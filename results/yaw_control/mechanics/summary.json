@@ -1,0 +1,442 @@
+{
+  "engine": "MuJoCo",
+  "engine_version": "3.16.0",
+  "configuration": {
+    "provenance": {
+      "status": "approximate_design_study",
+      "sphere_radius_source": "120 mm outer radius fit to 1009 vertices from native CAD saved body meshes; 110 mm inner radius.",
+      "shell_openings_source": "CAD mesh polar aperture radius 32 mm (15.466 degrees); shell axial truncation 10 mm each side.",
+      "masses_source": "Illustrative masses from the supplied handoff; native CAD materials/mass properties unavailable.",
+      "confirmed_topology": "Motors and polar modules fixed to carrier; shells rotate independently; carrier rotates relative to fork.",
+      "geometry_scope": "Native CAD shell/carrier visuals, analytical collision wedges and exposed belt caps; no gear or bearing dynamics."
+    },
+    "visual": {
+      "native_cad_meshes": true,
+      "include_carrier_details": true
+    },
+    "geometry": {
+      "sphere_radius_m": 0.12,
+      "shell_thickness_m": 0.01,
+      "polar_cap_angle_deg": 15.46600995,
+      "equatorial_gap_half_m": 0.01,
+      "collision_azimuth_sectors": 48,
+      "collision_meridian_samples": 24,
+      "shaft_radius_m": 0.008,
+      "shaft_length_m": 0.308,
+      "fork": {
+        "mass_kg": 0.2,
+        "arm_offset_y_m": 0.145,
+        "arm_size_xyz_m": [
+          0.022,
+          0.018,
+          0.185
+        ],
+        "arm_center_z_m": 0.0925,
+        "bridge_size_xyz_m": [
+          0.032,
+          0.308,
+          0.024
+        ],
+        "bridge_center_z_m": 0.18
+      },
+      "platform": {
+        "mass_kg": 1.0,
+        "size_xyz_m": [
+          0.18,
+          0.24,
+          0.02
+        ],
+        "center_xyz_m": [
+          0.0,
+          0.0,
+          0.2
+        ],
+        "com_offset_xyz_m": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "carrier": {
+        "mass_kg": 0.2,
+        "size_xyz_m": [
+          0.1,
+          0.08,
+          0.08
+        ]
+      },
+      "shell_mass_each_kg": 0.15,
+      "polar_module_mass_each_kg": 0.08,
+      "polar_module_internal_depth_m": 0.035
+    },
+    "simulation": {
+      "timestep_s": 0.001,
+      "control_interval_s": 0.005,
+      "gravity_m_s2": [
+        0.0,
+        0.0,
+        -9.81
+      ],
+      "initial_clearance_m": 0.0003,
+      "initial_shaft_phase_rad": 0.3,
+      "joint_damping_Nms": 0.0001
+    },
+    "contact": {
+      "mode": "analytic_clipped_floor",
+      "friction": [
+        0.7,
+        0.005,
+        0.0001
+      ],
+      "solref": [
+        0.005,
+        1.0
+      ],
+      "solimp": [
+        0.95,
+        0.99,
+        0.001
+      ],
+      "contact_dimension": 3
+    },
+    "actuation": {
+      "order": [
+        "shaft",
+        "shell_A",
+        "shell_B",
+        "belt_A",
+        "belt_B"
+      ],
+      "torque_limits_Nm": [
+        1.5,
+        0.6,
+        0.6
+      ],
+      "belt_speed_limit_m_s": 0.3,
+      "belt_mode": "ideal_surface_speed",
+      "belt_motor_load_dynamics": false,
+      "motor_gear_ratios": null
+    }
+  },
+  "generated_model_sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36",
+  "regression_source_sha256": "b15d37ca2486d9f317f46f87967a4a6ec5262279ec24df3e44dfa429b003d069",
+  "scope": "One free spherical wheel assembly; real internal joint torques and actual ground contact forces. No yaw constraint or external yaw torque.",
+  "private_free_space_conditions": "Gravity and collision masks disabled only in the two isolated test plant copies. Default masses, inertias, damping and actuator bounds retained.",
+  "polar_single_shell": {
+    "duration_s": 0.10000000000000007,
+    "torques_Nm": [
+      0.0,
+      0.1,
+      0.0
+    ],
+    "fork_yaw_deg": 2.77431180038519,
+    "fork_angular_velocity_world_rad_s": [
+      3.8646202756825353e-16,
+      -8.576845735729089e-17,
+      0.9573228353116108
+    ],
+    "body_angular_momentum_world_kg_m2_s": {
+      "fork": [
+        3.052316535402197e-18,
+        -7.11066739018853e-19,
+        0.00966934097067071
+      ],
+      "carrier": [
+        4.103634075482734e-18,
+        -3.6526720448759976e-19,
+        0.00028265275816804716
+      ],
+      "shell_A": [
+        -8.066825138821349e-18,
+        -1.3089568430139735e-19,
+        -0.009956823297466904
+      ],
+      "shell_B": [
+        6.50443777422755e-19,
+        -6.979805934312355e-20,
+        4.829568628137557e-06
+      ]
+    },
+    "total_angular_momentum_world_kg_m2_s": [
+      -2.6043075051366274e-19,
+      -1.2770276871509736e-18,
+      -8.345815629296621e-18
+    ],
+    "maximum_total_angular_momentum_error_kg_m2_s": 1.8788191289290695e-17,
+    "contacts": 0,
+    "equality_constraints": 0,
+    "free_root_joint": true,
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "joint_damping_Nms": [
+      0.0001,
+      0.0001,
+      0.0001
+    ],
+    "external_force_norm": 0.0,
+    "external_generalized_force_norm": 0.0
+  },
+  "polar_opposing_shells": {
+    "duration_s": 0.10000000000000007,
+    "torques_Nm": [
+      0.0,
+      0.1,
+      -0.1
+    ],
+    "fork_yaw_deg": 0.0,
+    "fork_angular_velocity_world_rad_s": [
+      -3.9413575569750314e-17,
+      -6.027569635627316e-19,
+      3.22686940004032e-33
+    ],
+    "body_angular_momentum_world_kg_m2_s": {
+      "fork": [
+        1.5843301415474474e-19,
+        6.750465409103425e-21,
+        3.2647382534896813e-35
+      ],
+      "carrier": [
+        -6.797121125891189e-19,
+        -4.6760960553655786e-21,
+        -9.250867108887071e-36
+      ],
+      "shell_A": [
+        2.5423619358705786e-18,
+        -2.326407567902481e-19,
+        -0.009961652866095043
+      ],
+      "shell_B": [
+        -1.148526049271718e-18,
+        1.9466450700746908e-19,
+        0.009961652866095043
+      ]
+    },
+    "total_angular_momentum_world_kg_m2_s": [
+      8.725567881644864e-19,
+      -3.590188042904115e-20,
+      0.0
+    ],
+    "maximum_total_angular_momentum_error_kg_m2_s": 8.732950781896492e-19,
+    "contacts": 0,
+    "equality_constraints": 0,
+    "free_root_joint": true,
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "joint_damping_Nms": [
+      0.0001,
+      0.0001,
+      0.0001
+    ],
+    "external_force_norm": 0.0,
+    "external_generalized_force_norm": 0.0
+  },
+  "equatorial_opposing_shells": {
+    "duration_s": 0.10000000000000007,
+    "torques_Nm": [
+      0.0,
+      0.1,
+      -0.1
+    ],
+    "initial_height_m": 0.11957421805136506,
+    "initial_acceleration_norm": 2.57236157167098e-08,
+    "initial_ground_contacts": {
+      "net_force_world_N": [
+        -1.61516267723083e-13,
+        -1.1823599459083511e-09,
+        18.246600000028586
+      ],
+      "moment_about_wheel_world_Nm": [
+        3.065760621559501e-11,
+        -8.36136715420821e-15,
+        1.976126274187059e-18
+      ],
+      "contacts": [
+        {
+          "geom": "shell_A_sector_035",
+          "position_relative_to_wheel_m": [
+            0.010000000936967436,
+            1.941641049330034e-10,
+            -0.11957841266597657
+          ],
+          "force_world_N": [
+            -4.0379064939003973e-14,
+            -2.955899240960292e-10,
+            4.561571734496615
+          ],
+          "yaw_moment_Nm": -2.9558995179105852e-12,
+          "contact_dimension": 3,
+          "direct_contact_torque": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geom": "shell_A_sector_036",
+          "position_relative_to_wheel_m": [
+            0.010000001062261489,
+            -1.7530030118478868e-10,
+            -0.11957841280987959
+          ],
+          "force_world_N": [
+            -4.037906892253752e-14,
+            -2.9558995005191845e-10,
+            4.561728265519055
+          ],
+          "yaw_moment_Nm": -2.955899814520083e-12,
+          "contact_dimension": 3,
+          "direct_contact_torque": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geom": "shell_B_sector_035",
+          "position_relative_to_wheel_m": [
+            -0.010000000936967415,
+            1.9416411013717383e-10,
+            -0.11957841266597657
+          ],
+          "force_world_N": [
+            -4.0379064939003973e-14,
+            -2.955900229022597e-10,
+            4.561571734489577
+          ],
+          "yaw_moment_Nm": 2.9559005059886566e-12,
+          "contact_dimension": 3,
+          "direct_contact_torque": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geom": "shell_B_sector_036",
+          "position_relative_to_wheel_m": [
+            -0.010000001062261489,
+            -1.7530030118478868e-10,
+            -0.11957841280987959
+          ],
+          "force_world_N": [
+            -4.037906892253752e-14,
+            -2.9559004885814383e-10,
+            4.561728265523335
+          ],
+          "yaw_moment_Nm": 2.9559008025682856e-12,
+          "contact_dimension": 3,
+          "direct_contact_torque": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "final_ground_contacts": {
+      "net_force_world_N": [
+        4.283920440606437e-12,
+        -2.141345878392542e-09,
+        18.24656555088052
+      ],
+      "moment_about_wheel_world_Nm": [
+        6.429431292920285e-11,
+        1.967419283044336e-12,
+        -0.016791901047702742
+      ],
+      "contacts": [
+        {
+          "geom": "shell_A_sector_035",
+          "position_relative_to_wheel_m": [
+            0.010000207364885676,
+            7.276755989481522e-06,
+            -0.11957839529339219
+          ],
+          "force_world_N": [
+            -0.04512362687118418,
+            -0.41982168761581595,
+            4.561563056982554
+          ],
+          "yaw_moment_Nm": -0.0041979755788123145,
+          "contact_dimension": 3,
+          "direct_contact_torque": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geom": "shell_A_sector_036",
+          "position_relative_to_wheel_m": [
+            0.010000207488058315,
+            7.276385967816304e-06,
+            -0.11957839543739508
+          ],
+          "force_world_N": [
+            -0.04512338287359569,
+            -0.4198216181329848,
+            4.561719718343517
+          ],
+          "yaw_moment_Nm": -0.004197974954152271,
+          "contact_dimension": 3,
+          "direct_contact_torque": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geom": "shell_B_sector_035",
+          "position_relative_to_wheel_m": [
+            -0.010000207362786858,
+            -7.276351410914829e-06,
+            -0.11957839529349225
+          ],
+          "force_world_N": [
+            0.04512338283233948,
+            0.41982168795389435,
+            4.561563187465472
+          ],
+          "yaw_moment_Nm": -0.004197975601343803,
+          "contact_dimension": 3,
+          "direct_contact_torque": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "geom": "shell_B_sector_036",
+          "position_relative_to_wheel_m": [
+            -0.010000207490200015,
+            -7.276720305792147e-06,
+            -0.11957839543729534
+          ],
+          "force_world_N": [
+            0.04512362691672431,
+            0.4198216156535605,
+            4.561719588088976
+          ],
+          "yaw_moment_Nm": -0.004197974913394352,
+          "contact_dimension": 3,
+          "direct_contact_torque": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "fork_yaw_deg": -0.3288057604187712,
+    "equality_constraints": 0,
+    "external_disturbance_norm": 0.0,
+    "no_slip_small_angle_yaw_gain": 5.979130371550699
+  },
+  "mechanics_regressions": "3 passed"
+}

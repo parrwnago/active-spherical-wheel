@@ -24,7 +24,7 @@ For **Ubuntu under WSL2**, run the command in the Ubuntu terminal, then open **h
 
 The interface runs live MuJoCo physics with manual force pulses, initial tilt, belt/controller switches, and forward, lateral, and curved trajectories. Start with **Polar belt**, **Roll 2°**, **Pitch 0°**, **Reset**, then **Run**. Try a **0.5 N** push for **0.10 s** using A/D, the direction buttons, or a drag in the view. Push controls remain available while a trajectory runs.
 
-The lab now defaults to **Transition aware** feedback with **Prepare incoming drives** enabled. It follows the actual shell/belt support and current heading, and uses a short kinematic preview to prepare an incoming drive's ground-tangent surface speed before load transfer. **Original local LQR** remains available for comparison. In 81 matched repeated-push cases, falls decreased from 20 to 2; settling and position bias remain limitations. The physical model and actuator bounds are unchanged; no MPC is implemented. See [CONTROL_UPGRADE.md](CONTROL_UPGRADE.md) for measured results and comparison instructions.
+The lab now defaults to **Transition aware** feedback with **Prepare incoming drives** enabled. It follows the actual shell/belt support and current heading, and uses a short kinematic preview to prepare an incoming drive's ground-tangent surface speed before load transfer. **Original local LQR** remains available for comparison. The 0.3.0 upgrade reduced falls from 20 to 2 in 81 matched repeated-push cases. Version 0.3.1 removes shell material-angle feedback that could sustain a delayed spin, and adds heading and vertical spin readings. See [YAW_BEHAVIOR.md](YAW_BEHAVIOR.md) for the physical yaw mechanisms and measured comparisons; settling and position bias remain limitations. The physical model and actuator bounds are unchanged; no MPC is implemented. See [CONTROL_UPGRADE.md](CONTROL_UPGRADE.md) for measured results and comparison instructions.
 
 At polar contact the driven transverse belt can move the support point beneath the upper body's center of mass. Independent ±2° roll and ±0.5 N push checks recovered with active belts; the same cases fell when belt commands were held at zero. That comparison retains belt friction and uses ideal speed servos. See the [interaction guide](INTERACTIVE_LAB.md), [polar belt evidence](results/polar_belt_check/README.md), and [browser screenshot](results/lab_ui/desktop.png).
 
@@ -160,7 +160,7 @@ The control code first searches for an upright nearby static equilibrium using t
 
 The default design retains material phases and yaw in the full local analysis; neutral cyclic modes do not imply convergence of every internal coordinate. The earlier `frozen_phase_feedback` controller is retained as a comparison and is not the default full-state design. A locally controllable linear model alone does not prove successful nonlinear balance or tracking. Inspect the run metrics, saturation, contact contributors and floor-contact failures alongside the rendered motion. The demonstrated shell–belt transition covers one path; other phases, transitions and disturbances require further checks.
 
-The interactive lab's `transition_aware` controller builds on those local designs with contact-weighted phase interpolation, heading-aware errors, wrapped cyclic joint errors, and incoming-drive preparation. Its reference heading follows unregulated yaw; it does not provide absolute-heading control. The previous interactive behavior is retained as `local_lqr`. The [upgrade notes](CONTROL_UPGRADE.md) distinguish feedback scheduling, kinematic preparation, and the limits of sampled recovery evidence.
+The interactive lab's `transition_aware` controller builds on those local designs with contact-weighted phase interpolation, heading-aware errors, a wrapped shaft-angle error, shell speed feedback without an arbitrary shell material-angle target, and incoming-drive preparation. Its reference heading follows unregulated yaw; it does not provide absolute-heading control. The previous interactive behavior is retained as `local_lqr`. The [upgrade notes](CONTROL_UPGRADE.md) distinguish feedback scheduling, kinematic preparation, and the limits of sampled recovery evidence.
 
 ## Files and next refinements
 
@@ -171,7 +171,7 @@ The interactive lab's `transition_aware` controller builds on those local design
 | `src/spherical_wheel/sim.py` | Nonlinear plant, input bounds, belt motion and contact reporting |
 | `src/spherical_wheel/contact.py` | Optional clipped analytical sphere–floor contacts and boundary fallback |
 | `src/spherical_wheel/control.py` | Equilibrium, finite differences and local controller |
-| `src/spherical_wheel/recovery_control.py` | Contact-weighted feedback, heading/cyclic errors and fingerprinted gain cache |
+| `src/spherical_wheel/recovery_control.py` | Contact-weighted feedback, heading-aware errors and fingerprinted gain cache |
 | `src/spherical_wheel/synchronization.py` | Kinematic preview and bounded incoming-drive preparation |
 | `src/spherical_wheel/validation.py` | Mechanism and physics diagnostics |
 | `generated/model.xml` | Generated primary MuJoCo model |

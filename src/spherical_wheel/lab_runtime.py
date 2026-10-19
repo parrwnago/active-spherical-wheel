@@ -102,6 +102,8 @@ class SimulationLab:
         self.run_id = uuid.uuid4().hex[:12]
         self.samples = deque(maxlen=120000)
         self.history = deque(maxlen=600)
+        self._previous_heading_rad = None
+        self._unwrapped_heading_rad = 0.
         self.events = []
         self.dropped_samples = 0
         self.pulses = []
@@ -245,8 +247,8 @@ class SimulationLab:
         force = sum((pulse['force_N'] for pulse in self.pulses if pulse['start_s'] <= now),start=np.zeros(3))
         self.plant.step(applied,np.r_[force,np.zeros(3)])
         self.nominal_joints += self.dt*vref[6:9]
-        # The incoming unloaded shell is intentionally pre-spun. Carry that
-        # cyclic reference forward instead of later fighting its preparation.
+        # Retain the pre-spin material reference for logs and legacy comparisons.
+        # Transition-aware feedback excludes shell position errors entirely.
         for target in sync['targets']:
             if 'target_joint_speed_rad_s' in target:
                 index = target['command_index']
@@ -288,10 +290,25 @@ class SimulationLab:
         quat = self.plant.data.qpos[3:7]
         roll = np.arctan2(2*(quat[0]*quat[1]+quat[2]*quat[3]),1-2*(quat[1]**2+quat[2]**2))
         pitch = np.arcsin(np.clip(2*(quat[0]*quat[2]-quat[3]*quat[1]),-1,1))
+        heading = float(np.arctan2(2*(quat[0]*quat[3]+quat[1]*quat[2]),
+                                  1-2*(quat[2]**2+quat[3]**2)))
+        if self._previous_heading_rad is None:
+            self._unwrapped_heading_rad = heading
+        else:
+            self._unwrapped_heading_rad += (heading-self._previous_heading_rad+np.pi)%(2*np.pi)-np.pi
+        self._previous_heading_rad = heading
+        # Free-joint angular qvel is expressed in the body frame. Report the
+        # actual world-vertical component, including when the platform tilts.
+        spatial_velocity = np.empty(6)
+        mujoco.mj_objectVelocity(self.plant.model, self.plant.data, mujoco.mjtObj.mjOBJ_BODY,
+                                self.plant.fork_id, spatial_velocity, 0)
         sample = {'time_s':float(self.plant.data.time),'interval_start_s':float(interval_start),
                   'qpos':self.plant.data.qpos.copy(),'qvel':self.plant.data.qvel.copy(),
                   'reference_xy':self._last_ref[:2].copy(),'tilt_deg':float(np.rad2deg(snapshot['tilt_rad'])),
                   'roll_deg':float(np.rad2deg(roll)),'pitch_deg':float(np.rad2deg(pitch)),
+                  'heading_deg':float(np.rad2deg(heading)),
+                  'heading_unwrapped_deg':float(np.rad2deg(self._unwrapped_heading_rad)),
+                  'yaw_rate_rad_s':float(spatial_velocity[2]),
                   'command':self._last_command.copy(),'input':self._last_input.copy(),'force_N':self._last_force.copy(),
                   'controller_enabled':self.controller_enabled,'belt_enabled':self.belt_enabled,
                   'sync_weights':np.asarray(self._last_sync['blend_weights']),
@@ -333,6 +350,8 @@ class SimulationLab:
                     'planar_speed_m_s':float(np.linalg.norm(sample['qvel'][:2])),
                     'tracking_velocity_error_m_s':float(np.linalg.norm(sample['qvel'][:2]-self._last_vref[:2])),
                     'angular_speed_rad_s':float(np.linalg.norm(sample['qvel'][3:6])),
+                    'heading_deg':sample['heading_deg'],'heading_unwrapped_deg':sample['heading_unwrapped_deg'],
+                    'yaw_rate_rad_s':sample['yaw_rate_rad_s'],
                     'motion_settled':bool(sample['tilt_deg']<.5 and np.linalg.norm(sample['qvel'][3:6])<.08
                                           and np.linalg.norm(sample['qvel'][:2]-self._last_vref[:2])<.03),
                     'tilt_deg':sample['tilt_deg'],'roll_deg':sample['roll_deg'],'pitch_deg':sample['pitch_deg'],
@@ -344,13 +363,16 @@ class SimulationLab:
                     'active_push_count':sum(p['start_s']<=self.plant.data.time<p['end_s'] for p in self.pulses),
                     'history':{'time_s':[point['time_s'] for point in self.history],
                                'tilt_deg':[point['tilt_deg'] for point in self.history],
+                               'heading_unwrapped_deg':[point['heading_unwrapped_deg'] for point in self.history],
+                               'yaw_rate_rad_s':[point['yaw_rate_rad_s'] for point in self.history],
                                'xy':[point['qpos'][:2].tolist() for point in self.history],
                                'reference_xy':[point['reference_xy'].tolist() for point in self.history],
                                'force_N':[point['force_N'].tolist() for point in self.history]},
                     'trajectory':trajectory,'run_id':self.run_id,'last_error':self.last_error,
                     'sample_count':len(self.samples),'dropped_samples':self.dropped_samples,
                     'gain_points_rejected':copy.deepcopy(self.failed_gain_points),
-                    'units':{'position':'m','force':'N','joint_torques':'N m','belt_speed':'m/s'},
+                    'units':{'position':'m','force':'N','joint_torques':'N m','belt_speed':'m/s',
+                             'heading':'deg','yaw_rate':'rad/s, world vertical'},
                     'camera':dict(self.camera)}
 
     def command(self, payload):
@@ -439,12 +461,14 @@ class SimulationLab:
                              'requested_belt_A_speed_m_s','requested_belt_B_speed_m_s',
                              'controller_mode','synchronization_enabled',
                              'sync_shaft_weight','sync_shell_A_weight','sync_shell_B_weight','sync_belt_A_weight','sync_belt_B_weight',
-                             'sync_shaft_torque_Nm','sync_shell_A_torque_Nm','sync_shell_B_torque_Nm','sync_belt_A_speed_m_s','sync_belt_B_speed_m_s'])
+                             'sync_shaft_torque_Nm','sync_shell_A_torque_Nm','sync_shell_B_torque_Nm','sync_belt_A_speed_m_s','sync_belt_B_speed_m_s',
+                             'heading_deg','heading_unwrapped_deg','yaw_rate_rad_s'])
             for sample in self.samples:
                 writer.writerow([sample['time_s'],sample['interval_start_s'],*sample['qpos'][:2],*sample['reference_xy'],
                                  sample['roll_deg'],sample['pitch_deg'],sample['tilt_deg'],*sample['force_N'],*sample['input'],
                                  sample['controller_enabled'],sample['belt_enabled'],*sample['command'],
-                                 sample['controller_mode'],sample['synchronization_enabled'],*sample['sync_weights'],*sample['sync_commands']])
+                                 sample['controller_mode'],sample['synchronization_enabled'],*sample['sync_weights'],*sample['sync_commands'],
+                                 sample['heading_deg'],sample['heading_unwrapped_deg'],sample['yaw_rate_rad_s']])
             return output.getvalue()
 
     def save_run(self):
@@ -454,7 +478,8 @@ class SimulationLab:
             generate_model(self.config,path/'model')
             arrays={key:np.asarray([sample[key] for sample in self.samples]) for key in
                     ('time_s','interval_start_s','qpos','qvel','command','input','force_N','reference_xy','tilt_deg',
-                     'controller_enabled','belt_enabled','controller_mode','synchronization_enabled','sync_weights','sync_commands')}
+                     'controller_enabled','belt_enabled','controller_mode','synchronization_enabled','sync_weights','sync_commands',
+                     'heading_deg','heading_unwrapped_deg','yaw_rate_rad_s')}
             arrays['disturbance']=np.c_[arrays['force_N'],np.zeros((len(self.samples),3))]
             arrays['tilt_rad']=np.deg2rad(arrays['tilt_deg'])
             arrays['model_path']=np.array('model/model.xml')

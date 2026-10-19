@@ -128,9 +128,35 @@ def test_csv_contains_actual_force_input_and_interval_alignment(lab):
         assert float(row['interval_start_s']) == sample['interval_start_s']
         np.testing.assert_array_equal([float(row[n]) for n in ['force_x_N', 'force_y_N', 'force_z_N']], sample['force_N'])
         np.testing.assert_array_equal([float(row[n]) for n in names], sample['input'])
+        assert float(row['heading_deg']) == sample['heading_deg']
+        assert float(row['heading_unwrapped_deg']) == sample['heading_unwrapped_deg']
+        assert float(row['yaw_rate_rad_s']) == sample['yaw_rate_rad_s']
     assert float(rows[-1]['time_s'])-float(rows[-1]['interval_start_s']) == pytest.approx(lab.dt)
     assert sum(float(row['force_y_N'])*lab.dt for row in rows) == pytest.approx(.01)
     assert abs(float(rows[1]['belt_A_speed_m_s'])) > .1
+
+
+def test_heading_wrap_and_world_vertical_spin_are_measured_independently_of_tilt(lab):
+    # A tilted free body's angular qvel[5] is not its world vertical spin.
+    for heading_deg in (179., -179.):
+        yaw = np.deg2rad(heading_deg)
+        roll = np.deg2rad(30.)
+        qyaw = np.array([np.cos(yaw/2), 0., 0., np.sin(yaw/2)])
+        qroll = np.array([np.cos(roll/2), np.sin(roll/2), 0., 0.])
+        mujoco.mju_mulQuat(lab.plant.data.qpos[3:7], qyaw, qroll)
+        lab.plant.data.qvel[3:6] = [.3, -.2, 1.]
+        mujoco.mj_forward(lab.plant.model, lab.plant.data)
+        lab._record(float(lab.plant.data.time))
+    state = lab.state()
+    rotation = lab.plant.data.xmat[lab.plant.fork_id].reshape(3, 3)
+    expected_spin = float((rotation @ lab.plant.data.qvel[3:6])[2])
+    assert state['yaw_rate_rad_s'] == pytest.approx(expected_spin)
+    assert abs(state['yaw_rate_rad_s']-lab.plant.data.qvel[5]) > .1
+    assert state['heading_deg'] == pytest.approx(-179.)
+    assert state['heading_unwrapped_deg'] == pytest.approx(181.)
+    assert not state['motion_settled']
+    lab.command({'action': 'reset', 'scenario': 'shell'})
+    assert lab.state()['heading_unwrapped_deg'] == pytest.approx(0.)
 
 
 def test_recovery_time_waits_for_all_overlapping_pushes_to_end(lab):
@@ -236,6 +262,8 @@ def test_polar_tracking_crosses_from_belt_to_shell_and_recovers_push(lab, tmp_pa
         assert str(rollout['model_path']) == 'model/model.xml'
         assert (saved / str(rollout['model_path'])).is_file()
         np.testing.assert_array_equal(rollout['force_N'], forces)
+        for key in ('heading_deg', 'heading_unwrapped_deg', 'yaw_rate_rad_s'):
+            np.testing.assert_array_equal(rollout[key], [sample[key] for sample in lab.samples])
     check = {'result': 'passed', 'duration_s': state['time_s'], 'final_tilt_deg': state['tilt_deg'],
              'final_tracking_error_m': state['tracking_error_m'], 'final_shaft_phase_rad': float(lab.plant.data.qpos[7]),
              'push_impulse_Ns': (forces.sum(axis=0)*lab.dt).tolist(),

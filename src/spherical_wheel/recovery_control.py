@@ -315,6 +315,12 @@ class ScheduledBalanceFeedback:
         error[:2] = world_to_heading@error[:2]
         error[9:11] = world_to_heading@error[9:11]
         error[6:9] = (error[6:9]+np.pi) % (2*np.pi)-np.pi
+        # Both shells are axisymmetric about their drive axes. Their material
+        # angles do not specify a physical balance target; even wrapped angle
+        # feedback can keep unwinding them and inject persistent yaw energy.
+        # Retain shaft phase and every velocity term, including yaw-rate and
+        # shell-speed feedback, while leaving shell material position free.
+        error[7:9] = 0.
         command = np.asarray(equilibrium_u)-gain@error
         if feedforward is not None:
             command += np.asarray(feedforward)

@@ -1,0 +1,88 @@
+{
+  "case": "hard_polar_overlap_2N_same_y",
+  "variant": "baseline",
+  "scenario": "polar",
+  "failed": true,
+  "requested_duration_s": 60.0,
+  "completed_duration_s": 2.059999999999884,
+  "reused_exact_baseline": false,
+  "max_abs_world_yaw_rate_rad_s": 6.997856145863617,
+  "final_world_yaw_rate_rad_s": 1.9842321798563933,
+  "final_yaw_rpm": 18.948021579969105,
+  "heading_turns": -0.27163402190463604,
+  "final_heading_deg": -97.78824788566898,
+  "final_tilt_deg": 70.26023201993807,
+  "max_tilt_deg": 70.26023201993807,
+  "final_planar_speed_m_s": 1.958781692519896,
+  "max_planar_speed_m_s": 3.501825338292571,
+  "final_total_angular_speed_rad_s": 9.388895177403237,
+  "final_position_error_m": 1.4816976741270922,
+  "max_position_error_m": 1.4816976741270922,
+  "longest_fast_upright_low_translation_interval_s": 0.0,
+  "tail_mean_yaw_rate_rad_s": -0.2604851812013474,
+  "tail_max_abs_yaw_rate_rad_s": 6.997856145863617,
+  "initial_kinetic_energy_J": 0.0,
+  "final_kinetic_energy_J": 7.385480006298244,
+  "max_kinetic_energy_J": 10.20434442343194,
+  "tail_mean_joint_power_W": 2.556534903331926,
+  "tail_mean_belt_power_W": 0.006796804997010616,
+  "tail_mean_sync_delta_joint_power_W": -0.20635895610156507,
+  "tail_mean_passive_power_W": -0.06292686511128256,
+  "max_angular_velocity_crosscheck_error_rad_s": 0.0,
+  "max_applied_inputs": [
+    1.5,
+    0.6,
+    0.6,
+    0.3,
+    0.3
+  ],
+  "saturated_command_fraction": 0.4406779661016949,
+  "max_combined_push_N": 4.0,
+  "actual_push_impulse_Ns": [
+    0.0,
+    3.939999999999566,
+    0.0
+  ],
+  "raw_wrapped_reference_crossings": 4,
+  "largest_reference_crossings": [
+    {
+      "time_s": 1.6249999999999318,
+      "joint_index": 2,
+      "command_jump_norm": 25.77829880782224
+    },
+    {
+      "time_s": 1.659999999999928,
+      "joint_index": 1,
+      "command_jump_norm": 0.5925704865441844
+    },
+    {
+      "time_s": 1.794999999999913,
+      "joint_index": 1,
+      "command_jump_norm": 0.10208831227558886
+    },
+    {
+      "time_s": 1.8349999999999087,
+      "joint_index": 2,
+      "command_jump_norm": 0.08104315065238467
+    }
+  ],
+  "settled_at_end": false,
+  "actuator_bounds_unchanged": true,
+  "physical_guards_passed": true,
+  "world_angular_velocity_definition": "fork body rotation @ free-joint local angular qvel; cross-checked against mj_objectVelocity in world axes",
+  "shell_reference_crossing_note": "Raw material-phase reference crossings are diagnostic only; candidate feedback ignores the two shell position errors.",
+  "pulse_settings": {
+    "strength_N": 2.0,
+    "duration_s": 0.3,
+    "spacing_s": 0.15,
+    "directions": [
+      [
+        0.0,
+        1.0,
+        0.0
+      ]
+    ],
+    "count": 8,
+    "first_start_s": 1.0
+  }
+}

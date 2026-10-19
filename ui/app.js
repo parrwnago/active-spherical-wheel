@@ -202,6 +202,8 @@
     $("tiltStatus").className = `metric-status ${fallen ? "fallen" : !motionSettled || !state.controller_enabled ? "warning" : "balanced"}`;
     $("trackingValue").textContent = fixed(number(state.tracking_error_m) * 1000, 1);
     $("positionDetail").textContent = `X ${fixed(number(xy[0]) * 1000, 1)} · Y ${fixed(number(xy[1]) * 1000, 1)} mm`;
+    $("yawRateValue").textContent = fixed(number(state.yaw_rate_rad_s) * 180 / Math.PI, 1);
+    $("headingDetail").textContent = `Heading ${fixed(state.heading_deg, 1)}° · free to turn`;
     $("timeValue").textContent = fixed(state.time_s, 2);
     $("runStatus").textContent = fallen ? "Reset to start a new run" : running ? !motionSettled && tilt < 0.5 ? "Correcting motion" : "Simulation running" : "Simulation paused";
     $("runningDot").className = `small-dot ${running ? "active" : "paused"}`;

@@ -10,7 +10,9 @@ Three commands are bounded equivalent output torques. Two are ideal belt surface
 
 ## Demonstrated runs
 
-The new interactive controller is assessed in [CONTROL_UPGRADE.md](CONTROL_UPGRADE.md). Its matched 81-case repeated-push suite reduces falls from 20 to 2 with unchanged physical parameters and actuator bounds. Strict end-of-run settlement is 46/81 for the original and 45/81 for the revision, so improved survival must not be interpreted as improved convergence in every case. A controlled incoming-shell handoff reduces measured contact slip from 0.07285 to 0.01478 m/s. See [selected paired rollouts](results/recovery_control/README.md), [complete comparison](results/recovery_control/stress_comparison.json), and [plots](results/recovery_control/comparison.png).
+The 0.3.0 interactive controller is assessed in [CONTROL_UPGRADE.md](CONTROL_UPGRADE.md). Its matched 81-case repeated-push suite reduces falls from 20 to 2 with unchanged physical parameters and actuator bounds. Strict end-of-run settlement is 46/81 for the original and 45/81 for the revision, so improved survival must not be interpreted as improved convergence in every case. A controlled incoming-shell handoff reduces measured contact slip from 0.07285 to 0.01478 m/s. See [selected paired rollouts](results/recovery_control/README.md), [complete comparison](results/recovery_control/stress_comparison.json), and [plots](results/recovery_control/comparison.png).
+
+Version 0.3.1 addresses delayed motor-driven yaw by excluding shell material-angle position errors. In matched 60 s replays, two critical cases change from 106.00 and 88.57 rpm to −0.0357 and 0.4238 rpm. It still leaves steady spinning in some stronger cases and one new polar failure in the 81-case comparison; total survival remains 79/81. [The yaw results](results/yaw_control/README.md) preserve these tradeoffs, longer settling times and changed handoff-slip measurements.
 
 The saved demonstration table below records the earlier local-feedback implementation. These historical runs have not been relabeled as results of the new interactive controller.
 
@@ -42,7 +44,7 @@ Actual Chromium interaction tests on Linux check polar recovery, button/keyboard
 
 ## Physics and control checks
 
-- **44 automated tests passed.** They cover free-base topology, physical inertias, isolated internal torque reactions and momentum conservation, correct belt response, floor-contact failure detection, clipped-contact geometry, pulse duration and logging, paused simulation time, live trajectory references, and polar-to-shell tracking under a push.
+- **56 automated tests passed in two complete, nonoverlapping batches.** They cover free-base topology, physical inertias, isolated internal torque reactions and momentum conservation, correct belt response, floor-contact failure detection, clipped-contact geometry, pulse duration and logging, paused simulation time, live trajectory references, polar-to-shell tracking under a push, shell-angle invariance, actual heading-following local Jacobians at seven poses, world-vertical spin measurement, and sustained post-push settling. [Validation details](results/yaw_control/verification.json) record changed historical assertions and the current passing batches.
 - A tilted zero-command run falls until a fork arm contacts the floor at about 0.442 s. This is the expected unsupported behavior; zero belt speed still represents an ideal holding servo.
 - The static-equilibrium controller-interval residual is approximately 2.66e-13. Independent finite-difference prediction agrees with nonlinear perturbations at about 3.3e-5 relative error for the recorded small perturbation.
 - Full 18-state closed-model eigenvalues are inspected. The nominal reachable rank is 12; stable contact modes and neutral cyclic/unregulated coordinates remain. The model is not claimed to regulate every coordinate asymptotically.

@@ -1,0 +1,35 @@
+{
+  "arguments": {
+    "output": "results/yaw_control/stress/phasefree",
+    "controller_mode": "transition_aware",
+    "scenarios": [
+      "shell",
+      "polar",
+      "transition"
+    ],
+    "amplitudes": [
+      0.5,
+      1.0,
+      2.0
+    ],
+    "patterns": [
+      "same_y",
+      "alternating_y",
+      "cross_xy"
+    ],
+    "profiles": [
+      "light",
+      "medium",
+      "overlap"
+    ],
+    "duration": 10.0,
+    "pulses": 8,
+    "workers": 3
+  },
+  "python": "/home/parrwnago/active-spherical-wheel/.venv/bin/python",
+  "PYTHONPATH": "src",
+  "thread_caps": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1"
+  }
+}

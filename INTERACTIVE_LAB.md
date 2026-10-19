@@ -80,7 +80,7 @@ You can apply pushes throughout tracking. The display reports tilt, tracking err
 
 The **Transition** scenario starts near the shell/belt boundary with a preset **60 mm** forward, **5 mm** lateral curve over **10 s**. Select it and press **Run** to use that preset. Starting a different trajectory replaces the preset.
 
-The default **Transition aware** mode blends local gains using the actual support loads and the carrier's orientation relative to the floor, distinguishing both hemispheres and both belts. It follows the platform's heading when calculating horizontal errors and wraps cyclic joint-angle errors. The requested world-space position target stays fixed; absolute yaw is unregulated. Rejected gain points remain recorded.
+The default **Transition aware** mode blends local gains using the actual support loads and the carrier's orientation relative to the floor, distinguishing both hemispheres and both belts. It follows the platform's heading when calculating horizontal errors, wraps the carrier shaft-angle error, and controls shell speeds without trying to return the shells to arbitrary material angles. The requested world-space position target stays fixed; absolute yaw is unregulated. Rejected gain points remain recorded.
 
 **Prepare incoming drives** uses a short kinematic lookahead to prepare an approaching unloaded shell or belt before it receives load. It coordinates tangential surface velocity at the ground rather than raw RPM, because shell and belt drives have different directions and contact lever arms. Shell preparation uses bounded motor torque with its reaction on the carrier; belt preparation retains the model's ideal surface-speed law. The preview is not a dynamic contact forecast or MPC.
 
@@ -115,3 +115,9 @@ The model uses provisional masses, inertias, friction, and actuator limits. Belt
 Measured component masses/inertias, final payload properties, exposed belt geometry, and motor/gear limits will improve physical fidelity. They are not required to run the current interface.
 
 If the page reports a rendering error, its data controls and logged physics remain available. Read the reported error and terminal output; the interface does not substitute a prerecorded animation. Headless Linux defaults to MuJoCo's EGL backend. The separate desktop `viewer` command requires a graphical display.
+
+## Heading and spinning
+
+The single wheel leaves the platform free to turn. Motor reaction torques and forces at separated shell rim contacts can change its heading even without a separate yaw motor. The balance controller does not command an absolute heading. [YAW_BEHAVIOR.md](YAW_BEHAVIOR.md) explains the mechanisms and the 0.3.1 delayed-spin correction.
+
+**Platform spin** displays the measured angular velocity about the world vertical axis in degrees per second; the smaller caption shows heading in degrees. CSV and NPZ exports include `heading_deg`, continuous `heading_unwrapped_deg`, and `yaw_rate_rad_s` (radians per second). The API and history expose the same measurements. Upright tilt alone is insufficient for settlement: angular and translation speeds must also be small.

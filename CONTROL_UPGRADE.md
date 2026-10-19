@@ -1,6 +1,8 @@
 # Contact-transition controller upgrade
 
-The interactive lab now defaults to **Transition aware** feedback (`transition_aware`) with **Prepare incoming drives** enabled. It combines a library of local LQR gains with contact-load blending, heading-aware state errors, cyclic joint-angle handling, and kinematic preparation of an incoming shell or belt. **Original local LQR** (`local_lqr`) remains available for comparisons with the earlier controller.
+The 0.3.0 upgrade introduced the default of **Transition aware** feedback (`transition_aware`) with **Prepare incoming drives** enabled. It combines a library of local LQR gains with contact-load blending, heading-aware state errors, cyclic joint-angle handling, and kinematic preparation of an incoming shell or belt. **Original local LQR** (`local_lqr`) remains available for comparisons with the earlier controller.
+
+Version 0.3.1 additionally removes shell material-angle position feedback to address delayed spinning after repeated pushes. The original 0.3.0 evidence below is retained with its version; see [YAW_BEHAVIOR.md](YAW_BEHAVIOR.md) and [the new comparisons](results/yaw_control/README.md).
 
 This is a controller change. The wheel geometry, masses, friction, contact treatment, physics step, and actuator bounds remain unchanged. The implementation does not add a balancing force, hold the platform upright, reset a disturbed state, or silently move the requested position target. No model predictive controller is implemented.
 
@@ -22,7 +24,7 @@ The earlier implementation is preserved at baseline commit `bb05156`. Its identi
 
 The controller maintains separate gain groups for shell A, shell B, belt A, and belt B. It interpolates nearby phase gains within a group, then blends those gains using the measured normal loads. A contact handover can therefore change the feedback continuously while more than one surface carries load. The well-conditioned ordinary-pose shaft row is retained instead of importing an extreme finite-rim row.
 
-Position targets and recorded trajectories stay in world coordinates. The controller rotates horizontal position and linear-velocity errors into the current heading frame. Its reference heading follows the platform's unregulated yaw; this upgrade does **not** provide an absolute-heading controller. Cyclic joint errors are wrapped to their equivalent shortest angular differences. References for deliberately pre-spun shells are also advanced so the position feedback does not undo their preparation.
+Position targets and recorded trajectories stay in world coordinates. The controller rotates horizontal position and linear-velocity errors into the current heading frame. Its reference heading follows the platform's unregulated yaw; this upgrade does **not** provide an absolute-heading controller. The carrier shaft-angle error is wrapped to its equivalent shortest angular difference. Shell material-angle errors are excluded: an axisymmetric shell has no preferred angle about its drive axis. Shell angular velocities remain in the feedback. Version 0.3.0 wrapped all cyclic errors and advanced pre-spin references, but still penalized shell angle; that residual penalty could supply motor power to a delayed spin.
 
 The default-model library contains 80 accepted local designs. Building the library rejects nonfinite or nonstatic equilibria, locally growing closed-loop models, and extreme shaft pitch gains above 100 N m/rad in magnitude. Rejected phases and reasons remain recorded. These checks reject problematic designs; they do not establish a nonlinear region of attraction.
 
@@ -52,7 +54,7 @@ Overlapping force pulses add. For example, 0.5 N pulses lasting 0.30 s and issue
 
 The backend exposes `controller_mode` and `synchronization_enabled` in state and saved runs. Mode changes use `{"action":"control_mode","mode":"transition_aware"}` or `"local_lqr"`; the preparation switch uses `{"action":"synchronization","enabled":true}`. Balance-controller and polar-belt switches retain their existing meanings. A disabled belt is held at zero surface speed with frictional contact still present.
 
-## Measured results and remaining limits
+## Historical 0.3.0 results and remaining limits
 
 The integrated [81-case comparison](results/recovery_control/stress_comparison.json) uses the same model, input bounds, initial conditions and intended force histories for both controllers. It covers three starting scenarios, three pulse magnitudes, three direction patterns, and three duration/spacing profiles. Each case requests eight pushes and runs for 10 s unless it falls. Pulses add physically, without clipping the disturbance.
 
