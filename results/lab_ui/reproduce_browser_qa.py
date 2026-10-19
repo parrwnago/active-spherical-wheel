@@ -28,6 +28,8 @@ def main():
         # Establish a repeatable starting state, including persisted camera preferences.
         for payload in ({'action':'pause'}, {'action':'controller','enabled':True},
                         {'action':'belt','enabled':True},
+                        {'action':'control_mode','mode':'transition_aware'},
+                        {'action':'synchronization','enabled':True},
                         {'action':'camera','azimuth':135,'elevation':-23,'distance':.9}):
             response=context.request.post(URL+'/api/command',data=payload)
             assert response.ok,response.text()
@@ -79,6 +81,10 @@ def main():
         wait_state(lambda value:abs(value['last_push']['force_N'][1]-.3)<.001)
         report['keyboard_and_drag_push']=True
         page.locator('#playButton').click();wait_state(lambda value:not value['running'])
+        # Preserve the original polar ablation as an explicit baseline check.
+        # The new controller can leave the pole and use other drives to recover.
+        page.locator('#controllerMode').select_option('local_lqr')
+        wait_state(lambda value:value['controller_mode']=='local_lqr')
         page.locator('label[for="beltToggle"]').click();expect(page.locator('#beltToggle')).not_to_be_checked()
         page.locator('#resetButton').click();wait_state(lambda value:value['time_s']==0 and not value['belt_enabled'])
         page.locator('#playButton').click()
@@ -86,8 +92,10 @@ def main():
         page.locator('#failureBanner').wait_for(state='visible')
         expect(page.locator('#playButton')).to_be_disabled()
         page.screenshot(path=str(OUT/'belt_disabled_failure.png'),full_page=True)
-        report['belt_disabled_failure']={'time_s':fallen['time_s'],'tilt_deg':fallen['tilt_deg'],'visible_failure':True}
+        report['belt_disabled_failure']={'time_s':fallen['time_s'],'tilt_deg':fallen['tilt_deg'],'visible_failure':True,'controller_mode':'local_lqr'}
         page.locator('label[for="beltToggle"]').click()
+        page.locator('#controllerMode').select_option('transition_aware')
+        wait_state(lambda value:value['controller_mode']=='transition_aware')
         page.locator('#initialRoll').fill('0');page.locator('#initialPitch').fill('0')
         page.locator('[data-scenario="shell"]').click()
         wait_state(lambda value:value['scenario']=='shell' and value['time_s']==0 and not value['failed'])

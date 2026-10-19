@@ -386,7 +386,7 @@ def _handler(service):
     return Handler
 
 
-def run_server(host="127.0.0.1", port=8765, open_browser=False):
+def run_server(host="127.0.0.1", port=8765, open_browser=False, controller_mode="transition_aware"):
     """Run the browser lab until Ctrl+C; never bind to a public interface."""
     if not _loopback(host):
         raise ValueError("The interactive lab binds only to a loopback address")
@@ -394,7 +394,7 @@ def run_server(host="127.0.0.1", port=8765, open_browser=False):
         raise ValueError("Port must be in [0, 65535]")
     from .lab_runtime import SimulationLab
     print("Loading the MuJoCo model and local balance controllers…", flush=True)
-    runtime = SimulationLab()
+    runtime = SimulationLab(controller_mode=controller_mode)
     service = LabService(runtime)
     server_type = ThreadingHTTPServer
     if ":" in host:

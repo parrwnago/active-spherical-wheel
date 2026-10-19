@@ -69,7 +69,8 @@
       if (["helpButton", "helpLink", "closeHelp", "helpDone", "retryButton"].includes(button.id)) return;
       button.disabled = unavailable;
     });
-    ["controllerToggle", "beltToggle"].forEach((id) => { $(id).disabled = unavailable; });
+    ["controllerToggle", "beltToggle", "controllerMode"].forEach((id) => { $(id).disabled = unavailable; });
+    $("synchronizationToggle").disabled = unavailable || state?.controller_mode !== "transition_aware" || state?.controller_enabled === false;
     if (isFallen()) {
       $("playButton").disabled = true;
       $("trajectoryButton").disabled = true;
@@ -190,17 +191,19 @@
     const fallen = isFallen();
     const running = !!state.running;
     const tilt = number(state.tilt_deg);
+    const motionSettled = typeof state.motion_settled === "boolean" ? state.motion_settled : tilt < 0.5 && number(state.angular_speed_rad_s) < 0.08 && number(state.tracking_velocity_error_m_s) < 0.03;
+    const following = state.trajectory?.kind && state.trajectory.kind !== "hold" && number(state.trajectory.elapsed_s) < number(state.trajectory.duration_s);
     const xy = state.position_xy_m || [];
     $("connection").className = "connection online";
     $("connection").lastElementChild.textContent = "Simulator connected";
     $("tiltValue").textContent = fixed(state.tilt_deg, 2);
     $("tiltDetail").textContent = `Roll ${fixed(state.roll_deg, 2)}° · Pitch ${fixed(state.pitch_deg, 2)}°`;
-    $("tiltStatus").textContent = fallen ? "Balance lost" : !state.controller_enabled ? "Control off" : tilt > 0.5 ? "Recovering" : "Balanced";
-    $("tiltStatus").className = `metric-status ${fallen ? "fallen" : tilt > 0.5 || !state.controller_enabled ? "warning" : "balanced"}`;
+    $("tiltStatus").textContent = fallen ? "Balance lost" : !state.controller_enabled ? "Control off" : !running ? "Paused" : !motionSettled ? "Recovering" : following ? "Tracking" : "Balanced";
+    $("tiltStatus").className = `metric-status ${fallen ? "fallen" : !motionSettled || !state.controller_enabled ? "warning" : "balanced"}`;
     $("trackingValue").textContent = fixed(number(state.tracking_error_m) * 1000, 1);
     $("positionDetail").textContent = `X ${fixed(number(xy[0]) * 1000, 1)} · Y ${fixed(number(xy[1]) * 1000, 1)} mm`;
     $("timeValue").textContent = fixed(state.time_s, 2);
-    $("runStatus").textContent = fallen ? "Reset to start a new run" : running ? "Simulation running" : "Simulation paused";
+    $("runStatus").textContent = fallen ? "Reset to start a new run" : running ? !motionSettled && tilt < 0.5 ? "Correcting motion" : "Simulation running" : "Simulation paused";
     $("runningDot").className = `small-dot ${running ? "active" : "paused"}`;
     $("liveMark").className = `live-mark${running ? " active" : ""}`;
     const visibleStatus = fallen ? "BALANCE LOST" : running ? "LIVE SIMULATION" : "PAUSED";
@@ -215,6 +218,18 @@
     $("contactDetail").textContent = contacts.length ? `${fixed(contacts.reduce((sum, item) => sum + number(item.normal_force_N), 0), 2)} N total normal force` : "No supporting contact force";
     $("controllerToggle").checked = state.controller_enabled !== false;
     $("beltToggle").checked = state.belt_enabled !== false;
+    const advanced = state.controller_mode === "transition_aware";
+    $("controllerMode").value = advanced ? "transition_aware" : "local_lqr";
+    $("modeDescription").textContent = advanced ? "For contact transitions and repeated pushes." : "Baseline feedback around a local balance point.";
+    $("synchronizationToggle").checked = state.synchronization_enabled !== false;
+    const preparing = (state.synchronization?.targets || []).filter((target) => number(target.blend_weight) > 0.01);
+    let synchronizationText = !state.controller_enabled ? "Incoming preparation paused: controller off." : !advanced ? "Original local LQR · incoming preparation inactive." : state.synchronization_enabled === false ? "Incoming drive preparation off." : "Ready for the next contact change.";
+    if (state.controller_enabled && advanced && state.synchronization_enabled !== false && preparing.length) {
+      const mismatch = Math.max(...preparing.map((target) => Math.hypot(...(target.actual_mismatch_to_outgoing_m_s || []).map((value) => number(value)))));
+      synchronizationText = `${running ? "Preparing" : "Preview"}: ${preparing.map((target) => contactLabel(target.name)).join(" + ")} · mismatch ${fixed(mismatch, 3)} m/s`;
+    }
+    $("synchronizationStatus").textContent = synchronizationText;
+    $("synchronizationStatus").className = `sync-status${preparing.length && state.controller_enabled && advanced && state.synchronization_enabled !== false ? " preparing" : ""}`;
     $("controllerNote").textContent = !state.controller_enabled ? "All drive commands are zero. Belt speed is held at zero with frictional contact." : !state.belt_enabled ? "Belt speeds held at zero; the belts still make frictional contact." : "Belt drives support balance when their surfaces contact the ground.";
     selectedScenario = state.scenario || selectedScenario;
     $("scenarioTag").textContent = scenarioNames[selectedScenario] || selectedScenario;
@@ -255,7 +270,11 @@
       node.amount.textContent = fixed(value, 3);
     });
     const force = state.active_force_N || [];
-    $("forceBadge").hidden = !force.some((value) => Math.abs(number(value)) > 0.0001);
+    const netForce = Math.hypot(...force.map((value) => number(value)));
+    const pushCount = Math.max(0, Math.round(number(state.active_push_count)));
+    $("forceBadge").hidden = !running || netForce < 0.0001 && pushCount === 0;
+    $("forceBadge").textContent = `${fixed(netForce, 2)} N NET${pushCount > 1 ? ` · ${pushCount} PUSHES` : ""}`;
+    $("forceBadge").title = `World force: X ${fixed(force[0], 2)}, Y ${fixed(force[1], 2)}, Z ${fixed(force[2], 2)} N`;
     if (state.last_push?.force_N) {
       const push = state.last_push;
       const magnitude = Math.hypot(...push.force_N.map((value) => number(value)));
@@ -326,6 +345,14 @@
   });
   $("resetButton").addEventListener("click", () => reset());
   $("playButton").addEventListener("click", () => command(state?.running ? "pause" : "resume"));
+  $("controllerMode").addEventListener("change", async (event) => {
+    const result = await command("control_mode", { mode: event.target.value });
+    if (!result && state) $("controllerMode").value = state.controller_mode === "transition_aware" ? "transition_aware" : "local_lqr";
+  });
+  $("synchronizationToggle").addEventListener("change", async (event) => {
+    const result = await command("synchronization", { enabled: event.target.checked });
+    if (!result && state) $("synchronizationToggle").checked = state.synchronization_enabled !== false;
+  });
   $("controllerToggle").addEventListener("change", async (event) => {
     const result = await command("controller", { enabled: event.target.checked });
     if (!result && state) event.target.checked = state.controller_enabled !== false;

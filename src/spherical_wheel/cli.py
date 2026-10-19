@@ -25,10 +25,11 @@ def main(argv=None):
     p.add_argument('--host',default='127.0.0.1')
     p.add_argument('--port',type=int,default=8765)
     p.add_argument('--open-browser',action='store_true')
+    p.add_argument('--controller-mode',choices=['transition_aware','local_lqr'],default='transition_aware')
     args=parser.parse_args(argv)
     if args.command=='lab':
         from .lab_server import run_server
-        run_server(args.host,args.port,args.open_browser);return
+        run_server(args.host,args.port,args.open_browser,args.controller_mode);return
     if args.command in ('transition','sensitivity'):
         if args.command=='transition':
             from .transition import run_transition

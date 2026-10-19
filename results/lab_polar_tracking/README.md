@@ -1,6 +1,6 @@
 # Polar tracking with a lateral disturbance
 
-This is the saved output of `test_polar_tracking_crosses_from_belt_to_shell_and_recovers_push` in `tests/test_lab.py`. The run uses the same `SimulationLab` implementation as the browser UI.
+This is the saved output of `test_polar_tracking_crosses_from_belt_to_shell_and_recovers_push` in `tests/test_lab.py`. The saved run records the earlier 0.2.0 `SimulationLab` implementation. The current regression is also run against the revised browser controller; these historical numbers are retained unchanged.
 
 Starting at polar shaft phase π/2, it follows a 40 mm forward curve with a 20 mm lateral excursion over 10 s. At 2 s, the fork receives a world lateral force of 0.5 N for 0.1 s. The pulse occupies exactly 20 controller intervals and supplies 0.05 N s of impulse.
 

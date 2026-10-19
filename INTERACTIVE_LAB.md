@@ -20,7 +20,7 @@ With the environment already installed, the manual command is:
 
 Open **http://127.0.0.1:8765** on the same Linux computer running the server. The address works while that command is running. Keep its terminal open and use Ctrl+C to stop. If automatic browser opening is unavailable, enter the address yourself. A different available port can be selected with `--port 8766`, then opened at the printed address.
 
-No additional CAD model or export is needed for these experiments. The supplied geometry, provisional fork/platform, and physical assumptions are already included. The first model/controller load and a new contact scenario can take a few seconds.
+No additional CAD model or export is needed for these experiments. The supplied geometry, provisional fork/platform, and physical assumptions are already included. The first uncached **Transition aware** startup builds a local gain library and takes longer; later startups reuse a valid fingerprinted cache. A new contact scenario can also take a few seconds.
 
 ### Ubuntu under WSL2
 
@@ -54,7 +54,7 @@ The transverse belt is independently driven and remains mounted on the carrier. 
 
 The independent [polar belt check](results/polar_belt_check/README.md) verified recovery from both +2° and −2° pure roll offsets, and from ±0.5 N lateral pushes lasting 0.1 s. With belt commands forced to zero, the corresponding cases touched the floor. These particular checks isolate the contacting belt: the other three torque commands were effectively zero.
 
-To compare that behavior yourself, switch **Polar belt drives** off, reset the same 2° roll case, and run it. After a fall, enable the belts again and reset before another attempt. Reset preserves the controller/belt switch settings.
+To reproduce that historical comparison, first select **Original local LQR**, then switch **Polar belt drives** off, reset the same 2° roll case, and run it. After a fall, enable the belts and select **Transition aware** again, then reset before another attempt. The new controller can leave the pole and use other contacts, so a disabled-belt trial under the new mode need not reproduce the original fall. Reset preserves the mode and switch settings.
 
 Turning the belts off holds their prescribed surface speeds at zero while retaining contact and friction. It represents a zero-speed servo comparison; an unpowered, freely rolling belt needs a different actuator model. Switching the balance controller off also removes its motor torque commands and sets belt speeds to zero.
 
@@ -72,7 +72,7 @@ Turning the belts off holds their prescribed surface speeds at zero while retain
 
 Keyboard shortcuts apply when focus is outside an input field. A drag scales force with its length, up to the slider setting. Use the direction buttons when you want the full selected force. Directions stay tied to the world axes when the camera changes.
 
-A push is an external force on the fork/platform, measured in newtons and applied for the chosen number of simulation seconds. For example, 0.5 N for 0.10 s supplies 0.05 N s of impulse. It is logged separately from the three motor torques in N m and the two belt surface speeds in m/s. Pause freezes simulation time, including the remaining duration of an active force pulse. The browser requires Run before accepting a new push.
+A push is an external force on the fork/platform, measured in newtons and applied for the chosen number of simulation seconds. For example, 0.5 N for 0.10 s supplies 0.05 N s of impulse. It is logged separately from the three motor torques in N m and the two belt surface speeds in m/s. Active pulses add: two simultaneous 0.5 N pushes in the same direction produce 1 N net force, while opposite pushes can cancel. Pause freezes simulation time, including the remaining duration of an active force pulse. The browser requires Run before accepting a new push.
 
 To track a path, reset with zero initial tilt, select **Forward**, **Lateral**, or **Curve**, and set distance and duration. A useful first curve is **40 mm** forward with **20 mm** lateral excursion over **10 s**. Press **Start trajectory**; it resumes the simulation automatically. The controller holds the endpoint after the path ends. **Hold** captures the current position as a stationary reference.
 
@@ -80,7 +80,13 @@ You can apply pushes throughout tracking. The display reports tilt, tracking err
 
 The **Transition** scenario starts near the shell/belt boundary with a preset **60 mm** forward, **5 mm** lateral curve over **10 s**. Select it and press **Run** to use that preset. Starting a different trajectory replaces the preset.
 
-The runtime selects local gains by contact load and nearby shaft phase. Gain points that fail its design checks remain recorded. This supports the tested contact transitions; it does not establish stability for every path, push, or orientation. Stronger pushes or disabled actuators can cause a fall, after which the interface requires Reset.
+The default **Transition aware** mode blends local gains using the actual support loads and the carrier's orientation relative to the floor, distinguishing both hemispheres and both belts. It follows the platform's heading when calculating horizontal errors and wraps cyclic joint-angle errors. The requested world-space position target stays fixed; absolute yaw is unregulated. Rejected gain points remain recorded.
+
+**Prepare incoming drives** uses a short kinematic lookahead to prepare an approaching unloaded shell or belt before it receives load. It coordinates tangential surface velocity at the ground rather than raw RPM, because shell and belt drives have different directions and contact lever arms. Shell preparation uses bounded motor torque with its reaction on the carrier; belt preparation retains the model's ideal surface-speed law. The preview is not a dynamic contact forecast or MPC.
+
+To compare controllers, export the current run, choose **Original local LQR** under **Feedback mode**, reset the same starting case, and repeat the same pushes or path. Incoming-drive preparation is inactive in that baseline mode. Within **Transition aware**, disable **Prepare incoming drives** to compare feedback alone with feedback plus preparation. Controller mode, preparation state, and preparation commands are retained in the saved run.
+
+See [CONTROL_UPGRADE.md](CONTROL_UPGRADE.md) for the controller changes and current integrated-evidence status. Sampled recoveries do not establish stability for every path, push, or orientation. Stronger pushes or disabled actuators can cause a fall, after which the interface requires Reset.
 
 ## Save and inspect a run
 
@@ -102,7 +108,7 @@ The browser's path history covers about 30 s; its tilt chart shows the last 20 s
 
 ## Evidence and current limits
 
-The Linux Chromium [browser checks](results/lab_ui/browser_qa.json) exercised keyboard and drag pushes, pause, a visible fall with belts disabled, CSV export, and a 0.5 N push during a 10 s curved trajectory. The shell tracking case finished with about 1.16 mm position error. A separate [polar tracking regression](results/lab_polar_tracking/README.md) followed the 40 mm / 20 mm curve with a lateral push, completed without falling, and finished with 4.39 mm position error and 0.01896° tilt. Its support moved from belt A to shell A. A [desktop screenshot](results/lab_ui/desktop.png) shows the interface.
+The earlier Linux Chromium [browser checks](results/lab_ui/browser_qa.json) exercised keyboard and drag pushes, pause, a visible fall with belts disabled, CSV export, and a 0.5 N push during a 10 s curved trajectory. The shell tracking case finished with about 1.16 mm position error. A separate earlier [polar tracking regression](results/lab_polar_tracking/README.md) followed the 40 mm / 20 mm curve with a lateral push, completed without falling, and finished with 4.39 mm position error and 0.01896° tilt. Its support moved from belt A to shell A. These saved checks describe their recorded controller versions; they do not establish the upgraded controller's performance. Updated integrated comparisons are tracked in [CONTROL_UPGRADE.md](CONTROL_UPGRADE.md). A [desktop screenshot](results/lab_ui/desktop.png) shows the interface.
 
 The model uses provisional masses, inertias, friction, and actuator limits. Belts are ideal moving-surface speed servos with no motor current, load response, rotor inertia, or full belt routing dynamics. The selected analytical contact treatment supports the declared flat horizontal floor. Feedback uses simulator state; sensor estimation and real hardware timing remain future work.
 

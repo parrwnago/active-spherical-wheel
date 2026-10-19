@@ -24,6 +24,8 @@ For **Ubuntu under WSL2**, run the command in the Ubuntu terminal, then open **h
 
 The interface runs live MuJoCo physics with manual force pulses, initial tilt, belt/controller switches, and forward, lateral, and curved trajectories. Start with **Polar belt**, **Roll 2°**, **Pitch 0°**, **Reset**, then **Run**. Try a **0.5 N** push for **0.10 s** using A/D, the direction buttons, or a drag in the view. Push controls remain available while a trajectory runs.
 
+The lab now defaults to **Transition aware** feedback with **Prepare incoming drives** enabled. It follows the actual shell/belt support and current heading, and uses a short kinematic preview to prepare an incoming drive's ground-tangent surface speed before load transfer. **Original local LQR** remains available for comparison. In 81 matched repeated-push cases, falls decreased from 20 to 2; settling and position bias remain limitations. The physical model and actuator bounds are unchanged; no MPC is implemented. See [CONTROL_UPGRADE.md](CONTROL_UPGRADE.md) for measured results and comparison instructions.
+
 At polar contact the driven transverse belt can move the support point beneath the upper body's center of mass. Independent ±2° roll and ±0.5 N push checks recovered with active belts; the same cases fell when belt commands were held at zero. That comparison retains belt friction and uses ideal speed servos. See the [interaction guide](INTERACTIVE_LAB.md), [polar belt evidence](results/polar_belt_check/README.md), and [browser screenshot](results/lab_ui/desktop.png).
 
 ## Run it
@@ -59,7 +61,7 @@ MUJOCO_GL=egl .venv/bin/python -m spherical_wheel render \
 
 The viewer computes a fresh equilibrium and full-state local controller for the loaded model, avoiding reuse of gains from a different configuration. Its initialization was checked headlessly; an interactive desktop session was not available for GUI testing.
 
-The project tests run with:
+The current automated suite has 44 passing tests. Run it with:
 
 ```bash
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -q
@@ -67,7 +69,7 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -q
 
 ## Demonstrated results
 
-The current suite has 29 passing tests. The saved demonstration runs use the declared provisional masses, friction and actuator bounds:
+The saved demonstration runs below use the earlier local feedback implementation and the declared provisional masses, friction and actuator bounds. Results for the interactive controller upgrade are tracked separately in [CONTROL_UPGRADE.md](CONTROL_UPGRADE.md).
 
 | Case | Demonstrated outcome |
 | --- | --- |
@@ -154,9 +156,11 @@ The fork/platform are one rigid body with a combined center of mass about 0.1910
 
 MuJoCo 3.16.0 supplies rigid-body dynamics, gravity, unilateral contact, finite friction, and moving-surface contact. The default physics interval is 1 ms and the controller holds its command for five physics steps. The model does not apply hidden world-frame stabilizing forces. Explicit disturbance inputs used in tests are separate from the five actuator commands.
 
-The control code first searches for an upright nearby static equilibrium using the actual contact geometry. It differentiates the complete held-command stepping map, including the belt speed updates, and constructs the full 18-state local model: nine tangent position coordinates and nine velocities. The default `full_state_lqr` solves a discrete LQR on that model's reachable subspace, with command scaling that accounts for the different torque and speed units. Diagnostics retain equilibrium residuals, full-model closed-loop eigenvalues, reachable rank and discarded modes. State feedback uses simulator ground truth, so this stage does not validate an IMU estimator or real sensor delays.
+The control code first searches for an upright nearby static equilibrium using the actual contact geometry. It differentiates the complete held-command stepping map, including the belt speed updates, and constructs the full 18-state local model: nine tangent position coordinates and nine velocities. Analysis and standalone balance/tracking experiments use `full_state_lqr`, which solves a discrete LQR on that model's reachable subspace, with command scaling that accounts for the different torque and speed units. Diagnostics retain equilibrium residuals, full-model closed-loop eigenvalues, reachable rank and discarded modes. State feedback uses simulator ground truth, so this stage does not validate an IMU estimator or real sensor delays.
 
 The default design retains material phases and yaw in the full local analysis; neutral cyclic modes do not imply convergence of every internal coordinate. The earlier `frozen_phase_feedback` controller is retained as a comparison and is not the default full-state design. A locally controllable linear model alone does not prove successful nonlinear balance or tracking. Inspect the run metrics, saturation, contact contributors and floor-contact failures alongside the rendered motion. The demonstrated shell–belt transition covers one path; other phases, transitions and disturbances require further checks.
+
+The interactive lab's `transition_aware` controller builds on those local designs with contact-weighted phase interpolation, heading-aware errors, wrapped cyclic joint errors, and incoming-drive preparation. Its reference heading follows unregulated yaw; it does not provide absolute-heading control. The previous interactive behavior is retained as `local_lqr`. The [upgrade notes](CONTROL_UPGRADE.md) distinguish feedback scheduling, kinematic preparation, and the limits of sampled recovery evidence.
 
 ## Files and next refinements
 
@@ -167,6 +171,8 @@ The default design retains material phases and yaw in the full local analysis; n
 | `src/spherical_wheel/sim.py` | Nonlinear plant, input bounds, belt motion and contact reporting |
 | `src/spherical_wheel/contact.py` | Optional clipped analytical sphere–floor contacts and boundary fallback |
 | `src/spherical_wheel/control.py` | Equilibrium, finite differences and local controller |
+| `src/spherical_wheel/recovery_control.py` | Contact-weighted feedback, heading/cyclic errors and fingerprinted gain cache |
+| `src/spherical_wheel/synchronization.py` | Kinematic preview and bounded incoming-drive preparation |
 | `src/spherical_wheel/validation.py` | Mechanism and physics diagnostics |
 | `generated/model.xml` | Generated primary MuJoCo model |
 | `generated/model.urdf` | Companion geometry/inertia/three-revolute topology |

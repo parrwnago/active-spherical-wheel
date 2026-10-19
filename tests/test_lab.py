@@ -133,6 +133,39 @@ def test_csv_contains_actual_force_input_and_interval_alignment(lab):
     assert abs(float(rows[1]['belt_A_speed_m_s'])) > .1
 
 
+def test_recovery_time_waits_for_all_overlapping_pushes_to_end(lab):
+    lab.command({'action': 'push', 'force_N': [0., .001, 0.], 'duration_s': 1.})
+    lab.advance(steps=20)
+    lab.command({'action': 'push', 'force_N': [.001, 0., 0.], 'duration_s': .02})
+    lab.advance(steps=100)
+    assert lab.plant.data.time == pytest.approx(.6)
+    assert lab.last_push['time_s']+lab.last_push['duration_s'] < lab.plant.data.time
+    assert lab.pulses  # The earlier, longer push is still physically active.
+    assert lab.recovery_time_s is None
+    lab.advance(steps=180)
+    assert not lab.pulses
+    assert lab.recovery_time_s is not None
+
+
+def test_disabled_incoming_belt_is_neither_commanded_nor_marked_as_preparing(lab):
+    lab.command({'action': 'reset', 'scenario': 'transition'})
+    point = lab._design(1.2)
+    velocity = np.zeros(lab.plant.model.nv)
+    velocity[:2] = [.12, .09]
+    velocity[6] = 1.
+    lab.plant.reset(qpos=point['equilibrium']['qpos'], qvel=velocity)
+    proposed = lab._synchronizer.preview(np.zeros(5))
+    assert proposed['blend_weights'][3] > .1
+    lab.command({'action': 'belt', 'enabled': False})
+    lab.advance()
+    state = lab.state()
+    np.testing.assert_array_equal(state['inputs'][3:], 0.)
+    np.testing.assert_array_equal(state['synchronization']['blend_weights'][3:], 0.)
+    assert all(t['blend_weight'] == 0. and t['disabled']
+               for t in state['synchronization']['targets'] if t['command_index'] >= 3)
+    np.testing.assert_array_equal(lab.plant.model.geom_surfacevel[lab.plant.all_belt_ids], 0.)
+
+
 def test_live_tracking_can_recover_from_a_finite_push(lab):
     lab.command({'action': 'trajectory', 'kind': 'curve', 'duration_s': 5., 'distance_m': .04, 'lateral_m': .02})
     lab.advance(steps=200)

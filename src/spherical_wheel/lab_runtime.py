@@ -18,6 +18,7 @@ from .control import design_lqr, find_equilibrium, jsonable
 from .experiments import rolling_feedforward
 from .model import REPO_ROOT, generate_model, load_config
 from .sim import Plant
+from .synchronization import ContactSynchronizer
 
 
 class SimulationLab:
@@ -25,7 +26,7 @@ class SimulationLab:
 
     scenarios = {'shell': .30, 'polar': np.pi/2, 'transition': 1.10}
 
-    def __init__(self, config=None, model_path=None):
+    def __init__(self, config=None, model_path=None, controller_mode='transition_aware', synchronize=True):
         self.lock = threading.RLock()
         self.config = copy.deepcopy(config if isinstance(config, dict) else load_config(config))
         self.model_path = Path(model_path) if model_path else generate_model(self.config, REPO_ROOT/'generated'/'lab')
@@ -33,6 +34,13 @@ class SimulationLab:
         self.designer = Plant(self.config, self.model_path)
         self.dt = self.plant.dt
         self._design_cache = {}
+        if controller_mode not in ('transition_aware', 'local_lqr'):
+            raise ValueError('Choose transition_aware or local_lqr controller')
+        self.controller_mode = controller_mode
+        self.synchronization_enabled = bool(synchronize)
+        self._feedback = None
+        self.gain_library_metadata = {}
+        self._synchronizer = ContactSynchronizer(self.plant)
         self.camera = {'azimuth': 135., 'elevation': -23., 'distance': .90}
         self.controller_enabled = True
         self.belt_enabled = True
@@ -40,6 +48,15 @@ class SimulationLab:
         self.failed = False
         self.last_error = None
         self._reset('shell', (0., 0.))
+        if self.controller_mode == 'transition_aware':
+            self._ensure_feedback()
+
+    def _ensure_feedback(self):
+        if self._feedback is None:
+            from .recovery_control import ScheduledBalanceFeedback, build_gain_library
+            points, self.gain_library_metadata = build_gain_library(
+                self.designer, self._design, self.model_path.parent/'control_schedule.npz')
+            self._feedback = ScheduledBalanceFeedback(self.plant, points)
 
     def _design(self, phase):
         key = round(float(phase), 6)
@@ -71,6 +88,7 @@ class SimulationLab:
             if not all(any(p['regime'] == regime for p in self.schedule) for regime in ('shell','belt')):
                 raise RuntimeError('No usable gain schedule for both contact regimes')
         self.selected = selected
+        self._ordinary = selected
         eq = selected['equilibrium']
         self.plant.reset(qpos=eq['qpos'], qvel=eq['qvel'])
         perturbation = np.zeros(2*self.plant.model.nv)
@@ -88,11 +106,14 @@ class SimulationLab:
         self.dropped_samples = 0
         self.pulses = []
         self.last_push = None
+        self._disturbance_end_s = None
         self.recovery_time_s = None
         self._recovery_candidate = None
         self._last_force = np.zeros(3)
         self._last_input = np.zeros(5)
         self._last_command = np.zeros(5)
+        self._feedback_diagnostics = {}
+        self._last_sync = {'commands': [0.]*5, 'blend_weights': [0.]*5, 'targets': []}
         self._last_ref = eq['qpos'].copy()
         self._last_vref = np.zeros(self.plant.model.nv)
         self.nominal_joints = eq['qpos'][7:10].copy()
@@ -181,9 +202,11 @@ class SimulationLab:
     def _advance_one(self):
         if self.failed:
             return
-        self._select_gain()
+        if self.controller_mode == 'local_lqr':
+            self._select_gain()
         xy, velocity, acceleration = self._reference()
-        eq, design = self.selected['equilibrium'], self.selected['design']
+        point = self._ordinary if self.controller_mode == 'transition_aware' else self.selected
+        eq, design = point['equilibrium'], point['design']
         qref = eq['qpos'].copy()
         qref[:2] = xy
         qref[7:10] = self.nominal_joints
@@ -192,7 +215,28 @@ class SimulationLab:
         delta[3:5] = [-np.arctan2(acceleration[1],gravity),np.arctan2(acceleration[0],gravity)]
         mujoco.mj_integratePos(self.plant.model,qref,delta,1.)
         vref, feedforward = rolling_feedforward(self.plant,velocity) if self.trajectory['kind']!='hold' else (np.zeros(9),np.zeros(5))
-        command = eq['u']+feedforward-design['K']@self.plant.error(qref,vref) if self.controller_enabled else np.zeros(5)
+        if self.controller_enabled and self.controller_mode == 'transition_aware':
+            self._ensure_feedback()
+            command, diagnostics = self._feedback.compute(qref, vref, eq['u'], design['K'], feedforward)
+            self._feedback_diagnostics = {key: jsonable(value) for key, value in diagnostics.items()
+                                          if key not in ('K', 'error')}
+            # Existing diagnostics consumers retain a selected-phase observation.
+            self.selected = {**point, 'phase': diagnostics['effective_phase_rad']}
+        else:
+            command = eq['u']+feedforward-design['K']@self.plant.error(qref,vref) if self.controller_enabled else np.zeros(5)
+            self._feedback_diagnostics = {}
+        sync = {'commands': [0.]*5, 'blend_weights': [0.]*5, 'targets': []}
+        if self.controller_enabled and self.controller_mode == 'transition_aware' and self.synchronization_enabled:
+            sync = self._synchronizer.preview(command)
+            if not self.belt_enabled:
+                sync['blend_weights'][3:] = [0., 0.]
+                for target in sync['targets']:
+                    if target['command_index'] >= 3:
+                        target['blend_weight'] = 0.
+                        target['disabled'] = True
+            weights = np.asarray(sync['blend_weights'])
+            command = (1.-weights)*command + weights*np.asarray(sync['commands'])
+        self._last_sync = sync
         applied = np.clip(command,-self.plant.bounds,self.plant.bounds)
         if not self.belt_enabled:
             applied[3:] = 0.
@@ -201,6 +245,12 @@ class SimulationLab:
         force = sum((pulse['force_N'] for pulse in self.pulses if pulse['start_s'] <= now),start=np.zeros(3))
         self.plant.step(applied,np.r_[force,np.zeros(3)])
         self.nominal_joints += self.dt*vref[6:9]
+        # The incoming unloaded shell is intentionally pre-spun. Carry that
+        # cyclic reference forward instead of later fighting its preparation.
+        for target in sync['targets']:
+            if 'target_joint_speed_rad_s' in target:
+                index = target['command_index']
+                self.nominal_joints[index] += self.dt*target['blend_weight']*target['target_joint_speed_rad_s']
         self._last_ref, self._last_vref = qref, vref
         self._last_command, self._last_input, self._last_force = command.copy(), applied.copy(), force.copy()
         snapshot = self.plant.snapshot()
@@ -208,14 +258,15 @@ class SimulationLab:
         if self.failed:
             self.running = False
             self.events.append({'time_s':float(self.plant.data.time),'action':'fall','floor_contact':snapshot['balance_failed']})
-        if self.last_push is not None and float(self.plant.data.time) >= self.last_push['time_s']+self.last_push['duration_s']:
-            stable = snapshot['tilt_rad']<np.deg2rad(.5) and np.linalg.norm(snapshot['qvel'][3:6])<.08
+        if self._disturbance_end_s is not None and float(self.plant.data.time) >= self._disturbance_end_s:
+            stable = (snapshot['tilt_rad']<np.deg2rad(.5) and np.linalg.norm(snapshot['qvel'][3:6])<.08
+                      and np.linalg.norm(snapshot['qvel'][:2]-vref[:2])<.03)
             if stable and self._recovery_candidate is None:
                 self._recovery_candidate = float(self.plant.data.time)
             elif not stable:
                 self._recovery_candidate = None
             if self._recovery_candidate is not None and float(self.plant.data.time)-self._recovery_candidate>=.3 and self.recovery_time_s is None:
-                self.recovery_time_s = max(0.,self._recovery_candidate-self.last_push['time_s']-self.last_push['duration_s'])
+                self.recovery_time_s = max(0.,self._recovery_candidate-self._disturbance_end_s)
         self._record(now)
 
     def advance(self, steps=1):
@@ -242,7 +293,10 @@ class SimulationLab:
                   'reference_xy':self._last_ref[:2].copy(),'tilt_deg':float(np.rad2deg(snapshot['tilt_rad'])),
                   'roll_deg':float(np.rad2deg(roll)),'pitch_deg':float(np.rad2deg(pitch)),
                   'command':self._last_command.copy(),'input':self._last_input.copy(),'force_N':self._last_force.copy(),
-                  'controller_enabled':self.controller_enabled,'belt_enabled':self.belt_enabled}
+                  'controller_enabled':self.controller_enabled,'belt_enabled':self.belt_enabled,
+                  'sync_weights':np.asarray(self._last_sync['blend_weights']),
+                  'sync_commands':np.asarray(self._last_sync['commands']),
+                  'controller_mode':self.controller_mode,'synchronization_enabled':self.synchronization_enabled}
         if len(self.samples)==self.samples.maxlen: self.dropped_samples+=1
         self.samples.append(sample)
         if not self.history or sample['time_s']-self.history[-1]['time_s']>=.049:
@@ -254,6 +308,10 @@ class SimulationLab:
         if not self.controller_enabled: return 'Controller off'
         if self.pulses: return 'Push applied'
         if self.samples[-1]['tilt_deg']>.5: return 'Recovering'
+        if (np.linalg.norm(self.plant.data.qvel[3:6])>.08
+                or np.linalg.norm(self.plant.data.qvel[:2]-self._last_vref[:2])>.03): return 'Recovering motion'
+        preparing = [t['name'] for t in self._last_sync['targets'] if t['blend_weight']>.01]
+        if preparing: return 'Synchronizing '+', '.join(preparing)
         if self.trajectory['kind']!='hold' and self.plant.data.time-self.trajectory['start_s']<self.trajectory['duration_s']: return 'Tracking'
         return 'Balanced'
 
@@ -270,12 +328,20 @@ class SimulationLab:
             trajectory['elapsed_s']=max(0.,float(self.plant.data.time)-self.trajectory['start_s'])
             return {'time_s':sample['time_s'],'running':self.running,'failed':self.failed,'scenario':self.scenario,
                     'controller_enabled':self.controller_enabled,'belt_enabled':self.belt_enabled,'status':self._status(),
+                    'controller_mode':self.controller_mode,'synchronization_enabled':self.synchronization_enabled,
+                    'synchronization':copy.deepcopy(self._last_sync),'feedback':copy.deepcopy(self._feedback_diagnostics),
+                    'planar_speed_m_s':float(np.linalg.norm(sample['qvel'][:2])),
+                    'tracking_velocity_error_m_s':float(np.linalg.norm(sample['qvel'][:2]-self._last_vref[:2])),
+                    'angular_speed_rad_s':float(np.linalg.norm(sample['qvel'][3:6])),
+                    'motion_settled':bool(sample['tilt_deg']<.5 and np.linalg.norm(sample['qvel'][3:6])<.08
+                                          and np.linalg.norm(sample['qvel'][:2]-self._last_vref[:2])<.03),
                     'tilt_deg':sample['tilt_deg'],'roll_deg':sample['roll_deg'],'pitch_deg':sample['pitch_deg'],
                     'position_xy_m':sample['qpos'][:2].tolist(),'reference_xy_m':sample['reference_xy'].tolist(),
                     'tracking_error_m':float(np.linalg.norm(sample['qpos'][:2]-sample['reference_xy'])),
                     'inputs':sample['input'].tolist(),'input_bounds':self.plant.bounds.tolist(),
                     'contacts':contacts,'active_force_N':self._last_force.tolist() if self.running else [0.,0.,0.],
                     'last_push':copy.deepcopy(self.last_push),'recovery_time_s':self.recovery_time_s,
+                    'active_push_count':sum(p['start_s']<=self.plant.data.time<p['end_s'] for p in self.pulses),
                     'history':{'time_s':[point['time_s'] for point in self.history],
                                'tilt_deg':[point['tilt_deg'] for point in self.history],
                                'xy':[point['qpos'][:2].tolist() for point in self.history],
@@ -304,6 +370,16 @@ class SimulationLab:
             elif action in ('controller','belt'):
                 if not isinstance(payload.get('enabled'),bool): raise ValueError('enabled must be true or false')
                 setattr(self,'controller_enabled' if action=='controller' else 'belt_enabled',payload['enabled'])
+            elif action=='control_mode':
+                mode = payload.get('mode')
+                if mode not in ('transition_aware','local_lqr'):
+                    raise ValueError('Choose transition_aware or local_lqr controller')
+                if mode=='transition_aware': self._ensure_feedback()
+                self.controller_mode=mode
+                self.selected=self._ordinary
+            elif action=='synchronization':
+                if not isinstance(payload.get('enabled'),bool): raise ValueError('enabled must be true or false')
+                self.synchronization_enabled=payload['enabled']
             elif action=='push':
                 if self.failed: raise ValueError('Reset the fallen model before pushing')
                 force = self._vector(payload.get('force_N'),3,10.,'Force')
@@ -312,6 +388,7 @@ class SimulationLab:
                 if len(self.pulses)>=16: raise ValueError('Too many overlapping pushes')
                 self.pulses.append({'start_s':now,'end_s':now+duration,'force_N':force})
                 self.last_push={'force_N':force.tolist(),'duration_s':duration,'time_s':now}
+                self._disturbance_end_s=max(self._disturbance_end_s or now,now+duration)
                 self.recovery_time_s=None;self._recovery_candidate=None
                 self.events.append({'time_s':now,'action':'push',**copy.deepcopy(self.last_push)})
             elif action=='trajectory':
@@ -325,7 +402,7 @@ class SimulationLab:
                     self._reset('transition',[0.,0.])
                     self.running=was_running
                     now=float(self.plant.data.time)
-                elif kind!='hold':
+                elif kind!='hold' and self.controller_mode=='local_lqr':
                     self._prepare_path_schedule(kind,distance)
                 self.anchor=self.plant.data.qpos[:2].copy()
                 self.nominal_joints=self.plant.data.qpos[7:10].copy()
@@ -359,11 +436,15 @@ class SimulationLab:
                              'force_x_N','force_y_N','force_z_N','shaft_torque_Nm','shell_A_torque_Nm','shell_B_torque_Nm',
                              'belt_A_speed_m_s','belt_B_speed_m_s','controller_enabled','belt_enabled',
                              'requested_shaft_torque_Nm','requested_shell_A_torque_Nm','requested_shell_B_torque_Nm',
-                             'requested_belt_A_speed_m_s','requested_belt_B_speed_m_s'])
+                             'requested_belt_A_speed_m_s','requested_belt_B_speed_m_s',
+                             'controller_mode','synchronization_enabled',
+                             'sync_shaft_weight','sync_shell_A_weight','sync_shell_B_weight','sync_belt_A_weight','sync_belt_B_weight',
+                             'sync_shaft_torque_Nm','sync_shell_A_torque_Nm','sync_shell_B_torque_Nm','sync_belt_A_speed_m_s','sync_belt_B_speed_m_s'])
             for sample in self.samples:
                 writer.writerow([sample['time_s'],sample['interval_start_s'],*sample['qpos'][:2],*sample['reference_xy'],
                                  sample['roll_deg'],sample['pitch_deg'],sample['tilt_deg'],*sample['force_N'],*sample['input'],
-                                 sample['controller_enabled'],sample['belt_enabled'],*sample['command']])
+                                 sample['controller_enabled'],sample['belt_enabled'],*sample['command'],
+                                 sample['controller_mode'],sample['synchronization_enabled'],*sample['sync_weights'],*sample['sync_commands']])
             return output.getvalue()
 
     def save_run(self):
@@ -371,7 +452,9 @@ class SimulationLab:
             path=REPO_ROOT/'results'/'live'/self.run_id
             path.mkdir(parents=True,exist_ok=True)
             generate_model(self.config,path/'model')
-            arrays={key:np.asarray([sample[key] for sample in self.samples]) for key in ('time_s','qpos','qvel','command','input','force_N','reference_xy','tilt_deg')}
+            arrays={key:np.asarray([sample[key] for sample in self.samples]) for key in
+                    ('time_s','interval_start_s','qpos','qvel','command','input','force_N','reference_xy','tilt_deg',
+                     'controller_enabled','belt_enabled','controller_mode','synchronization_enabled','sync_weights','sync_commands')}
             arrays['disturbance']=np.c_[arrays['force_N'],np.zeros((len(self.samples),3))]
             arrays['tilt_rad']=np.deg2rad(arrays['tilt_deg'])
             arrays['model_path']=np.array('model/model.xml')
@@ -382,6 +465,9 @@ class SimulationLab:
             (path/'summary.json').write_text(json.dumps({'run_id':self.run_id,'engine_version':mujoco.__version__,'scenario':self.scenario,
                                                         'trajectory':self.trajectory,'retained_samples':len(self.samples),'dropped_samples':self.dropped_samples,
                                                         'failed':self.failed,'initial_tilt_deg':self.initial_tilt_deg,
+                                                        'controller_mode':self.controller_mode,
+                                                        'synchronization_enabled':self.synchronization_enabled,
+                                                        'gain_library':self.gain_library_metadata,
                                                         'interval_alignment':'Logged inputs/forces produced state at time_s from interval_start_s.',
                                                         'limits':'Assumed masses/friction; ideal belt speed servos; flat-floor contact.'},indent=2))
             return path

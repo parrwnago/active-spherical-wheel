@@ -1,0 +1,5501 @@
+{
+  "baseline_commit": "bb05156b6cfe933e28c0eb8a3a2d3c7f762754d4",
+  "baseline_runtime_sha256": "4ddd480e63aa3f7ef866640bef034f7c019c6821b5321d55e9e84313d51be89c",
+  "current_source_sha256": {
+    "lab_runtime.py": "ce73bde3cced54ef95d4638ceab0a7fab8d3b02991ba776780645c26811bda64",
+    "recovery_control.py": "ba8b18fa5ddb23bf54ce85c14d18bdd5d849029a32f3c27469f8afac41ad7eb6",
+    "synchronization.py": "5051d9ca84bdfad5228f440cb274caa3499368c560ac6650fd640c2a4eef2776"
+  },
+  "input_names": [
+    "shaft",
+    "shell_A",
+    "shell_B",
+    "belt_A",
+    "belt_B"
+  ],
+  "input_units": [
+    "N m",
+    "N m",
+    "N m",
+    "m/s",
+    "m/s"
+  ],
+  "unchanged_input_bounds": [
+    1.5,
+    0.6,
+    0.6,
+    0.3,
+    0.3
+  ],
+  "same_configuration_all_modes": true,
+  "gain_library": {
+    "accepted_points": 80,
+    "attempted_points": 87,
+    "cache_loaded": true,
+    "cache_version": 1,
+    "fingerprint": "4bc136e5c7534a46ca252a9d109e616a8085adcb2d1084754145726326269f17",
+    "limits": "Local feedback with ideal belt speed commands; global recovery is not certified.",
+    "provenance": {
+      "cache_version": 1,
+      "configuration": {
+        "actuation": {
+          "belt_mode": "ideal_surface_speed",
+          "belt_motor_load_dynamics": false,
+          "belt_speed_limit_m_s": 0.3,
+          "motor_gear_ratios": null,
+          "order": [
+            "shaft",
+            "shell_A",
+            "shell_B",
+            "belt_A",
+            "belt_B"
+          ],
+          "torque_limits_Nm": [
+            1.5,
+            0.6,
+            0.6
+          ]
+        },
+        "contact": {
+          "contact_dimension": 3,
+          "friction": [
+            0.7,
+            0.005,
+            0.0001
+          ],
+          "mode": "analytic_clipped_floor",
+          "solimp": [
+            0.95,
+            0.99,
+            0.001
+          ],
+          "solref": [
+            0.005,
+            1.0
+          ]
+        },
+        "geometry": {
+          "carrier": {
+            "mass_kg": 0.2,
+            "size_xyz_m": [
+              0.1,
+              0.08,
+              0.08
+            ]
+          },
+          "collision_azimuth_sectors": 48,
+          "collision_meridian_samples": 24,
+          "equatorial_gap_half_m": 0.01,
+          "fork": {
+            "arm_center_z_m": 0.0925,
+            "arm_offset_y_m": 0.145,
+            "arm_size_xyz_m": [
+              0.022,
+              0.018,
+              0.185
+            ],
+            "bridge_center_z_m": 0.18,
+            "bridge_size_xyz_m": [
+              0.032,
+              0.308,
+              0.024
+            ],
+            "mass_kg": 0.2
+          },
+          "platform": {
+            "center_xyz_m": [
+              0.0,
+              0.0,
+              0.2
+            ],
+            "com_offset_xyz_m": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "mass_kg": 1.0,
+            "size_xyz_m": [
+              0.18,
+              0.24,
+              0.02
+            ]
+          },
+          "polar_cap_angle_deg": 15.46600995,
+          "polar_module_internal_depth_m": 0.035,
+          "polar_module_mass_each_kg": 0.08,
+          "shaft_length_m": 0.308,
+          "shaft_radius_m": 0.008,
+          "shell_mass_each_kg": 0.15,
+          "shell_thickness_m": 0.01,
+          "sphere_radius_m": 0.12
+        },
+        "provenance": {
+          "confirmed_topology": "Motors and polar modules fixed to carrier; shells rotate independently; carrier rotates relative to fork.",
+          "geometry_scope": "Native CAD shell/carrier visuals, analytical collision wedges and exposed belt caps; no gear or bearing dynamics.",
+          "masses_source": "Illustrative masses from the supplied handoff; native CAD materials/mass properties unavailable.",
+          "shell_openings_source": "CAD mesh polar aperture radius 32 mm (15.466 degrees); shell axial truncation 10 mm each side.",
+          "sphere_radius_source": "120 mm outer radius fit to 1009 vertices from native CAD saved body meshes; 110 mm inner radius.",
+          "status": "approximate_design_study"
+        },
+        "simulation": {
+          "control_interval_s": 0.005,
+          "gravity_m_s2": [
+            0.0,
+            0.0,
+            -9.81
+          ],
+          "initial_clearance_m": 0.0003,
+          "initial_shaft_phase_rad": 0.3,
+          "joint_damping_Nms": 0.0001,
+          "timestep_s": 0.001
+        },
+        "visual": {
+          "include_carrier_details": true,
+          "native_cad_meshes": true
+        }
+      },
+      "controller_interval_s": 0.005,
+      "input_bounds": [
+        1.5,
+        0.6,
+        0.6,
+        0.3,
+        0.3
+      ],
+      "model_xml_sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36",
+      "mujoco_version": "3.16.0",
+      "nq": 10,
+      "nv": 9,
+      "source_sha256": {
+        "contact.py": "a534156e7b304d60efd3e44911477ff5b89dedd076a90eb47e0c46fb2068fb84",
+        "control.py": "e0c4107601e07cafe29b726341de4c32bb8151506a539e913b0d6eec2e0c8e6f",
+        "model.py": "d41d35b283ef4732cd2b7c321539491054a8070c86a2109a577d470a8c406e72",
+        "recovery_control.py": "ba8b18fa5ddb23bf54ce85c14d18bdd5d849029a32f3c27469f8afac41ad7eb6",
+        "sim.py": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975"
+      }
+    },
+    "rejected_points": [
+      {
+        "phase_rad": -1.1102230246251565e-16,
+        "reason": "Unstabilizable growing modes in local model: [1.00277419 1.        ]"
+      },
+      {
+        "phase_rad": -0.0500000000000001,
+        "reason": "Extreme finite-rim shaft pitch gain exceeds 100 N m/rad"
+      },
+      {
+        "phase_rad": 0.04999999999999988,
+        "reason": "Extreme finite-rim shaft pitch gain exceeds 100 N m/rad"
+      },
+      {
+        "phase_rad": 1.3000000000000003,
+        "reason": "Extreme finite-rim shaft pitch gain exceeds 100 N m/rad"
+      },
+      {
+        "phase_rad": 1.8500000000000008,
+        "reason": "Extreme finite-rim shaft pitch gain exceeds 100 N m/rad"
+      },
+      {
+        "phase_rad": -1.2999999999999985,
+        "reason": "Extreme finite-rim shaft pitch gain exceeds 100 N m/rad"
+      },
+      {
+        "phase_rad": 2.6645352591003757e-15,
+        "reason": "Extreme finite-rim shaft pitch gain exceeds 100 N m/rad"
+      }
+    ]
+  },
+  "support_order": [
+    "shell_A",
+    "shell_B",
+    "belt_A",
+    "belt_B"
+  ],
+  "pulse_settings": {
+    "shell_overlap": {
+      "scenario": "shell",
+      "strength_N": 0.5,
+      "duration_s": 0.3,
+      "spacing_s": 0.15,
+      "directions": [
+        [
+          0.0,
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    "polar_cross": {
+      "scenario": "polar",
+      "strength_N": 1.0,
+      "duration_s": 0.2,
+      "spacing_s": 0.25,
+      "directions": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0
+        ]
+      ]
+    }
+  },
+  "recovery_cases": [
+    {
+      "case": "shell_overlap",
+      "mode": "local_lqr",
+      "failed": true,
+      "time_s": 5.890000000000302,
+      "max_tilt_deg": 73.25183567810762,
+      "final_tilt_deg": 73.25183567810762,
+      "final_xy_error_m": 0.4661901530570552,
+      "final_xy_speed_m_s": 1.3151199168684449,
+      "final_angular_speed_rad_s": 23.12079171440837,
+      "saturation_fraction": 0.42493638676844786,
+      "push_impulse_Ns": [
+        0.0,
+        1.2,
+        0.0
+      ],
+      "max_contact_slip_m_s": [
+        4.900977715943524,
+        4.769635508371371,
+        0.051815592738812165,
+        0.0
+      ],
+      "transfers": [
+        {
+          "time_s": 0.005,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            18.246599999960182,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            8.951181927789567e-14,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.8899999999999026,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            3.2361398410081765,
+            206.33546681770673,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            9.97568253999228e-05,
+            4.769635508371371,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.894999999999902,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.9099999999999004,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            126.64773925791266,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            2.7537114034290577,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.9149999999999,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.9199999999998993,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            27.827091411115404,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.21317132105548664,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.6549999999997085,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.659999999999708,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            14.173207561217303,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0035797103470232954,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.6649999999997074,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.669999999999707,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            80.86506280419584,
+            7.476115729451967,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            1.7262806526724974,
+            0.08212524497993255,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.6749999999997063,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.6799999999997057,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            28.29550619348595,
+            12.679706320358209,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.46298300494480704,
+            0.19727013177872357,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.684999999999705,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            17.40836638867674,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.03962146306116506,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.6899999999997046,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.694999999999704,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            16.430743775255856,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.015568740517013936,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.7199999999997013,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.7249999999997008,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            22.87307411388765,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.2748908006425156,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.739999999999699,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            21.489238707823887,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.4089680464101202,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.759999999999697,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.7649999999996964,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            18.53367039715844,
+            6.401126524998569,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.23688166690319606,
+            0.05640956555865108,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.769999999999696,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            24.244273489664987,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.006838214966737592,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.794999999999693,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.814999999999691,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            30.9792110286036,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.11348101108993537,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.8199999999996903,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.829999999999689,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            59.259578547885,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.5074179673808391,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.8349999999996887,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            22.380260890008074,
+            9.324395791690272,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.3723577522934866,
+            0.07290350663230243,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.839999999999688,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.8449999999996876,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            18.4842162941652,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.04847470745282282,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.894999999999682,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.8999999999996815,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            17.410883475453137,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.002413323348325977,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.9449999999996765,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.949999999999676,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            17.81520060537595,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0018853973590475354,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 4.804999999999939,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            9.284397963660364,
+            0.0,
+            15.452161963421679,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0007801686185101467,
+            0.0,
+            0.04131759574401026,
+            0.0
+          ]
+        },
+        {
+          "time_s": 4.814999999999943,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            14.3201358595918,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0066025517825328665,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 4.824999999999946,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            10.222257753587254,
+            0.0,
+            17.294849523930093,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0001492620034094901,
+            0.0,
+            0.051815592738812165,
+            0.0
+          ]
+        },
+        {
+          "time_s": 4.839999999999951,
+          "from": "belt_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 4.844999999999953,
+          "from": null,
+          "to": "belt_A",
+          "normal_N": [
+            0.0,
+            0.0,
+            19.15778237791552,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0023502158157390003,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.355000000000123,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            294.8546672049364,
+            0.0,
+            158.81661102541707,
+            0.0
+          ],
+          "slip_m_s": [
+            2.2780826138511143,
+            0.0,
+            0.0026606189316141517,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.360000000000125,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.460000000000158,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            555.5835774289096,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            4.900977715943524,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.46500000000016,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.550000000000188,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            114.33758939618708,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            1.083831469682643,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.55500000000019,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.565000000000193,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            38.7604654782793,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.16571749008290554,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.685000000000233,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.700000000000238,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            175.7455563955793,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.8638522989393693,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.70500000000024,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.730000000000248,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            215.92706384882666,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            1.4407536161563237,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 5.73500000000025,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "fixed_reference_xy_m": [
+        0.0,
+        0.0
+      ],
+      "physical_guards_passed": true
+    },
+    {
+      "case": "shell_overlap",
+      "mode": "transition_no_sync",
+      "failed": false,
+      "time_s": 11.999999999998789,
+      "max_tilt_deg": 11.03543849743987,
+      "final_tilt_deg": 0.6631388256584771,
+      "final_xy_error_m": 0.09384928560875656,
+      "final_xy_speed_m_s": 5.1286270537776044e-08,
+      "final_angular_speed_rad_s": 0.0027305103825256746,
+      "saturation_fraction": 0.03498542274052478,
+      "push_impulse_Ns": [
+        0.0,
+        1.2,
+        0.0
+      ],
+      "max_contact_slip_m_s": [
+        1.6975757776875302,
+        7.592643402052623,
+        0.0,
+        0.0
+      ],
+      "transfers": [
+        {
+          "time_s": 0.005,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            18.246599999960182,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            8.951181927789567e-14,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.8649999999999054,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            4.505221254765772,
+            329.4503287046558,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00012224452776593976,
+            7.592643402052623,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.8699999999999048,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.8999999999999015,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            230.32050814125745,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            4.919575093579602,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.9099999999999004,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.9199999999998993,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            84.69682905439453,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.09896679979139243,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.555000000000858,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.560000000000859,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            31.16640422892417,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0066539039204636516,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.7700000000009295,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            33.565860465783416,
+            1.9354953110297957,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.7400009485143642,
+            4.306122515615346e-05,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.780000000000933,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            6.335649590257945,
+            14.314739945735948,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.003942608759253292,
+            0.1929449385690446,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.7850000000009345,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.75319644144175,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00015681904478175552,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.790000000000936,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            5.741771712313803,
+            21.674491949500364,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00026407195627758473,
+            0.356784321156468,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.795000000000938,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.87944976685621,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00013489646102550972,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.910000000000976,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.925000000000981,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            48.03288435082717,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.4115443156501257,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.975000000000998,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.995000000001005,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            11.778297194164548,
+            27.60039603072117,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.26602911912629934,
+            0.621181911788049,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.000000000001005,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.010000000001,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            54.822442637605434,
+            20.68437240668099,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.9244250039368732,
+            0.2444777944382914,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.015000000000997,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            10.808080561663633,
+            13.074503606674027,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.08132460753393485,
+            0.018868065418608884,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.035000000000986,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.040000000000983,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            24.519195601249926,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.10070419424309675,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.055000000000975,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            18.876395079599966,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.3397451178517376,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.090000000000956,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.095000000000953,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            40.75283623614398,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.36008196167098866,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.10000000000095,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            38.453472206264905,
+            6.738735745631521,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.7566868712186855,
+            0.060560241787520015,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.105000000000947,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.110000000000944,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            17.11623054515433,
+            12.100166373244246,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.07944197892195642,
+            0.11252466015267244,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.165000000000914,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.170000000000911,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            21.374997956633358,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.04939913500314836,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.185000000000903,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            33.9018772638642,
+            3.3735973943343067,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.6524219675038135,
+            0.02747218287319418,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.1900000000009,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.195000000000897,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            14.719729018586765,
+            10.297835771278557,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.05069423774450011,
+            0.06299280160898846,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.210000000000889,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            8.934763243216565,
+            8.942812427153157,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0009067690580035484,
+            0.0033932692327244478,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.215000000000886,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.679037524909617,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0004715030086794246,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.240000000000872,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            14.230225873212298,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.2627229420785211,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.265000000000859,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.270000000000856,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            20.766562024256125,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.019317217828211365,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.28000000000085,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            34.488946529133045,
+            4.023313225856368,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.6754900969592317,
+            0.029357717732001114,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.285000000000847,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.290000000000845,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            12.111013963135449,
+            12.748506715768574,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.04837070162482235,
+            0.05163741111523686,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.295000000000842,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.425826330862247,
+            8.925184589528023,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.004447478704969159,
+            0.005263140810028813,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.305000000000836,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            8.95364795352852,
+            8.958063493635812,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0011262403708424832,
+            0.0034616947224702173,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.310000000000834,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.661165742309926,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0005002517053214617,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.345000000000814,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.7899164836786495,
+            17.08008375718886,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0029882921822559933,
+            0.07015893837970441,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.3700000000008,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.375000000000798,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            7.8718857051993485,
+            18.340655870403182,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.1645469326098285,
+            0.07439862872432954,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.410000000000778,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            28.395287317541264,
+            4.306437598638239,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.5500469337010421,
+            0.02185095817494477,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.46000000000075,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            4.51809373852226,
+            13.772003429495797,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.004442281498591982,
+            0.05238092577762716,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.495000000000731,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.500000000000728,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            20.58988710199556,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.012421380698844535,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.510000000000723,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.51500000000072,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            22.47998484156494,
+            5.098037085289919,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.134483339119816,
+            0.03627624018359614,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.545000000000703,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            8.978372474281759,
+            9.356741649557868,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0012424426925301318,
+            0.005060083070386687,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.590000000000678,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            27.902123180574975,
+            3.217142473635473,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.5627452823649686,
+            0.020269270886374587,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.630000000000656,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            10.081119075185175,
+            10.34206470655545,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.006991076110371492,
+            0.02048460958880008,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.71500000000061,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            77.33278732098933,
+            2.8890535568192477,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            1.6975757776875302,
+            0.0006807334246538473,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.720000000000606,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.725000000000604,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            24.32523355333726,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0016937756065157476,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.7300000000006,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            13.68238191596855,
+            4.763381760505741,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.2677380228429711,
+            0.017580976818438232,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.770000000000579,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.775000000000576,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            18.759242599187417,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.04259377956137837,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.795000000000565,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.756967166850274,
+            8.865501292871484,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.06132546428429997,
+            0.000991772167935539,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.800000000000562,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            8.883712198480751,
+            9.194590962428265,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.005223400564534779,
+            0.0014570589432650214,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.820000000000551,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.675418545423915,
+            8.538492211880794,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0007365406382457428,
+            0.0009232935748396601,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.84000000000054,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            8.98301158810279,
+            9.250257754839712,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0003207828786449153,
+            0.00031175567080203196,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.870000000000523,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.148107543258323,
+            9.07607662318307,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0014210148705118214,
+            0.001058474149823953,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.89500000000051,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            17.067248167116023,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.001986095271083439,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.905000000000504,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.60426993026394,
+            9.168861489056324,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.007926780686411845,
+            0.002951321806045818,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.915000000000498,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.459654082587381,
+            9.620415670367585,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0016974886003170843,
+            0.005111050629216273,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.925000000000493,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.93000000000049,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            18.247208035647475,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.003653245643556067,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.940000000000484,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            12.727025253147008,
+            10.240720255663442,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.1445832276519927,
+            0.0006472893884053219,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.945000000000482,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            17.60594858878826,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.000171826590331706,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.975000000000465,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            11.280047670013568,
+            9.647848844212042,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0934673000684778,
+            0.0005518908014553508,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.980000000000462,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            10.504245896053188,
+            10.938999193987545,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.015162603536365895,
+            0.0050122631103651305,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.000000000000451,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            10.326138967991673,
+            10.066258716028525,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.008873888769272028,
+            0.0002145743931875057,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.005000000000448,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            17.359907648308088,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.000859793551915223,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.015000000000443,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.02000000000044,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            9.212471196959996,
+            10.020166226617635,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00508093660293754,
+            0.0062210044477619755,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.120000000000385,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.213802491164168,
+            9.052399556488385,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0010551517029955837,
+            0.0007602573089529181,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.14500000000037,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            17.52224923365288,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.000995703641957308,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.150000000000368,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.374033944236949,
+            9.307198136689054,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.008689789684944096,
+            0.0014946618953639859,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.16500000000036,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            16.980178731269994,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0020528711706502356,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.175000000000354,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.540080469266233,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.005583788784943593,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.185000000000349,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            16.765382235399656,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.008985979767873227,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.195000000000343,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.20000000000034,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            9.767542929362865,
+            9.708978138700068,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.006783035377977737,
+            0.005244373113969435,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.205000000000338,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            15.696868285187694,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.003845813822693455,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.210000000000335,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            10.803083998500178,
+            10.205588989436741,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.031424801909534186,
+            0.0006767448078967355,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.215000000000332,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            17.04741848732766,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0022350966844544235,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.22000000000033,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            12.008995937092784,
+            11.704934298539225,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.010528546374449901,
+            0.011276109583847695,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.235000000000321,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.243345317516166,
+            10.038624529857938,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.003989420284343528,
+            0.019195918232867717,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.295000000000288,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            19.53872130369416,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.07361632937298893,
+            0.0020794075409232985,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.325000000000271,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.192428262855163,
+            9.200993892620343,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0002572820666696721,
+            0.003723821412978331,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.335000000000266,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.202988674044093,
+            9.134126879107267,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0007458018241474853,
+            0.002464562765703643,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.360000000000252,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            18.02218465609591,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.006972793612425901,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.410000000000224,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.21998514812945,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0020971875684644343,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.43500000000021,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            7.442136251810924,
+            11.704172804801688,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0011537453312158333,
+            0.11367354956394861,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.455000000000199,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.240732476965977,
+            8.876551027296323,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.002459362697442346,
+            0.0012742173681950433,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.465000000000193,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            17.065591454328377,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0017708341030904233,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.510000000000169,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            10.879446263927093,
+            10.504437590153392,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.016345026326481597,
+            0.0044009780342052565,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.540000000000152,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            7.964890428518557,
+            11.178762543334809,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0011198943420291686,
+            0.09348030705032255,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.56000000000014,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.190176749197779,
+            8.895371866193983,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0020521532234038476,
+            0.001388997803394,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.58000000000013,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            17.895413895217203,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0035149855890093734,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.630000000000102,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            13.69764206832387,
+            13.585610367274302,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.011750918459615704,
+            0.009413611432452482,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.67000000000008,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            8.134389194261235,
+            9.490858621587044,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0010779333080368524,
+            0.0027574240935564244,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.685000000000072,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.242395735312991,
+            8.918495308767394,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0006256626009632582,
+            0.00012766899614836025,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.720000000000052,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            10.909547936346552,
+            15.272539334682008,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00022253713962643409,
+            0.02396829445355074,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.750000000000036,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            12.078002771146323,
+            6.353858955382272,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.007948785604793158,
+            0.0007193578540226766,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.785000000000016,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.154464856136745,
+            9.422420475298024,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0004574941122171937,
+            0.002520117093719474,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.790000000000013,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            21.443515109959137,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.018316455028183874,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.819999999999997,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            2.2177703795905357,
+            16.980777936884365,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.001071207326648372,
+            0.052442371028330374,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.854999999999977,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.168219034710944,
+            14.051921813374468,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.02005559415218076,
+            0.019441214189487698,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.859999999999975,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            15.51008023132277,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.005974855451201121,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.864999999999972,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            10.110208823627321,
+            8.455854584440388,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.007443365909707268,
+            0.00022333117319890902,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.869999999999969,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            8.251580310467446,
+            9.870159770422465,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0005132032060330717,
+            0.0002927318373266601,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.879999999999963,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            15.392445232881833,
+            8.23645990402933,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.021635431859234843,
+            0.00043518294029812267,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.88499999999996,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.889999999999958,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            15.02694414544819,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.009024324060949131,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.909999999999947,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            5.639544903196631,
+            13.418324094402408,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0001852845469087986,
+            0.05118062340896952,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.93999999999993,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            10.824891032214921,
+            7.791655070753359,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.005887033554387882,
+            0.0003838683496023789,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.97499999999991,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.33055290241708,
+            10.514800556760509,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0001786896770540565,
+            0.16846986396308455,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.999999999999897,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.575604487527464,
+            9.334525202318023,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0028853050052813317,
+            0.00012668055918942602,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.004999999999894,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            7.9542890487324005,
+            10.1972431520715,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0001913554644580465,
+            0.00024417265735235426,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.019999999999886,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            13.309676179365304,
+            8.439682087092528,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.010443796445651505,
+            0.00686007555090493,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.02999999999988,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.034999999999878,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            9.654510795828063,
+            9.685433116409335,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0060474443943360195,
+            0.010456929822227333,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.04999999999987,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            11.426180314033594,
+            10.524075209008718,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.016469173319206408,
+            0.0007183361245348483,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.08499999999985,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            7.16640725101022,
+            12.390996298201348,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0001801757716169507,
+            0.12364034831386815,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.104999999999839,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            20.867515881933073,
+            3.1192868088524124,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00844267732566087,
+            0.008078343505267947,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.114999999999833,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.437622990799236,
+            10.5527576735312,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0026291988279846627,
+            0.030356404822704148,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.11999999999983,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            16.596322292128058,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0028114845056571576,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.124999999999828,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.129999999999825,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            9.390452808517875,
+            9.82970016982749,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.007184945643233193,
+            0.0050846091065845185,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.134999999999822,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            10.864657925305249,
+            10.17805531181789,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.02822596644522092,
+            0.0007088533528163399,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.13999999999982,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            4.429276596750553,
+            21.77031220064939,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.008247147287053608,
+            0.006341859149126247,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.144999999999817,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.561970452394716,
+            7.946875939420922,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0023332190097706024,
+            0.0024175092508702616,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.149999999999814,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            8.033245314890046,
+            9.907257730520483,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00013738463739842744,
+            0.00017391554020060868,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.159999999999808,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.117627155276633,
+            9.049690823148296,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            4.726330998472613e-05,
+            6.142924041852054e-05,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.1749999999998,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            8.028949216382152,
+            8.19425765310111,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0034249220074130744,
+            0.0032276344839303776,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.179999999999797,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.56649082711087,
+            9.299830382495355,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.007763948812524492,
+            0.002914193540006384,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.199999999999786,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            7.297358717560277,
+            12.008453154180904,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0001343371279906391,
+            0.06737818574244868,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.219999999999775,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.224999999999772,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            9.09516961166583,
+            10.126765180172889,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.004045970083025765,
+            0.004638191230829343,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.234999999999767,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.521771681307374,
+            9.254586807068506,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.004769369324088707,
+            0.002170006083955707,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.269999999999747,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            16.700198915243632,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0010516520813674771,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.274999999999745,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            12.827150017627682,
+            5.553175920319557,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.002567666614854718,
+            0.0006951326501122085,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.279999999999742,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            6.861865152940125,
+            10.71529047016831,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.000721429178071005,
+            0.0006620108920752142,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 10.284999999999739,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            11.117698992569322,
+            7.117180120639069,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0017497160972617,
+            0.00040804773246493677,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "fixed_reference_xy_m": [
+        0.0,
+        0.0
+      ],
+      "physical_guards_passed": true
+    },
+    {
+      "case": "shell_overlap",
+      "mode": "transition_sync",
+      "failed": false,
+      "time_s": 11.999999999998789,
+      "max_tilt_deg": 9.77801972003782,
+      "final_tilt_deg": 0.48541646422681195,
+      "final_xy_error_m": 0.05318245662287195,
+      "final_xy_speed_m_s": 4.389784188416207e-05,
+      "final_angular_speed_rad_s": 0.0036103159031719958,
+      "saturation_fraction": 0.022490628904623073,
+      "push_impulse_Ns": [
+        0.0,
+        1.2,
+        0.0
+      ],
+      "max_contact_slip_m_s": [
+        0.7948855045816273,
+        4.065209166189568,
+        0.0,
+        0.0
+      ],
+      "transfers": [
+        {
+          "time_s": 0.005,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            18.246599999960182,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            8.951181927789567e-14,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.8699999999999048,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.8999999999999015,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            183.27460332110226,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            4.065209166189568,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.9099999999999004,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.9149999999999,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            18.69503388996406,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.005903185775972844,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.9249999999998988,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.9299999999998982,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            15.824465360845789,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.006964859944514753,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.155000000000724,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            10.995959618755517,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.16978404060101315,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.490000000000836,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.510000000000843,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            35.906992025879674,
+            149.61822035345847,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.5743707270378963,
+            3.256829272851038,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.515000000000844,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.525000000000848,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            6.627978931278642,
+            33.3586615769577,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.13656325594583843,
+            0.7869877747528218,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.530000000000849,
+          "from": "shell_B",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.540000000000853,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            42.87863915734012,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.4032949580777151,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.560000000000859,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.565000000000861,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            25.357923954119563,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.27990820011871664,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.615000000000878,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.076738344567374,
+            1.4261541430522522,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.09615318422098165,
+            0.003377261090902696,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.650000000000889,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.655000000000891,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            26.823702632765997,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.17872663058905958,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.665000000000894,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            11.932695192749351,
+            5.9341387873167015,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.009172375073860078,
+            0.007055135170891656,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.730000000000916,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.7400000000009195,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            21.85249636288026,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.033970423253336886,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.745000000000921,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.750000000000923,
+          "from": null,
+          "to": "shell_B",
+          "normal_N": [
+            0.0,
+            22.207402232243275,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.10760870809899581,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.780000000000933,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            19.294220021559543,
+            6.250526639793749,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.32512906652700285,
+            0.0232091504250135,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.795000000000938,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            7.953344226749756,
+            11.131028374798849,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0004145597068660901,
+            0.13799144247200745,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.8000000000009395,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.774945183274106,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            7.55214232947863e-05,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.935000000000985,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.019835600499835,
+            9.361702070179884,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0008967836425015695,
+            0.0020115456976207875,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.940000000000986,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            22.383319965111802,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.012483370620579822,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.955000000000991,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            6.435571356791763,
+            16.10714942309749,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0005840455335863791,
+            0.29444934715949506,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.960000000000993,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.222592807900387,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0004499624490658984,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.980000000001,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            8.702469148355277,
+            11.595261568439826,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00015265571721687603,
+            0.13583389889160843,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.985000000001001,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.63201052433889,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00028118999236970013,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 7.995000000001005,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.411705868017373,
+            10.050491323449158,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0007514567678619738,
+            0.05866683812185043,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.000000000001005,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            16.56822875311341,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.001993626526031437,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.010000000001,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.408704446948711,
+            9.529512783880413,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.001499391080455751,
+            0.030871103878768787,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.015000000000997,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.65099115282386,
+            9.375141635417236,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0015010481477988925,
+            0.009447781282545264,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.080000000000961,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.5455412809666,
+            9.647026876921164,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00018417602228502355,
+            0.012739213308335927,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.085000000000958,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.34195940287472,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0006694555688124446,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.320000000000828,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.122449600871999,
+            9.233141819044885,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0006033659011956449,
+            0.002399233935903543,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.330000000000823,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.377405016441607,
+            8.880670283767557,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0006433589078117107,
+            0.0020799127201961577,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.33500000000082,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.114691270786906,
+            9.196229891402396,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0007367537639949909,
+            0.0023309322676454587,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.365000000000803,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            17.27859062078466,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0010850091073824476,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.375000000000798,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.134599868290394,
+            9.339339786151024,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0011929758077881254,
+            0.0022204070183821207,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.405000000000781,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            16.935179103665185,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0017867214977656002,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.42500000000077,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.154887993774866,
+            9.214205710996058,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0017806960219926126,
+            0.0024316419576681267,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.465000000000748,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.436644190203236,
+            9.336359585837524,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.004273180808254828,
+            0.02295137207177241,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.470000000000745,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.100309033981159,
+            9.20301461562181,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0017040425713785552,
+            0.0029586655380123296,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.630000000000656,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.177232995881855,
+            9.071751081387067,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0006322260036435726,
+            0.0018459284015913194,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.64000000000065,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            9.128364535221394,
+            9.194028613271646,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0005532996236341891,
+            0.0020192407983583346,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.645000000000648,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.89365735573214,
+            8.352150704937515,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.000532653303666209,
+            0.0016842641079097569,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.93000000000049,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            2.9582796010294694,
+            15.443157591100857,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            2.6760814734596403e-05,
+            0.00012329556759048532,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 8.970000000000468,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            38.00459679521623,
+            3.1479471309807927,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.7948855045816273,
+            6.277813990638314e-05,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.095000000000399,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            2.9594397253785703,
+            16.042971596476615,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00011955452150231635,
+            0.000560841007703982,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.150000000000368,
+          "from": "shell_B",
+          "to": "shell_A",
+          "normal_N": [
+            9.306023582472136,
+            8.934974815196348,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            6.684064383026151e-05,
+            7.242368878155156e-05,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 9.240000000000318,
+          "from": "shell_A",
+          "to": "shell_B",
+          "normal_N": [
+            7.385717389377978,
+            10.90865328309329,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            3.339846317745999e-06,
+            2.5680054153357713e-05,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "fixed_reference_xy_m": [
+        0.0,
+        0.0
+      ],
+      "physical_guards_passed": true
+    },
+    {
+      "case": "polar_cross",
+      "mode": "local_lqr",
+      "failed": true,
+      "time_s": 2.1499999999998742,
+      "max_tilt_deg": 51.95613087609693,
+      "final_tilt_deg": 51.95613087609693,
+      "final_xy_error_m": 0.10963496433735939,
+      "final_xy_speed_m_s": 0.43824315752274173,
+      "final_angular_speed_rad_s": 3.617733531271233,
+      "saturation_fraction": 0.33874709976798145,
+      "push_impulse_Ns": [
+        0.15,
+        0.0,
+        0.0
+      ],
+      "max_contact_slip_m_s": [
+        0.07080352636609177,
+        0.0,
+        0.05283330261194118,
+        0.0
+      ],
+      "transfers": [
+        {
+          "time_s": 0.005,
+          "from": null,
+          "to": "belt_A",
+          "normal_N": [
+            0.0,
+            0.0,
+            18.246599999889998,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            1.6583307994044927e-22,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.3249999999999649,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            20.283145042143346,
+            0.0,
+            15.25326729214191,
+            0.0
+          ],
+          "slip_m_s": [
+            0.07080352636609177,
+            0.0,
+            0.005349163020722324,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.3299999999999643,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            0.0,
+            0.0,
+            14.341998845719097,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.015497439950839619,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.3349999999999638,
+          "from": "belt_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.3399999999999632,
+          "from": null,
+          "to": "shell_A",
+          "normal_N": [
+            16.261334903588985,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.006214475908954589,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.3549999999999616,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            10.603770065379342,
+            0.0,
+            16.95633604108627,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00028850679129065594,
+            0.0,
+            0.05283330261194118,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.359999999999961,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            17.6000982561109,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0006623008949094383,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.1499999999998742,
+          "from": "shell_A",
+          "to": null,
+          "normal_N": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "fixed_reference_xy_m": [
+        0.0,
+        0.0
+      ],
+      "physical_guards_passed": true
+    },
+    {
+      "case": "polar_cross",
+      "mode": "transition_no_sync",
+      "failed": false,
+      "time_s": 11.999999999998789,
+      "max_tilt_deg": 2.927048549101005,
+      "final_tilt_deg": 0.0009335389207730543,
+      "final_xy_error_m": 0.004481277035955557,
+      "final_xy_speed_m_s": 0.0002607968805700213,
+      "final_angular_speed_rad_s": 0.055093492318791945,
+      "saturation_fraction": 0.0,
+      "push_impulse_Ns": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_contact_slip_m_s": [
+        0.06659534947852692,
+        0.0,
+        0.13481311357291295,
+        0.0
+      ],
+      "transfers": [
+        {
+          "time_s": 0.005,
+          "from": null,
+          "to": "belt_A",
+          "normal_N": [
+            0.0,
+            0.0,
+            18.246599999889998,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            1.6583307994044927e-22,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.3349999999999638,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            14.732772555326688,
+            0.0,
+            13.492338228232155,
+            0.0
+          ],
+          "slip_m_s": [
+            0.03232235005065364,
+            0.0,
+            0.004564010214881282,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.7449999999999186,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            11.594469132552383,
+            0.0,
+            20.92899136431625,
+            0.0
+          ],
+          "slip_m_s": [
+            4.6311848895140784e-05,
+            0.0,
+            0.0695770748391806,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.749999999999918,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            9.23007129782943,
+            0.0,
+            9.01118886361894,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0036946908279096454,
+            0.0,
+            0.0038781489451777717,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.759999999999917,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            9.041392938397312,
+            0.0,
+            9.041775180680252,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0031358273801418484,
+            0.0,
+            0.002382691140969248,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.389999999999848,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            17.29624623463242,
+            0.0,
+            12.076603861143541,
+            0.0
+          ],
+          "slip_m_s": [
+            0.06659534947852692,
+            0.0,
+            0.0006247076893976317,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.414999999999845,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            7.881821741416761,
+            0.0,
+            10.098003835170037,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0005493739961498148,
+            0.0,
+            0.0008618599332718029,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.424999999999844,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            9.299500300913955,
+            0.0,
+            8.966840578705524,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0010428262069023281,
+            0.0,
+            0.0005726068001343099,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.434999999999843,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            8.942686574397511,
+            0.0,
+            9.129540019936314,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0018864212095368804,
+            0.0,
+            0.0022835574381014335,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.4399999999998423,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            10.55245261083364,
+            0.0,
+            7.787642171998895,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0012511911670962843,
+            0.0,
+            0.0006824135042176569,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.449999999999841,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            17.81356310909797,
+            0.0,
+            32.562991605484,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0012034018127613114,
+            0.0,
+            0.13481311357291295,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.4549999999998406,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            18.09457911843727,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0008034079546602748,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.624999999999822,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            11.33287756935767,
+            0.0,
+            20.213823700371016,
+            0.0
+          ],
+          "slip_m_s": [
+            9.699225997287702e-05,
+            0.0,
+            0.06713611256677454,
+            0.0
+          ]
+        }
+      ],
+      "fixed_reference_xy_m": [
+        0.0,
+        0.0
+      ],
+      "physical_guards_passed": true
+    },
+    {
+      "case": "polar_cross",
+      "mode": "transition_sync",
+      "failed": false,
+      "time_s": 11.999999999998789,
+      "max_tilt_deg": 2.923747783805113,
+      "final_tilt_deg": 0.0010280767749500867,
+      "final_xy_error_m": 0.004169891411534115,
+      "final_xy_speed_m_s": 0.00011400321648632852,
+      "final_angular_speed_rad_s": 0.023047924463921704,
+      "saturation_fraction": 0.0,
+      "push_impulse_Ns": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_contact_slip_m_s": [
+        0.03694824937022483,
+        0.0,
+        0.02065829811812073,
+        0.0
+      ],
+      "transfers": [
+        {
+          "time_s": 0.005,
+          "from": null,
+          "to": "belt_A",
+          "normal_N": [
+            0.0,
+            0.0,
+            18.246599999889998,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            1.6583307994044927e-22,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.3299999999999643,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            11.938092293875247,
+            0.0,
+            10.183116453449903,
+            0.0
+          ],
+          "slip_m_s": [
+            0.03176650920419818,
+            0.0,
+            0.0016591633573123153,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.3349999999999638,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            8.785037665300791,
+            0.0,
+            9.502614413544586,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0017681534134352185,
+            0.0,
+            0.005145454121643556,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.3399999999999632,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            9.54494066848717,
+            0.0,
+            8.64779747499389,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0008818703157020002,
+            0.0,
+            0.0009325603384535925,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.7449999999999186,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            8.26768421129996,
+            0.0,
+            11.056350557205933,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0030552299115387095,
+            0.0,
+            0.02065829811812073,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.749999999999918,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            9.12852769542201,
+            0.0,
+            9.09484780554016,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0033168658598941147,
+            0.0,
+            0.004518814159188505,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.759999999999917,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            9.10999557890885,
+            0.0,
+            9.218532787268675,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0035220619086852845,
+            0.0,
+            0.0030897379266011725,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.7749999999999153,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            9.704951447926227,
+            0.0,
+            9.373279282101059,
+            0.0
+          ],
+          "slip_m_s": [
+            0.005133379957456396,
+            0.0,
+            0.001574614673363755,
+            0.0
+          ]
+        },
+        {
+          "time_s": 1.7799999999999148,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            9.603110645408863,
+            0.0,
+            9.775091388895284,
+            0.0
+          ],
+          "slip_m_s": [
+            0.015186987434790201,
+            0.0,
+            0.002916557478980595,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.404999999999846,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            11.549911133552074,
+            0.0,
+            10.05272219872241,
+            0.0
+          ],
+          "slip_m_s": [
+            0.028089164939349938,
+            0.0,
+            0.0013007112470961558,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.4099999999998456,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            0.0,
+            0.0,
+            17.14849918517591,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.006396380225600479,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.4199999999998445,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            9.511079808171393,
+            0.0,
+            8.761720516203138,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0006778310922902725,
+            0.0,
+            0.004557771257473876,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.6099999999998236,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            9.788939799446608,
+            0.0,
+            10.395675588351278,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0004452093824297269,
+            0.0,
+            0.007610443645852308,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.614999999999823,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            16.332329158245376,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "slip_m_s": [
+            0.002458929056171129,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.6199999999998225,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            8.933335009962315,
+            0.0,
+            9.424126066159205,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0020759446617788857,
+            0.0,
+            0.003886289234271279,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.6549999999998186,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            13.157886212318758,
+            0.0,
+            11.115097444269194,
+            0.0
+          ],
+          "slip_m_s": [
+            0.03694824937022483,
+            0.0,
+            0.00320791900914619,
+            0.0
+          ]
+        },
+        {
+          "time_s": 2.659999999999818,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            0.0,
+            0.0,
+            18.321472274452013,
+            0.0
+          ],
+          "slip_m_s": [
+            0.0,
+            0.0,
+            0.003585894548992859,
+            0.0
+          ]
+        },
+        {
+          "time_s": 3.869999999999685,
+          "from": "belt_A",
+          "to": "shell_A",
+          "normal_N": [
+            9.160121701738444,
+            0.0,
+            9.083875829286507,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00016086741437777702,
+            0.0,
+            0.00028190034680980274,
+            0.0
+          ]
+        },
+        {
+          "time_s": 4.0899999999997005,
+          "from": "shell_A",
+          "to": "belt_A",
+          "normal_N": [
+            9.02689708780584,
+            0.0,
+            9.218941594025953,
+            0.0
+          ],
+          "slip_m_s": [
+            0.00015783582513552742,
+            0.0,
+            0.00024537261506272807,
+            0.0
+          ]
+        }
+      ],
+      "fixed_reference_xy_m": [
+        0.0,
+        0.0
+      ],
+      "physical_guards_passed": true
+    }
+  ],
+  "controlled_probes": [
+    {
+      "case": "controlled_cap_exit",
+      "synchronization_enabled": false,
+      "failed": false,
+      "initial_carrier_phase_rad": 1.74,
+      "initial_planar_velocity_m_s": [
+        0.096,
+        0.1
+      ],
+      "initial_shaft_speed_rad_s": 0.8,
+      "initial_belt_A_speed_m_s": -0.1,
+      "reference": "Same constant planar velocity [.096,.1] m/s; no external push.",
+      "incoming_first_1N_load_s": 0.11500000000000009,
+      "pre5ms_mismatch_m_s": 0.08880333084824403,
+      "pre10ms_mismatch_m_s": 0.08459218325225082,
+      "pre20ms_mismatch_m_s": 0.1000000004976471,
+      "slip_at_first_1N_load_m_s": 0.0728523365756857,
+      "peak_incoming_contact_slip_m_s": 0.0728523365756857,
+      "preload_sync_weight_max": 0.0,
+      "final_tilt_deg": 0.0920264140093261,
+      "physical_guards_passed": true
+    },
+    {
+      "case": "controlled_cap_exit",
+      "synchronization_enabled": true,
+      "failed": false,
+      "initial_carrier_phase_rad": 1.74,
+      "initial_planar_velocity_m_s": [
+        0.096,
+        0.1
+      ],
+      "initial_shaft_speed_rad_s": 0.8,
+      "initial_belt_A_speed_m_s": -0.1,
+      "reference": "Same constant planar velocity [.096,.1] m/s; no external push.",
+      "incoming_first_1N_load_s": 0.1300000000000001,
+      "pre5ms_mismatch_m_s": 0.038985078570377814,
+      "pre10ms_mismatch_m_s": 0.04760863290831146,
+      "pre20ms_mismatch_m_s": 0.05017898714742386,
+      "slip_at_first_1N_load_m_s": 0.014782819049240956,
+      "peak_incoming_contact_slip_m_s": 0.014782819049240956,
+      "preload_sync_weight_max": 0.35,
+      "final_tilt_deg": 0.10915335308785692,
+      "physical_guards_passed": true
+    }
+  ],
+  "limitations": "Provisional physical parameters and ideal belt speed servos. One shell-recovery case retains position bias. Local sampled evidence does not establish global recovery or hardware performance."
+}

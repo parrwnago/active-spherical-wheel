@@ -1,0 +1,35 @@
+{
+  "browser": "Chromium, Linux headless; CSP enabled",
+  "actual_live_simulation_checks": {
+    "controller_mode_and_preparation_switches": "passed",
+    "overlapping_pushes": {
+      "pulse_force_N": [
+        0.0,
+        0.5,
+        0.0
+      ],
+      "pulse_duration_s": 0.5,
+      "pulse_count": 2,
+      "measured_active_push_count": 2,
+      "measured_net_force_N": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "badge": "1.00 N NET \u00b7 2 PUSHES",
+      "scope": "Verifies real force application and display; no recovery claim."
+    }
+  },
+  "ui_rendering_fixtures_only": {
+    "upright_but_moving_remains_recovering": true,
+    "cancelling_overlaps_show_zero_net_force_and_count": true,
+    "incoming_patch_and_actual_mismatch_caption": true,
+    "offline_controls_disabled": true
+  },
+  "fixture_scope": "Injected API responses exercise text/layout only; they neither modify the plant nor demonstrate recovery.",
+  "mobile_no_horizontal_overflow": true,
+  "online_page_errors": [],
+  "online_console_errors": [],
+  "expected_offline_network_error_count": 1,
+  "status": "passed"
+}
