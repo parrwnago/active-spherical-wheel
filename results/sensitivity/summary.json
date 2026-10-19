@@ -1,0 +1,44 @@
+{
+  "study": "fixed_nominal_gain_mass_and_COM_sensitivity",
+  "initial_tilt_offset_deg": [
+    2.0,
+    2.0
+  ],
+  "duration_s": 5.0,
+  "cases": [
+    {
+      "case": "lighter_lower",
+      "platform_mass_kg": 0.8,
+      "platform_center_above_sphere_m": 0.18,
+      "controller": "same_nominal_gain_no_retuning",
+      "completed_duration_s": 5.000000000000004,
+      "failed": false,
+      "max_tilt_deg": 2.6977884555914575,
+      "final_tilt_deg": 0.014512496011501017,
+      "final_position_error_m": 0.0028586807805527554
+    },
+    {
+      "case": "nominal",
+      "platform_mass_kg": 1.0,
+      "platform_center_above_sphere_m": 0.2,
+      "controller": "same_nominal_gain_no_retuning",
+      "completed_duration_s": 5.000000000000004,
+      "failed": false,
+      "max_tilt_deg": 2.7207217196087976,
+      "final_tilt_deg": 0.00797144725160271,
+      "final_position_error_m": 0.002673621397960381
+    },
+    {
+      "case": "heavier_higher",
+      "platform_mass_kg": 1.2,
+      "platform_center_above_sphere_m": 0.22,
+      "controller": "same_nominal_gain_no_retuning",
+      "completed_duration_s": 5.000000000000004,
+      "failed": false,
+      "max_tilt_deg": 2.737736772040581,
+      "final_tilt_deg": 0.0046016934326042,
+      "final_position_error_m": 0.002524392132975624
+    }
+  ],
+  "limitations": "Three illustrative payload cases; not a broad robustness guarantee."
+}

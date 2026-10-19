@@ -1,0 +1,279 @@
+{
+  "engine": "3.16.0",
+  "phase_rad": 1.5707963267948966,
+  "dt_s": 0.005,
+  "duration_s": 8.0,
+  "inputs": [
+    "shaft",
+    "shell_A",
+    "shell_B",
+    "belt_A",
+    "belt_B"
+  ],
+  "units": [
+    "N m",
+    "N m",
+    "N m",
+    "m/s",
+    "m/s"
+  ],
+  "same_gains_all_cases": true,
+  "belt_ablation": "set requested command entries [3:] to zero before Plant.step; belt geometry/friction unchanged",
+  "initial_condition": "equilibrium plus pure free-body roll perturbation in tangent coordinate 3; pitch 0",
+  "push": "world Fy on fork COM, applied on [1.0,1.1) seconds",
+  "caveat": "Ideal belt surface-speed servos; assumed masses/friction/limits; not proof of belt-only or hardware performance",
+  "equilibrium": {
+    "qpos": [
+      0.0,
+      0.0,
+      0.1199750693291434,
+      1.0,
+      -1.4841736553126452e-24,
+      -2.5509043802510003e-25,
+      -3.785985078390165e-49,
+      1.5707963267948966,
+      0.0,
+      0.0
+    ],
+    "qvel": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "u": [
+      3.792085402943633e-27,
+      9.662916359001244e-32,
+      1.0200493655924483e-31,
+      0.0,
+      0.0
+    ],
+    "phase": 1.5707963267948966,
+    "acceleration": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "step_residual": [
+      2.777327851124312e-26,
+      -7.601890172112099e-26,
+      -4.163336342344337e-17,
+      4.934871913722255e-25,
+      0.0,
+      0.0,
+      0.0,
+      1.3897807113193285e-33,
+      1.451159735318125e-33,
+      2.87731247467134e-23,
+      -8.201694164543531e-23,
+      1.7186347924253307e-13,
+      -4.399635146383466e-22,
+      -1.3865353533749082e-22,
+      9.550982591554664e-32,
+      -4.2646096962963915e-22,
+      4.632307473069426e-31,
+      4.836893836469556e-31
+    ],
+    "fit_cost": 7.189955861480189e-66,
+    "optimizer_success": true,
+    "contacts": [
+      {
+        "geoms": [
+          "floor",
+          "belt_A_smooth"
+        ],
+        "normal_force_N": 18.246600000053885,
+        "tangent_force_N": [
+          -0.0,
+          -0.0
+        ],
+        "position_m": [
+          0.0,
+          0.0,
+          -1.2465335428299418e-05
+        ]
+      }
+    ]
+  },
+  "runs": [
+    {
+      "case": "roll_positive_belts",
+      "belts_enabled": true,
+      "initial_roll_deg": 2.0,
+      "push_Fy_N": 0.0,
+      "completed_duration_s": 8.000000000001005,
+      "final_relative_tilt_deg": 0.0004076945427774569,
+      "max_relative_tilt_deg": 2.0,
+      "fork_floor_contact": false,
+      "max_applied_input": [
+        9.194069727319901e-14,
+        2.633627719330007e-13,
+        2.3631440206499707e-13,
+        0.208057620383599,
+        0.0
+      ],
+      "peak_belt_normal_N": 20.75461507181272,
+      "total_push_impulse_Ns": 0.0,
+      "nonzero_disturbance_channels": []
+    },
+    {
+      "case": "roll_positive_no_belts",
+      "belts_enabled": false,
+      "initial_roll_deg": 2.0,
+      "push_Fy_N": 0.0,
+      "completed_duration_s": 0.9750000000000008,
+      "final_relative_tilt_deg": 52.096505022798524,
+      "max_relative_tilt_deg": 52.096505022798524,
+      "fork_floor_contact": true,
+      "max_applied_input": [
+        1.2086558137749322e-11,
+        2.3592619866046746e-11,
+        3.0486698923873277e-12,
+        0.0,
+        0.0
+      ],
+      "peak_belt_normal_N": 18.242160241747474,
+      "total_push_impulse_Ns": 0.0,
+      "nonzero_disturbance_channels": []
+    },
+    {
+      "case": "roll_negative_belts",
+      "belts_enabled": true,
+      "initial_roll_deg": -2.0,
+      "push_Fy_N": 0.0,
+      "completed_duration_s": 8.000000000001005,
+      "final_relative_tilt_deg": 0.00040769454277745997,
+      "max_relative_tilt_deg": 2.0,
+      "fork_floor_contact": false,
+      "max_applied_input": [
+        9.194069727320658e-14,
+        2.633627719330007e-13,
+        2.3631440206499707e-13,
+        0.208057620383599,
+        0.0
+      ],
+      "peak_belt_normal_N": 20.75461507181272,
+      "total_push_impulse_Ns": 0.0,
+      "nonzero_disturbance_channels": []
+    },
+    {
+      "case": "roll_negative_no_belts",
+      "belts_enabled": false,
+      "initial_roll_deg": -2.0,
+      "push_Fy_N": 0.0,
+      "completed_duration_s": 0.9750000000000008,
+      "final_relative_tilt_deg": 52.09650502279851,
+      "max_relative_tilt_deg": 52.09650502279851,
+      "fork_floor_contact": true,
+      "max_applied_input": [
+        3.111702513561278e-11,
+        2.2135724167483483e-11,
+        3.417445750750874e-12,
+        0.0,
+        0.0
+      ],
+      "peak_belt_normal_N": 18.242160241747474,
+      "total_push_impulse_Ns": 0.0,
+      "nonzero_disturbance_channels": []
+    },
+    {
+      "case": "push_positive_belts",
+      "belts_enabled": true,
+      "initial_roll_deg": 0.0,
+      "push_Fy_N": 0.5,
+      "completed_duration_s": 8.000000000001005,
+      "final_relative_tilt_deg": 0.0010958075704954626,
+      "max_relative_tilt_deg": 0.5826226173899194,
+      "fork_floor_contact": false,
+      "max_applied_input": [
+        6.217844998833693e-13,
+        3.540062753198024e-13,
+        2.977240976294454e-13,
+        0.06327218463288231,
+        0.0
+      ],
+      "peak_belt_normal_N": 18.246600000426188,
+      "total_push_impulse_Ns": 0.05,
+      "nonzero_disturbance_channels": [
+        "Fy"
+      ]
+    },
+    {
+      "case": "push_positive_no_belts",
+      "belts_enabled": false,
+      "initial_roll_deg": 0.0,
+      "push_Fy_N": 0.5,
+      "completed_duration_s": 2.079999999999882,
+      "final_relative_tilt_deg": 52.16940294022717,
+      "max_relative_tilt_deg": 52.16940294022717,
+      "fork_floor_contact": true,
+      "max_applied_input": [
+        3.5420877465041614e-11,
+        2.132994837503735e-11,
+        3.739280475252287e-12,
+        0.0,
+        0.0
+      ],
+      "peak_belt_normal_N": 18.246600000426188,
+      "total_push_impulse_Ns": 0.05,
+      "nonzero_disturbance_channels": [
+        "Fy"
+      ]
+    },
+    {
+      "case": "push_negative_belts",
+      "belts_enabled": true,
+      "initial_roll_deg": 0.0,
+      "push_Fy_N": -0.5,
+      "completed_duration_s": 8.000000000001005,
+      "final_relative_tilt_deg": 0.0010958075704953969,
+      "max_relative_tilt_deg": 0.5826226173898935,
+      "fork_floor_contact": false,
+      "max_applied_input": [
+        6.217844998833693e-13,
+        3.5399383396145476e-13,
+        2.9773647866492153e-13,
+        0.06327218463288138,
+        0.0
+      ],
+      "peak_belt_normal_N": 18.246600000426188,
+      "total_push_impulse_Ns": -0.05,
+      "nonzero_disturbance_channels": [
+        "Fy"
+      ]
+    },
+    {
+      "case": "push_negative_no_belts",
+      "belts_enabled": false,
+      "initial_roll_deg": 0.0,
+      "push_Fy_N": -0.5,
+      "completed_duration_s": 2.079999999999882,
+      "final_relative_tilt_deg": 52.16940294020867,
+      "max_relative_tilt_deg": 52.16940294020867,
+      "fork_floor_contact": true,
+      "max_applied_input": [
+        8.40202487656462e-12,
+        2.2793507869741654e-11,
+        3.381538166054735e-12,
+        0.0,
+        0.0
+      ],
+      "peak_belt_normal_N": 18.246600000426188,
+      "total_push_impulse_Ns": -0.05,
+      "nonzero_disturbance_channels": [
+        "Fy"
+      ]
+    }
+  ]
+}

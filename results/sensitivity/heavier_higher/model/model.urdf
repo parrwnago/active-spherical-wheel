@@ -1,0 +1,619 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="active_spherical_wheel_approximate">
+  <!--Free root fork. URDF preserves geometry, masses and 3 revolutes; moving belt surface control requires the MuJoCo simulator.-->
+  <link name="fork">
+    <inertial>
+      <origin xyz="0 0 0.209504528896" rpy="0 0 0" />
+      <mass value="1.4" />
+      <inertia ixx="0.00989785364691" iyy="0.00480470478406" izz="0.0116003972892" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual name="fork_arm_left">
+      <origin xyz="0 0.145 0.0925" rpy="0 0 0" />
+      <geometry>
+        <box size="0.022 0.018 0.185" />
+      </geometry>
+    </visual>
+    <collision name="fork_arm_left">
+      <origin xyz="0 0.145 0.0925" rpy="0 0 0" />
+      <geometry>
+        <box size="0.022 0.018 0.185" />
+      </geometry>
+    </collision>
+    <visual name="fork_arm_right">
+      <origin xyz="0 -0.145 0.0925" rpy="0 0 0" />
+      <geometry>
+        <box size="0.022 0.018 0.185" />
+      </geometry>
+    </visual>
+    <collision name="fork_arm_right">
+      <origin xyz="0 -0.145 0.0925" rpy="0 0 0" />
+      <geometry>
+        <box size="0.022 0.018 0.185" />
+      </geometry>
+    </collision>
+    <visual name="fork_bridge">
+      <origin xyz="0 0 0.18" rpy="0 0 0" />
+      <geometry>
+        <box size="0.032 0.308 0.024" />
+      </geometry>
+    </visual>
+    <collision name="fork_bridge">
+      <origin xyz="0 0 0.18" rpy="0 0 0" />
+      <geometry>
+        <box size="0.032 0.308 0.024" />
+      </geometry>
+    </collision>
+    <visual name="platform">
+      <origin xyz="0 0 0.22" rpy="0 0 0" />
+      <geometry>
+        <box size="0.18 0.24 0.02" />
+      </geometry>
+    </visual>
+    <collision name="platform">
+      <origin xyz="0 0 0.22" rpy="0 0 0" />
+      <geometry>
+        <box size="0.18 0.24 0.02" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="carrier">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.36" />
+      <inertia ixx="0.000295253333298" iyy="0.00194542575563" izz="0.00194542575563" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual name="belt_A">
+      <geometry>
+        <mesh filename="meshes/belt_A.obj" scale="1 1 1" />
+      </geometry>
+    </visual>
+    <collision name="belt_A">
+      <geometry>
+        <mesh filename="meshes/belt_A.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <visual name="belt_B">
+      <geometry>
+        <mesh filename="meshes/belt_B.obj" scale="1 1 1" />
+      </geometry>
+    </visual>
+    <collision name="belt_B">
+      <geometry>
+        <mesh filename="meshes/belt_B.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <visual name="native_carrier">
+      <geometry>
+        <mesh filename="meshes/native_carrier.obj" scale="1 1 1" />
+      </geometry>
+    </visual>
+  </link>
+  <link name="shell_A">
+    <inertial>
+      <origin xyz="0.0604911092127 0 0" rpy="0 0 0" />
+      <mass value="0.15" />
+      <inertia ixx="0.0013135150602" iyy="0.000784611313744" izz="0.000784611313744" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <collision name="shell_A_sector_000">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_000.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_001">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_001.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_002">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_002.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_003">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_003.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_004">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_004.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_005">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_005.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_006">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_006.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_007">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_007.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_008">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_008.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_009">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_009.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_010">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_010.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_011">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_011.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_012">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_012.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_013">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_013.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_014">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_014.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_015">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_015.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_016">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_016.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_017">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_017.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_018">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_018.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_019">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_019.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_020">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_020.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_021">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_021.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_022">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_022.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_023">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_023.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_024">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_024.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_025">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_025.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_026">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_026.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_027">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_027.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_028">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_028.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_029">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_029.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_030">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_030.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_031">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_031.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_032">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_032.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_033">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_033.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_034">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_034.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_035">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_035.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_036">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_036.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_037">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_037.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_038">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_038.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_039">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_039.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_040">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_040.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_041">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_041.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_042">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_042.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_043">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_043.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_044">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_044.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_045">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_045.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_046">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_046.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_A_sector_047">
+      <geometry>
+        <mesh filename="meshes/shell_A_sector_047.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <visual name="native_shell_A">
+      <geometry>
+        <mesh filename="meshes/native_shell_positive.obj" scale="1 1 1" />
+      </geometry>
+    </visual>
+  </link>
+  <link name="shell_B">
+    <inertial>
+      <origin xyz="-0.0604911092127 0 0" rpy="0 0 0" />
+      <mass value="0.15" />
+      <inertia ixx="0.0013135150602" iyy="0.000784611313744" izz="0.000784611313744" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <collision name="shell_B_sector_000">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_000.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_001">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_001.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_002">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_002.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_003">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_003.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_004">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_004.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_005">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_005.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_006">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_006.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_007">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_007.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_008">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_008.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_009">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_009.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_010">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_010.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_011">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_011.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_012">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_012.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_013">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_013.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_014">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_014.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_015">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_015.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_016">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_016.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_017">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_017.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_018">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_018.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_019">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_019.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_020">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_020.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_021">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_021.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_022">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_022.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_023">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_023.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_024">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_024.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_025">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_025.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_026">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_026.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_027">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_027.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_028">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_028.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_029">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_029.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_030">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_030.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_031">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_031.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_032">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_032.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_033">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_033.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_034">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_034.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_035">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_035.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_036">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_036.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_037">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_037.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_038">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_038.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_039">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_039.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_040">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_040.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_041">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_041.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_042">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_042.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_043">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_043.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_044">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_044.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_045">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_045.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_046">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_046.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <collision name="shell_B_sector_047">
+      <geometry>
+        <mesh filename="meshes/shell_B_sector_047.obj" scale="1 1 1" />
+      </geometry>
+    </collision>
+    <visual name="native_shell_B">
+      <geometry>
+        <mesh filename="meshes/native_shell_negative.obj" scale="1 1 1" />
+      </geometry>
+    </visual>
+  </link>
+  <joint name="shaft" type="continuous">
+    <parent link="fork" />
+    <child link="carrier" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit effort="1.5" velocity="100" />
+    <dynamics damping="0.0001" friction="0" />
+  </joint>
+  <joint name="shell_A_joint" type="continuous">
+    <parent link="carrier" />
+    <child link="shell_A" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <axis xyz="1 0 0" />
+    <limit effort="0.6" velocity="100" />
+    <dynamics damping="0.0001" friction="0" />
+  </joint>
+  <joint name="shell_B_joint" type="continuous">
+    <parent link="carrier" />
+    <child link="shell_B" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <axis xyz="1 0 0" />
+    <limit effort="0.6" velocity="100" />
+    <dynamics damping="0.0001" friction="0" />
+  </joint>
+</robot>

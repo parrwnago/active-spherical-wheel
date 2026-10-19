@@ -1,0 +1,195 @@
+{
+  "status": "Recovered cached display geometry, not a B-rep translation; visual use only.",
+  "parser": {
+    "repository": "https://github.com/XRTC5/sldprt-export",
+    "commit": "ebde7524b3876c5d78c7e2248f2eba9b5725a6c0",
+    "license": "MIT; vendored modules and license in vendor/"
+  },
+  "source_archive": "Active sphere2.zip",
+  "input_policy": "Inputs read locally and read-only; no model uploads.",
+  "mesh_units": "meter",
+  "native_shell_axis": "+z is the shell symmetry axis, centered at part origin",
+  "native_to_positive_carrier_axes": {
+    "formula": "[x,y,z]_carrier = [z,y,-x]_native",
+    "rotation_axis_angle_degrees": [
+      0,
+      1,
+      0,
+      90
+    ],
+    "translation_m": [
+      0,
+      0,
+      0
+    ]
+  },
+  "native_to_negative_carrier_axes": {
+    "formula": "[x,y,z]_carrier = [-z,y,x]_native",
+    "rotation_axis_angle_degrees": [
+      0,
+      1,
+      0,
+      -90
+    ],
+    "translation_m": [
+      0,
+      0,
+      0
+    ]
+  },
+  "assembly_to_visual_coordinates": {
+    "source_center_m": [
+      0.70439327094328,
+      0.9565676112215376,
+      1.490231356601876
+    ],
+    "formula": "[x,y,z]_visual = [DY,0.5*DX-sqrt(3)/2*DZ,-sqrt(3)/2*DX-0.5*DZ], D=assembly-center",
+    "note": "Preserves saved relative placements. Shell symmetry axis is x. Observed polar roller-array travel is y, chosen parallel to the provisional common-shaft y axis. The unfinished common shaft is absent from CAD; its azimuth is inferred from the user's marked views."
+  },
+  "parts": {
+    "Shell_version2_Part2": {
+      "source_file": "Shell_version2_Part2.SLDPRT",
+      "source_sha256": "b3b5310a17a623a71d9bbb91829c4847a6143fb7a7a67fe213bce9e9e3f94ec1",
+      "vertices": 2743,
+      "triangles": 5486,
+      "bounds_m": [
+        [
+          -0.11576937139034271,
+          -0.11576937139034271,
+          0.030443063005805016
+        ],
+        [
+          0.11576937139034271,
+          0.11576937139034271,
+          0.11565465480089188
+        ]
+      ],
+      "open_or_nonmanifold_edges": 0,
+      "display_block_crc_valid": true,
+      "native_mesh": "native_meshes/Shell_version2_Part2.obj"
+    },
+    "Shell_version3": {
+      "source_file": "Shell_version3.SLDPRT",
+      "source_sha256": "eb996b8869aaf67328110f8be92df105a8d201c19ea8d5065de0ca3ba012d2c0",
+      "vertices": 2471,
+      "triangles": 4698,
+      "bounds_m": [
+        [
+          -0.11958260834217072,
+          -0.11958260834217072,
+          0.009999999776482582
+        ],
+        [
+          0.11958260834217072,
+          0.11958260834217072,
+          0.031582463532686234
+        ]
+      ],
+      "open_or_nonmanifold_edges": 372,
+      "display_block_crc_valid": true,
+      "native_mesh": "native_meshes/Shell_version3.obj"
+    },
+    "Belt Module": {
+      "source_file": "Belt Module.SLDPRT",
+      "source_sha256": "19af386b7ea389b10459dac5ab9fd8838099bbc67c5416581dc6c5c29c9ce3a1",
+      "vertices": 10639,
+      "triangles": 21262,
+      "bounds_m": [
+        [
+          0.07699999958276749,
+          -0.07046903669834137,
+          -0.07037618011236191
+        ],
+        [
+          0.118995800614357,
+          0.07046903669834137,
+          0.07050000131130219
+        ]
+      ],
+      "open_or_nonmanifold_edges": 168,
+      "display_block_crc_valid": true,
+      "native_mesh": "native_meshes/Belt Module.obj"
+    },
+    "Gear_Plate_Motor_Mount": {
+      "source_file": "Gear_Plate_Motor_Mount.SLDPRT",
+      "source_sha256": "d5ab8173a62eb492e34bf82a863d9fc94bb07409662d800c256bb19a9610ef09",
+      "vertices": 7337,
+      "triangles": 13536,
+      "bounds_m": [
+        [
+          -0.10624770820140839,
+          -0.0010000000474974513,
+          -0.10624770820140839
+        ],
+        [
+          0.10624770820140839,
+          0.055878523737192154,
+          0.10624770820140839
+        ]
+      ],
+      "open_or_nonmanifold_edges": 1952,
+      "display_block_crc_valid": true,
+      "native_mesh": "native_meshes/Gear_Plate_Motor_Mount.obj"
+    }
+  },
+  "measured_geometry_m": {
+    "sphere_outer_radius": 0.12,
+    "sphere_inner_radius": 0.11,
+    "polar_aperture_outer_radius": 0.032,
+    "polar_aperture_axial_coordinate": 0.1156546548,
+    "polar_aperture_half_angle_degrees": 15.466009953420551,
+    "equatorial_rim_axial_coordinate": 0.01,
+    "equatorial_open_gap_between_shell_pieces": 0.02,
+    "note": "Dimensions measured from saved mesh vertices, not a manufacturing tolerance report."
+  },
+  "limitations": [
+    "SolidWorks display tessellation can be incomplete, coarse, or stale.",
+    "The ring display mesh has open/nonmanifold edges; use only for display.",
+    "No material, mass, inertia, gear efficiency, belt compliance, or motor capability is inferred from these meshes.",
+    "MuJoCo convex mesh collision would close the polar aperture; these are visual meshes only.",
+    "Carrier visual mesh omits detailed bearings and standoffs for rendering speed, plus parts lacking cached triangles."
+  ],
+  "visual_meshes": {
+    "shell_positive": {
+      "path": "visuals/shell_positive.obj",
+      "triangles": 10184,
+      "components": 2,
+      "coordinates": "centered carrier frame, shell axis x, roller-array travel y, provisional common shaft y, meters"
+    },
+    "shell_negative": {
+      "path": "visuals/shell_negative.obj",
+      "triangles": 10184,
+      "components": 2,
+      "coordinates": "centered carrier frame, shell axis x, roller-array travel y, provisional common shaft y, meters"
+    },
+    "carrier": {
+      "path": "visuals/carrier.obj",
+      "triangles": 187662,
+      "components": 116,
+      "coordinates": "centered carrier frame, shell axis x, roller-array travel y, provisional common shaft y, meters"
+    }
+  },
+  "assembly": {
+    "source_file": "Active sphere2.SLDASM",
+    "source_sha256": "b470b3ba328079f20734bfa8228a576f1d64ed8fc8e12f90b29b084d1b94f090",
+    "parser_summary": {
+      "references": 202,
+      "placed": 194,
+      "from_part_files": 156,
+      "suppressed": 0,
+      "nested_subassembly": 0,
+      "no_cached_mesh": 4,
+      "hidden_excluded": 0,
+      "configuration": "Default",
+      "configurations": [
+        "Default"
+      ]
+    },
+    "note": "Reference count includes subassemblies; four leaf components lack recovered display triangles.",
+    "missing_leaf_geometry": [
+      "3505-8-SHS.STEP.SLDPRT (two instances)",
+      "____GIM3505-8GDZ34.STEP.SLDPRT (two instances)"
+    ],
+    "mesh_cache_crc_valid": true
+  }
+}

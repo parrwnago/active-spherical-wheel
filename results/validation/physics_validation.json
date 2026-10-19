@@ -1,0 +1,1258 @@
+{
+  "scope": "Provisional simulation physics checks, not physical measurements or certified hardware performance.",
+  "mujoco_version": "3.16.0",
+  "contact_model": "analytic_clipped_floor",
+  "model": "/home/parrwnago/active-spherical-wheel/generated/model.xml",
+  "topology": {
+    "status": "passed",
+    "checks": {
+      "one_free_base": true,
+      "three_relative_hinges": true,
+      "nine_velocity_degrees_of_freedom": true,
+      "three_effort_actuators": true,
+      "no_equality_constraints": true,
+      "no_mocap_bodies": true,
+      "positive_body_masses": true,
+      "positive_principal_inertias": true,
+      "physical_inertia_triangle_inequality": true
+    },
+    "nq": 10,
+    "nv": 9,
+    "nu": 3,
+    "total_mass_kg": 1.8599999999999999,
+    "bodies": [
+      {
+        "name": "fork",
+        "mass_kg": 1.2,
+        "principal_inertia_kg_m2": [
+          0.0101003972892,
+          0.00848236218221,
+          0.00380921331936
+        ]
+      },
+      {
+        "name": "carrier",
+        "mass_kg": 0.36,
+        "principal_inertia_kg_m2": [
+          0.00194542575563,
+          0.00194542575563,
+          0.000295253333298
+        ]
+      },
+      {
+        "name": "shell_A",
+        "mass_kg": 0.15,
+        "principal_inertia_kg_m2": [
+          0.0013135150602,
+          0.000784611313744,
+          0.000784611313744
+        ]
+      },
+      {
+        "name": "shell_B",
+        "mass_kg": 0.15,
+        "principal_inertia_kg_m2": [
+          0.0013135150602,
+          0.000784611313744,
+          0.000784611313744
+        ]
+      }
+    ]
+  },
+  "internal_torque_reactions": {
+    "status": "passed",
+    "setup": "Free system: gravity, contact, damping, stiffness and friction losses disabled; RK4 dt=0.0005 s. Ideal belt commands are zero; omitted belt rotors are not validated.",
+    "runs": [
+      {
+        "actuator": "shaft_motor",
+        "joint": "shaft",
+        "status": "passed",
+        "checks": {
+          "linear_momentum_conserved": true,
+          "angular_momentum_conserved": true,
+          "positive_relative_joint_response": true,
+          "opposing_parent_reaction": true
+        },
+        "torque_Nm": 0.4,
+        "duration_s": 0.08,
+        "max_linear_momentum_drift_kg_m_s": 1.0438817291601406e-13,
+        "max_angular_momentum_drift_kg_m2_s": 1.1639874549251985e-13,
+        "relative_joint_speed_rad_s": 8.590926852597097,
+        "parent_angular_speed_on_initial_axis_rad_s": -1.6531080721423774,
+        "child_angular_speed_on_initial_axis_rad_s": 6.93781878045472
+      },
+      {
+        "actuator": "shell_A_motor",
+        "joint": "shell_A_joint",
+        "status": "passed",
+        "checks": {
+          "linear_momentum_conserved": true,
+          "angular_momentum_conserved": true,
+          "positive_relative_joint_response": true,
+          "opposing_parent_reaction": true
+        },
+        "torque_Nm": 0.4,
+        "duration_s": 0.08,
+        "max_linear_momentum_drift_kg_m_s": 5.3328118820501444e-14,
+        "max_angular_momentum_drift_kg_m2_s": 5.976541821208005e-14,
+        "relative_joint_speed_rad_s": 25.67758274675626,
+        "parent_angular_speed_on_initial_axis_rad_s": -1.3154715158979347,
+        "child_angular_speed_on_initial_axis_rad_s": 24.362111230858325
+      },
+      {
+        "actuator": "shell_B_motor",
+        "joint": "shell_B_joint",
+        "status": "passed",
+        "checks": {
+          "linear_momentum_conserved": true,
+          "angular_momentum_conserved": true,
+          "positive_relative_joint_response": true,
+          "opposing_parent_reaction": true
+        },
+        "torque_Nm": 0.4,
+        "duration_s": 0.08,
+        "max_linear_momentum_drift_kg_m_s": 5.338334219724542e-14,
+        "max_angular_momentum_drift_kg_m2_s": 5.983644656019907e-14,
+        "relative_joint_speed_rad_s": 25.67758274675626,
+        "parent_angular_speed_on_initial_axis_rad_s": -1.3154715158979349,
+        "child_angular_speed_on_initial_axis_rad_s": 24.362111230858325
+      }
+    ]
+  },
+  "polar_shell_leverage": {
+    "status": "passed",
+    "setup": "Ideal points one metre from each hinge anchor. Confirms the geometric shell-spin singularity; the opening/belt contacts are checked separately.",
+    "shells": [
+      {
+        "joint": "shell_A_joint",
+        "pole_leverage": 0.0,
+        "equator_leverage": 1.0,
+        "status": "passed"
+      },
+      {
+        "joint": "shell_B_joint",
+        "pole_leverage": 0.0,
+        "equator_leverage": 1.0,
+        "status": "passed"
+      }
+    ]
+  },
+  "contact_phase_sweep": {
+    "status": "passed",
+    "setup": "KINEMATIC FIXTURE: base pose held, 0.5 mm floor penetration, no dynamic balance claim. Map columns are shaft/shell A/shell B rad/s and belt A/belt B m/s. Concatenated contact maps are a geometric diagnostic, not a controllability proof.",
+    "both_polar_belts_reach_floor": true,
+    "phases": [
+      {
+        "shaft_phase_deg": -90.0,
+        "contacts": [
+          {
+            "geom": "belt_B_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 29.961238060774722,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                -0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          1.0,
+          0.11989999999999999
+        ]
+      },
+      {
+        "shaft_phase_deg": -75.0,
+        "contacts": [
+          {
+            "geom": "belt_B_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 14.528801757840888,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                -0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_B_sector_034",
+            "position_m": [
+              0.000711565292397312,
+              -0.004176838392656937,
+              -6.258611772590877e-05
+            ],
+            "distance_m": -0.00012517223545181755,
+            "normal_force_N": 0.0,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11986258611772592,
+                0.0,
+                0.004034516075703056,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.03171003937552598,
+                0.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_B_sector_035",
+            "position_m": [
+              0.0009760018322352293,
+              -4.791634103384901e-11,
+              -9.801337790303621e-05
+            ],
+            "distance_m": -0.00019602675580607243,
+            "normal_force_N": 8.426232045345095,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989801337790305,
+                0.0,
+                4.6283631305869396e-11,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.03197463470841959,
+                0.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_B_sector_035",
+            "position_m": [
+              0.000711566185823756,
+              -0.004176838411176686,
+              -6.258597074819405e-05
+            ],
+            "distance_m": -0.0001251719414963881,
+            "normal_force_N": 0.0,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11986258597074821,
+                0.0,
+                0.0040345160935917595,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.031710040200469025,
+                0.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_B_sector_036",
+            "position_m": [
+              0.0009760019545416304,
+              5.648320353102143e-11,
+              -9.801340217875654e-05
+            ],
+            "distance_m": -0.00019602680435751307,
+            "normal_force_N": 8.42626082056678,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989801340217875,
+                0.0,
+                -5.4558585042155497e-11,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.03197463483284152,
+                0.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_B_sector_036",
+            "position_m": [
+              0.0007115657450697116,
+              0.004176838371538217,
+              -6.258562488850594e-05
+            ],
+            "distance_m": -0.00012517124977701188,
+            "normal_force_N": 0.0,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11986258562488851,
+                0.0,
+                -0.004034516055303939,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.031710039685218225,
+                0.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_B_sector_037",
+            "position_m": [
+              0.0007115653546563294,
+              0.004176838402069413,
+              -6.258609296506956e-05
+            ],
+            "distance_m": -0.00012517218593013912,
+            "normal_force_N": 0.0,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11986258609296506,
+                0.0,
+                -0.004034516084794809,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.03171003942925499,
+                0.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          1.0030288435541554,
+          0.3172701444410927
+        ]
+      },
+      {
+        "shaft_phase_deg": -60.00000000000001,
+        "contacts": [
+          {
+            "geom": "shell_B_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 29.1155056924048,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.059949999999999996,
+                0.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          0.11989999999999999,
+          0.059949999999999996
+        ]
+      },
+      {
+        "shaft_phase_deg": -45.0,
+        "contacts": [
+          {
+            "geom": "shell_B_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 29.1155056924048,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.08478210306426703,
+                0.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          0.11989999999999999,
+          0.08478210306426703
+        ]
+      },
+      {
+        "shaft_phase_deg": -30.000000000000004,
+        "contacts": [
+          {
+            "geom": "shell_B_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 29.1155056924048,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.1038364459137542,
+                0.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          0.11989999999999999,
+          0.1038364459137542
+        ]
+      },
+      {
+        "shaft_phase_deg": -15.000000000000009,
+        "contacts": [
+          {
+            "geom": "shell_B_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 29.1155056924048,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.11581450657205927,
+                0.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          0.11989999999999999,
+          0.11581450657205927
+        ]
+      },
+      {
+        "shaft_phase_deg": 0.0,
+        "contacts": [],
+        "planar_map_singular_values": []
+      },
+      {
+        "shaft_phase_deg": 14.999999999999996,
+        "contacts": [
+          {
+            "geom": "shell_A_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 29.1155056924048,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.11581450657205929,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          0.11989999999999996,
+          0.11581450657205931
+        ]
+      },
+      {
+        "shaft_phase_deg": 29.999999999999993,
+        "contacts": [
+          {
+            "geom": "shell_A_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 29.1155056924048,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.10383644591375421,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          0.11989999999999999,
+          0.10383644591375421
+        ]
+      },
+      {
+        "shaft_phase_deg": 45.0,
+        "contacts": [
+          {
+            "geom": "shell_A_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 29.1155056924048,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.08478210306426703,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          0.11989999999999999,
+          0.08478210306426703
+        ]
+      },
+      {
+        "shaft_phase_deg": 59.999999999999986,
+        "contacts": [
+          {
+            "geom": "shell_A_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 29.1155056924048,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.05995000000000004,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          0.11989999999999999,
+          0.05995000000000004
+        ]
+      },
+      {
+        "shaft_phase_deg": 74.99999999999999,
+        "contacts": [
+          {
+            "geom": "belt_A_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 14.528801757837703,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_A_sector_034",
+            "position_m": [
+              -0.0007115652923972843,
+              -0.004176838392656923,
+              -6.258611772591571e-05
+            ],
+            "distance_m": -0.00012517223545183143,
+            "normal_force_N": 0.0,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11986258611772592,
+                -0.004034516075703042,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.03171003937552597,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_A_sector_035",
+            "position_m": [
+              -0.0009760018322351877,
+              -4.7916350574828126e-11,
+              -9.801337790303621e-05
+            ],
+            "distance_m": -0.00019602675580607243,
+            "normal_force_N": 8.426232045342724,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989801337790305,
+                -4.6283640521747533e-11,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.031974634708419575,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_A_sector_035",
+            "position_m": [
+              -0.0007115661858237282,
+              -0.0041768384111766955,
+              -6.258597074819405e-05
+            ],
+            "distance_m": -0.0001251719414963881,
+            "normal_force_N": 0.0,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11986258597074821,
+                -0.004034516093591769,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.031710040200469025,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_A_sector_036",
+            "position_m": [
+              -0.0009760019545415888,
+              5.648320353102143e-11,
+              -9.801340217876348e-05
+            ],
+            "distance_m": -0.00019602680435752695,
+            "normal_force_N": 8.426260820572628,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989801340217877,
+                5.4558585042155497e-11,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.031974634832841506,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_A_sector_036",
+            "position_m": [
+              -0.0007115657450696561,
+              0.004176838371538217,
+              -6.258562488851288e-05
+            ],
+            "distance_m": -0.00012517124977702576,
+            "normal_force_N": 0.0,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11986258562488851,
+                0.004034516055303939,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.03171003968521821,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ]
+          },
+          {
+            "geom": "shell_A_sector_037",
+            "position_m": [
+              -0.0007115653546562739,
+              0.004176838402069418,
+              -6.258609296508344e-05
+            ],
+            "distance_m": -0.00012517218593016688,
+            "normal_force_N": 0.0,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11986258609296509,
+                0.0040345160847948145,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.031710039429254974,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          1.0030288435541552,
+          0.31727014444109275
+        ]
+      },
+      {
+        "shaft_phase_deg": 90.0,
+        "contacts": [
+          {
+            "geom": "belt_A_smooth",
+            "position_m": [
+              0.0,
+              0.0,
+              -0.00010000000000000286
+            ],
+            "distance_m": -0.00019999999999999185,
+            "normal_force_N": 29.961238060774722,
+            "body_contact_velocity_xy_m_s": [
+              0.0,
+              0.0
+            ],
+            "local_drive_map_xy": [
+              [
+                -0.11989999999999999,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "planar_map_singular_values": [
+          1.0,
+          0.11989999999999999
+        ]
+      }
+    ]
+  },
+  "belt_input_wrapper": {
+    "status": "passed",
+    "setup": "Free dynamic plant, settled for 0.05 s at each pole. Zero/nonzero commands are compared from identical integration states through Plant.step; no externally applied force.",
+    "belts": [
+      {
+        "belt": "belt_A",
+        "status": "passed",
+        "checks": {
+          "intended_belt_contacts_floor": true,
+          "moving_surface_flag_enabled": true,
+          "finite_command_reaches_surface_field": true,
+          "ground_reaction_opposes_surface_motion": true
+        },
+        "command_m_s": 0.15,
+        "shaft_phase_deg": 90.0,
+        "linear_momentum_delta_kg_m_s": [
+          3.4084967238699284e-20,
+          -0.052159876146366184,
+          0.0007275661967250922
+        ],
+        "base_velocity_delta_m_s": [
+          4.857722659694758e-20,
+          -0.08267991797488783,
+          0.0004822575668393377
+        ]
+      },
+      {
+        "belt": "belt_B",
+        "status": "passed",
+        "checks": {
+          "intended_belt_contacts_floor": true,
+          "moving_surface_flag_enabled": true,
+          "finite_command_reaches_surface_field": true,
+          "ground_reaction_opposes_surface_motion": true
+        },
+        "command_m_s": 0.15,
+        "shaft_phase_deg": -90.0,
+        "linear_momentum_delta_kg_m_s": [
+          -9.138354106830761e-20,
+          -0.05215987614636616,
+          0.0007275661967250983
+        ],
+        "base_velocity_delta_m_s": [
+          -1.2649093586837312e-19,
+          -0.08267991797488783,
+          0.00048225756683934097
+        ]
+      }
+    ]
+  },
+  "zero_input_response": {
+    "status": "passed",
+    "setup": "Free base, gravity on, all three joint efforts and both prescribed belt speeds zero. Zero belt speed is an ideal holding servo, not a freely spinning unpowered belt.",
+    "initial_tilt_deg": 2.8281398674428297,
+    "max_tilt_deg": 67.28387314636217,
+    "initial_shaft_phase_rad": 0.3,
+    "fork_floor_contact": [
+      {
+        "geom": "fork_arm_right",
+        "distance_m": -5.723420651826405e-05,
+        "position_m": [
+          -0.08106170627058926,
+          -0.040650944929759604,
+          -2.8617103259132026e-05
+        ]
+      }
+    ],
+    "end_time_s": 0.44200000000000034,
+    "samples": [
+      {
+        "time_s": 0.0,
+        "tilt_deg": 2.8281398674428297,
+        "base_position_m": [
+          0.0,
+          0.0,
+          0.1203
+        ]
+      },
+      {
+        "time_s": 0.02000000000000001,
+        "tilt_deg": 2.8716318505136287,
+        "base_position_m": [
+          -5.97006533123041e-05,
+          5.908157395387607e-05,
+          0.11990006457846689
+        ]
+      },
+      {
+        "time_s": 0.04000000000000003,
+        "tilt_deg": 3.031620598810553,
+        "base_position_m": [
+          -0.0002791685831859763,
+          0.0002763211366220843,
+          0.11996222642235843
+        ]
+      },
+      {
+        "time_s": 0.060000000000000046,
+        "tilt_deg": 3.300312037656604,
+        "base_position_m": [
+          -0.0006479305060295912,
+          0.0006406553994691954,
+          0.11996639071180216
+        ]
+      },
+      {
+        "time_s": 0.08000000000000006,
+        "tilt_deg": 3.6890065349391103,
+        "base_position_m": [
+          -0.0011818123861975503,
+          0.0011666591435268007,
+          0.11996667855648305
+        ]
+      },
+      {
+        "time_s": 0.10000000000000007,
+        "tilt_deg": 4.211971475264417,
+        "base_position_m": [
+          -0.001900821277346356,
+          0.0018725797565805756,
+          0.11996676966220084
+        ]
+      },
+      {
+        "time_s": 0.12000000000000009,
+        "tilt_deg": 4.888149086890827,
+        "base_position_m": [
+          -0.0028314229125563986,
+          0.0027825517708972188,
+          0.11996688650928514
+        ]
+      },
+      {
+        "time_s": 0.1400000000000001,
+        "tilt_deg": 5.741787734576707,
+        "base_position_m": [
+          -0.00400726836667425,
+          0.003927268145085428,
+          0.11996705746748862
+        ]
+      },
+      {
+        "time_s": 0.16000000000000011,
+        "tilt_deg": 6.803041837844282,
+        "base_position_m": [
+          -0.005469747268813105,
+          0.005344471661450209,
+          0.11996730641237537
+        ]
+      },
+      {
+        "time_s": 0.18000000000000013,
+        "tilt_deg": 8.108533413437607,
+        "base_position_m": [
+          -0.0072682657784960605,
+          0.007079156711804427,
+          0.11996766546035988
+        ]
+      },
+      {
+        "time_s": 0.20000000000000015,
+        "tilt_deg": 9.701719137206348,
+        "base_position_m": [
+          -0.00945988660681214,
+          0.009183096320685724,
+          0.11996817729053966
+        ]
+      },
+      {
+        "time_s": 0.22000000000000017,
+        "tilt_deg": 11.632797124010846,
+        "base_position_m": [
+          -0.012107741961602985,
+          0.01171305069797503,
+          0.11996889542461878
+        ]
+      },
+      {
+        "time_s": 0.24000000000000019,
+        "tilt_deg": 13.957760702720895,
+        "base_position_m": [
+          -0.01527737300250087,
+          0.014726698556522266,
+          0.1199698807736588
+        ]
+      },
+      {
+        "time_s": 0.2600000000000002,
+        "tilt_deg": 16.736111899301154,
+        "base_position_m": [
+          -0.019029970552034522,
+          0.01827506559747287,
+          0.11997119118345374
+        ]
+      },
+      {
+        "time_s": 0.2800000000000002,
+        "tilt_deg": 20.026810540492992,
+        "base_position_m": [
+          -0.023411651390631397,
+          0.02239028056106843,
+          0.11997286090081594
+        ]
+      },
+      {
+        "time_s": 0.3000000000000002,
+        "tilt_deg": 23.88244057533243,
+        "base_position_m": [
+          -0.02843877690557639,
+          0.02706829843286357,
+          0.1199748707346088
+        ]
+      },
+      {
+        "time_s": 0.32000000000000023,
+        "tilt_deg": 28.324449911226594,
+        "base_position_m": [
+          -0.03407735967465164,
+          0.03219994130104272,
+          0.11988156430703763
+        ]
+      },
+      {
+        "time_s": 0.34000000000000025,
+        "tilt_deg": 33.35224841243073,
+        "base_position_m": [
+          -0.040287091170930336,
+          0.037569232059686444,
+          0.11956357138621837
+        ]
+      },
+      {
+        "time_s": 0.36000000000000026,
+        "tilt_deg": 39.10668662242302,
+        "base_position_m": [
+          -0.04707197127526632,
+          0.042766501598804386,
+          0.1199521631959782
+        ]
+      },
+      {
+        "time_s": 0.3800000000000003,
+        "tilt_deg": 45.354654470195676,
+        "base_position_m": [
+          -0.053825653651112054,
+          0.04759883265600393,
+          0.11997979125465276
+        ]
+      },
+      {
+        "time_s": 0.4000000000000003,
+        "tilt_deg": 52.16769017254999,
+        "base_position_m": [
+          -0.06044247509180222,
+          0.051808807609222345,
+          0.11998348536201188
+        ]
+      },
+      {
+        "time_s": 0.4200000000000003,
+        "tilt_deg": 59.497582330501736,
+        "base_position_m": [
+          -0.0665775774284304,
+          0.05485080520790818,
+          0.11998347063845201
+        ]
+      },
+      {
+        "time_s": 0.44000000000000034,
+        "tilt_deg": 67.28387314636217,
+        "base_position_m": [
+          -0.07182978290221387,
+          0.05605785645755284,
+          0.1199821258127561
+        ]
+      }
+    ]
+  }
+}

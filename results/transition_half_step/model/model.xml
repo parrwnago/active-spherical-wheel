@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mujoco model="active_spherical_wheel_approximate">
+  <compiler angle="radian" autolimits="true" inertiafromgeom="false" balanceinertia="false" />
+  <option timestep="0.0005" gravity="0 0 -9.81" integrator="implicitfast" solver="Newton" iterations="60" tolerance="1e-10" cone="elliptic" />
+  <size njmax="3000" nconmax="1000" nuser_geom="5" />
+  <default>
+    <joint damping="0.0001" armature="0" />
+    <geom density="0" friction="0.7 0.005 0.0001" condim="3" solref="0.005 1" solimp="0.95 0.99 0.001" contype="1" conaffinity="2" />
+  </default>
+  <visual>
+    <global offwidth="1280" offheight="960" azimuth="130" elevation="-20" />
+    <quality shadowsize="2048" />
+    <headlight ambient="0.35 0.35 0.35" diffuse="0.65 0.65 0.65" specular="0.15 0.15 0.15" />
+  </visual>
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.90 0.94 0.98" rgb2="0.55 0.64 0.74" width="512" height="3072" />
+    <texture name="floor_tex" type="2d" builtin="checker" rgb1="0.60 0.64 0.69" rgb2="0.69 0.73 0.78" width="256" height="256" />
+    <material name="floor_mat" texture="floor_tex" texrepeat="2 2" texuniform="true" reflectance="0.02" />
+    <mesh name="shell_A_sector_000" file="meshes/shell_A_sector_000.obj" />
+    <mesh name="shell_A_sector_001" file="meshes/shell_A_sector_001.obj" />
+    <mesh name="shell_A_sector_002" file="meshes/shell_A_sector_002.obj" />
+    <mesh name="shell_A_sector_003" file="meshes/shell_A_sector_003.obj" />
+    <mesh name="shell_A_sector_004" file="meshes/shell_A_sector_004.obj" />
+    <mesh name="shell_A_sector_005" file="meshes/shell_A_sector_005.obj" />
+    <mesh name="shell_A_sector_006" file="meshes/shell_A_sector_006.obj" />
+    <mesh name="shell_A_sector_007" file="meshes/shell_A_sector_007.obj" />
+    <mesh name="shell_A_sector_008" file="meshes/shell_A_sector_008.obj" />
+    <mesh name="shell_A_sector_009" file="meshes/shell_A_sector_009.obj" />
+    <mesh name="shell_A_sector_010" file="meshes/shell_A_sector_010.obj" />
+    <mesh name="shell_A_sector_011" file="meshes/shell_A_sector_011.obj" />
+    <mesh name="shell_A_sector_012" file="meshes/shell_A_sector_012.obj" />
+    <mesh name="shell_A_sector_013" file="meshes/shell_A_sector_013.obj" />
+    <mesh name="shell_A_sector_014" file="meshes/shell_A_sector_014.obj" />
+    <mesh name="shell_A_sector_015" file="meshes/shell_A_sector_015.obj" />
+    <mesh name="shell_A_sector_016" file="meshes/shell_A_sector_016.obj" />
+    <mesh name="shell_A_sector_017" file="meshes/shell_A_sector_017.obj" />
+    <mesh name="shell_A_sector_018" file="meshes/shell_A_sector_018.obj" />
+    <mesh name="shell_A_sector_019" file="meshes/shell_A_sector_019.obj" />
+    <mesh name="shell_A_sector_020" file="meshes/shell_A_sector_020.obj" />
+    <mesh name="shell_A_sector_021" file="meshes/shell_A_sector_021.obj" />
+    <mesh name="shell_A_sector_022" file="meshes/shell_A_sector_022.obj" />
+    <mesh name="shell_A_sector_023" file="meshes/shell_A_sector_023.obj" />
+    <mesh name="shell_A_sector_024" file="meshes/shell_A_sector_024.obj" />
+    <mesh name="shell_A_sector_025" file="meshes/shell_A_sector_025.obj" />
+    <mesh name="shell_A_sector_026" file="meshes/shell_A_sector_026.obj" />
+    <mesh name="shell_A_sector_027" file="meshes/shell_A_sector_027.obj" />
+    <mesh name="shell_A_sector_028" file="meshes/shell_A_sector_028.obj" />
+    <mesh name="shell_A_sector_029" file="meshes/shell_A_sector_029.obj" />
+    <mesh name="shell_A_sector_030" file="meshes/shell_A_sector_030.obj" />
+    <mesh name="shell_A_sector_031" file="meshes/shell_A_sector_031.obj" />
+    <mesh name="shell_A_sector_032" file="meshes/shell_A_sector_032.obj" />
+    <mesh name="shell_A_sector_033" file="meshes/shell_A_sector_033.obj" />
+    <mesh name="shell_A_sector_034" file="meshes/shell_A_sector_034.obj" />
+    <mesh name="shell_A_sector_035" file="meshes/shell_A_sector_035.obj" />
+    <mesh name="shell_A_sector_036" file="meshes/shell_A_sector_036.obj" />
+    <mesh name="shell_A_sector_037" file="meshes/shell_A_sector_037.obj" />
+    <mesh name="shell_A_sector_038" file="meshes/shell_A_sector_038.obj" />
+    <mesh name="shell_A_sector_039" file="meshes/shell_A_sector_039.obj" />
+    <mesh name="shell_A_sector_040" file="meshes/shell_A_sector_040.obj" />
+    <mesh name="shell_A_sector_041" file="meshes/shell_A_sector_041.obj" />
+    <mesh name="shell_A_sector_042" file="meshes/shell_A_sector_042.obj" />
+    <mesh name="shell_A_sector_043" file="meshes/shell_A_sector_043.obj" />
+    <mesh name="shell_A_sector_044" file="meshes/shell_A_sector_044.obj" />
+    <mesh name="shell_A_sector_045" file="meshes/shell_A_sector_045.obj" />
+    <mesh name="shell_A_sector_046" file="meshes/shell_A_sector_046.obj" />
+    <mesh name="shell_A_sector_047" file="meshes/shell_A_sector_047.obj" />
+    <mesh name="shell_B_sector_000" file="meshes/shell_B_sector_000.obj" />
+    <mesh name="shell_B_sector_001" file="meshes/shell_B_sector_001.obj" />
+    <mesh name="shell_B_sector_002" file="meshes/shell_B_sector_002.obj" />
+    <mesh name="shell_B_sector_003" file="meshes/shell_B_sector_003.obj" />
+    <mesh name="shell_B_sector_004" file="meshes/shell_B_sector_004.obj" />
+    <mesh name="shell_B_sector_005" file="meshes/shell_B_sector_005.obj" />
+    <mesh name="shell_B_sector_006" file="meshes/shell_B_sector_006.obj" />
+    <mesh name="shell_B_sector_007" file="meshes/shell_B_sector_007.obj" />
+    <mesh name="shell_B_sector_008" file="meshes/shell_B_sector_008.obj" />
+    <mesh name="shell_B_sector_009" file="meshes/shell_B_sector_009.obj" />
+    <mesh name="shell_B_sector_010" file="meshes/shell_B_sector_010.obj" />
+    <mesh name="shell_B_sector_011" file="meshes/shell_B_sector_011.obj" />
+    <mesh name="shell_B_sector_012" file="meshes/shell_B_sector_012.obj" />
+    <mesh name="shell_B_sector_013" file="meshes/shell_B_sector_013.obj" />
+    <mesh name="shell_B_sector_014" file="meshes/shell_B_sector_014.obj" />
+    <mesh name="shell_B_sector_015" file="meshes/shell_B_sector_015.obj" />
+    <mesh name="shell_B_sector_016" file="meshes/shell_B_sector_016.obj" />
+    <mesh name="shell_B_sector_017" file="meshes/shell_B_sector_017.obj" />
+    <mesh name="shell_B_sector_018" file="meshes/shell_B_sector_018.obj" />
+    <mesh name="shell_B_sector_019" file="meshes/shell_B_sector_019.obj" />
+    <mesh name="shell_B_sector_020" file="meshes/shell_B_sector_020.obj" />
+    <mesh name="shell_B_sector_021" file="meshes/shell_B_sector_021.obj" />
+    <mesh name="shell_B_sector_022" file="meshes/shell_B_sector_022.obj" />
+    <mesh name="shell_B_sector_023" file="meshes/shell_B_sector_023.obj" />
+    <mesh name="shell_B_sector_024" file="meshes/shell_B_sector_024.obj" />
+    <mesh name="shell_B_sector_025" file="meshes/shell_B_sector_025.obj" />
+    <mesh name="shell_B_sector_026" file="meshes/shell_B_sector_026.obj" />
+    <mesh name="shell_B_sector_027" file="meshes/shell_B_sector_027.obj" />
+    <mesh name="shell_B_sector_028" file="meshes/shell_B_sector_028.obj" />
+    <mesh name="shell_B_sector_029" file="meshes/shell_B_sector_029.obj" />
+    <mesh name="shell_B_sector_030" file="meshes/shell_B_sector_030.obj" />
+    <mesh name="shell_B_sector_031" file="meshes/shell_B_sector_031.obj" />
+    <mesh name="shell_B_sector_032" file="meshes/shell_B_sector_032.obj" />
+    <mesh name="shell_B_sector_033" file="meshes/shell_B_sector_033.obj" />
+    <mesh name="shell_B_sector_034" file="meshes/shell_B_sector_034.obj" />
+    <mesh name="shell_B_sector_035" file="meshes/shell_B_sector_035.obj" />
+    <mesh name="shell_B_sector_036" file="meshes/shell_B_sector_036.obj" />
+    <mesh name="shell_B_sector_037" file="meshes/shell_B_sector_037.obj" />
+    <mesh name="shell_B_sector_038" file="meshes/shell_B_sector_038.obj" />
+    <mesh name="shell_B_sector_039" file="meshes/shell_B_sector_039.obj" />
+    <mesh name="shell_B_sector_040" file="meshes/shell_B_sector_040.obj" />
+    <mesh name="shell_B_sector_041" file="meshes/shell_B_sector_041.obj" />
+    <mesh name="shell_B_sector_042" file="meshes/shell_B_sector_042.obj" />
+    <mesh name="shell_B_sector_043" file="meshes/shell_B_sector_043.obj" />
+    <mesh name="shell_B_sector_044" file="meshes/shell_B_sector_044.obj" />
+    <mesh name="shell_B_sector_045" file="meshes/shell_B_sector_045.obj" />
+    <mesh name="shell_B_sector_046" file="meshes/shell_B_sector_046.obj" />
+    <mesh name="shell_B_sector_047" file="meshes/shell_B_sector_047.obj" />
+    <mesh name="belt_A" file="meshes/belt_A.obj" />
+    <mesh name="belt_B" file="meshes/belt_B.obj" />
+    <mesh name="native_shell_A" file="meshes/native_shell_positive.obj" />
+    <mesh name="native_shell_B" file="meshes/native_shell_negative.obj" />
+    <mesh name="native_carrier" file="meshes/native_carrier.obj" />
+  </asset>
+  <worldbody>
+    <light pos="0 -2 3" dir="0 0 -1" diffuse="0.8 0.8 0.8" />
+    <light pos="-2 1 2" dir="1 -0.5 -1" diffuse="0.4 0.4 0.4" />
+    <geom name="floor" type="plane" size="10 10 0.1" material="floor_mat" contype="2" conaffinity="1" user="0 0 0 -1 0.12" />
+    <body name="fork" pos="0 0 0.1203">
+      <freejoint name="base" />
+      <inertial pos="0 0 0.191088617046" mass="1.2" fullinertia="0.00848236218221 0.00380921331936 0.0101003972892 0 0 0" />
+      <geom name="fork_arm_left" type="box" size="0.011 0.009 0.0925" pos="0 0.145 0.0925" rgba="0.75 0.78 0.83 1" />
+      <geom name="fork_arm_right" type="box" size="0.011 0.009 0.0925" pos="0 -0.145 0.0925" rgba="0.75 0.78 0.83 1" />
+      <geom name="fork_bridge" type="box" size="0.016 0.154 0.012" pos="0 0 0.18" rgba="0.75 0.78 0.83 1" />
+      <geom name="platform" type="box" size="0.09 0.12 0.01" pos="0 0 0.2" rgba="0.75 0.78 0.83 1" />
+      <site name="upper_com" pos="0 0 0.191088617046" size="0.005" rgba="1 0.25 0.15 1" group="3" />
+      <site name="imu" pos="0 0 0.2" size="0.004" group="3" />
+      <camera name="overview" pos="0.52 -0.65 0.43" xyaxes="0.780869 0.624695 0 -0.25643 0.320537 0.911733" mode="trackcom" />
+      <camera name="side" pos="0 -0.8 0.28" xyaxes="1 0 0 0 0.14 0.990151" mode="trackcom" />
+      <body name="carrier">
+        <joint name="shaft" type="hinge" axis="0 1 0" />
+        <inertial pos="0 0 0" mass="0.36" fullinertia="0.000295253333298 0.00194542575563 0.00194542575563 0 0 0" />
+        <geom name="shaft_visual" type="cylinder" fromto="0 -0.154 0 0 0.154 0" size="0.008" contype="0" conaffinity="0" rgba="0.35 0.38 0.42 1" />
+        <geom name="carrier_visual" type="box" size="0.05 0.04 0.04" contype="0" conaffinity="0" rgba="0.65 0.55 0.3 1" group="3" />
+        <geom name="native_carrier_visual" type="mesh" mesh="native_carrier" contype="0" conaffinity="0" rgba="0.63 0.61 0.55 1" />
+        <geom name="belt_A" type="mesh" mesh="belt_A" rgba="0.17 0.19 0.22 1" surfacevel="0 0 0" user="1 0.11565465836 0.12 3 0.12" />
+        <geom name="belt_A_smooth" type="sphere" size="0.12" contype="4" conaffinity="0" group="5" rgba="0 0 0 0" surfacevel="0 0 0" user="1 0.11565465836 0.12 4 0.12" />
+        <geom name="belt_B" type="mesh" mesh="belt_B" rgba="0.17 0.19 0.22 1" surfacevel="0 0 0" user="-1 0.11565465836 0.12 3 0.12" />
+        <geom name="belt_B_smooth" type="sphere" size="0.12" contype="4" conaffinity="0" group="5" rgba="0 0 0 0" surfacevel="0 0 0" user="-1 0.11565465836 0.12 4 0.12" />
+        <body name="shell_A">
+          <joint name="shell_A_joint" type="hinge" axis="1 0 0" />
+          <inertial pos="0.0604911092127 0 0" mass="0.15" fullinertia="0.0013135150602 0.000784611313744 0.000784611313744 0 0 0" />
+          <geom name="shell_A_sector_000" type="mesh" mesh="shell_A_sector_000" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_001" type="mesh" mesh="shell_A_sector_001" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_002" type="mesh" mesh="shell_A_sector_002" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_003" type="mesh" mesh="shell_A_sector_003" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_004" type="mesh" mesh="shell_A_sector_004" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_005" type="mesh" mesh="shell_A_sector_005" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_006" type="mesh" mesh="shell_A_sector_006" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_007" type="mesh" mesh="shell_A_sector_007" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_008" type="mesh" mesh="shell_A_sector_008" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_009" type="mesh" mesh="shell_A_sector_009" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_010" type="mesh" mesh="shell_A_sector_010" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_011" type="mesh" mesh="shell_A_sector_011" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_012" type="mesh" mesh="shell_A_sector_012" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_013" type="mesh" mesh="shell_A_sector_013" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_014" type="mesh" mesh="shell_A_sector_014" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_015" type="mesh" mesh="shell_A_sector_015" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_016" type="mesh" mesh="shell_A_sector_016" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_017" type="mesh" mesh="shell_A_sector_017" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_018" type="mesh" mesh="shell_A_sector_018" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_019" type="mesh" mesh="shell_A_sector_019" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_020" type="mesh" mesh="shell_A_sector_020" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_021" type="mesh" mesh="shell_A_sector_021" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_022" type="mesh" mesh="shell_A_sector_022" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_023" type="mesh" mesh="shell_A_sector_023" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_024" type="mesh" mesh="shell_A_sector_024" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_025" type="mesh" mesh="shell_A_sector_025" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_026" type="mesh" mesh="shell_A_sector_026" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_027" type="mesh" mesh="shell_A_sector_027" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_028" type="mesh" mesh="shell_A_sector_028" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_029" type="mesh" mesh="shell_A_sector_029" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_030" type="mesh" mesh="shell_A_sector_030" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_031" type="mesh" mesh="shell_A_sector_031" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_032" type="mesh" mesh="shell_A_sector_032" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_033" type="mesh" mesh="shell_A_sector_033" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_034" type="mesh" mesh="shell_A_sector_034" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_035" type="mesh" mesh="shell_A_sector_035" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_036" type="mesh" mesh="shell_A_sector_036" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_037" type="mesh" mesh="shell_A_sector_037" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_038" type="mesh" mesh="shell_A_sector_038" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_039" type="mesh" mesh="shell_A_sector_039" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_040" type="mesh" mesh="shell_A_sector_040" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_041" type="mesh" mesh="shell_A_sector_041" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_042" type="mesh" mesh="shell_A_sector_042" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_043" type="mesh" mesh="shell_A_sector_043" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_044" type="mesh" mesh="shell_A_sector_044" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_045" type="mesh" mesh="shell_A_sector_045" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_046" type="mesh" mesh="shell_A_sector_046" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_sector_047" type="mesh" mesh="shell_A_sector_047" rgba="0.08 0.54 0.69 1" group="3" user="1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_A_smooth" type="sphere" size="0.12" contype="4" conaffinity="0" group="5" rgba="0 0 0 0" user="1 0.01 0.11565465836 2 0.12" />
+          <geom name="native_shell_A_visual" type="mesh" mesh="native_shell_A" contype="0" conaffinity="0" rgba="0.08 0.54 0.69 1" />
+        </body>
+        <body name="shell_B">
+          <joint name="shell_B_joint" type="hinge" axis="1 0 0" />
+          <inertial pos="-0.0604911092127 0 0" mass="0.15" fullinertia="0.0013135150602 0.000784611313744 0.000784611313744 0 0 0" />
+          <geom name="shell_B_sector_000" type="mesh" mesh="shell_B_sector_000" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_001" type="mesh" mesh="shell_B_sector_001" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_002" type="mesh" mesh="shell_B_sector_002" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_003" type="mesh" mesh="shell_B_sector_003" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_004" type="mesh" mesh="shell_B_sector_004" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_005" type="mesh" mesh="shell_B_sector_005" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_006" type="mesh" mesh="shell_B_sector_006" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_007" type="mesh" mesh="shell_B_sector_007" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_008" type="mesh" mesh="shell_B_sector_008" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_009" type="mesh" mesh="shell_B_sector_009" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_010" type="mesh" mesh="shell_B_sector_010" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_011" type="mesh" mesh="shell_B_sector_011" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_012" type="mesh" mesh="shell_B_sector_012" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_013" type="mesh" mesh="shell_B_sector_013" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_014" type="mesh" mesh="shell_B_sector_014" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_015" type="mesh" mesh="shell_B_sector_015" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_016" type="mesh" mesh="shell_B_sector_016" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_017" type="mesh" mesh="shell_B_sector_017" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_018" type="mesh" mesh="shell_B_sector_018" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_019" type="mesh" mesh="shell_B_sector_019" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_020" type="mesh" mesh="shell_B_sector_020" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_021" type="mesh" mesh="shell_B_sector_021" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_022" type="mesh" mesh="shell_B_sector_022" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_023" type="mesh" mesh="shell_B_sector_023" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_024" type="mesh" mesh="shell_B_sector_024" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_025" type="mesh" mesh="shell_B_sector_025" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_026" type="mesh" mesh="shell_B_sector_026" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_027" type="mesh" mesh="shell_B_sector_027" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_028" type="mesh" mesh="shell_B_sector_028" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_029" type="mesh" mesh="shell_B_sector_029" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_030" type="mesh" mesh="shell_B_sector_030" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_031" type="mesh" mesh="shell_B_sector_031" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_032" type="mesh" mesh="shell_B_sector_032" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_033" type="mesh" mesh="shell_B_sector_033" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_034" type="mesh" mesh="shell_B_sector_034" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_035" type="mesh" mesh="shell_B_sector_035" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_036" type="mesh" mesh="shell_B_sector_036" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_037" type="mesh" mesh="shell_B_sector_037" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_038" type="mesh" mesh="shell_B_sector_038" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_039" type="mesh" mesh="shell_B_sector_039" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_040" type="mesh" mesh="shell_B_sector_040" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_041" type="mesh" mesh="shell_B_sector_041" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_042" type="mesh" mesh="shell_B_sector_042" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_043" type="mesh" mesh="shell_B_sector_043" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_044" type="mesh" mesh="shell_B_sector_044" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_045" type="mesh" mesh="shell_B_sector_045" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_046" type="mesh" mesh="shell_B_sector_046" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_sector_047" type="mesh" mesh="shell_B_sector_047" rgba="0.11 0.35 0.49 1" group="3" user="-1 0.01 0.11565465836 1 0.12" />
+          <geom name="shell_B_smooth" type="sphere" size="0.12" contype="4" conaffinity="0" group="5" rgba="0 0 0 0" user="-1 0.01 0.11565465836 2 0.12" />
+          <geom name="native_shell_B_visual" type="mesh" mesh="native_shell_B" contype="0" conaffinity="0" rgba="0.11 0.35 0.49 1" />
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <keyframe>
+    <key name="initial" qpos="0 0 0.1203 1 0 0 0 0.3 0 0" />
+  </keyframe>
+  <actuator>
+    <motor name="shaft_motor" joint="shaft" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="shell_A_motor" joint="shell_A_joint" ctrllimited="true" ctrlrange="-0.6 0.6" gear="1" />
+    <motor name="shell_B_motor" joint="shell_B_joint" ctrllimited="true" ctrlrange="-0.6 0.6" gear="1" />
+  </actuator>
+  <sensor>
+    <framequat name="fork_orientation" objtype="body" objname="fork" />
+    <gyro name="fork_gyro" site="imu" />
+  </sensor>
+</mujoco>

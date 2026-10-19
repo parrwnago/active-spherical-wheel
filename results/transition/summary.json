@@ -1,0 +1,121 @@
+{
+  "mode": "shell_to_belt_transition",
+  "passed": true,
+  "contact_mode": "analytic_clipped_floor",
+  "engine_version": "3.16.0",
+  "requested_duration_s": 10.0,
+  "completed_duration_s": 10.0,
+  "initial_phase_rad": 1.1,
+  "shell_belt_boundary_phase_rad": 1.300863531021193,
+  "final_phase_rad": 1.6123380755771743,
+  "final_reference_phase_rad": 1.6007330954509382,
+  "crossed_shell_to_belt": true,
+  "fork_or_platform_floor_contact": false,
+  "max_tilt_deg": 0.11089262167723976,
+  "final_tilt_deg": 0.009946743157045482,
+  "rms_position_error_m": 0.0014467631960285749,
+  "final_position_error_m": 0.001389619405133277,
+  "final_xy_m": [
+    0.061356782193804055,
+    -0.000300306792629159
+  ],
+  "max_input_fraction": [
+    0.004481614804504197,
+    0.01948586873766304,
+    0.005212135601260711,
+    0.014261746041012652,
+    0.0
+  ],
+  "saturated_command_fraction": 0.0,
+  "max_joint_speeds_rad_s": [
+    0.10897603276421429,
+    0.11869493531491006,
+    0.06883317271916545
+  ],
+  "max_slip_speed_m_s": 0.00031734643177001545,
+  "contact_changes": [
+    {
+      "time_s": 0.0,
+      "phase_rad": 1.1,
+      "geoms": [
+        "shell_A_smooth"
+      ],
+      "normal_forces_N": [
+        18.24660000006704,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "time_s": 4.345,
+      "phase_rad": 1.2772975193570202,
+      "geoms": [
+        "belt_A",
+        "shell_A_smooth"
+      ],
+      "normal_forces_N": [
+        17.053141098369927,
+        0.0,
+        1.2105361346855323,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "time_s": 4.705,
+      "phase_rad": 1.2991660254533806,
+      "geoms": [
+        "belt_A_smooth",
+        "shell_A_sector_036",
+        "shell_A_sector_037"
+      ],
+      "normal_forces_N": [
+        10.90906190570314,
+        0.0,
+        7.3694012423990625,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "time_s": 4.9350000000000005,
+      "phase_rad": 1.3197025499547592,
+      "geoms": [
+        "belt_A_smooth"
+      ],
+      "normal_forces_N": [
+        0.007009849928048492,
+        0.0,
+        18.255504573835385,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "failed_gain_points": [
+    {
+      "phase_rad": 1.28,
+      "error": "Unstabilizable growing modes in local model: [1.00122791 1.        ]"
+    },
+    {
+      "phase_rad": 1.32,
+      "error": "Unstabilizable growing modes in local model: [1.00007259 0.99991601]"
+    }
+  ],
+  "targets": {
+    "complete_duration_s": 10.0,
+    "cross_shell_to_belt": true,
+    "max_tilt_deg": 8.0,
+    "final_tilt_deg": 1.0,
+    "rms_position_error_m": 0.02,
+    "final_position_error_m": 0.02
+  },
+  "notes": [
+    "No external forces or support constraints; starts from upright equilibrium.",
+    "Joint references integrate the instantaneous rolling allocation.",
+    "Unavailable local designs are recorded; nearby gains in the same actual contact regime are used.",
+    "Motor speed and electrical/thermal limits remain unmodeled."
+  ]
+}

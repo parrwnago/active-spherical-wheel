@@ -1,0 +1,38 @@
+{
+  "check": "WSL2 localhost access and live MuJoCo rendering",
+  "distribution": "Ubuntu-22.04",
+  "kernel_release": "6.6.87.2-microsoft-standard-WSL2",
+  "wslg_display_available": true,
+  "wayland_available": true,
+  "host": "127.0.0.1",
+  "port": 8766,
+  "attempts": [
+    {
+      "render_backend": "default",
+      "passed": true,
+      "scenario": "shell",
+      "simulation_time_s": 0.0,
+      "render_error": null,
+      "physics_error": null,
+      "wsl_client_jpeg_bytes": 29256,
+      "windows_native_client_state_ok": true,
+      "windows_native_client_jpeg_ok": true,
+      "windows_native_client_jpeg_bytes": 29256
+    },
+    {
+      "render_backend": "egl",
+      "passed": true,
+      "scenario": "shell",
+      "simulation_time_s": 0.0,
+      "render_error": null,
+      "physics_error": null,
+      "wsl_client_jpeg_bytes": 29256,
+      "windows_native_client_state_ok": true,
+      "windows_native_client_jpeg_ok": true,
+      "windows_native_client_jpeg_bytes": 29256
+    }
+  ],
+  "scope": "Fresh CLI server, initial paused shell state, state API and actual JPEG fetched from WSL and Windows-native curl.exe. Balance/recovery tests are separate.",
+  "cleanup": "Only the two test child servers were stopped after their respective checks.",
+  "microsoft_reference": "https://learn.microsoft.com/en-us/windows/wsl/networking#accessing-linux-networking-apps-from-windows-localhost"
+}

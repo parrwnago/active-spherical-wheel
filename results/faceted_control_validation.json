@@ -1,0 +1,272 @@
+{
+  "scope": "Local simulation analysis and finite free-balance trials. Tracking, robustness across phase changes and hardware performance are not established.",
+  "mujoco_version": "3.16.0",
+  "equilibrium": {
+    "status": "passed",
+    "step_residual_norm": 2.6242824105148533e-11,
+    "qpos": [
+      0.0,
+      0.0,
+      0.11998035290343197,
+      0.99999432158357,
+      2.1764506087838633e-12,
+      -0.0033699852544979204,
+      7.334648107930964e-15,
+      0.3,
+      0.0,
+      0.0
+    ],
+    "input": [
+      -0.015161445213732394,
+      9.353423758135789e-12,
+      2.642226263807036e-17,
+      0.0,
+      0.0
+    ],
+    "contacts": [
+      {
+        "geoms": [
+          "floor",
+          "shell_A_sector_035"
+        ],
+        "normal_force_N": 9.123320257801723,
+        "tangent_force_N": [
+          -0.0,
+          -0.0
+        ],
+        "position_m": [
+          -0.0008309188552837118,
+          5.3759713694589983e-11,
+          -8.38626210376836e-06
+        ]
+      },
+      {
+        "geoms": [
+          "floor",
+          "shell_A_sector_036"
+        ],
+        "normal_force_N": 9.123279742211071,
+        "tangent_force_N": [
+          -0.0,
+          -0.0
+        ],
+        "position_m": [
+          -0.0008309189899797995,
+          -5.483197663275208e-11,
+          -8.386224898399366e-06
+        ]
+      }
+    ]
+  },
+  "independent_local_prediction": {
+    "status": "passed",
+    "relative_error": 5.615295185983002e-05,
+    "seed": 73,
+    "perturbation_norm": 1e-05
+  },
+  "full_state_lqr": {
+    "status": "passed",
+    "full_closed_spectral_radius": 1.000000000196269,
+    "full_closed_eigenvalues": [
+      {
+        "real": 0.14803786145127437,
+        "imag": 0.0
+      },
+      {
+        "real": 0.18089455556488904,
+        "imag": 0.0
+      },
+      {
+        "real": 0.07817817913023357,
+        "imag": 0.0
+      },
+      {
+        "real": 0.5109776921225698,
+        "imag": 0.0
+      },
+      {
+        "real": 0.3949458950596515,
+        "imag": 0.0
+      },
+      {
+        "real": 0.07603237742929177,
+        "imag": 0.0
+      },
+      {
+        "real": 0.9131689682280535,
+        "imag": 0.0
+      },
+      {
+        "real": 0.9132697097249518,
+        "imag": 0.0
+      },
+      {
+        "real": 0.9515852070533687,
+        "imag": 0.0
+      },
+      {
+        "real": 0.9699774835918982,
+        "imag": 6.372360214756744e-05
+      },
+      {
+        "real": 0.9699774835918982,
+        "imag": -6.372360214756744e-05
+      },
+      {
+        "real": 0.9647484455792035,
+        "imag": 0.0
+      },
+      {
+        "real": 0.983224060579146,
+        "imag": 0.0
+      },
+      {
+        "real": 0.9803667375914659,
+        "imag": 0.0
+      },
+      {
+        "real": 1.000000000002012,
+        "imag": 3.7034129189451655e-08
+      },
+      {
+        "real": 1.000000000002012,
+        "imag": -3.7034129189451655e-08
+      },
+      {
+        "real": 1.000000000196269,
+        "imag": 0.0
+      },
+      {
+        "real": 1.0000000000004594,
+        "imag": 0.0
+      }
+    ],
+    "reachable_rank": 14,
+    "discarded_eigenvalues": [
+      0.9999997960003794,
+      1.0000002040006115,
+      1.0000000000007239,
+      1.000000000042042
+    ]
+  },
+  "frozen_phase_baseline_local_stability": {
+    "status": "failed",
+    "full_closed_spectral_radius": 1.0316495621164385,
+    "growing_full_eigenvalues": [
+      {
+        "real": 1.0316495621164385,
+        "imag": 0.0
+      },
+      {
+        "real": 1.0215096072999632,
+        "imag": 0.0
+      }
+    ],
+    "interpretation": "This empirical baseline is not a full-state stabilizing LQR. Passing a finite nonlinear trial does not certify its local stability."
+  },
+  "nonlinear_trials": [
+    {
+      "method": "full_state_lqr",
+      "status": "failed",
+      "initial_roll_and_pitch_deg": 0.1,
+      "requested_duration_s": 3.0,
+      "end_time_s": 2.9999999999997806,
+      "final_tilt_deg": 0.06033011858548997,
+      "target_final_tilt_deg": 0.05,
+      "peak_tilt_deg": 0.8795446607726677,
+      "fork_platform_floor_contact": false,
+      "final_body_angular_velocity_rad_s": [
+        1.2266960088793535e-07,
+        8.245558016483803e-08,
+        -3.873198282061544e-05
+      ],
+      "final_xy_error_m": [
+        -0.0011699890547167975,
+        0.0002051726725134121
+      ],
+      "final_joint_speeds_rad_s": [
+        -1.5163801836994345e-07,
+        -7.338453010223225e-06,
+        -0.001545092056254315
+      ],
+      "peak_joint_speeds_rad_s": [
+        1.130199818338607,
+        0.04912544406340602,
+        1.6780729204544431
+      ],
+      "saturated_control_intervals": 0,
+      "external_disturbance": "none"
+    },
+    {
+      "method": "full_state_lqr",
+      "status": "failed",
+      "initial_roll_and_pitch_deg": 2.0,
+      "requested_duration_s": 5.0,
+      "end_time_s": 0.20000000000000015,
+      "final_tilt_deg": 117.8385818879361,
+      "target_final_tilt_deg": 0.5,
+      "peak_tilt_deg": 117.8385818879361,
+      "fork_platform_floor_contact": true,
+      "final_body_angular_velocity_rad_s": [
+        2.6427836378422223,
+        13.063111411351892,
+        7.022698091030705
+      ],
+      "final_xy_error_m": [
+        -0.13884329650107635,
+        -0.006284340561305499
+      ],
+      "final_joint_speeds_rad_s": [
+        -68.4748985647708,
+        9.168402787444846,
+        -38.976516257033
+      ],
+      "peak_joint_speeds_rad_s": [
+        71.79134938219957,
+        13.420404344276715,
+        38.976516257033
+      ],
+      "saturated_control_intervals": 40,
+      "external_disturbance": "none"
+    },
+    {
+      "method": "frozen_phase_feedback",
+      "status": "passed",
+      "initial_roll_and_pitch_deg": 2.0,
+      "requested_duration_s": 5.0,
+      "end_time_s": 5.000000000000004,
+      "final_tilt_deg": 0.19821169428642327,
+      "target_final_tilt_deg": 0.5,
+      "peak_tilt_deg": 2.5698985033575727,
+      "fork_platform_floor_contact": false,
+      "final_body_angular_velocity_rad_s": [
+        4.306844863793348e-09,
+        -9.718806066027747e-11,
+        -1.2002222012528867e-09
+      ],
+      "final_xy_error_m": [
+        -0.02083678533543655,
+        -0.0032772204707229276
+      ],
+      "final_joint_speeds_rad_s": [
+        9.446415801006636e-11,
+        -4.434850159630391e-09,
+        4.735081810087229
+      ],
+      "peak_joint_speeds_rad_s": [
+        1.6588652177578964,
+        1.6488499633431792,
+        6.07870713287549
+      ],
+      "saturated_control_intervals": 1,
+      "external_disturbance": "none"
+    }
+  ],
+  "limits": [
+    "Joint motor speed limits and electrical/thermal dynamics are not modeled.",
+    "Belts use ideal prescribed speed; motor load and rotor dynamics are omitted.",
+    "Polygonal collision surfaces introduce material-phase contact changes absent from an ideal smooth shell.",
+    "The successful baseline trial allows residual position offset and cyclic shell motion."
+  ],
+  "contact_model": "faceted_wedges_and_caps"
+}
