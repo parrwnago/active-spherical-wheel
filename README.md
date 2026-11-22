@@ -43,6 +43,8 @@ On Windows use `.venv\Scripts\python.exe` in place of `.venv/bin/python`. See [O
 
 ## Run it
 
+For full circles, figure-eights, lateral reversals and eight-direction motion over uneven terrain, see [OFFROAD_MOBILITY.md](OFFROAD_MOBILITY.md). The evaluation compares the unchanged controllers and saves paired MP4 replays, raw logs, acceptance gates and tracking metrics.
+
 Use Python 3.10–3.12 from the repository directory for the pinned environment. The supplied environment was verified with Python 3.10:
 
 ```bash

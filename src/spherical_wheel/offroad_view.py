@@ -52,6 +52,11 @@ def _draw(plant, renderer, log, index, camera, option, shadows):
     renderer.update_scene(plant.data, camera=camera, scene_option=option)
     scene = renderer.scene
     scene.flags[mujoco.mjtRndFlag.mjRND_SHADOW] = bool(shadows)
+    if 'planned_xy' in log:
+        points = log['planned_xy']
+        planned = np.array([[x, y, plant.terrain.height(float(x), float(y))+.006] for x, y in points])
+        for start, end in zip(planned[:-1], planned[1:]):
+            _line(scene, start, end, np.array([1., .62, .2, .65]), width=2.)
     stride = max(1, index//150)
     trail = np.column_stack((log['qpos'][:index+1:stride, :2], log['ground_height_m'][:index+1:stride]+.004))
     for start, end in zip(trail[:-1], trail[1:]):
@@ -111,7 +116,7 @@ def _caption(frame, heading, lines, footer):
 
 
 def render_replay(plant, runs, output, fps=30, speed=1., width=960, height=720, azimuth=112., elevation=-14.,
-                  distance=1.25, title=None):
+                  distance=1.25, title=None, fixed_lookat=None):
     """Write an MP4 replay of one or more saved runs on the same terrain, side by side.
 
     ``runs`` is a list of ``(label, log)``. Each run gets its own panel with a
@@ -145,7 +150,8 @@ def render_replay(plant, runs, output, fps=30, speed=1., width=960, height=720, 
                 for label, log in runs:
                     stopped = moment > log['time_s'][-1]+1e-9
                     index = min(int(np.searchsorted(log['time_s'], moment)), len(log['time_s'])-1)
-                    camera = _camera(log['qpos'][index, :3], azimuth, elevation, distance)
+                    camera = _camera(log['qpos'][index, :3] if fixed_lookat is None else fixed_lookat,
+                                     azimuth, elevation, distance)
                     frame = _draw(plant, renderer, log, index, camera, option, shadows=False)
                     slope = np.degrees(np.arccos(np.clip(log['ground_normal'][index, 2], -1., 1.)))
                     error = np.linalg.norm(log['qpos'][index, :2]-log['reference_xy'][index])*1000.

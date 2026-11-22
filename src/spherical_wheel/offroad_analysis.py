@@ -81,6 +81,9 @@ def plot_run(log, summary, terrain, path, output, title=None):
     axis.set(xlim=(x0, x1), ylim=(y0, y1))
     axis.grid(False)
     axis.set(xlabel='x (m)', ylabel='y (m)', title='Path over the ground (axes not to equal scale)')
+    if hasattr(path, 'kind'):
+        axis.set_aspect('equal', adjustable='box')
+        axis.set_title('Path over the ground (equal scale)')
     legend = _legend(axis, loc='lower left', ncols=2, borderaxespad=.6)
     legend.set_frame_on(True)
     legend.get_frame().set(facecolor=SURFACE, edgecolor='none', alpha=.9)
