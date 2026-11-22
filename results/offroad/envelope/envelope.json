@@ -1,0 +1,1220 @@
+{
+  "scope": "Hold on a uniform slope for 6 s with a 0.5 N, 0.1 s push at 1 s. Simulated provisional model.",
+  "static_limits": {
+    "weight_N": 18.2466,
+    "lean_per_unit_slope": 0.9733703811122447,
+    "friction_limit_deg": 34.99202019855866,
+    "shaft_torque_limit_deg": 43.240257904065025,
+    "shell_torque_limit_deg_at_initial_phase": 16.66854858665773,
+    "belt_cap_side_slope_limit_deg": 7.837357902008715,
+    "notes": {
+      "lean_per_unit_slope": "Balancing lean from vertical divided by slope angle, for small angles.",
+      "friction_limit_deg": "Slope whose tangent equals the nominal friction coefficient.",
+      "shaft_torque_limit_deg": "Grade along the shaft direction at which static holding torque equals the shaft bound.",
+      "shell_torque_limit_deg_at_initial_phase": "Side slope at which static holding torque equals the shell bound, at the initial shaft phase.",
+      "belt_cap_side_slope_limit_deg": "Side slope at which slope plus balancing lean carries the support point off the polar belt cap when a pole is down. Not a holding limit: beyond it the sideways drive depends on the support staying off the exact pole line."
+    }
+  },
+  "cases": [
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 0.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0005321968459050761,
+      "max_error_m": 0.015064577981342097,
+      "max_attitude_error_deg": 0.5566067123140348,
+      "utilization_p95": 0.0063471280423223475,
+      "max_input_fraction": [
+        0.03138089382085871,
+        5.372892087238266e-13,
+        5.582511440418797e-13,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.006252284027381005,
+        5.0959021422299265e-14,
+        5.0402092844904475e-14
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 0.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0005359332105630801,
+      "max_error_m": 0.015064991131449323,
+      "max_attitude_error_deg": 0.5566035643549619,
+      "utilization_p95": 0.006346674021219416,
+      "max_input_fraction": [
+        0.031387914662951974,
+        5.36275807618945e-13,
+        5.581145655744073e-13,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.00625231998616862,
+        5.0861162028306086e-14,
+        5.038938274894007e-14
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 4.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.3017521584446242,
+      "max_error_m": 0.3064701564121374,
+      "max_attitude_error_deg": 4.583929042172234,
+      "utilization_p95": 0.1080419350588068,
+      "max_input_fraction": [
+        1.0,
+        1.803994284822286e-10,
+        6.451502489793829e-10,
+        0.0,
+        3.3416294807048564e-10
+      ],
+      "rms_torque_Nm": [
+        0.1644099695657301,
+        1.3577070035299007e-11,
+        2.919097513837113e-11
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 4.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.00039613470005015025,
+      "max_error_m": 0.01333322518875591,
+      "max_attitude_error_deg": 0.5652995990746658,
+      "utilization_p95": 0.10105182466201132,
+      "max_input_fraction": [
+        0.133653949150619,
+        2.935855636255008e-13,
+        5.995243027254844e-13,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.15186165384317996,
+        5.0020702928918474e-14,
+        6.553363188948773e-14
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 8.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.8836225819769713,
+      "max_error_m": 0.8857859655242576,
+      "max_attitude_error_deg": 9.411583417507378,
+      "utilization_p95": 0.21970002932735025,
+      "max_input_fraction": [
+        1.0,
+        3.3096292092330057e-09,
+        7.260604287849218e-09,
+        9.461062134670488e-10,
+        2.429434683648198e-10
+      ],
+      "rms_torque_Nm": [
+        0.3227498445567513,
+        4.1815246727277843e-10,
+        8.713966945765503e-10
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 8.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.00026143461599150564,
+      "max_error_m": 0.01715764160817994,
+      "max_attitude_error_deg": 0.5738451826787565,
+      "utilization_p95": 0.20311586508491059,
+      "max_input_fraction": [
+        0.23611797362552975,
+        3.0740768287921393e-13,
+        4.597620782604328e-13,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.3038011222423123,
+        5.1719945428359925e-14,
+        6.061127959987895e-14
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 12.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0000604345566024,
+      "max_error_m": 1.0000604345566024,
+      "max_attitude_error_deg": 14.303566828704925,
+      "utilization_p95": 0.3359257986006148,
+      "max_input_fraction": [
+        1.0,
+        8.265423221309338e-10,
+        9.805829063893036e-10,
+        4.4945930485400823e-10,
+        7.116586647232396e-10
+      ],
+      "rms_torque_Nm": [
+        0.46968038899394077,
+        5.538267172067891e-11,
+        6.641783637515723e-11
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 12.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0001322146131008652,
+      "max_error_m": 0.02562742986988886,
+      "max_attitude_error_deg": 0.5821592342533282,
+      "utilization_p95": 0.307202534472153,
+      "max_input_fraction": [
+        0.3389070913746401,
+        3.5241571388223953e-13,
+        4.277330135492112e-13,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.45430525175075653,
+        5.632367308611223e-14,
+        5.6648049827139934e-14
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 16.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0016776337879938,
+      "max_error_m": 1.0016776337879938,
+      "max_attitude_error_deg": 18.676437885259595,
+      "utilization_p95": 0.5370970164214964,
+      "max_input_fraction": [
+        1.0,
+        5.727307335403807e-10,
+        8.82986400052456e-10,
+        3.4102677243380834e-10,
+        7.351941148075297e-10
+      ],
+      "rms_torque_Nm": [
+        0.5927001884089124,
+        4.6886125859440816e-11,
+        6.137804397054564e-11
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 16.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 9.036889828650552e-06,
+      "max_error_m": 0.03396706587142468,
+      "max_attitude_error_deg": 0.59019977569294,
+      "utilization_p95": 0.4145192806307887,
+      "max_input_fraction": [
+        0.4408891215799702,
+        4.4036596687047663e-13,
+        4.186359157769597e-13,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.6026108176048891,
+        6.596566254173728e-14,
+        5.676847343663407e-14
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 20.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0021967953803839,
+      "max_error_m": 1.0021967953803839,
+      "max_attitude_error_deg": 22.16440308094328,
+      "utilization_p95": 0.6475506461945653,
+      "max_input_fraction": [
+        1.0,
+        4.8585909426237345e-09,
+        9.710511849034387e-09,
+        3.135032266210615e-10,
+        3.6446033660257883e-09
+      ],
+      "rms_torque_Nm": [
+        0.7038503490983736,
+        2.1895670250895395e-10,
+        3.9339396101936815e-10
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 0.3,
+      "grade_deg": 20.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.00010731955014074388,
+      "max_error_m": 0.042134340067726504,
+      "max_attitude_error_deg": 0.5977895048482003,
+      "utilization_p95": 0.5260916462281185,
+      "max_input_fraction": [
+        0.5419016988787632,
+        5.334815030309123e-13,
+        4.346092304086572e-13,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.7479905304773273,
+        8.755530336585928e-14,
+        6.674134733284914e-14
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 0.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0005330567825478727,
+      "max_error_m": 0.015064274697592802,
+      "max_attitude_error_deg": 0.5566178320525405,
+      "utilization_p95": 0.006347157202638501,
+      "max_input_fraction": [
+        0.031376979708912046,
+        7.665567031947602e-13,
+        9.114352014041305e-13,
+        2.1565285806268844e-13,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.006252234477855298,
+        5.616343541725181e-14,
+        6.893378263779161e-14
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 0.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0005358104370033906,
+      "max_error_m": 0.01506458265266476,
+      "max_attitude_error_deg": 0.5566155259561383,
+      "utilization_p95": 0.006346819090475562,
+      "max_input_fraction": [
+        0.031382204073832194,
+        7.665999099955344e-13,
+        9.115713160108105e-13,
+        8.14474178878446e-14,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.006252261124859216,
+        5.6180168226903206e-14,
+        6.894467301979274e-14
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 4.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.3016495021249482,
+      "max_error_m": 0.3059374038716465,
+      "max_attitude_error_deg": 4.582393605328955,
+      "utilization_p95": 0.1074743289821682,
+      "max_input_fraction": [
+        1.0,
+        1.6891324361094974e-10,
+        8.99759669455008e-10,
+        9.929043391962092e-12,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.1642905636596013,
+        2.8196056324068143e-11,
+        1.7179004098988213e-10
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 4.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0004076046253357707,
+      "max_error_m": 0.01332421129779672,
+      "max_attitude_error_deg": 0.5653168966378559,
+      "utilization_p95": 0.10104972069813084,
+      "max_input_fraction": [
+        0.13365855953715897,
+        6.675334412418765e-13,
+        1.9729909137941384e-12,
+        1.7556929836699782e-13,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.15186661752263225,
+        5.704390452419574e-14,
+        1.0430991682076035e-13
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 8.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.88138806861943,
+      "max_error_m": 0.8838130742871201,
+      "max_attitude_error_deg": 9.340753965850748,
+      "utilization_p95": 0.21934629878599257,
+      "max_input_fraction": [
+        1.0,
+        9.43670233411473e-10,
+        1.0559176803948501e-09,
+        2.0189640025096894e-10,
+        1.5831712408063644e-09
+      ],
+      "rms_torque_Nm": [
+        0.32287851648639,
+        4.538977693032818e-11,
+        4.684654061273723e-11
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 8.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0002844495020682624,
+      "max_error_m": 0.017157678641362358,
+      "max_attitude_error_deg": 0.5738664591600606,
+      "utilization_p95": 0.20311157821947085,
+      "max_input_fraction": [
+        0.2361429160121058,
+        1.313168076809865e-12,
+        1.5218288225981293e-12,
+        4.1746855366889454e-13,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.30381101328365556,
+        9.109479185825688e-14,
+        1.1686940440789381e-13
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 12.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0007127988594033,
+      "max_error_m": 1.0007127988594033,
+      "max_attitude_error_deg": 14.36307578540488,
+      "utilization_p95": 0.33595803173660077,
+      "max_input_fraction": [
+        1.0,
+        2.4834674362036836e-10,
+        3.912786982031382e-10,
+        1.6879640453826092e-10,
+        2.1100961725155375e-10
+      ],
+      "rms_torque_Nm": [
+        0.4700068929531574,
+        2.2467964738574607e-11,
+        3.95212673802239e-11
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 12.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.00040463303954898274,
+      "max_error_m": 0.025627463813846608,
+      "max_attitude_error_deg": 0.5838909488605407,
+      "utilization_p95": 1.0,
+      "max_input_fraction": [
+        0.33892864621888724,
+        3.443859111515263e-10,
+        6.961706897500399e-11,
+        4.219324203769414e-10,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.45366461841639405,
+        2.9083016523529764e-11,
+        5.1875720961820625e-12
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 16.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0003950365345091,
+      "max_error_m": 1.0003950365345091,
+      "max_attitude_error_deg": 18.661183048974618,
+      "utilization_p95": 0.505678365124707,
+      "max_input_fraction": [
+        1.0,
+        7.733524398015421e-10,
+        1.5226355729345007e-09,
+        4.796669966498235e-10,
+        2.0905714827909814e-10
+      ],
+      "rms_torque_Nm": [
+        0.5934110128613372,
+        5.1845721961100584e-11,
+        7.225974677932868e-11
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 16.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 7.304666119612386e-06,
+      "max_error_m": 0.03396707006759578,
+      "max_attitude_error_deg": 0.7152416609459482,
+      "utilization_p95": 0.41723994896844746,
+      "max_input_fraction": [
+        0.44092741116598,
+        2.4750350639811817e-10,
+        4.792224244123788e-11,
+        3.437511686893853e-10,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.6026991910075626,
+        1.5281971279646092e-11,
+        2.6785067263779393e-12
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 20.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0013497911045137,
+      "max_error_m": 1.0013497911045137,
+      "max_attitude_error_deg": 22.16241886254092,
+      "utilization_p95": 0.6493659684252789,
+      "max_input_fraction": [
+        1.0,
+        7.4067185583861e-10,
+        1.556414316106033e-09,
+        5.273448533961796e-10,
+        3.914501191187544e-10
+      ],
+      "rms_torque_Nm": [
+        0.7044134398302286,
+        5.2566008679229e-11,
+        6.92798800557318e-11
+      ]
+    },
+    {
+      "direction": "along",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 20.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0001097160971166959,
+      "max_error_m": 0.04213422363066476,
+      "max_attitude_error_deg": 0.7804847526551594,
+      "utilization_p95": 0.5278947995952455,
+      "max_input_fraction": [
+        0.5419191312486084,
+        3.609956918949448e-10,
+        4.8180298979878883e-11,
+        1.6912393203658475e-10,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.7480596065946554,
+        2.306618716316399e-11,
+        2.9400418699467758e-12
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 0.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0005321968459050761,
+      "max_error_m": 0.015064577981342097,
+      "max_attitude_error_deg": 0.5566067123140348,
+      "utilization_p95": 0.0063471280423223475,
+      "max_input_fraction": [
+        0.03138089382085871,
+        5.372892087238266e-13,
+        5.582511440418797e-13,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.006252284027381005,
+        5.0959021422299265e-14,
+        5.0402092844904475e-14
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 0.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0005359332105630801,
+      "max_error_m": 0.015064991131449323,
+      "max_attitude_error_deg": 0.5566035643549619,
+      "utilization_p95": 0.006346674021219416,
+      "max_input_fraction": [
+        0.031387914662951974,
+        5.36275807618945e-13,
+        5.581145655744073e-13,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.00625231998616862,
+        5.0861162028306086e-14,
+        5.038938274894007e-14
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 4.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.37299446292166183,
+      "max_error_m": 0.3764570081415844,
+      "max_attitude_error_deg": 5.406033099839981,
+      "utilization_p95": 0.6067077973629396,
+      "max_input_fraction": [
+        0.12883369549895549,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.04146503115131399,
+        0.21704112306408174,
+        0.2044639947583875
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 4.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0006664737774503292,
+      "max_error_m": 0.01516705938857476,
+      "max_attitude_error_deg": 0.5547901912906679,
+      "utilization_p95": 0.10041955721205004,
+      "max_input_fraction": [
+        0.033016960758353815,
+        0.2585889921350058,
+        0.04988460735073862,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.007066013265282996,
+        0.1435835687740786,
+        0.0015179251244954704
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 8.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.6129761956557696,
+      "max_error_m": 0.630712694429206,
+      "max_attitude_error_deg": 15.538310974744387,
+      "utilization_p95": 0.42024537452346983,
+      "max_input_fraction": [
+        0.5340617185505969,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.13144009837706966,
+        0.3147891254090648,
+        0.28969795572513957
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 8.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0009642415849520695,
+      "max_error_m": 0.01682770187253477,
+      "max_attitude_error_deg": 0.5491970637488964,
+      "utilization_p95": 0.20151371361810508,
+      "max_input_fraction": [
+        0.03771737026137994,
+        0.5159097990102512,
+        0.099526057173921,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.01767041428740221,
+        0.28618477240589196,
+        0.0030298711787515456
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 12.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0004777154336297,
+      "max_error_m": 1.0004777154336297,
+      "max_attitude_error_deg": 16.810365554786312,
+      "utilization_p95": 0.5041589533864969,
+      "max_input_fraction": [
+        1.0,
+        1.0,
+        1.0,
+        0.7021081722292111,
+        1.0
+      ],
+      "rms_torque_Nm": [
+        0.33948848885194155,
+        0.2991310268183048,
+        0.2786462350645678
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 12.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0013445380298569432,
+      "max_error_m": 0.025133325165930715,
+      "max_attitude_error_deg": 0.5394296659371909,
+      "utilization_p95": 0.3047079838451429,
+      "max_input_fraction": [
+        0.05767033139369363,
+        0.7712357624942002,
+        0.14868237461164502,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.03912199198109467,
+        0.4266144944406297,
+        0.004529786529533517
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 16.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0018600088849223,
+      "max_error_m": 1.0018600088849223,
+      "max_attitude_error_deg": 25.021556123732857,
+      "utilization_p95": 0.785515491461373,
+      "max_input_fraction": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rms_torque_Nm": [
+        0.4490255186406186,
+        0.3833745636329452,
+        0.32453207336448053
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 16.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0018084716380566944,
+      "max_error_m": 0.03339862733930049,
+      "max_attitude_error_deg": 0.5251023783771953,
+      "utilization_p95": 0.41128161812210334,
+      "max_input_fraction": [
+        0.10447547150669768,
+        1.0,
+        0.1971139479595099,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.07148184528927452,
+        0.5628491424765528,
+        0.005718094806259216
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 20.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0005524312688683,
+      "max_error_m": 1.0005524312688683,
+      "max_attitude_error_deg": 27.491685230221172,
+      "utilization_p95": 0.9751549074564247,
+      "max_input_fraction": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.4452775480146984,
+        0.4643244111248109,
+        0.4048655598541153
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 0.3,
+      "grade_deg": 20.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.039077241704508506,
+      "max_error_m": 0.08506077633843656,
+      "max_attitude_error_deg": 6.10549234113726,
+      "utilization_p95": 0.5853861592867804,
+      "max_input_fraction": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.5625222602941311,
+        0.19825577652755905,
+        0.36930917480522335
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 0.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0005330567825478727,
+      "max_error_m": 0.015064274697592802,
+      "max_attitude_error_deg": 0.5566178320525405,
+      "utilization_p95": 0.006347157202638501,
+      "max_input_fraction": [
+        0.031376979708912046,
+        7.665567031947602e-13,
+        9.114352014041305e-13,
+        2.1565285806268844e-13,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.006252234477855298,
+        5.616343541725181e-14,
+        6.893378263779161e-14
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 0.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0005358104370033906,
+      "max_error_m": 0.01506458265266476,
+      "max_attitude_error_deg": 0.5566155259561383,
+      "utilization_p95": 0.006346819090475562,
+      "max_input_fraction": [
+        0.031382204073832194,
+        7.665999099955344e-13,
+        9.115713160108105e-13,
+        8.14474178878446e-14,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.006252261124859216,
+        5.6180168226903206e-14,
+        6.894467301979274e-14
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 4.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.38214903828335395,
+      "max_error_m": 0.38676797912570315,
+      "max_attitude_error_deg": 4.662697767350129,
+      "utilization_p95": 0.10916376929120443,
+      "max_input_fraction": [
+        0.11084895427308318,
+        0.677356064696421,
+        0.423908153801632,
+        1.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.12693664862284093,
+        0.03414027860594551,
+        0.016743768344145846
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 4.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0005582281636593715,
+      "max_error_m": 0.01518050894230913,
+      "max_attitude_error_deg": 0.555561179821936,
+      "utilization_p95": 0.10075565108711493,
+      "max_input_fraction": [
+        0.03135651099003339,
+        0.001433080521229259,
+        0.0012082176639552297,
+        0.03635866074117708,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.006747719339076023,
+        0.00010945167023899827,
+        9.977091562542219e-05
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 8.0,
+      "controller": "flat_baseline",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.7930102009298917,
+      "max_error_m": 0.9252860297051859,
+      "max_attitude_error_deg": 23.644167100981058,
+      "utilization_p95": 0.38559848271793756,
+      "max_input_fraction": [
+        0.6168811842401786,
+        1.0,
+        1.0,
+        1.0,
+        0.0008542922767941485
+      ],
+      "rms_torque_Nm": [
+        0.21081698737367524,
+        0.21991043652135742,
+        0.22936326501400056
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 8.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.01705293865568028,
+      "max_error_m": 0.059926663316248234,
+      "max_attitude_error_deg": 3.19591037787691,
+      "utilization_p95": 0.488968722820405,
+      "max_input_fraction": [
+        0.09421671380496634,
+        0.32293344999028095,
+        0.06492264542859545,
+        0.2594652639209871,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.11580022395730262,
+        0.09490026339645471,
+        0.00491540168136559
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 12.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0009232329201796,
+      "max_error_m": 1.0009232329201796,
+      "max_attitude_error_deg": 14.901341500944724,
+      "utilization_p95": 0.5790409215128921,
+      "max_input_fraction": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rms_torque_Nm": [
+        0.4002430638418198,
+        0.21928667149988565,
+        0.16354921260869554
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 12.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": true,
+      "final_error_m": 0.0028370272670976246,
+      "max_error_m": 0.028935445119266552,
+      "max_attitude_error_deg": 2.0224112896640705,
+      "utilization_p95": 0.3140865642557126,
+      "max_input_fraction": [
+        0.05294789822385539,
+        0.4478511060816993,
+        0.041855329809563864,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.046913037947370215,
+        0.19946800583023344,
+        0.003317456057049958
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 16.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0010669708247892,
+      "max_error_m": 1.0010669708247892,
+      "max_attitude_error_deg": 18.818607511639424,
+      "utilization_p95": 0.7050859441791022,
+      "max_input_fraction": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rms_torque_Nm": [
+        0.4909197675396982,
+        0.26456092747428667,
+        0.1925277119632676
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 16.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.005405890480654537,
+      "max_error_m": 0.043668076345839225,
+      "max_attitude_error_deg": 3.610463669901054,
+      "utilization_p95": 0.4255400614626769,
+      "max_input_fraction": [
+        0.1399983791612803,
+        0.7544365086471947,
+        0.11195810053192345,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.10271969886058864,
+        0.3473778911331143,
+        0.0090735711469893
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 20.0,
+      "controller": "flat_baseline",
+      "completed": false,
+      "failure": "more than 1 m from the reference",
+      "settled": false,
+      "final_error_m": 1.0023942191837916,
+      "max_error_m": 1.0023942191837916,
+      "max_attitude_error_deg": 22.397081938724295,
+      "utilization_p95": 0.775849583072958,
+      "max_input_fraction": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "rms_torque_Nm": [
+        0.5708990095725579,
+        0.3339694158014069,
+        0.25521677880500343
+      ]
+    },
+    {
+      "direction": "across",
+      "phase_rad": 1.5707963267948966,
+      "grade_deg": 20.0,
+      "controller": "terrain_aware",
+      "completed": true,
+      "failure": null,
+      "settled": false,
+      "final_error_m": 0.008928014378739193,
+      "max_error_m": 0.04120109864277709,
+      "max_attitude_error_deg": 2.7322147329805313,
+      "utilization_p95": 0.5323416155829092,
+      "max_input_fraction": [
+        0.37334770962386954,
+        0.7728511639890814,
+        0.08302475872632865,
+        0.0,
+        0.0
+      ],
+      "rms_torque_Nm": [
+        0.37495831031991167,
+        0.3315192942205949,
+        0.006744591046632955
+      ]
+    }
+  ]
+}

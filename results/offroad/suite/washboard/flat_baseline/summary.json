@@ -1,0 +1,127 @@
+{
+  "terrain": "washboard",
+  "controller": "flat_baseline",
+  "parameters": {
+    "mode": "flat_baseline",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0
+  },
+  "engine_version": "3.16.0",
+  "contact_mode": "analytic_clipped_floor",
+  "ground_model": "Tangent plane of the analytic terrain at the surface point nearest the wheel centre.",
+  "path": {
+    "distance_m": 1.8,
+    "heading_deg": 90.0,
+    "duration_s": 20.0,
+    "start_s": 0.5,
+    "profile": "cruise",
+    "ramp_s": 1.5,
+    "origin": [
+      0.0,
+      0.0
+    ],
+    "cruise_speed_m_s": 0.0972972972972973
+  },
+  "completed": true,
+  "failure": null,
+  "completed_duration_s": 23.500000000005738,
+  "requested_duration_s": 23.5,
+  "distance_along_path_m": 1.8123572567715727,
+  "final_cross_track_m": 0.06278982734435422,
+  "tracking": {
+    "rms_error_m": 0.19879621263604494,
+    "max_error_m": 0.4601108315480956,
+    "final_error_m": 0.0639942514047347,
+    "rms_error_while_moving_m": 0.21407851215515647
+  },
+  "attitude": {
+    "max_tilt_deg": 6.662512887849757,
+    "max_error_from_reference_deg": 6.662512887848661,
+    "rms_error_from_reference_deg": 2.817187621087004,
+    "final_error_from_reference_deg": 0.1277698730952998,
+    "heading_change_deg": 170.76634687492333
+  },
+  "ground": {
+    "max_slope_under_wheel_deg": 6.718881045927186,
+    "height_range_m": [
+      -0.002999695346362075,
+      0.002999931983744608
+    ],
+    "friction_range": [
+      0.7,
+      0.7
+    ]
+  },
+  "contact": {
+    "normal_load_fraction_min": 0.0,
+    "normal_load_fraction_max": 3.396224276229635,
+    "normal_load_fraction_std": 0.07370662996768725,
+    "unloaded_time_s": 0.04,
+    "utilization_mean": 0.15502318889944194,
+    "utilization_p95": 1.0,
+    "utilization_max": 1.0000000000000004,
+    "time_above_90pct_cone_s": 1.81,
+    "max_slip_speed_m_s": 0.45336897206821236,
+    "slip_distance_m": 0.011432672542517478,
+    "sliding_time_s": 0.085,
+    "friction_loss_J": 0.050417205613944555,
+    "estimated_friction_min": 0.7,
+    "normal_estimate_error_rms_deg": 0.7686475909968262,
+    "normal_estimate_error_max_deg": 9.401970580324459,
+    "support_time_share": {
+      "shell_A": 0.6594928617089282,
+      "shell_B": 0.26273172810568934,
+      "belt_A": 0.020669081610909867,
+      "belt_B": 0.05710632857447262
+    },
+    "support_handovers": 28,
+    "fork_ground_contact": false
+  },
+  "actuation": {
+    "max_input_fraction": [
+      0.4494906823924203,
+      1.0,
+      1.0,
+      0.885440338285826,
+      0.014837158130860265
+    ],
+    "saturated_time_fraction": 0.003617021276595745,
+    "rms_torque_Nm": [
+      0.10442310071704729,
+      0.05991156155052211,
+      0.05102778547096875
+    ],
+    "max_joint_speed_rad_s": [
+      2.736051031657713,
+      47.85970368791878,
+      36.52519008603937
+    ],
+    "joint_work_J": 6.426357193113477,
+    "unloaded_fade_time_s": 0.0
+  },
+  "settled_at_end": true,
+  "label": [
+    "washboard",
+    "flat_baseline",
+    0
+  ]
+}

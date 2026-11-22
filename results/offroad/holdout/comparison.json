@@ -1,0 +1,1578 @@
+{
+  "scope": "Not used for tuning. Simulated provisional model. Each case is run from each start phase.",
+  "start_phases_rad": [
+    0.3,
+    0.9,
+    2.2,
+    -1.0
+  ],
+  "cases": [
+    {
+      "label": "rough, new seed",
+      "terrain": "rough",
+      "changes": {
+        "seed": 41
+      }
+    },
+    {
+      "label": "bumps, new seed",
+      "terrain": "bumps",
+      "changes": {
+        "seed": 41
+      }
+    },
+    {
+      "label": "hills, diagonal travel",
+      "terrain": "hills",
+      "changes": {
+        "course": 35.0,
+        "travel": 35.0
+      }
+    },
+    {
+      "label": "washboard, shaft-driven",
+      "terrain": "washboard",
+      "changes": {
+        "course": 0.0,
+        "travel": 0.0
+      }
+    },
+    {
+      "label": "ramp 12 deg, shell-driven",
+      "terrain": "ramp",
+      "changes": {
+        "course": 90.0,
+        "travel": 90.0,
+        "options": {
+          "grade_deg": 12.0
+        },
+        "distance": 1.0,
+        "duration": 12.0
+      }
+    },
+    {
+      "label": "course, new seed, reversed",
+      "terrain": "course",
+      "changes": {
+        "seed": 41,
+        "course": 180.0,
+        "travel": 180.0
+      }
+    }
+  ],
+  "cost": {
+    "terms_and_the_value_that_costs_1": {
+      "rms_tracking_error_m": 0.03,
+      "max_tracking_error_m": 0.1,
+      "final_error_m": 0.02,
+      "max_attitude_error_deg": 4.0,
+      "impact_load_above_weight": 2.0,
+      "sliding_distance_m": 0.05
+    },
+    "failure_cost": 30.0
+  },
+  "overall": {
+    "flat_baseline": {
+      "completed": "22/24",
+      "mean_cost": 30.822
+    },
+    "terrain_aware": {
+      "completed": "24/24",
+      "mean_cost": 3.493
+    }
+  },
+  "results": {
+    "rough, new seed": {
+      "flat_baseline": {
+        "completed": "3/4",
+        "failures": [
+          "fork or platform touched the ground"
+        ],
+        "final_error_mm": {
+          "median": 168.44,
+          "worst": 500.33
+        },
+        "max_error_mm": {
+          "median": 285.765,
+          "worst": 500.33
+        },
+        "rms_error_mm": {
+          "median": 150.455,
+          "worst": 242.2
+        },
+        "max_attitude_error_deg": {
+          "median": 7.07,
+          "worst": 51.681
+        },
+        "friction_use_p95": {
+          "median": 0.095,
+          "worst": 1.0
+        },
+        "sliding_distance_mm": {
+          "median": 20.035,
+          "worst": 24.02
+        },
+        "largest_normal_load_x_weight": {
+          "median": 5.43,
+          "worst": 5.47
+        },
+        "heading_change_deg_abs": {
+          "median": 69.1,
+          "worst": 135.6
+        },
+        "mean_cost": 30.87,
+        "runs": [
+          {
+            "completed": false,
+            "failure": "fork or platform touched the ground",
+            "final_error_mm": 500.33,
+            "max_error_mm": 500.33,
+            "rms_error_mm": 242.2,
+            "max_attitude_error_deg": 51.681,
+            "heading_change_deg": -135.6,
+            "max_slope_under_wheel_deg": 3.74,
+            "normal_load_range_x_weight": [
+              0.0,
+              5.46
+            ],
+            "friction_use_p95": 1.0,
+            "sliding_distance_mm": 21.08,
+            "normal_estimate_error_rms_deg": 1.23,
+            "saturated_time_fraction": 0.0163,
+            "support_handovers": 14,
+            "cost": 65.729,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 162.59,
+            "max_error_mm": 206.07,
+            "rms_error_mm": 129.98,
+            "max_attitude_error_deg": 3.504,
+            "heading_change_deg": -105.8,
+            "max_slope_under_wheel_deg": 3.4,
+            "normal_load_range_x_weight": [
+              0.0,
+              5.4
+            ],
+            "friction_use_p95": 0.092,
+            "sliding_distance_mm": 24.02,
+            "normal_estimate_error_rms_deg": 0.264,
+            "saturated_time_fraction": 0.0011,
+            "support_handovers": 37,
+            "cost": 18.077,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 169.49,
+            "max_error_mm": 288.85,
+            "rms_error_mm": 150.59,
+            "max_attitude_error_deg": 7.202,
+            "heading_change_deg": 21.3,
+            "max_slope_under_wheel_deg": 3.59,
+            "normal_load_range_x_weight": [
+              0.0,
+              5.47
+            ],
+            "friction_use_p95": 0.083,
+            "sliding_distance_mm": 18.99,
+            "normal_estimate_error_rms_deg": 0.086,
+            "saturated_time_fraction": 0.004,
+            "support_handovers": 13,
+            "cost": 20.799,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 167.39,
+            "max_error_mm": 282.68,
+            "rms_error_mm": 150.32,
+            "max_attitude_error_deg": 6.938,
+            "heading_change_deg": 32.4,
+            "max_slope_under_wheel_deg": 3.6,
+            "normal_load_range_x_weight": [
+              0.0,
+              2.47
+            ],
+            "friction_use_p95": 0.097,
+            "sliding_distance_mm": 10.1,
+            "normal_estimate_error_rms_deg": 0.101,
+            "saturated_time_fraction": 0.0043,
+            "support_handovers": 27,
+            "cost": 18.876,
+            "start_phase_rad": -1.0
+          }
+        ]
+      },
+      "terrain_aware": {
+        "completed": "4/4",
+        "failures": [],
+        "final_error_mm": {
+          "median": 2.985,
+          "worst": 11.95
+        },
+        "max_error_mm": {
+          "median": 39.21,
+          "worst": 40.0
+        },
+        "rms_error_mm": {
+          "median": 15.12,
+          "worst": 15.64
+        },
+        "max_attitude_error_deg": {
+          "median": 2.393,
+          "worst": 2.539
+        },
+        "friction_use_p95": {
+          "median": 0.107,
+          "worst": 0.118
+        },
+        "sliding_distance_mm": {
+          "median": 9.01,
+          "worst": 9.67
+        },
+        "largest_normal_load_x_weight": {
+          "median": 1.835,
+          "worst": 3.34
+        },
+        "heading_change_deg_abs": {
+          "median": 81.1,
+          "worst": 135.8
+        },
+        "mean_cost": 2.441,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 2.22,
+            "max_error_mm": 40.0,
+            "rms_error_mm": 13.33,
+            "max_attitude_error_deg": 2.506,
+            "heading_change_deg": -4.2,
+            "max_slope_under_wheel_deg": 4.19,
+            "normal_load_range_x_weight": [
+              0.93,
+              1.66
+            ],
+            "friction_use_p95": 0.118,
+            "sliding_distance_mm": 5.55,
+            "normal_estimate_error_rms_deg": 0.582,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 41,
+            "cost": 2.021,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 11.95,
+            "max_error_mm": 39.65,
+            "rms_error_mm": 14.74,
+            "max_attitude_error_deg": 2.539,
+            "heading_change_deg": -135.8,
+            "max_slope_under_wheel_deg": 4.13,
+            "normal_load_range_x_weight": [
+              0.0,
+              1.86
+            ],
+            "friction_use_p95": 0.101,
+            "sliding_distance_mm": 9.67,
+            "normal_estimate_error_rms_deg": 0.569,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 39,
+            "cost": 2.743,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 3.75,
+            "max_error_mm": 31.24,
+            "rms_error_mm": 15.5,
+            "max_attitude_error_deg": 1.844,
+            "heading_change_deg": 78.3,
+            "max_slope_under_wheel_deg": 4.18,
+            "normal_load_range_x_weight": [
+              0.0,
+              3.34
+            ],
+            "friction_use_p95": 0.11,
+            "sliding_distance_mm": 9.54,
+            "normal_estimate_error_rms_deg": 0.493,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 32,
+            "cost": 2.841,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 2.16,
+            "max_error_mm": 38.77,
+            "rms_error_mm": 15.64,
+            "max_attitude_error_deg": 2.281,
+            "heading_change_deg": 83.9,
+            "max_slope_under_wheel_deg": 4.19,
+            "normal_load_range_x_weight": [
+              0.0,
+              1.81
+            ],
+            "friction_use_p95": 0.104,
+            "sliding_distance_mm": 8.48,
+            "normal_estimate_error_rms_deg": 0.531,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 29,
+            "cost": 2.16,
+            "start_phase_rad": -1.0
+          }
+        ]
+      }
+    },
+    "bumps, new seed": {
+      "flat_baseline": {
+        "completed": "4/4",
+        "failures": [],
+        "final_error_mm": {
+          "median": 390.435,
+          "worst": 466.07
+        },
+        "max_error_mm": {
+          "median": 505.0,
+          "worst": 587.46
+        },
+        "rms_error_mm": {
+          "median": 301.46,
+          "worst": 332.19
+        },
+        "max_attitude_error_deg": {
+          "median": 6.301,
+          "worst": 7.614
+        },
+        "friction_use_p95": {
+          "median": 0.148,
+          "worst": 0.262
+        },
+        "sliding_distance_mm": {
+          "median": 31.61,
+          "worst": 77.83
+        },
+        "largest_normal_load_x_weight": {
+          "median": 6.475,
+          "worst": 8.31
+        },
+        "heading_change_deg_abs": {
+          "median": 115.5,
+          "worst": 186.3
+        },
+        "mean_cost": 28.106,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 90.62,
+            "max_error_mm": 444.54,
+            "rms_error_mm": 241.97,
+            "max_attitude_error_deg": 6.068,
+            "heading_change_deg": 59.8,
+            "max_slope_under_wheel_deg": 5.77,
+            "normal_load_range_x_weight": [
+              0.0,
+              7.61
+            ],
+            "friction_use_p95": 0.148,
+            "sliding_distance_mm": 41.04,
+            "normal_estimate_error_rms_deg": 0.14,
+            "saturated_time_fraction": 0.0091,
+            "support_handovers": 28,
+            "cost": 22.684,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 466.07,
+            "max_error_mm": 544.9,
+            "rms_error_mm": 332.19,
+            "max_attitude_error_deg": 6.535,
+            "heading_change_deg": -4.6,
+            "max_slope_under_wheel_deg": 6.25,
+            "normal_load_range_x_weight": [
+              0.0,
+              2.06
+            ],
+            "friction_use_p95": 0.262,
+            "sliding_distance_mm": 18.42,
+            "normal_estimate_error_rms_deg": 0.63,
+            "saturated_time_fraction": 0.0094,
+            "support_handovers": 37,
+            "cost": 27.981,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 325.09,
+            "max_error_mm": 587.46,
+            "rms_error_mm": 303.16,
+            "max_attitude_error_deg": 6.049,
+            "heading_change_deg": 171.2,
+            "max_slope_under_wheel_deg": 5.79,
+            "normal_load_range_x_weight": [
+              0.0,
+              8.31
+            ],
+            "friction_use_p95": 0.149,
+            "sliding_distance_mm": 77.83,
+            "normal_estimate_error_rms_deg": 0.177,
+            "saturated_time_fraction": 0.0113,
+            "support_handovers": 32,
+            "cost": 32.599,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 455.78,
+            "max_error_mm": 465.1,
+            "rms_error_mm": 299.76,
+            "max_attitude_error_deg": 7.614,
+            "heading_change_deg": 186.3,
+            "max_slope_under_wheel_deg": 5.34,
+            "normal_load_range_x_weight": [
+              0.0,
+              5.34
+            ],
+            "friction_use_p95": 0.12,
+            "sliding_distance_mm": 22.18,
+            "normal_estimate_error_rms_deg": 0.095,
+            "saturated_time_fraction": 0.0049,
+            "support_handovers": 17,
+            "cost": 29.158,
+            "start_phase_rad": -1.0
+          }
+        ]
+      },
+      "terrain_aware": {
+        "completed": "4/4",
+        "failures": [],
+        "final_error_mm": {
+          "median": 3.36,
+          "worst": 4.19
+        },
+        "max_error_mm": {
+          "median": 53.465,
+          "worst": 71.5
+        },
+        "rms_error_mm": {
+          "median": 28.235,
+          "worst": 30.98
+        },
+        "max_attitude_error_deg": {
+          "median": 1.493,
+          "worst": 2.868
+        },
+        "friction_use_p95": {
+          "median": 0.204,
+          "worst": 0.212
+        },
+        "sliding_distance_mm": {
+          "median": 6.19,
+          "worst": 7.69
+        },
+        "largest_normal_load_x_weight": {
+          "median": 3.245,
+          "worst": 3.32
+        },
+        "heading_change_deg_abs": {
+          "median": 19.65,
+          "worst": 20.2
+        },
+        "mean_cost": 3.208,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 2.86,
+            "max_error_mm": 71.5,
+            "rms_error_mm": 30.98,
+            "max_attitude_error_deg": 2.868,
+            "heading_change_deg": 19.6,
+            "max_slope_under_wheel_deg": 8.19,
+            "normal_load_range_x_weight": [
+              0.0,
+              3.22
+            ],
+            "friction_use_p95": 0.206,
+            "sliding_distance_mm": 7.69,
+            "normal_estimate_error_rms_deg": 0.473,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 20,
+            "cost": 3.872,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 3.14,
+            "max_error_mm": 51.94,
+            "rms_error_mm": 27.51,
+            "max_attitude_error_deg": 1.514,
+            "heading_change_deg": 5.9,
+            "max_slope_under_wheel_deg": 8.2,
+            "normal_load_range_x_weight": [
+              0.0,
+              3.27
+            ],
+            "friction_use_p95": 0.2,
+            "sliding_distance_mm": 6.73,
+            "normal_estimate_error_rms_deg": 0.171,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 25,
+            "cost": 3.243,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 3.58,
+            "max_error_mm": 53.55,
+            "rms_error_mm": 28.18,
+            "max_attitude_error_deg": 1.472,
+            "heading_change_deg": -19.7,
+            "max_slope_under_wheel_deg": 8.2,
+            "normal_load_range_x_weight": [
+              0.0,
+              3.32
+            ],
+            "friction_use_p95": 0.201,
+            "sliding_distance_mm": 5.65,
+            "normal_estimate_error_rms_deg": 0.22,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 20,
+            "cost": 3.292,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 4.19,
+            "max_error_mm": 53.38,
+            "rms_error_mm": 28.29,
+            "max_attitude_error_deg": 1.087,
+            "heading_change_deg": -20.2,
+            "max_slope_under_wheel_deg": 8.2,
+            "normal_load_range_x_weight": [
+              0.0,
+              1.72
+            ],
+            "friction_use_p95": 0.212,
+            "sliding_distance_mm": 5.25,
+            "normal_estimate_error_rms_deg": 0.217,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 26,
+            "cost": 2.423,
+            "start_phase_rad": -1.0
+          }
+        ]
+      }
+    },
+    "hills, diagonal travel": {
+      "flat_baseline": {
+        "completed": "3/4",
+        "failures": [
+          "fork or platform touched the ground"
+        ],
+        "final_error_mm": {
+          "median": 655.25,
+          "worst": 673.93
+        },
+        "max_error_mm": {
+          "median": 684.945,
+          "worst": 714.83
+        },
+        "rms_error_mm": {
+          "median": 436.505,
+          "worst": 464.9
+        },
+        "max_attitude_error_deg": {
+          "median": 7.776,
+          "worst": 52.966
+        },
+        "friction_use_p95": {
+          "median": 0.597,
+          "worst": 1.0
+        },
+        "sliding_distance_mm": {
+          "median": 46.59,
+          "worst": 183.38
+        },
+        "largest_normal_load_x_weight": {
+          "median": 4.415,
+          "worst": 7.1
+        },
+        "heading_change_deg_abs": {
+          "median": 83.55,
+          "worst": 228.0
+        },
+        "mean_cost": 40.952,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 650.69,
+            "max_error_mm": 710.04,
+            "rms_error_mm": 464.9,
+            "max_attitude_error_deg": 7.874,
+            "heading_change_deg": 27.9,
+            "max_slope_under_wheel_deg": 9.13,
+            "normal_load_range_x_weight": [
+              0.0,
+              4.06
+            ],
+            "friction_use_p95": 1.0,
+            "sliding_distance_mm": 58.49,
+            "normal_estimate_error_rms_deg": 1.379,
+            "saturated_time_fraction": 0.007,
+            "support_handovers": 44,
+            "cost": 31.766,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 673.93,
+            "max_error_mm": 714.83,
+            "rms_error_mm": 462.55,
+            "max_attitude_error_deg": 7.678,
+            "heading_change_deg": 35.8,
+            "max_slope_under_wheel_deg": 9.08,
+            "normal_load_range_x_weight": [
+              0.0,
+              3.21
+            ],
+            "friction_use_p95": 0.194,
+            "sliding_distance_mm": 12.11,
+            "normal_estimate_error_rms_deg": 0.186,
+            "saturated_time_fraction": 0.0077,
+            "support_handovers": 33,
+            "cost": 30.415,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 659.81,
+            "max_error_mm": 659.85,
+            "rms_error_mm": 410.46,
+            "max_attitude_error_deg": 6.601,
+            "heading_change_deg": -131.3,
+            "max_slope_under_wheel_deg": 8.69,
+            "normal_load_range_x_weight": [
+              0.0,
+              7.1
+            ],
+            "friction_use_p95": 1.0,
+            "sliding_distance_mm": 183.38,
+            "normal_estimate_error_rms_deg": 1.195,
+            "saturated_time_fraction": 0.0549,
+            "support_handovers": 156,
+            "cost": 34.967,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": false,
+            "failure": "fork or platform touched the ground",
+            "final_error_mm": 470.11,
+            "max_error_mm": 506.52,
+            "rms_error_mm": 270.55,
+            "max_attitude_error_deg": 52.966,
+            "heading_change_deg": -228.0,
+            "max_slope_under_wheel_deg": 8.76,
+            "normal_load_range_x_weight": [
+              0.0,
+              4.77
+            ],
+            "friction_use_p95": 0.178,
+            "sliding_distance_mm": 34.69,
+            "normal_estimate_error_rms_deg": 0.372,
+            "saturated_time_fraction": 0.0235,
+            "support_handovers": 29,
+            "cost": 66.661,
+            "start_phase_rad": -1.0
+          }
+        ]
+      },
+      "terrain_aware": {
+        "completed": "4/4",
+        "failures": [],
+        "final_error_mm": {
+          "median": 6.025,
+          "worst": 11.66
+        },
+        "max_error_mm": {
+          "median": 79.215,
+          "worst": 136.79
+        },
+        "rms_error_mm": {
+          "median": 32.92,
+          "worst": 42.53
+        },
+        "max_attitude_error_deg": {
+          "median": 2.718,
+          "worst": 3.997
+        },
+        "friction_use_p95": {
+          "median": 0.228,
+          "worst": 0.824
+        },
+        "sliding_distance_mm": {
+          "median": 22.0,
+          "worst": 35.1
+        },
+        "largest_normal_load_x_weight": {
+          "median": 4.78,
+          "worst": 7.01
+        },
+        "heading_change_deg_abs": {
+          "median": 87.75,
+          "worst": 120.9
+        },
+        "mean_cost": 5.463,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 6.09,
+            "max_error_mm": 58.33,
+            "rms_error_mm": 31.3,
+            "max_attitude_error_deg": 2.621,
+            "heading_change_deg": 77.4,
+            "max_slope_under_wheel_deg": 8.99,
+            "normal_load_range_x_weight": [
+              0.0,
+              3.38
+            ],
+            "friction_use_p95": 0.824,
+            "sliding_distance_mm": 8.59,
+            "normal_estimate_error_rms_deg": 0.297,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 32,
+            "cost": 3.95,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 11.66,
+            "max_error_mm": 74.88,
+            "rms_error_mm": 34.54,
+            "max_attitude_error_deg": 2.816,
+            "heading_change_deg": 98.1,
+            "max_slope_under_wheel_deg": 8.92,
+            "normal_load_range_x_weight": [
+              0.0,
+              3.14
+            ],
+            "friction_use_p95": 0.228,
+            "sliding_distance_mm": 16.04,
+            "normal_estimate_error_rms_deg": 0.519,
+            "saturated_time_fraction": 0.0002,
+            "support_handovers": 50,
+            "cost": 4.578,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 5.96,
+            "max_error_mm": 83.55,
+            "rms_error_mm": 31.19,
+            "max_attitude_error_deg": 1.895,
+            "heading_change_deg": -120.9,
+            "max_slope_under_wheel_deg": 8.96,
+            "normal_load_range_x_weight": [
+              0.0,
+              7.01
+            ],
+            "friction_use_p95": 0.228,
+            "sliding_distance_mm": 35.1,
+            "normal_estimate_error_rms_deg": 0.676,
+            "saturated_time_fraction": 0.0072,
+            "support_handovers": 55,
+            "cost": 6.353,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 0.74,
+            "max_error_mm": 136.79,
+            "rms_error_mm": 42.53,
+            "max_attitude_error_deg": 3.997,
+            "heading_change_deg": 29.8,
+            "max_slope_under_wheel_deg": 8.85,
+            "normal_load_range_x_weight": [
+              0.0,
+              6.18
+            ],
+            "friction_use_p95": 0.226,
+            "sliding_distance_mm": 27.96,
+            "normal_estimate_error_rms_deg": 0.32,
+            "saturated_time_fraction": 0.0153,
+            "support_handovers": 49,
+            "cost": 6.97,
+            "start_phase_rad": -1.0
+          }
+        ]
+      }
+    },
+    "washboard, shaft-driven": {
+      "flat_baseline": {
+        "completed": "4/4",
+        "failures": [],
+        "final_error_mm": {
+          "median": 555.025,
+          "worst": 716.18
+        },
+        "max_error_mm": {
+          "median": 555.17,
+          "worst": 716.18
+        },
+        "rms_error_mm": {
+          "median": 288.35,
+          "worst": 378.49
+        },
+        "max_attitude_error_deg": {
+          "median": 6.391,
+          "worst": 6.967
+        },
+        "friction_use_p95": {
+          "median": 0.147,
+          "worst": 0.321
+        },
+        "sliding_distance_mm": {
+          "median": 3.13,
+          "worst": 3.83
+        },
+        "largest_normal_load_x_weight": {
+          "median": 2.225,
+          "worst": 2.38
+        },
+        "heading_change_deg_abs": {
+          "median": 0.05,
+          "worst": 1.0
+        },
+        "mean_cost": 23.263,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 716.18,
+            "max_error_mm": 716.18,
+            "rms_error_mm": 378.49,
+            "max_attitude_error_deg": 6.967,
+            "heading_change_deg": 0.1,
+            "max_slope_under_wheel_deg": 6.72,
+            "normal_load_range_x_weight": [
+              0.0,
+              2.11
+            ],
+            "friction_use_p95": 0.321,
+            "sliding_distance_mm": 2.66,
+            "normal_estimate_error_rms_deg": 1.249,
+            "saturated_time_fraction": 0.0026,
+            "support_handovers": 23,
+            "cost": 29.514,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 552.64,
+            "max_error_mm": 552.93,
+            "rms_error_mm": 287.96,
+            "max_attitude_error_deg": 6.303,
+            "heading_change_deg": -0.0,
+            "max_slope_under_wheel_deg": 6.72,
+            "normal_load_range_x_weight": [
+              0.0,
+              2.29
+            ],
+            "friction_use_p95": 0.144,
+            "sliding_distance_mm": 3.83,
+            "normal_estimate_error_rms_deg": 0.434,
+            "saturated_time_fraction": 0.0036,
+            "support_handovers": 19,
+            "cost": 27.424,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 0.61,
+            "max_error_mm": 270.49,
+            "rms_error_mm": 121.04,
+            "max_attitude_error_deg": 4.573,
+            "heading_change_deg": -0.0,
+            "max_slope_under_wheel_deg": 6.72,
+            "normal_load_range_x_weight": [
+              0.0,
+              2.16
+            ],
+            "friction_use_p95": 0.107,
+            "sliding_distance_mm": 2.07,
+            "normal_estimate_error_rms_deg": 0.581,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 24,
+            "cost": 8.536,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 557.41,
+            "max_error_mm": 557.41,
+            "rms_error_mm": 288.74,
+            "max_attitude_error_deg": 6.479,
+            "heading_change_deg": -1.0,
+            "max_slope_under_wheel_deg": 6.72,
+            "normal_load_range_x_weight": [
+              0.0,
+              2.38
+            ],
+            "friction_use_p95": 0.151,
+            "sliding_distance_mm": 3.6,
+            "normal_estimate_error_rms_deg": 1.499,
+            "saturated_time_fraction": 0.0023,
+            "support_handovers": 22,
+            "cost": 27.579,
+            "start_phase_rad": -1.0
+          }
+        ]
+      },
+      "terrain_aware": {
+        "completed": "4/4",
+        "failures": [],
+        "final_error_mm": {
+          "median": 0.915,
+          "worst": 1.1
+        },
+        "max_error_mm": {
+          "median": 114.845,
+          "worst": 176.82
+        },
+        "rms_error_mm": {
+          "median": 30.23,
+          "worst": 47.02
+        },
+        "max_attitude_error_deg": {
+          "median": 3.093,
+          "worst": 3.649
+        },
+        "friction_use_p95": {
+          "median": 0.18,
+          "worst": 0.19
+        },
+        "sliding_distance_mm": {
+          "median": 3.085,
+          "worst": 3.38
+        },
+        "largest_normal_load_x_weight": {
+          "median": 2.02,
+          "worst": 2.31
+        },
+        "heading_change_deg_abs": {
+          "median": 0.65,
+          "worst": 4.6
+        },
+        "mean_cost": 3.746,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 0.8,
+            "max_error_mm": 176.82,
+            "rms_error_mm": 47.02,
+            "max_attitude_error_deg": 3.649,
+            "heading_change_deg": -4.6,
+            "max_slope_under_wheel_deg": 6.72,
+            "normal_load_range_x_weight": [
+              0.0,
+              1.82
+            ],
+            "friction_use_p95": 0.19,
+            "sliding_distance_mm": 2.91,
+            "normal_estimate_error_rms_deg": 0.501,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 32,
+            "cost": 4.758,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 1.1,
+            "max_error_mm": 84.83,
+            "rms_error_mm": 23.36,
+            "max_attitude_error_deg": 2.991,
+            "heading_change_deg": 1.2,
+            "max_slope_under_wheel_deg": 6.72,
+            "normal_load_range_x_weight": [
+              0.0,
+              2.31
+            ],
+            "friction_use_p95": 0.179,
+            "sliding_distance_mm": 3.38,
+            "normal_estimate_error_rms_deg": 0.629,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 29,
+            "cost": 3.153,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 0.99,
+            "max_error_mm": 88.9,
+            "rms_error_mm": 23.8,
+            "max_attitude_error_deg": 2.908,
+            "heading_change_deg": -0.1,
+            "max_slope_under_wheel_deg": 6.72,
+            "normal_load_range_x_weight": [
+              0.0,
+              1.98
+            ],
+            "friction_use_p95": 0.179,
+            "sliding_distance_mm": 3.17,
+            "normal_estimate_error_rms_deg": 0.606,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 34,
+            "cost": 3.012,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 0.84,
+            "max_error_mm": 140.79,
+            "rms_error_mm": 36.66,
+            "max_attitude_error_deg": 3.195,
+            "heading_change_deg": -0.1,
+            "max_slope_under_wheel_deg": 6.72,
+            "normal_load_range_x_weight": [
+              0.0,
+              2.06
+            ],
+            "friction_use_p95": 0.182,
+            "sliding_distance_mm": 3.0,
+            "normal_estimate_error_rms_deg": 0.523,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 28,
+            "cost": 4.06,
+            "start_phase_rad": -1.0
+          }
+        ]
+      }
+    },
+    "ramp 12 deg, shell-driven": {
+      "flat_baseline": {
+        "completed": "4/4",
+        "failures": [],
+        "final_error_mm": {
+          "median": 767.095,
+          "worst": 767.84
+        },
+        "max_error_mm": {
+          "median": 769.52,
+          "worst": 773.17
+        },
+        "rms_error_mm": {
+          "median": 492.445,
+          "worst": 492.66
+        },
+        "max_attitude_error_deg": {
+          "median": 7.716,
+          "worst": 8.043
+        },
+        "friction_use_p95": {
+          "median": 0.191,
+          "worst": 0.193
+        },
+        "sliding_distance_mm": {
+          "median": 3.54,
+          "worst": 3.84
+        },
+        "largest_normal_load_x_weight": {
+          "median": 1.29,
+          "worst": 1.64
+        },
+        "heading_change_deg_abs": {
+          "median": 91.4,
+          "worst": 93.9
+        },
+        "mean_cost": 29.847,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 759.73,
+            "max_error_mm": 766.99,
+            "rms_error_mm": 491.53,
+            "max_attitude_error_deg": 6.823,
+            "heading_change_deg": 90.0,
+            "max_slope_under_wheel_deg": 7.49,
+            "normal_load_range_x_weight": [
+              0.61,
+              1.27
+            ],
+            "friction_use_p95": 0.171,
+            "sliding_distance_mm": 3.81,
+            "normal_estimate_error_rms_deg": 0.034,
+            "saturated_time_fraction": 0.0045,
+            "support_handovers": 0,
+            "cost": 29.585,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 766.74,
+            "max_error_mm": 769.63,
+            "rms_error_mm": 492.61,
+            "max_attitude_error_deg": 7.672,
+            "heading_change_deg": 93.9,
+            "max_slope_under_wheel_deg": 8.38,
+            "normal_load_range_x_weight": [
+              0.56,
+              1.29
+            ],
+            "friction_use_p95": 0.189,
+            "sliding_distance_mm": 3.24,
+            "normal_estimate_error_rms_deg": 0.039,
+            "saturated_time_fraction": 0.0045,
+            "support_handovers": 7,
+            "cost": 29.822,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 767.45,
+            "max_error_mm": 769.41,
+            "rms_error_mm": 492.66,
+            "max_attitude_error_deg": 7.759,
+            "heading_change_deg": -92.8,
+            "max_slope_under_wheel_deg": 8.45,
+            "normal_load_range_x_weight": [
+              0.55,
+              1.29
+            ],
+            "friction_use_p95": 0.193,
+            "sliding_distance_mm": 3.27,
+            "normal_estimate_error_rms_deg": 0.041,
+            "saturated_time_fraction": 0.0048,
+            "support_handovers": 7,
+            "cost": 29.843,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 767.84,
+            "max_error_mm": 773.17,
+            "rms_error_mm": 492.28,
+            "max_attitude_error_deg": 8.043,
+            "heading_change_deg": -88.9,
+            "max_slope_under_wheel_deg": 8.52,
+            "normal_load_range_x_weight": [
+              0.0,
+              1.64
+            ],
+            "friction_use_p95": 0.193,
+            "sliding_distance_mm": 3.84,
+            "normal_estimate_error_rms_deg": 0.034,
+            "saturated_time_fraction": 0.0048,
+            "support_handovers": 11,
+            "cost": 30.139,
+            "start_phase_rad": -1.0
+          }
+        ]
+      },
+      "terrain_aware": {
+        "completed": "4/4",
+        "failures": [],
+        "final_error_mm": {
+          "median": 30.07,
+          "worst": 32.11
+        },
+        "max_error_mm": {
+          "median": 39.24,
+          "worst": 40.11
+        },
+        "rms_error_mm": {
+          "median": 25.39,
+          "worst": 25.91
+        },
+        "max_attitude_error_deg": {
+          "median": 1.15,
+          "worst": 1.293
+        },
+        "friction_use_p95": {
+          "median": 0.299,
+          "worst": 0.299
+        },
+        "sliding_distance_mm": {
+          "median": 5.665,
+          "worst": 7.33
+        },
+        "largest_normal_load_x_weight": {
+          "median": 1.275,
+          "worst": 1.74
+        },
+        "heading_change_deg_abs": {
+          "median": 14.65,
+          "worst": 31.1
+        },
+        "mean_cost": 2.944,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 2.16,
+            "max_error_mm": 40.11,
+            "rms_error_mm": 23.8,
+            "max_attitude_error_deg": 0.545,
+            "heading_change_deg": -31.1,
+            "max_slope_under_wheel_deg": 11.84,
+            "normal_load_range_x_weight": [
+              0.98,
+              1.0
+            ],
+            "friction_use_p95": 0.299,
+            "sliding_distance_mm": 4.09,
+            "normal_estimate_error_rms_deg": 0.045,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 0,
+            "cost": 1.52,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 28.79,
+            "max_error_mm": 39.34,
+            "rms_error_mm": 25.28,
+            "max_attitude_error_deg": 1.293,
+            "heading_change_deg": -15.6,
+            "max_slope_under_wheel_deg": 11.84,
+            "normal_load_range_x_weight": [
+              0.96,
+              1.19
+            ],
+            "friction_use_p95": 0.299,
+            "sliding_distance_mm": 5.16,
+            "normal_estimate_error_rms_deg": 0.409,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 12,
+            "cost": 3.199,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 32.11,
+            "max_error_mm": 39.14,
+            "rms_error_mm": 25.91,
+            "max_attitude_error_deg": 1.14,
+            "heading_change_deg": 13.7,
+            "max_slope_under_wheel_deg": 11.84,
+            "normal_load_range_x_weight": [
+              0.0,
+              1.74
+            ],
+            "friction_use_p95": 0.299,
+            "sliding_distance_mm": 7.33,
+            "normal_estimate_error_rms_deg": 0.455,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 14,
+            "cost": 3.66,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 31.35,
+            "max_error_mm": 38.75,
+            "rms_error_mm": 25.5,
+            "max_attitude_error_deg": 1.16,
+            "heading_change_deg": 12.4,
+            "max_slope_under_wheel_deg": 11.84,
+            "normal_load_range_x_weight": [
+              0.95,
+              1.36
+            ],
+            "friction_use_p95": 0.298,
+            "sliding_distance_mm": 6.17,
+            "normal_estimate_error_rms_deg": 0.479,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 13,
+            "cost": 3.397,
+            "start_phase_rad": -1.0
+          }
+        ]
+      }
+    },
+    "course, new seed, reversed": {
+      "flat_baseline": {
+        "completed": "4/4",
+        "failures": [],
+        "final_error_mm": {
+          "median": 72.005,
+          "worst": 126.15
+        },
+        "max_error_mm": {
+          "median": 771.82,
+          "worst": 930.83
+        },
+        "rms_error_mm": {
+          "median": 415.275,
+          "worst": 425.23
+        },
+        "max_attitude_error_deg": {
+          "median": 9.558,
+          "worst": 40.149
+        },
+        "friction_use_p95": {
+          "median": 0.211,
+          "worst": 0.544
+        },
+        "sliding_distance_mm": {
+          "median": 85.5,
+          "worst": 139.05
+        },
+        "largest_normal_load_x_weight": {
+          "median": 7.465,
+          "worst": 18.63
+        },
+        "heading_change_deg_abs": {
+          "median": 250.3,
+          "worst": 611.0
+        },
+        "mean_cost": 31.893,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 126.15,
+            "max_error_mm": 930.83,
+            "rms_error_mm": 410.06,
+            "max_attitude_error_deg": 10.151,
+            "heading_change_deg": -267.9,
+            "max_slope_under_wheel_deg": 6.86,
+            "normal_load_range_x_weight": [
+              0.0,
+              4.31
+            ],
+            "friction_use_p95": 0.544,
+            "sliding_distance_mm": 139.05,
+            "normal_estimate_error_rms_deg": 1.099,
+            "saturated_time_fraction": 0.0292,
+            "support_handovers": 177,
+            "cost": 32.591,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 20.42,
+            "max_error_mm": 772.91,
+            "rms_error_mm": 406.36,
+            "max_attitude_error_deg": 8.966,
+            "heading_change_deg": -611.0,
+            "max_slope_under_wheel_deg": 6.86,
+            "normal_load_range_x_weight": [
+              0.0,
+              6.57
+            ],
+            "friction_use_p95": 0.175,
+            "sliding_distance_mm": 99.13,
+            "normal_estimate_error_rms_deg": 0.567,
+            "saturated_time_fraction": 0.0168,
+            "support_handovers": 48,
+            "cost": 25.757,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 123.59,
+            "max_error_mm": 770.73,
+            "rms_error_mm": 420.49,
+            "max_attitude_error_deg": 7.408,
+            "heading_change_deg": -232.7,
+            "max_slope_under_wheel_deg": 6.86,
+            "normal_load_range_x_weight": [
+              0.0,
+              8.36
+            ],
+            "friction_use_p95": 0.187,
+            "sliding_distance_mm": 49.17,
+            "normal_estimate_error_rms_deg": 0.604,
+            "saturated_time_fraction": 0.0073,
+            "support_handovers": 73,
+            "cost": 30.404,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 17.27,
+            "max_error_mm": 770.48,
+            "rms_error_mm": 425.23,
+            "max_attitude_error_deg": 40.149,
+            "heading_change_deg": -98.8,
+            "max_slope_under_wheel_deg": 6.86,
+            "normal_load_range_x_weight": [
+              0.0,
+              18.63
+            ],
+            "friction_use_p95": 0.235,
+            "sliding_distance_mm": 71.87,
+            "normal_estimate_error_rms_deg": 0.554,
+            "saturated_time_fraction": 0.0238,
+            "support_handovers": 68,
+            "cost": 38.819,
+            "start_phase_rad": -1.0
+          }
+        ]
+      },
+      "terrain_aware": {
+        "completed": "4/4",
+        "failures": [],
+        "final_error_mm": {
+          "median": 2.515,
+          "worst": 5.24
+        },
+        "max_error_mm": {
+          "median": 64.965,
+          "worst": 152.4
+        },
+        "rms_error_mm": {
+          "median": 19.175,
+          "worst": 32.54
+        },
+        "max_attitude_error_deg": {
+          "median": 3.046,
+          "worst": 3.652
+        },
+        "friction_use_p95": {
+          "median": 0.232,
+          "worst": 0.241
+        },
+        "sliding_distance_mm": {
+          "median": 9.89,
+          "worst": 12.77
+        },
+        "largest_normal_load_x_weight": {
+          "median": 2.05,
+          "worst": 2.26
+        },
+        "heading_change_deg_abs": {
+          "median": 13.2,
+          "worst": 76.4
+        },
+        "mean_cost": 3.159,
+        "runs": [
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 5.24,
+            "max_error_mm": 39.22,
+            "rms_error_mm": 16.52,
+            "max_attitude_error_deg": 2.797,
+            "heading_change_deg": -17.0,
+            "max_slope_under_wheel_deg": 6.86,
+            "normal_load_range_x_weight": [
+              0.0,
+              2.12
+            ],
+            "friction_use_p95": 0.224,
+            "sliding_distance_mm": 9.62,
+            "normal_estimate_error_rms_deg": 0.283,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 47,
+            "cost": 2.659,
+            "start_phase_rad": 0.3
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 1.91,
+            "max_error_mm": 83.81,
+            "rms_error_mm": 20.84,
+            "max_attitude_error_deg": 3.294,
+            "heading_change_deg": 76.4,
+            "max_slope_under_wheel_deg": 6.86,
+            "normal_load_range_x_weight": [
+              0.0,
+              1.98
+            ],
+            "friction_use_p95": 0.241,
+            "sliding_distance_mm": 12.77,
+            "normal_estimate_error_rms_deg": 0.47,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 59,
+            "cost": 3.197,
+            "start_phase_rad": 0.9
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 2.9,
+            "max_error_mm": 152.4,
+            "rms_error_mm": 32.54,
+            "max_attitude_error_deg": 3.652,
+            "heading_change_deg": -7.6,
+            "max_slope_under_wheel_deg": 6.86,
+            "normal_load_range_x_weight": [
+              0.0,
+              2.26
+            ],
+            "friction_use_p95": 0.24,
+            "sliding_distance_mm": 10.16,
+            "normal_estimate_error_rms_deg": 0.404,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 58,
+            "cost": 4.501,
+            "start_phase_rad": 2.2
+          },
+          {
+            "completed": true,
+            "failure": null,
+            "final_error_mm": 2.13,
+            "max_error_mm": 46.12,
+            "rms_error_mm": 17.51,
+            "max_attitude_error_deg": 2.472,
+            "heading_change_deg": 9.4,
+            "max_slope_under_wheel_deg": 6.86,
+            "normal_load_range_x_weight": [
+              0.0,
+              1.66
+            ],
+            "friction_use_p95": 0.224,
+            "sliding_distance_mm": 9.07,
+            "normal_estimate_error_rms_deg": 0.299,
+            "saturated_time_fraction": 0.0,
+            "support_handovers": 58,
+            "cost": 2.279,
+            "start_phase_rad": -1.0
+          }
+        ]
+      }
+    }
+  }
+}
