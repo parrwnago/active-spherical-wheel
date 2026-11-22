@@ -28,6 +28,19 @@ The lab now defaults to **Transition aware** feedback with **Prepare incoming dr
 
 At polar contact the driven transverse belt can move the support point beneath the upper body's center of mass. Independent ±2° roll and ±0.5 N push checks recovered with active belts; the same cases fell when belt commands were held at zero. That comparison retains belt friction and uses ideal speed servos. See the [interaction guide](INTERACTIVE_LAB.md), [polar belt evidence](results/polar_belt_check/README.md), and [browser screenshot](results/lab_ui/desktop.png).
 
+## Uneven ground
+
+The wheel can also be run on smooth uneven terrain: grades, side slopes, rolling ground, ripples, mounds and a low-friction strip. The ground under the wheel is the tangent plane of an analytic height field, re-posed every physics step, so the same clipped spherical contact and friction solve apply. A controller mode that reads the ground reaction senses the slope from the contact force and moment, leans so the centre of mass is over the contact point, and feeds the static holding torque forward. The flat-floor controller is kept as the baseline for every comparison. On eleven terrain scenarios run from four starts each, the contact-aware mode finished 44 of 44 runs and the flat-floor controller 38 of 44.
+
+```bash
+.venv/bin/python -m spherical_wheel offroad limits      # static slope figures of the declared model
+.venv/bin/python -m spherical_wheel offroad run --scenario course
+.venv/bin/python -m spherical_wheel offroad replay --scenario course   # MP4 of both controllers
+.venv/bin/python -m spherical_wheel offroad suite       # every scenario, both controllers
+```
+
+On Windows use `.venv\Scripts\python.exe` in place of `.venv/bin/python`. See [OFFROAD.md](OFFROAD.md) for the contact model and its checks, what the controller does with the contact force, measured results, and where it stops working.
+
 ## Run it
 
 Use Python 3.10–3.12 from the repository directory for the pinned environment. The supplied environment was verified with Python 3.10:
@@ -61,7 +74,7 @@ MUJOCO_GL=egl .venv/bin/python -m spherical_wheel render \
 
 The viewer computes a fresh equilibrium and full-state local controller for the loaded model, avoiding reuse of gains from a different configuration. Its initialization was checked headlessly; an interactive desktop session was not available for GUI testing.
 
-The current automated suite has 44 passing tests. Run it with:
+The current automated suite has 154 passing tests, 98 of them for the uneven-ground work. Run it with:
 
 ```bash
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -q
@@ -174,6 +187,12 @@ The interactive lab's `transition_aware` controller builds on those local design
 | `src/spherical_wheel/recovery_control.py` | Contact-weighted feedback, heading-aware errors and fingerprinted gain cache |
 | `src/spherical_wheel/synchronization.py` | Kinematic preview and bounded incoming-drive preparation |
 | `src/spherical_wheel/validation.py` | Mechanism and physics diagnostics |
+| `src/spherical_wheel/terrain.py` | Analytic uneven ground: height, slope, curvature and friction map |
+| `src/spherical_wheel/offroad.py` | The plant on uneven ground: tangent-plane contact under the wheel |
+| `src/spherical_wheel/contact_sensing.py` | Ground-reaction measurement, normal from force and moment, friction estimate |
+| `src/spherical_wheel/offroad_control.py` | Balance and tracking feedback that uses the ground reaction |
+| `src/spherical_wheel/offroad_experiments.py`, `offroad_suite.py` | Off-road runs, metrics, scenario suites, tuning and slope limits |
+| `src/spherical_wheel/offroad_analysis.py`, `offroad_geometry.py`, `offroad_view.py` | Figures, the wheel's support and leverage map, rendered stills |
 | `generated/model.xml` | Generated primary MuJoCo model |
 | `generated/model.urdf` | Companion geometry/inertia/three-revolute topology |
 | `generated/model_preview.png` | Inspected nominal model view |

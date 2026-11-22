@@ -26,7 +26,20 @@ def main(argv=None):
     p.add_argument('--port',type=int,default=8765)
     p.add_argument('--open-browser',action='store_true')
     p.add_argument('--controller-mode',choices=['transition_aware','local_lqr'],default='transition_aware')
+    p=sub.add_parser('offroad',help='Uneven-ground runs, contact-force analysis and controller tuning')
+    p.add_argument('action',choices=['limits','run','replay','suite','envelope','holdout','tune'])
+    p.add_argument('--speed',type=float,default=2.,help='Playback speed of the replay action')
+    p.add_argument('--config',type=Path)
+    p.add_argument('--output',type=Path,default=Path('results')/'offroad')
+    p.add_argument('--scenario',default='course',help='Scenario name for the run action')
+    p.add_argument('--controller',choices=['terrain_aware','flat_baseline'],default='terrain_aware')
+    p.add_argument('--seed',type=int,default=7)
+    p.add_argument('--workers',type=int,help='Worker processes for batch actions')
+    p.add_argument('--view-time',type=float,help='Time in s of the rendered still for the run action (default: midway)')
     args=parser.parse_args(argv)
+    if args.command=='offroad':
+        from .offroad_cli import main as offroad_main
+        offroad_main(args);return
     if args.command=='lab':
         from .lab_server import run_server
         run_server(args.host,args.port,args.open_browser,args.controller_mode);return
