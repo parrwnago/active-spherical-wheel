@@ -28,6 +28,9 @@ def reference(t, duration, mode):
 
 def rolling_feedforward(plant, velocity):
     """Minimum normalized contact-speed allocation; no extra forces are applied."""
+    records=getattr(plant,'contact_records',None)
+    if records is not None:
+        return rolling_feedforward_records(plant,records(),velocity)
     rows=[]; rhs=[]
     for c in plant.data.contact:
         if c.efc_address < 0:
@@ -46,6 +49,29 @@ def rolling_feedforward(plant, velocity):
         if name.startswith('belt_'):
             side=0 if name.startswith('belt_A') else 1
             row[:,3+side]=plant.data.geom_xmat[geom].reshape(3,3)[:2,1]
+        rows.extend(row);rhs.extend(-velocity)
+    if not rows:
+        return np.zeros(9),np.zeros(5)
+    scale=np.array([5.,5.,5.,.3,.3])
+    allocated=scale*np.linalg.lstsq(np.asarray(rows)*scale,np.asarray(rhs),rcond=1e-7)[0]
+    qvel=np.r_[velocity,0.,0.,0.,0.,allocated[:3]]
+    u=np.r_[np.zeros(3),allocated[3:]]
+    return qvel,u
+
+
+def rolling_feedforward_records(plant, records, velocity):
+    """``rolling_feedforward`` from contact records (see contact_sensing.records_from_mujoco)."""
+    rows=[]; rhs=[]
+    for record in records:
+        name=record['name']
+        if not name.startswith(('shell_','belt_')):
+            continue
+        jac=np.zeros((3,plant.model.nv))
+        mujoco.mj_jac(plant.model,plant.data,jac,None,record['pos'],int(record['body']))
+        row=np.zeros((2,5));row[:,:3]=jac[:2,6:9]
+        if name.startswith('belt_'):
+            side=0 if name.startswith('belt_A') else 1
+            row[:,3+side]=plant.data.geom_xmat[int(record['geom'])].reshape(3,3)[:2,1]
         rows.extend(row);rhs.extend(-velocity)
     if not rows:
         return np.zeros(9),np.zeros(5)

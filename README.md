@@ -41,6 +41,19 @@ The wheel can also be run on smooth uneven terrain: grades, side slopes, rolling
 
 On Windows use `.venv\Scripts\python.exe` in place of `.venv/bin/python`. See [OFFROAD.md](OFFROAD.md) for the contact model and its checks, what the controller does with the contact force, measured results, and where it stops working.
 
+## Gazebo and the ERC Mars yard
+
+The same contact-aware controller, with the same gains, also runs in Gazebo Harmonic (gz-sim 8, DART physics). A bridge plugin steps Gazebo in lockstep with the Python controller and reproduces the MuJoCo contact rules (clipped shell and belt patches, ideal belt surface speed). The setup needs no `sudo`:
+
+```bash
+conda env create -f environment/gazebo.yml && conda activate asw-gz
+bash scripts/setup-gazebo.sh
+python -m spherical_wheel.gazebo parity --mujoco-reference   # off-road scenarios in both simulators
+python -m spherical_wheel.gazebo mars                         # routes over Leo Rover's ERC 2021 Mars yard
+```
+
+See [GAZEBO.md](GAZEBO.md) for how the port works, the checks that it matches MuJoCo, the Gazebo issues it corrects, and the Mars yard results.
+
 ## Run it
 
 For full circles, figure-eights, lateral reversals and eight-direction motion over uneven terrain, see [OFFROAD_MOBILITY.md](OFFROAD_MOBILITY.md). The evaluation compares the unchanged controllers and saves paired MP4 replays, raw logs, acceptance gates and tracking metrics.
@@ -191,6 +204,7 @@ The interactive lab's `transition_aware` controller builds on those local design
 | `src/spherical_wheel/validation.py` | Mechanism and physics diagnostics |
 | `src/spherical_wheel/terrain.py` | Analytic uneven ground: height, slope, curvature and friction map |
 | `src/spherical_wheel/offroad.py` | The plant on uneven ground: tangent-plane contact under the wheel |
+| `src/spherical_wheel/gazebo/`, `gazebo/` | Gazebo reconstruction: SDF model, worlds, bridge and physics plugins, Mars yard (see GAZEBO.md) |
 | `src/spherical_wheel/contact_sensing.py` | Ground-reaction measurement, normal from force and moment, friction estimate |
 | `src/spherical_wheel/offroad_control.py` | Balance and tracking feedback that uses the ground reaction |
 | `src/spherical_wheel/offroad_experiments.py`, `offroad_suite.py` | Off-road runs, metrics, scenario suites, tuning and slope limits |

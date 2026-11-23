@@ -96,6 +96,9 @@ class ContactSynchronizer:
         return velocity, projection @ jacobian, projection, margin, gap
 
     def _normal_loads(self):
+        records = getattr(self.plant, 'contact_records', None)
+        if records is not None:
+            return self._normal_loads_records(records())
         loads = {patch['name']: 0. for patch in self._patches}
         velocity_sums = {name: np.zeros(3) for name in loads}
         force = np.zeros(6)
@@ -118,6 +121,28 @@ class ContactSynchronizer:
                         if patch_name.startswith('belt'):
                             velocity += self.plant.data.geom_xmat[geom].reshape(3, 3) @ self.plant.model.geom_surfacevel[geom, :3]
                         velocity_sums[patch_name] += load * (projection @ velocity)
+        return loads, {name: velocity_sums[name] / max(loads[name], 1e-12) for name in loads}
+
+    def _normal_loads_records(self, records):
+        """``_normal_loads`` from contact records (a plant simulated elsewhere)."""
+        loads = {patch['name']: 0. for patch in self._patches}
+        velocity_sums = {name: np.zeros(3) for name in loads}
+        normal = self.plant.data.geom_xmat[self._floor].reshape(3, 3)[:, 2]
+        projection = np.eye(3) - np.outer(normal, normal)
+        for record in records:
+            name = record['name']
+            for patch_name in loads:
+                if name == patch_name or name.startswith(patch_name + '_'):
+                    load = max(0., float(record['normal_force']))
+                    loads[patch_name] += load
+                    jacobian = np.zeros((3, self.plant.model.nv))
+                    mujoco.mj_jac(self.plant.model, self.plant.data, jacobian, None,
+                                  record['pos'], int(record['body']))
+                    velocity = jacobian @ self.plant.data.qvel
+                    if patch_name.startswith('belt'):
+                        geom = int(record['geom'])
+                        velocity += self.plant.data.geom_xmat[geom].reshape(3, 3) @ self.plant.model.geom_surfacevel[geom, :3]
+                    velocity_sums[patch_name] += load * (projection @ velocity)
         return loads, {name: velocity_sums[name] / max(loads[name], 1e-12) for name in loads}
 
     def preview(self, primary_command=None):

@@ -41,6 +41,10 @@ def measure_contact(plant):
     ``utilization`` is the largest per-contact ratio of tangential force to
     its friction limit: 1 means that contact is at its limit.
     """
+    records = getattr(plant, 'contact_records', None)
+    if records is not None:
+        # A plant simulated elsewhere (Gazebo) supplies its own solved contacts.
+        return measure_records(plant, records())
     model, data = plant.model, plant.data
     floor = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, 'floor')
     centre = data.xpos[plant.fork_id]
@@ -85,6 +89,92 @@ def measure_contact(plant):
         limit = float(contact.friction[0])*pressure
         if limit > 1e-9:
             utilization = max(utilization, float(np.hypot(wrench[1], wrench[2]))/limit)
+    if normal_load > 1e-9:
+        normal = normal_sum/np.linalg.norm(normal_sum)
+        point, slip, friction = point_sum/normal_load, slip_sum/normal_load, friction_sum/normal_load
+    else:
+        normal, point, slip, friction = np.array([0., 0., 1.]), centre.copy(), np.zeros(3), float('nan')
+    tangential = force-normal*(normal@force)
+    return {'in_contact': bool(normal_load > 1e-9), 'contacts': count,
+            'force_N': force, 'moment_Nm': moment, 'normal': normal, 'point_m': point,
+            'normal_force_N': float(normal_load), 'tangential_force_N': tangential,
+            'tangential_force_norm_N': float(np.linalg.norm(tangential)),
+            'friction_coefficient': float(friction), 'utilization': float(utilization),
+            'slip_velocity_m_s': slip, 'slip_speed_m_s': float(np.linalg.norm(slip)),
+            'loads_N': loads, 'fork_load_N': float(fork_load)}
+
+
+def records_from_mujoco(plant):
+    """The MuJoCo plant's active ground contacts as contact records.
+
+    Same fields as ``GazeboPlant.contact_records``: ``name``, ``geom``,
+    ``body``, ``pos``, unit ``normal`` from the ground into the wheel, world
+    ``force`` on the wheel, ``normal_force``, ``tangent_force_norm`` and
+    ``friction``. Used to check that the records path of ``measure_contact``
+    and friends reproduces the MuJoCo path exactly.
+    """
+    model, data = plant.model, plant.data
+    floor = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, 'floor')
+    wrench = np.zeros(6)
+    records = []
+    for index in range(data.ncon):
+        contact = data.contact[index]
+        if contact.efc_address < 0 or floor not in contact.geom:
+            continue
+        ground_first = int(contact.geom[0]) == floor
+        other = int(contact.geom[1] if ground_first else contact.geom[0])
+        sign = 1. if ground_first else -1.
+        mujoco.mj_contactForce(model, data, index, wrench)
+        frame = contact.frame.reshape(3, 3)
+        records.append({'name': mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, other) or '',
+                        'geom': other, 'body': int(model.geom_bodyid[other]), 'pos': contact.pos.copy(),
+                        'normal': sign*frame[0], 'force': sign*(frame.T@wrench[:3]),
+                        'normal_force': float(wrench[0]),
+                        'tangent_force_norm': float(np.hypot(wrench[1], wrench[2])),
+                        'friction': float(contact.friction[0])})
+    return records
+
+
+def measure_records(plant, records):
+    """``measure_contact`` from contact records instead of MuJoCo's contact list.
+
+    The arithmetic is that of ``measure_contact``; only the source of each
+    contact's position, normal, force and friction differs. The plant's
+    ``model``/``data`` still supply the frames, Jacobians and belt speeds.
+    """
+    model, data = plant.model, plant.data
+    centre = data.xpos[plant.fork_id]
+    force, moment = np.zeros(3), np.zeros(3)
+    normal_sum, point_sum, slip_sum = np.zeros(3), np.zeros(3), np.zeros(3)
+    loads = {name: 0. for name in SUPPORTS}
+    normal_load = friction_sum = utilization = 0.
+    fork_load = 0.
+    jacobian = np.zeros((3, model.nv))
+    count = 0
+    for record in records:
+        normal, world, position = record['normal'], record['force'], record['pos']
+        support = _support(record['name'])
+        pressure = max(0., float(record['normal_force']))
+        if support is None:
+            fork_load += pressure
+            continue
+        count += 1
+        loads[support] += pressure
+        force += world
+        moment += np.cross(position-centre, world)
+        normal_load += pressure
+        normal_sum += pressure*normal
+        point_sum += pressure*position
+        friction_sum += pressure*float(record['friction'])
+        mujoco.mj_jac(model, data, jacobian, None, position, int(record['body']))
+        velocity = jacobian@data.qvel
+        if support.startswith('belt'):
+            geom = int(record['geom'])
+            velocity = velocity+data.geom_xmat[geom].reshape(3, 3)@model.geom_surfacevel[geom, :3]
+        slip_sum += pressure*(velocity-normal*(normal@velocity))
+        limit = float(record['friction'])*pressure
+        if limit > 1e-9:
+            utilization = max(utilization, float(record['tangent_force_norm'])/limit)
     if normal_load > 1e-9:
         normal = normal_sum/np.linalg.norm(normal_sum)
         point, slip, friction = point_sum/normal_load, slip_sum/normal_load, friction_sum/normal_load

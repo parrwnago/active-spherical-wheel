@@ -1,0 +1,17 @@
+# Gazebo Harmonic (gz-sim 8) + the project's pinned Python packages, without sudo.
+#   conda env create -f environment/gazebo.yml && bash scripts/setup-gazebo.sh
+# Tested on Ubuntu 24.04 (WSL2) with conda 26.1, gz-sim 8.10.0, gz-physics 7.5.0, DART 6.19.5.
+name: asw-gz
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - gz-sim8=8.10.0
+  - libgz-sim8
+  - gz-math7          # Python pose/vector types used by the gz.sim8 bindings
+  - cxx-compiler
+  - cmake
+  - make
+  - pkg-config
+  - ruby              # the `gz` command-line tool is a Ruby script
+  - pip

@@ -27,7 +27,15 @@ by how much the tuning sweep found they matter (results/offroad/tuning):
 
 Measuring the gain schedule's phase against the sensed normal instead of
 vertical is available (``schedule_on_ground_normal``) and off: the sweep found
-no benefit from it.
+no benefit from it, and on the Mars yard it made falls more frequent.
+
+Heading is free by default. On steep rough ground it matters: the wheel holds
+a grade along its shaft-driven direction with the shaft (43 deg bound) but
+across it only with a shell (16.7 deg) or a belt cap (7.8 deg), and the flat
+library uses the unloaded shell as a roll reaction wheel whose reaction turns
+the platform. ``heading_reference='fall_line'`` with shell steering keeps the
+shaft-driven direction on the fall line of the sensed ground; it is off by
+default and evaluated in results/gazebo/mars_yaw_study.
 
 Two things were tried and are deliberately absent. Scaling torque to keep the
 implied tangential force inside an estimated friction cone made the wheel
@@ -43,16 +51,100 @@ State feedback and the contact wrench are simulator ground truth.
 """
 from __future__ import annotations
 
+import hashlib
+import json
 from dataclasses import asdict, dataclass
+from pathlib import Path
 
 import mujoco
 import numpy as np
+from scipy.linalg import solve_discrete_are
 
 from .contact_sensing import ContactEstimator, measure_contact
-from .control import design_lqr, find_equilibrium
+from .control import design_lqr, find_equilibrium, linearize
 from .experiments import rolling_feedforward
 from .recovery_control import ScheduledBalanceFeedback, build_gain_library
 from .synchronization import ContactSynchronizer
+
+# State weights of the flat-floor LQR (control.design_lqr), in its scaled
+# coordinates. Order: x y z roll pitch yaw shaft shell_A shell_B, then the
+# nine velocities. Kept here only so a variant can override some entries;
+# design_weighted_lqr with no overrides reproduces design_lqr exactly.
+_FLAT_Q = (2., 2., 1., 30., 30., .01, .001, .001, .001, 2., 2., .1, 4., 4., .05, .01, .01, .01)
+_FLAT_SCALES = (.15, .15, .005, .15, .15, .5, 1., 1., 1., 1., 1., .1, 1., 1., 1., 10., 10., 10.)
+_FLAT_R = (.3, .3, .3, 1., 1.)
+
+# Gain-library variants: state-weight overrides by index.
+#
+# 'flat' is the library as designed for the level floor. Its heading weight
+# (0.01) and shell-speed weights (0.01 at 10 rad/s) are close to zero, so the
+# LQR is free to use the unloaded shell as a roll reaction wheel: at the
+# ordinary phase that shell's roll gain is over half the loaded shell's. A
+# reaction wheel only gives transient torque. Under a lasting roll or lateral
+# error (a side slope, a facet) the unloaded shell keeps accelerating, and its
+# axis is tilted by the carrier phase, so its reaction turns the platform. On
+# the Mars yard that is the main source of heading drift.
+#
+# 'yaw_aware' also weights heading, yaw rate and both shell speeds. The
+# unloaded shell then keeps a small roll share, parks near zero speed, damps
+# yaw, and at a pole (both shells free, axes near vertical) acts as a yaw
+# reaction wheel. In the linear model this cuts heading drift under a lasting
+# side load ten- to forty-fold. In Gazebo on the Mars yard it fell on all 12
+# slope starts (results/gazebo/mars_yaw_study): the unloaded shell's roll
+# help is part of what holds the wheel on a side slope, and without it the
+# loaded shell saturates. It is kept for comparison, not recommended; steer
+# heading with heading_reference='fall_line' and the shells instead.
+LQR_WEIGHTS = {
+    'flat': None,
+    'yaw_aware': {5: 5., 14: 5., 15: 1., 16: 1., 17: 1.},
+}
+
+
+def design_weighted_lqr(plant, equilibrium, overrides=None, epsilon=1e-5):
+    """``control.design_lqr`` with some diagonal state weights replaced.
+
+    Same linearisation, scaling, reachable-subspace reduction and input
+    weights; ``overrides`` maps state index to a new weight.
+    """
+    A, B, f0 = linearize(plant, equilibrium, epsilon)
+    scales = np.array(_FLAT_SCALES)
+    q = np.array(_FLAT_Q)
+    for index, weight in (overrides or {}).items():
+        q[int(index)] = float(weight)
+    As = A*scales[None, :]/scales[:, None]
+    Bs = B*plant.bounds[None, :]/scales[:, None]
+    reach = Bs.copy()
+    for _ in range(A.shape[0]):
+        reach = np.column_stack((reach, As@reach[:, -Bs.shape[1]:]))
+    U, s, _ = np.linalg.svd(reach, full_matrices=False)
+    rank = int(np.sum(s > max(s[0]*1e-8, 1e-10)))
+    T, Tn = U[:, :rank], U[:, rank:]
+    omitted = np.linalg.eigvals(Tn.T@As@Tn) if Tn.size else np.array([])
+    if np.any(np.abs(omitted) > 1.00001):
+        raise RuntimeError(f'Unstabilizable growing modes in local model: {omitted}')
+    Ac, Bc = T.T@As@T, T.T@Bs
+    R = np.diag(_FLAT_R)
+    P = solve_discrete_are(Ac, Bc, T.T@np.diag(q)@T, R)
+    Kc = np.linalg.solve(R+Bc.T@P@Bc, Bc.T@P@Ac)
+    K = plant.bounds[:, None]*(Kc@T.T)/scales[None, :]
+    closed = np.linalg.eigvals(A-B@K)
+    return {'A': A, 'B': B, 'K': K, 'f0': f0, 'keep': np.arange(A.shape[0]), 'reachable_rank': rank,
+            'reach_singular_values': s, 'discarded_eigenvalues': omitted,
+            'open_eigenvalues': np.linalg.eigvals(A), 'closed_eigenvalues': closed,
+            'epsilon': float(epsilon), 'state_scales': scales, 'state_weights': q,
+            'method': 'full_state_lqr', 'full_closed_spectral_radius': float(max(abs(closed)))}
+
+
+def _variant_cache_path(cache_path, weights):
+    """Separate cache file per weight set; the name carries a hash of the weights.
+
+    The library fingerprint covers model and sources but not these weights,
+    so a changed weight set must not find the old file.
+    """
+    tag = hashlib.sha256(json.dumps({'q': _FLAT_Q, 'overrides': LQR_WEIGHTS[weights]},
+                                    sort_keys=True).encode()).hexdigest()[:10]
+    path = Path(cache_path)
+    return path.with_name(f'{path.stem}_{weights}_{tag}{path.suffix}')
 
 
 @dataclass
@@ -84,6 +176,14 @@ class OffroadParams:
     unload_fraction: float = .3            # below this share of weight, feedback torque fades out
     airborne_damping_Nms: float = .01      # relative-speed damping while unloaded
     max_lean_deg: float = 28.              # bound on the reference lean
+    lqr_weights: str = 'flat'              # gain library: 'flat' (as designed) or 'yaw_aware' (see LQR_WEIGHTS)
+    heading_reference: str = 'none'        # heading target: 'none' (start heading if heading_gain > 0), 'start' or 'fall_line'
+    heading_actuation: str = 'shells'      # 'shells': unloaded-shell reaction torque; 'lqr': error into the LQR yaw state
+    heading_roll_budget_Nm: float = 0.     # > 0 caps the heading torque's horizontal (roll) reaction at this size
+    fall_line_slope_deg: tuple = (6., 12.)  # sensed slope over which fall-line alignment fades in
+    heading_normal_time_constant_s: float = .5  # low-pass on the normal that sets the fall line
+    heading_error_limit_rad: float = .5    # bound on the heading error used
+    fall_line_hysteresis_deg: float = 20.  # keep the chosen end of the fall line until the other is this much closer
 
     def __post_init__(self):
         if self.mode not in ('terrain_aware', 'flat_baseline'):
@@ -92,6 +192,20 @@ class OffroadParams:
             raise ValueError('Shaft error must be material, free or rolling')
         if self.normal_source not in ('intrinsic', 'solver'):
             raise ValueError('Normal source must be intrinsic or solver')
+        if self.lqr_weights not in LQR_WEIGHTS:
+            raise ValueError(f'LQR weights must be one of {sorted(LQR_WEIGHTS)}')
+        if self.heading_reference not in ('none', 'start', 'fall_line'):
+            raise ValueError('Heading reference must be none, start or fall_line')
+        if self.heading_actuation not in ('shells', 'lqr'):
+            raise ValueError('Heading actuation must be shells or lqr')
+        if self.heading_reference != 'none' and self.heading_actuation == 'shells' and self.heading_gain <= 0:
+            raise ValueError('A heading reference acting through the shells needs heading_gain > 0')
+        if self.heading_roll_budget_Nm < 0:
+            raise ValueError('heading_roll_budget_Nm must be non-negative')
+        low, high = self.fall_line_slope_deg
+        if not 0 <= low < high:
+            raise ValueError('fall_line_slope_deg must be an increasing pair of non-negative angles')
+        self.fall_line_slope_deg = (float(low), float(high))
 
     def as_dict(self):
         return asdict(self)
@@ -104,16 +218,42 @@ class FlatDesign:
     does, so the terrain plant is never perturbed by a design calculation.
     """
 
-    def __init__(self, designer, cache_path=None):
-        self.designer = designer
-        self._local = {}
-        self.points, self.metadata = build_gain_library(designer, None, cache_path)
+    def __init__(self, designer, cache_path=None, weights='flat'):
+        if weights not in LQR_WEIGHTS:
+            raise ValueError(f'Unknown LQR weights {weights!r}; choose from {sorted(LQR_WEIGHTS)}')
+        self.designer, self.cache_path, self.weights = designer, cache_path, weights
+        self._local, self._variants = {}, {}
+        if LQR_WEIGHTS[weights] is None:
+            self.points, self.metadata = build_gain_library(designer, None, cache_path)
+        else:
+            path = None if cache_path is None else _variant_cache_path(cache_path, weights)
+            self.points, self.metadata = build_gain_library(designer, self._design, path)
+            self.metadata = {**self.metadata, 'lqr_weights': weights,
+                             'weight_overrides': {str(k): v for k, v in LQR_WEIGHTS[weights].items()}}
+
+    def _lqr(self, equilibrium):
+        overrides = LQR_WEIGHTS[self.weights]
+        if overrides is None:
+            return design_lqr(self.designer, equilibrium)
+        return design_weighted_lqr(self.designer, equilibrium, overrides)
+
+    def _design(self, phase):
+        equilibrium = find_equilibrium(self.designer, phase)
+        return {'equilibrium': equilibrium, 'design': self._lqr(equilibrium)}
+
+    def variant(self, weights):
+        """The same design with another weight set (built once, then cached)."""
+        if weights == self.weights:
+            return self
+        if weights not in self._variants:
+            self._variants[weights] = FlatDesign(self.designer, self.cache_path, weights)
+        return self._variants[weights]
 
     def local(self, phase):
         key = round(float(phase), 6)
         if key not in self._local:
             equilibrium = find_equilibrium(self.designer, phase)
-            design = design_lqr(self.designer, equilibrium)
+            design = self._lqr(equilibrium)
             if design['full_closed_spectral_radius'] > 1.0001:
                 raise RuntimeError('Local feedback has a growing full-state mode')
             self._local[key] = {'phase': float(phase), 'equilibrium': equilibrium, 'design': design}
@@ -138,8 +278,10 @@ class OffroadController:
     """
 
     def __init__(self, plant, design, params=None, phase=None):
-        self.plant, self.design = plant, design
         self.params = params or OffroadParams()
+        if self.params.mode == 'terrain_aware' and self.params.lqr_weights != getattr(design, 'weights', 'flat'):
+            design = design.variant(self.params.lqr_weights)
+        self.plant, self.design = plant, design
         self.feedback = ScheduledBalanceFeedback(plant, design.points)
         self.synchronizer = ContactSynchronizer(plant)
         model = plant.model
@@ -174,6 +316,52 @@ class OffroadController:
         quat = self.plant.data.qpos[3:7]
         self.heading_reference = float(np.arctan2(2*(quat[0]*quat[3]+quat[1]*quat[2]),
                                                   1-2*(quat[2]**2+quat[3]**2)))
+        self._slow_normal = self.estimator.normal.copy()
+        self._fall_end = None
+        self._yaw_error = None
+
+    def _update_heading_target(self, normal, yaw):
+        """Heading error to steer on, or ``None`` when no heading reference is set.
+
+        The error is used by the shell steering in ``_heading_torque`` or, with
+        ``heading_actuation='lqr'``, given to the LQR's yaw state.
+
+        'start' holds the heading the run began with. 'fall_line' turns the
+        shaft-driven direction (fork x) onto the fall line of the sensed
+        ground. The wheel holds a grade along that direction with the shaft,
+        whose bound is 43 deg; across it a shell holds 16.7 deg and a pole
+        less, so keeping the slope on the shaft keeps it on the strong drive.
+        Either end of the fall line will do; the nearer one is kept, with
+        hysteresis so a misalignment near 90 deg does not flip the choice
+        every interval. Alignment fades in with slope and is off on level
+        ground, where heading does not matter and only yaw rate is damped.
+        The normal is filtered more slowly than the balance normal so that the
+        target does not jump at every DEM facet.
+        """
+        params, dt = self.params, self.plant.dt
+        blend = dt/(params.heading_normal_time_constant_s+dt)
+        mixed = self._slow_normal+blend*(np.asarray(normal)-self._slow_normal)
+        self._slow_normal = mixed/np.linalg.norm(mixed)
+        if params.heading_reference == 'none':
+            return None
+        if params.heading_reference == 'start':
+            error = (yaw-self.heading_reference+np.pi) % (2*np.pi)-np.pi
+            return float(np.clip(error, -params.heading_error_limit_rad, params.heading_error_limit_rad))
+        n = self._slow_normal
+        slope = float(np.degrees(np.arccos(np.clip(n[2], -1., 1.))))
+        low, high = params.fall_line_slope_deg
+        weight = float(np.clip((slope-low)/(high-low), 0., 1.))
+        if weight <= 0.:
+            return 0.
+        fall = float(np.arctan2(n[1], n[0]))
+
+        def miss(end):
+            return abs((yaw-fall-end+np.pi) % (2*np.pi)-np.pi)
+        nearer = min((0., np.pi), key=miss)
+        if self._fall_end is None or miss(self._fall_end) > miss(nearer)+np.radians(params.fall_line_hysteresis_deg):
+            self._fall_end = nearer
+        error = (yaw-fall-self._fall_end+np.pi) % (2*np.pi)-np.pi
+        return weight*float(np.clip(error, -params.heading_error_limit_rad, params.heading_error_limit_rad))
 
     def _rim_support(self, loads):
         """``(axis, hold)`` while the support point lies in the equatorial gap, else ``(None, False)``.
@@ -238,6 +426,10 @@ class OffroadController:
         estimate = self.estimator.update(measurement, plant.dt, *rim)
         aware = params.mode == 'terrain_aware'
         normal = estimate['normal'] if aware else np.array([0., 0., 1.])
+        if aware:
+            quat = plant.data.qpos[3:7]
+            yaw = float(np.arctan2(2*(quat[0]*quat[3]+quat[1]*quat[2]), 1-2*(quat[2]**2+quat[3]**2)))
+            self._yaw_error = self._update_heading_target(normal, yaw)
         moving = bool(np.linalg.norm(velocity) > 0)
         touching = sum(measurement['loads_N'].values()) > .001
         if not moving:
@@ -260,7 +452,8 @@ class OffroadController:
         qref[7:10] = self.nominal_joints
         qref[3:7] = self.reference_attitude(normal, acceleration)
         diagnostics = {'measurement': measurement, 'estimate': estimate, 'drive_fade': 1.,
-                       'support_torque': np.zeros(5), 'reference_quat': qref[3:7].copy()}
+                       'support_torque': np.zeros(5), 'reference_quat': qref[3:7].copy(),
+                       'heading_target_error_rad': self._yaw_error if aware else None}
         if aware:
             command, feedback = self._terrain_feedback(qref, vref, feedforward, normal, measurement, touching)
             diagnostics['support_torque'] = feedback.pop('support_torque')
@@ -329,6 +522,10 @@ class OffroadController:
             # undulating surface breaks the flat bookkeeping of shaft angle, so
             # take the shaft error that is consistent with the position error.
             error[6] = error[0]/self.radius-error[4]
+        if self._yaw_error is not None and params.heading_actuation == 'lqr':
+            # The target above carries the current yaw, so error[5] is zero
+            # and heading is free. A heading reference replaces it.
+            error[5] = self._yaw_error
         support_torque = params.support_feedforward*self.support_torque(normal, loads)
         command = np.asarray(equilibrium['u'])+np.asarray(feedforward)+support_torque-gain@error
         return command, {'effective_phase_rad': phase, 'yaw_rad': yaw, 'error': error,
@@ -348,11 +545,26 @@ class OffroadController:
 
         The reaction's horizontal part is a roll disturbance that the balance
         feedback has to absorb, which is why the torque is kept small.
+
+        With a heading reference acting through the shells, the target is that
+        reference ('start' or 'fall_line') instead of the starting heading.
+        ``heading_roll_budget_Nm`` then bounds the horizontal part of the
+        reaction rather than the torque: near a pole, where the support is on
+        a belt and both shell axes are close to vertical, the reaction is
+        almost pure yaw and the full torque limit is used; on a shell, where the
+        axis is close to horizontal, the same budget allows only a small
+        torque. Heading is then steered mostly during pole crossings, which
+        shaft-driven travel makes twice per wheel revolution.
         """
         params, plant = self.params, self.plant
         error = float((yaw-self.heading_reference+np.pi) % (2*np.pi)-np.pi)
         torque = np.zeros(5)
+        steering = params.heading_actuation == 'shells' and self._yaw_error is not None
         if params.heading_gain <= 0 or self._held is None:
+            return torque, error
+        if steering:
+            error = self._yaw_error
+        elif params.heading_reference != 'none':
             return torque, error
         loads = self._held['loads']
         total = sum(loads.values())
@@ -363,8 +575,12 @@ class OffroadController:
         velocity = np.empty(6)
         mujoco.mj_objectVelocity(plant.model, plant.data, mujoco.mjtObj.mjOBJ_BODY, plant.fork_id, velocity, 0)
         wanted = -(params.heading_gain*error+params.heading_damping*velocity[2])
+        limit = params.heading_torque_limit_Nm
+        if params.heading_roll_budget_Nm > 0:
+            horizontal = float(np.sqrt(max(1.-vertical*vertical, 0.)))
+            limit = min(limit, params.heading_roll_budget_Nm/max(horizontal, 1e-6))
         # Motor torque t on a free shell reacts on the platform as -t * axis.
-        each = float(np.clip(-wanted/vertical, -params.heading_torque_limit_Nm, params.heading_torque_limit_Nm))
+        each = float(np.clip(-wanted/vertical, -limit, limit))
         torque[free] = each/len(free)
         return torque, error
 

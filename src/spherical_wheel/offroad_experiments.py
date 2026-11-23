@@ -123,7 +123,7 @@ class Workspace:
         return self._plants[key]
 
 
-def place_on_ground(plant, controller, origin, phase, balanced_lean=True):
+def place_on_ground(plant, controller, origin, phase, balanced_lean=True, yaw_deg=0.):
     """Start at rest on the terrain with the ordinary drive configuration.
 
     With ``balanced_lean`` the body starts at the lean that puts its centre of
@@ -131,11 +131,17 @@ def place_on_ground(plant, controller, origin, phase, balanced_lean=True):
     static balance for every controller being compared. The shaft joint is
     then turned so the same patch of the wheel is on the ground as on level
     ground. The starting state depends only on the terrain, not the controller.
+    ``yaw_deg`` turns the platform about the vertical before leaning; 0 keeps
+    the fork's x axis (shaft-driven travel) along world x.
     """
     equilibrium = controller.ordinary['equilibrium']
     x, y = float(origin[0]), float(origin[1])
     normal = plant.terrain.normal_at(x, y)
     qpos = equilibrium['qpos'].copy()
+    if yaw_deg:
+        half = np.deg2rad(yaw_deg)/2
+        mujoco.mju_mulQuat(qpos[3:7], np.array([np.cos(half), 0., 0., np.sin(half)]), equilibrium['qpos'][3:7].copy())
+    upright = qpos[3:7].copy()
     compression = plant.radius-equilibrium['qpos'][2]
     qpos[:3] = np.array([x, y, plant.terrain.height(x, y)])+(plant.radius-compression)*normal
     if balanced_lean:
@@ -145,7 +151,11 @@ def place_on_ground(plant, controller, origin, phase, balanced_lean=True):
             vector = np.arcsin(min(size, .99))*np.array([-lean[1], lean[0], 0.])/size
             angle = np.linalg.norm(vector)
             quat = np.r_[np.cos(angle/2), np.sin(angle/2)*vector/angle]
-            mujoco.mju_mulQuat(qpos[3:7], equilibrium['qpos'][3:7], quat)
+            if yaw_deg:
+                # The lean is about world axes; turned with the platform it is world-fixed.
+                c, s_ = np.cos(np.deg2rad(yaw_deg)), np.sin(np.deg2rad(yaw_deg))
+                quat[1:] = np.array([[c, s_, 0.], [-s_, c, 0.], [0., 0., 1.]])@quat[1:]
+            mujoco.mju_mulQuat(qpos[3:7], upright, quat)
     plant.reset(qpos=qpos, qvel=np.zeros(plant.model.nv))
     rotation = plant.data.xmat[controller.carrier_id].reshape(3, 3)
     support = rotation.T@normal
@@ -161,11 +171,11 @@ _LOG_KEYS = ('time_s', 'qpos', 'qvel', 'command', 'input', 'reference_xy', 'refe
              'ground_friction', 'estimated_friction', 'contact_force_N', 'normal_force_N',
              'tangential_force_N', 'utilization', 'slip_speed_m_s', 'support_loads_N',
              'effective_phase_rad', 'drive_fade', 'support_torque', 'heading_rad', 'fork_load_N',
-             'support_direction')
+             'support_direction', 'contact_point_m')
 
 
 def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=None, pushes=(),
-                balanced_lean=True, settle_s=3.):
+                balanced_lean=True, settle_s=3., yaw_deg=0.):
     """Simulate one run and return ``(log, summary)``.
 
     ``pushes`` are ``(start_s, duration_s, [Fx, Fy, Fz])`` world forces on the
@@ -177,7 +187,7 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
     plant = workspace.plant(terrain)
     phase = plant.config['simulation'].get('initial_shaft_phase_rad', .30) if phase is None else phase
     controller = OffroadController(plant, workspace.design, params, phase)
-    place_on_ground(plant, controller, path.origin, phase, balanced_lean)
+    place_on_ground(plant, controller, path.origin, phase, balanced_lean, yaw_deg)
     duration = float(duration_s if duration_s is not None else path.start_s+path.duration_s+settle_s)
     count = int(round(duration/plant.dt))
     log = {key: [] for key in _LOG_KEYS}
@@ -211,7 +221,8 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
                'heading_rad': float(np.arctan2(2*(quat[0]*quat[3]+quat[1]*quat[2]), 1-2*(quat[2]**2+quat[3]**2))),
                'fork_load_N': measurement['fork_load_N'],
                # Ground normal seen from the carrier: where on the wheel the support point is.
-               'support_direction': plant.data.xmat[controller.carrier_id].reshape(3, 3).T@plant.ground['normal']}
+               'support_direction': plant.data.xmat[controller.carrier_id].reshape(3, 3).T@plant.ground['normal'],
+               'contact_point_m': np.asarray(measurement['point_m'], float).copy()}
         for key in _LOG_KEYS:
             log[key].append(row[key])
         if snapshot['balance_failed']:
