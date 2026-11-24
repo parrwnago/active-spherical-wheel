@@ -348,6 +348,96 @@ class SplinePath:
                 'initial_heading_deg': self.heading_deg}
 
 
+def _cruise(elapsed, distance, total, ramp):
+    """``ReferencePath``'s cruise profile: arc length, speed and acceleration at ``elapsed``."""
+    elapsed = float(np.clip(elapsed, 0., total))
+    speed = distance/(total-ramp)
+    if elapsed < ramp:
+        r = elapsed/ramp
+        return speed*ramp*(r**3-r**4/2), speed*(3*r**2-2*r**3), speed*(6*r-6*r**2)/ramp
+    if elapsed <= total-ramp:
+        return speed*(elapsed-ramp/2), speed, 0.
+    r = (total-elapsed)/ramp
+    return distance-speed*ramp*(r**3-r**4/2), speed*(3*r**2-2*r**3), -speed*(6*r-6*r**2)/ramp
+
+
+class CirclePath:
+    """One full circle at a constant cruise speed, at rest at both ends.
+
+    Starts at ``start`` moving along ``heading_deg``; the centre is to the left
+    (counter-clockwise) or right (``clockwise``). Arc length follows the same
+    cruise profile as the straight routes, so velocity and acceleration are exact.
+    """
+
+    kind = 'ring'
+
+    def __init__(self, start, radius_m, heading_deg=90., speed_m_s=.1, start_s=1., ramp_s=1.5, clockwise=False):
+        self.origin = np.asarray(start, float)
+        self.radius_m, self.heading_deg, self.clockwise = float(radius_m), float(heading_deg), bool(clockwise)
+        self.sign = -1. if clockwise else 1.
+        angle = math.radians(heading_deg)
+        self.direction = np.array([math.cos(angle), math.sin(angle)])
+        left = np.array([-self.direction[1], self.direction[0]])
+        self.centre = self.origin+self.sign*self.radius_m*left
+        self.theta0 = math.atan2(*(self.origin-self.centre)[::-1])
+        self.length_m = 2*math.pi*self.radius_m
+        self.speed_m_s, self.start_s, self.ramp_s = float(speed_m_s), float(start_s), float(ramp_s)
+        self.duration_s = self.length_m/self.speed_m_s+self.ramp_s
+
+    def __call__(self, t):
+        s, v, a = _cruise(t-self.start_s, self.length_m, self.duration_s, self.ramp_s)
+        theta = self.theta0+self.sign*s/self.radius_m
+        radial = np.array([math.cos(theta), math.sin(theta)])
+        tangent = self.sign*np.array([-radial[1], radial[0]])
+        return self.centre+self.radius_m*radial, v*tangent, a*tangent-v*v/self.radius_m*radial
+
+    def spec(self):
+        return {'kind': 'ring', 'start': self.origin.tolist(), 'centre': self.centre.tolist(), 'radius_m': self.radius_m,
+                'initial_heading_deg': self.heading_deg, 'clockwise': self.clockwise, 'length_m': self.length_m,
+                'speed_m_s': self.speed_m_s, 'start_s': self.start_s, 'ramp_s': self.ramp_s,
+                'duration_s': self.duration_s, 'origin': self.origin.tolist()}
+
+
+class PolylinePath:
+    """Straight legs through waypoints, coming to rest at every corner.
+
+    Each leg uses the straight routes' cruise profile (``ramp_s`` speed-up and
+    slow-down, ``speed_m_s`` between), so a corner is a genuine stop and turn
+    rather than a rounded curve. Position, velocity and acceleration are
+    continuous; velocity and acceleration are zero at each waypoint.
+    """
+
+    kind = 'polyline'
+
+    def __init__(self, waypoints, speed_m_s=.1, start_s=1., ramp_s=1.5):
+        points = np.asarray(waypoints, float)
+        legs = np.diff(points, axis=0)
+        lengths = np.linalg.norm(legs, axis=1)
+        if len(points) < 2 or np.any(lengths <= speed_m_s*ramp_s):
+            raise ValueError('Every leg must be longer than the distance covered by one speed ramp')
+        self.waypoints, self.lengths, self.units = points, lengths, legs/lengths[:, None]
+        self.speed_m_s, self.start_s, self.ramp_s = float(speed_m_s), float(start_s), float(ramp_s)
+        self.leg_durations = lengths/self.speed_m_s+self.ramp_s
+        self.leg_starts = np.r_[0., np.cumsum(self.leg_durations)[:-1]]
+        self.duration_s = float(self.leg_durations.sum())
+        self.length_m = float(lengths.sum())
+        self.origin, self.direction = points[0].copy(), self.units[0].copy()
+        self.heading_deg = float(np.degrees(np.arctan2(self.direction[1], self.direction[0])))
+
+    def __call__(self, t):
+        elapsed = float(np.clip(t-self.start_s, 0., self.duration_s))
+        k = int(np.clip(np.searchsorted(self.leg_starts, elapsed, side='right')-1, 0, len(self.lengths)-1))
+        s, v, a = _cruise(elapsed-self.leg_starts[k], self.lengths[k], self.leg_durations[k], self.ramp_s)
+        unit = self.units[k]
+        return self.waypoints[k]+s*unit, v*unit, a*unit
+
+    def spec(self):
+        return {'kind': 'polyline', 'waypoints': self.waypoints.tolist(), 'leg_lengths_m': self.lengths.tolist(),
+                'length_m': self.length_m, 'speed_m_s': self.speed_m_s, 'start_s': self.start_s,
+                'ramp_s': self.ramp_s, 'duration_s': self.duration_s, 'origin': self.origin.tolist(),
+                'initial_heading_deg': self.heading_deg}
+
+
 def _straight(start, heading_deg, length_m, speed_m_s=.1):
     from ..offroad_experiments import ReferencePath
     return ReferencePath(length_m, heading_deg, length_m/speed_m_s+1.5, start_s=1., origin=start)
@@ -391,9 +481,58 @@ ROUTES = {
 }
 
 
+def _polygon(start, heading_deg, side_m, sides):
+    """Closed regular polygon, counter-clockwise, first side along ``heading_deg``."""
+    turns = heading_deg+np.arange(sides)*360./sides
+    steps = side_m*np.c_[np.cos(np.radians(turns)), np.sin(np.radians(turns))]
+    return [tuple(p) for p in np.asarray(start, float)+np.r_[np.zeros((1, 2)), np.cumsum(steps, axis=0)]]
+
+
+def _zigzag(start, heading_deg, leg_m, swing_deg, legs):
+    """Legs alternating ``+swing_deg`` and ``-swing_deg`` about ``heading_deg``, starting with ``+``."""
+    turns = heading_deg+swing_deg*(-1.)**np.arange(legs)
+    steps = leg_m*np.c_[np.cos(np.radians(turns)), np.sin(np.radians(turns))]
+    return [tuple(p) for p in np.asarray(start, float)+np.r_[np.zeros((1, 2)), np.cumsum(steps, axis=0)]]
+
+
+def _out_and_back(start, heading_deg, length_m):
+    out = _line_points(start, heading_deg, length_m)
+    return [out[0], out[1], out[0]]
+
+
+# Shape routes (python -m spherical_wheel.gazebo mars-shapes), kept apart from
+# ROUTES so the existing suites are unchanged. Each placement was the lowest
+# worst-case wheel-scale slope (results/gazebo/mars/route_fields.npz) found on a
+# 0.2 m grid of starts and 15 deg of headings, with the whole path at least
+# 0.35 m from lava/rock standing more than 2 cm above the DEM.
+SHAPE_ROUTES = {
+    'shape_circle': {'path': ('ring', (-14.8, -6.), 90., 1.), 'yaw': 0.,
+                     'about': 'A 1 m radius circle, counter-clockwise, at a constant 0.1 m/s.'},
+    'shape_triangle': {'path': ('polyline', _polygon((2.6, 17.4), 30., 2., 3)), 'yaw': 0.,
+                       'about': 'An equilateral triangle with 2 m sides, counter-clockwise, stopping at each corner.'},
+    'shape_line_and_back': {'path': ('polyline', _out_and_back((-19.2, 3.2), 285., 3.)), 'yaw': 0.,
+                            'about': '3 m straight out, stop, and 3 m straight back to the start.'},
+    'shape_zigzag': {'path': ('polyline', _zigzag((.6, 16.6), 15., 1.5, 45., 5)), 'yaw': 0.,
+                     'about': 'Five 1.5 m legs at +/-45 deg to the route axis (90 deg turns), stopping at each corner.'},
+}
+
+
+def route_item(name):
+    return ROUTES[name] if name in ROUTES else SHAPE_ROUTES[name]
+
+
+def route_closed(name):
+    """Whether a route ends where it starts (then the loop-closure gate applies)."""
+    spec = route_item(name)['path']
+    kind = spec[0]
+    if kind == 'polyline':
+        return bool(np.allclose(spec[1][0], spec[1][-1]))
+    return kind in ('circle', 'figure8', 'ring') or (kind == 'spline' and spec[2])
+
+
 def build_route(name):
     from ..mobility import MobilityPath
-    item = ROUTES[name]
+    item = route_item(name)
     kind = item['path'][0]
     speed = item.get('speed', .1)
     if kind == 'line':
@@ -404,6 +543,13 @@ def build_route(name):
         _, origin, radius, duration = item['path']
         path = MobilityPath(kind, duration, radius, origin=origin)
         route_heading = 90. if kind == 'circle' else 45.
+    elif kind == 'ring':
+        _, start, heading, radius = item['path']
+        path = CirclePath(start, radius, heading, speed)
+        route_heading = heading
+    elif kind == 'polyline':
+        path = PolylinePath(item['path'][1], speed)
+        route_heading = path.heading_deg
     else:
         _, waypoints, closed = item['path']
         path = SplinePath(waypoints, speed, closed=closed)
@@ -500,6 +646,8 @@ def evaluate_route(log, summary, path, yard, closed):
 # OffroadParams option (off by default) at the value of the tuning sweep.
 CONTROLLERS = {'terrain_aware': {'mode': 'terrain_aware'},
                'flat_baseline': {'mode': 'flat_baseline'},
+               # terrain_aware with the ground force and moment from the momentum observer.
+               'momentum_observer': {'mode': 'momentum_observer'},
                'terrain_aware_heading_hold': {'mode': 'terrain_aware', 'heading_gain': .2},
                # Turn the shaft-driven direction onto the fall line, steering with the
                # unloaded shells mostly at pole crossings (results/gazebo/mars_yaw_study).
@@ -508,6 +656,7 @@ CONTROLLERS = {'terrain_aware': {'mode': 'terrain_aware'},
                                            'heading_damping': .1, 'heading_torque_limit_Nm': .3,
                                            'heading_roll_budget_Nm': .05, 'fall_line_slope_deg': (6., 12.)}}
 LABELS = {'terrain_aware': 'contact-aware', 'flat_baseline': 'flat baseline',
+          'momentum_observer': 'momentum observer (no force sensing)',
           'terrain_aware_heading_hold': 'contact-aware + heading hold',
           'terrain_aware_fall_line': 'contact-aware + fall-line heading'}
 
@@ -541,9 +690,8 @@ def run_route(job):
     path, yaw = build_route(name)
     start = time.time()
     log, summary = run_gazebo(workspace, yard, path, OffroadParams(**CONTROLLERS[mode]), yaw_deg=yaw, phase=phase)
-    closed = ROUTES[name]['path'][0] in ('circle', 'figure8') or (ROUTES[name]['path'][0] == 'spline' and ROUTES[name]['path'][2])
-    summary = evaluate_route(log, summary, path, yard, closed)
-    summary['route'] = {'name': name, 'about': ROUTES[name]['about'], 'initial_yaw_deg': yaw, 'path': path.spec(),
+    summary = evaluate_route(log, summary, path, yard, route_closed(name))
+    summary['route'] = {'name': name, 'about': route_item(name)['about'], 'initial_yaw_deg': yaw, 'path': path.spec(),
                         'start_phase_rad': .30 if phase is None else phase}
     directory = save_run(root/name/mode/(f'phase_{phase:+.2f}' if phase is not None else ''), log, summary, yard)
     plot_route(log, summary, path, yard, directory/'plots.png', f'{name}: {mode}')

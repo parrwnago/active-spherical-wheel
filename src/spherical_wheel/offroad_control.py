@@ -47,7 +47,13 @@ there; it is slowed instead.
 
 The feedback gains themselves are the unchanged flat-floor library. Nothing
 here adds an external force, resets a state or moves the requested target.
-State feedback and the contact wrench are simulator ground truth.
+In ``terrain_aware`` the state feedback and the contact wrench are simulator
+ground truth. ``momentum_observer`` is the same controller without the force
+sensor: the force and moment behind the normal and the load fraction come from
+a momentum observer (``MomentumObserver``) that reads only the state, the drive
+torques and the model. In both, the per-surface loads used for gain blending
+and rim detection, the rolling feedforward and the incoming-drive preview
+still read the simulator's contacts.
 """
 from __future__ import annotations
 
@@ -60,7 +66,7 @@ import mujoco
 import numpy as np
 from scipy.linalg import solve_discrete_are
 
-from .contact_sensing import ContactEstimator, measure_contact
+from .contact_sensing import ContactEstimator, MomentumObserver, intrinsic_normal, measure_contact
 from .control import design_lqr, find_equilibrium, linearize
 from .experiments import rolling_feedforward
 from .recovery_control import ScheduledBalanceFeedback, build_gain_library
@@ -147,16 +153,26 @@ def _variant_cache_path(cache_path, weights):
     return path.with_name(f'{path.stem}_{weights}_{tag}{path.suffix}')
 
 
+# 'terrain_aware' reads the solved contact force and moment (simulation only);
+# 'momentum_observer' estimates them from the motion; 'flat_baseline' ignores the ground.
+CONTROLLER_MODES = ('terrain_aware', 'momentum_observer', 'flat_baseline')
+
+
 @dataclass
 class OffroadParams:
     """Controller settings. ``flat_baseline`` ignores every terrain option.
 
+    ``momentum_observer`` is ``terrain_aware`` with the ground force and moment
+    estimated from the motion by ``MomentumObserver`` instead of read from the
+    contact solver, so it needs no force sensor.
+
     The defaults are the outcome of the tuning sweep saved in
     results/offroad/tuning/tuning.json.
     """
-    mode: str = 'terrain_aware'            # 'terrain_aware' or 'flat_baseline'
+    mode: str = 'terrain_aware'            # 'terrain_aware', 'momentum_observer' or 'flat_baseline'
     synchronize: bool = True               # prepare incoming drives, as in the lab
-    normal_source: str = 'intrinsic'       # 'intrinsic' (force and moment) or 'solver'
+    normal_source: str = 'intrinsic'       # 'intrinsic' (from force and moment) or 'solver' (terrain_aware only)
+    observer_cutoff_rad_s: float = 100.    # bandwidth of the momentum observer (momentum_observer only)
     normal_time_constant_s: float = .02    # low-pass on the sensed ground normal
     rim_aware: bool = True                 # treat the equatorial rims as rims; False reads them as sphere
     rim_time_constant_s: float = .2        # low-pass along the carrier axis while the support is on the rims
@@ -186,12 +202,16 @@ class OffroadParams:
     fall_line_hysteresis_deg: float = 20.  # keep the chosen end of the fall line until the other is this much closer
 
     def __post_init__(self):
-        if self.mode not in ('terrain_aware', 'flat_baseline'):
-            raise ValueError('Choose terrain_aware or flat_baseline')
+        if self.mode not in CONTROLLER_MODES:
+            raise ValueError(f'Choose a controller mode from {CONTROLLER_MODES}')
         if self.shaft_error not in ('material', 'free', 'rolling'):
             raise ValueError('Shaft error must be material, free or rolling')
         if self.normal_source not in ('intrinsic', 'solver'):
             raise ValueError('Normal source must be intrinsic or solver')
+        if self.mode == 'momentum_observer' and self.normal_source != 'intrinsic':
+            raise ValueError('momentum_observer reads no solved contact force; normal_source must be intrinsic')
+        if not self.observer_cutoff_rad_s > 0:
+            raise ValueError('observer_cutoff_rad_s must be positive')
         if self.lqr_weights not in LQR_WEIGHTS:
             raise ValueError(f'LQR weights must be one of {sorted(LQR_WEIGHTS)}')
         if self.heading_reference not in ('none', 'start', 'fall_line'):
@@ -206,6 +226,11 @@ class OffroadParams:
         if not 0 <= low < high:
             raise ValueError('fall_line_slope_deg must be an increasing pair of non-negative angles')
         self.fall_line_slope_deg = (float(low), float(high))
+
+    @property
+    def ground_aware(self):
+        """True for the modes that use the sensed ground (all but flat_baseline)."""
+        return self.mode != 'flat_baseline'
 
     def as_dict(self):
         return asdict(self)
@@ -279,7 +304,7 @@ class OffroadController:
 
     def __init__(self, plant, design, params=None, phase=None):
         self.params = params or OffroadParams()
-        if self.params.mode == 'terrain_aware' and self.params.lqr_weights != getattr(design, 'weights', 'flat'):
+        if self.params.ground_aware and self.params.lqr_weights != getattr(design, 'weights', 'flat'):
             design = design.variant(self.params.lqr_weights)
         self.plant, self.design = plant, design
         self.feedback = ScheduledBalanceFeedback(plant, design.points)
@@ -296,11 +321,14 @@ class OffroadController:
         upper_moment = float(model.body_mass[plant.fork_id]*model.body_ipos[plant.fork_id][2])
         self.lean_factor = self.total_mass*self.radius/upper_moment
         self.nominal_friction = float(plant.config['contact']['friction'][0])
+        # The observer supplies the same force and moment the intrinsic estimate reads.
+        self.observer = (MomentumObserver(model, plant.fork_id, self.params.observer_cutoff_rad_s)
+                         if self.params.mode == 'momentum_observer' else None)
         self.estimator = ContactEstimator(self.radius, self.weight, self.nominal_friction,
                                           self.params.normal_time_constant_s,
                                           slip_threshold_m_s=self.params.slip_threshold_m_s,
                                           friction_recovery_s=self.params.friction_recovery_s,
-                                          source=self.params.normal_source,
+                                          source='solver' if self.params.normal_source == 'solver' else 'intrinsic',
                                           rim_time_constant_s=self.params.rim_time_constant_s)
         self.reset(phase)
 
@@ -308,8 +336,15 @@ class OffroadController:
         phase = self.plant.config['simulation'].get('initial_shaft_phase_rad', .30) if phase is None else phase
         self.ordinary = self.design.local(phase)
         self.nominal_joints = self.ordinary['equilibrium']['qpos'][7:10].copy()
-        ground = getattr(self.plant, 'ground', None)
-        self.estimator.reset(ground['normal'] if ground else (0., 0., 1.))
+        if self.observer is not None:
+            # No ground truth: start from the static wrench of the current state.
+            data = self.plant.data
+            self.observer.reset(data.qpos, data.qvel, data.time, self.plant.last_input)
+            start = intrinsic_normal(*self.observer.wrench(), self.radius)
+            self.estimator.reset(start if start is not None else (0., 0., 1.))
+        else:
+            ground = getattr(self.plant, 'ground', None)
+            self.estimator.reset(ground['normal'] if ground else (0., 0., 1.))
         self._vref = np.zeros(self.plant.model.nv)
         self._sync = {'commands': [0.]*5, 'blend_weights': [0.]*5, 'targets': []}
         self._held = None
@@ -387,7 +422,7 @@ class OffroadController:
     def lean_vector(self, normal, acceleration):
         """Horizontal part of the desired body-up direction."""
         lean = np.asarray(acceleration, float)/self.gravity
-        if self.params.mode == 'terrain_aware':
+        if self.params.ground_aware:
             lean = lean-self.params.lean_gain*self.lean_factor*np.asarray(normal)[:2]
         limit = np.sin(np.deg2rad(self.params.max_lean_deg))
         size = float(np.linalg.norm(lean))
@@ -422,9 +457,14 @@ class OffroadController:
         plant, params = self.plant, self.params
         equilibrium, design = self.ordinary['equilibrium'], self.ordinary['design']
         measurement = measure_contact(plant)
+        sensed = measurement
+        if self.observer is not None:
+            data = plant.data
+            self.observer.update(data.qpos, data.qvel, plant.last_input, data.time)
+            sensed = self.observer.measurement(self.radius)
         rim = self._rim_support(measurement['loads_N']) if params.rim_aware else (None, False)
-        estimate = self.estimator.update(measurement, plant.dt, *rim)
-        aware = params.mode == 'terrain_aware'
+        estimate = self.estimator.update(sensed, plant.dt, *rim)
+        aware = params.ground_aware
         normal = estimate['normal'] if aware else np.array([0., 0., 1.])
         if aware:
             quat = plant.data.qpos[3:7]
@@ -452,6 +492,7 @@ class OffroadController:
         qref[7:10] = self.nominal_joints
         qref[3:7] = self.reference_attitude(normal, acceleration)
         diagnostics = {'measurement': measurement, 'estimate': estimate, 'drive_fade': 1.,
+                       'observed': sensed if self.observer is not None else None,
                        'support_torque': np.zeros(5), 'reference_quat': qref[3:7].copy(),
                        'heading_target_error_rad': self._yaw_error if aware else None}
         if aware:

@@ -16,8 +16,9 @@ CRITICAL = '#d03b3b'
 HEIGHT_RAMP = ['#cde2fb', '#9ec5f4', '#6da7ec', '#3987e5', '#256abf', '#104281']
 # Neutral ramp for ground height, so the blue wheel path stays legible on it.
 GROUND_RAMP = ['#f4f3f0', '#dcdbd4', '#c3c2b7', '#a3a29a', '#7d7c76']
-CONTROLLER_COLORS = {'terrain_aware': BLUE, 'flat_baseline': ORANGE}
-CONTROLLER_LABELS = {'terrain_aware': 'Contact-aware', 'flat_baseline': 'Flat-floor baseline'}
+CONTROLLER_COLORS = {'terrain_aware': BLUE, 'momentum_observer': AQUA, 'flat_baseline': ORANGE}
+CONTROLLER_LABELS = {'terrain_aware': 'Contact-aware', 'momentum_observer': 'Momentum-observer',
+                     'flat_baseline': 'Flat-floor baseline'}
 
 
 def _pyplot():

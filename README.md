@@ -54,6 +54,25 @@ python -m spherical_wheel.gazebo mars                         # routes over Leo 
 
 See [GAZEBO.md](GAZEBO.md) for how the port works, the checks that it matches MuJoCo, the Gazebo issues it corrects, and the Mars yard results.
 
+## Controllers
+
+Each controller is a named mode. The interactive lab runs on level ground. The off-road study and the Gazebo runs use the three modes of the off-road controller, which share the flat-floor gain library.
+
+| Name | Used in | What it knows about the ground |
+| --- | --- | --- |
+| `transition_aware` | Interactive lab (default) | Level floor. Contact-weighted gain scheduling and incoming-drive preparation. |
+| `local_lqr` | Interactive lab; Mars comparison (`gazebo mars-lqr`) | Level floor. The original lab controller, kept as a baseline. |
+| `flat_baseline` | Off-road study, Gazebo | Level floor. The flat-floor gain library with no terrain correction. |
+| `terrain_aware` | Off-road study, Gazebo (default) | The ground force and moment at the wheel, read from the contact solver. Only a simulator or a hub load cell provides these. |
+| `momentum_observer` | Off-road study, Gazebo | The same as `terrain_aware`, with the ground force and moment estimated from the motion, the drive torques and the model. Needs no force sensor. |
+
+`momentum_observer` still reads the simulator's per-surface contact loads (gain blending, rim detection), contact points (rolling feedforward) and ground plane (incoming-drive preview), and the full simulator state. See [OFFROAD.md](OFFROAD.md#without-a-force-sensor-momentum_observer) for how it works and what was checked, and [GAZEBO.md](GAZEBO.md#contact-aware-control-without-force-sensing-momentum_observer) for the Mars yard runs.
+
+```bash
+.venv/bin/python -m spherical_wheel offroad run --scenario course --controller momentum_observer
+MUJOCO_GL=egl python -m spherical_wheel.gazebo mars-observer   # asw-gz: every Mars route, terrain_aware and momentum_observer
+```
+
 ## Run it
 
 For full circles, figure-eights, lateral reversals and eight-direction motion over uneven terrain, see [OFFROAD_MOBILITY.md](OFFROAD_MOBILITY.md). The evaluation compares the unchanged controllers and saves paired MP4 replays, raw logs, acceptance gates and tracking metrics.
@@ -205,8 +224,8 @@ The interactive lab's `transition_aware` controller builds on those local design
 | `src/spherical_wheel/terrain.py` | Analytic uneven ground: height, slope, curvature and friction map |
 | `src/spherical_wheel/offroad.py` | The plant on uneven ground: tangent-plane contact under the wheel |
 | `src/spherical_wheel/gazebo/`, `gazebo/` | Gazebo reconstruction: SDF model, worlds, bridge and physics plugins, Mars yard (see GAZEBO.md) |
-| `src/spherical_wheel/contact_sensing.py` | Ground-reaction measurement, normal from force and moment, friction estimate |
-| `src/spherical_wheel/offroad_control.py` | Balance and tracking feedback that uses the ground reaction |
+| `src/spherical_wheel/contact_sensing.py` | Ground-reaction measurement, normal from force and moment, friction estimate, momentum observer |
+| `src/spherical_wheel/offroad_control.py` | Balance and tracking feedback that uses the ground reaction: `terrain_aware`, `momentum_observer`, `flat_baseline` |
 | `src/spherical_wheel/offroad_experiments.py`, `offroad_suite.py` | Off-road runs, metrics, scenario suites, tuning and slope limits |
 | `src/spherical_wheel/offroad_analysis.py`, `offroad_geometry.py`, `offroad_view.py` | Figures, the wheel's support and leverage map, rendered stills |
 | `generated/model.xml` | Generated primary MuJoCo model |

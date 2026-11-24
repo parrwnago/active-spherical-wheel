@@ -13,6 +13,10 @@ the slope under the wheel is observable without a terrain map. In simulation
 the pair comes from the solver; sensor noise, bias and the hub inertial loads
 a real cell would also see are not modelled.
 
+``MomentumObserver`` obtains the same force and moment without any force
+sensing. It reads only the joint state, the drive torques and the dynamics
+model, and recovers the ground wrench from how the machine's momentum changes.
+
 ``ContactEstimator`` turns the raw measurement into the slowly varying
 quantities feedback needs: a filtered normal, the normal load as a fraction of
 weight, and a friction estimate that drops when the surface is seen sliding.
@@ -208,6 +212,164 @@ def intrinsic_normal(force, moment, radius):
         return lateral/np.sqrt(excess)
     normal = np.sqrt(1.-excess)*force/np.sqrt(squared)+lateral
     return normal/np.linalg.norm(normal)
+
+
+def _rotation(quat):
+    matrix = np.empty(9)
+    mujoco.mju_quat2Mat(matrix, np.asarray(quat, float)/np.linalg.norm(quat))
+    return matrix.reshape(3, 3)
+
+
+class MomentumObserver:
+    """Ground force and moment from the machine's motion, without force sensing.
+
+    A generalized momentum observer (De Luca and Mattone, 2003) on the plant's
+    nine velocities ``v`` (the fork's free joint, the shaft and both shells).
+    With ``M(q)`` the mass matrix and ``p = M v`` the generalized momentum,
+
+        dp/dt = S u + f_passive - c(q, v) + (dM/dt) v + f_ext
+
+    where ``S u`` are the drive torques, ``f_passive`` the joint damping, ``c``
+    gravity plus Coriolis and centrifugal forces, and ``f_ext`` everything the
+    model does not contain: the ground contact, plus any push. Integrated over
+    one control interval this gives the interval's mean ``f_ext`` from two
+    consecutive states and the command held between them. The integrals of the
+    smooth model terms use the trapezoidal rule. No acceleration and no
+    contact force is read. The estimate follows that mean through
+    ``dr/dt = K (f_ext - r)`` with ``K = cutoff_rad_s``, discretised exactly
+    for a value held over the interval.
+
+    The first six rows belong to the fork's free joint, whose origin is the
+    wheel centre. Drive torques and joint damping act between bodies, so they
+    cancel there: those rows are the whole machine's momentum balance. They
+    give the net ground force (world frame) and its moment about the wheel
+    centre (fork frame, rotated to world here), the pair a hub load cell would
+    measure and ``intrinsic_normal`` expects. The moment rows are rotated to
+    world with the interval's mid rotation before filtering, so a turning body
+    does not smear the moment.
+
+    Inputs: ``q`` and ``v`` (on hardware: IMU attitude and rate, joint
+    encoders, and an estimate of the base's linear velocity), the applied drive
+    torques and the model. In simulation ``q`` and ``v`` are the plant's state.
+    A push on the body is indistinguishable from ground force and biases the
+    estimate while it lasts.
+    """
+
+    def __init__(self, model, fork_id, cutoff_rad_s=100.):
+        if not cutoff_rad_s > 0:
+            raise ValueError('The observer cutoff must be positive')
+        if (model.njnt == 0 or model.jnt_type[0] != mujoco.mjtJoint.mjJNT_FREE or model.jnt_dofadr[0] != 0
+                or model.jnt_bodyid[0] != fork_id):
+            raise ValueError('The observer expects the fork to carry the first joint, a free joint')
+        self.model, self.fork_id = model, int(fork_id)
+        self.cutoff_rad_s = float(cutoff_rad_s)
+        self._data = mujoco.MjData(model)   # private: the plant's data are never written
+        self._mass = np.zeros((model.nv, model.nv))
+        self._drive = np.zeros((model.nv, model.nu))
+        for index in range(model.nu):
+            if (model.actuator_trntype[index] != mujoco.mjtTrn.mjTRN_JOINT
+                    or model.actuator_dyntype[index] != mujoco.mjtDyn.mjDYN_NONE
+                    or model.actuator_gaintype[index] != mujoco.mjtGain.mjGAIN_FIXED
+                    or model.actuator_biastype[index] != mujoco.mjtBias.mjBIAS_NONE):
+                raise ValueError('The observer models only direct joint torque motors')
+            dof = model.jnt_dofadr[model.actuator_trnid[index, 0]]
+            self._drive[dof, index] = model.actuator_gear[index, 0]
+        self.generalized = np.zeros(model.nv)    # filtered f_ext; rows 0-5 in world frame
+        self.interval_mean = np.zeros(model.nv)  # last interval's mean f_ext, same frames
+        self._previous = None
+
+    def _torques(self, command):
+        """Actuator forces for a command, with MuJoCo's control and force limits."""
+        model = self.model
+        control = np.zeros(model.nu) if command is None else np.array(command[:model.nu], float)
+        limited = model.actuator_ctrllimited.astype(bool)
+        control[limited] = np.clip(control[limited], *model.actuator_ctrlrange[limited].T)
+        force = model.actuator_gainprm[:, 0]*control
+        limited = model.actuator_forcelimited.astype(bool)
+        force[limited] = np.clip(force[limited], *model.actuator_forcerange[limited].T)
+        return self._drive@force
+
+    def _terms(self, qpos, qvel):
+        """Mass matrix, bias force ``c(q, v)``, passive force and fork rotation at one state."""
+        model, data = self.model, self._data
+        data.qpos[:], data.qvel[:] = qpos, qvel
+        mujoco.mj_kinematics(model, data)
+        mujoco.mj_comPos(model, data)
+        mujoco.mj_crb(model, data)
+        mujoco.mj_fullM(model, data, self._mass)
+        mujoco.mj_comVel(model, data)
+        mujoco.mj_passive(model, data)
+        bias = np.empty(model.nv)
+        mujoco.mj_rne(model, data, 0, bias)
+        return (self._mass.copy(), bias, data.qfrc_passive.copy(),
+                data.xmat[self.fork_id].reshape(3, 3).copy(), data.xquat[self.fork_id].copy())
+
+    @staticmethod
+    def _to_world(generalized, rotation):
+        world = np.array(generalized, float)
+        world[3:6] = rotation@world[3:6]
+        return world
+
+    def reset(self, qpos, qvel, time, command=None):
+        """Start from the given state, assuming it is not accelerating.
+
+        At rest the ground carries whatever the model's own forces leave
+        unbalanced: on the free-joint rows, gravity. For a machine standing
+        still that places the contact under the centre of mass.
+        """
+        mass, bias, passive, rotation, quat = self._terms(qpos, qvel)
+        self.generalized = self._to_world(bias-passive-self._torques(command), rotation)
+        self.interval_mean = self.generalized.copy()
+        self._previous = (float(time), mass, np.array(qvel, float), bias, passive, quat)
+        return self.wrench()
+
+    def update(self, qpos, qvel, command, time):
+        """Advance to a new state; ``command`` is the one held since the previous state.
+
+        A repeated time leaves the estimate unchanged; an earlier time restarts it.
+        """
+        if self._previous is None:
+            return self.reset(qpos, qvel, time, command)
+        time0, mass0, qvel0, bias0, passive0, quat0 = self._previous
+        dt = float(time)-time0
+        if dt < -1e-12:
+            return self.reset(qpos, qvel, time, command)
+        if dt <= 1e-12:
+            return self.wrench()
+        mass1, bias1, passive1, _, quat1 = self._terms(qpos, qvel)
+        qvel1 = np.array(qvel, float)
+        known = (dt*(self._torques(command)+.5*(passive0+passive1)-.5*(bias0+bias1))
+                 + (mass1-mass0)@(.5*(qvel0+qvel1)))
+        mean = (mass1@qvel1-mass0@qvel0-known)/dt
+        middle = quat0+(quat1 if quat0@quat1 >= 0 else -quat1)
+        self.interval_mean = self._to_world(mean, _rotation(middle))
+        self.generalized += (1.-np.exp(-self.cutoff_rad_s*dt))*(self.interval_mean-self.generalized)
+        self._previous = (float(time), mass1, qvel1, bias1, passive1, quat1)
+        return self.wrench()
+
+    def wrench(self):
+        """``(force, moment)``: ground force on the wheel and its moment about the wheel centre, world frame."""
+        return self.generalized[:3].copy(), self.generalized[3:6].copy()
+
+    def measurement(self, radius):
+        """The fields of ``measure_contact`` that ``ContactEstimator`` reads, from the observer.
+
+        The normal load is the force along the ground normal implied by the
+        same force and moment. Sliding cannot be seen without contact sensing:
+        ``slip_speed_m_s`` is reported as zero, so the friction estimate stays
+        at its nominal value.
+        """
+        force, moment = self.wrench()
+        normal = intrinsic_normal(force, moment, radius)
+        if normal is None:
+            normal, pressure = np.array([0., 0., 1.]), 0.
+        else:
+            pressure = max(0., float(normal@force))
+        tangential = force-normal*(normal@force)
+        return {'in_contact': bool(pressure > 1e-9), 'force_N': force, 'moment_Nm': moment, 'normal': normal,
+                'normal_force_N': pressure, 'tangential_force_N': tangential,
+                'tangential_force_norm_N': float(np.linalg.norm(tangential)), 'slip_velocity_m_s': np.zeros(3),
+                'slip_speed_m_s': 0., 'source': 'momentum_observer'}
 
 
 class ContactEstimator:

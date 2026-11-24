@@ -116,7 +116,7 @@ def _caption(frame, heading, lines, footer):
 
 
 def render_replay(plant, runs, output, fps=30, speed=1., width=960, height=720, azimuth=112., elevation=-14.,
-                  distance=1.25, title=None, fixed_lookat=None):
+                  distance=1.25, title=None, fixed_lookat=None, annotate=None):
     """Write an MP4 replay of one or more saved runs on the same terrain, side by side.
 
     ``runs`` is a list of ``(label, log)``. Each run gets its own panel with a
@@ -124,7 +124,8 @@ def render_replay(plant, runs, output, fps=30, speed=1., width=960, height=720, 
     The cyan line is the path travelled and the orange ball is where the
     reference is at that moment. ``speed`` above 1 plays faster than real
     time and is stated in the caption. A run that ended early holds its last
-    frame, marked as stopped. Returns the output path.
+    frame, marked as stopped. ``annotate(log, index)``, if given, returns one
+    more caption line for each panel. Returns the output path.
     """
     import imageio.v2 as imageio
     runs = list(runs)
@@ -161,6 +162,8 @@ def render_replay(plant, runs, output, fps=30, speed=1., width=960, height=720, 
                              f"ground load {log['normal_force_N'][index]:5.1f} N"]
                     if stopped:
                         lines[1] = f"run stopped at {log['time_s'][-1]:.1f} s"
+                    if annotate is not None:
+                        lines.append(annotate(log, index))
                     panels.append(_caption(frame, label if title is None else f'{title}: {label}', lines, footer))
                 writer.append_data(np.concatenate(panels, axis=1))
     finally:

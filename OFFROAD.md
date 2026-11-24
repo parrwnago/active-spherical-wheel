@@ -15,6 +15,7 @@ From the repository directory, with the environment from the README. On Windows 
 ```bash
 python -m spherical_wheel offroad limits                    # static slope figures of the declared model
 python -m spherical_wheel offroad run --scenario course     # one run: rollout, summary, figure, rendered still
+python -m spherical_wheel offroad run --scenario course --controller momentum_observer   # the same without force sensing
 python -m spherical_wheel offroad replay --scenario course  # MP4 of both controllers side by side
 python -m spherical_wheel offroad suite                     # every scenario, both controllers, four starts each
 python -m spherical_wheel offroad envelope                  # holding position on steeper and steeper slopes
@@ -22,9 +23,9 @@ python -m spherical_wheel offroad holdout                   # terrains and headi
 python -m spherical_wheel offroad tune                      # the tuning sweep
 ```
 
-`run` and `replay` accept any scenario name from the suite table below, and `run` accepts `--controller flat_baseline`. Batch actions use worker processes (`--workers N`); results are identical for any worker count. Output goes to `results/offroad/`, and generated models to `generated/offroad/`, which is not tracked. On this 8-thread machine with six workers the suite takes about 12 minutes, the held-out set 8, the envelope 2 and the tuning sweep 25. A headless Linux machine needs `MUJOCO_GL=egl` for the rendered still and the replay; the runs themselves need no display.
+`run` and `replay` accept any scenario name from the suite table below, and `run` accepts `--controller flat_baseline` or `--controller momentum_observer`. Batch actions use worker processes (`--workers N`); results are identical for any worker count. Output goes to `results/offroad/`, and generated models to `generated/offroad/`, which is not tracked. On this 8-thread machine with six workers the suite takes about 12 minutes, the held-out set 8, the envelope 2 and the tuning sweep 25. A headless Linux machine needs `MUJOCO_GL=egl` for the rendered still and the replay; the runs themselves need no display.
 
-The tests are in `tests/test_offroad_ground.py` (the ground model against closed-form mechanics) and `tests/test_offroad_control.py` (sensing and the controller against the baseline).
+The tests are in `tests/test_offroad_ground.py` (the ground model against closed-form mechanics), `tests/test_offroad_control.py` (sensing and the controller against the baseline) and `tests/test_momentum_observer.py` (the force-free sensing below).
 
 ## What a slope does to this wheel
 
@@ -83,6 +84,27 @@ One artefact to know about: MuJoCo's soft friction lets a body resting on a slop
 **Resting on both rims, the axial part is held.** Two rims are a stable two-point base, and how the load divides between them depends on where the body leans. Following the measured normal there is a slow positive feedback: the body leans toward one rim, that rim takes more load, the apparent slope grows, and the wheel ends up tipped onto one rim on level ground. An earlier run of the cross-slope scenario showed exactly that after stopping in the gap, so the part of the estimate along the carrier axis is held while both rims carry load and the wheel is at rest.
 
 **Friction is learned only from sustained sliding.** The estimate starts at the nominal coefficient and drops to the measured force ratio when the loaded surface has slid for 30 ms. A single sliding sample during a surface handover is ignored, because the force at that instant is well inside the friction limit and says nothing about the limit. The estimate is reported in every run and does not limit any command; see below for why.
+
+## Without a force sensor: `momentum_observer`
+
+`terrain_aware` reads the force and moment from the contact solver, and the robot has no sensor that measures them. The `momentum_observer` mode is the same controller, with the same gains and settings, where that pair is estimated from the motion instead.
+
+**What it estimates.** The drive motors push between the wheel, the carrier and the fork, so their torques cancel for the machine as a whole. Only gravity and the ground change its total momentum. Each 5 ms controller interval, `MomentumObserver` (in `contact_sensing.py`) computes the generalized momentum `M(q) v` from the state and the model and takes its change over the interval. It subtracts what the drive torques, gravity, Coriolis forces and joint damping account for, using the trapezoidal rule over the interval. The free joint's rows of what remains are the net external force on the machine and its moment about the wheel centre. They are rotated to the world frame and smoothed by a first-order filter at 100 rad/s (`observer_cutoff_rad_s`, a 10 ms time constant). This is the generalized-momentum disturbance observer of De Luca and Mattone (2003). Nothing is trained or fitted.
+
+**Everything after it is unchanged.** The estimated pair goes through the same normal from force and moment, the same filter, lean and holding torque. At reset the observer starts from the static balance of the current state, so the starting slope is found without being told the terrain's normal. Standing still, the force alone is the weight and says nothing about the slope; the slope shows up in the moment, because the wheel touches the ground uphill of its centre.
+
+**Checks** (`tests/test_momentum_observer.py`):
+
+- The mass matrix, bias forces, damping and drive map it uses reproduce MuJoCo's own step to 1e-12 when evaluated with the integrator's rule.
+- In the air, with random drive torques, it recovers a known push on the body to within 0.02 N and 0.005 N m.
+- On hills, bumps and washboard it reproduces the contact impulse MuJoCo applied over each interval: median force error under 1e-4 N, worst under 5e-3 N.
+- Standing on an 8 deg grade, a 6 deg side slope and a 10 + 5 deg slope, it finds the slope within 0.05 deg.
+- Corrupting every solved-force field the controller could read leaves its commands bit-identical.
+- It climbs the 8 deg ramp as well as `terrain_aware`.
+
+The suite, envelope and held-out set below have not been run with it. In Gazebo on the Mars yard it finished 13 of 15 routes against 14 of 15 for `terrain_aware` from one start each (GAZEBO.md).
+
+**What it does not remove.** It still needs the full state, including the base's linear velocity, which hardware would have to estimate. The per-surface loads used for gain blending and rim detection, the contact points of the rolling feedforward and the incoming-drive preview still come from the simulator. A push on the body reads as ground force while it lasts. Its slip speed is reported as zero, so the friction estimate stays at the nominal coefficient. It has not been tested with sensor noise, bias or delay, or with model parameters that differ from the plant's.
 
 ## What the controller does with it
 
@@ -269,7 +291,7 @@ The ramp, where the wheel stays on smooth surfaces most of the time, reproduces 
 ## Limits
 
 - **Simulation of a provisional model.** Assumed masses, inertias, friction and torque bounds; ideal belt speed servos; no motor torque-speed curves. None of this is a hardware prediction.
-- **Ground truth sensing.** The controller uses the simulator's state, the solver's contact force and moment, and the load on each shell and belt. No estimator, sensor noise, bias or delay is modelled, and a real hub load cell would also read inertial loads that must be removed.
+- **Ground truth sensing.** The controller uses the simulator's state, the solver's contact force and moment, and the load on each shell and belt. `momentum_observer` replaces the force and moment with an estimate and keeps the rest. No estimator, sensor noise, bias or delay is modelled, and a real hub load cell would also read inertial loads that must be removed.
 - **Smooth single-contact ground only.** No steps, edges, ruts narrower than the wheel, loose or deformable ground. Friction is Coulomb with one coefficient per place, with no torsional or rolling resistance at the contact.
 - **Worst-case error is sensitive to small changes.** The largest error in a run depends on where surface handovers fall on the terrain. On the course the contact-aware controller's largest error was 67, 71, 146 and 177 mm from the four starts, and for the 146 mm start it became 87 mm at half the physics step. Medians over several starts are the figures to compare.
 - **Heading is unregulated by default.** The platform turned by up to 142 degrees during contact-aware runs in the suite, with medians of 6 to 50 degrees on the seven scenarios where it turns at all. A heading hold through the idle shell exists and works, but did not lower the suite cost, so it is off. Heading drift is what turns shell-driven travel, which should stay on one shell, into travel that crosses the gap and the poles.

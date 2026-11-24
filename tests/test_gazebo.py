@@ -94,6 +94,26 @@ def test_spline_route_has_exact_derivatives():
     assert np.allclose(path(0.)[1], 0.) and np.allclose(path(path.start_s+path.duration_s+1.)[1], 0.)
 
 
+def test_shape_routes_have_exact_derivatives_and_stop_at_corners():
+    from spherical_wheel.gazebo.mars import SHAPE_ROUTES, build_route, route_closed
+    step = 1e-4
+    for name in SHAPE_ROUTES:
+        path, yaw = build_route(name)
+        assert np.isclose(yaw, path.heading_deg)
+        for t in np.linspace(path.start_s+.3, path.start_s+path.duration_s-.3, 23):
+            velocity = (path(t+step)[0]-path(t-step)[0])/(2*step)
+            acceleration = (path(t+step)[1]-path(t-step)[1])/(2*step)
+            assert np.allclose(velocity, path(t)[1], atol=2e-6), name
+            assert np.allclose(acceleration, path(t)[2], atol=2e-5), name
+        end = path.start_s+path.duration_s
+        assert np.allclose(path(0.)[1], 0.) and np.allclose(path(end+1.)[1], 0.)
+        assert np.isclose(np.linalg.norm(path(path.start_s+path.duration_s/2)[1]), .1) or path.kind == 'polyline'
+        if path.kind == 'polyline':
+            for corner, point in zip(path.start_s+path.leg_starts[1:], path.waypoints[1:-1]):
+                assert np.allclose(path(corner)[0], point) and np.allclose(path(corner)[1], 0.)
+        assert route_closed(name) == np.allclose(path(end)[0], path(0.)[0]), name
+
+
 @pytest.mark.skipif(not (REPO_ROOT/'assets'/'gazebo'/'third_party'/'leo_simulator-ros2').is_dir(),
                     reason='Leo Rover Mars yard not fetched (scripts/fetch-marsyard.sh)')
 def test_mars_yard_surface_matches_its_samples_and_facets():

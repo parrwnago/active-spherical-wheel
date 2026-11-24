@@ -32,7 +32,8 @@ def main(argv=None):
     p.add_argument('--config',type=Path)
     p.add_argument('--output',type=Path,default=Path('results')/'offroad')
     p.add_argument('--scenario',default='course',help='Scenario name for the run action')
-    p.add_argument('--controller',choices=['terrain_aware','flat_baseline'],default='terrain_aware')
+    p.add_argument('--controller',choices=['terrain_aware','momentum_observer','flat_baseline'],default='terrain_aware',
+                   help='momentum_observer: terrain_aware without the solved contact force (no force sensor)')
     p.add_argument('--seed',type=int,default=7)
     p.add_argument('--workers',type=int,help='Worker processes for batch actions')
     p.add_argument('--view-time',type=float,help='Time in s of the rendered still for the run action (default: midway)')

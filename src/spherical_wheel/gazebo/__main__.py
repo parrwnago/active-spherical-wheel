@@ -1,4 +1,4 @@
-"""Command line: python -m spherical_wheel.gazebo {parity,mars} --help."""
+"""Command line: python -m spherical_wheel.gazebo {parity,mars,mars-lqr,mars-shapes,mars-observer,view} --help."""
 from __future__ import annotations
 
 import argparse
@@ -21,7 +21,8 @@ def main(argv=None):
     mars = sub.add_parser('mars', help='Trajectories on the ERC Mars yard (marsyard2021)')
     mars.add_argument('--routes', nargs='*', default=None)
     mars.add_argument('--controllers', nargs='*', default=['terrain_aware', 'flat_baseline'],
-                      help='terrain_aware, flat_baseline, terrain_aware_heading_hold and/or terrain_aware_fall_line')
+                      help='terrain_aware, momentum_observer, flat_baseline, terrain_aware_heading_hold and/or '
+                           'terrain_aware_fall_line')
     mars.add_argument('--workers', type=int, default=4)
     mars.add_argument('--output', default=str(REPO_ROOT/'results'/'gazebo'/'mars'))
     mars.add_argument('--phases', nargs='*', type=float, default=None,
@@ -33,10 +34,26 @@ def main(argv=None):
     lqr.add_argument('--render-workers', type=int, default=6)
     lqr.add_argument('--no-render', action='store_true')
     lqr.add_argument('--output', default=str(REPO_ROOT/'results'/'gazebo'/'mars_local_lqr'))
+    shapes = sub.add_parser('mars-shapes', help='Circle, triangle, line-and-back and zigzag routes on the Mars yard '
+                                                'with the contact-aware controller, with replay videos')
+    shapes.add_argument('--routes', nargs='*', default=None, help='Names from mars.SHAPE_ROUTES (default: all)')
+    shapes.add_argument('--workers', type=int, default=4)
+    shapes.add_argument('--render-workers', type=int, default=4)
+    shapes.add_argument('--no-render', action='store_true')
+    shapes.add_argument('--output', default=str(REPO_ROOT/'results'/'gazebo'/'mars_shapes'))
+    observer = sub.add_parser('mars-observer', help='Every Mars route with force sensing (terrain_aware) and with the '
+                                                    'momentum observer (momentum_observer), matched starts, with '
+                                                    'side-by-side replay videos')
+    observer.add_argument('--routes', nargs='*', default=None, help='Names from mars.ROUTES and mars.SHAPE_ROUTES')
+    observer.add_argument('--workers', type=int, default=5)
+    observer.add_argument('--render-workers', type=int, default=4)
+    observer.add_argument('--no-render', action='store_true')
+    observer.add_argument('--output', default=str(REPO_ROOT/'results'/'gazebo'/'mars_observer'))
     view = sub.add_parser('view', help='Run one Mars route at real-time pace for the Gazebo GUI (gz sim -g)')
     view.add_argument('--route', default='plain_traverse')
     view.add_argument('--controller', default='terrain_aware',
-                      help='terrain_aware, flat_baseline, terrain_aware_heading_hold or terrain_aware_fall_line')
+                      help='terrain_aware, momentum_observer, flat_baseline, terrain_aware_heading_hold or '
+                           'terrain_aware_fall_line')
     view.add_argument('--rate', type=float, default=1., help='Simulated seconds per wall-clock second')
     view.add_argument('--output', default=str(REPO_ROOT/'results'/'gazebo'/'view'))
     args = parser.parse_args(argv)
@@ -50,6 +67,12 @@ def main(argv=None):
         run_routes(args.output, args.routes, tuple(args.controllers), args.workers, args.phases)
     elif args.command == 'mars-lqr':
         from .mars_compare import run
+        run(args.output, args.routes, args.workers, not args.no_render, args.render_workers)
+    elif args.command == 'mars-shapes':
+        from .mars_shapes import run
+        run(args.output, args.routes, args.workers, not args.no_render, args.render_workers)
+    elif args.command == 'mars-observer':
+        from .mars_observer import run
         run(args.output, args.routes, args.workers, not args.no_render, args.render_workers)
     elif args.command == 'view':
         view_route(args)

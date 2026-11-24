@@ -171,7 +171,8 @@ _LOG_KEYS = ('time_s', 'qpos', 'qvel', 'command', 'input', 'reference_xy', 'refe
              'ground_friction', 'estimated_friction', 'contact_force_N', 'normal_force_N',
              'tangential_force_N', 'utilization', 'slip_speed_m_s', 'support_loads_N',
              'effective_phase_rad', 'drive_fade', 'support_torque', 'heading_rad', 'fork_load_N',
-             'support_direction', 'contact_point_m')
+             'support_direction', 'contact_point_m', 'contact_moment_Nm', 'observer_force_N', 'observer_moment_Nm')
+_UNOBSERVED = np.full(3, np.nan)
 
 
 def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=None, pushes=(),
@@ -222,7 +223,14 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
                'fork_load_N': measurement['fork_load_N'],
                # Ground normal seen from the carrier: where on the wheel the support point is.
                'support_direction': plant.data.xmat[controller.carrier_id].reshape(3, 3).T@plant.ground['normal'],
-               'contact_point_m': np.asarray(measurement['point_m'], float).copy()}
+               'contact_point_m': np.asarray(measurement['point_m'], float).copy(),
+               # Solved moment about the wheel centre, and the observer's force and
+               # moment when the controller uses it (NaN otherwise).
+               'contact_moment_Nm': np.asarray(measurement['moment_Nm'], float).copy(),
+               'observer_force_N': (diagnostics['observed']['force_N'].copy() if diagnostics.get('observed')
+                                    else _UNOBSERVED.copy()),
+               'observer_moment_Nm': (diagnostics['observed']['moment_Nm'].copy() if diagnostics.get('observed')
+                                      else _UNOBSERVED.copy())}
         for key in _LOG_KEYS:
             log[key].append(row[key])
         if snapshot['balance_failed']:
@@ -269,7 +277,18 @@ def summarize(log, plant, path, params, failure=None, requested_duration_s=None)
     heading = np.unwrap(log['heading_rad'])
     tail = time >= time[-1]-1.
     completed = failure is None and (requested_duration_s is None or time[-1] >= requested_duration_s-dt/2)
+    sensing = {}
+    if 'observer_force_N' in log and np.isfinite(log['observer_force_N']).all() and loaded.any():
+        # Observer against the solved contact. The observer reports an interval
+        # mean, the solver the instant at the end of the interval.
+        force_error = np.linalg.norm(log['observer_force_N']-log['contact_force_N'], axis=1)[loaded]
+        moment_error = np.linalg.norm(log['observer_moment_Nm']-log['contact_moment_Nm'], axis=1)[loaded]
+        sensing = {'observer_force_error_median_N': float(np.median(force_error)),
+                   'observer_force_error_p95_N': _percentile(force_error, 95),
+                   'observer_moment_error_median_Nm': float(np.median(moment_error)),
+                   'observer_moment_error_p95_Nm': _percentile(moment_error, 95)}
     return {
+        'sensing': sensing,
         'terrain': plant.terrain.name, 'controller': params.mode, 'parameters': params.as_dict(),
         'engine_version': mujoco.__version__, 'contact_mode': plant.config['contact'].get('mode', 'faceted'),
         'ground_model': 'Tangent plane of the analytic terrain at the surface point nearest the wheel centre.',
@@ -301,6 +320,8 @@ def summarize(log, plant, path, params, failure=None, requested_duration_s=None)
                     'estimated_friction_min': float(log['estimated_friction'].min()),
                     'normal_estimate_error_rms_deg': float(np.sqrt(np.mean(normal_error[loaded]**2))) if loaded.any() else float('nan'),
                     'normal_estimate_error_max_deg': float(normal_error[loaded].max()) if loaded.any() else float('nan'),
+                    'normal_estimate_error_median_deg': float(np.median(normal_error[loaded])) if loaded.any() else float('nan'),
+                    'normal_estimate_error_p95_deg': _percentile(normal_error[loaded], 95),
                     'support_time_share': {name: float(np.mean(dominant == i)) if len(dominant) else 0.
                                            for i, name in enumerate(SUPPORT_NAMES)},
                     'support_handovers': int(np.count_nonzero(np.diff(dominant))) if len(dominant) > 1 else 0,

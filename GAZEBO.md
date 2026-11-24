@@ -22,6 +22,7 @@ python -m spherical_wheel.gazebo mars --workers 5                        # 11 Ma
 python -m spherical_wheel.gazebo mars --controllers terrain_aware_heading_hold
 python -m spherical_wheel.gazebo mars --controllers terrain_aware terrain_aware_fall_line   # fall-line heading steering (Follow-up below)
 MUJOCO_GL=egl python -m spherical_wheel.gazebo mars-lqr                 # original local LQR vs contact-aware, side-by-side MP4s
+MUJOCO_GL=egl python -m spherical_wheel.gazebo mars-observer            # contact-aware with and without force sensing, side-by-side MP4s
 python -m spherical_wheel.gazebo view --route crater_rim_climb           # real-time pace; then `gz sim -g` in another terminal
 ```
 
@@ -186,9 +187,51 @@ A follow-up study (`results/gazebo/mars_yaw_study/REPORT.md`, kept local like th
 * **The local LQR falls on every route, mostly within two seconds.** Every Mars start is on a sloped facet and both controllers start in the lean that balances on it. The local LQR has no slope model, sees that lean as an attitude error and saturates all three drives in its first command. From the same start on the same ground, MuJoCo gives the same first command and the same falls (plain traverse 1.27 s against 1.25 s in Gazebo; circle 6.43 against 6.67 s), so this is the controller, not the simulator. On Gazebo's level plane the same local LQR drives the 1 m `flat_forward` path with a 21 mm largest error and 1 mm final error, so the falls come from the slopes.
 * **The contact-aware controller finished 6 of the 10 routes from this start.** Started at heading 0 rather than along the route, it crosses the 15-16 deg crater rims partly on a shell, whose holding bound is 16.7 deg, and falls on both rim routes, which it finished when started along them; the steep descent and the lava crossing fail as before.
 
+### Shape routes with the contact-aware controller
+
+`MUJOCO_GL=egl python -m spherical_wheel.gazebo mars-shapes` runs four shapes (`mars.SHAPE_ROUTES`) with the contact-aware controller only, and renders one replay per route at `results/gazebo/mars_shapes/<route>/replay.mp4` (played at 2x). Each starts at rest with the shaft-driven direction along the first leg, wheel phase 0.30, and cruises at 0.1 m/s. The triangle, line and zigzag come to rest at every corner (`PolylinePath`); the circle holds a constant speed (`CirclePath`). Each was placed at the lowest worst-case wheel-scale slope found in the terrain survey, at least 0.35 m from lava and rock. These are single runs from one start.
+
+| Route | Shape | Wheel-scale slope, max / mean | Result | Moving RMS / max / final mm | Closure mm | Max attitude error deg |
+| --- | --- | --- | --- | --- | --- | --- |
+| shape_circle | 1 m radius, counter-clockwise, from (-14.8, -6.0) | 6.4 / 3.2 deg | finished; all gates but settling | 32 / 80 / 1 | 11 | 5.2 |
+| shape_triangle | 2 m sides, counter-clockwise, from (2.6, 17.4) | 5.6 / 2.4 deg | passed all gates | 26 / 84 / 2 | 10 | 3.8 |
+| shape_line_and_back | 3 m out at 285 deg and back, from (-19.2, 3.2) | 4.4 / 2.4 deg | passed all gates | 27 / 64 / 5 | 10 | 4.7 |
+| shape_zigzag | five 1.5 m legs at +/-45 deg about 15 deg, from (0.6, 16.6) | 6.7 / 3.8 deg | passed all gates | 29 / 96 / 8 | - | 4.1 |
+
+The circle misses only the settling gate: the platform is still turning at the end. Its heading moved up to 644 deg over the lap, and 404 deg on the line and back, because heading is unregulated (see above).
+
+### Contact-aware control without force sensing (`momentum_observer`)
+
+`MUJOCO_GL=egl python -m spherical_wheel.gazebo mars-observer` runs all 15 routes (the 11 above and the 4 shapes) twice from one identical start each: at rest in static balance, wheel phase 0.30, shaft-driven direction along the route. `terrain_aware` reads the ground force and moment from Gazebo's solved contacts. `momentum_observer` estimates them from the motion, the drive torques and the MuJoCo model (OFFROAD.md); DART produces the motion, so the observer's model is not the one being integrated. Both still read the per-surface loads, the rolling feedforward's contact points and the preview's ground plane from Gazebo. `terrain_aware` was rerun alongside with the current code, so the two columns compare with each other, not with the tables above. Each route has a side-by-side replay at `results/gazebo/mars_observer/<route>/replay.mp4` (kept local, like the rest of `results/`).
+
+| Route | `terrain_aware` | `momentum_observer` | Observer against solved force, median / 95th percentile N |
+| --- | --- | --- | --- |
+| plain_traverse | finished: 110 / 2 mm | finished: 158 / 57 mm | 0.02 / 2.6 |
+| plain_traverse_shell | finished: 219 / 17 mm | finished: 279 / 36 mm | 0.02 / 3.1 |
+| plain_fast | finished: 143 / 4 mm | finished: 329 / 8 mm | 0.05 / 2.5 |
+| moderate_climb | finished: 405 / 32 mm | finished: 169 / 20 mm | 0.03 / 2.1 |
+| crater_rim_descent | finished: 418 / 29 mm | fell at 33.8 s | 0.03 / 4.0 |
+| crater_rim_climb | finished: 134 / 7 mm | finished: 436 / 4 mm | 0.03 / 1.8 |
+| steep_descent | fell at 7.4 s | finished: 294 / 24 mm | 0.04 / 2.9 |
+| lava_crossing | finished: 302 / 83 mm | fell at 17.2 s | 0.03 / 5.1 |
+| plain_circle | finished: 74 / 11 mm | finished: 93 / 12 mm | 0.00 / 1.9 |
+| plain_figure8 | finished: 130 / 29 mm | finished: 190 / 40 mm | 0.01 / 2.2 |
+| plain_patrol | finished: 285 / 53 mm | finished: 336 / 5 mm | 0.03 / 2.0 |
+| shape_circle | finished: 192 / 2 mm | finished: 115 / 14 mm | 0.02 / 1.6 |
+| shape_triangle | finished: 84 / 2 mm | finished: 50 / 7 mm | 0.01 / 1.1 |
+| shape_line_and_back | finished: 75 / 3 mm | finished: 73 / 3 mm | 0.01 / 0.9 |
+| shape_zigzag | finished: 92 / 6 mm | finished: 62 / 2 mm | 0.01 / 0.9 |
+
+Cells give largest / final tracking error.
+
+* **The estimate matches Gazebo's contact force.** The median difference is 0.00-0.05 N on every route, against a weight of about 18 N. The 95th percentile is 0.9-5.1 N, at impacts, because the observer reports the average over a 5 ms interval and the solver an instant. The sensed slope direction has a median error of 0.03 deg or less on 14 of 15 routes (3.3 deg on the lava crossing), against 0.05-0.10 deg with the solved contacts on 13 of 15.
+* **Outcomes differ on three routes, where both controllers reach the shell torque limit.** `momentum_observer` finished 13 of 15 and `terrain_aware` 14 of 15. The steep descent and the lava crossing are at the edge for the contact-aware controller anyway (1 of 4 and 0 of 4 starts above). The crater rim descent counts against the observer: `terrain_aware` finished it from all four starts above. One start per route cannot rank the two there.
+* **Tracking is mixed.** On the 12 routes both finished, the observer's largest error is larger on 7, smaller on 4 and about equal on 1. With one start per route and the start-to-start spread seen above, these differences are not conclusive.
+* **Repeated Gazebo runs are not bit-identical.** Rerunning plain_fast with the same code and start matched the saved run for the first 3.5 s, then drifted apart from a 1e-12 N difference in the solved contact force. The observer's largest error came out at 144 mm in one rerun against 329 mm in the table, and a rerun of `terrain_aware` also drifted. Which run drifts varies between reruns, so the source is in the Gazebo harness, not in either controller. Single-run largest errors on this yard are therefore only indicative.
+
 ## Limits
 
-* **Simulation of a provisional model**, as in OFFROAD.md: assumed masses, inertias, friction and torque bounds, ideal belt speed servos, no motor curves, ground-truth state and contact wrench, no sensor noise or delay.
+* **Simulation of a provisional model**, as in OFFROAD.md: assumed masses, inertias, friction and torque bounds, ideal belt speed servos, no motor curves, ground-truth state and contact wrench (`momentum_observer` estimates the wrench but keeps the rest), no sensor noise or delay.
 * **Two contact models, neither exact.** MuJoCo's is soft with an elliptic friction cone; DART's is rigid with a box friction pyramid, a 50 µm allowance and DART's default 1 mm/s penetration correction. Agreement between them is evidence that the results are not an artefact of one solver; it is not a hardware prediction.
 * **The yard's DEM is the surface.** At 9.4 cm resolution with linear facets, the wheel rolls over facet edges; the real yard is softer and has detail below that scale. Rocks and lava are the meshes Leo's world uses. Gazebo keeps at most 20 contacts per collision pair (SDF default), which a 12 cm sphere on a 9.4 cm-faceted surface does not approach at rest.
 * **Heading is unregulated by default.** On the yard the platform can turn several full revolutions while the wheel follows its path; the existing heading hold is evaluated separately above.
@@ -206,5 +249,7 @@ A follow-up study (`results/gazebo/mars_yaw_study/REPORT.md`, kept local like th
 | `src/spherical_wheel/gazebo/parity.py` | Gazebo against MuJoCo on the off-road scenarios |
 | `src/spherical_wheel/gazebo/mars.py` | Mars yard ground model, world, routes, runs and report |
 | `src/spherical_wheel/gazebo/mars_compare.py` | Original local LQR against the contact-aware controller on the yard; replay videos |
+| `src/spherical_wheel/gazebo/mars_shapes.py` | Circle, triangle, line-and-back and zigzag routes with the contact-aware controller; replay videos |
+| `src/spherical_wheel/gazebo/mars_observer.py` | Every route with `terrain_aware` and `momentum_observer` from matched starts; side-by-side replay videos |
 | `tests/test_gazebo.py` | Equivalence and parity tests |
 | `environment/gazebo.yml`, `scripts/setup-gazebo.sh`, `scripts/fetch-marsyard.sh` | Environment, build and data |

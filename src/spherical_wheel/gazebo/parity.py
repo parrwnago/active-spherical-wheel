@@ -27,7 +27,8 @@ from ..offroad_control import OffroadParams
 from ..offroad_experiments import SCENARIOS, save_run, scenario
 
 CONTROLLERS = ('terrain_aware', 'flat_baseline')
-LABELS = {'terrain_aware': 'contact-aware', 'flat_baseline': 'flat baseline'}
+LABELS = {'terrain_aware': 'contact-aware', 'flat_baseline': 'flat baseline',
+          'momentum_observer': 'momentum observer (no force sensing)'}
 MUJOCO_SUITE = REPO_ROOT/'results'/'offroad'/'suite'
 SEED_CACHE = REPO_ROOT/'generated'/'offroad'/'flat'/'control_schedule.npz'
 
@@ -132,7 +133,7 @@ def run_suite(output, scenarios=None, controllers=CONTROLLERS, workers=4):
                      f"({result['wall_s']:.0f} s wall)"), flush=True)
             (output/'results.json').write_text(json.dumps(jsonable(results), indent=2)+'\n')
     order = {name: i for i, name in enumerate(SCENARIOS)}
-    results.sort(key=lambda r: (order.get(r['scenario'], 99), CONTROLLERS.index(r['controller'])))
+    results.sort(key=lambda r: (order.get(r['scenario'], 99), list(LABELS).index(r['controller'])))
     (output/'results.json').write_text(json.dumps(jsonable(results), indent=2)+'\n')
     write_report(results, output)
     return results
@@ -185,7 +186,8 @@ def plot_comparison(results, path):
     for axis, key, label in ((axes[0], 'max_mm', 'Largest tracking error (mm)'),
                              (axes[1], 'final_mm', 'Final error (mm)'),
                              (axes[2], 'attitude_max_deg', 'Largest attitude error (deg)')):
-        for mode, colour in (('terrain_aware', '#1b6ca8'), ('flat_baseline', '#c8553d')):
+        for mode, colour in (('terrain_aware', '#1b6ca8'), ('momentum_observer', '#1baf7a'),
+                             ('flat_baseline', '#c8553d')):
             subset = [r for r in rows if r['controller'] == mode]
             x = [max(r['mujoco'][key], 1e-2) for r in subset]
             y = [max(r['gazebo'][key], 1e-2) for r in subset]
