@@ -19,7 +19,9 @@ import shutil
 import mujoco
 import numpy as np
 
+from .contact_sensing import measure_contact
 from .control import jsonable
+from .mirror import StateMirror
 from .model import REPO_ROOT, generate_model, load_config
 from .offroad import TerrainPlant
 from .offroad_control import FlatDesign, OffroadController, OffroadParams
@@ -108,6 +110,7 @@ class Workspace:
         self._plants = {}
         self._plant_limit = int(plant_limit)
         self._built = 0
+        self._mirror = None
 
     def plant(self, terrain):
         """A terrain plant, reused while the terrain repeats (most recent few kept)."""
@@ -121,6 +124,18 @@ class Workspace:
             self._built += 1
             self._plants[key] = TerrainPlant(self.config, terrain, self.directory/f'terrain_{slot:02d}')
         return self._plants[key]
+
+    def mirror(self):
+        """The ``StateMirror`` a ``hardware`` controller sees the robot through (built once)."""
+        if self._mirror is None:
+            self._mirror = StateMirror(self.config, self.directory/'mirror')
+        return self._mirror
+
+
+def measure_for(controller, plant):
+    """Hand a controller that sees the robot only through its sensors the current measurement."""
+    if controller.plant is not plant:
+        controller.plant.follow(plant)
 
 
 def place_on_ground(plant, controller, origin, phase, balanced_lean=True, yaw_deg=0.):
@@ -161,6 +176,7 @@ def place_on_ground(plant, controller, origin, phase, balanced_lean=True, yaw_de
     support = rotation.T@normal
     qpos[7] += phase-float(np.arctan2(-support[0], support[2]))
     plant.reset(qpos=qpos, qvel=np.zeros(plant.model.nv))
+    measure_for(controller, plant)
     controller.reset(phase)
     controller.nominal_joints = qpos[7:10].copy()
     return qpos
@@ -183,11 +199,17 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
     fork, as in the lab. ``settle_s`` extends the run past the end of the path.
     The log is aligned as in the other experiments: commands logged at time t
     are held until the next row.
+
+    A ``hardware`` controller is given the workspace's ``StateMirror``, which
+    follows the simulated robot's state before every call. Its contact
+    estimates stay in its diagnostics; the log's contact columns are the
+    solver's in every mode, so they measure what really happened.
     """
     params = params or OffroadParams()
     plant = workspace.plant(terrain)
     phase = plant.config['simulation'].get('initial_shaft_phase_rad', .30) if phase is None else phase
-    controller = OffroadController(plant, workspace.design, params, phase)
+    controller = OffroadController(workspace.mirror() if params.mode == 'hardware' else plant,
+                                   workspace.design, params, phase)
     place_on_ground(plant, controller, path.origin, phase, balanced_lean, yaw_deg)
     duration = float(duration_s if duration_s is not None else path.start_s+path.duration_s+settle_s)
     count = int(round(duration/plant.dt))
@@ -196,10 +218,12 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
     for index in range(count+1):
         now = float(plant.data.time)
         xy, velocity, acceleration = path(now)
+        measure_for(controller, plant)
         applied, diagnostics = controller.command(xy, velocity, acceleration)
         push = sum((np.asarray(force, float) for start, length, force in pushes if start <= now < start+length-1e-9),
                    start=np.zeros(3))
-        measurement, estimate = diagnostics['measurement'], diagnostics['estimate']
+        estimate = diagnostics['estimate']
+        measurement = diagnostics['measurement'] if controller.plant is plant else measure_contact(plant)
         snapshot = plant.snapshot()
         body_up = plant.data.xmat[plant.fork_id].reshape(3, 3)[:, 2]
         reference_matrix = np.empty(9)

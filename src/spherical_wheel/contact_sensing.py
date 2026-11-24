@@ -17,6 +17,10 @@ a real cell would also see are not modelled.
 sensing. It reads only the joint state, the drive torques and the dynamics
 model, and recovers the ground wrench from how the machine's momentum changes.
 
+``SupportLocator`` turns that force and moment into contact records: which
+shell, belt or rim carries the load, where, and how much, so that nothing
+downstream needs the solver's contacts either.
+
 ``ContactEstimator`` turns the raw measurement into the slowly varying
 quantities feedback needs: a filtered normal, the normal load as a fraction of
 weight, and a friction estimate that drops when the surface is seen sliding.
@@ -370,6 +374,91 @@ class MomentumObserver:
                 'normal_force_N': pressure, 'tangential_force_N': tangential,
                 'tangential_force_norm_N': float(np.linalg.norm(tangential)), 'slip_velocity_m_s': np.zeros(3),
                 'slip_speed_m_s': 0., 'source': 'momentum_observer'}
+
+
+class SupportLocator:
+    """Which wheel surface carries the ground force, and where, from that force and its moment.
+
+    The force and its moment about the wheel centre fix the force's line of
+    action. The wheel's sphere of radius ``R`` meets that line at
+    ``c - R n``, with ``n`` from ``intrinsic_normal``. Every shell and belt
+    patch is a band of that sphere between two planes normal to its body's x
+    axis (the ``geom_user`` metadata the clipped contact model uses), so the
+    patch whose band holds the point is the one carrying the load: the same
+    rule the contact model applies to the ground plane.
+
+    The bands leave a gap between the two shells, where the wheel stands on
+    the shell rims instead. A load on one rim acts through that rim, which
+    lies on the sphere, so the point found above is the rim itself. Shared by
+    both rims, the resultant passes between them at the load-weighted axial
+    position, and the lever rule gives each rim its share.
+
+    ``records(data, force, moment)`` returns contact records in the format of
+    ``records_from_mujoco``, one per loaded surface, so ``measure_records``,
+    ``rolling_feedforward_records`` and ``ContactSynchronizer`` use them
+    unchanged. Nothing here reads a contact, the ground or the terrain: only
+    the force and moment and the wheel's own pose. With no compressive load
+    above ``minimum_load_N`` there are no records.
+    """
+
+    SUPPORTS = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+
+    def __init__(self, model, centre_body, radius, nominal_friction, minimum_load_N):
+        if model.nuser_geom < 5:
+            raise ValueError('The support locator needs the generated spherical patch metadata')
+        self.centre_body = int(centre_body)
+        self.radius = float(radius)
+        self.friction = float(nominal_friction)
+        self.minimum_load_N = float(minimum_load_N)
+        self.patches = []
+        for support in self.SUPPORTS:
+            geom = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, support+'_smooth')
+            if geom < 0:
+                raise ValueError(f'The model lacks {support}_smooth')
+            sign, lower, upper, _, patch_radius = model.geom_user[geom, :5]
+            if not np.isclose(patch_radius, self.radius):
+                raise ValueError(f'{support} is not on the sphere of radius {self.radius}')
+            self.patches.append({'name': support+'_smooth', 'support': support, 'geom': int(geom),
+                                 'body': int(model.geom_bodyid[geom]), 'sign': float(sign),
+                                 'lower': float(lower), 'upper': float(upper)})
+        self.shells = [patch for patch in self.patches if patch['support'].startswith('shell')]
+
+    def _axis(self, data, patch):
+        return data.xmat[patch['body']].reshape(3, 3)[:, 0]
+
+    def locate(self, data, support):
+        """``[(patch, share, point)]`` for a support vector ``support`` from the wheel centre."""
+        centre = data.xpos[self.centre_body]
+        for patch in self.patches:
+            signed = patch['sign']*float(self._axis(data, patch)@support)
+            if patch['lower']-1e-12 <= signed <= patch['upper']+1e-12:
+                return [(patch, 1., centre+support)]
+        # In the gap between the shells: the rims. Axial positions are along
+        # the first shell's axis; the shells turn about the same carrier axis.
+        axis = self._axis(data, self.shells[0])
+        axial = float(axis@support)
+        radial = support-axial*axis
+        size = float(np.linalg.norm(radial))
+        direction = radial/size if size > 1e-12 else radial
+        rims = [(patch, patch['sign']*patch['lower']*float(self._axis(data, patch)@axis)) for patch in self.shells]
+        (first, x_first), (second, x_second) = rims
+        share = float(np.clip((axial-x_second)/(x_first-x_second), 0., 1.))
+        return [(patch, weight, centre+x*axis+np.sqrt(max(self.radius**2-x*x, 0.))*direction)
+                for (patch, x), weight in zip(rims, (share, 1.-share)) if weight > 0.]
+
+    def records(self, data, force, moment):
+        force, moment = np.asarray(force, float), np.asarray(moment, float)
+        normal = intrinsic_normal(force, moment, self.radius)
+        if normal is None:
+            return []
+        load = float(normal@force)
+        if load < self.minimum_load_N:
+            return []
+        tangential = float(np.linalg.norm(force-normal*load))
+        return [{'name': patch['name'], 'geom': patch['geom'], 'body': patch['body'], 'pos': point,
+                 'normal': normal.copy(), 'force': share*force, 'normal_force': share*load,
+                 'tangent_force_norm': share*tangential, 'friction': self.friction}
+                for patch, share, point in self.locate(data, -self.radius*normal)]
 
 
 class ContactEstimator:

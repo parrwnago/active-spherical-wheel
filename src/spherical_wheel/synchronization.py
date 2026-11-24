@@ -43,6 +43,7 @@ class ContactSynchronizer:
         self.lever_regularization_m = float(lever_regularization_m)
         self._data = mujoco.MjData(plant.model)
         self._floor = self._id(mujoco.mjtObj.mjOBJ_GEOM, 'floor')
+        self._plane = None   # (point, unit normal) given to preview(); None reads the floor geom
         self._patches = []
         for name, index in [('shell_A', 1), ('shell_B', 2), ('belt_A', 3), ('belt_B', 4)]:
             geom = mujoco.mj_name2id(plant.model, mujoco.mjtObj.mjOBJ_GEOM, name + '_smooth')
@@ -71,8 +72,13 @@ class ContactSynchronizer:
         mujoco.mj_kinematics(self.plant.model, self._data)
         mujoco.mj_comPos(self.plant.model, self._data)
 
+    def _ground(self, data):
+        if self._plane is not None:
+            return self._plane
+        return data.geom_xpos[self._floor], data.geom_xmat[self._floor].reshape(3, 3)[:, 2]
+
     def _support(self, patch, data):
-        normal = data.geom_xmat[self._floor].reshape(3, 3)[:, 2]
+        plane_point, normal = self._ground(data)
         center = data.xpos[patch['body']]
         point = center - patch['radius'] * normal
         axis = data.xmat[patch['body']].reshape(3, 3)[:, 0]
@@ -81,7 +87,7 @@ class ContactSynchronizer:
         margin = signed_x - patch['lower']
         if patch['name'].startswith('shell'):
             margin = min(margin, patch['upper'] - signed_x)
-        gap = float(np.dot(point - data.geom_xpos[self._floor], normal))
+        gap = float(np.dot(point - plane_point, normal))
         return point.copy(), normal.copy(), float(margin), gap
 
     def _velocity(self, patch, data, qvel, include_surface=True):
@@ -127,7 +133,7 @@ class ContactSynchronizer:
         """``_normal_loads`` from contact records (a plant simulated elsewhere)."""
         loads = {patch['name']: 0. for patch in self._patches}
         velocity_sums = {name: np.zeros(3) for name in loads}
-        normal = self.plant.data.geom_xmat[self._floor].reshape(3, 3)[:, 2]
+        normal = self._ground(self.plant.data)[1]
         projection = np.eye(3) - np.outer(normal, normal)
         for record in records:
             name = record['name']
@@ -145,13 +151,22 @@ class ContactSynchronizer:
                     velocity_sums[patch_name] += load * (projection @ velocity)
         return loads, {name: velocity_sums[name] / max(loads[name], 1e-12) for name in loads}
 
-    def preview(self, primary_command=None):
+    def preview(self, primary_command=None, records=None, ground=None):
         """Return bounded incoming-drive targets and actual velocity diagnostics.
 
         Velocities are tangential world-frame velocities at the virtual spherical
         support point. An inactive patch's support point is a kinematic preview,
         not an added collision or an assertion that it touches the floor.
+
+        ``records`` (contact records) and ``ground`` (a plane as ``(point,
+        normal)``) replace the plant's contacts and floor, for a controller
+        that estimates both instead of reading them.
         """
+        if ground is None:
+            self._plane = None
+        else:
+            normal = np.asarray(ground[1], float)
+            self._plane = (np.asarray(ground[0], float), normal/np.linalg.norm(normal))
         plant, model = self.plant, self.plant.model
         primary = np.asarray(plant.last_input if primary_command is None else primary_command, float)
         if primary.shape != (5,) or not np.all(np.isfinite(primary)):
@@ -162,7 +177,7 @@ class ContactSynchronizer:
         if not np.all(np.isfinite(qpos)) or not np.all(np.isfinite(qvel)):
             return {'commands': commands.tolist(), 'blend_weights': weights.tolist(),
                     'targets': [], 'warning': 'Nonfinite plant state; synchronization disabled'}
-        loads, contact_velocities = self._normal_loads()
+        loads, contact_velocities = self._normal_loads() if records is None else self._normal_loads_records(records)
         total_load = sum(loads.values())
         # Resolve rapid carrier motion rather than jumping over a narrow cap.
         angular_scale = max(1., float(np.max(abs(qvel[3:]))))

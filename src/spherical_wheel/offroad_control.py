@@ -54,6 +54,16 @@ a momentum observer (``MomentumObserver``) that reads only the state, the drive
 torques and the model. In both, the per-surface loads used for gain blending
 and rim detection, the rolling feedforward and the incoming-drive preview
 still read the simulator's contacts.
+
+``hardware`` reads nothing a real robot could not measure. The plant it is
+given is a ``StateMirror``: the measured state (motion capture for the fork,
+encoders for the joints) and the inputs sent, with collisions switched off and
+no ground. The observer's force and moment locate the support
+(``SupportLocator``): which shell, belt or rim carries the load, where and how
+much. Those estimated contacts replace the solver's in the gain blending, rim
+detection, holding-torque split and rolling feedforward, and the plane through
+the estimated support point with the sensed normal replaces the ground plane in
+the incoming-drive preview.
 """
 from __future__ import annotations
 
@@ -66,9 +76,10 @@ import mujoco
 import numpy as np
 from scipy.linalg import solve_discrete_are
 
-from .contact_sensing import ContactEstimator, MomentumObserver, intrinsic_normal, measure_contact
+from .contact_sensing import (ContactEstimator, MomentumObserver, SupportLocator, intrinsic_normal, measure_contact,
+                              measure_records)
 from .control import design_lqr, find_equilibrium, linearize
-from .experiments import rolling_feedforward
+from .experiments import rolling_feedforward, rolling_feedforward_records
 from .recovery_control import ScheduledBalanceFeedback, build_gain_library
 from .synchronization import ContactSynchronizer
 
@@ -154,8 +165,11 @@ def _variant_cache_path(cache_path, weights):
 
 
 # 'terrain_aware' reads the solved contact force and moment (simulation only);
-# 'momentum_observer' estimates them from the motion; 'flat_baseline' ignores the ground.
-CONTROLLER_MODES = ('terrain_aware', 'momentum_observer', 'flat_baseline')
+# 'momentum_observer' estimates them from the motion; 'hardware' also estimates
+# the loaded surface, contact point and ground plane, reading no contact at all;
+# 'flat_baseline' ignores the ground.
+CONTROLLER_MODES = ('terrain_aware', 'momentum_observer', 'hardware', 'flat_baseline')
+OBSERVER_MODES = ('momentum_observer', 'hardware')
 
 
 @dataclass
@@ -164,15 +178,18 @@ class OffroadParams:
 
     ``momentum_observer`` is ``terrain_aware`` with the ground force and moment
     estimated from the motion by ``MomentumObserver`` instead of read from the
-    contact solver, so it needs no force sensor.
+    contact solver, so it needs no force sensor. ``hardware`` also estimates
+    which surface is loaded, where, and the ground plane, from the same force
+    and moment, and runs on a ``StateMirror`` that holds only measurements.
 
     The defaults are the outcome of the tuning sweep saved in
     results/offroad/tuning/tuning.json.
     """
-    mode: str = 'terrain_aware'            # 'terrain_aware', 'momentum_observer' or 'flat_baseline'
+    mode: str = 'terrain_aware'            # 'terrain_aware', 'momentum_observer', 'hardware' or 'flat_baseline'
     synchronize: bool = True               # prepare incoming drives, as in the lab
     normal_source: str = 'intrinsic'       # 'intrinsic' (from force and moment) or 'solver' (terrain_aware only)
-    observer_cutoff_rad_s: float = 100.    # bandwidth of the momentum observer (momentum_observer only)
+    observer_cutoff_rad_s: float = 100.    # bandwidth of the momentum observer (momentum_observer, hardware)
+    support_min_load_fraction: float = .05  # hardware: an observed load below this fraction of weight is no contact
     normal_time_constant_s: float = .02    # low-pass on the sensed ground normal
     rim_aware: bool = True                 # treat the equatorial rims as rims; False reads them as sphere
     rim_time_constant_s: float = .2        # low-pass along the carrier axis while the support is on the rims
@@ -208,8 +225,10 @@ class OffroadParams:
             raise ValueError('Shaft error must be material, free or rolling')
         if self.normal_source not in ('intrinsic', 'solver'):
             raise ValueError('Normal source must be intrinsic or solver')
-        if self.mode == 'momentum_observer' and self.normal_source != 'intrinsic':
-            raise ValueError('momentum_observer reads no solved contact force; normal_source must be intrinsic')
+        if self.mode in OBSERVER_MODES and self.normal_source != 'intrinsic':
+            raise ValueError(f'{self.mode} reads no solved contact force; normal_source must be intrinsic')
+        if not 0 < self.support_min_load_fraction < 1:
+            raise ValueError('support_min_load_fraction must lie between 0 and 1')
         if not self.observer_cutoff_rad_s > 0:
             raise ValueError('observer_cutoff_rad_s must be positive')
         if self.lqr_weights not in LQR_WEIGHTS:
@@ -323,7 +342,11 @@ class OffroadController:
         self.nominal_friction = float(plant.config['contact']['friction'][0])
         # The observer supplies the same force and moment the intrinsic estimate reads.
         self.observer = (MomentumObserver(model, plant.fork_id, self.params.observer_cutoff_rad_s)
-                         if self.params.mode == 'momentum_observer' else None)
+                         if self.params.mode in OBSERVER_MODES else None)
+        # hardware: the observer's force and moment also say where the support is.
+        self.locator = (SupportLocator(model, plant.fork_id, self.radius, self.nominal_friction,
+                                       self.params.support_min_load_fraction*self.weight)
+                        if self.params.mode == 'hardware' else None)
         self.estimator = ContactEstimator(self.radius, self.weight, self.nominal_friction,
                                           self.params.normal_time_constant_s,
                                           slip_threshold_m_s=self.params.slip_threshold_m_s,
@@ -342,6 +365,8 @@ class OffroadController:
             self.observer.reset(data.qpos, data.qvel, data.time, self.plant.last_input)
             start = intrinsic_normal(*self.observer.wrench(), self.radius)
             self.estimator.reset(start if start is not None else (0., 0., 1.))
+            centre = self.plant.data.xpos[self.plant.fork_id]
+            self._plane = (centre-self.radius*self.estimator.normal, self.estimator.normal.copy())
         else:
             ground = getattr(self.plant, 'ground', None)
             self.estimator.reset(ground['normal'] if ground else (0., 0., 1.))
@@ -456,12 +481,26 @@ class OffroadController:
     def command(self, xy, velocity, acceleration):
         plant, params = self.plant, self.params
         equilibrium, design = self.ordinary['equilibrium'], self.ordinary['design']
-        measurement = measure_contact(plant)
-        sensed = measurement
-        if self.observer is not None:
+        records = None
+        if self.locator is not None:
+            # Nothing solved is read. The observer's force and moment locate the
+            # support, and the records built from them stand in for the contacts.
             data = plant.data
             self.observer.update(data.qpos, data.qvel, plant.last_input, data.time)
             sensed = self.observer.measurement(self.radius)
+            records = self.locator.records(data, *self.observer.wrench())
+            measurement = measure_records(plant, records)
+            # The surface's speed over the ground at the located point: the
+            # mismatch between measured motion and rolling, i.e. the slip.
+            sensed.update(slip_velocity_m_s=measurement['slip_velocity_m_s'],
+                          slip_speed_m_s=measurement['slip_speed_m_s'])
+        else:
+            measurement = measure_contact(plant)
+            sensed = measurement
+            if self.observer is not None:
+                data = plant.data
+                self.observer.update(data.qpos, data.qvel, plant.last_input, data.time)
+                sensed = self.observer.measurement(self.radius)
         rim = self._rim_support(measurement['loads_N']) if params.rim_aware else (None, False)
         estimate = self.estimator.update(sensed, plant.dt, *rim)
         aware = params.ground_aware
@@ -479,6 +518,8 @@ class OffroadController:
             # rolling allocation needs a contact, so keep the last one rather
             # than drop the velocity reference to zero for that interval.
             vref, feedforward = self._held['vref'].copy(), self._held['feedforward'].copy()
+        elif records is not None:
+            vref, feedforward = rolling_feedforward_records(plant, records, np.asarray(velocity, float))
         else:
             vref, feedforward = rolling_feedforward(plant, np.asarray(velocity, float))
         qref = equilibrium['qpos'].copy()
@@ -503,7 +544,16 @@ class OffroadController:
         diagnostics.update(effective_phase_rad=feedback['effective_phase_rad'], yaw_rad=feedback['yaw_rad'],
                            error=feedback['error'])
         sync = {'commands': [0.]*5, 'blend_weights': [0.]*5, 'targets': []}
-        if params.synchronize:
+        if params.synchronize and records is not None:
+            # The plane through the located support with the sensed normal,
+            # kept from the last loaded interval while the wheel is unloaded.
+            if records:
+                centre = plant.data.xpos[plant.fork_id]
+                self._plane = (centre-self.radius*estimate['normal'], estimate['normal'].copy())
+            sync = self.synchronizer.preview(command, records=records, ground=self._plane)
+            weights = np.asarray(sync['blend_weights'])
+            command = (1.-weights)*command+weights*np.asarray(sync['commands'])
+        elif params.synchronize:
             # The preview owns a private MjData; give it the current ground plane.
             self.synchronizer._data.mocap_pos[:] = plant.data.mocap_pos
             self.synchronizer._data.mocap_quat[:] = plant.data.mocap_quat
