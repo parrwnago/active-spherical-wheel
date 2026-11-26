@@ -1,0 +1,2321 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.10">
+  <model name="active_spherical_wheel">
+    <self_collide>false</self_collide>
+    <link name="fork">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0.191088617046 0 0 0</pose>
+        <mass>1.2</mass>
+        <inertia>
+          <ixx>0.00848236218221</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.00380921331936</iyy>
+          <iyz>0</iyz>
+          <izz>0.0101003972892</izz>
+        </inertia>
+      </inertial>
+      <collision name="fork_arm_left">
+        <pose>0 0.145 0.0925 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.022 0.018 0.185</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <visual name="fork_arm_left_visual">
+        <pose>0 0.145 0.0925 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.022 0.018 0.185</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.75 0.78 0.83 1</ambient>
+          <diffuse>0.75 0.78 0.83 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+      <collision name="fork_arm_right">
+        <pose>0 -0.145 0.0925 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.022 0.018 0.185</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <visual name="fork_arm_right_visual">
+        <pose>0 -0.145 0.0925 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.022 0.018 0.185</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.75 0.78 0.83 1</ambient>
+          <diffuse>0.75 0.78 0.83 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+      <collision name="fork_bridge">
+        <pose>0 0 0.18 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.032 0.308 0.024</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <visual name="fork_bridge_visual">
+        <pose>0 0 0.18 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.032 0.308 0.024</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.75 0.78 0.83 1</ambient>
+          <diffuse>0.75 0.78 0.83 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+      <collision name="platform">
+        <pose>0 0 0.2 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.18 0.24 0.02</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <visual name="platform_visual">
+        <pose>0 0 0.2 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.18 0.24 0.02</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.75 0.78 0.83 1</ambient>
+          <diffuse>0.75 0.78 0.83 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+    </link>
+    <link name="carrier">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.36</mass>
+        <inertia>
+          <ixx>0.000295253333298</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.00194542575563</iyy>
+          <iyz>0</iyz>
+          <izz>0.00194542575563</izz>
+        </inertia>
+      </inertial>
+      <visual name="shaft_visual">
+        <pose>0 0 0 1.57079632679 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.008</radius>
+            <length>0.308</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.35 0.38 0.42 1</ambient>
+          <diffuse>0.35 0.38 0.42 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+      <visual name="native_carrier_visual">
+        <geometry>
+          <mesh>
+            <uri>model://active_spherical_wheel/meshes/native_carrier.obj</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.63 0.61 0.55 1</ambient>
+          <diffuse>0.63 0.61 0.55 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+      <visual name="belt_A_visual">
+        <geometry>
+          <mesh>
+            <uri>model://active_spherical_wheel/meshes/belt_A.obj</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.17 0.19 0.22 1</ambient>
+          <diffuse>0.17 0.19 0.22 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+      <collision name="belt_A_smooth">
+        <geometry>
+          <sphere>
+            <radius>0.12</radius>
+          </sphere>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <visual name="belt_B_visual">
+        <geometry>
+          <mesh>
+            <uri>model://active_spherical_wheel/meshes/belt_B.obj</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.17 0.19 0.22 1</ambient>
+          <diffuse>0.17 0.19 0.22 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+      <collision name="belt_B_smooth">
+        <geometry>
+          <sphere>
+            <radius>0.12</radius>
+          </sphere>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+    </link>
+    <link name="shell_A">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.0604911092127 0 0 0 0 0</pose>
+        <mass>0.15</mass>
+        <inertia>
+          <ixx>0.0013135150602</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000784611313744</iyy>
+          <iyz>0</iyz>
+          <izz>0.000784611313744</izz>
+        </inertia>
+      </inertial>
+      <collision name="shell_A_smooth">
+        <geometry>
+          <sphere>
+            <radius>0.12</radius>
+          </sphere>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_000">
+        <pose>0.01 0.118573223324 0.0077716996538 0 0.0654498469498 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_001">
+        <pose>0.01 0.116544402598 0.0231821230256 0 0.196349540849 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_002">
+        <pose>0.01 0.112521474832 0.0381958938451 0 0.327249234749 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_003">
+        <pose>0.01 0.106573273434 0.0525561223311 0 0.458148928649 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_004">
+        <pose>0.01 0.0988015737801 0.0660171009926 0 0.589048622548 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_005">
+        <pose>0.01 0.0893393518059 0.0783485087528 0 0.719948316448 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_006">
+        <pose>0.01 0.0783485087528 0.0893393518059 0 0.850848010347 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_007">
+        <pose>0.01 0.0660171009926 0.0988015737801 0 0.981747704247 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_008">
+        <pose>0.01 0.0525561223311 0.106573273434 0 1.11264739815 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_009">
+        <pose>0.01 0.0381958938451 0.112521474832 0 1.24354709205 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_010">
+        <pose>0.01 0.0231821230256 0.116544402598 0 1.37444678595 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_011">
+        <pose>0.01 0.0077716996538 0.118573223324 0 1.50534647985 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_012">
+        <pose>0.01 -0.0077716996538 0.118573223324 0 1.63624617374 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_013">
+        <pose>0.01 -0.0231821230256 0.116544402598 0 1.76714586764 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_014">
+        <pose>0.01 -0.0381958938451 0.112521474832 0 1.89804556154 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_015">
+        <pose>0.01 -0.0525561223311 0.106573273434 0 2.02894525544 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_016">
+        <pose>0.01 -0.0660171009926 0.0988015737801 0 2.15984494934 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_017">
+        <pose>0.01 -0.0783485087528 0.0893393518059 0 2.29074464324 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_018">
+        <pose>0.01 -0.0893393518059 0.0783485087528 0 2.42164433714 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_019">
+        <pose>0.01 -0.0988015737801 0.0660171009926 0 2.55254403104 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_020">
+        <pose>0.01 -0.106573273434 0.0525561223311 0 2.68344372494 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_021">
+        <pose>0.01 -0.112521474832 0.0381958938451 0 2.81434341884 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_022">
+        <pose>0.01 -0.116544402598 0.0231821230256 0 2.94524311274 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_023">
+        <pose>0.01 -0.118573223324 0.0077716996538 0 3.07614280664 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_024">
+        <pose>0.01 -0.118573223324 -0.0077716996538 0 3.07614280664 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_025">
+        <pose>0.01 -0.116544402598 -0.0231821230256 0 2.94524311274 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_026">
+        <pose>0.01 -0.112521474832 -0.0381958938451 0 2.81434341884 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_027">
+        <pose>0.01 -0.106573273434 -0.0525561223311 0 2.68344372494 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_028">
+        <pose>0.01 -0.0988015737801 -0.0660171009926 0 2.55254403104 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_029">
+        <pose>0.01 -0.0893393518059 -0.0783485087528 0 2.42164433714 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_030">
+        <pose>0.01 -0.0783485087528 -0.0893393518059 0 2.29074464324 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_031">
+        <pose>0.01 -0.0660171009926 -0.0988015737801 0 2.15984494934 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_032">
+        <pose>0.01 -0.0525561223311 -0.106573273434 0 2.02894525544 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_033">
+        <pose>0.01 -0.0381958938451 -0.112521474832 0 1.89804556154 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_034">
+        <pose>0.01 -0.0231821230256 -0.116544402598 0 1.76714586764 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_035">
+        <pose>0.01 -0.0077716996538 -0.118573223324 0 1.63624617374 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_036">
+        <pose>0.01 0.0077716996538 -0.118573223324 0 1.50534647985 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_037">
+        <pose>0.01 0.0231821230256 -0.116544402598 0 1.37444678595 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_038">
+        <pose>0.01 0.0381958938451 -0.112521474832 0 1.24354709205 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_039">
+        <pose>0.01 0.0525561223311 -0.106573273434 0 1.11264739815 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_040">
+        <pose>0.01 0.0660171009926 -0.0988015737801 0 0.981747704247 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_041">
+        <pose>0.01 0.0783485087528 -0.0893393518059 0 0.850848010347 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_042">
+        <pose>0.01 0.0893393518059 -0.0783485087528 0 0.719948316448 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_043">
+        <pose>0.01 0.0988015737801 -0.0660171009926 0 0.589048622548 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_044">
+        <pose>0.01 0.106573273434 -0.0525561223311 0 0.458148928649 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_045">
+        <pose>0.01 0.112521474832 -0.0381958938451 0 0.327249234749 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_046">
+        <pose>0.01 0.116544402598 -0.0231821230256 0 0.196349540849 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_A_rim_047">
+        <pose>0.01 0.118573223324 -0.0077716996538 0 0.0654498469498 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <visual name="native_shell_A_visual">
+        <geometry>
+          <mesh>
+            <uri>model://active_spherical_wheel/meshes/native_shell_positive.obj</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.08 0.54 0.69 1</ambient>
+          <diffuse>0.08 0.54 0.69 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+    </link>
+    <link name="shell_B">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>-0.0604911092127 0 0 0 0 0</pose>
+        <mass>0.15</mass>
+        <inertia>
+          <ixx>0.0013135150602</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000784611313744</iyy>
+          <iyz>0</iyz>
+          <izz>0.000784611313744</izz>
+        </inertia>
+      </inertial>
+      <collision name="shell_B_smooth">
+        <geometry>
+          <sphere>
+            <radius>0.12</radius>
+          </sphere>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_000">
+        <pose>-0.01 0.118573223324 0.0077716996538 0 0.0654498469498 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_001">
+        <pose>-0.01 0.116544402598 0.0231821230256 0 0.196349540849 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_002">
+        <pose>-0.01 0.112521474832 0.0381958938451 0 0.327249234749 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_003">
+        <pose>-0.01 0.106573273434 0.0525561223311 0 0.458148928649 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_004">
+        <pose>-0.01 0.0988015737801 0.0660171009926 0 0.589048622548 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_005">
+        <pose>-0.01 0.0893393518059 0.0783485087528 0 0.719948316448 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_006">
+        <pose>-0.01 0.0783485087528 0.0893393518059 0 0.850848010347 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_007">
+        <pose>-0.01 0.0660171009926 0.0988015737801 0 0.981747704247 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_008">
+        <pose>-0.01 0.0525561223311 0.106573273434 0 1.11264739815 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_009">
+        <pose>-0.01 0.0381958938451 0.112521474832 0 1.24354709205 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_010">
+        <pose>-0.01 0.0231821230256 0.116544402598 0 1.37444678595 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_011">
+        <pose>-0.01 0.0077716996538 0.118573223324 0 1.50534647985 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_012">
+        <pose>-0.01 -0.0077716996538 0.118573223324 0 1.63624617374 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_013">
+        <pose>-0.01 -0.0231821230256 0.116544402598 0 1.76714586764 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_014">
+        <pose>-0.01 -0.0381958938451 0.112521474832 0 1.89804556154 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_015">
+        <pose>-0.01 -0.0525561223311 0.106573273434 0 2.02894525544 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_016">
+        <pose>-0.01 -0.0660171009926 0.0988015737801 0 2.15984494934 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_017">
+        <pose>-0.01 -0.0783485087528 0.0893393518059 0 2.29074464324 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_018">
+        <pose>-0.01 -0.0893393518059 0.0783485087528 0 2.42164433714 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_019">
+        <pose>-0.01 -0.0988015737801 0.0660171009926 0 2.55254403104 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_020">
+        <pose>-0.01 -0.106573273434 0.0525561223311 0 2.68344372494 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_021">
+        <pose>-0.01 -0.112521474832 0.0381958938451 0 2.81434341884 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_022">
+        <pose>-0.01 -0.116544402598 0.0231821230256 0 2.94524311274 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_023">
+        <pose>-0.01 -0.118573223324 0.0077716996538 0 3.07614280664 -1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_024">
+        <pose>-0.01 -0.118573223324 -0.0077716996538 0 3.07614280664 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_025">
+        <pose>-0.01 -0.116544402598 -0.0231821230256 0 2.94524311274 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_026">
+        <pose>-0.01 -0.112521474832 -0.0381958938451 0 2.81434341884 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_027">
+        <pose>-0.01 -0.106573273434 -0.0525561223311 0 2.68344372494 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_028">
+        <pose>-0.01 -0.0988015737801 -0.0660171009926 0 2.55254403104 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_029">
+        <pose>-0.01 -0.0893393518059 -0.0783485087528 0 2.42164433714 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_030">
+        <pose>-0.01 -0.0783485087528 -0.0893393518059 0 2.29074464324 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_031">
+        <pose>-0.01 -0.0660171009926 -0.0988015737801 0 2.15984494934 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_032">
+        <pose>-0.01 -0.0525561223311 -0.106573273434 0 2.02894525544 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_033">
+        <pose>-0.01 -0.0381958938451 -0.112521474832 0 1.89804556154 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_034">
+        <pose>-0.01 -0.0231821230256 -0.116544402598 0 1.76714586764 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_035">
+        <pose>-0.01 -0.0077716996538 -0.118573223324 0 1.63624617374 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_036">
+        <pose>-0.01 0.0077716996538 -0.118573223324 0 1.50534647985 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_037">
+        <pose>-0.01 0.0231821230256 -0.116544402598 0 1.37444678595 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_038">
+        <pose>-0.01 0.0381958938451 -0.112521474832 0 1.24354709205 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_039">
+        <pose>-0.01 0.0525561223311 -0.106573273434 0 1.11264739815 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_040">
+        <pose>-0.01 0.0660171009926 -0.0988015737801 0 0.981747704247 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_041">
+        <pose>-0.01 0.0783485087528 -0.0893393518059 0 0.850848010347 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_042">
+        <pose>-0.01 0.0893393518059 -0.0783485087528 0 0.719948316448 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_043">
+        <pose>-0.01 0.0988015737801 -0.0660171009926 0 0.589048622548 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_044">
+        <pose>-0.01 0.106573273434 -0.0525561223311 0 0.458148928649 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_045">
+        <pose>-0.01 0.112521474832 -0.0381958938451 0 0.327249234749 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_046">
+        <pose>-0.01 0.116544402598 -0.0231821230256 0 0.196349540849 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <collision name="shell_B_rim_047">
+        <pose>-0.01 0.118573223324 -0.0077716996538 0 0.0654498469498 1.57079632679</pose>
+        <geometry>
+          <capsule>
+            <radius>0.0005</radius>
+            <length>0.0155767503257</length>
+          </capsule>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+      <visual name="native_shell_B_visual">
+        <geometry>
+          <mesh>
+            <uri>model://active_spherical_wheel/meshes/native_shell_negative.obj</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.11 0.35 0.49 1</ambient>
+          <diffuse>0.11 0.35 0.49 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+    </link>
+    <joint name="shaft" type="revolute">
+      <parent>fork</parent>
+      <child>carrier</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+          <effort>1.5</effort>
+          <velocity>-1</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.0001</damping>
+          <friction>0</friction>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <joint name="shell_A_joint" type="revolute">
+      <parent>carrier</parent>
+      <child>shell_A</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+          <effort>0.6</effort>
+          <velocity>-1</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.0001</damping>
+          <friction>0</friction>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <joint name="shell_B_joint" type="revolute">
+      <parent>carrier</parent>
+      <child>shell_B</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+          <effort>0.6</effort>
+          <velocity>-1</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.0001</damping>
+          <friction>0</friction>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <plugin filename="SphericalWheelBridge" name="asw::SphericalWheelBridge">
+      <sphere_radius>0.12</sphere_radius>
+      <equatorial_gap_half>0.01</equatorial_gap_half>
+      <polar_rim>0.11565465836</polar_rim>
+      <fork_com>0 0 0.191088617046</fork_com>
+      <contact_error_allowance>5e-05</contact_error_allowance>
+    </plugin>
+  </model>
+</sdf>

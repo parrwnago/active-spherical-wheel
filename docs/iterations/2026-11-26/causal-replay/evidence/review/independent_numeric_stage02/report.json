@@ -1,0 +1,109 @@
+{
+  "passed": true,
+  "assertions": 53,
+  "scope": "Independent saved-data checks; direct world angular-velocity chains, no reducer imports.",
+  "independence": "No canonical reducer imports/Jacobianvelocity reuse; directworldframejointchain andcoincidentoriginCOMkinematics. No integration/forward/solver/controllercalls.",
+  "checks": {
+    "native_substepsworldomega_32.251": true,
+    "native_substepsHbody_32.251": true,
+    "native_substepsHtotal_32.251": true,
+    "native_substepsactualheld_32.251": true,
+    "native_substepsworldomega_32.255": true,
+    "native_substepsHbody_32.255": true,
+    "native_substepsHtotal_32.255": true,
+    "native_substepsactualheld_32.255": true,
+    "zero_free_shellAworldomega_32.251": true,
+    "zero_free_shellAHbody_32.251": true,
+    "zero_free_shellAHtotal_32.251": true,
+    "zero_free_shellAactualheld_32.251": true,
+    "zero_free_shellAworldomega_32.255": true,
+    "zero_free_shellAHbody_32.255": true,
+    "zero_free_shellAHtotal_32.255": true,
+    "zero_free_shellAactualheld_32.255": true,
+    "hold_attitudeworldomega_32.251": true,
+    "hold_attitudeHbody_32.251": true,
+    "hold_attitudeHtotal_32.251": true,
+    "hold_attitudeactualheld_32.251": true,
+    "hold_attitudeworldomega_32.255": true,
+    "hold_attitudeHbody_32.255": true,
+    "hold_attitudeHtotal_32.255": true,
+    "hold_attitudeactualheld_32.255": true,
+    "first_hold_5_substeps": true,
+    "same_before_treatment_state": true,
+    "first_hold_other_inputs_exact": true,
+    "first_hold_disturbance_exact": true,
+    "first_hold_friction_exact": true,
+    "paired_wz_32.251": true,
+    "paired_Hbodyz_32.251": true,
+    "paired_totalHz_32.251": true,
+    "paired_held_delta_32.251": true,
+    "paired_wz_32.255": true,
+    "paired_Hbodyz_32.255": true,
+    "paired_totalHz_32.255": true,
+    "paired_held_delta_32.255": true,
+    "native_deltaHz_32.275": true,
+    "native_contact_impulse_32.275": true,
+    "native_closure_residual_32.275": true,
+    "native_closure_pass_32.275": true,
+    "native_linear_residual_32.275": true,
+    "shaft_motor_fork_32.275": true,
+    "shaft_motor_carrier_32.275": true,
+    "native_deltaHz_32.305": true,
+    "native_contact_impulse_32.305": true,
+    "native_closure_residual_32.305": true,
+    "native_closure_pass_32.305": true,
+    "native_linear_residual_32.305": true,
+    "shaft_motor_fork_32.305": true,
+    "shaft_motor_carrier_32.305": true,
+    "fixed_untreated_up_error_native_substeps": true,
+    "fixed_untreated_up_error_hold_attitude": true
+  },
+  "results": {
+    "zero_A_32.251": {
+      "world_wz_delta": -0.05436734552006861,
+      "delta_H_body_z": [
+        -0.000550099831828299,
+        -2.0916441196361293e-05,
+        0.0005700077441984242,
+        6.68364219268136e-07
+      ],
+      "delta_H_total_z": -3.4016460696796244e-07
+    },
+    "zero_A_32.255": {
+      "world_wz_delta": -0.2708335994728328,
+      "delta_H_body_z": [
+        -0.002740503142219297,
+        -0.00010544718075407148,
+        0.0028404106420544216,
+        2.6542939461429715e-06
+      ],
+      "delta_H_total_z": -2.885386972803841e-06
+    },
+    "native_interval_32.275": {
+      "delta_Hz": 0.0013854433748757902,
+      "contact_impulse_midpoint": 0.001311510556626651,
+      "residual": -7.393281824913931e-05,
+      "registered_tolerance": 0.00013854433748757903,
+      "registered_closure_pass": true,
+      "linear_impulse_residual_N_s": [
+        -0.0017835920821400036,
+        0.0014756653803363606,
+        0.0003583201291787186
+      ]
+    },
+    "native_interval_32.305": {
+      "delta_Hz": 0.0027980981686059857,
+      "contact_impulse_midpoint": 0.002467804369253732,
+      "residual": -0.0003302937993522538,
+      "registered_tolerance": 0.0002798098168605986,
+      "registered_closure_pass": false,
+      "linear_impulse_residual_N_s": [
+        -0.004121402413367961,
+        0.0021477311201096305,
+        0.002101828811841344
+      ]
+    },
+    "all_original_sources_and_inputs_unchanged": true
+  },
+  "canonical_report_sha256": "4e3cd2e0da6777c9533a9cf0d2da97c5b606fec88af146e7730f88d2d0ae392b"
+}

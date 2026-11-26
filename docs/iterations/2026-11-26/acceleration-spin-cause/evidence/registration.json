@@ -1,0 +1,34 @@
+{
+  "iteration": "I-54",
+  "registered_utc": "2026-11-26T22:59:18.950337+00:00",
+  "base_commit": "37f3cdca614b065b061b2a205768810b8f8414cd",
+  "question": "Identify trigger and persistence of m100_R acceleration and subsequent apparent spinning before any controller fix.",
+  "baseline": "I52 same44s Mars figure-eight B/R/N/NR, initialshaft-1.0rad, observer-only contact control, exact simulated body/joint states, assumed0.30m/s belt cap",
+  "initial_scope": "Saved-data and source investigation, offline algebra/kinematics as needed; no live controller/default changes. Any new integration requires a separately recorded diagnostic design.",
+  "hypotheses": [
+    "Support-gain discontinuity generates infeasible correction on bad entering state",
+    "Guard changes earlier feedback/trajectory causing adverse entering state",
+    "Spin follows yaw coupling from drives/contact/angular-momentum transfer",
+    "Heading is unregulated or damping loses authority",
+    "Spin is partly material-joint motion or camera/heading-coordinate artifact"
+  ],
+  "decision_rule": "Distinguish directly reconstructed command math, observed state changes and physical causal hypotheses; do not claim unique physical cause from synchronized snapshots.",
+  "input_sha256": {
+    "src/spherical_wheel/offroad_control.py": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+    "src/spherical_wheel/recovery_control.py": "b3a6bad0870c22ada4c926a7659befb756e31f8ed5defb5506786dc466f5b17d",
+    "src/spherical_wheel/synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+    "src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "src/spherical_wheel/gazebo/plant.py": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d",
+    "gazebo/plugin/SphericalWheelBridge.cc": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e",
+    "src/spherical_wheel/sim.py": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975",
+    "src/spherical_wheel/model.py": "d41d35b283ef4732cd2b7c321539491054a8070c86a2109a577d470a8c406e72",
+    "results/contact_scheduling_joint_tracking_20261126/run_factorial_case.py": "9aafbfbc146afa64440aefc734b09b25f917926ddea27776c2a54a1796adfa04",
+    "results/contact_scheduling_joint_tracking_20261126/candidate/scheduling_reference.py": "345e0dca7c0a7172efbb0320df123eb90551b7add2cb190e055ac55cd8988b85",
+    "results/allocation_handoff_isolation_20261126/reference_candidate/joint_reference_guard.py": "80c01ce649ce507dde6e96950fbfeb8b9b7de269a5d51c8980529d5970d5a2a4",
+    "ITERATION_LOG.md": "53f16e76bf05081eb88e5e6f69418456d1f5a4aeb776f91345aabd843bf03bc3",
+    "docs/TEAMMATE_HANDOFF.md": "b8b49f8dc45ec57b8145fe62ae3facf5adaf3a946ce7b3af7fb9f6d24bced471",
+    "docs/iterations/2026-11-26/README.md": "8e31c896915ded9a0102bdeacf054e9ce8115bd5a268762990abad63a060bc57",
+    "docs/iterations/2026-11-26/teammate-handoff/README.md": "54abfa45f8d9455eaf1eb68bac51feaaeb8965f67acec367fb7e6b0aaa9d43fd",
+    "docs/iterations/2026-11-26/teammate-handoff/evidence/manifest.json": "1eae4f90d86646aed765d5b2e4318b81562189746878354aafc5f48bc04888ea"
+  }
+}

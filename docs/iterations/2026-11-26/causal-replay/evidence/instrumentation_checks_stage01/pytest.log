@@ -1,0 +1,53 @@
+..............                                                           [100%]
+=============================== warnings summary ===============================
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:36
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:36: DeprecationWarning: invalid decimal literal
+    assert p.sim.run_calls==[1]*5and len(p.sim.commands)==1
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:37
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:37: DeprecationWarning: invalid decimal literal
+    assert p.pull_calls==p.forward_calls==1and p.received[0][0]is u and p.received[0][1]is d
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:49
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:49
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:49: DeprecationWarning: invalid decimal literal
+    assert len(p.sim.commands)==3and p.pull_calls==3and p.forward_calls==3
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:50
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:50: DeprecationWarning: invalid decimal literal
+    assert len(t.arrays()['time_s'])==5and t.completed_holds==1
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:56
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:56: DeprecationWarning: invalid decimal literal
+    assert 6in a['contact_tags']and np.any(~a['contact_admitted'])
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:65
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:65: DeprecationWarning: invalid decimal literal
+    assert z['contact_rows'].shape[1]==16and z['bridge_state'].shape[1]==24
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:66
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:66: DeprecationWarning: invalid decimal literal
+    metadata=json.loads(str(z['metadata_json']));assert metadata['completed_holds']==1and metadata['failed_holds']==0
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:82
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:82: DeprecationWarning: invalid decimal literal
+    a=t.arrays();assert len(a['time_s'])==1and not a['hold_completed'].any()and t.failed_holds==1
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:83
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:83: DeprecationWarning: invalid decimal literal
+    assert len(p.sim.commands)==1and p.sim.run_calls==[1,1]
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:90
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:90: DeprecationWarning: invalid decimal literal
+    assert p.sim.run_calls==[]and len(p.sim.commands)==1and t.failed_holds==1
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:96
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:96: DeprecationWarning: invalid decimal literal
+    assert t.failed_holds==1and len(t.arrays()['time_s'])==1
+
+results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:100
+  /home/parrwnago/active-spherical-wheel/results/causal_replay_20261126/instrumentation_checks_stage01/check_substep_trace.py:100: DeprecationWarning: invalid decimal literal
+    assert len(q.sim.commands)==1and r.failed_holds==1
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+14 passed, 13 warnings in 0.29s

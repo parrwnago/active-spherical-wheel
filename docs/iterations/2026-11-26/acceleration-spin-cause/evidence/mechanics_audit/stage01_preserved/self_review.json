@@ -1,0 +1,5 @@
+{
+  "status": "superseded",
+  "issue": "Stored shell_axis_world arrays aliased private data.xmat across rows, causing constant final-axis values in stored snapshots. Momentum calculations, instantaneous reaction scalar and interval deltas were computed before each update and unaffected.",
+  "correction": "Copy axis array before storing; rerun saved-state geometry only in fresh stage02 directory."
+}

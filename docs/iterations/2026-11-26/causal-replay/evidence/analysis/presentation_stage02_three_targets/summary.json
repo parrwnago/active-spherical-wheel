@@ -1,0 +1,851 @@
+{
+  "scope": "Causal diagnostics, no controller candidate or adoption claim",
+  "technical_causal_prerequisites_pass": true,
+  "clean_unloaded_A_effect_interpretation_allowed": true,
+  "baseline_gates": {
+    "native_batch_historical": {
+      "all_shared_fields_exact": true,
+      "shared_field_count": 56,
+      "compared_rows": 6501,
+      "fields": {
+        "cap_m_s": true,
+        "exact_allocation_drive_reference": true,
+        "exact_applied": true,
+        "exact_clipping_command_delta": true,
+        "exact_effective_phase_rad": true,
+        "exact_equilibrium_command": true,
+        "exact_error": true,
+        "exact_estimated_contact_point_m": true,
+        "exact_estimated_normal": true,
+        "exact_estimated_normal_carrier": true,
+        "exact_estimated_support_loads_N": true,
+        "exact_fade_command_delta": true,
+        "exact_feedback_error": true,
+        "exact_feedback_gain": true,
+        "exact_feedback_reference_qvel": true,
+        "exact_guarded_joint_reference": true,
+        "exact_handoff_command_delta": true,
+        "exact_heading_command": true,
+        "exact_input_bounds": true,
+        "exact_lqr_command": true,
+        "exact_native_applied": true,
+        "exact_native_clipping_command_delta": true,
+        "exact_native_joint_reference": true,
+        "exact_native_requested": true,
+        "exact_nominal_joints_before": true,
+        "exact_observer_generalized": true,
+        "exact_observer_interval_mean": true,
+        "exact_observer_wrench": true,
+        "exact_phase_estimated_normal_rad": true,
+        "exact_phase_normal_xz_norm": true,
+        "exact_phase_world_vertical_rad": true,
+        "exact_phase_world_xz_norm": true,
+        "exact_previous_applied": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_reference_acceleration_m_s2": true,
+        "exact_reference_guard_delta": true,
+        "exact_reference_guard_enabled": true,
+        "exact_reference_qpos": true,
+        "exact_reference_quat": true,
+        "exact_reference_qvel": true,
+        "exact_reference_velocity_m_s": true,
+        "exact_reference_xy": true,
+        "exact_rolling_feedforward": true,
+        "exact_schedule_on_ground_normal": true,
+        "exact_support_command": true,
+        "exact_sync_weights": true,
+        "exact_transition_command_delta": true,
+        "exact_world_vertical_carrier": true,
+        "mirror_previous_applied_matches_physical": true,
+        "time_s": true,
+        "truth_equivalent_point_m": true,
+        "truth_patch_contact_counts": true,
+        "truth_patch_loads_N": true,
+        "truth_patch_points_m": true,
+        "truth_time_s": true
+      }
+    },
+    "native_substeps_batch_equivalence": {
+      "all_shared_fields_exact": true,
+      "shared_field_count": 56,
+      "compared_rows": 6501,
+      "fields": {
+        "cap_m_s": true,
+        "exact_allocation_drive_reference": true,
+        "exact_applied": true,
+        "exact_clipping_command_delta": true,
+        "exact_effective_phase_rad": true,
+        "exact_equilibrium_command": true,
+        "exact_error": true,
+        "exact_estimated_contact_point_m": true,
+        "exact_estimated_normal": true,
+        "exact_estimated_normal_carrier": true,
+        "exact_estimated_support_loads_N": true,
+        "exact_fade_command_delta": true,
+        "exact_feedback_error": true,
+        "exact_feedback_gain": true,
+        "exact_feedback_reference_qvel": true,
+        "exact_guarded_joint_reference": true,
+        "exact_handoff_command_delta": true,
+        "exact_heading_command": true,
+        "exact_input_bounds": true,
+        "exact_lqr_command": true,
+        "exact_native_applied": true,
+        "exact_native_clipping_command_delta": true,
+        "exact_native_joint_reference": true,
+        "exact_native_requested": true,
+        "exact_nominal_joints_before": true,
+        "exact_observer_generalized": true,
+        "exact_observer_interval_mean": true,
+        "exact_observer_wrench": true,
+        "exact_phase_estimated_normal_rad": true,
+        "exact_phase_normal_xz_norm": true,
+        "exact_phase_world_vertical_rad": true,
+        "exact_phase_world_xz_norm": true,
+        "exact_previous_applied": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_reference_acceleration_m_s2": true,
+        "exact_reference_guard_delta": true,
+        "exact_reference_guard_enabled": true,
+        "exact_reference_qpos": true,
+        "exact_reference_quat": true,
+        "exact_reference_qvel": true,
+        "exact_reference_velocity_m_s": true,
+        "exact_reference_xy": true,
+        "exact_rolling_feedforward": true,
+        "exact_schedule_on_ground_normal": true,
+        "exact_support_command": true,
+        "exact_sync_weights": true,
+        "exact_transition_command_delta": true,
+        "exact_world_vertical_carrier": true,
+        "mirror_previous_applied_matches_physical": true,
+        "time_s": true,
+        "truth_equivalent_point_m": true,
+        "truth_patch_contact_counts": true,
+        "truth_patch_loads_N": true,
+        "truth_patch_points_m": true,
+        "truth_time_s": true
+      }
+    },
+    "zero_A_first_hold_other_inputs_exact": {
+      "passes": true,
+      "first_hold_substeps": 5,
+      "later_mediated_max_other_input_delta": [
+        0.07153844489854985,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "other_input_indices": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "scope": "Only the first5ms has matched other held inputs. Later feedback naturally responds to altered state/history; full25ms effect is a closed-loop mediated intervention effect."
+    }
+  },
+  "zero_A": {
+    "first_1ms_and5ms": {
+      "32.251": {
+        "world_z_rate_delta_rad_s": -0.054367345520069055,
+        "heading_delta_deg": -0.003103747664215022,
+        "H_by_body_z_delta_kg_m2_s": [
+          -0.0005500998318283337,
+          -2.091644119636346e-05,
+          0.0005700077441984312,
+          6.683642192750749e-07
+        ],
+        "H_total_z_delta_kg_m2_s": -3.4016460699268225e-07,
+        "actual_held_input_delta": [
+          0.0,
+          0.6,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "32.255": {
+        "world_z_rate_delta_rad_s": -0.2708335994728346,
+        "heading_delta_deg": -0.0464355107082524,
+        "H_by_body_z_delta_kg_m2_s": [
+          -0.002740503142219311,
+          -0.00010544718075407235,
+          0.0028404106420544216,
+          2.6542939461429715e-06
+        ],
+        "H_total_z_delta_kg_m2_s": -2.885386972822923e-06,
+        "actual_held_input_delta": [
+          0.0,
+          0.6,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "later_endpoints": {
+      "31.58": {
+        "world_z_rate_delta_rad_s": 0.0,
+        "heading_delta_deg": 0.0,
+        "absolute_tilt_delta_deg": 0.0,
+        "branch_current_native_relative_error_delta_deg": 0.0,
+        "fixed_untreated_target_error_delta_deg": 0.0,
+        "actual_up_separation_deg": 0.0,
+        "XY_delta_m": [
+          0.0,
+          0.0
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "31.745": {
+        "world_z_rate_delta_rad_s": 0.0,
+        "heading_delta_deg": 0.0,
+        "absolute_tilt_delta_deg": 0.0,
+        "branch_current_native_relative_error_delta_deg": 0.0,
+        "fixed_untreated_target_error_delta_deg": 0.0,
+        "actual_up_separation_deg": 0.0,
+        "XY_delta_m": [
+          0.0,
+          0.0
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "32.245": {
+        "world_z_rate_delta_rad_s": 0.0,
+        "heading_delta_deg": 0.0,
+        "absolute_tilt_delta_deg": 0.0,
+        "branch_current_native_relative_error_delta_deg": 0.0,
+        "fixed_untreated_target_error_delta_deg": 0.0,
+        "actual_up_separation_deg": 0.0,
+        "XY_delta_m": [
+          0.0,
+          0.0
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "32.25": {
+        "world_z_rate_delta_rad_s": 0.0,
+        "heading_delta_deg": 0.0,
+        "absolute_tilt_delta_deg": 0.0,
+        "branch_current_native_relative_error_delta_deg": 0.0,
+        "fixed_untreated_target_error_delta_deg": 0.0,
+        "actual_up_separation_deg": 0.0,
+        "XY_delta_m": [
+          0.0,
+          0.0
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "32.255": {
+        "world_z_rate_delta_rad_s": -0.2708335994728337,
+        "heading_delta_deg": -0.0464355107082524,
+        "absolute_tilt_delta_deg": 0.006775066384490991,
+        "branch_current_native_relative_error_delta_deg": 0.005743377051922849,
+        "fixed_untreated_target_error_delta_deg": 0.007010819652203182,
+        "actual_up_separation_deg": 0.007090162517309258,
+        "XY_delta_m": [
+          -5.40504651147522e-06,
+          -1.3729957734298637e-05
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          0.0025769640441848374,
+          2.5545591421091007,
+          0.2765890196687817
+        ]
+      },
+      "32.275": {
+        "world_z_rate_delta_rad_s": -1.1624870330211055,
+        "heading_delta_deg": -0.934459412190565,
+        "absolute_tilt_delta_deg": 0.14402133800012162,
+        "branch_current_native_relative_error_delta_deg": 0.17566814494857041,
+        "fixed_untreated_target_error_delta_deg": 0.16238265915449723,
+        "actual_up_separation_deg": 0.17415439300751454,
+        "XY_delta_m": [
+          -0.00020542456620287197,
+          -0.0003113759948654149
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          0.2539894401187972,
+          11.177311221076351,
+          1.1439990277471992
+        ]
+      },
+      "32.305": {
+        "world_z_rate_delta_rad_s": -0.1439106342666392,
+        "heading_delta_deg": -2.125074343145447,
+        "absolute_tilt_delta_deg": 0.13178463847318111,
+        "branch_current_native_relative_error_delta_deg": 0.491493693135415,
+        "fixed_untreated_target_error_delta_deg": 0.27039762913197984,
+        "actual_up_separation_deg": 0.5792261617816341,
+        "XY_delta_m": [
+          -0.0007186228591047339,
+          -0.0009784562518735385
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          0.09384246777715788,
+          4.060290054320781,
+          -1.789990480566214
+        ]
+      },
+      "32.5": {
+        "world_z_rate_delta_rad_s": 0.01738516532578327,
+        "heading_delta_deg": -3.063009718120982,
+        "absolute_tilt_delta_deg": 0.06323102720175555,
+        "branch_current_native_relative_error_delta_deg": 0.007124185606294908,
+        "fixed_untreated_target_error_delta_deg": 0.11212443893890267,
+        "actual_up_separation_deg": 0.11464993018241859,
+        "XY_delta_m": [
+          0.0003967962583155682,
+          0.0022992432563864185
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          0.03291217273819136,
+          -1.3102632230295317,
+          -0.14691428591797995
+        ]
+      }
+    },
+    "first_5ms_native_yaw_rate_rise_rad_s": 0.49084515403757356,
+    "first_5ms_zeroA_yaw_rate_rise_rad_s": 0.22001155456473898,
+    "first_5ms_rise_reduction_fraction": 0.5517699364963122
+  },
+  "hold_attitude": {
+    "primary_time_s": 31.745,
+    "baseline": {
+      "time_s": 31.74499999999797,
+      "actual_up": [
+        -0.04658901826846762,
+        0.007971773726566385,
+        0.9988823325099072
+      ],
+      "absolute_tilt_deg": 2.709158395935436,
+      "relative_to_branch_native_target_deg": 9.848087410390288,
+      "relative_to_branch_used_target_deg": 9.848087410390288,
+      "relative_to_held_target_before_release_deg": 5.850141881949876,
+      "relative_to_untreated_same_clock_target_deg": 9.848087410390288,
+      "branch_native_target_up": [
+        -0.1554363188460673,
+        -0.1234443246964476,
+        0.9801025708995063
+      ],
+      "used_target_up": [
+        -0.1554363188460673,
+        -0.1234443246964476,
+        0.9801025708995063
+      ],
+      "untreated_same_clock_target_up": [
+        -0.1554363188460673,
+        -0.1234443246964476,
+        0.9801025708995063
+      ],
+      "platform_world_omega_rad_s": [
+        0.12544123541149693,
+        -0.14974504548304457,
+        3.1326544012986077
+      ],
+      "heading_unwrapped_rad": 8.465779024957442,
+      "heading_derivative_rad_s": 3.1261691445061266,
+      "heading_valid": true,
+      "relative_joint_rates_rad_s": [
+        4.339429074407781,
+        6.272777172281326,
+        -19.12343035952911
+      ],
+      "actual_xy": [
+        -1.8404717470875342,
+        9.33505892069461
+      ],
+      "linear_velocity_m_s": [
+        0.23225071565784078,
+        0.1380154854691107,
+        -0.06460635320545607
+      ],
+      "requested": [
+        0.007025963291084413,
+        0.12840993070708617,
+        0.37199935558890945,
+        0.0,
+        0.3
+      ],
+      "applied": [
+        0.007025963291084413,
+        0.12840993070708617,
+        0.37199935558890945,
+        0.0,
+        0.3
+      ],
+      "pre_actuator_override_requested": [
+        0.007025963291084413,
+        0.12840993070708617,
+        0.37199935558890945,
+        0.0,
+        0.3
+      ],
+      "LQR_error": [
+        -0.048889298073680976,
+        0.048661946703966785,
+        0.0,
+        0.16589397512796294,
+        0.044972184508306916,
+        0.004075708378819962,
+        -0.4523830017889817,
+        0.0,
+        0.0,
+        -0.013772928272963128,
+        -0.20349075508052555,
+        -0.0509626640439633,
+        -0.29884704449938343,
+        -0.12153062014112999,
+        3.12211521768911,
+        3.2294489628335006,
+        6.272777172281326,
+        -15.03430864683945
+      ],
+      "state_at_endpoint_precedes_current_command": true
+    },
+    "treated": {
+      "time_s": 31.74499999999797,
+      "actual_up": [
+        0.033791968945940935,
+        0.07842356952301559,
+        0.9963472520050554
+      ],
+      "absolute_tilt_deg": 4.898687907958985,
+      "relative_to_branch_native_target_deg": 10.62355995163522,
+      "relative_to_branch_used_target_deg": 10.62355995163522,
+      "relative_to_held_target_before_release_deg": 0.495429415475939,
+      "relative_to_untreated_same_clock_target_deg": 15.931810577671952,
+      "branch_native_target_up": [
+        -0.09229258718445726,
+        -0.05714317654981124,
+        0.9940909091851693
+      ],
+      "used_target_up": [
+        -0.09229258718445726,
+        -0.05714317654981124,
+        0.9940909091851693
+      ],
+      "untreated_same_clock_target_up": [
+        -0.1554363188460673,
+        -0.1234443246964476,
+        0.9801025708995063
+      ],
+      "platform_world_omega_rad_s": [
+        0.1540991379246949,
+        -0.0422453590976778,
+        1.8720421653680297
+      ],
+      "heading_unwrapped_rad": 8.349231451224135,
+      "heading_derivative_rad_s": 1.8661757307131834,
+      "heading_valid": true,
+      "relative_joint_rates_rad_s": [
+        0.6160639432253399,
+        4.6297279097766255,
+        -6.612300683571799
+      ],
+      "actual_xy": [
+        -1.8560271624809168,
+        9.324895012731199
+      ],
+      "linear_velocity_m_s": [
+        0.20800595065179833,
+        0.13798464074753283,
+        -0.04160828654214769
+      ],
+      "requested": [
+        2.278529661404136,
+        -0.6537010977599605,
+        -4.911976650770911,
+        0.0,
+        0.26471730572591684
+      ],
+      "applied": [
+        1.5,
+        -0.6,
+        -0.6,
+        0.0,
+        0.26471730572591684
+      ],
+      "pre_actuator_override_requested": [
+        2.278529661404136,
+        -0.6537010977599605,
+        -4.911976650770911,
+        0.0,
+        0.26471730572591684
+      ],
+      "LQR_error": [
+        -0.055766215432136175,
+        0.061163631067670365,
+        0.0,
+        0.17558572581957207,
+        0.05957168023446613,
+        0.0008878900274741759,
+        -0.5242901421689343,
+        0.0,
+        0.0,
+        0.0214784275126257,
+        -0.18236543110071898,
+        -0.034161050289273805,
+        -0.20958144960178254,
+        0.009615429931186997,
+        1.867098348529156,
+        0.48102698049664816,
+        4.6297279097766255,
+        -4.9470070288459205
+      ],
+      "state_at_endpoint_precedes_current_command": true
+    },
+    "paired_endpoints": {
+      "31.58": {
+        "world_z_rate_delta_rad_s": 0.0,
+        "heading_delta_deg": 0.0,
+        "absolute_tilt_delta_deg": 0.0,
+        "branch_current_native_relative_error_delta_deg": 0.0,
+        "fixed_untreated_target_error_delta_deg": 0.0,
+        "actual_up_separation_deg": 0.0,
+        "XY_delta_m": [
+          0.0,
+          0.0
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "31.745": {
+        "world_z_rate_delta_rad_s": -1.260612235930578,
+        "heading_delta_deg": -6.677684087408252,
+        "absolute_tilt_delta_deg": 2.189529512023549,
+        "branch_current_native_relative_error_delta_deg": 0.7754725412449321,
+        "fixed_untreated_target_error_delta_deg": 6.083723167281663,
+        "actual_up_separation_deg": 6.128744727380377,
+        "XY_delta_m": [
+          -0.015555415393382566,
+          -0.01016390796341149
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          -3.723365131182441,
+          -1.6430492625047002,
+          12.51112967595731
+        ]
+      },
+      "32.245": {
+        "world_z_rate_delta_rad_s": -2.708660491840196,
+        "heading_delta_deg": 41.13997875471474,
+        "absolute_tilt_delta_deg": 0.7726257899982505,
+        "branch_current_native_relative_error_delta_deg": -4.475004676787318,
+        "fixed_untreated_target_error_delta_deg": -3.7860332832006787,
+        "actual_up_separation_deg": 8.306906477334136,
+        "XY_delta_m": [
+          0.009246479172345223,
+          0.023404940104033045
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          2.188916861655796,
+          16.10183658124408,
+          14.55516892918757
+        ]
+      },
+      "32.25": {
+        "world_z_rate_delta_rad_s": -2.715659127780828,
+        "heading_delta_deg": 40.4005044495518,
+        "absolute_tilt_delta_deg": 0.694257133725622,
+        "branch_current_native_relative_error_delta_deg": -4.913696521940269,
+        "fixed_untreated_target_error_delta_deg": -3.465757742923527,
+        "actual_up_separation_deg": 8.06917998556347,
+        "XY_delta_m": [
+          0.008388245030165997,
+          0.02180812777355179
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          2.136399229236654,
+          16.229828265610887,
+          14.088580956272127
+        ]
+      },
+      "32.255": {
+        "world_z_rate_delta_rad_s": -3.1320236314275283,
+        "heading_delta_deg": 39.58469780881455,
+        "absolute_tilt_delta_deg": 0.6934333962845161,
+        "branch_current_native_relative_error_delta_deg": -5.267787637176661,
+        "fixed_untreated_target_error_delta_deg": -3.1430709871106544,
+        "actual_up_separation_deg": 7.787205662271642,
+        "XY_delta_m": [
+          0.0073873603316987335,
+          0.020094485709130083
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          2.2346257751164473,
+          18.379617840381187,
+          15.941471770574562
+        ]
+      },
+      "32.275": {
+        "world_z_rate_delta_rad_s": -4.558638530672969,
+        "heading_delta_deg": 35.206198554483024,
+        "absolute_tilt_delta_deg": 1.5507709001064205,
+        "branch_current_native_relative_error_delta_deg": -5.4325296465403685,
+        "fixed_untreated_target_error_delta_deg": -1.308300194500795,
+        "actual_up_separation_deg": 6.033957395141601,
+        "XY_delta_m": [
+          0.0016852262719424527,
+          0.011283423201383869
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          3.2726052097172706,
+          25.770128000035218,
+          22.628236368860478
+        ]
+      },
+      "32.305": {
+        "world_z_rate_delta_rad_s": -4.2804835800847645,
+        "heading_delta_deg": 27.087303823158432,
+        "absolute_tilt_delta_deg": 4.311567846082067,
+        "branch_current_native_relative_error_delta_deg": 4.676028570683718,
+        "fixed_untreated_target_error_delta_deg": 4.306556080110827,
+        "actual_up_separation_deg": 4.312011365262644,
+        "XY_delta_m": [
+          -0.00879034039312887,
+          -0.00857752662647826
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          7.292692149830473,
+          24.838575046093265,
+          22.998362724355943
+        ]
+      },
+      "32.5": {
+        "world_z_rate_delta_rad_s": -0.3945403293376226,
+        "heading_delta_deg": 21.70111606410615,
+        "absolute_tilt_delta_deg": -0.5148904251575086,
+        "branch_current_native_relative_error_delta_deg": -3.94383078275545,
+        "fixed_untreated_target_error_delta_deg": -3.838431620285605,
+        "actual_up_separation_deg": 4.710188489089146,
+        "XY_delta_m": [
+          -0.05497742971545705,
+          -0.041817515838866726
+        ],
+        "relative_joint_rate_delta_rad_s": [
+          0.9562049711761511,
+          13.118191185911684,
+          0.9242067154512409
+        ]
+      }
+    }
+  },
+  "contact_closure": {
+    "native_substeps": [
+      {
+        "start_s": 31.4,
+        "end_s": 31.58,
+        "state_delta_Hz_kg_m2_s": -1.050459322597978e-05,
+        "contact_yaw_impulse_Nm_s": -1.1525223564856071e-05,
+        "contact_minus_delta_Hz_Nm_s": -1.0206303388762918e-06,
+        "desired_abs_residual_tolerance_Nm_s": 0.0001,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 31.58,
+        "end_s": 31.745,
+        "state_delta_Hz_kg_m2_s": 0.0013253059467442548,
+        "contact_yaw_impulse_Nm_s": 0.001356450037266936,
+        "contact_minus_delta_Hz_Nm_s": 3.114409052268124e-05,
+        "desired_abs_residual_tolerance_Nm_s": 0.00013253059467442549,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 32.245,
+        "end_s": 32.275,
+        "state_delta_Hz_kg_m2_s": 0.0017523477650821136,
+        "contact_yaw_impulse_Nm_s": 0.001676677842122018,
+        "contact_minus_delta_Hz_Nm_s": -7.56699229600955e-05,
+        "desired_abs_residual_tolerance_Nm_s": 0.00017523477650821138,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 32.25,
+        "end_s": 32.275,
+        "state_delta_Hz_kg_m2_s": 0.001385443374875778,
+        "contact_yaw_impulse_Nm_s": 0.001311510556626651,
+        "contact_minus_delta_Hz_Nm_s": -7.393281824912717e-05,
+        "desired_abs_residual_tolerance_Nm_s": 0.0001385443374875778,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 32.25,
+        "end_s": 32.305,
+        "state_delta_Hz_kg_m2_s": 0.0027980981686059943,
+        "contact_yaw_impulse_Nm_s": 0.002467804369253732,
+        "contact_minus_delta_Hz_Nm_s": -0.0003302937993522625,
+        "desired_abs_residual_tolerance_Nm_s": 0.00027980981686059946,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": false
+      },
+      {
+        "start_s": 32.25,
+        "end_s": 32.5,
+        "state_delta_Hz_kg_m2_s": 0.001460094643937192,
+        "contact_yaw_impulse_Nm_s": 0.0015107006942604796,
+        "contact_minus_delta_Hz_Nm_s": 5.060605032328755e-05,
+        "desired_abs_residual_tolerance_Nm_s": 0.0001460094643937192,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      }
+    ],
+    "zero_free_shellA": [
+      {
+        "start_s": 31.4,
+        "end_s": 31.58,
+        "state_delta_Hz_kg_m2_s": -1.050459322597978e-05,
+        "contact_yaw_impulse_Nm_s": -1.1525223564856071e-05,
+        "contact_minus_delta_Hz_Nm_s": -1.0206303388762918e-06,
+        "desired_abs_residual_tolerance_Nm_s": 0.0001,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 31.58,
+        "end_s": 31.745,
+        "state_delta_Hz_kg_m2_s": 0.0013253059467442548,
+        "contact_yaw_impulse_Nm_s": 0.001356450037266936,
+        "contact_minus_delta_Hz_Nm_s": 3.114409052268124e-05,
+        "desired_abs_residual_tolerance_Nm_s": 0.00013253059467442549,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 32.245,
+        "end_s": 32.275,
+        "state_delta_Hz_kg_m2_s": 0.0016120176543540886,
+        "contact_yaw_impulse_Nm_s": 0.0015593653199495604,
+        "contact_minus_delta_Hz_Nm_s": -5.2652334404528194e-05,
+        "desired_abs_residual_tolerance_Nm_s": 0.00016120176543540888,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 32.25,
+        "end_s": 32.275,
+        "state_delta_Hz_kg_m2_s": 0.0012451132641477514,
+        "contact_yaw_impulse_Nm_s": 0.001194198034454193,
+        "contact_minus_delta_Hz_Nm_s": -5.0915229693558346e-05,
+        "desired_abs_residual_tolerance_Nm_s": 0.00012451132641477515,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 32.25,
+        "end_s": 32.305,
+        "state_delta_Hz_kg_m2_s": 0.0026893698862428244,
+        "contact_yaw_impulse_Nm_s": 0.0023597471076598265,
+        "contact_minus_delta_Hz_Nm_s": -0.0003296227785829979,
+        "desired_abs_residual_tolerance_Nm_s": 0.00026893698862428243,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": false
+      },
+      {
+        "start_s": 32.25,
+        "end_s": 32.5,
+        "state_delta_Hz_kg_m2_s": 0.0010402303708646164,
+        "contact_yaw_impulse_Nm_s": 0.0010779012718990996,
+        "contact_minus_delta_Hz_Nm_s": 3.76709010344832e-05,
+        "desired_abs_residual_tolerance_Nm_s": 0.00010402303708646164,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      }
+    ],
+    "hold_attitude": [
+      {
+        "start_s": 31.4,
+        "end_s": 31.58,
+        "state_delta_Hz_kg_m2_s": -1.050459322597978e-05,
+        "contact_yaw_impulse_Nm_s": -1.1525223564856071e-05,
+        "contact_minus_delta_Hz_Nm_s": -1.0206303388762918e-06,
+        "desired_abs_residual_tolerance_Nm_s": 0.0001,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 31.58,
+        "end_s": 31.745,
+        "state_delta_Hz_kg_m2_s": 0.00028284563867668954,
+        "contact_yaw_impulse_Nm_s": 0.000281934178881849,
+        "contact_minus_delta_Hz_Nm_s": -9.114597948405262e-07,
+        "desired_abs_residual_tolerance_Nm_s": 0.0001,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 32.245,
+        "end_s": 32.275,
+        "state_delta_Hz_kg_m2_s": 0.0006172098066906701,
+        "contact_yaw_impulse_Nm_s": 0.0006133072237582424,
+        "contact_minus_delta_Hz_Nm_s": -3.902582932427661e-06,
+        "desired_abs_residual_tolerance_Nm_s": 0.0001,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 32.25,
+        "end_s": 32.275,
+        "state_delta_Hz_kg_m2_s": 0.0004907806315060013,
+        "contact_yaw_impulse_Nm_s": 0.00048719613086998565,
+        "contact_minus_delta_Hz_Nm_s": -3.584500636015606e-06,
+        "desired_abs_residual_tolerance_Nm_s": 0.0001,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 32.25,
+        "end_s": 32.305,
+        "state_delta_Hz_kg_m2_s": 0.0008329923150447028,
+        "contact_yaw_impulse_Nm_s": 0.0008233260729849723,
+        "contact_minus_delta_Hz_Nm_s": -9.666242059730521e-06,
+        "desired_abs_residual_tolerance_Nm_s": 0.0001,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      },
+      {
+        "start_s": 32.25,
+        "end_s": 32.5,
+        "state_delta_Hz_kg_m2_s": 0.0012382092345615118,
+        "contact_yaw_impulse_Nm_s": 0.001211822020402652,
+        "contact_minus_delta_Hz_Nm_s": -2.638721415885981e-05,
+        "desired_abs_residual_tolerance_Nm_s": 0.0001238209234561512,
+        "comparison_roundoff_allowance_Nm_s": 2e-15,
+        "passes_desired_closure": true
+      }
+    ]
+  },
+  "limits": [
+    "Any branch effects include the natural feedback/contact response after treatment; direct hook scope is separate from later mediated changes.",
+    "Known internal motor torques cancel in total angularmomentum balance. Per-body remainder includes the explicitly approximated moving-COM transport correction and is not uniquely a motor, contact or passive cause.",
+    "Versioned DART/gz-physics source supports force=solver impulse/dt, conditional on actual force sign/order/pass-through/completeness; the raw field remains forceN. Closure failure means incomplete force accounting, not no motor reaction.",
+    "The interventions can worsen balance or tracking and are not deployable controller recommendations.",
+    "Pre-actuator-output request in hold_attitude already includes the held attitude target."
+  ]
+}

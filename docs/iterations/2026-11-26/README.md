@@ -1,5 +1,27 @@
 # Research presentation notes — 2026-11-26
 
+- **I-55 matched-prefix causal diagnostics:** [record](causal-replay/README.md).
+  Four short 32.5 s Gazebo runs. Unchanged batch and 1 ms-read versions match
+  all 56 original precision fields at 6,501 samples exactly. Removing only
+  unloaded-shell A torque reduces the first 5 ms yaw-rate increase 55.2%,
+  with an opposing shell/platform momentum effect; later motion rebounds.
+  Holding attitude reduces yaw but worsens fixed untreated-target error
+  9.848→15.932°, despite only 0.495° error to the easier held target.
+  No intervention is a controller fix. Registered 25 ms yaw budget passes;
+  55 ms fails at 11.8% residual. No source-supported contact-publication lag
+  explains that residual. Raw 1 ms event traces and all adverse results
+  are retained; controller defaults remain unchanged.
+- **I-54 acceleration and platform-spin investigation:**
+  [record](acceleration-spin-cause/README.md). R already spins before the
+  32.250 s handoff, peaks at 6.635 rad/s, and makes 2.748 heading turns through
+  44 s. Near-vertical shell axes and opposing shell/platform momentum changes
+  support a reaction-wheel contribution; native rate feedback later reverses
+  torque. The entering relative attitude error includes a target swing:
+  desired up moves 15.621° while actual absolute tilt decreases over
+  31.400–31.745 s. Separate heading control is off, but angular-rate LQR
+  feedback remains. Exact support-share/gain algebra, prior guard history,
+  model-derived momentum and causal limitations are retained. No new physics
+  campaign or controller/default change.
 - **I-53 teammate publication and acceleration audit:**
   [record](teammate-handoff/README.md), [start-here guide](../../TEAMMATE_HANDOFF.md).
   The user's playback 10 s cue is recorded 32 s. R reaches 1.025 m/s after a
@@ -7,7 +29,7 @@
   reference slew constraints do not bound actual acceleration. N is calmer in this
   window but still transient. Keep the overall improvement qualified.
   Current source/tests/history, selected media/data and frozen native-run
-  restoration recipe are prepared for the requested push; defaults unchanged.
+  restoration recipe were published on main in commit `37f3cdc`; defaults unchanged.
 - **I-52 scheduling × joint-reference configuration study:**
   [record](contact-scheduling-joint-tracking/README.md). Twelve complete 44 s
   cells across phases −1/+0.3/+0.9. Ground-normal phase lowers RMS at all

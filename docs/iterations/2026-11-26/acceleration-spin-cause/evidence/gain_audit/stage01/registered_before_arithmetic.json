@@ -1,0 +1,20 @@
+{
+  "iteration": "I-54",
+  "utc": "2026-11-26T23:01:29.983865+00:00",
+  "source_sha256": "da76368196a217c8fab3497810483039524a578c0b8a980fcd16c846e3adae92",
+  "input_sha256": {
+    "results/contact_scheduling_joint_tracking_20261126/campaign/resolved_case_paths.json": "4f07f873cafe8ced12ef3a7fc8b6d31ddf8b1bd8a59b01b21d85c24041dbc106",
+    "generated/offroad/flat/control_schedule.npz": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+    "src/spherical_wheel/recovery_control.py": "b3a6bad0870c22ada4c926a7659befb756e31f8ed5defb5506786dc466f5b17d",
+    "src/spherical_wheel/offroad_control.py": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+    "src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_B/precision.npz": "c614f8d1c2abaf91f4628f63ba9dc1e83e0f5a4fdc348540923988fca5b92fac",
+    "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_R/precision.npz": "8dd125cdff944aa5d1f5a6043a6233f4c57a39bddb488f74ce48bf857bafd5dd",
+    "results/contact_scheduling_joint_tracking_20261126/campaign/technical_retry_m100_N/campaign/runs/m100_N/precision.npz": "5c596cca3b3138804a69d541ccc90a75d9f54884eeb07f93f30ce15d3a0b8299",
+    "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_NR/precision.npz": "5d33228963351392996bf41aab256d8dc89671498ab1b9cfbc1630c9fba97284"
+  },
+  "scope": "No integration, controller execution or model/observer mutation. Reimplement exact cached gain lookup and compare all loaded samples; descriptive fixed-state algebra only.",
+  "events": "Prior I53 events31.770 and32.250, plus largest gain-induced normalized command change over fixed28\u201336 and32.25\u201344 windows, all fourm100 arms.",
+  "decomposition": "Symmetric phase/load Shapley split of K change; symmetric K/error split of LQR change. Unchanged shaft anchor. These are algebraic decompositions, not trajectory counterfactuals.",
+  "blend_feasibility": "At selected rows retain current non-LQR command terms and current error; blend previous/currentK overlambda0..1. Intersect all5 native input boxes. No inference that a feasible blend ensures balance/contact or that an infeasible blend excludes nonlinear solutions."
+}

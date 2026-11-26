@@ -1,0 +1,77 @@
+{
+  "status": "complete_read_only_timing_review",
+  "utc": "2026-11-26T23:37:20.700683+00:00",
+  "scope": "Read-only source timing trace; no lag fitting, data changes or simulation.",
+  "conclusion": "Source supports post-step state and forces from the SAME completed physics step. No intentional one-step ContactSensorData publication lag is present in the inspected chain. No posthoc force/state shift is justified.",
+  "chain": [
+    {
+      "path": "gazebo/physics/Physics.cc",
+      "line": 956,
+      "meaning": "Physics Update performs UpdatePhysics, Step(dt), ChangedLinks, UpdateSim in that order."
+    },
+    {
+      "path": "gazebo/physics/Physics.cc",
+      "line": 2960,
+      "meaning": "ASW exact state bypasses changed-pose tolerance and reads every dynamic link from current engine FrameDataRelativeToWorld."
+    },
+    {
+      "path": "gazebo/physics/Physics.cc",
+      "line": 3828,
+      "meaning": "UpdateSim calls UpdateCollisions before returning, after current link and joint components are written."
+    },
+    {
+      "path": "gazebo/physics/Physics.cc",
+      "line": 3911,
+      "meaning": "UpdateCollisions queries GetContactsFromLastStep after the current world Step and assigns contact component data."
+    },
+    {
+      "path": "build/gazebo-env/include/gz/sim8/gz/sim/System.hh",
+      "line": 50,
+      "meaning": "Installed framework contract: PreUpdate then Update physics, then readonly PostUpdate; simTime is time reached after current step."
+    },
+    {
+      "path": "gazebo/plugin/SphericalWheelBridge.cc",
+      "line": 234,
+      "meaning": "Bridge PostUpdate writes state and contacts under one mutex; reads current ECM state and ContactSensorData."
+    },
+    {
+      "path": "build/gazebo-env/include/gz/sim8/gz/sim/components/Component.hh",
+      "line": 455,
+      "meaning": "SetData always assigns new component data, even if equality returns true. contactsEql position-only tolerance affects changeflag, not force value seen by direct component read."
+    }
+  ],
+  "upstream": {
+    "url": "https://raw.githubusercontent.com/dartsim/dart/v6.19.5/dart/simulation/World.cpp",
+    "path": "results/causal_replay_20261126/review/source_timing_stage01/upstream/dart_6.19.5_World.cpp",
+    "sha256": "2a90fd07bc616aa25c2b48d69f5757407f36cf4e863fc73d950ca2e125c56829",
+    "line_map": {
+      "void World::step": [
+        174
+      ],
+      "computeForwardDynamics();": [
+        224
+      ],
+      "integrateVelocities(mTimeStep);": [
+        225
+      ],
+      "mConstraintSolver->solve();": [
+        232
+      ],
+      "computeImpulseForwardDynamics();": [
+        269
+      ],
+      "integratePositions(mTimeStep);": [
+        273
+      ]
+    }
+  },
+  "qualifications": [
+    "DART solves contacts before position integration. A poststep pose and collision point used in that same step are not simultaneous geometric configurations; this is not a one-step publication delay.",
+    "Published contact force is world-frame force on the corresponding first body, derived from perstep constraint impulse divided bydt; previous force-source proof retains collision-order qualification.",
+    "The fixed registered midpoint COM plus prior/post sensitivities should remain. Do not choose a lag or origin because it improves closure.",
+    "Discrete multibody integration, moving geometry, model/compiled-engine differences and message mapping/completeness remain possible residual sources; this source trace doesnot uniquely quantify them.",
+    "Source contracts and versioned upstream implementation are not a runtime trace/disassembly proof of the compiledbinary."
+  ],
+  "local_sources_unchanged": true,
+  "no_physics_or_new_numeric_lag_scan": true
+}

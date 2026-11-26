@@ -1,0 +1,77 @@
+{
+  "iteration": "I-55",
+  "registered_utc": "2026-11-26T23:21:31.811382+00:00",
+  "base_commit": "37f3cdca614b065b061b2a205768810b8f8414cd",
+  "question": "Discriminate shell-motor yaw contribution and moving-attitude-target contribution using identical full native prefixes; no proposed controller adopted.",
+  "source_campaign": "I-52 m100_R Mars plainfigure8, initialshaft-1.0,yaw45deg, hardware mode(observer contact, exactsim body/joints), .30m/sbeltbounds, oldflatKbank/exactI51referenceguard",
+  "duration_s": 32.5,
+  "original_path_duration_s": 40.0,
+  "original_job_horizon_s": 44.0,
+  "trace_window_s": [
+    31.4,
+    32.5
+  ],
+  "control_dt_s": 0.005,
+  "physics_dt_s": 0.001,
+  "cases": [
+    {
+      "id": "native_batch",
+      "intervention": "none",
+      "logging": "original5ms batch; no1ms split"
+    },
+    {
+      "id": "native_substeps",
+      "intervention": "none",
+      "logging": "5x1ms onlyinsidewindow, controllerstill5ms"
+    },
+    {
+      "id": "zero_free_shellA",
+      "window_s": [
+        32.25,
+        32.275
+      ],
+      "intervention": "After single nativecommand set ONLYshellA requestedtorque(index1) to0 thenexistingboxprojection; lognative/final separately. Observer receivesactualpreviousinput normally.",
+      "logging": "same1ms split asnative_substeps"
+    },
+    {
+      "id": "hold_attitude",
+      "window_s": [
+        31.58,
+        31.745
+      ],
+      "intervention": "Immediatelybefore original_terrain_feedback freezeONLYqref[3:7] tothefirstnativequatinwindow. Nativeestimatednormal,gains,XY,velrefs,FFandallothercomputationsremain; nativeqref/usedqreflogged. Onwindowexit resumereference; primaryscorebeforeexitstate.",
+      "logging": "same1ms split asnative_substeps"
+    }
+  ],
+  "gates": {
+    "historical_reproduction": "Allshared5ms precision arrays exactlyequal originalm100_R overcomplete diagnosticprefix; stopcausalinterpretationifnot.",
+    "stepping_equivalence": "native_substeps5ms precision exactlyequalsnative_batch overdiagnostic horizon; holdsremain5ms.",
+    "branch_prefix": "State/observer/controllerfingerprints identicalthroughbranch-startmeasurement; alloutputs strictlybeforet0identical. Firststate can differonlyafternextphysicsstep.",
+    "selective_intervention": "Onlyregisteredrequestindex orqrefquatchanges; nohistoryreset, nohiddensecondcommandcall.",
+    "substep_clock": "Exactly5consecutive1mssteps perlogged5mshold, before/afterstates, actualheldinput, fullcontacts(includingbody/rejected) andcontrollerclock aligned.",
+    "unloaded_shellA": "Report admittedandallsolvercontactcoverage; ifAforce>.05N orbodycontactduringmask, donotcallitcleanunloadedcomparison.",
+    "momentum_contact_closure": "Reportstate-derivedH andfullcontactrightendforce*dt yawimpulse withprior/post/midpointCOMandpointcentersensitivity. Desiredresidual<=max(1e-4Nms,.1absDeltaHz); gatefailuremeansunclosedbudget,notabsenceofreaction."
+  },
+  "outcomes": {
+    "shellA": "worldwz,heading,body/shellH,absolute/relativelean,XYat32.275(beforewindowrelease),32.305,32.500",
+    "attitude": "actualup,desired/nativeup,relative+absolutelean,motorcommands/yawresponseat31.745beforefirstreleasedcommand; releaseeffectsreportedseparately",
+    "policy_acceptance": "None: diagnosticinterventions canregressbalance/trajectory andarenotcontrollercandidates."
+  },
+  "input_sha256": {
+    "results/contact_scheduling_joint_tracking_20261126/protocol.json": "fd33439c9db9a6bc31183409df9f00d13e82c3393581d4c66bab7878d59767bf",
+    "results/contact_scheduling_joint_tracking_20261126/campaign/jobs.json": "ff199967690a8fc5a9998012894d5c0df508f22513a7c7f8577945d7e0aef19f",
+    "results/contact_scheduling_joint_tracking_20261126/campaign/resolved_case_paths.json": "4f07f873cafe8ced12ef3a7fc8b6d31ddf8b1bd8a59b01b21d85c24041dbc106",
+    "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_R/precision.npz": "8dd125cdff944aa5d1f5a6043a6233f4c57a39bddb488f74ce48bf857bafd5dd",
+    "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_R/provenance.json": "1051039bf6c82f4fd9efb6f4ecb71088755375d19b19e9c73196b27598f828c6",
+    "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_R/rollout.npz": "7c85e993257c062ec7de2279d8ec715fa8e1c7c439c881aeaf589bf68b900dd3",
+    "gazebo/plugin/SphericalWheelBridge.cc": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e",
+    "src/spherical_wheel/gazebo/bridge.py": "6b1f7e2ec860e6d21a6a025d1581952836aef3515da66f60a2314d15776c18a4",
+    "src/spherical_wheel/gazebo/plant.py": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d",
+    "src/spherical_wheel/offroad_control.py": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+    "docs/iterations/2026-11-26/acceleration-spin-cause/README.md": "0ad62234b8463b0463e1c8a749db1a5faa25b92d70419fec947b2327486253c9",
+    "ITERATION_LOG.md": "fec11653551af84da8c54ad374359e434bd2d2c31182114727fdd157fbbcecfa",
+    "docs/TEAMMATE_HANDOFF.md": "c2472b5a7fa9a296af2c511ce0b085786b37e2a188e697885f24bb60e18d3709",
+    "docs/iterations/2026-11-26/README.md": "88ef5f461ff9cc926321fce15150bc9bdd6438f0881da4acce4908acf3330d68"
+  },
+  "scope": "NewtargetedGazebointegration authorized byuser. Originalruntime/config/plugin/gains/sources remainbyteexact. No motorlimit/observer/controllerdefaulttuning."
+}

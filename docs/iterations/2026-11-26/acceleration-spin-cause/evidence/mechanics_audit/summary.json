@@ -1,0 +1,83 @@
+{
+  "status": "complete_saved_state_mechanics_audit",
+  "authoritative_stage": "stage02_corrected",
+  "question": "How can shell acceleration amplify platform spin?",
+  "established": "Large opposing shell and platform/carrier angular-momentum changes, with much smaller complete-system yaw angular impulse under mirror/SDF inertia identity.",
+  "intervals": [
+    {
+      "start_s": 32.245,
+      "end_s": 32.275,
+      "delta_H_total_systemCOM_z_kg_m2_s": 0.0017523477650820893,
+      "delta_H_by_body_systemCOM_z_kg_m2_s": {
+        "fork": 0.02295334925864982,
+        "carrier": 0.0009261295715550203,
+        "shell_A": -0.012426371345033922,
+        "shell_B": -0.009700759720088832
+      },
+      "delta_H_fork_carrier_z_kg_m2_s": 0.02387947883020484,
+      "delta_H_shells_z_kg_m2_s": -0.022127131065122756,
+      "abs_net_to_shell_exchange_ratio": 0.07919453090980133,
+      "endpoint_only_trapezoid_contact_yaw_impulse_Nm_s": 0.0013436480425374534,
+      "endpoint_quadrature_minus_delta_H_Nm_s": -0.0004086997225446359,
+      "interpretation": "\u0394Htotal is state-derived netexternalyaw angularimpulse under matched modeled mass/inertia assumptions; endpoint contact quadrature is only sparse descriptive approximation and doesnotclose impulsebudget. Bodymomentum changes include motor,bearing,contact and gyroscopic redistribution."
+    },
+    {
+      "start_s": 32.245,
+      "end_s": 32.305,
+      "delta_H_total_systemCOM_z_kg_m2_s": 0.003165002558812323,
+      "delta_H_by_body_systemCOM_z_kg_m2_s": {
+        "fork": 0.023036619641215478,
+        "carrier": 0.0012431624191327367,
+        "shell_A": -0.010575267017665061,
+        "shell_B": -0.010539512483870826
+      },
+      "delta_H_fork_carrier_z_kg_m2_s": 0.024279782060348216,
+      "delta_H_shells_z_kg_m2_s": -0.02111477950153589,
+      "abs_net_to_shell_exchange_ratio": 0.14989512718246006,
+      "endpoint_only_trapezoid_contact_yaw_impulse_Nm_s": 0.0018495588455399634,
+      "endpoint_quadrature_minus_delta_H_Nm_s": -0.0013154437132723595,
+      "interpretation": "\u0394Htotal is state-derived netexternalyaw angularimpulse under matched modeled mass/inertia assumptions; endpoint contact quadrature is only sparse descriptive approximation and doesnotclose impulsebudget. Bodymomentum changes include motor,bearing,contact and gyroscopic redistribution."
+    },
+    {
+      "start_s": 32.25,
+      "end_s": 32.275,
+      "delta_H_total_systemCOM_z_kg_m2_s": 0.001385443374875752,
+      "delta_H_by_body_systemCOM_z_kg_m2_s": {
+        "fork": 0.022064635666391226,
+        "carrier": 0.0008507116584303262,
+        "shell_A": -0.011592834004041905,
+        "shell_B": -0.009937069945903895
+      },
+      "delta_H_fork_carrier_z_kg_m2_s": 0.02291534732482155,
+      "delta_H_shells_z_kg_m2_s": -0.0215299039499458,
+      "abs_net_to_shell_exchange_ratio": 0.06434972390479428,
+      "endpoint_only_trapezoid_contact_yaw_impulse_Nm_s": 0.001282565160292409,
+      "endpoint_quadrature_minus_delta_H_Nm_s": -0.0001028782145833431,
+      "interpretation": "\u0394Htotal is state-derived netexternalyaw angularimpulse under matched modeled mass/inertia assumptions; endpoint contact quadrature is only sparse descriptive approximation and doesnotclose impulsebudget. Bodymomentum changes include motor,bearing,contact and gyroscopic redistribution."
+    }
+  ],
+  "inertia_identity_max_tolerance": 1e-10,
+  "total_mass_kg": 1.8599999999999999,
+  "maximum_chain_vs_jacobian_omega_gap_rad_s": 6.217248937900877e-15,
+  "heading_helper_command_max_abs_in_context": 0.0,
+  "push_max_abs_N": 0.0,
+  "no_physics_controller_or_gain_execution": true,
+  "not_established": [
+    "Unique motor-versus-bearing/contact decomposition per body",
+    "Exact externalcontactimpulse closure from5ms endpointforces",
+    "Initial origin of all spin or referenceguard-only causation"
+  ],
+  "source_line_map": "stage02_corrected/source_line_map.json",
+  "plot": "stage02_corrected/momentum_exchange.png",
+  "report": "stage02_corrected/report.json",
+  "source_hashes_preserved": true,
+  "later_reversal_qualification": {
+    "recorded_time_s": 32.304999999998074,
+    "applied_shell_torques_Nm": [
+      0.5817889987020096,
+      0.6
+    ],
+    "projected_carrier_motor_reaction_z_Nm": -1.0339141363832125,
+    "interpretation": "Native torque reversal returns momentum; spin falls after this burst. No claim of undamped coast or all yaw feedback absent."
+  }
+}

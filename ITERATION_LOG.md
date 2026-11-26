@@ -3335,6 +3335,118 @@ test-only 0.36 formatting churn in the initially clean generated report.
 Capture 168 older origins and 21 older archives. Controller defaults remain
 unchanged. [Handoff and evidence](docs/iterations/2026-11-26/teammate-handoff/README.md).
 
+### I-54 — acceleration, entering reference motion and sustained platform spin
+
+2026-11-26. **Saved-data analysis completed; no live controller/default change.**
+
+The user asks for causes before another fix and identifies spinning after
+I-52's −1.00 R burst. Rotation is actual platform heading: world-vertical
+angular velocity is already 3.739 rad/s before the 32.250 s support change,
+peaks at 6.635 rad/s at 32.290 s, and the platform makes 2.748 further turns
+through 44 s. Its rate remains 1.161 rad/s at 42 s with zero XY reference.
+Frame/projection validity, relative joint spin and current/prior holds are
+separated. Other arms have different entering histories, not matched states.
+
+Exact cached-gain reconstruction matches all loaded rows in all four arms.
+The shell-B request jump splits into −7.429 N m from support-share change,
+−0.172 from phase change and −0.011 from changing error. Both solver endpoint
+and estimated support change together. A frozen old/new gain blend cannot
+meet all five existing command caps at this state; that is algebra, not a
+tested controller. Earlier guard changes first alter B/R commands on the
+same state at 10.930 s; the 55 modified holds and 13 clusters are retained.
+
+The entering relative-error rise substantially includes desired-attitude
+motion. Over 31.400–31.745 s, desired up moves 15.621° while actual absolute
+tilt decreases 6.042→2.709°; relative error grows 1.715→9.848°. Local guard
+activation follows at 31.745 s. Normal-derived target motion, zero angular
+velocity reference, belt preparation/cap and flat-bank interpolation are
+separate candidate contributors; the initial growth cannot be attributed
+solely to that local clamp. At the later 13.166° relative error, absolute tilt
+is 6.171°. This qualifies any impression that the platform fell 13° from vertical.
+
+Using saved state and verified mirror/SDF inertias, 32.250–32.275 s changes
+platform/carrier vertical angular momentum +0.022915 kg m²/s versus shells
+−0.021530; total changes +0.001385. Near-vertical shell axes and known motor
+reaction support a substantial exchange contribution. Net-small total
+momentum change does not uniquely separate opposing individual contact/joint
+impulses. Dedicated heading commands are zero; native angular-rate feedback
+remains active and later reverses torque. The episode is driven/oscillatory,
+with slower continuing rotation afterward, not an undamped constant-rate coast.
+
+Preserve registered saved-array/kinematic calculations, compact reports,
+plots and checks. Mechanics stage01's snapshot-axis alias is retained and
+corrected separately; computed momentum values were unaffected. Whole-route
+causal attribution remains open because 1 ms impulse histories and matched
+interventions are absent. Propose an identical-prefix, short-window diagnostic
+before a fix. No new trajectory or full repo-test run; evidence QA is not
+additional robot trials. [Record and evidence](docs/iterations/2026-11-26/acceleration-spin-cause/README.md).
+
+### I-55 — identical-prefix motor and attitude-reference interventions
+
+2026-11-26. **Four short native diagnostics completed; no default adopted.**
+
+User authorizes the proposed causal investigation. Register native batch,
+native 1 ms-read, zero-only-free-shell-A torque [32.250,32.275), and held-only
+attitude target [31.580,31.745), all with original R settings/path/limits and
+32.500 s diagnostic horizon. Preserve the original 44 s job metadata separately
+from the shortened actual execution. No branch restores hidden solver history;
+each replays the full original initialization and prefix in a fresh process.
+
+Both native cases reproduce all 56 original precision fields at all 6,501
+samples exactly; their 14 sidecar fields and selected numerical histories also
+match. The 1 ms recorder preserves five-step command holds, captures raw states
+before/after and all contacts, and executes no extra controller/observer call.
+Original runtime/config/plugin/gains remain unchanged. The two intervention
+prefixes and direct hook scopes pass their registered gates.
+
+At 32.250 s both motor-test states have world yaw rate 3.825019 rad/s.
+After the first hold it is 4.315864 native versus 4.045030 with only A zeroed:
+the yaw-rate increase falls 55.2%. The other four held inputs are identical
+during that first hold, and A carries zero exported force throughout all
+25 affected 1 ms steps. The paired first-hold momentum changes are almost
+entirely opposite A/base exchange. By 32.275 rates are 5.992068 versus
+4.829581 rad/s, including later normal feedback. After release rates nearly
+reconverge and planar speed at 32.305 is slightly worse (1.039 vs1.025 m/s).
+This confirms a local actuator contribution, not a useful disabling policy.
+
+At the 31.745 s attitude endpoint before release acts, yaw rate decreases
+3.132654→1.872042 rad/s, but absolute tilt rises 2.709→4.899° and error to
+the same untreated desired up worsens 9.848→15.932°. Error to the easier held
+target is only 0.495°. Current branch-native target error is 10.624°; keep
+all three targets distinct. Native reference release generates another
+transient, retained separately. Moving balance reference affects real motion,
+but freezing it sacrifices required tracking and is not adopted.
+
+Versioned DART/physics source binds force=impulse/dt and current-step
+publication; there is no supported one-step force shift. Actual solver
+geometry precedes position integration, so origin sensitivities remain.
+Native 25 ms complete-system yaw closure passes at 5.34% residual; native
+55 ms fails at 11.80%. Retain the failed budget and linear residuals without
+sign/time/threshold adjustments. Causal actuator evidence remains valid;
+the complete physical force accounting is not uniquely closed.
+
+A post-primary descriptive contact follow-up confirms a physical geometric
+swing: over 69 endpoints from 31.405–31.745 s, actual force-weighted radial/
+equivalent-wrench directions change 17.826/17.825° versus 16.031° estimated.
+Interval equivalent-normal differences are 2.137° RMS/5.070° max; this is not
+proof of an exact estimator-delay cause. Two final 1 ms samples have zero
+force but all full 5 ms intervals carry load. The first analysis's always-
+loaded assertion failure is preserved; its successor retains missing normals
+explicitly. Canonical causal endpoints/gates are unchanged. This supports
+prioritizing feasible control through genuine contact changes while retaining
+estimation limits.
+
+Validation includes 14 pure fake-recorder contracts, nine separate pure math
+fixtures, and 53 independent saved-data assertions. These are separate QA
+scopes, not extra simulator trials or a full repository-suite run. Retain the
+initial floating-boundary fixture failure/correction and the independent
+review's first incomplete input declaration, followed by corrected registration
+and unchanged numerical results. Earlier repeated check counts are not additive.
+Preserve compact source/protocol/report/plots plus exact 1 ms data and exact
+5 ms event subsets. Next target is feasible continuous balance/drive handoff
+with momentum and total-command limits, not blanket torque removal/reference
+holding. [Record and evidence](docs/iterations/2026-11-26/causal-replay/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

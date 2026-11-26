@@ -144,6 +144,27 @@ This is an experimental comparison, not a solved controller. The next focused
 question is how to preserve balance and command consistency through support
 changes and direction reversals using the full estimated contact geometry.
 
+The [I-54 acceleration/spin investigation](iterations/2026-11-26/acceleration-spin-cause/README.md)
+adds an important qualification: the entering attitude error includes a rapidly
+moving normal-derived target. Over 31.400–31.745 s, desired up moves 15.621°
+while actual absolute tilt decreases. The platform already spins before the
+largest command jump, reaches 6.635 rad/s vertical angular velocity, and makes
+2.748 additional heading turns from 32.250 to 44 s. Saved-state momentum
+accounting supports shell/platform exchange near a vertical shell axis.
+Separate heading control is disabled, while native angular-rate feedback
+remains active and later reverses torque. The complete causal chain remains
+open; no new controller or trajectory campaign was introduced.
+
+The subsequent [I-55 matched-prefix diagnostics](iterations/2026-11-26/causal-replay/README.md)
+reproduce the original R trace exactly before two short interventions.
+Removing only unloaded shell-A torque reduces the first 5 ms yaw-rate
+increase by 55.2%, confirming its contribution; the later motion rebounds.
+Holding the attitude target reduces yaw but worsens tracking of the fixed
+untreated target (9.848→15.932°). Neither intervention is adopted. The
+25 ms force/momentum check passes its declared tolerance, while the 55 ms
+check fails. [Portable 1 ms data](iterations/2026-11-26/causal-replay/data/README.md)
+and plots preserve both the causal findings and unresolved accounting.
+
 ## Run and inspect from a fresh clone
 
 For the browser lab, follow the normal [README](../README.md) setup. For the

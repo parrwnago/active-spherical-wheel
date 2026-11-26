@@ -1,0 +1,105 @@
+{
+  "iteration": "I-55",
+  "utc": "2026-11-26T23:39:02.869647+00:00",
+  "source_sha256": "65f9996dd6eff206467f3b4aa492708f6126f46cba1c92beca33518a815b9f1b",
+  "cases": [
+    "native_substeps",
+    "zero_free_shellA",
+    "hold_attitude"
+  ],
+  "window_s": [
+    31.4,
+    32.5
+  ],
+  "files": [
+    {
+      "path": "native_substeps_substeps.npz",
+      "origin": "results/causal_replay_20261126/campaign/native_substeps/substeps.npz",
+      "bytes": 444556,
+      "sha256": "ec391deec1de98c226834971196761eac6ff16ba57a89e69514108eb6c1287ec",
+      "derivation": "Byte-exact copy of complete recorded1ms trace31.4\u201332.5; no resampling/casting"
+    },
+    {
+      "path": "native_substeps_control_window.npz",
+      "bytes": 400564,
+      "sha256": "d021de88dff7ef6ab68190a0cb6106b01a0b5a6f1e3353a16b5a033e46b44951",
+      "derivation": "Exact field/window subset31.4\u201332.5,221rows; fieldnames prefixedprecision__/sidecar__; no resampling/casting",
+      "sources": [
+        {
+          "kind": "precision",
+          "path": "results/causal_replay_20261126/campaign/native_substeps/campaign/runs/m100_R/precision.npz",
+          "sha256": "ad3b8f70877d02afb194b7c1154eb8df7219eda8f9d33c46705244ffdac3ce2e",
+          "rows": 6501,
+          "selected_rows": 221
+        },
+        {
+          "kind": "sidecar",
+          "path": "results/causal_replay_20261126/campaign/native_substeps/i55_sidecar.npz",
+          "sha256": "e61768cf19464db503e072153a0166b170bfecd0e502f6a7c74517d90698834f",
+          "rows": 6501,
+          "selected_rows": 221
+        }
+      ]
+    },
+    {
+      "path": "zero_free_shellA_substeps.npz",
+      "origin": "results/causal_replay_20261126/campaign/zero_free_shellA/substeps.npz",
+      "bytes": 444974,
+      "sha256": "c281053cce5c574ff53dfd41f322f60dc16b6a330473b5e701528fec080a029b",
+      "derivation": "Byte-exact copy of complete recorded1ms trace31.4\u201332.5; no resampling/casting"
+    },
+    {
+      "path": "zero_free_shellA_control_window.npz",
+      "bytes": 400505,
+      "sha256": "6e5a39832c6476b12fd0efbcbd77791260eeeebd1e1db776ddf23b59c9187ee7",
+      "derivation": "Exact field/window subset31.4\u201332.5,221rows; fieldnames prefixedprecision__/sidecar__; no resampling/casting",
+      "sources": [
+        {
+          "kind": "precision",
+          "path": "results/causal_replay_20261126/campaign/zero_free_shellA/campaign/runs/m100_R/precision.npz",
+          "sha256": "b8ce28cffdbbc1704acd9979e4727488691d7697e317aee17db4cecf26cbe4db",
+          "rows": 6501,
+          "selected_rows": 221
+        },
+        {
+          "kind": "sidecar",
+          "path": "results/causal_replay_20261126/campaign/zero_free_shellA/i55_sidecar.npz",
+          "sha256": "52b1252e43f9c58ba2818e0ca0a65a1366d1cda987d4f07703075629b9ae3988",
+          "rows": 6501,
+          "selected_rows": 221
+        }
+      ]
+    },
+    {
+      "path": "hold_attitude_substeps.npz",
+      "origin": "results/causal_replay_20261126/campaign/hold_attitude/substeps.npz",
+      "bytes": 449320,
+      "sha256": "32c4308214c17e3ab591867cdc5c7ddd171ab6c85bb4b756909af3cca15cc92f",
+      "derivation": "Byte-exact copy of complete recorded1ms trace31.4\u201332.5; no resampling/casting"
+    },
+    {
+      "path": "hold_attitude_control_window.npz",
+      "bytes": 390073,
+      "sha256": "8732f9c1add87d2a606a4ff811fd303673f908cad5d9ba7f7652b81c7e962973",
+      "derivation": "Exact field/window subset31.4\u201332.5,221rows; fieldnames prefixedprecision__/sidecar__; no resampling/casting",
+      "sources": [
+        {
+          "kind": "precision",
+          "path": "results/causal_replay_20261126/campaign/hold_attitude/campaign/runs/m100_R/precision.npz",
+          "sha256": "d8dec5430f2410526363c1878f1525737b8283bb69f994576743cde5711d2778",
+          "rows": 6501,
+          "selected_rows": 221
+        },
+        {
+          "kind": "sidecar",
+          "path": "results/causal_replay_20261126/campaign/hold_attitude/i55_sidecar.npz",
+          "sha256": "631a5f920ce6db5d2457fc97897c1fa61937a64caa705cf00eed4ce302e61623",
+          "rows": 6501,
+          "selected_rows": 221
+        }
+      ]
+    }
+  ],
+  "bytes": 2529992,
+  "semantics": "Parentprecision exact_native_requested/applied are final returned values inI55. sidecar pre_output_* is computed before actuator override; hold_attitudealreadyusesheldquat. World bridge\u03c9 differsfrombodyframe precisionqvelangular. Fullprefixrawrollouts staylocal; exactparitygates/provenance copiedseparately."
+}
