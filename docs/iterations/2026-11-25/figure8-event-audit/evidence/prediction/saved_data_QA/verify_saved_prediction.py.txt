@@ -1,0 +1,106 @@
+"""Independent saved-array and sealed-artifact QA; runs no physics/controller."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+RAW = ROOT / 'results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090'
+
+
+def read(path):
+    return json.loads(path.read_text())
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    output = HERE / 'saved_data_QA'
+    output.mkdir(exist_ok=False)
+    shutil.copy2(__file__, output / Path(__file__).name)
+    dense_path = HERE / 'dense_run_01/forecasts.json'
+    report_path = HERE / 'reduction_stage01/report.json'
+    dense, report = read(dense_path), read(report_path)
+    bounds = np.asarray(read(RAW/'provenance.json')['input_bounds'])
+    with np.load(RAW/'precision.npz') as z:
+        truth = {k:z[k] for k in ('time_s','exact_qpos','exact_qvel','exact_applied')}
+    assert len(dense['rows']) == 35 and len(report['paired_endpoint_records']) == 105
+    assert len(read(HERE/'reduction_stage01/endpoint_records.json')) == 210
+    checked_files = 0
+    for folder in (HERE/'dense_run_01', HERE/'reduction_stage01'):
+        for record in read(folder/'artifact_manifest.json')['files']:
+            path = folder / record['path']
+            assert sha(path) == record['sha256'] and path.stat().st_size == record['bytes']
+            checked_files += 1
+    peak_input = 0.
+    bad_fits = []
+    max_xy_recompute_difference = 0.
+    for row in dense['rows']:
+        assert row['success'] and row['offline_actual_input_replay_success']
+        assert row['source_state_unchanged'] and row['history_audit']['passed']
+        assert row['AB_same_initial_and_first_5ms_state_contact_input_exact']
+        assert not row['future_actual_data_used_by_forecast']
+        assert max(row['history_audit']['maximum_absolute_differences'].values()) == 0.
+        a,b = row['forecast'], row['offline_actual_input_replay']
+        assert b['metadata']['future_actual_commands_used'] and not b['metadata']['deployable_forecast']
+        assert not b['metadata']['future_actual_states_or_contacts_supplied_to_prediction']
+        assert a['metadata']['frozen_plane'] == b['metadata']['frozen_plane']
+        assert a['metadata']['command_averaging'] is False
+        for mode, forecast in (('A',a),('B',b)):
+            q,v,u,t = (np.asarray(forecast[k]) for k in ('qpos','qvel','commands','time_s'))
+            assert q.shape[0] == v.shape[0] == t.size == 41 and u.shape == (40,5)
+            assert np.isfinite(q).all() and np.isfinite(v).all() and np.isfinite(u).all()
+            np.testing.assert_allclose(np.diff(t), .005, atol=1e-12, rtol=0)
+            assert np.all(abs(u) <= bounds + 1e-10)
+            peak_input = max(peak_input, float(np.max(abs(u)/bounds)))
+            np.testing.assert_array_equal(q[:2], np.asarray((b if mode=='A' else a)['qpos'])[:2])
+            np.testing.assert_array_equal(v[:2], np.asarray((b if mode=='A' else a)['qvel'])[:2])
+            assert forecast['contacts'][:2] == (b if mode=='A' else a)['contacts'][:2]
+            for horizon in (.05,.1,.2):
+                step = round(horizon/.005)
+                saved = next(r for r in report['paired_endpoint_records'] if
+                    r['anchor_index']==row['anchor_index'] and r['horizon_s']==horizon)
+                error = float(np.linalg.norm(q[step,:2]-truth['exact_qpos'][row['anchor_index']+step,:2])*1000)
+                difference = abs(error-saved[f'{mode}_xy_error_mm'])
+                assert difference < 1e-10
+                max_xy_recompute_difference = max(max_xy_recompute_difference,difference)
+        np.testing.assert_array_equal(np.asarray(a['commands'])[0],np.asarray(b['commands'])[0])
+        np.testing.assert_array_equal(np.asarray(b['commands']),truth['exact_applied'][row['anchor_index']:row['anchor_index']+40])
+        fit = row['calibration']
+        np.testing.assert_allclose(fit['normal_load_residual_N'],fit['calibrated_normal_load_N']-fit['estimated_normal_load_N'],atol=1e-12)
+        if not fit['load_fit_within_tolerance']:
+            bad_fits.append(row['anchor_time_s'])
+    assert bad_fits == report['bad_initial_load_fit_times_s'] and len(bad_fits)==5
+    for summary in report['summary']:
+        selected = [r for r in report['paired_endpoint_records'] if r['horizon_s']==summary['horizon_s'] and
+            (summary['category']=='all_event_selected_anchors' or r['event_category']==summary['category'])]
+        assert len(selected)==summary['paired_anchor_n']
+        for key,value in summary.items():
+            if isinstance(value,dict) and 'n' in value:
+                samples = [v for r in selected for v in (r[key] if isinstance(r[key],list) else [r[key]]) if v is not None]
+                assert len(samples)==value['n']
+                if samples:
+                    for statistic,expected in (('mean',np.mean(samples)),('median',np.median(samples)),('p95',np.percentile(samples,95)),('max',max(samples))):
+                        np.testing.assert_allclose(value[statistic],expected,atol=1e-10)
+            elif key.endswith('_agrees_count'):
+                assert value == sum(r[key[:-6]] for r in selected)
+        assert summary['B_xy_error_lower_than_A_count']==sum(r['B_xy_error_mm']<r['A_xy_error_mm'] for r in selected)
+    result = {'passed':True,'scope':'Independent saved-array/hash QA only; zero physics/controller/model execution.',
+        'source_sha256':sha(Path(__file__)), 'dense_sha256':sha(dense_path),'report_sha256':sha(report_path),
+        'verified_sealed_files':checked_files,'paired_endpoints':105,'per_mode_endpoints':210,
+        'fine_cadence_s':.005,'all_35_first_step_state_contact_input_exact':True,
+        'all_finite_state_command_paths':True,'all_commands_within_assumed_simulation_bounds':True,
+        'maximum_input_bound_fraction':peak_input,'all_B_commands_exact_saved_future_actual_inputs':True,
+        'all_A_future_truth_flags_false':True,'bad_initial_load_fit_count':5,'bad_initial_load_fit_times_s':bad_fits,
+        'all_9_group_horizon_summaries_recomputed':True,'maximum_xy_endpoint_recompute_difference_mm':max_xy_recompute_difference,
+        'limits':'Bounds are existing simulation assumptions. Five poor initial load fits are included; no hidden abstention. Event windows overlap within one Mars trace.'}
+    (output/'report.json').write_text(json.dumps(result,indent=2)+'\n')
+    print(json.dumps(result,indent=2))
+
+
+if __name__ == '__main__':
+    main()

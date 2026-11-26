@@ -1,0 +1,65 @@
+"""Conditional sparse/full-Jacobian directional check; no new Gazebo or tuning."""
+from pathlib import Path
+import importlib.util,json,hashlib,csv
+import numpy as np
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+from spherical_wheel.predictive_control import AffineMPC,AffineMPCSettings
+ROOT=Path.cwd();OUT=Path(__file__).resolve().parent
+if (OUT/'report.json').exists():raise FileExistsError('Preserve derivative audit')
+def load(name,path):
+ s=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
+helper=load('derivative_helper',ROOT/'scripts/diagnose-mpc-search.py')
+harness=load('frozen_evaluator',helper.FROZEN_HARNESS)
+paths=[Path(__file__),ROOT/'scripts/diagnose-mpc-search.py',ROOT/'src/spherical_wheel/predictive_model.py',ROOT/'src/spherical_wheel/predictive_control.py',helper.FROZEN_HARNESS]
+entries=[]
+for n,p in enumerate(paths):
+ t=OUT/'source_snapshot'/f'{n}_{p.name}';t.parent.mkdir(exist_ok=True);t.write_bytes(p.read_bytes());entries.append({'origin':str(p.relative_to(ROOT)),'snapshot':str(t.relative_to(OUT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
+helper.save(OUT/'provenance.json',{'scope':'Conditional private frozen-direction diagnostics atactualruntime1-plan; boundedlinesearch plus explicitlyunclippedcentraldirectionderivatives. No livecontroller/weights/epsilonchanges.','sources':entries,'finite_difference_model_epsilon':1e-5,'strides':[5,1],'direction_steps':[1e-3,1e-4,1e-5]})
+with np.load(helper.SOURCE/'precision.npz') as z:exact={k:z[k] for k in z.files}
+plans=json.loads((helper.SOURCE/'plans.json').read_text())
+mirror=StateMirror(model_dir=OUT/'private_model');predictor=EstimatedPlanePredictor(mirror)
+settings=AffineMPCSettings();rows=[];details=[]
+for at in (.4,2.):
+ plan=min(plans,key=lambda p:abs(p['time_s']-at));i=int(np.argmin(abs(exact['time_s']-at)))
+ chosen=json.load(open(OUT.parent/f'runtime_entrypoints/anchor_{at:g}/native_1.json'))['plan']
+ q0,v0=np.array(plan['qpos']),np.array(plan['qvel']);previous=exact['exact_applied'][i-1]
+ mirror.set_state(q0,v0,at,previous)
+ predictor.update(q0,v0,plan['normal'],plan['point_m'],plan['load_N'],friction=float(mirror.nominal_friction),command=previous)
+ evaluator=object.__new__(harness.TrajectoryPredictiveExperiment);evaluator.predictor=predictor;evaluator.settings=settings
+ target=np.array(chosen['target_states']);nominal=np.array(chosen['inputs']);bounds=mirror.bounds
+ transform=np.eye(18);transform[2,:3]=plan['normal'];transform[11,9:12]=plan['normal'];inverse=np.linalg.inv(transform)
+ ns,nc,_=evaluator.evaluate(q0,v0,nominal,target,transform,bounds,previous)
+ assert nc==chosen['nonlinear_cost'],(nc,chosen['nonlinear_cost'])
+ for stride in (5,1):
+  A,B,f0,xbar=predictor.linearize_trajectory(q0,v0,nominal,.02,jacobian_stride=stride)
+  result=AffineMPC(settings).solve(transform@A@inverse,transform@B,f0@transform.T,target@transform.T,nominal,previous,bounds)
+  d={'anchor_s':at,'stride':stride,'nominal_cost':nc,'solver':result.diagnostics,'line_search':[],'directional_derivatives':[]}
+  if result.success:
+   direction=result.inputs-nominal
+   def affine_cost(alpha):
+    x=np.zeros(18);states=[]
+    for a,b,c,u,u0 in zip(A,B,f0,nominal+alpha*direction,nominal):
+     x=a@x+b@(u-u0)+c;states.append(x.copy())
+    return helper.score_states(settings,np.array(states),target,transform,nominal+alpha*direction,bounds,previous)
+   for alpha in (1.,.5,.25):
+    inputs=nominal+alpha*direction
+    assert np.all(abs(inputs)<=bounds+1e-10)
+    _,actual,_=evaluator.evaluate(q0,v0,inputs,target,transform,bounds,previous)
+    d['line_search'].append({'alpha':alpha,'actual_cost':actual,'affine_predicted_cost':affine_cost(alpha),'actual_reduction':nc-actual,'predicted_reduction':nc-affine_cost(alpha)})
+   for step in (1e-3,1e-4,1e-5):
+    _,cp,_=evaluator.evaluate(q0,v0,nominal+step*direction,target,transform,bounds,previous)
+    _,cm,_=evaluator.evaluate(q0,v0,nominal-step*direction,target,transform,bounds,previous)
+    actual=(cp-cm)/(2*step);linear=(affine_cost(step)-affine_cost(-step))/(2*step)
+    d['directional_derivatives'].append({'step':step,'actual_derivative':actual,'affine_derivative':linear,'same_descent_sign':bool((actual<0)==(linear<0)),
+       'note':'Central +/- probesmaycrossinputbounds inprivateunclippedmodel; theyarenotfeasiblecommandcandidates.'})
+   best=min([nc]+[v['actual_cost'] for v in d['line_search']]);row={'anchor_s':at,'jacobian_stride':stride,'nominal_cost':nc,'best_actual_line_cost':best,'actual_best_reduction':nc-best,
+      'direction_input_inf':float(np.max(abs(direction))),'actual_derivative_1e4':d['directional_derivatives'][1]['actual_derivative'],
+      'affine_derivative_1e4':d['directional_derivatives'][1]['affine_derivative'],'solver_success':True}
+  else:row={'anchor_s':at,'jacobian_stride':stride,'nominal_cost':nc,'solver_success':False}
+  rows.append(row);details.append(d);print(json.dumps(row),flush=True)
+  helper.save(OUT/'report.json',{'status':'in_progress','rows':rows,'details':details})
+helper.save(OUT/'report.json',{'status':'completed','scope':'Frozen private-model diagnostic, notclosedloopmodelvalidation ornewGazebo.','rows':rows,'details':details,
+ 'limits':['Finitesetofdirections,scalesandstatesdoesnotvalidateallJacobians.','Largelinesearchnonlinearity/contactswitchescaninvalidatefiniteaffinepredictions evenwheninfinitesimaldirectionsagree.','Changingstridehereisdiagnosticonly; nocontrollerparameterchange adopted.']})
+with (OUT/'metrics.csv').open('w',newline='') as f:
+ w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)

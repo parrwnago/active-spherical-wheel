@@ -1,0 +1,49 @@
+{
+  "iteration": "I-40",
+  "render_source_snapshot": "results/lqr_contact_forecast_20261125/videos/source_snapshot/render_contact_forecasts_95d7f4ac9271.py",
+  "render_source_sha256": "95d7f4ac9271916d6e33b403bde369737fdbbd470f7d71c8d6b0ce997a6ec3aa",
+  "no_new_physics": true,
+  "preview_only": false,
+  "forecast": {
+    "selection": {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 9.16,
+      "event_time_s": 9.26,
+      "label": "Late-X stress fallback: first15ms-stable family change",
+      "selection_basis": "Root-selected predeclared fallback: intended flat_y_transfer has no stable family transfer; use the first late-X stable family event at9.260s and its sole successful pre-event anchor9.160s. Selection made without selecting for forecast quality.",
+      "root_selection_message": "Raw+forecasts complete; use first lateX transfer9.260s, sole9.160 anchor; show even if forecast bad.",
+      "selection_kind": "predeclared_event",
+      "display_caveat": "Raw patchloads chatter; stablefamilyevent usesdeclared15msdwell. Theprivateanchorloadfit isoutside tolerance."
+    },
+    "anchor_time_s": 9.160000000000032,
+    "forecast_interval_s": [
+      9.160000000000032,
+      9.360000000000031
+    ],
+    "playback_speed": 0.025,
+    "endpoint_holds_video_s": 1.0,
+    "horizon_markers_s": [
+      0.05,
+      0.1,
+      0.2
+    ],
+    "scope": "Actual recorded Gazebo future versus stored PRIVATE estimated-plane forecast under the same native5ms policy; not two live controllers.",
+    "private_reference_display": "Private panel displays the known anchor reference tilt; future cloned policy reference quaternions were not stored. Actual panel displays actual logged reference.",
+    "force_timing": "Anchor mj_forward at current state; future endpoint records are from the final physics solver step before integration.",
+    "shared_load_axis_maximum_N": 84.99506841831996,
+    "future_private_force_offset_s": -0.001,
+    "video": {
+      "path": "results/lqr_contact_forecast_20261125/videos/contact_forecast_vs_gazebo.mp4",
+      "sha256": "5d79b0a9038cd70bb28400473abf10866791ca1bac033a008ce7e895e3b1aa6f",
+      "bytes": 833862,
+      "dimensions": [
+        1920,
+        926
+      ],
+      "fps": 20,
+      "frames": 201,
+      "video_duration_s": 10.05,
+      "decoded_final_verified": true
+    }
+  }
+}

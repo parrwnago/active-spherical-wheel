@@ -1,0 +1,32 @@
+............F                                                            [100%]
+=================================== FAILURES ===================================
+_________ test_detailed_rollout_keeps_previous_interval_inputs_aligned _________
+
+workspace = <spherical_wheel.offroad_experiments.Workspace object at 0x7d62f6f101f0>
+
+    def test_detailed_rollout_keeps_previous_interval_inputs_aligned(workspace):
+        from spherical_wheel.offroad_experiments import run_offroad
+        log, _ = run_offroad(workspace, make_terrain('slope', grade_deg=8.),
+>                            ReferencePath(.2, 0., 2., start_s=.05, ramp_s=.3),
+                             OffroadParams(mode='hardware'), duration_s=.4,
+                             record_diagnostics=True)
+
+tests/test_hardware_mode.py:214: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <spherical_wheel.offroad_experiments.ReferencePath object at 0x7d62f70df520>
+distance_m = 0.2, heading_deg = 0.0, duration_s = 2.0, start_s = 0.05
+profile = 'cruise', ramp_s = 1.5, origin = (0.0, 0.0)
+
+    def __init__(self, distance_m=0., heading_deg=0., duration_s=10., start_s=.5,
+                 profile='cruise', ramp_s=1.5, origin=(0., 0.)):
+        if profile not in ('cruise', 'quintic'):
+            raise ValueError('Profile must be cruise or quintic')
+        if duration_s <= 0 or (profile == 'cruise' and 2*ramp_s >= duration_s):
+>           raise ValueError('Path duration must be positive and longer than both speed ramps')
+E           ValueError: Path duration must be positive and longer than both speed ramps
+
+src/spherical_wheel/offroad_experiments.py:48: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_hardware_mode.py::test_detailed_rollout_keeps_previous_interval_inputs_aligned
+1 failed, 12 passed in 43.42s

@@ -1,0 +1,312 @@
+"""Read-only analysis of temporal continuity in two saved contact events.
+
+This reconstructs kinematics at recorded poses. It does not advance a physics
+simulation or change a controller. The old baseline has no active adaptive
+effort schedule: its evaluated coefficient is explicitly counterfactual.
+"""
+from pathlib import Path
+import csv
+import hashlib
+import json
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import mujoco
+import numpy as np
+
+
+ROOT = Path(__file__).resolve().parents[3]
+OUTPUT = Path(__file__).resolve().parent
+SCALE = np.array([5., 5., 5., .3, .3])
+SUPPORTS = ('Shell A', 'Shell B', 'Belt A', 'Belt B')
+CASES = (
+    ('adaptive_negative_phase',
+     ROOT/'results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00',
+     28.2, 29., 28.975),
+    ('baseline_positive_phase',
+     ROOT/'results/contact_diagnostics_20261125/baseline/plain_figure8/phase_+0.90',
+     31.6, 31.7, 31.65),
+)
+
+
+def fingerprint(path):
+    data = path.read_bytes()
+    return {'path': str(path.relative_to(ROOT)), 'bytes': len(data),
+            'sha256': hashlib.sha256(data).hexdigest()}
+
+
+def stats(values):
+    values = np.asarray(values)
+    values = values[np.isfinite(values)]
+    if not len(values):
+        return {'samples': 0, 'median': None, 'p95': None, 'max': None}
+    return {'samples': len(values), 'median': float(np.median(values)),
+            'p95': float(np.percentile(values, 95)), 'max': float(np.max(values))}
+
+
+def load_case(name, directory, start, end, marked_time):
+    with np.load(directory/'rollout.npz') as archive:
+        log = {key: value.copy() for key, value in archive.items()}
+    times = log['time_s'].astype(float)
+    selected = np.flatnonzero((times >= start-1e-4) & (times <= end+1e-4))
+    # Retain one earlier row so the first visible row has an aligned step.
+    selected = np.r_[selected[0]-1, selected]
+    model_path = sorted(directory.parents[1].glob('_workspaces/*/flat/model.xml'))[0]
+    model = mujoco.MjModel.from_xml_path(str(model_path.resolve()))
+    data = mujoco.MjData(model)
+    bodies = [mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, body)
+              for body in ('shell_A', 'shell_B', 'carrier', 'carrier')]
+    geoms = [mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, geom)
+             for geom in ('shell_A_smooth', 'shell_B_smooth', 'belt_A', 'belt_B')]
+    jacobians, authorities, reconstructed_residuals, shares, reference_tilts = [], [], [], [], []
+    drive = (log['allocation_drive_reference'] if 'allocation_drive_reference' in log else
+             np.column_stack((log['reference_qvel'][:, 6:9], log['rolling_feedforward'][:, 3:5])))
+    for index in selected:
+        data.qpos[:] = log['qpos'][index]
+        mujoco.mj_forward(model, data)
+        loads = log['estimated_support_loads_N'][index].astype(float)
+        weights = loads/loads.sum() if loads.sum() > 1e-9 else np.zeros(4)
+        mean_matrix = np.zeros((2, 5))
+        residual_squared = 0.
+        for support in np.flatnonzero(weights > 0):
+            jac = np.zeros((3, model.nv))
+            point = log['estimated_contact_points_m'][index, support].astype(float)
+            mujoco.mj_jac(model, data, jac, None, point, bodies[support])
+            row = np.zeros((2, 5))
+            row[:, :3] = jac[:2, 6:9]
+            if support >= 2:
+                row[:, support+1] = data.geom_xmat[geoms[support]].reshape(3, 3)[:2, 1]
+            mean_matrix += weights[support]*row
+            residual_squared += weights[support]*np.linalg.norm(
+                row@drive[index]+log['reference_velocity_m_s'][index])**2
+        jacobians.append(mean_matrix*SCALE)
+        authorities.append(np.linalg.svd(mean_matrix*SCALE, compute_uv=False)[1])
+        reconstructed_residuals.append(np.sqrt(residual_squared))
+        shares.append(weights)
+        reference_matrix = np.empty(9)
+        mujoco.mju_quat2Mat(reference_matrix, log['reference_quat'][index].astype(float))
+        reference_tilts.append(np.degrees(np.arccos(np.clip(reference_matrix.reshape(3, 3)[2, 2], -1., 1.))))
+
+    time = times[selected]
+    shares = np.asarray(shares)
+    matrix = np.asarray(jacobians)
+    authority = np.asarray(authorities)
+    evaluated_effort = .001+.004*.02**2/(authority**2+.02**2)
+    actual_effort = (log['allocation_effort_weight_m_s'][selected].astype(float)
+                     if 'allocation_effort_weight_m_s' in log else None)
+    effort = actual_effort if actual_effort is not None else evaluated_effort
+    mode = np.where(shares.sum(axis=1) > 0, np.argmax(shares, axis=1), -1)
+    switches = mode[1:] != mode[:-1]
+    truth_loads = log['support_loads_N'][selected].astype(float)
+    truth_shares = np.divide(truth_loads, truth_loads.sum(axis=1)[:, None],
+                             out=np.zeros_like(truth_loads), where=truth_loads.sum(axis=1)[:, None] > 1e-9)
+    truth_mode = np.where(truth_shares.sum(axis=1) > 0, np.argmax(truth_shares, axis=1), -1)
+    truth_switches = truth_mode[1:] != truth_mode[:-1]
+    velocity = log['reference_velocity_m_s'][selected].astype(float)
+    normalized_drive = drive[selected]/SCALE
+    points = log['estimated_contact_point_m'][selected].astype(float)
+    normal = log['estimated_normal'][selected].astype(float)
+    normal /= np.linalg.norm(normal, axis=1)[:, None]
+    steps = {
+        'desired_velocity_step_m_s': np.linalg.norm(np.diff(velocity, axis=0), axis=1),
+        'normalized_contact_jacobian_step_frobenius_m_s': np.linalg.norm(np.diff(matrix, axis=0), axis=(1, 2)),
+        'effort_coefficient_step_m_s': np.abs(np.diff(effort)),
+        'drive_reference_step_normalized_l2': np.linalg.norm(np.diff(normalized_drive, axis=0), axis=1),
+        'drive_reference_step_normalized_linf': np.max(np.abs(np.diff(normalized_drive, axis=0)), axis=1),
+        'estimated_equivalent_point_step_m': np.linalg.norm(np.diff(points, axis=0), axis=1),
+        'estimated_normal_step_deg': np.degrees(np.arccos(np.clip(np.sum(normal[1:]*normal[:-1], axis=1), -1., 1.))),
+        'reference_attitude_error_step_deg': np.abs(np.diff(np.degrees(log['attitude_error_rad'][selected]))),
+        'lqr_command_step_normalized_linf': np.max(np.abs(np.diff(log['lqr_command'][selected], axis=0))/log['input_bounds'][selected[1:]], axis=1),
+        'requested_command_step_normalized_linf': np.max(np.abs(np.diff(log['command'][selected], axis=0))/log['input_bounds'][selected[1:]], axis=1),
+        'applied_command_step_normalized_linf': np.max(np.abs(np.diff(log['input'][selected], axis=0))/log['input_bounds'][selected[1:]], axis=1),
+    }
+
+    def snapshot(local):
+        index = selected[local]
+        return {
+            'time_s': float(time[local]), 'support': SUPPORTS[mode[local]] if mode[local] >= 0 else 'none',
+            'estimated_load_shares': shares[local].tolist(),
+            'truth_load_shares_evaluation_only': truth_shares[local].tolist(),
+            'desired_velocity_xy_m_s': velocity[local].tolist(),
+            'estimated_equivalent_point_m': points[local].tolist(),
+            'normalized_contact_jacobian_m_s': matrix[local].tolist(),
+            'authority_reconstructed_m_s': float(authority[local]),
+            'authority_logged_m_s': float(log['allocation_authority_m_s'][index]) if 'allocation_authority_m_s' in log else None,
+            'effort_coefficient_m_s': float(effort[local]),
+            'effort_is_active': actual_effort is not None,
+            'drive_reference': drive[index].tolist(),
+            'actual_joint_rates_rad_s': log['qvel'][index, 6:9].tolist(),
+            'actual_tilt_deg': float(np.degrees(log['tilt_rad'][index])),
+            'reference_tilt_deg': float(reference_tilts[local]),
+            'reference_attitude_error_deg': float(np.degrees(log['attitude_error_rad'][index])),
+            'angular_generalized_velocity_rad_s': log['qvel'][index, 3:6].tolist(),
+            'effective_phase_rad': float(log['effective_phase_rad'][index]),
+            'allocation_residual_logged_m_s': float(log['allocation_residual_rms_m_s'][index]) if 'allocation_residual_rms_m_s' in log else None,
+            'allocation_residual_reconstructed_m_s': float(reconstructed_residuals[local]),
+            'allocation_active_bounds': log['allocation_active_bounds'][index].tolist() if 'allocation_active_bounds' in log else None,
+            'lqr_command': log['lqr_command'][index].tolist(),
+            'requested_command': log['command'][index].tolist(),
+            'applied_command': log['input'][index].tolist(),
+        }
+
+    events = {}
+    for key, values in steps.items():
+        edge = int(np.argmax(values))
+        events[key] = {'step': float(values[edge]), 'patch_switch': bool(switches[edge]),
+                       'before': snapshot(edge), 'after': snapshot(edge+1)}
+    marked = int(np.argmin(abs(time-marked_time)))
+    report = {
+        'name': name, 'window_s': [start, end], 'visible_samples': len(selected)-1,
+        'interval_s': stats(np.diff(time)), 'patch_switch_count': int(switches.sum()),
+        'patch_switch_times_s': time[1:][switches].tolist(),
+        'truth_patch_switch_count_evaluation_only': int(truth_switches.sum()),
+        'truth_patch_switch_times_s_evaluation_only': time[1:][truth_switches].tolist(),
+        'estimated_truth_identity_disagreement_samples': int(np.sum(mode[1:] != truth_mode[1:])),
+        'actual_effort_schedule_active': actual_effort is not None,
+        'step_metrics': {key: {'all_steps': stats(values), 'at_patch_switch': stats(values[switches]),
+                               'without_patch_switch': stats(values[~switches])} for key, values in steps.items()},
+        'marked_event': snapshot(marked), 'largest_step_events': events,
+        'scalar_schedule_reconstruction_max_error_m_s': float(np.max(abs(effort-evaluated_effort))) if actual_effort is not None else None,
+        'input_files': [fingerprint(directory/'rollout.npz'), fingerprint(directory/'summary.json'), fingerprint(model_path)],
+    }
+    for local in range(1, len(selected)):
+        row = {'case': name, 'time_s': float(time[local]), 'patch': SUPPORTS[mode[local]] if mode[local] >= 0 else 'none',
+               'patch_switch': bool(switches[local-1]), 'authority_m_s': float(authority[local]),
+               'effort_coefficient_m_s': float(effort[local]), 'effort_is_active': actual_effort is not None,
+               'actual_tilt_deg': float(np.degrees(log['tilt_rad'][selected[local]])),
+               'reference_tilt_deg': float(reference_tilts[local]),
+               'reference_attitude_error_deg': float(np.degrees(log['attitude_error_rad'][selected[local]]))}
+        for key, values in steps.items():
+            row[key] = float(values[local-1])
+        yield_data.append(row)
+    return report, {'time': time, 'selected': selected, 'log': log, 'mode': mode, 'switches': switches,
+                    'velocity': velocity, 'authority': authority, 'effort': effort,
+                    'actual_effort': actual_effort is not None, 'drive': normalized_drive,
+                    'jacobian_step': steps['normalized_contact_jacobian_step_frobenius_m_s'],
+                    'reference_tilt': reference_tilts, 'marked_time': marked_time}
+
+
+def plot(cases):
+    figure, axes = plt.subplots(8, 2, figsize=(17, 22), sharex='col', constrained_layout=True)
+    colors = ('#2878b5', '#df7e31', '#269c83', '#a06ac2', '#b44848')
+    for column, (report, data) in enumerate(cases):
+        time, log, selected = data['time'], data['log'], data['selected']
+        for axis in axes[:, column]:
+            for moment in time[1:][data['switches']]:
+                axis.axvline(moment, color='#999999', linewidth=.6, alpha=.2)
+            axis.axvline(data['marked_time'], color='#c73e3e', linewidth=1, linestyle='--', alpha=.8)
+            axis.grid(alpha=.2)
+            axis.set_xlim(report['window_s'])
+        axes[0, column].set_title(report['name'].replace('_', ' '), fontsize=12)
+        for component, label in enumerate(('Desired vx', 'Desired vy')):
+            axes[0, column].plot(time, data['velocity'][:, component], label=label, color=colors[component])
+        axes[0, column].set_ylabel('Desired velocity (m/s)')
+        axes[1, column].step(time, data['mode'], where='post', color='#181818')
+        axes[1, column].set(yticks=range(4), yticklabels=SUPPORTS, ylim=(-.3, 3.3), ylabel='Estimated loaded patch')
+        axes[2, column].semilogy(time, np.maximum(data['authority'], 1e-7), color=colors[2], label='Weak authority')
+        axes[2, column].axhline(.02, color='#777777', linestyle=':', label='Schedule threshold .02')
+        axes[2, column].set_ylabel('Normalized authority (m/s)')
+        axes[3, column].plot(time, data['effort']*1000, color=colors[3],
+                            label='Active coefficient' if data['actual_effort'] else 'Evaluated, NOT active in baseline')
+        axes[3, column].set_ylabel('Effort coefficient (×10⁻³ m/s)')
+        axes[4, column].plot(time[1:], data['jacobian_step'], color='#777777', label='Selected J change, Frobenius')
+        axes[4, column].set_ylabel('Per-step normalized ΔJ (m/s)')
+        for channel, label in enumerate(('Shaft / 5 rad/s', 'Shell A / 5 rad/s', 'Shell B / 5 rad/s',
+                                         'Belt A / .3 m/s', 'Belt B / .3 m/s')):
+            axes[5, column].plot(time, data['drive'][:, channel], label=label, color=colors[channel])
+        axes[5, column].set_yscale('symlog', linthresh=1.)
+        axes[5, column].set_ylabel('Normalized drive references')
+        axes[6, column].plot(time, np.degrees(log['tilt_rad'][selected]), color=colors[0], label='Actual tilt')
+        axes[6, column].plot(time, data['reference_tilt'], color=colors[1], label='Reference tilt')
+        axes[6, column].plot(time, np.degrees(log['attitude_error_rad'][selected]), color=colors[4], label='Reference attitude error')
+        axes[6, column].set(ylabel='Degrees', xlabel='Time (s)')
+        for channel, label in enumerate(('Shaft', 'Shell A', 'Shell B', 'Belt A', 'Belt B')):
+            axes[7, column].plot(time, log['lqr_command'][selected, channel]/log['input_bounds'][selected, channel],
+                                label=label, color=colors[channel])
+        axes[7, column].set_yscale('symlog', linthresh=1.)
+        axes[7, column].set(ylabel='LQR demand / actuator bound', xlabel='Time (s)')
+        for row in (0, 2, 3, 4, 5, 6, 7):
+            axes[row, column].legend(loc='best', fontsize=7, ncols=2 if row == 5 else 1)
+    figure.suptitle('Saved-event continuity: smooth scalar formula, discontinuous selected contact geometry', fontsize=15)
+    figure.text(.01, -.012, 'Gray vertical lines: estimated patch changes. Red dashed lines: inspected correction events. '
+                'Jacobians reconstructed from saved float32 states/contacts; no new closed-loop simulation. '
+                'Baseline right column predates the adaptive schedule.', fontsize=9)
+    for suffix in ('png', 'pdf'):
+        figure.savefig(OUTPUT/f'continuity.{suffix}', dpi=150, bbox_inches='tight')
+    plt.close(figure)
+
+
+yield_data = []
+
+
+def main():
+    cases = [load_case(*case) for case in CASES]
+    report = {
+        'scope': 'Offline kinematic reconstruction and per-controller-step continuity audit of saved runs; no new physics or controller execution.',
+        'precision': 'Saved states/contact locations are float32. Jacobian and baseline residual reconstructions are approximate; adaptive logged fields are identified separately.',
+        'schedule': {'formula': '.001 + .004 * .02**2 / (sigma_weak**2 + .02**2)',
+                     'meaning': 'Continuous as a function of its scalar geometry input; not guaranteed continuous in time when selected patch/J changes.',
+                     'baseline_note': 'Evaluated diagnostic only; baseline controller did not use this schedule.'},
+        'source_files': [fingerprint(path) for path in (
+            Path(__file__).resolve(), ROOT/'src/spherical_wheel/experiments.py',
+            ROOT/'src/spherical_wheel/rolling_allocation.py', ROOT/'src/spherical_wheel/contact_sensing.py',
+            ROOT/'src/spherical_wheel/offroad_control.py')],
+        'cases': [case[0] for case in cases],
+        'limitations': [
+            'The selected Jacobian maps drive rates into planar contact-point velocity. It is not a dynamic controllability measure.',
+            'Patch-switch comparisons are descriptive and cannot separate coupled physical contact transitions, estimated identity changes, gain changes, and state evolution.',
+            'A small desired velocity step does not imply small inverse-kinematic reference steps near weak geometry.',
+            'Temporal ordering and co-occurrence do not prove a single cause of the correction.',
+        ],
+        'observations': [
+            'Desired planar velocity changes gradually in both inspected windows; its largest step is not at a patch change.',
+            'At patch changes the load-averaged normalized contact Jacobian changes substantially even though the estimated equivalent point and normal remain comparatively continuous.',
+            'The adaptive scalar coefficient is continuous in its geometry argument, but it is neither time-filtered nor slew-limited. The largest active coefficient step occurs during rapid authority loss without a patch switch.',
+            'The bounded allocator caps reference acceleration despite those changes. Reference feasibility does not bound LQR balance demand: adaptive LQR command steps reach 5.79 actuator bounds per step at patch changes.',
+            'In the baseline window every estimated dominant-patch change matches a true dominant-patch change. The phenomenon is not simply observer classification error or estimator-only chatter.',
+            'The old baseline did not use the adaptive coefficient. Its evaluated schedule shows how the same formula would respond to that saved geometry; it is not a simulated alternative trajectory.',
+        ],
+        'proposed_next_policy': {
+            'status': 'proposed only, contingent on controlled configuration-study findings',
+            'policy': 'Bumpless shell-to-belt feedback/gain transition, retaining the current estimated contact geometry and the existing bounded allocation.',
+            'reason': 'Hard selected support changes velocity channels and feedback blending even when geometric point motion is small. Bounded references already have finite steps, but LQR demand has much larger patch-aligned steps. Smoothing only a scalar coefficient cannot make those paths continuous.',
+            'risk': 'Slowing feedback transfer can weaken necessary balance authority. Do not freeze an old contact identity or impose a blanket actuator slew limit as a substitute; evaluate the attitude response explicitly.',
+            'comparison': 'Keep actuator/reference bounds, timed velocity reference, gain library, and effort coefficients fixed; compare with and without this single feedback-transfer policy on the controlled cases before the five trajectory cases.',
+            'checks': ['Support-switch count and truth-identity disagreement duration',
+                       'Selected-J and gain changes, normalized reference steps, allocation residual',
+                       'Reference attitude error, applied-command saturation, tracking and actual joint speed'],
+            'caveat': 'This is a targeted hypothesis, not a demonstrated correction or evidence that observer error alone caused the excursions.'
+        },
+    }
+    # Keep full snapshots separate from the compact evidence used by readers.
+    (OUTPUT/'event_details.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
+    compact = {key: value for key, value in report.items() if key != 'cases'}
+    compact['event_details_file'] = 'event_details.json'
+    compact['step_alignment'] = 'Each step is indexed by its ending sample inside the window; one preceding sample is read for the first visible step.'
+    compact['cases'] = []
+    for case, _ in cases:
+        item = {key: value for key, value in case.items() if key != 'largest_step_events'}
+        item['largest_steps'] = {}
+        for key, event in case['largest_step_events'].items():
+            item['largest_steps'][key] = {
+                'step': event['step'], 'before_time_s': event['before']['time_s'],
+                'after_time_s': event['after']['time_s'], 'patch_switch': event['patch_switch'],
+                'support_before': event['before']['support'], 'support_after': event['after']['support'],
+            }
+        compact['cases'].append(item)
+    (OUTPUT/'evidence.json').write_text(json.dumps(compact, indent=2, allow_nan=False)+'\n')
+    with (OUTPUT/'samples.csv').open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(yield_data[0]))
+        writer.writeheader()
+        writer.writerows(yield_data)
+    plot(cases)
+    for case, _ in cases:
+        print(case['name'], 'switches', case['patch_switch_count'])
+        for key, values in case['step_metrics'].items():
+            print(key, 'maximum', values['all_steps']['max'],
+                  'switch median/max', values['at_patch_switch']['median'], values['at_patch_switch']['max'])
+
+
+if __name__ == '__main__':
+    main()

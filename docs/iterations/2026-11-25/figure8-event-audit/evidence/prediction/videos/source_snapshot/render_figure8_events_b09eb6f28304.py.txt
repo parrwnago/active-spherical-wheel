@@ -1,0 +1,216 @@
+"""Render I41 actual Mars/flat event windows and a separate hindsight diagnostic.
+
+No controller, forecast or physics integration is run. Terrain and balanced
+initialization differ between the two actual traces; controller/program do not.
+"""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+import types
+
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+from PIL import Image, ImageDraw
+
+HERE = Path(__file__).resolve().parent
+FAMILY = HERE.parents[1]
+ROOT = FAMILY.parents[1]
+I40 = ROOT / 'results/lqr_contact_forecast_20261125'
+VIEWER = I40 / 'videos/render_contact_forecasts.py'
+FLAT = FAMILY / 'terrain/flat_control/campaign/runs/flat_figure8'
+EVENTS = FAMILY / 'events/full_audit'
+FPS, SPEED, WIDTH, HEIGHT, CHART_HEIGHT = 20, .5, 960, 720, 200
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def read(path):
+    return json.loads(Path(path).read_text())
+
+
+def npz(path):
+    with np.load(path) as z:
+        return {k: z[k].copy() for k in z.files}
+
+
+def chart(log, signals, index, window, event, axis, limits, font):
+    image = Image.new('RGB', (WIDTH, CHART_HEIGHT), (9, 19, 29))
+    draw = ImageDraw.Draw(image, 'RGBA')
+    time = log['time_s']; chosen = (time >= window[0]-1e-8) & (time <= window[1]+1e-8)
+    times = time[chosen]
+    current = np.flatnonzero(chosen & (time <= time[index]+1e-8))
+    columns = [(signals['local_path_distance_mm'], signals['tracking_error_mm'],
+                'Local path distance / time-aligned error (mm)', (0., limits[0])),
+               (log['qvel'][:, axis]*1000, log['reference_velocity_m_s'][:, axis]*1000,
+                f'{"XY"[axis]} velocity: actual / reference (mm/s)', (-limits[1], limits[1]))]
+    for column, (actual, reference, title, bounds) in enumerate(columns):
+        left, top, width, height = 42+column*WIDTH/2, 38, WIDTH/2-62, 128
+        def point(t, value):
+            return (left+width*(float(t)-window[0])/(window[1]-window[0]),
+                    top+height-height*(float(value)-bounds[0])/(bounds[1]-bounds[0]))
+        draw.text((left-30, 7), title, font=font(11), fill=(223, 236, 247))
+        for value in (bounds[0], .5*sum(bounds), bounds[1]):
+            draw.line([point(window[0], value), point(window[1], value)], fill=(160, 183, 201, 45))
+            draw.text((left-30, point(window[0], value)[1]-6), f'{value:.0f}', font=font(9), fill=(185, 205, 221))
+        for values, color in ((actual, (59, 208, 216)), (reference, (246, 191, 75))):
+            draw.line([point(t, v) for t, v in zip(times, values[chosen])], fill=color+(65,), width=1)
+            if len(current)>1:
+                draw.line([point(time[i], values[i]) for i in current], fill=color+(255,), width=2)
+        draw.line([point(event, bounds[0]), point(event, bounds[1])], fill=(243, 103, 94, 220), width=2)
+        draw.line([point(time[index], bounds[0]), point(time[index], bounds[1])], fill=(235, 244, 249, 180))
+        for tick in (window[0], event, window[1]):
+            draw.text((point(tick, bounds[0])[0]-13, top+height+5), f'{tick:.2f}', font=font(9), fill=(190, 211, 225))
+    draw.text((12, CHART_HEIGHT-16), 'Cyan: first quantity | gold: second | red: selected event | faint: full window, bright: recorded motion so far',
+              font=font(10), fill=(202, 220, 232))
+    return np.asarray(image)
+
+
+def end_card(report, plot_path, font):
+    image = Image.new('RGB', (WIDTH*2, HEIGHT+CHART_HEIGHT), (12, 22, 33))
+    draw = ImageDraw.Draw(image)
+    draw.text((30, 15), 'Separate MODEL diagnostic: these forecasts never commanded the recorded Mars run', font=font(29), fill=(237, 244, 250))
+    candidates = [r for r in report['paired_endpoint_records'] if r['event_category']=='primary_departure'
+                  and abs(r['anchor_time_s']-6.76)<1e-7]
+    for k, horizon in enumerate((.1, .2)):
+        row = next(r for r in candidates if abs(r['horizon_s']-horizon)<1e-9)
+        draw.text((30, 65+k*32), f'Anchor6.760s, +{horizon*1000:.0f}ms: XY error A {row["A_xy_error_mm"]:.3f}mm | B {row["B_xy_error_mm"]:.3f}mm',
+                  font=font(21), fill=(197, 219, 236))
+    draw.text((30, 140), 'A: native5ms feedback on predicted states. B: OFFLINE HINDSIGHT replay of saved FUTURE actual commands.',
+              font=font(20), fill=(247, 199, 98))
+    draw.text((30, 175), 'Error remains with actual inputs: frozen local model mismatch persists. This does not identify one physical/controller cause.',
+              font=font(18), fill=(214, 231, 243))
+    plot = Image.open(plot_path).convert('RGB')
+    plot.thumbnail((WIDTH*2-70, HEIGHT+CHART_HEIGHT-235))
+    image.paste(plot, ((WIDTH*2-plot.width)//2, 220))
+    return np.asarray(image)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--preview', action='store_true')
+    args = parser.parse_args()
+    target = HERE / 'mars_departure_and_direction_changes.mp4'
+    if target.exists():
+        raise FileExistsError('Preserve completed render; choose a fresh stage')
+    source = Path(__file__).resolve()
+    snapshot = HERE / 'source_snapshot' / f'render_figure8_events_{sha(source)[:12]}.py'
+    snapshot.parent.mkdir(parents=True, exist_ok=True)
+    if not snapshot.exists():
+        snapshot.write_bytes(source.read_bytes())
+    viewer = types.ModuleType('i41_saved_state_viewer'); viewer.__file__ = str(VIEWER)
+    exec(compile(VIEWER.read_text(), str(VIEWER), 'exec'), viewer.__dict__)
+    assert sha(VIEWER) == read(I40/'videos/overview_video_metadata.json')['render_source_sha256']
+    viewer.HERE = HERE
+    mars = viewer.load_case('mars_figure8_p090')
+    viewer.RUNS = FLAT.parent
+    flat = viewer.load_case('flat_figure8')
+    runs = (mars, flat)
+    signals = tuple(npz(EVENTS/name/'signals.npz') for name in ('mars', 'flat'))
+    reports = tuple(read(EVENTS/name/'report.json') for name in ('mars', 'flat'))
+    terrain = npz(FAMILY/'terrain/terrain_series.npz')
+    reduction = FAMILY/'prediction/reduction_stage01/report.json'
+    paired = read(reduction)
+    np.testing.assert_array_equal(mars['exact']['time_s'], flat['exact']['time_s'])
+    for key in ('exact_reference_xy', 'exact_reference_velocity_m_s', 'exact_reference_acceleration_m_s2'):
+        np.testing.assert_array_equal(mars['exact'][key], flat['exact'][key])
+    onset = float(reports[0]['primary_deviation']['start_s'])
+    turns = reports[0]['turn_events']
+    chapters = [{'id':'first_primary_departure', 'time_s':onset, 'axis_index':turns[0]['axis_index'],
+                  'title':'First sustained local-path departure >20mm', 'selection':'First primary20mm/100ms onset, fixed before prediction results.'},
+                {'id':turns[0]['event_id'], 'time_s':turns[0]['time_s'], 'axis_index':turns[0]['axis_index'],
+                  'title':'First reference-component reversal: lag is distinct from spatial overshoot', 'selection':'First component reversal, regardless of outcome.'},
+                {'id':turns[5]['event_id'], 'time_s':turns[5]['time_s'], 'axis_index':turns[5]['axis_index'],
+                  'title':'Later direction change: genuine geometric overshoot is present', 'selection':'Root-requested turn06 illustration after all six outcomes were reported; not a new experiment.'}]
+    paths = [source, snapshot, VIEWER, FAMILY/'protocol.json', reduction,
+             FAMILY/'prediction/reduction_stage01/onset_AB_xy_error.png', FAMILY/'terrain/terrain_series.npz']
+    for name in ('mars', 'flat'):
+        paths += [EVENTS/name/file for file in ('report.json', 'signals.npz')]
+    for run in runs:
+        paths += [run['folder']/file for file in ('precision.npz','rollout.npz','summary.json','provenance.json','terrain.json','source_snapshot/config/model.yaml')]
+    provenance = {'iteration':'I-41', 'scope':'Saved actual Mars and new actual flat counterfactual event replays; no new physics/forecast during rendering.',
+        'render_source_sha256':sha(source), 'render_source_snapshot':str(snapshot.relative_to(ROOT)),
+        'input_source_sha256':{str(p.relative_to(ROOT)):sha(p) for p in paths},
+        'reference_and_time_arrays_exact_between_actual_cases':True, 'chapters':chapters,
+        'counterfactual_limit':'Full terrain relief/rocks/lava and terrain-appropriate balanced initial pose differ. This is not an isolated slope-only or controller-change experiment.',
+        'causal_boundary':'Dynamic A/B forecasts are unused shadows; the existing120ms kinematic synchronizer remains active in both actual controllers.'}
+    prefix = 'preview' if args.preview else 'video'
+    metadata = HERE/f'{prefix}_metadata.json'
+    if metadata.exists():
+        raise FileExistsError('Preserve prior rendering stage metadata')
+    (HERE/f'{prefix}_provenance.json').write_text(json.dumps(provenance,indent=2)+'\n')
+    plants = [viewer.scene(run, '_I41_events') for run in runs]
+    saved = [p.capture() for p in plants]
+    renderers = [mujoco.Renderer(p.model,height=HEIGHT,width=WIDTH) for p in plants]
+    option=mujoco.MjvOption(); option.geomgroup[3:]=0
+    writer = None if args.preview else imageio.get_writer(target,fps=FPS,codec='libx264',quality=8,
+        macro_block_size=2,ffmpeg_log_level='error')
+    frames=0
+    try:
+        for chapter_number, chapter in enumerate(chapters,1):
+            at=float(chapter['time_s']); window=(at-1.,at+2.); axis=int(chapter['axis_index'])
+            chosen=(mars['log']['time_s']>=window[0])&(mars['log']['time_s']<=window[1])
+            coordinates=np.vstack([np.vstack((r['log']['qpos'][chosen,:2],r['log']['reference_xy'][chosen])) for r in runs])
+            xy_bounds=(float(coordinates[:,0].min()-.02),float(coordinates[:,0].max()+.02),
+                       float(coordinates[:,1].min()-.02),float(coordinates[:,1].max()+.02))
+            limits=(max(25.,max(float(np.max(s[k][chosen])) for s in signals for k in ('tracking_error_mm','local_path_distance_mm'))*1.1),
+                    max(10.,max(float(np.max(abs(r['log']['qvel'][chosen,axis]*1000))) for r in runs),
+                        float(np.max(abs(mars['log']['reference_velocity_m_s'][chosen,axis]*1000))))*1.1)
+            moments=np.array([at,window[1]]) if args.preview else window[0]+viewer.frame_times(3.,SPEED)
+            for moment in moments:
+                panels=[]
+                for side,(run,plant,renderer,sig,report) in enumerate(zip(runs,plants,renderers,signals,reports)):
+                    log=run['log'];i=viewer.nearest(log['time_s'],moment)
+                    camera=viewer._camera(log['qpos'][i,:3],112.,-25.,1.35)
+                    frame=viewer._draw(plant,renderer,log,i,camera,option,False)
+                    slope=float(terrain['dem_slope_at_body_xy_deg'][i]) if side==0 else 0.
+                    true_patch=int(sig['true_dominant_patch_code'][i]);estimated=int(sig['estimated_dominant_patch_code'][i])
+                    names=('shell A','shell B','belt A','belt B','none')
+                    lines=[f'Chapter{chapter_number}/3 | t{log["time_s"][i]:.3f}s | selected event{at:.3f}s | {SPEED:g}x',
+                        chapter['title'],
+                        f'Local path distance {sig["local_path_distance_mm"][i]:.2f}mm | time-aligned error {sig["tracking_error_mm"][i]:.2f}mm | phase lag {sig["reference_phase_lag_s"][i]:.3f}s',
+                        f'ABS tilt {log["absolute_tilt_deg"][i]:.2f}deg | reference {log["reference_tilt_deg"][i]:.2f}deg | DEM body-XY slope {slope:.2f}deg',
+                        f'Support true/estimated {names[true_patch]}/{names[estimated]} | max sync blend {100*sig["maximum_sync_weight"][i]:.1f}% | input/bound {sig["applied_max_normalized"][i]:.3f}',
+                        'Same native5ms LQR + observer + active120ms kinematic synchronization',
+                        'Terrain + appropriate balanced initial pose differ; motion program/gains/bounds match']
+                    if chapter_number>1:
+                        turn=next(x for x in report['turn_events'] if x['event_id']==chapter['id'])
+                        lag=turn['actual_reversal_lag_s']
+                        lines.append(f'Component reversal lag {lag:.3f}s | geometric component overshoot {turn["geometric_component_overshoot_mm"]:.2f}mm')
+                    frame=viewer._caption(frame,'ACTUAL MARS / DEM' if side==0 else 'ACTUAL FLAT / terrain counterfactual',lines,
+                        'Recorded Gazebo/DART states | dynamic forecasts never command these runs | DEM slope is not measured collision normal')
+                    start=int(np.flatnonzero(chosen)[0]);stop=int(np.flatnonzero(chosen)[-1])+1
+                    inset={'qpos':log['qpos'][start:stop], 'reference_xy':log['reference_xy'][start:stop]}
+                    frame=viewer.xy_inset(frame,inset,i-start,xy_bounds)
+                    panels.append(np.concatenate((frame,chart(log,sig,i,window,at,axis,limits,viewer._font)),axis=0))
+                combined=np.concatenate(panels,axis=1)
+                if writer is not None:writer.append_data(combined)
+                frames+=1
+                if args.preview or abs(moment-moments[-1])<1e-9:
+                    imageio.imwrite(HERE/f'{prefix}_{chapter["id"]}_{"event" if abs(moment-at)<.01 else "end"}.jpg',combined,quality=92)
+        if writer is not None:
+            card=end_card(paired,FAMILY/'prediction/reduction_stage01/onset_AB_xy_error.png',viewer._font)
+            for _ in range(FPS*3):writer.append_data(card);frames+=1
+            imageio.imwrite(HERE/'video_model_diagnostic_endcard.jpg',card,quality=92)
+    finally:
+        if writer is not None:writer.close()
+        for renderer in renderers:renderer.close()
+        for plant,state in zip(plants,saved):plant.restore(state)
+    record=dict(provenance,preview_only=args.preview,playback_speed=SPEED,chart_axes_common_between_actual_cases=True)
+    if not args.preview:
+        with imageio.get_reader(target) as reader:
+            info=reader.get_meta_data();count=reader.count_frames();last=reader.get_data(count-1)
+        assert count==frames and tuple(info['size'])==(WIDTH*2,HEIGHT+CHART_HEIGHT) and info['fps']==FPS
+        imageio.imwrite(HERE/'video_decoded_final.jpg',last,quality=92)
+        record['video']={'path':str(target.relative_to(ROOT)),'sha256':sha(target),'bytes':target.stat().st_size,
+            'frames':count,'fps':FPS,'dimensions':list(info['size']),'video_duration_s':info['duration'],
+            'decoded_final_verified':True,'endcard_duration_s':3.}
+    record['stills']={p.name:sha(p) for p in HERE.glob(prefix+'*.jpg')}
+    metadata.write_text(json.dumps(record,indent=2)+'\n')
+    print(json.dumps({k:v for k,v in record.items() if k not in ('input_source_sha256','stills')},indent=2))
+
+
+if __name__=='__main__':main()

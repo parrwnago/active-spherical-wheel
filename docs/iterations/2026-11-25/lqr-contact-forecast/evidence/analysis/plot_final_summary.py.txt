@@ -1,0 +1,74 @@
+"""Plot sealed I40 scalar summaries; no geometry or prediction reevaluation."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+OUT = HERE/'summary_plot_stage'
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    if OUT.exists():
+        raise FileExistsError('Preserve previous plot stage')
+    OUT.mkdir()
+    source = Path(__file__).resolve(); shutil.copyfile(source, OUT/source.name)
+    path = HERE/'final_report.json'; report = json.loads(path.read_text())
+    uniform = [x for x in report['endpoint_summaries'] if x['selection_kind'] == 'uniform']
+    conditioned = [x for x in report['endpoint_summaries'] if x['selection_kind'] == 'predeclared_event']
+    h = np.array([x['horizon_s']*1000 for x in uniform])
+    dynamic, other = '#098b78', '#d88722'
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    for method, color, label in (('dynamic_xy_error_mm', dynamic, 'Dynamic model +5ms LQR'),
+                                 ('constant_velocity_xy_error_mm', other, 'Constant-velocity reference')):
+        axes[0, 0].plot(h, [x[method]['p95'] for x in uniform], '-o', color=color, label=label+' p95')
+        axes[0, 0].plot(h, [x[method]['median'] for x in uniform], '--', color=color, alpha=.6, label=label+' median')
+    axes[0, 0].set(xlabel='Lookahead (ms)', ylabel='XY prediction error (mm)',
+                    title='Primary uniform anchors: tail errors matter')
+    axes[0, 0].legend(fontsize=8)
+    for ax, rows, title in ((axes[0, 1], uniform, 'Primary uniform anchors:96 per horizon'),
+                             (axes[1, 0], conditioned, 'Truth-conditioned diagnostic anchors:17 per horizon')):
+        for method, color, label in (('dynamic_support', dynamic, 'Dynamic contact forecast'),
+                                     ('observer_persistence_support', other, 'Hold current observer contact')):
+            y = [x[method]['dominant_agreement_fraction']*100 for x in rows]
+            ax.plot(h, y, '-o', color=color, label=label)
+            for x, yy, row in zip(h, y, rows):
+                count = round(yy/100*row['endpoint_count'])
+                ax.annotate(f"{count}/{row['endpoint_count']}", (x, yy), xytext=(4, 5),
+                            textcoords='offset points', fontsize=8, color=color)
+        ax.set(xlabel='Lookahead (ms)', ylabel='Dominant-patch agreement (%)', title=title, ylim=(0, 105))
+        ax.legend(fontsize=8, loc='lower left')
+    runtime = report['runtime_summary']['per_anchor']
+    axes[1, 1].hist([1000*x['combined_wall_s'] for x in runtime], bins=15,
+                    color=dynamic, alpha=.8)
+    axes[1, 1].axvline(20, color='crimson', ls='--', label='20ms comparison budget')
+    axes[1, 1].set(xlabel='Forecast + calibration wall time (ms)', ylabel='Forecast computations',
+                   title='Offline timing:3 concurrent workers, not isolated')
+    axes[1, 1].legend(fontsize=8)
+    for ax in axes.flat:
+        ax.grid(alpha=.2)
+    fig.suptitle('I40 diagnostic forecasts; live LQR unchanged\n8 Gazebo cases;113 computations;12 calibration misses retained; overlapping anchors are not independent events', fontsize=12)
+    fig.tight_layout()
+    fig.savefig(OUT/'forecast_summary.png', dpi=160)
+    fig.savefig(OUT/'forecast_summary.pdf')
+    plt.close(fig)
+    files = []
+    for artifact in sorted(OUT.iterdir()):
+        if artifact.is_file():
+            files.append({'path': artifact.name, 'bytes': artifact.stat().st_size, 'sha256': sha(artifact)})
+    (OUT/'artifact_manifest.json').write_text(json.dumps({'scope': 'Read-only final scalar plot; no model/forecast rerun',
+        'input_final_report_sha256': sha(path), 'source_sha256': sha(source), 'files': files}, indent=2)+'\n')
+    print(str(OUT/'forecast_summary.png'))
+
+
+if __name__ == '__main__':
+    main()

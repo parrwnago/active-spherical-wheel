@@ -1,0 +1,341 @@
+{
+  "geometry": {
+    "samples": 1601,
+    "support": "shell_B_smooth",
+    "support_transitions": 0,
+    "contact_point_world_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_normalized_J_step_frobenius_m_s": 0.0012483185556433252,
+    "min_patch_margin_m": 0.0028915438656910014,
+    "min_fork_clearance_m": 0.06732889792784703,
+    "min_authority_m_s": 1.2519220604002457e-16,
+    "initial_authority_m_s": 0.4653370722014548
+  },
+  "assertions": {
+    "same_single_shell_B_every_sample": true,
+    "shell_patch_interior_every_sample": true,
+    "fixed_platform_tilt_20deg_every_sample": true,
+    "fork_clear_of_plane_every_sample": true,
+    "no_physics_or_controller_execution": true,
+    "pole_weak_authority_below_1e_12_m_s": true,
+    "old_LS_Y_has_speed_limit_violations": true,
+    "bounded_modes_obey_speed_and_acceleration_limits": true,
+    "feasible_reference_valid_every_sample": true,
+    "feasible_reference_matches_allocated_kinematics_every_sample": true,
+    "feasible_Y_rejects_unavailable_pole_component": true,
+    "feasible_X_preserved_at_pole": true,
+    "feasible_diagonal_preserves_available_X_component_at_pole": true,
+    "feasible_diagonal_rejects_unavailable_Y_component_at_pole": true
+  },
+  "cases": [
+    {
+      "variant": "least_squares",
+      "target": "x",
+      "samples": 1601,
+      "speed_violation_samples": 0,
+      "acceleration_violation_steps": 0,
+      "max_speed_ratio": 0.02660444431189784,
+      "max_acceleration_ratio": 0.3420201433256687,
+      "max_joint_reference_rad_s": 0.5320888862379568,
+      "max_normalized_drive_step": 0.03420201433256687,
+      "max_accepted_velocity_step_m_s": 0.0011247000360000113,
+      "max_demanded_velocity_step_m_s": 0.0011247000360000113,
+      "max_achievable_velocity_step_m_s": 0.0011247000360000182,
+      "rms_nominal_velocity_residual_m_s": 1.37266888973118e-11,
+      "max_nominal_velocity_residual_m_s": 3.883707010838508e-10,
+      "max_accepted_velocity_residual_m_s": 3.883707010838508e-10,
+      "demand_velocity_time_integral_m": [
+        0.46500000000001,
+        0.0
+      ],
+      "accepted_velocity_time_integral_m": [
+        0.46500000000001,
+        0.0
+      ],
+      "achievable_velocity_time_integral_m": [
+        0.46500000000001,
+        -3.8837092906378755e-12
+      ],
+      "rejected_reference_velocity_time_integral_m": [
+        0.0,
+        0.0
+      ],
+      "accepted_reference_semantics": "Demand unchanged: this old allocator does not supply a feasible body-reference acceptance step"
+    },
+    {
+      "variant": "least_squares",
+      "target": "y",
+      "samples": 1601,
+      "speed_violation_samples": 234,
+      "acceleration_violation_steps": 230,
+      "max_speed_ratio": 165432.9020029125,
+      "max_acceleration_ratio": 6617316.080116498,
+      "max_joint_reference_rad_s": 3308658.04005825,
+      "max_normalized_drive_step": 661731.6080116498,
+      "max_accepted_velocity_step_m_s": 0.0011247000360000113,
+      "max_demanded_velocity_step_m_s": 0.0011247000360000113,
+      "max_achievable_velocity_step_m_s": 0.05999999999999999,
+      "rms_nominal_velocity_residual_m_s": 0.002597264692916729,
+      "max_nominal_velocity_residual_m_s": 0.06,
+      "max_accepted_velocity_residual_m_s": 0.06,
+      "demand_velocity_time_integral_m": [
+        0.0,
+        0.46500000000001
+      ],
+      "accepted_velocity_time_integral_m": [
+        0.0,
+        0.46500000000001
+      ],
+      "achievable_velocity_time_integral_m": [
+        -4.059859440407646e-12,
+        0.46410000000001
+      ],
+      "rejected_reference_velocity_time_integral_m": [
+        0.0,
+        0.0
+      ],
+      "accepted_reference_semantics": "Demand unchanged: this old allocator does not supply a feasible body-reference acceptance step"
+    },
+    {
+      "variant": "least_squares",
+      "target": "diagonal",
+      "samples": 1601,
+      "speed_violation_samples": 206,
+      "acceleration_violation_steps": 210,
+      "max_speed_ratio": 116978.72683762899,
+      "max_acceleration_ratio": 4679149.315349921,
+      "max_joint_reference_rad_s": 2339574.5367525797,
+      "max_normalized_drive_step": 467914.93153499207,
+      "max_accepted_velocity_step_m_s": 0.0011247000360000094,
+      "max_demanded_velocity_step_m_s": 0.0011247000360000094,
+      "max_achievable_velocity_step_m_s": 0.042426407145812396,
+      "rms_nominal_velocity_residual_m_s": 0.0018365434848229222,
+      "max_nominal_velocity_residual_m_s": 0.0424264071458124,
+      "max_accepted_velocity_residual_m_s": 0.0424264071458124,
+      "demand_velocity_time_integral_m": [
+        0.32880465325174735,
+        0.32880465325174735
+      ],
+      "accepted_velocity_time_integral_m": [
+        0.32880465325174735,
+        0.32880465325174735
+      ],
+      "achievable_velocity_time_integral_m": [
+        0.32880465324909963,
+        0.32816825714593334
+      ],
+      "rejected_reference_velocity_time_integral_m": [
+        0.0,
+        0.0
+      ],
+      "accepted_reference_semantics": "Demand unchanged: this old allocator does not supply a feasible body-reference acceptance step"
+    },
+    {
+      "variant": "bounded_adaptive",
+      "target": "x",
+      "samples": 1601,
+      "speed_violation_samples": 0,
+      "acceleration_violation_steps": 0,
+      "max_speed_ratio": 0.026604354731919678,
+      "max_acceleration_ratio": 0.01994794572144354,
+      "max_joint_reference_rad_s": 0.5320870946383935,
+      "max_normalized_drive_step": 0.001994794572144354,
+      "max_accepted_velocity_step_m_s": 0.0011247000360000113,
+      "max_demanded_velocity_step_m_s": 0.0011247000360000113,
+      "max_achievable_velocity_step_m_s": 0.0011246964451825199,
+      "rms_nominal_velocity_residual_m_s": 2.0859706204483717e-05,
+      "max_nominal_velocity_residual_m_s": 8.745138610540058e-05,
+      "max_accepted_velocity_residual_m_s": 8.745138610540058e-05,
+      "demand_velocity_time_integral_m": [
+        0.46500000000001,
+        0.0
+      ],
+      "accepted_velocity_time_integral_m": [
+        0.46500000000001,
+        0.0
+      ],
+      "achievable_velocity_time_integral_m": [
+        0.464993261727749,
+        -5.9314493925755576e-05
+      ],
+      "rejected_reference_velocity_time_integral_m": [
+        0.0,
+        0.0
+      ],
+      "accepted_reference_semantics": "Demand unchanged: this old allocator does not supply a feasible body-reference acceptance step"
+    },
+    {
+      "variant": "bounded_adaptive",
+      "target": "y",
+      "samples": 1601,
+      "speed_violation_samples": 0,
+      "acceleration_violation_steps": 0,
+      "max_speed_ratio": 1.0,
+      "max_acceleration_ratio": 1.0000000000000018,
+      "max_joint_reference_rad_s": 20.0,
+      "max_normalized_drive_step": 0.10000000000000017,
+      "max_accepted_velocity_step_m_s": 0.0011247000360000113,
+      "max_demanded_velocity_step_m_s": 0.0011247000360000113,
+      "max_achievable_velocity_step_m_s": 0.001313789273613781,
+      "rms_nominal_velocity_residual_m_s": 0.01848870345509139,
+      "max_nominal_velocity_residual_m_s": 0.06,
+      "max_accepted_velocity_residual_m_s": 0.06,
+      "demand_velocity_time_integral_m": [
+        0.0,
+        0.46500000000001
+      ],
+      "accepted_velocity_time_integral_m": [
+        0.0,
+        0.46500000000001
+      ],
+      "achievable_velocity_time_integral_m": [
+        -5.0758551797129925e-05,
+        0.4113472605802388
+      ],
+      "rejected_reference_velocity_time_integral_m": [
+        0.0,
+        0.0
+      ],
+      "accepted_reference_semantics": "Demand unchanged: this old allocator does not supply a feasible body-reference acceptance step"
+    },
+    {
+      "variant": "bounded_adaptive",
+      "target": "diagonal",
+      "samples": 1601,
+      "speed_violation_samples": 0,
+      "acceleration_violation_steps": 0,
+      "max_speed_ratio": 1.0,
+      "max_acceleration_ratio": 1.0,
+      "max_joint_reference_rad_s": 20.0,
+      "max_normalized_drive_step": 0.1,
+      "max_accepted_velocity_step_m_s": 0.0011247000360000094,
+      "max_demanded_velocity_step_m_s": 0.0011247000360000094,
+      "max_achievable_velocity_step_m_s": 0.0011246949424610474,
+      "rms_nominal_velocity_residual_m_s": 0.012574261501451935,
+      "max_nominal_velocity_residual_m_s": 0.04242650570931844,
+      "max_accepted_velocity_residual_m_s": 0.04242650570931844,
+      "demand_velocity_time_integral_m": [
+        0.32880465325174735,
+        0.32880465325174735
+      ],
+      "accepted_velocity_time_integral_m": [
+        0.32880465325174735,
+        0.32880465325174735
+      ],
+      "achievable_velocity_time_integral_m": [
+        0.32875822238916774,
+        0.2936389106575121
+      ],
+      "rejected_reference_velocity_time_integral_m": [
+        0.0,
+        0.0
+      ],
+      "accepted_reference_semantics": "Demand unchanged: this old allocator does not supply a feasible body-reference acceptance step"
+    },
+    {
+      "variant": "feasible_directional",
+      "target": "x",
+      "samples": 1601,
+      "speed_violation_samples": 0,
+      "acceleration_violation_steps": 0,
+      "max_speed_ratio": 0.02660435504027885,
+      "max_acceleration_ratio": 0.01994794595832261,
+      "max_joint_reference_rad_s": 0.532087100805577,
+      "max_normalized_drive_step": 0.001994794595832261,
+      "max_accepted_velocity_step_m_s": 0.00112469646030742,
+      "max_demanded_velocity_step_m_s": 0.0011247000360000113,
+      "max_achievable_velocity_step_m_s": 0.00112469646030742,
+      "rms_nominal_velocity_residual_m_s": 2.080456328964614e-05,
+      "max_nominal_velocity_residual_m_s": 8.736682007128143e-05,
+      "max_accepted_velocity_residual_m_s": 0.0,
+      "demand_velocity_time_integral_m": [
+        0.46500000000001,
+        0.0
+      ],
+      "accepted_velocity_time_integral_m": [
+        0.4649982940376981,
+        -5.933960935462657e-05
+      ],
+      "achievable_velocity_time_integral_m": [
+        0.4649982940376981,
+        -5.933960935462657e-05
+      ],
+      "rejected_reference_velocity_time_integral_m": [
+        1.705962301171845e-06,
+        5.933960935462657e-05
+      ],
+      "accepted_reference_semantics": "Allocator feasible body reference"
+    },
+    {
+      "variant": "feasible_directional",
+      "target": "y",
+      "samples": 1601,
+      "speed_violation_samples": 0,
+      "acceleration_violation_steps": 0,
+      "max_speed_ratio": 1.0,
+      "max_acceleration_ratio": 1.0,
+      "max_joint_reference_rad_s": 20.0,
+      "max_normalized_drive_step": 0.1,
+      "max_accepted_velocity_step_m_s": 0.001313789273399743,
+      "max_demanded_velocity_step_m_s": 0.0011247000360000113,
+      "max_achievable_velocity_step_m_s": 0.001313789273399743,
+      "rms_nominal_velocity_residual_m_s": 0.018488703457074568,
+      "max_nominal_velocity_residual_m_s": 0.06,
+      "max_accepted_velocity_residual_m_s": 0.0,
+      "demand_velocity_time_integral_m": [
+        0.0,
+        0.46500000000001
+      ],
+      "accepted_velocity_time_integral_m": [
+        -5.078227231897201e-05,
+        0.4113472618960405
+      ],
+      "achievable_velocity_time_integral_m": [
+        -5.078227231897201e-05,
+        0.4113472618960405
+      ],
+      "rejected_reference_velocity_time_integral_m": [
+        5.078227231897201e-05,
+        0.05365273810396017
+      ],
+      "accepted_reference_semantics": "Allocator feasible body reference"
+    },
+    {
+      "variant": "feasible_directional",
+      "target": "diagonal",
+      "samples": 1601,
+      "speed_violation_samples": 0,
+      "acceleration_violation_steps": 0,
+      "max_speed_ratio": 1.0,
+      "max_acceleration_ratio": 1.0,
+      "max_joint_reference_rad_s": 20.0,
+      "max_normalized_drive_step": 0.1,
+      "max_accepted_velocity_step_m_s": 0.0011246949443977647,
+      "max_demanded_velocity_step_m_s": 0.0011247000360000094,
+      "max_achievable_velocity_step_m_s": 0.0011246949443977647,
+      "rms_nominal_velocity_residual_m_s": 0.012574261223567189,
+      "max_nominal_velocity_residual_m_s": 0.04242650560719917,
+      "max_accepted_velocity_residual_m_s": 0.0,
+      "demand_velocity_time_integral_m": [
+        0.32880465325174735,
+        0.32880465325174735
+      ],
+      "accepted_velocity_time_integral_m": [
+        0.328761763044113,
+        0.29363889514401875
+      ],
+      "achievable_velocity_time_integral_m": [
+        0.328761763044113,
+        0.29363889514401875
+      ],
+      "rejected_reference_velocity_time_integral_m": [
+        4.289020763129665e-05,
+        0.03516575810772578
+      ],
+      "accepted_reference_semantics": "Allocator feasible body reference"
+    }
+  ]
+}

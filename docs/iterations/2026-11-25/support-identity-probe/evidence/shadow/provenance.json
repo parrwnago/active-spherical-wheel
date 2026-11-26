@@ -1,0 +1,84 @@
+{
+  "scope": "Offline saved-state feedback-only routing ablation. No physics or new rollout.",
+  "reproduction_command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python results/support_identity_probe_20261125/shadow/analyze_shadow.py",
+  "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "numpy": "1.26.4",
+  "mujoco": "3.16.0",
+  "sources": [
+    {
+      "path": "results/support_identity_probe_20261125/shadow/analyze_shadow.py",
+      "sha256": "a1164022025b5bc22455f1067ad35fe3b1407d29ab504c85944c15c5024b427f"
+    },
+    {
+      "path": "docs/iterations/2026-11-25/source/src/spherical_wheel/offroad_control.py.txt",
+      "sha256": "2dda6e5be08f55cc991c7606eb2336338486b5f7932c26ce6584796c341b4be7"
+    },
+    {
+      "path": "src/spherical_wheel/recovery_control.py",
+      "sha256": "b3a6bad0870c22ada4c926a7659befb756e31f8ed5defb5506786dc466f5b17d"
+    },
+    {
+      "path": "src/spherical_wheel/sim.py",
+      "sha256": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975"
+    },
+    {
+      "path": "src/spherical_wheel/synchronization.py",
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/rollout.npz",
+      "sha256": "4dd1c8ceaaf7327a1ee51831c201cbb9e62f8e7295e0d309f62da49cd8d53e48"
+    },
+    {
+      "path": "results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/summary.json",
+      "sha256": "4eb32e3ac90703b3eadad82856cf10cd996f40da0ce5efc2d6cdb09c62c04a03"
+    },
+    {
+      "path": "results/weighted_allocation_20261125/bounded_adaptive/provenance.json",
+      "sha256": "b960b2261e6a52b83885e2c335e45612c1c752b559dea16b8922ac020d9b5c25"
+    },
+    {
+      "path": "results/weighted_allocation_20261125/bounded_adaptive/_workspaces/worker_94098/flat/model.xml",
+      "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+    },
+    {
+      "path": "results/weighted_allocation_20261125/bounded_adaptive/_workspaces/worker_94098/flat/control_schedule.npz",
+      "sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1"
+    },
+    {
+      "path": "results/weighted_allocation_20261125/bounded_adaptive/_workspaces/worker_94098/flat/model_config.json",
+      "sha256": "9e1e141da88e39da2e9f1b18cf379638d8592975f59c00f8f7f8b434c7024daf"
+    }
+  ],
+  "archived_offroad_control_matches_campaign_hash": true,
+  "gain_cache_source_fingerprint_matches_current_helpers": {
+    "contact.py": true,
+    "control.py": true,
+    "model.py": true,
+    "recovery_control.py": true,
+    "sim.py": true
+  },
+  "frozen_inputs": [
+    "qpos",
+    "qvel",
+    "reference_xy",
+    "reference_quat",
+    "reference_qvel",
+    "estimated_normal",
+    "rolling_feedforward",
+    "equilibrium_command",
+    "ordinary shaft gain row",
+    "sync weights/targets",
+    "heading/fade terms"
+  ],
+  "ordinary_shaft_gain": "Restored from the logged invariant ordinary-design row, not independently redesigned.",
+  "unneeded_unavailable_source": "Historical allocator file missing; allocator is never run: recorded references are frozen.",
+  "truth_timing": "Saved shares describe the final completed 1 ms Gazebo substep at each 5 ms controller sample.",
+  "window_requested_s": [
+    28.8,
+    29.5
+  ],
+  "marked_event_requested_s": 28.975
+}

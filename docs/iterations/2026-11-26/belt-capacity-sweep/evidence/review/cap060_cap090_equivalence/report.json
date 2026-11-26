@@ -1,0 +1,331 @@
+{
+  "iteration": "I-49",
+  "scope": "Secondary saved-data equivalence audit, no new dynamics or controller/observer calls.",
+  "samples": 8801,
+  "held_samples": 8800,
+  "dt_s": 0.005,
+  "weight_N": 18.2466,
+  "loaded_endpoint_threshold_N": 0.9123300000000001,
+  "time_alignment": "Command at rowi is held for[i,i+1]. Rowi truth is the latest completed1ms solve before that hold; rowi+1 is the latest1ms solve after it, not a5ms mean or full substep record.",
+  "equality": {
+    "precision": {
+      "time_s": true,
+      "exact_qpos": true,
+      "exact_qvel": true,
+      "exact_applied": false,
+      "exact_previous_applied": false,
+      "exact_native_requested": true,
+      "exact_observer_wrench": true,
+      "exact_observer_generalized": true,
+      "exact_observer_interval_mean": true,
+      "exact_estimated_normal": true,
+      "exact_nominal_joints_before": true,
+      "exact_reference_xy": true,
+      "exact_reference_velocity_m_s": true,
+      "exact_reference_acceleration_m_s2": true,
+      "exact_reference_quat": true,
+      "cap_m_s": false,
+      "mirror_previous_applied_matches_physical": true,
+      "exact_feedback_gain": true,
+      "exact_error": true,
+      "exact_reference_qpos": true,
+      "exact_reference_qvel": true,
+      "exact_feedback_reference_qvel": true,
+      "exact_equilibrium_command": true,
+      "exact_rolling_feedforward": true,
+      "exact_support_command": true,
+      "exact_lqr_command": true,
+      "exact_transition_command_delta": true,
+      "exact_heading_command": true,
+      "exact_fade_command_delta": true,
+      "exact_clipping_command_delta": false,
+      "exact_sync_weights": true,
+      "exact_input_bounds": false,
+      "exact_estimated_support_loads_N": true,
+      "exact_estimated_contact_point_m": true,
+      "exact_allocation_drive_reference": true,
+      "exact_feedback_error": true,
+      "truth_time_s": true,
+      "truth_patch_loads_N": true,
+      "truth_patch_points_m": true,
+      "truth_patch_contact_counts": true,
+      "truth_equivalent_point_m": true
+    },
+    "rollout": {
+      "time_s": true,
+      "qpos": true,
+      "qvel": true,
+      "command": true,
+      "input": false,
+      "reference_xy": true,
+      "reference_quat": true,
+      "tilt_rad": true,
+      "attitude_error_rad": true,
+      "push_N": true,
+      "ground_normal": true,
+      "estimated_normal": true,
+      "ground_height_m": true,
+      "ground_friction": true,
+      "estimated_friction": true,
+      "contact_force_N": true,
+      "normal_force_N": true,
+      "tangential_force_N": true,
+      "utilization": true,
+      "slip_speed_m_s": false,
+      "support_loads_N": true,
+      "effective_phase_rad": true,
+      "drive_fade": true,
+      "support_torque": true,
+      "heading_rad": true,
+      "fork_load_N": true,
+      "support_direction": true,
+      "contact_point_m": true,
+      "contact_moment_Nm": true,
+      "observer_force_N": true,
+      "observer_moment_Nm": true,
+      "estimated_contact_point_m": true,
+      "estimated_contact_points_m": true,
+      "estimated_support_loads_N": true,
+      "reference_velocity_m_s": true,
+      "reference_qvel": true,
+      "feedback_reference_qvel": true,
+      "rolling_feedforward": true,
+      "lqr_command": true,
+      "equilibrium_command": true,
+      "support_command": true,
+      "transition_command_delta": true,
+      "heading_command": true,
+      "fade_command_delta": true,
+      "clipping_command_delta": false,
+      "sync_weights": true,
+      "feedback_gain": true,
+      "contact_velocity_residual_m_s": false,
+      "contact_velocity_residual_rms_m_s": false,
+      "contact_velocity_residual_max_m_s": false,
+      "predicted_body_velocity_m_s": false,
+      "measured_body_velocity_m_s": true,
+      "velocity_consistency_valid": true,
+      "kinematic_inconsistency": true,
+      "actuator_saturated": false,
+      "tracking_velocity_error_m_s": true,
+      "input_bounds": false,
+      "previous_applied_input": false,
+      "previous_actuator_saturated": false,
+      "allocation_drive_reference": true,
+      "allocation_speed_limits": true,
+      "allocation_acceleration_limits": true,
+      "allocation_active_bounds": true,
+      "allocation_effort_weight_m_s": true,
+      "allocation_change_weight_m_s": true,
+      "allocation_residual_rms_m_s": true,
+      "allocation_velocity_error_m_s": true,
+      "allocation_authority_m_s": true,
+      "allocation_effort_blend": true,
+      "allocation_requested_velocity_m_s": true,
+      "allocation_accepted_velocity_m_s": true,
+      "allocation_velocity_response": true,
+      "allocation_modal_effort_m_s": true,
+      "allocation_accepted_velocity_valid": true,
+      "allocation_reference_residual_rms_m_s": true,
+      "feedback_reference_xy": true,
+      "reference_acceleration_m_s2": true,
+      "reference_position_error_relaxed_m": true,
+      "reference_catchup_velocity_m_s": true,
+      "reference_travel_priority": true,
+      "reference_balance_metric_rad": true
+    }
+  },
+  "differing_applied_components": [
+    3
+  ],
+  "union_different_held_samples": 9,
+  "union_different_held_duration_s": 0.045,
+  "components": {
+    "belt_A": {
+      "held_different_samples": 9,
+      "held_different_duration_s": 0.045,
+      "max_absolute_applied_difference_m_s": 0.23474184612735838,
+      "max_applied060_m_s": 0.6,
+      "max_applied090_m_s": 0.8347418461273584,
+      "intervals": [
+        {
+          "start_index": 1365,
+          "last_held_index": 1367,
+          "start_s": 6.824999999999877,
+          "last_command_s": 6.8349999999998765,
+          "hold_end_s": 6.839999999999876,
+          "held_samples": 3,
+          "held_duration_s": 0.015
+        },
+        {
+          "start_index": 1373,
+          "last_held_index": 1374,
+          "start_s": 6.864999999999876,
+          "last_command_s": 6.869999999999876,
+          "hold_end_s": 6.874999999999876,
+          "held_samples": 2,
+          "held_duration_s": 0.01
+        },
+        {
+          "start_index": 1377,
+          "last_held_index": 1378,
+          "start_s": 6.884999999999875,
+          "last_command_s": 6.889999999999875,
+          "hold_end_s": 6.894999999999875,
+          "held_samples": 2,
+          "held_duration_s": 0.01
+        },
+        {
+          "start_index": 1380,
+          "last_held_index": 1381,
+          "start_s": 6.899999999999875,
+          "last_command_s": 6.904999999999875,
+          "hold_end_s": 6.909999999999875,
+          "held_samples": 2,
+          "held_duration_s": 0.01
+        }
+      ],
+      "current_patch_load_N": {
+        "count": 9,
+        "min": 0.0,
+        "max": 21.75682880391887,
+        "mean": 14.158691864939204
+      },
+      "next_endpoint_patch_load_N": {
+        "count": 9,
+        "min": 0.0,
+        "max": 15.210700442744905,
+        "mean": 11.215914877489475
+      },
+      "current_positive_contact_samples": 8,
+      "next_positive_contact_samples": 8,
+      "current_loaded_ge5pct_weight_samples": 8,
+      "next_loaded_ge5pct_weight_samples": 8,
+      "both_endpoints_loaded_samples": 7,
+      "neither_endpoint_loaded_samples": 0,
+      "no_positive_contact_at_either_endpoint_samples": 0,
+      "current_utilization": {
+        "count": 9,
+        "min": 0.3182750642299652,
+        "max": 1.4957032203674316,
+        "mean": 1.0489798486232758
+      },
+      "next_endpoint_utilization": {
+        "count": 9,
+        "min": 1.0340253114700317,
+        "max": 1.4957032203674316,
+        "mean": 1.2883828083674114
+      },
+      "next_endpoint_loaded_and_utilization_ge099_samples": 8,
+      "next_endpoint_slip060_m_s": {
+        "count": 9,
+        "min": 0.12665747106075287,
+        "max": 0.46425849199295044,
+        "mean": 0.32107221914662254
+      },
+      "next_endpoint_slip090_m_s": {
+        "count": 9,
+        "min": 0.1817677915096283,
+        "max": 0.6837425231933594,
+        "mean": 0.4782851106590695
+      }
+    },
+    "belt_B": {
+      "held_different_samples": 0,
+      "held_different_duration_s": 0.0,
+      "max_absolute_applied_difference_m_s": 0.0,
+      "max_applied060_m_s": 0.4513069268588694,
+      "max_applied090_m_s": 0.4513069268588694,
+      "intervals": [],
+      "current_patch_load_N": {
+        "count": 0,
+        "min": null,
+        "max": null,
+        "mean": null
+      },
+      "next_endpoint_patch_load_N": {
+        "count": 0,
+        "min": null,
+        "max": null,
+        "mean": null
+      },
+      "current_positive_contact_samples": 0,
+      "next_positive_contact_samples": 0,
+      "current_loaded_ge5pct_weight_samples": 0,
+      "next_loaded_ge5pct_weight_samples": 0,
+      "both_endpoints_loaded_samples": 0,
+      "neither_endpoint_loaded_samples": 0,
+      "no_positive_contact_at_either_endpoint_samples": 0,
+      "current_utilization": {
+        "count": 0,
+        "min": null,
+        "max": null,
+        "mean": null
+      },
+      "next_endpoint_utilization": {
+        "count": 0,
+        "min": null,
+        "max": null,
+        "mean": null
+      },
+      "next_endpoint_loaded_and_utilization_ge099_samples": 0,
+      "next_endpoint_slip060_m_s": {
+        "count": 0,
+        "min": null,
+        "max": null,
+        "mean": null
+      },
+      "next_endpoint_slip090_m_s": {
+        "count": 0,
+        "min": null,
+        "max": null,
+        "mean": null
+      }
+    }
+  },
+  "evaluator_field_comparison": {
+    "contact_force_N": {
+      "equal_bytes": true,
+      "max_abs_gap": 0.0
+    },
+    "contact_moment_Nm": {
+      "equal_bytes": true,
+      "max_abs_gap": 0.0
+    },
+    "normal_force_N": {
+      "equal_bytes": true,
+      "max_abs_gap": 0.0
+    },
+    "support_loads_N": {
+      "equal_bytes": true,
+      "max_abs_gap": 0.0
+    },
+    "utilization": {
+      "equal_bytes": true,
+      "max_abs_gap": 0.0
+    },
+    "slip_speed_m_s": {
+      "equal_bytes": false,
+      "max_abs_gap": 0.22675415873527527
+    },
+    "tangential_force_N": {
+      "equal_bytes": true,
+      "max_abs_gap": 0.0
+    },
+    "ground_friction": {
+      "equal_bytes": true,
+      "max_abs_gap": 0.0
+    }
+  },
+  "physics_source": {
+    "plugin_belt_target": "SphericalWheelBridge.cc449\u2013456 passes commanded speed times tangential-axis norm as contactSurfaceMotionVelocity; frictionCoeff and secondaryFrictionCoeff set at439\u2013440. No .30 cap in callback.",
+    "held_command": "GazeboPlant.step173\u2013183 applies operating cap, sends last_input belt values, runs5physicssteps, then pulls state/contact snapshot.",
+    "slip_diagnostic": "contact_sensing.measure_records computes load-weighted slip including each belts commanded surface speed; differing slip with identical state can therefore be a kinematic consequence of different prior commands, not an independent sensor or motor response."
+  },
+  "interpretation_limits": [
+    "Equal exact saved states/wrenches are an observed equality, not a claim that every simulator-internal field is identical.",
+    "Endpoint unloaded samples cannot prove the belt had no contact during any of the five intervening1ms solves.",
+    "Loaded endpoints with near-unit utilization and unequal commanded slip are compatible with Coulomb friction saturation; saved endpoint data do not establish that mechanism uniquely.",
+    "No force/current/surface target tracking telemetry or motor load dynamics were collected; ideal belt speed capacity is not hardware capability."
+  ]
+}

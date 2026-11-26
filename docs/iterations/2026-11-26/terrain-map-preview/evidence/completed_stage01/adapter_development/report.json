@@ -1,0 +1,28 @@
+{
+  "iteration": "I-44",
+  "passed": true,
+  "scope": "Sensor adapter implementation and visibility fixtures only. No controller changes, no physics integration, no fulltrace depth campaign by adapter owner.",
+  "module_sha256": "476f87cc8f4a9b1081d7ea2be4c6b15e89ebb2efade31f9c3516a5d6dd24a549",
+  "test_source_sha256": "743e32111d422732e94691769fd39550ec85db531df6d531395987b538f7235e",
+  "unique_tests": 18,
+  "environments": [
+    ".venv",
+    "build/gazebo-env"
+  ],
+  "test_stage": "stage01",
+  "concave_backend_fixture": "preflight01/report.json",
+  "real_scene_fixture": "stage02_mars_factory/report.json",
+  "source_preserved_before_each_execution": true,
+  "all_executed_sources_unchanged": true,
+  "existing_src_test_config_origins_unchanged": 81,
+  "geometry_choice": "Exact saved6decimalcollisionDEM source faces and original feature meshes with exactSDFtransforms; visible robotCAD/fork/shaft/belts as occluders; invisible contactproxies omitted.",
+  "precision_note": "MuJoCo stores compiled mesh vertices asfloat32. Sourceface query comparison gave rangeerror<=4.51e-8m and normalvectorerror<=1.08e-6 in the three fixedMarsfixture rays; edgeambiguity must still be evaluated.",
+  "performance_note": "One pose repeated20times:14.5ms per four-camera64x48batch; offline throughput only, not realtime guarantee or wholetrace runtime.",
+  "mapper_boundary": "DepthFrame exposes only depth,mask,intrinsics,extrinsics,capturepose/capture+delivery times. Self-first-hits invalid with no searchthrough. Geometry/IDs/normals available only privately/evaluator.",
+  "limitations": [
+    "Ideal range, calibration, capture-time pose and model-based selfmask; no actual camera/SLAM or hardware evidence.",
+    "Robot optical geometry is declared visibleCAD, not identical to Gazebo collision proxy geometry.",
+    "Scene coverage requires caller crop expanded by camera range+mount margin; camera poses/specs are frozen by protocol.",
+    "Existing tests and independent13campaignhelper cases are separate; this18count covers owned depth tests only."
+  ]
+}

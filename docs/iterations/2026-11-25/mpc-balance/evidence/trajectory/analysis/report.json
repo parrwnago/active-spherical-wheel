@@ -1,0 +1,1546 @@
+{
+  "status": "later_candidate_not_accepted",
+  "scope": "Later fixed-setting candidate comparison with explicitly reused original baselines/earlier candidates. This analysis performs no simulations.",
+  "candidate_label": "trajectory_SQP",
+  "candidate_folder": "results/mpc_balance_20261125/trajectory",
+  "new_candidate_executions": 2,
+  "reused_initial_inputs_are_not_new_runs": true,
+  "initial_protocol": {
+    "status": "Declared before initial closed-loop campaign; predictor replay audit already available separately.",
+    "case": {
+      "warm_s": 0.8,
+      "motion_s": 0.6,
+      "recovery_s": 4.0,
+      "nominal_distance_m": 0.016,
+      "peak_speed_m_s": 0.04,
+      "slope_degrees": [
+        0,
+        10
+      ],
+      "shaft_phase_rad": 1.5707963267948966
+    },
+    "mpc": {
+      "kind": "frozen local affine MPC; no guaranteed nonlinear configuration planning",
+      "horizon_steps": 20,
+      "step_s": 0.02,
+      "horizon_s": 0.4,
+      "replan_s": 0.02,
+      "sensing_s": 0.005,
+      "direct_physical_inputs": [
+        "shaft torque Nm",
+        "shellA torque Nm",
+        "shellB torque Nm",
+        "beltA speed m/s",
+        "beltB speed m/s"
+      ]
+    },
+    "acceptance": {
+      "all": "no physical failure; hard applied-input bounds respected; useful original-goal recovery; fallback active samples <=5 percent",
+      "weak_y": "final original-goal error <=5mm, no worse peak reference-relative lean and lower lean-error integral plus lower original-clock path RMS than matched baseline",
+      "strong_x": "no greater than10 percent path-RMS regression and no worse peak lean; final original-goal error <=5mm",
+      "not_accepted": "Frozen/stalled travel, mostly LQR fallback, success inferred only from QP bound compliance",
+      "runtime": "offline wall-time measured, no real-time claim; no runtime gate for physics proof-of-concept"
+    },
+    "prediction_screen_reference": {
+      "20ms_xy_m": 0.0005,
+      "20ms_angle_degrees": 0.2,
+      "100ms_xy_m": 0.002,
+      "100ms_angle_degrees": 1.0,
+      "scope": "Proposed diagnostic tolerances; prior recorded-input audit passed. Optimized400msplans must be checked separately; a frozen model may omit phase\u00d7drive benefits."
+    }
+  },
+  "stage_protocol": {
+    "status": "Declared before trajectory-MPC closed-loop trial; informed by preserved initial/calibration audits.",
+    "case": {
+      "warm_s": 0.8,
+      "motion_s": 0.6,
+      "recovery_s": 4.0,
+      "nominal_distance_m": 0.016,
+      "peak_speed_m_s": 0.04,
+      "slope_degrees": [
+        0,
+        10
+      ],
+      "shaft_phase_rad": 1.5707963267948966
+    },
+    "mpc": {
+      "kind": "One-SQP-step successive trajectory linearization with nonlinear cost screening",
+      "horizon_steps": 20,
+      "step_s": 0.02,
+      "horizon_s": 0.4,
+      "replan_s": 0.02,
+      "sensing_s": 0.005,
+      "direct_physical_inputs": [
+        "shaft torque Nm",
+        "shellA torque Nm",
+        "shellB torque Nm",
+        "beltA speed m/s",
+        "beltB speed m/s"
+      ],
+      "jacobian_stride": 5,
+      "jacobian_nodes": [
+        0,
+        5,
+        10,
+        15,
+        19
+      ],
+      "initial_seed_shaft_torque_Nm": [
+        -0.03,
+        0.03
+      ],
+      "initial_seed_duration_s": 0.12,
+      "line_search_alpha": [
+        1,
+        0.5,
+        0.25
+      ],
+      "load_residual_fraction": 0.1,
+      "load_gate": "Bracketed nearest-load solution away from3mmoffsetbound, residual<=10%; strict.002diagnosticretained. Nominalpredictiongood doesnotguaranteeFDJacobianquality.",
+      "costs": "Same state/input/change/terminal costs as initial candidate. No broadcoefficientsearch.",
+      "command_selection": "Select lowest finite nonlinear-private-model cost among bounded warm/initialseed/SQPline-search input sequences; label selected source andQPfailures explicitly. Seeds change only predicted torque sequences, never livepose.",
+      "runtime": "Offline; cost and solve failuresreported, no real-timeclaim."
+    },
+    "acceptance": {
+      "all": "no physical failure; hard applied-input bounds respected; useful original-goal recovery; fallback active samples <=5 percent",
+      "weak_y": "final original-goal error <=5mm, no worse peak reference-relative lean and lower lean-error integral plus lower original-clock path RMS than matched baseline",
+      "strong_x": "no greater than10 percent path-RMS regression and no worse peak lean; final original-goal error <=5mm",
+      "not_accepted": "Frozen/stalled travel, mostly LQR fallback, success inferred only from QP bound compliance",
+      "runtime": "offline wall-time measured, no real-time claim; no runtime gate for physics proof-of-concept"
+    },
+    "prediction_screen_reference": {
+      "20ms_xy_m": 0.0005,
+      "20ms_angle_degrees": 0.2,
+      "100ms_xy_m": 0.002,
+      "100ms_angle_degrees": 1.0,
+      "scope": "Proposed diagnostic tolerances; prior recorded-input audit passed. Optimized400msplans must be checked separately; a frozen model may omit phase\u00d7drive benefits."
+    },
+    "baseline": "REUSE initial LQR worldX/Y runs; verify exactwarm prefix, no newbaselinephysics.",
+    "limitations": [
+      "Force-admission gaps make some full-state finite-difference Jacobians ill-conditioned; nonlinear screening doesnotprovegloballyoptimalorrobustcontrol.",
+      "Sparse Jacobian interpolation approximatesintermediatecontactmodes; nominal nonlinearstate drift is retained atall20nodes.",
+      "Use same originalgoal andconstraints. Physical configuration is not frozen orreset."
+    ]
+  },
+  "rows": [
+    {
+      "direction": "world_x",
+      "variant": "baseline",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 10.366450957688176,
+      "original_clock_path_peak_mm": 14.362576466532486,
+      "original_goal_final_error_mm": 5.300235765395867,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 13.668826475855097,
+      "motion_end_goal_error_mm": 3.5004785953752866,
+      "final_progress_mm": 15.519110780197632,
+      "final_progress_fraction": 0.969944423762352,
+      "peak_reference_lean_deg": 1.3909749613839726,
+      "lean_error_integral_deg_s": 0.8075508164084676,
+      "lean_error_rms_deg": 0.3190507921783967,
+      "actual_input_limit_occupancy_fraction": 0.0,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        1.2193176903921217,
+        0.986821245828527,
+        0.20210230463711384
+      ],
+      "shaft_phase_range_rad": [
+        1.4955515789700926,
+        1.9144059366564548
+      ],
+      "actual_dominant_support_switches_active": 0,
+      "fallback_actuated_samples": 0,
+      "fallback_fraction": 0.0,
+      "plans_including_terminal": 0,
+      "actuated_update_plans": 0,
+      "plan_success_semantics": "Accepted bounded QP plan with finite private replay.",
+      "actuated_accepted_plans": 0,
+      "actuated_qp_solved_plans": 0,
+      "actuated_qp_attempt_statuses": {},
+      "actuated_trial_failures": {},
+      "actuated_selected_plan_sources": {},
+      "actuated_plan_failures": {},
+      "all_update_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_update_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "accepted_update_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_qp_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_linearization_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "component_reconstruction_max_bound_fraction": 1.2415219824424284e-08,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {},
+      "actuated_command_source_samples": {
+        "native_LQR": 920
+      },
+      "affine_disagreement_available_accepted_plans": 0,
+      "truth_geometry_evaluation": {
+        "scope": "Evaluation only: last-physics-substep truth load/resultant point and exact measured state. No truth information reaches control.",
+        "pulse_window_s": [
+          0.8,
+          1.4
+        ],
+        "pulse_samples": 121,
+        "initial_actual_patch": "shell_A",
+        "actual_dominant_patch_switches_during_pulse": 0,
+        "same_actual_hemisphere_above_95pct_load_entire_pulse": true,
+        "normal_load_fraction_min_during_pulse": 0.9792517668665198,
+        "initial_true_weak_authority_m_s": 0.0006699284321181961,
+        "true_weak_authority_min_during_pulse_m_s": 0.00018198265717043186,
+        "true_weak_authority_max_during_pulse_m_s": 0.09527210931301544,
+        "peak_demand_samples": 81,
+        "single_patch_authority_valid_peak_samples": 81,
+        "peak_demand_weak_band_fraction": 0.49382716049382713,
+        "sustained_weak_band_gate_passed": false,
+        "limitation": "A changing actual configuration is allowed. Failed sustained-weak-band coverage prevents a persistent-rank-loss recovery claim."
+      },
+      "stage_label": "baseline_reused",
+      "origin": "results/mpc_balance_20261125/initial/runs/world_x/baseline"
+    },
+    {
+      "direction": "world_x",
+      "variant": "mpc",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 13.57912090988503,
+      "original_clock_path_peak_mm": 21.736684080191353,
+      "original_goal_final_error_mm": 1.7941750013339828,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 7.014390153730791,
+      "motion_end_goal_error_mm": 9.119263349293153,
+      "final_progress_mm": 15.2726764464549,
+      "final_progress_fraction": 0.9545422779034313,
+      "peak_reference_lean_deg": 0.9242801949497546,
+      "lean_error_integral_deg_s": 1.0193894011012836,
+      "lean_error_rms_deg": 0.3068345852323566,
+      "actual_input_limit_occupancy_fraction": 0.008695652173913044,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        3.658027834263264,
+        11.546975282131786,
+        29.40968687832587
+      ],
+      "shaft_phase_range_rad": [
+        1.4430349125717556,
+        1.7819688216445027
+      ],
+      "actual_dominant_support_switches_active": 2,
+      "fallback_actuated_samples": 628,
+      "fallback_fraction": 0.6826086956521739,
+      "plans_including_terminal": 231,
+      "actuated_update_plans": 230,
+      "plan_success_semantics": "Accepted bounded QP plan with finite private replay.",
+      "actuated_accepted_plans": 73,
+      "actuated_qp_solved_plans": 73,
+      "actuated_qp_attempt_statuses": {
+        "solved": 73,
+        "problem non convex": 2
+      },
+      "actuated_trial_failures": {},
+      "actuated_selected_plan_sources": {
+        "affine_QP": 73
+      },
+      "actuated_plan_failures": {
+        "estimated_plane_load_fit_failed": 155,
+        "qp_problem non convex": 2
+      },
+      "all_update_runtime_s": {
+        "count": 230,
+        "median": 0.00910663050126459,
+        "p95": 0.49127587605107687,
+        "max": 0.537866729999223
+      },
+      "solved_update_runtime_s": {
+        "count": 73,
+        "median": 0.4341778800007887,
+        "p95": 0.5174272969998128,
+        "max": 0.537866729999223
+      },
+      "accepted_update_runtime_s": {
+        "count": 73,
+        "median": 0.4341778800007887,
+        "p95": 0.5174272969998128,
+        "max": 0.537866729999223
+      },
+      "solved_qp_runtime_s": {
+        "count": 73,
+        "median": 0.003297769999335287,
+        "p95": 0.004171618599502835,
+        "max": 0.02966873499826761
+      },
+      "solved_linearization_runtime_s": {
+        "count": 73,
+        "median": 0.29337667700019665,
+        "p95": 0.34334039959940127,
+        "max": 0.35334044200135395
+      },
+      "component_reconstruction_max_bound_fraction": 5.134601429220472e-08,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {
+        "0.02": {
+          "xy_error_mm": {
+            "count": 73,
+            "median": 0.011142946604557767,
+            "p95": 0.16075489260547232,
+            "max": 0.2645674351845547
+          },
+          "rotation_tangent_error_deg": {
+            "count": 73,
+            "median": 0.005750417223496117,
+            "p95": 0.07202410691860382,
+            "max": 0.1518847525325741
+          },
+          "linear_velocity_error_m_s": {
+            "count": 73,
+            "median": 0.002504017133662643,
+            "p95": 0.030263706772513985,
+            "max": 0.04927546797736803
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 73,
+            "median": 0.015076449860872648,
+            "p95": 0.3346948243073424,
+            "max": 0.94037437780732
+          },
+          "diagnostic_screen_passes": 73,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.1": {
+          "xy_error_mm": {
+            "count": 73,
+            "median": 0.4855018720897564,
+            "p95": 2.184204483042539,
+            "max": 8.450959083114624
+          },
+          "rotation_tangent_error_deg": {
+            "count": 73,
+            "median": 0.3714139447871086,
+            "p95": 1.5976904752074128,
+            "max": 2.661455410545052
+          },
+          "linear_velocity_error_m_s": {
+            "count": 73,
+            "median": 0.006561773221935324,
+            "p95": 0.042281914998974296,
+            "max": 0.0723635121493655
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 73,
+            "median": 0.10156427591884483,
+            "p95": 3.5923702567498093,
+            "max": 4.354673847260744
+          },
+          "diagnostic_screen_passes": 62,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.4": {
+          "xy_error_mm": {
+            "count": 73,
+            "median": 6.893303113676081,
+            "p95": 33.98687048567538,
+            "max": 111.61267669772039
+          },
+          "rotation_tangent_error_deg": {
+            "count": 73,
+            "median": 3.045686286493917,
+            "p95": 18.79043049052177,
+            "max": 96.48417175224398
+          },
+          "linear_velocity_error_m_s": {
+            "count": 73,
+            "median": 0.06317991123611802,
+            "p95": 0.3172888074518123,
+            "max": 1.2526931664710559
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 73,
+            "median": 1.5950184825680616,
+            "p95": 12.361765847525986,
+            "max": 63.66446683394655
+          }
+        }
+      },
+      "actuated_command_source_samples": {
+        "affine_QP": 292,
+        "native_LQR_fallback": 628
+      },
+      "affine_disagreement_available_accepted_plans": 73,
+      "truth_geometry_evaluation": {
+        "scope": "Evaluation only: last-physics-substep truth load/resultant point and exact measured state. No truth information reaches control.",
+        "pulse_window_s": [
+          0.8,
+          1.4
+        ],
+        "pulse_samples": 121,
+        "initial_actual_patch": "shell_A",
+        "actual_dominant_patch_switches_during_pulse": 0,
+        "same_actual_hemisphere_above_95pct_load_entire_pulse": true,
+        "normal_load_fraction_min_during_pulse": 0.9421284734250897,
+        "initial_true_weak_authority_m_s": 0.0006699284321181961,
+        "true_weak_authority_min_during_pulse_m_s": 0.0006699284321181961,
+        "true_weak_authority_max_during_pulse_m_s": 0.06757616846919297,
+        "peak_demand_samples": 81,
+        "single_patch_authority_valid_peak_samples": 81,
+        "peak_demand_weak_band_fraction": 0.0,
+        "sustained_weak_band_gate_passed": false,
+        "limitation": "A changing actual configuration is allowed. Failed sustained-weak-band coverage prevents a persistent-rank-loss recovery claim."
+      },
+      "stage_label": "initial_mpc_reused",
+      "origin": "results/mpc_balance_20261125/initial/runs/world_x/mpc"
+    },
+    {
+      "direction": "world_x",
+      "variant": "mpc",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 19.732612520811536,
+      "original_clock_path_peak_mm": 29.538915129272205,
+      "original_goal_final_error_mm": 29.538915129272205,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 7.014390153730791,
+      "motion_end_goal_error_mm": 9.119263349293153,
+      "final_progress_mm": 8.773364749308405,
+      "final_progress_fraction": 0.5483352968317753,
+      "peak_reference_lean_deg": 3.815879840218969,
+      "lean_error_integral_deg_s": 1.1619245909629712,
+      "lean_error_rms_deg": 0.5537104995742658,
+      "actual_input_limit_occupancy_fraction": 0.030434782608695653,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        7.742008295289008,
+        10.452929092632328,
+        29.40968687832587
+      ],
+      "shaft_phase_range_rad": [
+        1.4430349125717556,
+        1.8558739730807428
+      ],
+      "actual_dominant_support_switches_active": 2,
+      "fallback_actuated_samples": 28,
+      "fallback_fraction": 0.030434782608695653,
+      "plans_including_terminal": 231,
+      "actuated_update_plans": 230,
+      "plan_success_semantics": "Accepted bounded QP plan with finite private replay.",
+      "actuated_accepted_plans": 223,
+      "actuated_qp_solved_plans": 223,
+      "actuated_qp_attempt_statuses": {
+        "solved": 223,
+        "problem non convex": 4
+      },
+      "actuated_trial_failures": {},
+      "actuated_selected_plan_sources": {
+        "affine_QP": 223
+      },
+      "actuated_plan_failures": {
+        "estimated_plane_load_fit_failed": 3,
+        "qp_problem non convex": 4
+      },
+      "all_update_runtime_s": {
+        "count": 230,
+        "median": 0.38702122299764596,
+        "p95": 0.47821277530038053,
+        "max": 0.5618158020006376
+      },
+      "solved_update_runtime_s": {
+        "count": 223,
+        "median": 0.38762237000264577,
+        "p95": 0.4791910274001565,
+        "max": 0.5618158020006376
+      },
+      "accepted_update_runtime_s": {
+        "count": 223,
+        "median": 0.38762237000264577,
+        "p95": 0.4791910274001565,
+        "max": 0.5618158020006376
+      },
+      "solved_qp_runtime_s": {
+        "count": 223,
+        "median": 0.0038552869991690386,
+        "p95": 0.0048987720019795225,
+        "max": 0.030951201002608286
+      },
+      "solved_linearization_runtime_s": {
+        "count": 223,
+        "median": 0.26536943999963114,
+        "p95": 0.3280942377990868,
+        "max": 0.4344234750024043
+      },
+      "component_reconstruction_max_bound_fraction": 1.2851553658303297e-07,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {
+        "0.02": {
+          "xy_error_mm": {
+            "count": 223,
+            "median": 0.0005375723446380366,
+            "p95": 0.15382843184851674,
+            "max": 0.9507446244456841
+          },
+          "rotation_tangent_error_deg": {
+            "count": 223,
+            "median": 5.6800090001083265e-05,
+            "p95": 0.05023914737625083,
+            "max": 1.2553299178256485
+          },
+          "linear_velocity_error_m_s": {
+            "count": 223,
+            "median": 0.00010102406657123458,
+            "p95": 0.028751825873119415,
+            "max": 0.04927546797736803
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 223,
+            "median": 0.0010649132222731515,
+            "p95": 0.15627641732107467,
+            "max": 7.968061694615168
+          },
+          "diagnostic_screen_passes": 220,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.1": {
+          "xy_error_mm": {
+            "count": 223,
+            "median": 0.08335751120371117,
+            "p95": 2.0846609903192586,
+            "max": 33.16735615970359
+          },
+          "rotation_tangent_error_deg": {
+            "count": 223,
+            "median": 0.014720939036380694,
+            "p95": 0.7034431350470067,
+            "max": 18.00698444949164
+          },
+          "linear_velocity_error_m_s": {
+            "count": 223,
+            "median": 0.0024252862879199084,
+            "p95": 0.03466908510387205,
+            "max": 25.89302360267809
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 223,
+            "median": 0.034479757738094086,
+            "p95": 0.36958939758618936,
+            "max": 569.079022522186
+          },
+          "diagnostic_screen_passes": 211,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.4": {
+          "xy_error_mm": {
+            "count": 223,
+            "median": 5.871870162669664,
+            "p95": 19.142111495083327,
+            "max": 500408649.50042814
+          },
+          "rotation_tangent_error_deg": {
+            "count": 223,
+            "median": 1.652728862015846,
+            "p95": 10.219035128253124,
+            "max": 386998479.46065897
+          },
+          "linear_velocity_error_m_s": {
+            "count": 223,
+            "median": 0.04878709508376631,
+            "p95": 0.1763151533229448,
+            "max": 14029362.051081123
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 223,
+            "median": 0.7232376852062884,
+            "p95": 3.3778197996479276,
+            "max": 815754542.0517796
+          }
+        }
+      },
+      "actuated_command_source_samples": {
+        "affine_QP": 892,
+        "native_LQR_fallback": 28
+      },
+      "affine_disagreement_available_accepted_plans": 223,
+      "truth_geometry_evaluation": {
+        "scope": "Evaluation only: last-physics-substep truth load/resultant point and exact measured state. No truth information reaches control.",
+        "pulse_window_s": [
+          0.8,
+          1.4
+        ],
+        "pulse_samples": 121,
+        "initial_actual_patch": "shell_A",
+        "actual_dominant_patch_switches_during_pulse": 0,
+        "same_actual_hemisphere_above_95pct_load_entire_pulse": true,
+        "normal_load_fraction_min_during_pulse": 0.9421284734250897,
+        "initial_true_weak_authority_m_s": 0.0006699284321181961,
+        "true_weak_authority_min_during_pulse_m_s": 0.0006699284321181961,
+        "true_weak_authority_max_during_pulse_m_s": 0.06757616846919297,
+        "peak_demand_samples": 81,
+        "single_patch_authority_valid_peak_samples": 81,
+        "peak_demand_weak_band_fraction": 0.0,
+        "sustained_weak_band_gate_passed": false,
+        "limitation": "A changing actual configuration is allowed. Failed sustained-weak-band coverage prevents a persistent-rank-loss recovery claim."
+      },
+      "stage_label": "calibration_gate_reused",
+      "origin": "results/mpc_balance_20261125/calibration_gate/runs/world_x/mpc"
+    },
+    {
+      "direction": "world_x",
+      "variant": "mpc",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 9.183791887660316,
+      "original_clock_path_peak_mm": 10.207197071900932,
+      "original_goal_final_error_mm": 8.163008028952067,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 7.869168133081798,
+      "motion_end_goal_error_mm": 8.289279840111913,
+      "final_progress_mm": 8.868392569316427,
+      "final_progress_fraction": 0.5542745355822767,
+      "peak_reference_lean_deg": 0.8361304672126576,
+      "lean_error_integral_deg_s": 0.32106130638509084,
+      "lean_error_rms_deg": 0.15857721624030058,
+      "actual_input_limit_occupancy_fraction": 0.0,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        2.7489903758809064,
+        5.1488638371495945,
+        22.49858093368457
+      ],
+      "shaft_phase_range_rad": [
+        1.0626629052665573,
+        1.6160572485820683
+      ],
+      "actual_dominant_support_switches_active": 0,
+      "fallback_actuated_samples": 0,
+      "fallback_fraction": 0.0,
+      "plans_including_terminal": 231,
+      "actuated_update_plans": 230,
+      "plan_success_semantics": "Accepted finite bounded nonlinear sequence; may be warm/seed without a successful SQP solve.",
+      "actuated_accepted_plans": 230,
+      "actuated_qp_solved_plans": 232,
+      "actuated_qp_attempt_statuses": {
+        "solved": 232
+      },
+      "actuated_trial_failures": {},
+      "actuated_selected_plan_sources": {
+        "SQP_warm_start_alpha_0.25": 3,
+        "SQP_warm_start_alpha_1": 221,
+        "SQP_warm_start_alpha_0.5": 3,
+        "warm_start": 3
+      },
+      "actuated_plan_failures": {},
+      "all_update_runtime_s": {
+        "count": 230,
+        "median": 2.0188496304999717,
+        "p95": 2.158286832649901,
+        "max": 5.90192868700251
+      },
+      "solved_update_runtime_s": {
+        "count": 230,
+        "median": 2.0188496304999717,
+        "p95": 2.158286832649901,
+        "max": 5.90192868700251
+      },
+      "accepted_update_runtime_s": {
+        "count": 230,
+        "median": 2.0188496304999717,
+        "p95": 2.158286832649901,
+        "max": 5.90192868700251
+      },
+      "solved_qp_runtime_s": {
+        "count": 230,
+        "median": 0.003912398498869152,
+        "p95": 0.004589848201612767,
+        "max": 0.03684672900271835
+      },
+      "solved_linearization_runtime_s": {
+        "count": 230,
+        "median": 1.5200211940009467,
+        "p95": 1.6268296650016054,
+        "max": 4.458555292996607
+      },
+      "component_reconstruction_max_bound_fraction": 5.898824613030188e-08,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {
+        "0.02": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 6.351658195775241e-09,
+            "p95": 0.00036123248570557045,
+            "max": 0.010737235325404774
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 2.6342894064370093e-09,
+            "p95": 0.00011831206859525417,
+            "max": 0.003433853944223057
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 1.1991274967160924e-09,
+            "p95": 6.937318642566702e-05,
+            "max": 0.002065292349874431
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 2.2817508059311363e-08,
+            "p95": 0.00017799676476736297,
+            "max": 0.009431051166382255
+          },
+          "diagnostic_screen_passes": 230,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.1": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 1.1876155869404182e-06,
+            "p95": 0.04083385115749903,
+            "max": 0.710084500257943
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 5.04281496101251e-07,
+            "p95": 0.013162627266379267,
+            "max": 0.22373510911719274
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 2.8733166123268086e-08,
+            "p95": 0.0007512363808520541,
+            "max": 0.008442511800298381
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 5.341472709145963e-07,
+            "p95": 0.009889397123787435,
+            "max": 0.09255431311974503
+          },
+          "diagnostic_screen_passes": 230,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.4": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 7.028723401328706e-05,
+            "p95": 0.5368443256184069,
+            "max": 2.265740344696485
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 3.152763403042487e-05,
+            "p95": 0.19734598459718608,
+            "max": 1.0227265411938535
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 7.965852729304317e-07,
+            "p95": 0.004769166352080435,
+            "max": 0.026269354836246848
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 1.1048882310694368e-05,
+            "p95": 0.06847099734312094,
+            "max": 0.36612908774169295
+          }
+        }
+      },
+      "actuated_command_source_samples": {
+        "SQP_refinement": 908,
+        "warm_sequence": 12
+      },
+      "affine_disagreement_available_accepted_plans": 230,
+      "truth_geometry_evaluation": {
+        "scope": "Evaluation only: last-physics-substep truth load/resultant point and exact measured state. No truth information reaches control.",
+        "pulse_window_s": [
+          0.8,
+          1.4
+        ],
+        "pulse_samples": 121,
+        "initial_actual_patch": "shell_A",
+        "actual_dominant_patch_switches_during_pulse": 0,
+        "same_actual_hemisphere_above_95pct_load_entire_pulse": true,
+        "normal_load_fraction_min_during_pulse": 0.9594704962063673,
+        "initial_true_weak_authority_m_s": 0.0006699284321181961,
+        "true_weak_authority_min_during_pulse_m_s": 0.0003199215861641222,
+        "true_weak_authority_max_during_pulse_m_s": 0.0677288004580052,
+        "peak_demand_samples": 81,
+        "single_patch_authority_valid_peak_samples": 81,
+        "peak_demand_weak_band_fraction": 0.18518518518518517,
+        "sustained_weak_band_gate_passed": false,
+        "limitation": "A changing actual configuration is allowed. Failed sustained-weak-band coverage prevents a persistent-rank-loss recovery claim."
+      },
+      "stage_label": "trajectory_SQP",
+      "origin": "results/mpc_balance_20261125/trajectory/runs/world_x/mpc"
+    },
+    {
+      "direction": "world_y",
+      "variant": "baseline",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 235.6309365968619,
+      "original_clock_path_peak_mm": 402.3357170781665,
+      "original_goal_final_error_mm": 98.82571930310188,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 1.3642602263984545,
+      "motion_end_goal_error_mm": 15.03284383487177,
+      "final_progress_mm": -74.46692210339017,
+      "final_progress_fraction": -4.654182631461886,
+      "peak_reference_lean_deg": 9.362855757652037,
+      "lean_error_integral_deg_s": 13.574734152901202,
+      "lean_error_rms_deg": 3.8576190775060635,
+      "actual_input_limit_occupancy_fraction": 0.17173913043478262,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        2.930359528128228,
+        25.891972237591794,
+        23.240404843790696
+      ],
+      "shaft_phase_range_rad": [
+        -0.24317953902414788,
+        2.519947460879088
+      ],
+      "actual_dominant_support_switches_active": 79,
+      "fallback_actuated_samples": 0,
+      "fallback_fraction": 0.0,
+      "plans_including_terminal": 0,
+      "actuated_update_plans": 0,
+      "plan_success_semantics": "Accepted bounded QP plan with finite private replay.",
+      "actuated_accepted_plans": 0,
+      "actuated_qp_solved_plans": 0,
+      "actuated_qp_attempt_statuses": {},
+      "actuated_trial_failures": {},
+      "actuated_selected_plan_sources": {},
+      "actuated_plan_failures": {},
+      "all_update_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_update_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "accepted_update_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_qp_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_linearization_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "component_reconstruction_max_bound_fraction": 1.9691288174102559e-07,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {},
+      "actuated_command_source_samples": {
+        "native_LQR": 920
+      },
+      "affine_disagreement_available_accepted_plans": 0,
+      "truth_geometry_evaluation": {
+        "scope": "Evaluation only: last-physics-substep truth load/resultant point and exact measured state. No truth information reaches control.",
+        "pulse_window_s": [
+          0.8,
+          1.4
+        ],
+        "pulse_samples": 121,
+        "initial_actual_patch": "shell_A",
+        "actual_dominant_patch_switches_during_pulse": 0,
+        "same_actual_hemisphere_above_95pct_load_entire_pulse": true,
+        "normal_load_fraction_min_during_pulse": 0.9781579468620395,
+        "initial_true_weak_authority_m_s": 0.0006699284321181961,
+        "true_weak_authority_min_during_pulse_m_s": 0.0006699284321181961,
+        "true_weak_authority_max_during_pulse_m_s": 0.07346364537053005,
+        "peak_demand_samples": 81,
+        "single_patch_authority_valid_peak_samples": 81,
+        "peak_demand_weak_band_fraction": 0.0,
+        "sustained_weak_band_gate_passed": false,
+        "limitation": "A changing actual configuration is allowed. Failed sustained-weak-band coverage prevents a persistent-rank-loss recovery claim."
+      },
+      "stage_label": "baseline_reused",
+      "origin": "results/mpc_balance_20261125/initial/runs/world_y/baseline"
+    },
+    {
+      "direction": "world_y",
+      "variant": "mpc",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 20.07124066238992,
+      "original_clock_path_peak_mm": 25.734631447813474,
+      "original_goal_final_error_mm": 25.081235430644366,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 4.000410813842965,
+      "motion_end_goal_error_mm": 12.1434879279257,
+      "final_progress_mm": -8.753198551085285,
+      "final_progress_fraction": -0.5470749094428303,
+      "peak_reference_lean_deg": 1.768385921874607,
+      "lean_error_integral_deg_s": 0.6152126788473574,
+      "lean_error_rms_deg": 0.28615588967228345,
+      "actual_input_limit_occupancy_fraction": 0.04782608695652174,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        2.1604068382410935,
+        8.187830065524027,
+        29.677321838169494
+      ],
+      "shaft_phase_range_rad": [
+        0.7460504270146144,
+        1.6063785697042186
+      ],
+      "actual_dominant_support_switches_active": 0,
+      "fallback_actuated_samples": 0,
+      "fallback_fraction": 0.0,
+      "plans_including_terminal": 231,
+      "actuated_update_plans": 230,
+      "plan_success_semantics": "Accepted bounded QP plan with finite private replay.",
+      "actuated_accepted_plans": 230,
+      "actuated_qp_solved_plans": 230,
+      "actuated_qp_attempt_statuses": {
+        "solved": 230
+      },
+      "actuated_trial_failures": {},
+      "actuated_selected_plan_sources": {
+        "affine_QP": 230
+      },
+      "actuated_plan_failures": {},
+      "all_update_runtime_s": {
+        "count": 230,
+        "median": 0.3635326844996598,
+        "p95": 0.4050103889503589,
+        "max": 0.46711048200086225
+      },
+      "solved_update_runtime_s": {
+        "count": 230,
+        "median": 0.3635326844996598,
+        "p95": 0.4050103889503589,
+        "max": 0.46711048200086225
+      },
+      "accepted_update_runtime_s": {
+        "count": 230,
+        "median": 0.3635326844996598,
+        "p95": 0.4050103889503589,
+        "max": 0.46711048200086225
+      },
+      "solved_qp_runtime_s": {
+        "count": 230,
+        "median": 0.003202349000275717,
+        "p95": 0.004583147049379476,
+        "max": 0.03327728600197588
+      },
+      "solved_linearization_runtime_s": {
+        "count": 230,
+        "median": 0.24842086950047815,
+        "p95": 0.27694166605106146,
+        "max": 0.3306226400018204
+      },
+      "component_reconstruction_max_bound_fraction": 1.640679245356232e-06,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {
+        "0.02": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 1.1739102599090542e-07,
+            "p95": 0.0007937361545979544,
+            "max": 0.348079851641835
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 5.608329083514527e-08,
+            "p95": 0.0002594925311194285,
+            "max": 0.12099312788343884
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 2.2266507152376663e-08,
+            "p95": 0.00015145710174024622,
+            "max": 0.06559094987533917
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 4.960904190362179e-07,
+            "p95": 0.0013009809110296289,
+            "max": 0.33428189357777327
+          },
+          "diagnostic_screen_passes": 230,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.1": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 0.0025131667813943956,
+            "p95": 0.3219779925780883,
+            "max": 1.343983458095521
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 0.0007837442959001014,
+            "p95": 0.16570026344621924,
+            "max": 0.9816514815346601
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 8.129030286068334e-05,
+            "p95": 0.01087969958764275,
+            "max": 0.0494017722205605
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 0.0010978379828633093,
+            "p95": 0.13413309625833333,
+            "max": 0.5180460871602696
+          },
+          "diagnostic_screen_passes": 230,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.4": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 0.30348188987976155,
+            "p95": 13.853422796495051,
+            "max": 33.475867676518526
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 0.08936211270457517,
+            "p95": 6.690791916732163,
+            "max": 15.544284726822744
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 0.0027448046869344373,
+            "p95": 0.13971415895416595,
+            "max": 0.38457206008630396
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 0.05527200372153562,
+            "p95": 2.6141370154545274,
+            "max": 10.797378979474011
+          }
+        }
+      },
+      "actuated_command_source_samples": {
+        "affine_QP": 920,
+        "native_LQR_fallback": 0
+      },
+      "affine_disagreement_available_accepted_plans": 230,
+      "truth_geometry_evaluation": {
+        "scope": "Evaluation only: last-physics-substep truth load/resultant point and exact measured state. No truth information reaches control.",
+        "pulse_window_s": [
+          0.8,
+          1.4
+        ],
+        "pulse_samples": 121,
+        "initial_actual_patch": "shell_A",
+        "actual_dominant_patch_switches_during_pulse": 0,
+        "same_actual_hemisphere_above_95pct_load_entire_pulse": true,
+        "normal_load_fraction_min_during_pulse": 0.9368680187322891,
+        "initial_true_weak_authority_m_s": 0.0006699284321181961,
+        "true_weak_authority_min_during_pulse_m_s": 8.803749106113336e-05,
+        "true_weak_authority_max_during_pulse_m_s": 0.109228352158574,
+        "peak_demand_samples": 81,
+        "single_patch_authority_valid_peak_samples": 81,
+        "peak_demand_weak_band_fraction": 0.25925925925925924,
+        "sustained_weak_band_gate_passed": false,
+        "limitation": "A changing actual configuration is allowed. Failed sustained-weak-band coverage prevents a persistent-rank-loss recovery claim."
+      },
+      "stage_label": "initial_mpc_reused",
+      "origin": "results/mpc_balance_20261125/initial/runs/world_y/mpc"
+    },
+    {
+      "direction": "world_y",
+      "variant": "mpc",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 19.63395175511738,
+      "original_clock_path_peak_mm": 25.742835621744387,
+      "original_goal_final_error_mm": 24.973062368519663,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 9.737078035649297,
+      "motion_end_goal_error_mm": 6.39040349756362,
+      "final_progress_mm": -8.786919012327504,
+      "final_progress_fraction": -0.549182438270469,
+      "peak_reference_lean_deg": 1.7188415439043327,
+      "lean_error_integral_deg_s": 0.6000682206939769,
+      "lean_error_rms_deg": 0.28203625563406676,
+      "actual_input_limit_occupancy_fraction": 0.0,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        2.7253129873847683,
+        6.918489266572716,
+        30.80899700732365
+      ],
+      "shaft_phase_range_rad": [
+        0.6644081621355484,
+        1.5809787560035236
+      ],
+      "actual_dominant_support_switches_active": 0,
+      "fallback_actuated_samples": 0,
+      "fallback_fraction": 0.0,
+      "plans_including_terminal": 231,
+      "actuated_update_plans": 230,
+      "plan_success_semantics": "Accepted finite bounded nonlinear sequence; may be warm/seed without a successful SQP solve.",
+      "actuated_accepted_plans": 230,
+      "actuated_qp_solved_plans": 232,
+      "actuated_qp_attempt_statuses": {
+        "solved": 232
+      },
+      "actuated_trial_failures": {},
+      "actuated_selected_plan_sources": {
+        "warm_start": 5,
+        "SQP_warm_start_alpha_0.5": 1,
+        "SQP_warm_start_alpha_1": 224
+      },
+      "actuated_plan_failures": {},
+      "all_update_runtime_s": {
+        "count": 230,
+        "median": 1.6364301290013827,
+        "p95": 1.9172181767500658,
+        "max": 5.835919983001077
+      },
+      "solved_update_runtime_s": {
+        "count": 230,
+        "median": 1.6364301290013827,
+        "p95": 1.9172181767500658,
+        "max": 5.835919983001077
+      },
+      "accepted_update_runtime_s": {
+        "count": 230,
+        "median": 1.6364301290013827,
+        "p95": 1.9172181767500658,
+        "max": 5.835919983001077
+      },
+      "solved_qp_runtime_s": {
+        "count": 230,
+        "median": 0.0038726395014236914,
+        "p95": 0.004730103501060512,
+        "max": 0.036133192996203434
+      },
+      "solved_linearization_runtime_s": {
+        "count": 230,
+        "median": 1.2340946290005377,
+        "p95": 1.4425276310983461,
+        "max": 4.4049625280022155
+      },
+      "component_reconstruction_max_bound_fraction": 1.8196626004144771e-06,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {
+        "0.02": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 3.1043053644187154e-08,
+            "p95": 1.4591517121239308e-05,
+            "max": 0.08305817023920609
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 1.043291411719547e-08,
+            "p95": 9.531112792088204e-06,
+            "max": 0.02811249722084185
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 5.865075986502691e-09,
+            "p95": 2.7512152895064587e-06,
+            "max": 0.015944576145129976
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 9.410281026156126e-08,
+            "p95": 3.581343468127815e-05,
+            "max": 0.012464472811349433
+          },
+          "diagnostic_screen_passes": 230,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.1": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 2.0731867951908263e-06,
+            "p95": 0.003581678341132499,
+            "max": 0.9936493194166063
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 1.8555152425341389e-06,
+            "p95": 0.000991400271903341,
+            "max": 0.2277389893418593
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 6.8100877589396e-08,
+            "p95": 9.657336906025826e-05,
+            "max": 0.02318699951129959
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 9.676448019745695e-07,
+            "p95": 0.0009610936645850597,
+            "max": 0.0768122305250383
+          },
+          "diagnostic_screen_passes": 230,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.4": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 8.055546591787803e-05,
+            "p95": 0.24734185021974964,
+            "max": 4.478277682321099
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 2.7914432056161333e-05,
+            "p95": 0.07932223422282261,
+            "max": 4.199449387850207
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 2.429931836940975e-06,
+            "p95": 0.0034514028943595384,
+            "max": 0.0336509876215686
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 3.522282543877436e-05,
+            "p95": 0.11963745740100284,
+            "max": 2.668754067494139
+          }
+        }
+      },
+      "actuated_command_source_samples": {
+        "warm_sequence": 20,
+        "SQP_refinement": 900
+      },
+      "affine_disagreement_available_accepted_plans": 230,
+      "truth_geometry_evaluation": {
+        "scope": "Evaluation only: last-physics-substep truth load/resultant point and exact measured state. No truth information reaches control.",
+        "pulse_window_s": [
+          0.8,
+          1.4
+        ],
+        "pulse_samples": 121,
+        "initial_actual_patch": "shell_A",
+        "actual_dominant_patch_switches_during_pulse": 0,
+        "same_actual_hemisphere_above_95pct_load_entire_pulse": true,
+        "normal_load_fraction_min_during_pulse": 0.9644772523946884,
+        "initial_true_weak_authority_m_s": 0.0006699284321181961,
+        "true_weak_authority_min_during_pulse_m_s": 3.0271029552326053e-05,
+        "true_weak_authority_max_during_pulse_m_s": 0.18208900358807958,
+        "peak_demand_samples": 81,
+        "single_patch_authority_valid_peak_samples": 81,
+        "peak_demand_weak_band_fraction": 0.20987654320987653,
+        "sustained_weak_band_gate_passed": false,
+        "limitation": "A changing actual configuration is allowed. Failed sustained-weak-band coverage prevents a persistent-rank-loss recovery claim."
+      },
+      "stage_label": "trajectory_SQP",
+      "origin": "results/mpc_balance_20261125/trajectory/runs/world_y/mpc"
+    }
+  ],
+  "acceptance_against_original_protocol": {
+    "world_x": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": false,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": true,
+        "path_rms_regression_at_most_10pct": true
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "final_goal_within_5mm"
+      ]
+    },
+    "world_y": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": false,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": true,
+        "lower_lean_integral": true,
+        "lower_original_clock_path_rms": true
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "final_goal_within_5mm"
+      ]
+    }
+  },
+  "warm_prefix_audit": {
+    "world_x": {
+      "samples": 160,
+      "fields": {
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_observer_wrench": true,
+        "exact_applied": true,
+        "mpc_native_requested": true,
+        "mpc_native_applied": true,
+        "mpc_command_delta": true,
+        "mpc_original_goal_xy": true,
+        "mpc_actual_input_at_limit": true
+      },
+      "activation_state_and_goal_equal": true
+    },
+    "world_y": {
+      "samples": 160,
+      "fields": {
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_observer_wrench": true,
+        "exact_applied": true,
+        "mpc_native_requested": true,
+        "mpc_native_applied": true,
+        "mpc_command_delta": true,
+        "mpc_original_goal_xy": true,
+        "mpc_actual_input_at_limit": true
+      },
+      "activation_state_and_goal_equal": true
+    }
+  },
+  "metric_definitions": "Same exact-state/goal and terminal-actuation conventions as initial/analysis/report.json. Native controller component fields are shadows under MPC.",
+  "inputs": [
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/baseline/summary.json",
+      "sha256": "d620a323da912f1b86833333d9ae16289cdbb197213bbf11e4eada234b5d9c54",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/baseline/precision.npz",
+      "sha256": "5970a55f6eab1761e89a2c8f3d144fcbda45aa61e48607dca0fe47c2123ec4aa",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/baseline/rollout.npz",
+      "sha256": "defa4b9d97bac744bc691de41b67d102f5be7e09a70afd748167c6f4b3327bdc",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/baseline/plans.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/baseline/provenance.json",
+      "sha256": "3a41b7e6af288aaf75ab310f04e882a8d8916aa7664c407f85f0ef69b8c1d9c0",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/mpc/summary.json",
+      "sha256": "47764c7f1764d84ff777945ceeee14272a5865d8b1c1b3b9a5b1c03b965434f6",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/mpc/precision.npz",
+      "sha256": "efab7f1d68be2ae2f10c8719373a47087877b98a8d6478c089e6c40b5fdde557",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/mpc/rollout.npz",
+      "sha256": "13807c4d51523aa5525c560a395a3fc7cf02fb63c48ca362047dc7776c98cd09",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/mpc/plans.json",
+      "sha256": "423349765655749617c6b8d5a40757b78aa1ddfcde74525278d121a1b424b410",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/mpc/provenance.json",
+      "sha256": "85e890b854523207de10feaf4d91402486e57a2c4102afc78da886ba29fba623",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/calibration_gate/runs/world_x/mpc/summary.json",
+      "sha256": "22a2799fa3d324cc6dbc03235a4be16f21af5d55b01489c70e257d9dcbdee35e",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/calibration_gate/runs/world_x/mpc/precision.npz",
+      "sha256": "6ae176fe4039afa30d0d79d93fc07a7c10146113711ee046bc4fc8fa7d86cfcd",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/calibration_gate/runs/world_x/mpc/rollout.npz",
+      "sha256": "6d3bf15773fd2119ca6952565df1187aafb1566d98ca2f5848b1ed4f52e1cbd0",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/calibration_gate/runs/world_x/mpc/plans.json",
+      "sha256": "a4132793921d99e23dbfc309dd468c24705b5406b1bba8f85a5144a6bf6cb5fc",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/calibration_gate/runs/world_x/mpc/provenance.json",
+      "sha256": "45b6f60bf64334fc01a46d3f387ab8d42ae7edb281198e067f0e53abad13757c",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/trajectory/runs/world_x/mpc/summary.json",
+      "sha256": "13875cb2f40e64eef4070f64acbdc4f613970b82418c22b00b9caab68c000f95",
+      "reuse": false
+    },
+    {
+      "path": "results/mpc_balance_20261125/trajectory/runs/world_x/mpc/precision.npz",
+      "sha256": "0f3f63ecc7064db43539c38eb3f4283865d212682ae9a41af8c19a3d9f8869a3",
+      "reuse": false
+    },
+    {
+      "path": "results/mpc_balance_20261125/trajectory/runs/world_x/mpc/rollout.npz",
+      "sha256": "35cf1dd91cbbd447265446842120c8d05538b18145639ddade802b52159a1efc",
+      "reuse": false
+    },
+    {
+      "path": "results/mpc_balance_20261125/trajectory/runs/world_x/mpc/plans.json",
+      "sha256": "a9e46636912bbe10bdcc1be2f9d374e26726618dc16af5e40547371729fdcbb2",
+      "reuse": false
+    },
+    {
+      "path": "results/mpc_balance_20261125/trajectory/runs/world_x/mpc/provenance.json",
+      "sha256": "ad515aab05f0c3929c67feaf8d2feb85b6e36bb9c47354ffb4f26fec9e52f14c",
+      "reuse": false
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/baseline/summary.json",
+      "sha256": "46dba4e2c7654d39ab0c9e8c3e03fa22b91a7338756e1680fab923199c5b10b9",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/baseline/precision.npz",
+      "sha256": "7ddd4ac26147a7ff4dc090093e9ce8f4b29edfe834fe804f9e668d58356a351d",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/baseline/rollout.npz",
+      "sha256": "64bad91bc89e175084b0f8dc4bffd82667de57931198f15ffb9401f95b74791a",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/baseline/plans.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/baseline/provenance.json",
+      "sha256": "d29c293b89b9f1b5f6b402abf46874dfea0c2516c860f941e0d436b7242b40a5",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/mpc/summary.json",
+      "sha256": "8588e299dbab7def45792a30378d2d925ddb14a2c2a965ed4e289555170332ec",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/mpc/precision.npz",
+      "sha256": "070e87acd339a5c94f2990be85bcd4d263a20b55b7a50877107522582653c7f6",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/mpc/rollout.npz",
+      "sha256": "dabb6e4d2fef5bcb27917df34f4837f27002dcfe55397e799f386255f9345d2a",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/mpc/plans.json",
+      "sha256": "a5cc6aa6b5aa319a099706f0e1521afb98ef21dffe850064a140da1116d87303",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/mpc/provenance.json",
+      "sha256": "9223213514ced6547f2d2467deadf529b3b1122f059ce85e695fe1a0ee5f2218",
+      "reuse": true
+    },
+    {
+      "path": "results/mpc_balance_20261125/trajectory/runs/world_y/mpc/summary.json",
+      "sha256": "4719cd5abd14f14c758af8c7bad7419b931d5407a381b90459d761aecd95fcbc",
+      "reuse": false
+    },
+    {
+      "path": "results/mpc_balance_20261125/trajectory/runs/world_y/mpc/precision.npz",
+      "sha256": "61a4415898cd0f550279f895a8a0ab158e36685600ec8ac25976ee228c75eced",
+      "reuse": false
+    },
+    {
+      "path": "results/mpc_balance_20261125/trajectory/runs/world_y/mpc/rollout.npz",
+      "sha256": "ddb6cbdab35c211324a55e9542201358343ab56c34ae75f863e48dc41f13806c",
+      "reuse": false
+    },
+    {
+      "path": "results/mpc_balance_20261125/trajectory/runs/world_y/mpc/plans.json",
+      "sha256": "81b3a19026f30eb6ae86e08a20dcd738733fd0598a2254dec748c56706f16e8f",
+      "reuse": false
+    },
+    {
+      "path": "results/mpc_balance_20261125/trajectory/runs/world_y/mpc/provenance.json",
+      "sha256": "b70abfb0730753d7ad2b71b1e86e4d99e702809e18b589839d46141545123ff4",
+      "reuse": false
+    }
+  ],
+  "source_sha256": {
+    "results/mpc_balance_20261125/analyze_candidate_stage.py": "becd1ebf53cc3d8b4ac65f5381173c671dff12fd3717c2fa888212bef406a540",
+    "results/mpc_balance_20261125/analysis_support.py": "7f9e4c0ea3339323be12b6a023e209b25d0ce1d457b60c29699ed3172d9bbfba"
+  }
+}

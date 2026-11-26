@@ -1,0 +1,606 @@
+{
+  "scope": "Read-only controller/constraint/dynamics presentationaudit. No tests/newphysics/controller/observer/research execution.",
+  "controller_name": "Gain-scheduled LQR with inferred-contact rolling drive references, static holding feedforward andincomingdrive synchronization",
+  "coordinates": {
+    "mechanical_dof": 9,
+    "qpos_length": 10,
+    "qvel_length": 9,
+    "LQR_tangent_error_length": 18,
+    "qpos_order": [
+      "worldx",
+      "worldy",
+      "worldz",
+      "qw",
+      "qx",
+      "qy",
+      "qz",
+      "shaftangle",
+      "shellAangle",
+      "shellBangle"
+    ],
+    "qvel_order": [
+      "worldvx",
+      "worldvy",
+      "worldvz",
+      "bodyomegax",
+      "bodyomegay",
+      "bodyomegaz",
+      "shaftrate",
+      "shellArate",
+      "shellBrate"
+    ]
+  },
+  "dynamics": {
+    "equation": "M(q)*v_dot+h(q,v)=S_tau*tau+f_passive+sum(J_c(q)^T*f_c)+f_dist",
+    "belt_convention": "Beltvelocity entersmovingcontactsurface constraint, not a modeledbeltrotor generalizedtorque.",
+    "contact_qualification": "Numericallyregularized contact/frictionsolver, notanexactrigid-contacttheorem."
+  },
+  "inputs": [
+    {
+      "name": "shaft",
+      "units": "Nm",
+      "bound": 1.5
+    },
+    {
+      "name": "shell_A",
+      "units": "Nm",
+      "bound": 0.6
+    },
+    {
+      "name": "shell_B",
+      "units": "Nm",
+      "bound": 0.6
+    },
+    {
+      "name": "belt_A",
+      "units": "m/s",
+      "bound": 0.3
+    },
+    {
+      "name": "belt_B",
+      "units": "m/s",
+      "bound": 0.3
+    }
+  ],
+  "LQR": {
+    "normalized_Q_diagonal": [
+      2,
+      2,
+      1,
+      30,
+      30,
+      0.01,
+      0.001,
+      0.001,
+      0.001,
+      2,
+      2,
+      0.1,
+      4,
+      4,
+      0.05,
+      0.01,
+      0.01,
+      0.01
+    ],
+    "normalized_R_diagonal": [
+      0.3,
+      0.3,
+      0.3,
+      1,
+      1
+    ],
+    "state_scales": [
+      0.15,
+      0.15,
+      0.005,
+      0.15,
+      0.15,
+      0.5,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0.1,
+      1,
+      1,
+      1,
+      10,
+      10,
+      10
+    ],
+    "input_scales": "Assumedplantbounds",
+    "design": "Discrete localfinite-difference linearization, reachable-subspaceDARE",
+    "online_inequality_constraints": false,
+    "effort_is_physical_energy": false
+  },
+  "constraint_status": {
+    "final_magnitude_clip": true,
+    "native_bounded_rolling_allocator": false,
+    "native_damped_regularization": false,
+    "native_joint_reference_speed_accel_bounds": false,
+    "synchronizer_shell_target_cap_rad_s": 20,
+    "actual_joint_speed_hard_limit": false,
+    "general_command_slew_hard_limit": false,
+    "desired_lean_cap_deg": 28,
+    "safe_slope_demonstrated_deg": null,
+    "guaranteed_body_speed_m_s": null
+  },
+  "sample_6_825": {
+    "time_s": 6.824999999999877,
+    "LQR_groups_m_s": {
+      "position": 0.0191797201010285,
+      "attitude_tangent": 0.5455496839680146,
+      "joint_position": -1.0802882866623604e-15,
+      "linear_velocity": 0.07473805783588108,
+      "angular_velocity": 0.20209684040954345,
+      "joint_velocity": 0.0022399553360555992
+    },
+    "exact_terms_m_s": {
+      "LQR": 0.8438042576505222,
+      "rolling_feedforward": -0.009062411523163871,
+      "holding": 0.0,
+      "synchronization_delta": 0.0,
+      "heading_delta": 0.0,
+      "fade_delta": 0.0
+    },
+    "equilibrium_m_s": 0.0,
+    "requested_m_s": 0.8347418461273584,
+    "applied_m_s": 0.3,
+    "bound_m_s": 0.3,
+    "over_bound_ratio": 2.782472820424528,
+    "attitude_plus_angular_share_of_LQR": 0.886042607155474,
+    "exact_sum_residual": 0.0,
+    "requested_reference_body_velocity_m_s": [
+      0.032437248171481,
+      0.03127916914343344
+    ],
+    "zero_desired_angular_rate": true,
+    "explanation": "This command requests local belt surface speed, not robot body speed. The large positive demand comes predominantly from attitude/angular-rate feedback; nominal rolling FF is small and negative."
+  },
+  "verified_saved_contexts": 36,
+  "all_36_LQR_casts_exact": true,
+  "normalized_reconstruction_residual_max": 8.853518325876072e-09,
+  "interpretation": "The0.835m/sbeltrequestis88.6%attitude+angularrate feedbackwithinLQR atthissample, notprimarilyrollingFF. Thisidentifiescommandorigins,notauniquephysicalcause.",
+  "candidate_summary": [
+    {
+      "candidate": "D10damped.01",
+      "benefit": "Max+.9jointreference1760.5to4.4rad/s",
+      "regression": "-1.00phaseRMS51.1to86.4mm",
+      "adopted": false,
+      "refs": [
+        "D10"
+      ]
+    },
+    {
+      "candidate": "W20bounded.001",
+      "benefit": "All5 obeyreferencebounds,4improveRMS",
+      "regression": "+.9RMS50.5to67.6mm; actualjoint44.3rad/s",
+      "adopted": false,
+      "refs": [
+        "W20_initial"
+      ]
+    },
+    {
+      "candidate": "W20strongercost.005",
+      "benefit": "+.9peak190.9to85.3mm",
+      "regression": "TriangleRMS24.4to35.2mm",
+      "adopted": false,
+      "refs": [
+        "W20_stronger"
+      ]
+    },
+    {
+      "candidate": "W20adaptive",
+      "benefit": "Triangle24.4to23.4mm",
+      "regression": "-1.00RMS41.3to77.1mm",
+      "adopted": false,
+      "refs": [
+        "W20_adaptive"
+      ]
+    },
+    {
+      "candidate": "I17-I21feasiblereferences",
+      "benefit": "Some direction/route improvements andboundedreferences",
+      "regression": "Other routesworse, projectedreferencecanconcealnominalgoallag",
+      "adopted": false,
+      "refs": [
+        "feasible_references"
+      ]
+    },
+    {
+      "candidate": "I42syncmask/shareoracle",
+      "benefit": "MaskedrouteRMS50.486to41.681mm",
+      "regression": "First6.86departureunchanged; 0.29%earlyRMSgain",
+      "adopted": false,
+      "refs": [
+        "masking"
+      ]
+    },
+    {
+      "candidate": "I43boundedtilt+rate",
+      "benefit": "EarlyRMS38.661to29.893mm,belt.835to.491m/s",
+      "regression": "Fullrawtargetlean8.709to13.581deg,4of6turnsworse",
+      "adopted": false,
+      "refs": [
+        "tilt_candidate"
+      ]
+    }
+  ],
+  "guarantees": [
+    "Commandmagnitudeclipping onlyenforcesdeclaredsimulationbounds",
+    "LocalLQRdesignisnotglobalnonlinearhybridstabilityproof",
+    "Boundedreferenceoptimizationdoesnotguaranteephysicaljointspeed/bodyacceleration/fullfeedbackfeasibility",
+    "No universalmaxsafeslopeorbodytravelspeed established",
+    "No realrobot/current/torquecalibration/SLAMvalidation"
+  ],
+  "citations": [
+    {
+      "id": "model_topology",
+      "relative_path": "src/spherical_wheel/model.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/model.py",
+      "line": 294,
+      "relative_citation": "src/spherical_wheel/model.py:294",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/model.py:294",
+      "sha256": "d41d35b283ef4732cd2b7c321539491054a8070c86a2109a577d470a8c406e72",
+      "supports": "Floatingfork+three revolutes; beltsare surfaces, not independent mechanical states."
+    },
+    {
+      "id": "actuator_model",
+      "relative_path": "config/model.yaml",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/config/model.yaml",
+      "line": 57,
+      "relative_citation": "config/model.yaml:57",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/config/model.yaml:57",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+      "supports": "Inputorder,torquebounds,idealbeltmode andmissingmotorloaddynamics."
+    },
+    {
+      "id": "approximation",
+      "relative_path": "config/model.yaml",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/config/model.yaml",
+      "line": 1,
+      "relative_citation": "config/model.yaml:1",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/config/model.yaml:1",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+      "supports": "Illustrative masses andmodelscope."
+    },
+    {
+      "id": "state_transfer",
+      "relative_path": "src/spherical_wheel/gazebo/plant.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/gazebo/plant.py",
+      "line": 148,
+      "relative_citation": "src/spherical_wheel/gazebo/plant.py:148",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/gazebo/plant.py:148",
+      "sha256": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d",
+      "supports": "Quaternion/currentjointstate; worldlinear/bodyangularvelocity."
+    },
+    {
+      "id": "state_error",
+      "relative_path": "src/spherical_wheel/sim.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/sim.py",
+      "line": 97,
+      "relative_citation": "src/spherical_wheel/sim.py:97",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/sim.py:97",
+      "sha256": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975",
+      "supports": "Quaterniontangent9-dimensionalpositionerror plus9velocities."
+    },
+    {
+      "id": "dynamics_terms",
+      "relative_path": "src/spherical_wheel/contact_sensing.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py",
+      "line": 296,
+      "relative_citation": "src/spherical_wheel/contact_sensing.py:296",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py:296",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+      "supports": "Mass,bias,passiveforce terms; no contactforce reading."
+    },
+    {
+      "id": "observer_equation",
+      "relative_path": "src/spherical_wheel/contact_sensing.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py",
+      "line": 227,
+      "relative_citation": "src/spherical_wheel/contact_sensing.py:227",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py:227",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+      "supports": "Momentum equation andinput/model caveats."
+    },
+    {
+      "id": "observer_filter",
+      "relative_path": "src/spherical_wheel/contact_sensing.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py",
+      "line": 330,
+      "relative_citation": "src/spherical_wheel/contact_sensing.py:330",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py:330",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+      "supports": "Precedinginterval mean and100rad/s filtered wrench."
+    },
+    {
+      "id": "actuator_torque",
+      "relative_path": "gazebo/plugin/SphericalWheelBridge.cc",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/gazebo/plugin/SphericalWheelBridge.cc",
+      "line": 223,
+      "relative_citation": "gazebo/plugin/SphericalWheelBridge.cc:223",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/gazebo/plugin/SphericalWheelBridge.cc:223",
+      "sha256": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e",
+      "supports": "Direct jointtorquecommand and externaldisturbance."
+    },
+    {
+      "id": "belt_boundary",
+      "relative_path": "gazebo/plugin/SphericalWheelBridge.cc",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/gazebo/plugin/SphericalWheelBridge.cc",
+      "line": 439,
+      "relative_citation": "gazebo/plugin/SphericalWheelBridge.cc:439",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/gazebo/plugin/SphericalWheelBridge.cc:439",
+      "sha256": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e",
+      "supports": "Tangentialmovingcontact surface target."
+    },
+    {
+      "id": "LQR_linearization",
+      "relative_path": "src/spherical_wheel/control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/control.py",
+      "line": 47,
+      "relative_citation": "src/spherical_wheel/control.py:47",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/control.py:47",
+      "sha256": "e0c4107601e07cafe29b726341de4c32bb8151506a539e913b0d6eec2e0c8e6f",
+      "supports": "Finite-difference discreteheld5ms nonlineartransition."
+    },
+    {
+      "id": "LQR_scaling_cost",
+      "relative_path": "src/spherical_wheel/control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/control.py",
+      "line": 66,
+      "relative_citation": "src/spherical_wheel/control.py:66",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/control.py:66",
+      "sha256": "e0c4107601e07cafe29b726341de4c32bb8151506a539e913b0d6eec2e0c8e6f",
+      "supports": "State/inputscaling, reachablesubspace, normalizedQ/R andDARE."
+    },
+    {
+      "id": "gain_schedule",
+      "relative_path": "src/spherical_wheel/recovery_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/recovery_control.py",
+      "line": 272,
+      "relative_citation": "src/spherical_wheel/recovery_control.py:272",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/recovery_control.py:272",
+      "sha256": "b3a6bad0870c22ada4c926a7659befb756e31f8ed5defb5506786dc466f5b17d",
+      "supports": "Phase interpolation withsupportloadweighting."
+    },
+    {
+      "id": "gain_runtime",
+      "relative_path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 768,
+      "relative_citation": "src/spherical_wheel/offroad_control.py:768",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py:768",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "supports": "Gain/dropoutchoice,shaftrowfix,errorchanges,feedbackcommand."
+    },
+    {
+      "id": "native_allocator_inactive_bounds",
+      "relative_path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 381,
+      "relative_citation": "src/spherical_wheel/offroad_control.py:381",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py:381",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "supports": "Bounded/feasible allocator instantiatedonlyforopt-in modes."
+    },
+    {
+      "id": "native_no_damping",
+      "relative_path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 598,
+      "relative_citation": "src/spherical_wheel/offroad_control.py:598",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py:598",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "supports": "Dampingzero except explicitdampedmode."
+    },
+    {
+      "id": "rolling_LS",
+      "relative_path": "src/spherical_wheel/experiments.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/experiments.py",
+      "line": 29,
+      "relative_citation": "src/spherical_wheel/experiments.py:29",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/experiments.py:29",
+      "sha256": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638",
+      "supports": "Scaled leastsquares andnormalizerpreferences,notlimits."
+    },
+    {
+      "id": "rolling_records",
+      "relative_path": "src/spherical_wheel/experiments.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/experiments.py",
+      "line": 79,
+      "relative_citation": "src/spherical_wheel/experiments.py:79",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/experiments.py:79",
+      "sha256": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638",
+      "supports": "EstimatedcontactJacobian mapsbodyvelocity todrive ratereferences andbeltFF."
+    },
+    {
+      "id": "bounded_allocator",
+      "relative_path": "src/spherical_wheel/rolling_allocation.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/rolling_allocation.py",
+      "line": 38,
+      "relative_citation": "src/spherical_wheel/rolling_allocation.py:38",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/rolling_allocation.py:38",
+      "sha256": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092",
+      "supports": "Kinematicreference objective andspeed/accelerationbounds."
+    },
+    {
+      "id": "actuation_and_clipping",
+      "relative_path": "src/spherical_wheel/sim.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/sim.py",
+      "line": 61,
+      "relative_citation": "src/spherical_wheel/sim.py:61",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/sim.py:61",
+      "sha256": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975",
+      "supports": "Finalthree torques/twobeltsurfacevelocitycommands."
+    },
+    {
+      "id": "controller_final_clip",
+      "relative_path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 691,
+      "relative_citation": "src/spherical_wheel/offroad_control.py:691",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py:691",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "supports": "Sync/heading/fade/finalclip order."
+    },
+    {
+      "id": "lean_reference",
+      "relative_path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 513,
+      "relative_citation": "src/spherical_wheel/offroad_control.py:513",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py:513",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "supports": "Terrain/accelerationlean andreferencecap."
+    },
+    {
+      "id": "selected_defaults",
+      "relative_path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 223,
+      "relative_citation": "src/spherical_wheel/offroad_control.py:223",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py:223",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "supports": "Freeheading,28degdesiredlean,tiltprototypeoff."
+    },
+    {
+      "id": "live_observer_contacts",
+      "relative_path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 547,
+      "relative_citation": "src/spherical_wheel/offroad_control.py:547",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py:547",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "supports": "Singleobserverupdate/currentpose inferredrecords andfilterednormal."
+    },
+    {
+      "id": "support_locator",
+      "relative_path": "src/spherical_wheel/contact_sensing.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py",
+      "line": 379,
+      "relative_citation": "src/spherical_wheel/contact_sensing.py:379",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py:379",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+      "supports": "Equivalentband/rim support andgeneral multicontact limitation."
+    },
+    {
+      "id": "active_preview",
+      "relative_path": "src/spherical_wheel/synchronization.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py",
+      "line": 1,
+      "relative_citation": "src/spherical_wheel/synchronization.py:1",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py:1",
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+      "supports": "120msconstantvelocitypreview,not dynamicprediction."
+    },
+    {
+      "id": "shadow_forecast",
+      "relative_path": "src/spherical_wheel/contact_prediction.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_prediction.py",
+      "line": 1,
+      "relative_citation": "src/spherical_wheel/contact_prediction.py:1",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_prediction.py:1",
+      "sha256": "cb9deeee1e254ea2b1eb9b88511a68eb07b1b55233fc6ac3de808b849e978f3f",
+      "supports": "Copiednativepolicy forecastdiagnostic, privatecontactsnotfedtopolicy."
+    },
+    {
+      "id": "selected_parameters",
+      "relative_path": "results/support_routing_timing_20261126/protocol.json",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/results/support_routing_timing_20261126/protocol.json",
+      "line": 35,
+      "relative_citation": "results/support_routing_timing_20261126/protocol.json:35",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/results/support_routing_timing_20261126/protocol.json:35",
+      "sha256": "a4e4cc0f138582d40eef4a8870f39c4c70b5aa69d29e292f52427b966d94bff3",
+      "supports": "ActualselectedmodeLS/syncon/tiltoff,5msclock."
+    },
+    {
+      "id": "D10",
+      "relative_path": "docs/iterations/2026-11-25/diagnostic_comparison.csv",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/diagnostic_comparison.csv",
+      "line": 1,
+      "relative_citation": "docs/iterations/2026-11-25/diagnostic_comparison.csv:1",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/diagnostic_comparison.csv:1",
+      "sha256": "bf4922918447cf2c45ffe51efb724b060f1da8e426a40c2e48627a7d35933d65",
+      "supports": "Previouslyexecutedmatched baseline/dampedcases."
+    },
+    {
+      "id": "W20_initial",
+      "relative_path": "docs/iterations/2026-11-25/comparison_initial.json",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/comparison_initial.json",
+      "line": 1,
+      "relative_citation": "docs/iterations/2026-11-25/comparison_initial.json:1",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/comparison_initial.json:1",
+      "sha256": "34e427ead3744c82adec199da2797cdf74631fd0f5c2e32b5b615cedd2170880",
+      "supports": "Previouslyexecutedboundedreferencecases, freshbaseline."
+    },
+    {
+      "id": "W20_stronger",
+      "relative_path": "docs/iterations/2026-11-25/comparison_effort005.json",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/comparison_effort005.json",
+      "line": 1,
+      "relative_citation": "docs/iterations/2026-11-25/comparison_effort005.json:1",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/comparison_effort005.json:1",
+      "sha256": "bf0dd7c27600ad1be45c02c18da79d68eb801daeb23f4e896637f5a5310fe327",
+      "supports": "Previouslyexecutedstrongerfixedspeedpenalty."
+    },
+    {
+      "id": "W20_adaptive",
+      "relative_path": "docs/iterations/2026-11-25/comparison_adaptive.json",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/comparison_adaptive.json",
+      "line": 1,
+      "relative_citation": "docs/iterations/2026-11-25/comparison_adaptive.json:1",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/comparison_adaptive.json:1",
+      "sha256": "654ffa122b108f22626b4f2e28ef2e31f275ab2c3a44dbcfc63eb4add85227ad",
+      "supports": "Previouslyexecutedgeometryadaptedpenalty."
+    },
+    {
+      "id": "feasible_references",
+      "relative_path": "docs/iterations/2026-11-25/fixed-contact-allocation/README.md",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/fixed-contact-allocation/README.md",
+      "line": 90,
+      "relative_citation": "docs/iterations/2026-11-25/fixed-contact-allocation/README.md:90",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/fixed-contact-allocation/README.md:90",
+      "sha256": "1132de7648871ba893f4a3c44e668a015ffdec3a7dc233704351b369fd506a16",
+      "supports": "Tradeoffsandmulticase regressions, reference vsactualconstraints."
+    },
+    {
+      "id": "masking",
+      "relative_path": "docs/iterations/2026-11-25/handoff-factorial/README.md",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/handoff-factorial/README.md",
+      "line": 85,
+      "relative_citation": "docs/iterations/2026-11-25/handoff-factorial/README.md:85",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/handoff-factorial/README.md:85",
+      "sha256": "9f8993576010d3d1074871682a65c2a95fd03d7eced77884b4c02a7187427f70",
+      "supports": "I42shareoracle/preparationmask primary andfullroute outcomes."
+    },
+    {
+      "id": "decomposition_prior",
+      "relative_path": "docs/iterations/2026-11-25/handoff-factorial/README.md",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/handoff-factorial/README.md",
+      "line": 166,
+      "relative_citation": "docs/iterations/2026-11-25/handoff-factorial/README.md:166",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/handoff-factorial/README.md:166",
+      "sha256": "9f8993576010d3d1074871682a65c2a95fd03d7eced77884b4c02a7187427f70",
+      "supports": "Prior savedbalance-vs-FFdecomposition, notcausalproof."
+    },
+    {
+      "id": "tilt_candidate",
+      "relative_path": "docs/iterations/2026-11-25/tilt-reference/README.md",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/tilt-reference/README.md",
+      "line": 120,
+      "relative_citation": "docs/iterations/2026-11-25/tilt-reference/README.md:120",
+      "absolute_citation": "/home/parrwnago/active-spherical-wheel/docs/iterations/2026-11-25/tilt-reference/README.md:120",
+      "sha256": "8b28a293556e883f4e7fd9f3825c3f4e4553379566bbd2d4648ac75f5c3b5ff0",
+      "supports": "I43localgains andfullrun/turnregressions."
+    }
+  ],
+  "artifacts": {
+    "markdown": "controller_audit.md",
+    "numeric": "saved_decomposition.json",
+    "reproduction": "verify_saved_decomposition.py",
+    "input_manifest": "inputs_before_execution.json"
+  }
+}

@@ -1,0 +1,241 @@
+"""Offline audit of saved control-time support disagreements; no physics runs.
+
+Run from the repository root with .venv/bin/python. Results are new derived
+artifacts; all historical rollouts and provenance remain untouched.
+"""
+from pathlib import Path
+import csv
+import hashlib
+import json
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+ROOT = Path.cwd()
+OUT = ROOT/'results/support_identity_probe_20261125/audit'
+RUN = ROOT/'results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00'
+NAMES = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+SOURCES = [RUN/'rollout.npz', RUN/'summary.json', RUN.parent.parent/'provenance.json',
+           ROOT/'docs/iterations/2026-11-25/adaptive_event.json',
+           ROOT/'docs/iterations/2026-11-25/source/src/spherical_wheel/offroad_experiments.py.txt',
+           ROOT/'docs/iterations/2026-11-25/source/src/spherical_wheel/offroad_control.py.txt',
+           ROOT/'docs/iterations/2026-11-25/configuration-study/source/map_source_snapshot/src/spherical_wheel/contact_sensing.py.txt',
+           ROOT/'src/spherical_wheel/gazebo/plant.py', ROOT/'gazebo/plugin/SphericalWheelBridge.cc']
+
+
+def serial(value):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    raise TypeError(type(value))
+
+
+def main():
+    OUT.mkdir(parents=True, exist_ok=True)
+    z = np.load(RUN/'rollout.npz')
+    t = z['time_s'].astype(float)
+    dt = float(np.median(np.diff(t)))
+    # Saved times are float32, so use rounded control-grid times for interval
+    # membership and durations. Original times remain in the CSV as well.
+    grid = np.round(t/.005)*.005
+    truth_loads = z['support_loads_N'].astype(float)
+    est_loads = z['estimated_support_loads_N'].astype(float)
+    true_total, est_total = truth_loads.sum(axis=1), est_loads.sum(axis=1)
+    true_share = truth_loads/np.maximum(true_total[:, None], 1e-12)
+    est_share = est_loads/np.maximum(est_total[:, None], 1e-12)
+    truth, estimated = truth_loads.argmax(axis=1), est_loads.argmax(axis=1)
+    # Matches the controller's touching test. Dominant labels are undefined
+    # while either report is unloaded and excluded from disagreement counts.
+    loaded = (true_total > .001) & (est_total > .001)
+    mismatch = loaded & (truth != estimated)
+    bounds = z['input_bounds'].astype(float)
+    if bounds.ndim == 1:
+        bounds = np.tile(bounds, (len(t), 1))
+    previous_bounds = np.maximum(bounds, 1e-12)
+    increments = {}
+    for key in ('command', 'input', 'lqr_command', 'rolling_feedforward', 'transition_command_delta'):
+        increments[key] = np.vstack((np.zeros(5), np.diff(z[key].astype(float), axis=0)))
+    normalized_command_step = np.abs(increments['command'])/previous_bounds
+    normalized_lqr_step = np.abs(increments['lqr_command'])/previous_bounds
+    normalized_ff_step = np.abs(increments['rolling_feedforward'])/previous_bounds
+    point_error = 1000*np.linalg.norm(z['estimated_contact_point_m']-z['contact_point_m'], axis=1)
+    normal_error = np.degrees(np.arccos(np.clip(np.sum(z['estimated_normal']*z['ground_normal'], axis=1), -1, 1)))
+    attitude = np.degrees(z['attitude_error_rad'])
+    tracking = 1000*np.linalg.norm(z['qpos'][:, :2]-z['reference_xy'], axis=1)
+    true_margin = np.sort(true_share, axis=1)[:, -1]-np.sort(true_share, axis=1)[:, -2]
+    est_margin = np.sort(est_share, axis=1)[:, -1]-np.sort(est_share, axis=1)[:, -2]
+
+    def window(a, b):
+        return (grid >= a-1e-9) & (grid <= b+1e-9)
+
+    def intervals(mask):
+        idx = np.where(mask)[0]
+        if not len(idx):
+            return []
+        groups = np.split(idx, np.where(np.diff(idx) != 1)[0]+1)
+        rows = []
+        for g in groups:
+            i, j = int(g[0]), int(g[-1])
+            rows.append({'first_index': i, 'last_index': j,
+                         'first_sample_time_s': float(grid[i]), 'last_sample_time_s': float(grid[j]),
+                         'sample_timestamp_span_ms': float(1000*(grid[j]-grid[i])),
+                         'sample_held_interval_end_s': float(grid[j]+.005),
+                         'sample_held_duration_ms': len(g)*5., 'sample_count': len(g),
+                         'truth_supports': sorted(set(NAMES[k] for k in truth[g])),
+                         'estimated_supports': sorted(set(NAMES[k] for k in estimated[g])),
+                         'max_point_error_mm': float(np.max(point_error[g])),
+                         'max_terrain_normal_error_deg': float(np.max(normal_error[g])),
+                         'max_requested_command_fraction': float(np.max(np.abs(z['command'][g])/bounds[g])),
+                         'belt_A_saturated_samples': int(np.sum(z['actuator_saturated'][g, 3]))})
+        return rows
+
+    def snapshot(i):
+        return {'index': int(i), 'time_s': float(grid[i]),
+                'truth_support': NAMES[truth[i]], 'estimated_support': NAMES[estimated[i]],
+                'truth_loads_N': truth_loads[i], 'estimated_loads_N': est_loads[i],
+                'truth_share_margin': true_margin[i], 'estimated_share_margin': est_margin[i],
+                'equivalent_point_error_mm': point_error[i], 'terrain_normal_error_deg': normal_error[i],
+                'attitude_error_deg': attitude[i], 'original_path_error_mm': tracking[i],
+                'command': z['command'][i], 'applied_input': z['input'][i],
+                'previous_applied_input': z['previous_applied_input'][i],
+                'lqr_command': z['lqr_command'][i], 'rolling_feedforward': z['rolling_feedforward'][i],
+                'transition_command_delta': z['transition_command_delta'][i],
+                'command_step_from_previous': increments['command'][i],
+                'lqr_step_from_previous': increments['lqr_command'][i],
+                'feedforward_step_from_previous': increments['rolling_feedforward'][i],
+                'transition_delta_step_from_previous': increments['transition_command_delta'][i],
+                'actuator_saturated': z['actuator_saturated'][i],
+                'allocation_authority_m_s': z['allocation_authority_m_s'][i],
+                'allocation_residual_rms_m_s': z['allocation_residual_rms_m_s'][i],
+                'truth_force_N': z['contact_force_N'][i], 'observer_force_N': z['observer_force_N'][i]}
+
+    win = window(28.8, 29.45)
+    onset = window(28.2, 28.9)
+    rollup = {}
+    for name, mask in [('transition', win), ('lead_in', onset), ('full_run', np.ones(len(t), bool))]:
+        valid = mask & loaded
+        g = np.where(valid)[0]
+        changes = np.r_[False, estimated[1:] != estimated[:-1]] & valid
+        true_changes = np.r_[False, truth[1:] != truth[:-1]] & valid
+        rollup[name] = {'window_s': [float(grid[np.where(mask)[0][0]]), float(grid[np.where(mask)[0][-1]])],
+                        'samples': int(mask.sum()), 'loaded_comparison_samples': int(valid.sum()),
+                        'mismatched_samples': int((mismatch & valid).sum()),
+                        'sample_held_mismatch_duration_ms': float(5*(mismatch & valid).sum()),
+                        'estimated_switches': int(changes.sum()), 'truth_switches': int(true_changes.sum()),
+                        'max_requested_command_step_fraction': float(normalized_command_step[g].max()),
+                        'max_lqr_step_fraction': float(normalized_lqr_step[g].max()),
+                        'max_feedforward_step_fraction': float(normalized_ff_step[g].max()),
+                        'max_attitude_error_deg': float(attitude[g].max()),
+                        'max_path_error_mm': float(tracking[g].max())}
+
+    lag_audit = []
+    for lag in range(7):
+        idx = np.where(win & loaded)[0]
+        idx = idx[idx >= lag]
+        lag_audit.append({'truth_shift_ms': lag*5,
+                          'meaning': 'Compare estimated(t) against truth(t-shift); endpoint truth only, not impulse-aligned truth.',
+                          'samples': len(idx), 'mismatches': int(np.sum(estimated[idx] != truth[idx-lag]))})
+
+    target = int(np.argmin(np.abs(t-28.975)))
+    mismatch_intervals = intervals(win & mismatch)
+    first_lean = {}
+    episode = window(28.2, 29.45)
+    for degrees in (3, 5, 8):
+        ix = np.where(episode & (attitude > degrees))[0]
+        first_lean[f'first_over_{degrees}_deg_s'] = float(grid[ix[0]]) if len(ix) else None
+    report = {
+        'scope': 'Offline audit of one existing saved Gazebo/DART adaptive-bounded run. No simulation, counterfactual control execution, or causal correction is performed.',
+        'case': 'plain_figure8 phase -1.00, hardware mode, bounded adaptive allocation',
+        'original_campaign': str(RUN.parent.parent.relative_to(ROOT)),
+        'timing': {
+            'command_interval_s': .005, 'saved_median_interval_s': dt, 'physics_step_s': .001,
+            'row_alignment': 'State, measurement, estimates and upcoming command are logged before plant.step. Commands at t are held to next row; no post-step truth row shift is present.',
+            'truth_contact_semantics': 'Bridge PostUpdate clears and replaces contact records each physics step; final 1ms substep contacts are pulled at the control boundary. They are not the preceding 5ms contact-impulse average.',
+            'observer_semantics': 'Momentum reconstruction uses preceding 5ms control interval and previous applied input, then first-order filtering of wrench at 100/s (time constant10ms). SupportLocator uses this filtered wrench with current state geometry.',
+            'filter_alpha_per_5ms': float(1-np.exp(-100*.005)),
+            'duration_semantics': 'Sample-held mismatch intervals are durations of the sampled label indicator, not proof of continuously wrong support throughout each interval. Physics contact identity can change between logged rows.',
+            'truth_reconstruction_limit': 'Historical NPZ omits per-physics-substep contacts and full contact impulse history; exact time-aligned instantaneous-versus-interval separation cannot be reconstructed offline.'},
+        'thresholds': {'loaded_comparison_threshold_N': .001, 'share_margin': 'Largest minus second-largest normalized load share; diagnostic only, not calibrated confidence/probability.'},
+        'summary': rollup, 'first_lean_thresholds_in_episode': first_lean,
+        'transition_mismatch_intervals': mismatch_intervals,
+        'target_snapshot': snapshot(target),
+        'target_neighbor_snapshots': [snapshot(target-1), snapshot(target+1)],
+        'target_mismatch_interval': next(v for v in mismatch_intervals if v['first_index'] <= target <= v['last_index']),
+        'lag_sensitivity': lag_audit,
+        'largest_requested_steps': [snapshot(int(i)) for i in np.where(win)[0][np.argsort(normalized_command_step[win].max(axis=1))[-6:][::-1]]],
+        'interpretation': [
+            'The selected28.975s mismatch is isolated at the 5ms sample grid, matching immediately before and after. It sits inside a burst of real shell/belt physical switching, plus estimation/support-information disagreements.',
+            'Lean-error growth precedes the first observed support disagreement in this transition window, so that mismatch cannot be inferred to initiate the entire excursion.',
+            'At the target the estimated point is close while all estimated load is assigned to belt A and all last-substep true load to shell A. Both normalized share margins equal1; this is not low reported confidence.',
+            'Large LQR/belt clipping is already present, so this audit supports a targeted sensitivity/control experiment for amplification or recovery, not a claim that the wrong identity alone caused the failure.',
+            'A fixed time shift does not remove the short switching-window discrepancy; endpoint/contact-filter distinctions remain. A physical probe should preserve observer updates and label any truth injection as diagnostic.',
+            'Original timed-path error, attitude and actuator saturation must remain primary comparisons; changing support identity can simultaneously change gains, allocation geometry and synchronization.'
+        ],
+        'input_files': [{'path': str(p.relative_to(ROOT)), 'sha256': hashlib.sha256(p.read_bytes()).hexdigest(), 'bytes': p.stat().st_size} for p in SOURCES],
+        'script_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+    }
+    (OUT/'audit.json').write_text(json.dumps(report, indent=2, default=serial)+'\n')
+    rows = []
+    for i in np.where(window(28.2, 30.05))[0]:
+        row = {'index': int(i), 'time_s': grid[i], 'saved_time_s': t[i],
+               'truth_support': NAMES[truth[i]], 'estimated_support': NAMES[estimated[i]],
+               'loaded': bool(loaded[i]), 'identity_mismatch': bool(mismatch[i]),
+               'truth_load_N': true_total[i], 'estimated_load_N': est_total[i],
+               'truth_share_margin': true_margin[i], 'estimated_share_margin': est_margin[i],
+               'point_error_mm': point_error[i], 'terrain_normal_error_deg': normal_error[i],
+               'attitude_error_deg': attitude[i], 'original_path_error_mm': tracking[i],
+               'command_step_fraction': normalized_command_step[i].max(),
+               'lqr_step_fraction': normalized_lqr_step[i].max(), 'feedforward_step_fraction': normalized_ff_step[i].max()}
+        for k in range(5):
+            for key in ('command', 'input', 'lqr_command', 'rolling_feedforward', 'transition_command_delta'):
+                row[f'{key}_{k}'] = z[key][i, k]
+        for k in range(4):
+            row[f'truth_load_{NAMES[k]}_N'] = truth_loads[i, k]
+            row[f'estimated_load_{NAMES[k]}_N'] = est_loads[i, k]
+        rows.append(row)
+    with (OUT/'samples.csv').open('w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
+
+    for name, a, b in [('transition_zoom', 28.85, 29.1), ('episode_context', 28.2, 30.05)]:
+        m = window(a, b)
+        fig, axes = plt.subplots(5, 1, figsize=(12, 12), sharex=True)
+        ax = axes[0]
+        ax.step(grid[m], truth[m], where='post', label='True last-substep support', linewidth=2)
+        ax.step(grid[m], estimated[m]+.08, where='post', label='Estimated support + display offset', alpha=.85)
+        ax.set_yticks(range(4), NAMES);ax.set_ylabel('Dominant patch');ax.legend(loc='upper left', fontsize=8)
+        for interval in mismatch_intervals:
+            for ax in axes:
+                ax.axvspan(interval['first_sample_time_s'], interval['sample_held_interval_end_s'], color='red', alpha=.08)
+        axes[1].plot(grid[m], true_total[m], label='True total load')
+        axes[1].plot(grid[m], est_total[m], label='Estimated total load')
+        axes[1].set_ylabel('Load, N');axes[1].legend(fontsize=8)
+        ax = axes[2]
+        ax.plot(grid[m], z['command'][m, 3], label='Belt-A requested')
+        ax.plot(grid[m], z['input'][m, 3], label='Belt-A applied')
+        ax.plot(grid[m], z['lqr_command'][m, 3], label='Belt-A LQR')
+        ax.plot(grid[m], z['rolling_feedforward'][m, 3], label='Belt-A feedforward')
+        ax.axhline(-.3, color='k', ls=':', lw=.8);ax.axhline(.3, color='k', ls=':', lw=.8)
+        ax.set_ylabel('Belt speed command, m/s');ax.legend(fontsize=8)
+        axes[3].plot(grid[m], z['command'][m, 1], label='Shell-A requested torque')
+        axes[3].plot(grid[m], z['input'][m, 1], label='Shell-A applied torque')
+        axes[3].axhline(-.6, color='k', ls=':', lw=.8);axes[3].axhline(.6, color='k', ls=':', lw=.8)
+        axes[3].set_ylabel('Shell-A torque, N m');axes[3].legend(fontsize=8)
+        axes[4].plot(grid[m], attitude[m], color='tab:orange', label='Reference-relative lean error')
+        axes[4].set_ylabel('Lean error, degrees')
+        twin = axes[4].twinx();twin.plot(grid[m], tracking[m], color='tab:green', label='Original-path error');twin.set_ylabel('Path error, mm')
+        for ax in axes:
+            ax.axvline(28.975, color='black', ls='--', lw=.8);ax.grid(alpha=.2)
+        axes[-1].set_xlabel('Simulation time, s; red shading = sampled-label disagreement')
+        fig.suptitle('Saved adaptive -1.00 event: support disagreement and actual command components\n'
+                     'Offline observed traces; no corrected-controller trajectory or causal conclusion', fontsize=13)
+        fig.tight_layout();fig.savefig(OUT/f'{name}.png', dpi=150);fig.savefig(OUT/f'{name}.pdf');plt.close(fig)
+    print(json.dumps({'output': str(OUT.relative_to(ROOT)), 'summary': rollup, 'first_lean': first_lean,
+                      'target_interval': report['target_mismatch_interval']}, indent=2, default=serial))
+
+
+if __name__ == '__main__':
+    main()

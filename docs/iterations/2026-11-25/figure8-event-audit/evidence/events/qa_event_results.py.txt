@@ -1,0 +1,110 @@
+"""I41 saved-data QA and descriptive chronology; no model or physics calls."""
+from __future__ import annotations
+import csv
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+OUT = HERE/'qa_stage'
+
+
+def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def load_npz(path):
+    with np.load(path) as z: return {k:z[k].copy() for k in z.files}
+def save(path, value): path.write_text(json.dumps(value, indent=2, allow_nan=False)+'\n')
+
+
+def main():
+    if OUT.exists(): raise FileExistsError('Preserve priorQAstage')
+    OUT.mkdir(); source = Path(__file__).resolve(); shutil.copyfile(source, OUT/source.name)
+    manifests = [(HERE/'selection_stage01_initial', 'selection_manifest.json'),
+                 (HERE/'selection_stage02_corrected', 'selection_manifest.json'),
+                 (HERE/'full_audit', 'artifact_manifest.json')]
+    counts = {}
+    for folder, name in manifests:
+        manifest = json.loads((folder/name).read_text())
+        for row in manifest['files']: assert sha(folder/row['path']) == row['sha256'], row
+        counts[str((folder/name).relative_to(HERE))] = len(manifest['files'])
+    correction = json.loads((HERE/'selection_correction.json').read_text())
+    assert correction['anchor_files_byte_identical'] and correction['changed_local_distance_samples'] == 0
+    report_path = HERE/'full_audit/report.json'; report = json.loads(report_path.read_text())
+    cases = {}
+    data = {}
+    for label in ('mars', 'flat'):
+        folder = Path('/home/parrwnago/active-spherical-wheel')/report[label]['source_folder']
+        actual = load_npz(folder/'precision.npz'); log = load_npz(folder/'rollout.npz')
+        signals = load_npz(HERE/'full_audit'/label/'signals.npz')
+        data[label] = (actual, log, signals)
+        for name, expected in report[label]['source_sha256'].items(): assert sha(folder/name) == expected
+        before_motion = actual['time_s'] < 1-1e-9
+        initial, start = 0, int(np.argmin(abs(actual['time_s']-1)))
+        cases[label] = {'initial_tracking_error_mm': float(signals['tracking_error_mm'][initial]),
+            'tracking_error_at_motion_start_mm': float(signals['tracking_error_mm'][start]),
+            'maximum_premotion_tracking_error_mm': float(signals['tracking_error_mm'][before_motion].max()),
+            'initial_reference_lean_error_deg': float(signals['reference_lean_error_deg'][initial]),
+            'initial_qpos': actual['exact_qpos'][initial].tolist(),
+            'initial_logged_DEM_normal': log['ground_normal'][initial].tolist(),
+            'authority_derived_samples': report[label]['authority_sample_count'],
+            'command_decomposition_max_normalized_roundoff': report[label]['command_reconstruction_max_normalized_error'],
+            'projection_window_boundary_samples': int(signals['projection_window_boundary'].sum())}
+    ma, ml, ms = data['mars']; fa, fl, fs = data['flat']
+    reference_checks = {key: bool(np.array_equal(ma[key], fa[key])) for key in (
+        'time_s', 'exact_reference_xy', 'exact_reference_velocity_m_s', 'exact_reference_acceleration_m_s2')}
+    assert all(reference_checks.values())
+    times = ma['time_s']; bounds = np.array([1.5,.6,.6,.3,.3])
+    chronology = []
+    # These descriptive snapshots supplement the predeclared event windows;
+    # they do not redefine the primary event or choose forecast anchors.
+    for stamp in (5.8, 6.6, 6.66, 6.725, 6.76, 6.825, 6.855, 6.86, 6.91, 6.96, 7.06):
+        i = int(np.argmin(abs(times-stamp)))
+        chronology.append({'time_s': float(times[i]),
+            'tracking_error_mm': float(ms['tracking_error_mm'][i]),
+            'local_path_distance_mm': float(ms['local_path_distance_mm'][i]),
+            'signed_normal_error_mm': float(ms['signed_normal_error_mm'][i]),
+            'alongtrack_error_mm': float(ms['alongtrack_error_mm'][i]),
+            'actual_speed_mm_s': float(ms['actual_speed_mm_s'][i]),
+            'reference_speed_mm_s': float(ms['reference_speed_mm_s'][i]),
+            'true_dominant_patch_code': int(ms['true_dominant_patch_code'][i]),
+            'estimated_dominant_patch_code': int(ms['estimated_dominant_patch_code'][i]),
+            'true_patch_loads_N': ma['truth_patch_loads_N'][i].tolist(),
+            'estimated_patch_loads_N': ml['estimated_support_loads_N'][i].tolist(),
+            'logged_DEM_slope_deg': float(ms['logged_DEM_tangent_slope_deg'][i]),
+            'estimated_vs_logged_DEM_normal_difference_deg': float(ms['estimated_vs_logged_DEM_normal_error_deg'][i]),
+            'requested_input': ma['exact_native_requested'][i].tolist(),
+            'applied_input': ma['exact_applied'][i].tolist(),
+            'sync_weights': ml['sync_weights'][i].tolist(),
+            'sync_command_delta': ml['transition_command_delta'][i].tolist(),
+            'gain_relative_Frobenius_step': float(ms['gain_relative_frobenius_step'][i]),
+            'contact_point_difference_mm': float(ms['contact_equivalent_point_gap_mm'][i])})
+    onset = report['mars']['primary_deviation']['start_s']
+    pre = (times >= onset-.2-1e-9) & (times < onset-1e-9)
+    before = (times >= onset-1.-1e-9) & (times < onset-1e-9)
+    sync_pre = {'preceding200ms_max_sync_weight': float(ms['maximum_sync_weight'][pre].max()),
+                'preceding200ms_max_sync_delta_over_bound': float(ms['sync_delta_max_normalized'][pre].max()),
+                'preceding1s_max_sync_weight': float(ms['maximum_sync_weight'][before].max()),
+                'preceding1s_max_sync_delta_over_bound': float(ms['sync_delta_max_normalized'][before].max())}
+    result = {'iteration': 'I-41', 'scope': 'Saved-data QA/descriptive snapshots only; no physics, model, geometry or forecast calls.',
+        'verified_manifests': counts, 'source_selection_correction': correction,
+        'reference_arrays_bit_equal': reference_checks, 'initial_condition_comparison': cases,
+        'initial_condition_limit': 'Flat removes relief/rocks/lava and starts in its appropriate different balance pose/observer condition. Comparisons do not isolate a small slope or guarantee startup effects have washed out. Positive flat geometric overshoot demonstrates relief is not necessary for that phenomenon; eventwise Mars-minus-flat magnitudes are not a sole terrain effect.',
+        'turn_comparison': report['turn_comparison'],
+        'turn_interpretation': 'First3Marscomponentovershootsarezero althoughtrackinglags/cutsreference; last3positive. Flat6componentextremaallhavepositivegeometricovershoot. Terrain doesnotuniformlyincreaseeveryovershoot.',
+        'primary_onset_preceding_sync': sync_pre,
+        'chronology': chronology,
+        'normal_caveat': 'Loggednormal is localDEMclosest-point tangent, notforce-weightedDARTcollisionnormal. Differences cannotbeclaimedobserver-vs-physical-contact error.',
+        'authority_definition': 'Jxy=sum_i(load_i/sumload)*[contactJacobianXY columns6:9, beltA/B carrierY axes]; singularvaluesofJxy*diag(5,5,5,.3,.3). Estimatedcontactpoints/loadsoncontactfreegeometry,20Hzwholetrace+5mseventwindows. Declaredrate scales are assumptions, not measured actuator speed limits.',
+        'source_sha256': sha(source), 'full_audit_report_sha256': sha(report_path)}
+    save(OUT/'report.json', result)
+    with (OUT/'onset_chronology.csv').open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(chronology[0])); writer.writeheader()
+        for row in chronology:
+            writer.writerow({k:json.dumps(v) if isinstance(v,list) else v for k,v in row.items()})
+    files = [p for p in OUT.iterdir() if p.is_file()]
+    save(OUT/'artifact_manifest.json', {'files':[{'path':p.name,'bytes':p.stat().st_size,'sha256':sha(p)} for p in files]})
+    print(json.dumps({'initial_conditions':cases,'pre_onset_sync':sync_pre,'verified_manifests':counts},indent=2))
+
+
+if __name__ == '__main__': main()

@@ -1,0 +1,67 @@
+{
+  "status": "material_issue_resolved_precision_clarifications_only",
+  "reviewed_guide_sha256": "8bc3812204331d09ee2157cf356747b4dbd6f4f704c4ebbceebd850c16f262b7",
+  "created_utc": "2026-11-26T08:21:11.308601+00:00",
+  "reviewer_scope": [
+    "authority",
+    "authority_math",
+    "authority_event",
+    "turns",
+    "tradeoffs",
+    "turn_tradeoffs",
+    "next",
+    "qa1"
+  ],
+  "material_findings": [
+    {
+      "page_id": "turn_tradeoffs",
+      "page": 25,
+      "issue": "Early belt demand was not lower than angle-only; same settings do not imply identical closed-loop angle traces.",
+      "demand_window_s": [
+        6.6,
+        6.9
+      ],
+      "angle_only": {
+        "belt_A_max_m_s": 0.3762693887933399,
+        "local_path_rms_mm": 14.251872439865773,
+        "raw_peak_lean_deg": 5.305166929056756
+      },
+      "consistent_rate": {
+        "belt_A_max_m_s": 0.49062016877226755,
+        "local_path_rms_mm": 14.642776820351092,
+        "raw_peak_lean_deg": 3.677860438598581
+      },
+      "resolved": true,
+      "resolution": "Latest guide correctly states improved raw-reference lean but increased belt demand and differing closed-loop angle histories."
+    }
+  ],
+  "precision_clarifications": [
+    {
+      "page_id": "authority_event",
+      "issue": "State S=diag(5,5)rad/s and vref; explicitly label reconstructed float32-derived rates vs actual logged rates."
+    },
+    {
+      "page_id": "authority_math",
+      "issue": "Add m/rad to physical singular values."
+    },
+    {
+      "page_id": "turns",
+      "issue": "100ms dwell applies to reversal timing; geometric overshoot uses fixed window."
+    }
+  ],
+  "all_other_motion_claims_verified": true,
+  "root_content_edited": false,
+  "new_simulations": 0,
+  "scientific_reduction_reruns": 0,
+  "evidence_sha256": {
+    "results/presentation_preparation_20261126/motion_audit/motion_audit.json": "fa82badcbf80413685c64c84d7f55fccd27ca2e2c43006af25d685b425ace41a",
+    "results/tilt_reference_20261125/analysis/stage01/report.json": "4aaf39a1c554ed7c8a161af8a3ff7a6c398884cf609f799e80f183bde8b63898",
+    "results/figure8_event_audit_20261125/events/full_audit/report.json": "f11057851a471e335b17d9695dc53032b7c757a068d018447d5ccb7f5f126fa2",
+    "results/handoff_factorial_20261125/analysis/turn_addendum/report.json": "51ab950dc0bd2ccadad41e6d98f11e1149550f8499172dc70c64153150d996f7",
+    "ITERATION_LOG.md": "7040e0cc272a4db51c9373206a79dcdb5a3852397188868e9f4bf3c456e3f7d6"
+  },
+  "markdown_sha256": "cc5d7e54d6923427386f9366bfc0efc51465f2c56ebc3fd07f5d09e5cebdbe27",
+  "initial_material_finding_guide_sha256": "03fb09e3fbd031ae5e8fec9ad488427217bf751b4525254626682aa644772af1",
+  "resolution_checked_utc": "2026-11-26T08:21:47.418056+00:00",
+  "review_during_authoring_note": "Guide changed while review was being saved; material finding refers to initial03fb09 version, resolution checked against latest captured bytes. No content edited by reviewer."
+}

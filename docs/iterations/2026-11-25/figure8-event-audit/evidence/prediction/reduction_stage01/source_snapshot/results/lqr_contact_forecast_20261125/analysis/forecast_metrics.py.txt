@@ -1,0 +1,201 @@
+"""Saved-data metrics for the I40 native-LQR contact forecast audit.
+
+No controller or predictor is called here. Contact labels are evaluation
+reductions; a geometric eligibility warning is never called a force forecast.
+"""
+from __future__ import annotations
+
+import numpy as np
+
+
+PATCHES = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+
+
+def distribution(values):
+    """Finite-only descriptive statistics, with explicit empty denominator."""
+    values = np.asarray(list(values), dtype=float)
+    values = values[np.isfinite(values)]
+    if not len(values):
+        return {'n': 0, 'median': None, 'p95': None, 'max': None, 'mean': None}
+    return {'n': int(len(values)), 'median': float(np.median(values)),
+            'p95': float(np.percentile(values, 95)), 'max': float(np.max(values)),
+            'mean': float(np.mean(values))}
+
+
+def quaternion_angle_deg(first, second):
+    first, second = np.asarray(first, float), np.asarray(second, float)
+    first, second = first/np.linalg.norm(first), second/np.linalg.norm(second)
+    return float(np.degrees(2*np.arccos(np.clip(abs(first@second), 0., 1.))))
+
+
+def active_set(loads, threshold_N):
+    loads = np.asarray(loads, float)
+    return tuple(PATCHES[i] for i in np.flatnonzero(loads >= threshold_N))
+
+
+def dominant(loads, threshold_N=.05):
+    loads = np.asarray(loads, float)
+    return PATCHES[int(np.argmax(loads))] if float(np.max(loads)) >= threshold_N else 'none'
+
+
+def family(patch):
+    return patch.split('_', 1)[0] if patch != 'none' else 'none'
+
+
+def stable_dominant_family_events(times, loads, threshold_N, dwell_s=.015):
+    """Family changes with a duration-based dwell; shellA/B remain one family."""
+    times, loads = np.asarray(times, float), np.asarray(loads, float)
+    labels = [family(dominant(row, threshold_N)) for row in loads]
+    runs, start = [], 0
+    for stop in range(1, len(times)+1):
+        if stop < len(times) and labels[stop] == labels[start]:
+            continue
+        runs.append({'start_s': float(times[start]), 'end_s': float(times[stop-1]),
+                     'duration_s': float(times[stop-1]-times[start]),
+                     'sample_count': stop-start, 'family': labels[start]})
+        start = stop
+    stable = [r for r in runs if r['duration_s'] >= dwell_s-1e-10]
+    events, previous = [], None
+    for run in stable:
+        if previous is not None and run['family'] != previous['family']:
+            events.append({'time_s': run['start_s'], 'from_family': previous['family'],
+                           'to_family': run['family'],
+                           'is_shell_belt_handover': {run['family'], previous['family']} == {'shell', 'belt'}})
+        previous = run
+    return {'raw_transition_count': max(0, len(runs)-1), 'stable_events': events,
+            'stable_shell_belt_handover_count': sum(r['is_shell_belt_handover'] for r in events),
+            'end_run_censored': bool(runs and runs[-1]['duration_s'] < dwell_s-1e-10)}
+
+
+def contact_comparison(predicted, actual, threshold_N):
+    """Thresholded patch sets; empty-set Jaccard/precision/recall stay undefined."""
+    p, a = set(active_set(predicted, threshold_N)), set(active_set(actual, threshold_N))
+    union, intersection = p | a, p & a
+    return {'predicted_set': sorted(p), 'actual_set': sorted(a),
+            'exact_set_agreement': p == a,
+            'loaded_union_count': len(union), 'intersection_count': len(intersection),
+            'jaccard': len(intersection)/len(union) if union else None,
+            'precision': len(intersection)/len(p) if p else None,
+            'recall': len(intersection)/len(a) if a else None,
+            'predicted_multiple_loaded': len(p) >= 2, 'actual_multiple_loaded': len(a) >= 2}
+
+
+def equivalent_point(loads, points):
+    loads, points = np.asarray(loads, float), np.asarray(points, float)
+    valid = (loads > 0) & np.isfinite(points).all(axis=1)
+    if not np.any(valid) or loads[valid].sum() <= 1e-9:
+        return None
+    return np.average(points[valid], weights=loads[valid], axis=0)
+
+
+def support_runs(times, loads, threshold_N):
+    """Contiguous equal loaded sets. Duration is endpoint span, not N*dt."""
+    times, loads = np.asarray(times, float), np.asarray(loads, float)
+    if not len(times):
+        return []
+    labels = [active_set(row, threshold_N) for row in loads]
+    runs = []
+    start = 0
+    for stop in range(1, len(times)+1):
+        if stop < len(times) and labels[stop] == labels[start]:
+            continue
+        runs.append({'start_index': start, 'end_index': stop-1,
+                     'start_s': float(times[start]), 'end_s': float(times[stop-1]),
+                     'duration_s': float(times[stop-1]-times[start]),
+                     'sample_count': stop-start, 'patches': list(labels[start])})
+        start = stop
+    return runs
+
+
+def stable_events(times, loads, threshold_N, dwell_s=.015, initial_patches=None):
+    """Changes between observed stable loaded sets; onset is backdated.
+
+    Short intervening runs are recorded as raw transitions but do not establish
+    a new stable set. The first stable set supplies context, not an incoming
+    event unless initial_patches supplies current-model context at a forecast
+    anchor. A final run shorter than dwell is censored, never inferred stable.
+    """
+    runs = support_runs(times, loads, threshold_N)
+    stable = [r for r in runs if r['duration_s'] >= dwell_s-1e-10]
+    events = []
+    previous = None if initial_patches is None else {'patches': list(initial_patches)}
+    for run in stable:
+        current = set(run['patches'])
+        if previous is not None:
+            prior = set(previous['patches'])
+            if current != prior:
+                events.append({'time_s': run['start_s'], 'confirmed_at_s': run['start_s']+dwell_s,
+                               'from_patches': sorted(prior), 'to_patches': sorted(current),
+                               'incoming_patches': sorted(current-prior),
+                               'outgoing_patches': sorted(prior-current),
+                               'dwell_s': float(dwell_s)})
+        previous = run
+    return {'raw_run_count': len(runs), 'raw_transition_count': max(0, len(runs)-1),
+            'stable_runs': stable, 'events': events,
+            'end_run_censored': bool(runs and runs[-1]['duration_s'] < dwell_s-1e-10)}
+
+
+def incoming_events(events):
+    return [{'time_s': event['time_s'], 'patch': patch}
+            for event in events for patch in event['incoming_patches']]
+
+
+def earliest_by_patch(events, start_s, end_s):
+    out = {}
+    for event in events:
+        if event['time_s'] <= start_s+1e-9 or event['time_s'] > end_s+1e-9:
+            continue
+        patch = event['patch']
+        if patch not in out or event['time_s'] < out[patch]:
+            out[patch] = float(event['time_s'])
+    return out
+
+
+def warning_confusion(warnings, actual_incoming):
+    """Counts for a diagnostic incoming-load proxy, not calibrated probability."""
+    predicted, actual = set(warnings), set(actual_incoming)
+    tp, fp, fn = len(predicted & actual), len(predicted-actual), len(actual-predicted)
+    return {'tp': tp, 'fp': fp, 'fn': fn,
+            'precision': tp/(tp+fp) if tp+fp else None,
+            'recall': tp/(tp+fn) if tp+fn else None,
+            'warning_patches': sorted(predicted), 'actual_incoming_patches': sorted(actual)}
+
+
+def merge_confusions(rows):
+    tp = sum(row['tp'] for row in rows)
+    fp = sum(row['fp'] for row in rows)
+    fn = sum(row['fn'] for row in rows)
+    return {'anchor_patch_tp': tp, 'anchor_patch_fp': fp, 'anchor_patch_fn': fn,
+            'precision': tp/(tp+fp) if tp+fp else None,
+            'recall': tp/(tp+fn) if tp+fn else None,
+            'independence_limit': 'Anchors overlap and are not independent transfers.'}
+
+
+def self_check():
+    """Small adversarial arithmetic checks; no physics or unit-suite claim."""
+    # Three samples span10ms and cannot pass15ms dwell. Four span15ms.
+    t = np.arange(9)*.005
+    loads = np.zeros((9, 4)); loads[:5, 0] = 10; loads[5:, 2] = 10
+    events = stable_events(t, loads, 1., .015)
+    assert len(events['events']) == 1
+    assert events['events'][0]['incoming_patches'] == ['belt_A']
+    assert abs(events['events'][0]['time_s']-.025) < 1e-12
+    truncated = stable_events(t[:-1], loads[:-1], 1., .015)
+    assert not truncated['events'] and truncated['end_run_censored']
+    near_anchor = stable_events(t[:5], loads[[0, 5, 6, 7, 8]], 1., .015,
+                                initial_patches=['shell_A'])
+    assert near_anchor['events'][0]['incoming_patches'] == ['belt_A']
+    assert abs(near_anchor['events'][0]['time_s']-.005) < 1e-12
+    empty = contact_comparison(np.zeros(4), np.zeros(4), .05)
+    assert empty['exact_set_agreement'] and empty['jaccard'] is None
+    assert contact_comparison([10, 0, 0, 0], [0, 0, 10, 0], 1.)['jaccard'] == 0
+    assert warning_confusion([], [])['recall'] is None
+    assert warning_confusion(['shell_A'], ['belt_A'])['fp'] == 1
+    assert abs(quaternion_angle_deg([1, 0, 0, 0], [-1, 0, 0, 0])) < 1e-12
+    return {'arithmetic_scope': 'dwell/censoring/empty-denominator/sign-invariant orientation',
+            'passed': True, 'new_physics_calls': 0, 'new_unit_test_suite': False}
+
+
+if __name__ == '__main__':
+    import json
+    print(json.dumps(self_check(), indent=2))

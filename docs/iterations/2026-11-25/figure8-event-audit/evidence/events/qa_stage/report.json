@@ -1,0 +1,774 @@
+{
+  "iteration": "I-41",
+  "scope": "Saved-data QA/descriptive snapshots only; no physics, model, geometry or forecast calls.",
+  "verified_manifests": {
+    "selection_stage01_initial/selection_manifest.json": 10,
+    "selection_stage02_corrected/selection_manifest.json": 10,
+    "full_audit/artifact_manifest.json": 23
+  },
+  "source_selection_correction": {
+    "old_stage_preserved": true,
+    "old_primary_selection_manifest_sha256": "3d9efabb63116b3ce6b21e49ac0fd3ad5991a6394ab2546a79e29e83054224bf",
+    "new_selection_manifest_sha256": "3e7de96fbb2aaee31132836d8d61600477d6910f21026cc2ef3e947f4e86e9a1",
+    "anchor_files_byte_identical": true,
+    "old_anchor_sha256": "9f3e0e32d70a0c88fd638bafeebf1366796b67b7c58767301b4df2e07b228057",
+    "corrected_anchor_sha256": "9f3e0e32d70a0c88fd638bafeebf1366796b67b7c58767301b4df2e07b228057",
+    "primary_onset_unchanged": true,
+    "primary_onset_s": 6.859999999999876,
+    "changed_local_distance_samples": 0,
+    "max_local_distance_change_mm": 0.0,
+    "old_boundary_samples": 0,
+    "new_boundary_samples": 0,
+    "reference_turn_times_unchanged": true,
+    "actual_reversal_lags_unchanged": true,
+    "source_stages": "Original source/results/tests remain underrootandexplicitselection_stage01_initial; correctedsource+adversarialchecks inselection_stage02_source, newcalculationinselection_stage02_corrected.",
+    "no_new_physics": true
+  },
+  "reference_arrays_bit_equal": {
+    "time_s": true,
+    "exact_reference_xy": true,
+    "exact_reference_velocity_m_s": true,
+    "exact_reference_acceleration_m_s2": true
+  },
+  "initial_condition_comparison": {
+    "mars": {
+      "initial_tracking_error_mm": 15.808740942252369,
+      "tracking_error_at_motion_start_mm": 12.327959843496402,
+      "maximum_premotion_tracking_error_mm": 16.042009261056165,
+      "initial_reference_lean_error_deg": 0.0,
+      "initial_qpos": [
+        -1.5948048038083584,
+        9.58506928579372,
+        1.2470516718313842,
+        0.9219696673116444,
+        -0.06415891978862295,
+        0.003715641125039446,
+        0.3818923403000417,
+        0.7843127529839619,
+        5.546263159914077e-11,
+        1.4216099198130548e-11
+      ],
+      "initial_logged_DEM_normal": [
+        0.04330538958311081,
+        -0.12445735931396484,
+        0.9912794828414917
+      ],
+      "authority_derived_samples": 4634,
+      "command_decomposition_max_normalized_roundoff": 6.028304208408978e-06,
+      "projection_window_boundary_samples": 0
+    },
+    "flat": {
+      "initial_tracking_error_mm": 4.440892098500626e-13,
+      "tracking_error_at_motion_start_mm": 3.0109248427834245e-10,
+      "maximum_premotion_tracking_error_mm": 2.9887203822909214e-10,
+      "initial_reference_lean_error_deg": 0.0,
+      "initial_qpos": [
+        -1.6000000000000005,
+        9.6,
+        1.248097894523294,
+        0.9238795325112867,
+        3.6542999248021464e-14,
+        -8.822260439449217e-14,
+        0.38268343236508984,
+        0.900000000000191,
+        5.089837261070443e-28,
+        -1.4065725798357516e-29
+      ],
+      "initial_logged_DEM_normal": [
+        -0.0,
+        -0.0,
+        1.0
+      ],
+      "authority_derived_samples": 4093,
+      "command_decomposition_max_normalized_roundoff": 1.4531217016703717e-08,
+      "projection_window_boundary_samples": 17
+    }
+  },
+  "initial_condition_limit": "Flat removes relief/rocks/lava and starts in its appropriate different balance pose/observer condition. Comparisons do not isolate a small slope or guarantee startup effects have washed out. Positive flat geometric overshoot demonstrates relief is not necessary for that phenomenon; eventwise Mars-minus-flat magnitudes are not a sole terrain effect.",
+  "turn_comparison": [
+    {
+      "event_id": "turn_01_y",
+      "time_s": 11.775142746922178,
+      "reference_speed_mm_s": 58.08306667551488,
+      "mars_geometric_overshoot_mm": 0.0,
+      "flat_geometric_overshoot_mm": 8.028499943645073,
+      "mars_reversal_lag_s": 1.100938360308028,
+      "flat_reversal_lag_s": 0.19308224315998146,
+      "mars_post_peak_local_error_mm": 11.761806436356819,
+      "flat_post_peak_local_error_mm": 14.376164792976773
+    },
+    {
+      "event_id": "turn_02_x",
+      "time_s": 15.377446019513739,
+      "reference_speed_mm_s": 112.41432428551782,
+      "mars_geometric_overshoot_mm": 0.0,
+      "flat_geometric_overshoot_mm": 15.615055248909382,
+      "mars_reversal_lag_s": 0.018064769964869498,
+      "flat_reversal_lag_s": -0.028812751308521456,
+      "mars_post_peak_local_error_mm": 25.987187051855685,
+      "flat_post_peak_local_error_mm": 16.892486738839047
+    },
+    {
+      "event_id": "turn_03_y",
+      "time_s": 18.30073407696684,
+      "reference_speed_mm_s": 90.3340138591643,
+      "mars_geometric_overshoot_mm": 0.0,
+      "flat_geometric_overshoot_mm": 23.43759593581396,
+      "mars_reversal_lag_s": -0.46915226135824284,
+      "flat_reversal_lag_s": 0.17247248112396818,
+      "mars_post_peak_local_error_mm": 29.867737473711845,
+      "flat_post_peak_local_error_mm": 23.43958303228986
+    },
+    {
+      "event_id": "turn_04_y",
+      "time_s": 23.69926592303316,
+      "reference_speed_mm_s": 90.33401385916424,
+      "mars_geometric_overshoot_mm": 9.836278500703344,
+      "flat_geometric_overshoot_mm": 28.959430560659527,
+      "mars_reversal_lag_s": -0.44434883374383105,
+      "flat_reversal_lag_s": 0.14980453392652038,
+      "mars_post_peak_local_error_mm": 80.20545661859498,
+      "flat_post_peak_local_error_mm": 33.4730635054321
+    },
+    {
+      "event_id": "turn_05_x",
+      "time_s": 26.622553980486252,
+      "reference_speed_mm_s": 112.41432428551778,
+      "mars_geometric_overshoot_mm": 28.022318702334736,
+      "flat_geometric_overshoot_mm": 14.968851465476884,
+      "mars_reversal_lag_s": -0.5180118656368222,
+      "flat_reversal_lag_s": 0.0021028329197569917,
+      "mars_post_peak_local_error_mm": 22.27200626701859,
+      "flat_post_peak_local_error_mm": 15.953241588086822
+    },
+    {
+      "event_id": "turn_06_y",
+      "time_s": 30.224857253077822,
+      "reference_speed_mm_s": 58.083066675514836,
+      "mars_geometric_overshoot_mm": 60.20396490699831,
+      "flat_geometric_overshoot_mm": 26.491575973400572,
+      "mars_reversal_lag_s": 0.5689890958972583,
+      "flat_reversal_lag_s": -0.025950113893163262,
+      "mars_post_peak_local_error_mm": 60.22499659259513,
+      "flat_post_peak_local_error_mm": 26.475827264484117
+    }
+  ],
+  "turn_interpretation": "First3Marscomponentovershootsarezero althoughtrackinglags/cutsreference; last3positive. Flat6componentextremaallhavepositivegeometricovershoot. Terrain doesnotuniformlyincreaseeveryovershoot.",
+  "primary_onset_preceding_sync": {
+    "preceding200ms_max_sync_weight": 1.0,
+    "preceding200ms_max_sync_delta_over_bound": 0.16602431734402975,
+    "preceding1s_max_sync_weight": 1.0,
+    "preceding1s_max_sync_delta_over_bound": 0.23852715889612836
+  },
+  "chronology": [
+    {
+      "time_s": 5.799999999999899,
+      "tracking_error_mm": 6.694636268546706,
+      "local_path_distance_mm": 6.546646981351033,
+      "signed_normal_error_mm": 6.546435369150979,
+      "alongtrack_error_mm": -1.4008350101528937,
+      "actual_speed_mm_s": 39.62175464339008,
+      "reference_speed_mm_s": 33.10535476147367,
+      "true_dominant_patch_code": 0,
+      "estimated_dominant_patch_code": 0,
+      "true_patch_loads_N": [
+        17.744764283790566,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        17.854387283325195,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 7.290751934051514,
+      "estimated_vs_logged_DEM_normal_difference_deg": 1.1356621681467625,
+      "requested_input": [
+        -0.08032262352903355,
+        -0.028322806716561344,
+        -0.017462171750886372,
+        0.039811568998540624,
+        0.0
+      ],
+      "applied_input": [
+        -0.08032262352903355,
+        -0.028322806716561344,
+        -0.017462171750886372,
+        0.039811568998540624,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.589777410030365,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.039811570197343826,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.0015037663257834039,
+      "contact_point_difference_mm": 2.0938676012857957
+    },
+    {
+      "time_s": 6.5999999999998815,
+      "tracking_error_mm": 17.24747973939043,
+      "local_path_distance_mm": 5.474633489320839,
+      "signed_normal_error_mm": -5.517515448173781,
+      "alongtrack_error_mm": -16.341131559345794,
+      "actual_speed_mm_s": 39.1907604823238,
+      "reference_speed_mm_s": 42.44494811033563,
+      "true_dominant_patch_code": 0,
+      "estimated_dominant_patch_code": 0,
+      "true_patch_loads_N": [
+        18.035793166056077,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        18.033679962158203,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 7.290751934051514,
+      "estimated_vs_logged_DEM_normal_difference_deg": 3.6827095910678973,
+      "requested_input": [
+        -0.04381509367491138,
+        -0.016718176582322372,
+        0.004943090106546248,
+        -0.0012776058671631067,
+        0.0
+      ],
+      "applied_input": [
+        -0.04381509367491138,
+        -0.016718176582322372,
+        0.004943090106546248,
+        -0.0012776058671631067,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.9996135234832764,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        -0.0012776058865711093,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.0025312365378545297,
+      "contact_point_difference_mm": 0.19014034823337284
+    },
+    {
+      "time_s": 6.65999999999988,
+      "tracking_error_mm": 17.421495817559776,
+      "local_path_distance_mm": 6.7504785143244295,
+      "signed_normal_error_mm": -6.793334875672797,
+      "alongtrack_error_mm": -16.042416207922685,
+      "actual_speed_mm_s": 72.38005577986647,
+      "reference_speed_mm_s": 43.14532978755018,
+      "true_dominant_patch_code": 0,
+      "estimated_dominant_patch_code": 0,
+      "true_patch_loads_N": [
+        17.888486158821692,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        17.917644500732422,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 7.290751934051514,
+      "estimated_vs_logged_DEM_normal_difference_deg": 3.215232728238234,
+      "requested_input": [
+        -0.013740188613645316,
+        -0.01574702350403944,
+        0.0019787398695217447,
+        -0.003857705400238256,
+        0.0
+      ],
+      "applied_input": [
+        -0.013740188613645316,
+        -0.01574702350403944,
+        0.0019787398695217447,
+        -0.003857705400238256,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        -0.003857705509290099,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.004220778259110492,
+      "contact_point_difference_mm": 0.6338204434140733
+    },
+    {
+      "time_s": 6.724999999999879,
+      "tracking_error_mm": 16.28629968470366,
+      "local_path_distance_mm": 10.259461468689189,
+      "signed_normal_error_mm": -10.28744978581683,
+      "alongtrack_error_mm": -12.625843905429681,
+      "actual_speed_mm_s": 127.37599001191246,
+      "reference_speed_mm_s": 43.90219377874336,
+      "true_dominant_patch_code": 0,
+      "estimated_dominant_patch_code": 2,
+      "true_patch_loads_N": [
+        17.835392078931076,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        0.0,
+        0.0,
+        18.90655517578125,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 12.054045677185059,
+      "estimated_vs_logged_DEM_normal_difference_deg": 8.713544549319373,
+      "requested_input": [
+        -0.04053182332545302,
+        0.04606959441953769,
+        0.014382953865841559,
+        0.4205328576948129,
+        0.0
+      ],
+      "applied_input": [
+        -0.04053182332545302,
+        0.04606959441953769,
+        0.014382953865841559,
+        0.3,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.1609923056179235,
+      "contact_point_difference_mm": 0.4619373776662963
+    },
+    {
+      "time_s": 6.759999999999878,
+      "tracking_error_mm": 15.110564447728231,
+      "local_path_distance_mm": 11.621405549067653,
+      "signed_normal_error_mm": -11.638255110256189,
+      "alongtrack_error_mm": -9.637436169311009,
+      "actual_speed_mm_s": 147.03642730979846,
+      "reference_speed_mm_s": 44.308771346348315,
+      "true_dominant_patch_code": 0,
+      "estimated_dominant_patch_code": 0,
+      "true_patch_loads_N": [
+        17.534027980352917,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        17.597183227539062,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 12.054045677185059,
+      "estimated_vs_logged_DEM_normal_difference_deg": 8.211457287736408,
+      "requested_input": [
+        -0.11700364358030013,
+        -0.009640379103125957,
+        0.010414066978636956,
+        -0.023540437850258625,
+        0.0
+      ],
+      "applied_input": [
+        -0.11700364358030013,
+        -0.009640379103125957,
+        0.010414066978636956,
+        -0.023540437850258625,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        -0.0235404372215271,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.0028549478284624567,
+      "contact_point_difference_mm": 1.323348829851935
+    },
+    {
+      "time_s": 6.824999999999877,
+      "tracking_error_mm": 14.816273702722368,
+      "local_path_distance_mm": 14.750046340698143,
+      "signed_normal_error_mm": -14.75042727287543,
+      "alongtrack_error_mm": -1.3952998608166889,
+      "actual_speed_mm_s": 153.1980728946894,
+      "reference_speed_mm_s": 45.06175197705662,
+      "true_dominant_patch_code": 2,
+      "estimated_dominant_patch_code": 2,
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        20.8722477626769,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        0.0,
+        0.0,
+        18.627656936645508,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 12.597207069396973,
+      "estimated_vs_logged_DEM_normal_difference_deg": 0.21265979479298983,
+      "requested_input": [
+        -0.2302161380392005,
+        0.10636418100285082,
+        0.011956034587499303,
+        0.8347418461273584,
+        0.0
+      ],
+      "applied_input": [
+        -0.2302161380392005,
+        0.10636418100285082,
+        0.011956034587499303,
+        0.3,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.19236385123224656,
+      "contact_point_difference_mm": 0.13893391095739496
+    },
+    {
+      "time_s": 6.854999999999876,
+      "tracking_error_mm": 19.777813175263862,
+      "local_path_distance_mm": 19.77446295741992,
+      "signed_normal_error_mm": -19.774491650362883,
+      "alongtrack_error_mm": 0.362455466739655,
+      "actual_speed_mm_s": 182.5193034723411,
+      "reference_speed_mm_s": 45.40825839726301,
+      "true_dominant_patch_code": 2,
+      "estimated_dominant_patch_code": 2,
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        15.191188591925972,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        0.0,
+        0.0,
+        18.296499252319336,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 12.597207069396973,
+      "estimated_vs_logged_DEM_normal_difference_deg": 0.05688929589075494,
+      "requested_input": [
+        -0.27258158863411297,
+        0.0614489679648577,
+        -0.026168954357422006,
+        0.8142649814544745,
+        0.0
+      ],
+      "applied_input": [
+        -0.27258158863411297,
+        0.0614489679648577,
+        -0.026168954357422006,
+        0.3,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.3499998152256012,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.010286254808306694,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.0003522988624882596,
+      "contact_point_difference_mm": 0.19303241217284145
+    },
+    {
+      "time_s": 6.859999999999876,
+      "tracking_error_mm": 20.81248966258995,
+      "local_path_distance_mm": 20.807537155643548,
+      "signed_normal_error_mm": -20.80757817843977,
+      "alongtrack_error_mm": 0.45212421250219115,
+      "actual_speed_mm_s": 243.5759105482201,
+      "reference_speed_mm_s": 45.465941580780175,
+      "true_dominant_patch_code": 2,
+      "estimated_dominant_patch_code": 0,
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        14.532933417908005,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        16.42138671875,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 12.597207069396973,
+      "estimated_vs_logged_DEM_normal_difference_deg": 0.03834172758555814,
+      "requested_input": [
+        -0.3666539230125782,
+        -0.5686373937806255,
+        -0.07518210405440255,
+        0.0,
+        0.0
+      ],
+      "applied_input": [
+        -0.3666539230125782,
+        -0.5686373937806255,
+        -0.07518210405440255,
+        0.0,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.23800375323095901,
+      "contact_point_difference_mm": 0.1827075149306331
+    },
+    {
+      "time_s": 6.909999999999875,
+      "tracking_error_mm": 31.333828376852743,
+      "local_path_distance_mm": 31.286812727258063,
+      "signed_normal_error_mm": -31.287419585541958,
+      "alongtrack_error_mm": 1.7047511338338563,
+      "actual_speed_mm_s": 292.4064437226528,
+      "reference_speed_mm_s": 46.041638012074515,
+      "true_dominant_patch_code": 2,
+      "estimated_dominant_patch_code": 2,
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        15.828716042444624,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        0.0,
+        0.0,
+        16.490211486816406,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 12.054045677185059,
+      "estimated_vs_logged_DEM_normal_difference_deg": 4.536283307530741,
+      "requested_input": [
+        -0.06536961711636108,
+        0.1000670683977353,
+        -0.01511489141487729,
+        0.3857347679098016,
+        0.0
+      ],
+      "applied_input": [
+        -0.06536961711636108,
+        0.1000670683977353,
+        -0.01511489141487729,
+        0.3,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.3499999940395355,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.016750112175941467,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.0020089795820838834,
+      "contact_point_difference_mm": 2.2407934419206392
+    },
+    {
+      "time_s": 6.959999999999874,
+      "tracking_error_mm": 40.68044395692,
+      "local_path_distance_mm": 39.88915411386957,
+      "signed_normal_error_mm": -39.90291761231413,
+      "alongtrack_error_mm": 7.915534508608997,
+      "actual_speed_mm_s": 210.10779802639928,
+      "reference_speed_mm_s": 46.61511400325538,
+      "true_dominant_patch_code": 2,
+      "estimated_dominant_patch_code": 2,
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        18.406398822927905,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        0.0,
+        0.0,
+        18.61411476135254,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 12.054045677185059,
+      "estimated_vs_logged_DEM_normal_difference_deg": 0.5607635452690581,
+      "requested_input": [
+        -0.5518995414401017,
+        0.08865475669660541,
+        0.006723367374050382,
+        -0.047649768383305084,
+        0.0
+      ],
+      "applied_input": [
+        -0.5518995414401017,
+        0.08865475669660541,
+        0.006723367374050382,
+        -0.047649768383305084,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.3499999940395355,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.03246348351240158,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.0,
+      "contact_point_difference_mm": 0.2032959921181163
+    },
+    {
+      "time_s": 7.059999999999872,
+      "tracking_error_mm": 51.05860788781809,
+      "local_path_distance_mm": 48.83123981209407,
+      "signed_normal_error_mm": -48.883178582005804,
+      "alongtrack_error_mm": 14.745042935227058,
+      "actual_speed_mm_s": 114.01842033506705,
+      "reference_speed_mm_s": 47.754495852487224,
+      "true_dominant_patch_code": 2,
+      "estimated_dominant_patch_code": 2,
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        17.063499457213545,
+        0.0
+      ],
+      "estimated_patch_loads_N": [
+        0.0,
+        0.0,
+        17.533273696899414,
+        0.0
+      ],
+      "logged_DEM_slope_deg": 12.054045677185059,
+      "estimated_vs_logged_DEM_normal_difference_deg": 1.3692338791043834,
+      "requested_input": [
+        -0.36247741708444253,
+        0.06220129009089569,
+        0.014254021625442651,
+        -0.007768684358432691,
+        0.0
+      ],
+      "applied_input": [
+        -0.36247741708444253,
+        0.06220129009089569,
+        0.014254021625442651,
+        -0.007768684358432691,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.3499999940395355,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_command_delta": [
+        0.0,
+        0.019617967307567596,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gain_relative_Frobenius_step": 0.0,
+      "contact_point_difference_mm": 0.4531368187528157
+    }
+  ],
+  "normal_caveat": "Loggednormal is localDEMclosest-point tangent, notforce-weightedDARTcollisionnormal. Differences cannotbeclaimedobserver-vs-physical-contact error.",
+  "authority_definition": "Jxy=sum_i(load_i/sumload)*[contactJacobianXY columns6:9, beltA/B carrierY axes]; singularvaluesofJxy*diag(5,5,5,.3,.3). Estimatedcontactpoints/loadsoncontactfreegeometry,20Hzwholetrace+5mseventwindows. Declaredrate scales are assumptions, not measured actuator speed limits.",
+  "source_sha256": "d67ec0c5b6fca7d9bb10c9ef46a35fd67436e5dbaffaf2a5d99361e6721df4c0",
+  "full_audit_report_sha256": "f11057851a471e335b17d9695dc53032b7c757a068d018447d5ccb7f5f126fa2"
+}

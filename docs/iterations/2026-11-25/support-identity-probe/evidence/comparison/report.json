@@ -1,0 +1,863 @@
+{
+  "scope": "Diagnostic feedback-load-share-only and complete-contact-record interventions on fresh current-source Gazebo runs. Original nominal trajectory remains evaluator. These are not hardware-capable controllers or statistical robustness trials.",
+  "intervention_window_s": [
+    28.9,
+    29.385
+  ],
+  "last_intervened_command_held_until_s": 29.39,
+  "timing": "Truth last-substep contacts are latest completed1ms. Interval mean is all5 preceding1ms substeps; neither is observer-filtered. High-rate audit28.80\u201329.50 changes only run call grouping, consistently in all branches.",
+  "completed_variants": [
+    "baseline",
+    "last_substep",
+    "interval_mean",
+    "contact_records"
+  ],
+  "runs": {
+    "baseline": {
+      "full_run": {
+        "samples": 8801,
+        "elapsed_time_s": 44.00000000000406,
+        "sample_indicator_duration_s": 44.005,
+        "held_command_duration_s": 44.0,
+        "position_rms_mm": 94.02801096439362,
+        "position_max_mm": 317.7807629108429,
+        "position_end_mm": 87.65722066164017,
+        "attitude_max_deg": 13.912954330444336,
+        "saturated_fraction": 0.05885694807408249,
+        "max_requested_command_fraction": 12.227477073669434,
+        "max_applied_command_step_fraction": 1.8226463794708252,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 108,
+        "injection_eligible_calls": 0,
+        "feedback_share_changed_calls": 0
+      },
+      "intervention": {
+        "samples": 98,
+        "elapsed_time_s": 0.4849999999999035,
+        "sample_indicator_duration_s": 0.49,
+        "held_command_duration_s": 0.49,
+        "position_rms_mm": 102.16797888278961,
+        "position_max_mm": 184.46774780750275,
+        "position_end_mm": 184.46774780750275,
+        "attitude_max_deg": 13.912954330444336,
+        "saturated_fraction": 0.9081632653061225,
+        "max_requested_command_fraction": 8.526546478271484,
+        "max_applied_command_step_fraction": 1.30433189868927,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 30,
+        "injection_eligible_calls": 0,
+        "feedback_share_changed_calls": 0
+      },
+      "recovery_to_32s": {
+        "samples": 523,
+        "elapsed_time_s": 2.6099999999994807,
+        "sample_indicator_duration_s": 2.615,
+        "held_command_duration_s": 2.615,
+        "position_rms_mm": 237.80196905136108,
+        "position_max_mm": 317.7807629108429,
+        "position_end_mm": 89.29061889648438,
+        "attitude_max_deg": 11.38530158996582,
+        "saturated_fraction": 0.07839388145315487,
+        "max_requested_command_fraction": 2.581707715988159,
+        "max_applied_command_step_fraction": 1.2211525440216064,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 2,
+        "injection_eligible_calls": 0,
+        "feedback_share_changed_calls": 0
+      },
+      "event_to_30_5s": {
+        "samples": 341,
+        "elapsed_time_s": 1.6999999999996618,
+        "sample_indicator_duration_s": 1.705,
+        "held_command_duration_s": 1.705,
+        "position_rms_mm": 242.1775907278061,
+        "position_max_mm": 317.7807629108429,
+        "position_end_mm": 282.8293442726135,
+        "attitude_max_deg": 13.912954330444336,
+        "saturated_fraction": 0.3489736070381232,
+        "max_requested_command_fraction": 8.526546478271484,
+        "max_applied_command_step_fraction": 1.30433189868927,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 30,
+        "injection_eligible_calls": 0,
+        "feedback_share_changed_calls": 0
+      },
+      "completed": true,
+      "failure": null,
+      "passed_all_gates": false,
+      "original_path_moving_rms_mm": 77.07637214846595,
+      "historical_source_differences": {
+        "offroad_control.py": {
+          "historical": "2dda6e5be08f55cc991c7606eb2336338486b5f7932c26ce6584796c341b4be7",
+          "current": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3"
+        },
+        "offroad_experiments.py": {
+          "historical": "706558801d74d412aebc19fee464e0b72583351d97bbf492d1cd492150125563",
+          "current": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b"
+        },
+        "experiments.py": {
+          "historical": "88113662e829852684c72a88131bcd7118bf166f5b8d2115bae30fe16ee621e3",
+          "current": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638"
+        },
+        "rolling_allocation.py": {
+          "historical": "fd6ac7bddcd57e4cdf5980fe257ef881ca377f06d711d7fdafee1d61534e5edf",
+          "current": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092"
+        }
+      },
+      "outside_window_injections": 0,
+      "max_total_load_preservation_error_N": 0.0,
+      "shadow_used_command_max_reconstruction_error": 0.0,
+      "intervention_scope": "Only feedback load shares, normalized to the original inferred total. Locator records, normal/force estimates, rolling allocation and synchronization records stay native. Feedback-held load/gain history may carry effects onward."
+    },
+    "last_substep": {
+      "full_run": {
+        "samples": 8801,
+        "elapsed_time_s": 44.00000000000406,
+        "sample_indicator_duration_s": 44.005,
+        "held_command_duration_s": 44.0,
+        "position_rms_mm": 70.4401284456253,
+        "position_max_mm": 311.58408522605896,
+        "position_end_mm": 34.44315493106842,
+        "attitude_max_deg": 14.478062629699707,
+        "saturated_fraction": 0.05226678786501534,
+        "max_requested_command_fraction": 8.712666511535645,
+        "max_applied_command_step_fraction": 1.8743482828140259,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 117,
+        "injection_eligible_calls": 97,
+        "feedback_share_changed_calls": 34
+      },
+      "intervention": {
+        "samples": 98,
+        "elapsed_time_s": 0.4849999999999035,
+        "sample_indicator_duration_s": 0.49,
+        "held_command_duration_s": 0.49,
+        "position_rms_mm": 102.29799151420593,
+        "position_max_mm": 188.63867223262787,
+        "position_end_mm": 188.63867223262787,
+        "attitude_max_deg": 14.478062629699707,
+        "saturated_fraction": 0.8163265306122449,
+        "max_requested_command_fraction": 8.712666511535645,
+        "max_applied_command_step_fraction": 1.6274000406265259,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 34,
+        "injection_eligible_calls": 97,
+        "feedback_share_changed_calls": 34
+      },
+      "recovery_to_32s": {
+        "samples": 523,
+        "elapsed_time_s": 2.6099999999994807,
+        "sample_indicator_duration_s": 2.615,
+        "held_command_duration_s": 2.615,
+        "position_rms_mm": 233.75344276428223,
+        "position_max_mm": 311.58408522605896,
+        "position_end_mm": 87.3471200466156,
+        "attitude_max_deg": 10.949623107910156,
+        "saturated_fraction": 0.10707456978967496,
+        "max_requested_command_fraction": 2.3454079627990723,
+        "max_applied_command_step_fraction": 1.1259162425994873,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 0,
+        "injection_eligible_calls": 0,
+        "feedback_share_changed_calls": 0
+      },
+      "event_to_30_5s": {
+        "samples": 341,
+        "elapsed_time_s": 1.6999999999996618,
+        "sample_indicator_duration_s": 1.705,
+        "held_command_duration_s": 1.705,
+        "position_rms_mm": 239.54805731773376,
+        "position_max_mm": 311.58408522605896,
+        "position_end_mm": 278.76347303390503,
+        "attitude_max_deg": 14.478062629699707,
+        "saturated_fraction": 0.3782991202346041,
+        "max_requested_command_fraction": 8.712666511535645,
+        "max_applied_command_step_fraction": 1.6274000406265259,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 34,
+        "injection_eligible_calls": 97,
+        "feedback_share_changed_calls": 34
+      },
+      "completed": true,
+      "failure": null,
+      "passed_all_gates": false,
+      "original_path_moving_rms_mm": 73.54056975152362,
+      "historical_source_differences": {
+        "offroad_control.py": {
+          "historical": "2dda6e5be08f55cc991c7606eb2336338486b5f7932c26ce6584796c341b4be7",
+          "current": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3"
+        },
+        "offroad_experiments.py": {
+          "historical": "706558801d74d412aebc19fee464e0b72583351d97bbf492d1cd492150125563",
+          "current": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b"
+        },
+        "experiments.py": {
+          "historical": "88113662e829852684c72a88131bcd7118bf166f5b8d2115bae30fe16ee621e3",
+          "current": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638"
+        },
+        "rolling_allocation.py": {
+          "historical": "fd6ac7bddcd57e4cdf5980fe257ef881ca377f06d711d7fdafee1d61534e5edf",
+          "current": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092"
+        }
+      },
+      "outside_window_injections": 0,
+      "max_total_load_preservation_error_N": 0.0,
+      "shadow_used_command_max_reconstruction_error": 0.0,
+      "intervention_scope": "Only feedback load shares, normalized to the original inferred total. Locator records, normal/force estimates, rolling allocation and synchronization records stay native. Feedback-held load/gain history may carry effects onward."
+    },
+    "interval_mean": {
+      "full_run": {
+        "samples": 8801,
+        "elapsed_time_s": 44.00000000000406,
+        "sample_indicator_duration_s": 44.005,
+        "held_command_duration_s": 44.0,
+        "position_rms_mm": 95.63960880041122,
+        "position_max_mm": 340.86769819259644,
+        "position_end_mm": 206.5291553735733,
+        "attitude_max_deg": 16.75982093811035,
+        "saturated_fraction": 0.06749233041699806,
+        "max_requested_command_fraction": 12.710160255432129,
+        "max_applied_command_step_fraction": 1.8784605264663696,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 129,
+        "injection_eligible_calls": 98,
+        "feedback_share_changed_calls": 47
+      },
+      "intervention": {
+        "samples": 98,
+        "elapsed_time_s": 0.4849999999999035,
+        "sample_indicator_duration_s": 0.49,
+        "held_command_duration_s": 0.49,
+        "position_rms_mm": 101.03766620159149,
+        "position_max_mm": 184.62878465652466,
+        "position_end_mm": 184.62878465652466,
+        "attitude_max_deg": 14.349345207214355,
+        "saturated_fraction": 0.8367346938775511,
+        "max_requested_command_fraction": 8.845257759094238,
+        "max_applied_command_step_fraction": 1.5915910005569458,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 31,
+        "injection_eligible_calls": 98,
+        "feedback_share_changed_calls": 47
+      },
+      "recovery_to_32s": {
+        "samples": 523,
+        "elapsed_time_s": 2.6099999999994807,
+        "sample_indicator_duration_s": 2.615,
+        "held_command_duration_s": 2.615,
+        "position_rms_mm": 236.02348566055298,
+        "position_max_mm": 314.6577477455139,
+        "position_end_mm": 88.4043276309967,
+        "attitude_max_deg": 11.851968765258789,
+        "saturated_fraction": 0.13193116634799235,
+        "max_requested_command_fraction": 2.6107089519500732,
+        "max_applied_command_step_fraction": 1.3905994892120361,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 1,
+        "injection_eligible_calls": 0,
+        "feedback_share_changed_calls": 0
+      },
+      "event_to_30_5s": {
+        "samples": 341,
+        "elapsed_time_s": 1.6999999999996618,
+        "sample_indicator_duration_s": 1.705,
+        "held_command_duration_s": 1.705,
+        "position_rms_mm": 240.85110425949097,
+        "position_max_mm": 314.6577477455139,
+        "position_end_mm": 280.6014120578766,
+        "attitude_max_deg": 14.349345207214355,
+        "saturated_fraction": 0.4046920821114369,
+        "max_requested_command_fraction": 8.845257759094238,
+        "max_applied_command_step_fraction": 1.5915910005569458,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 31,
+        "injection_eligible_calls": 98,
+        "feedback_share_changed_calls": 47
+      },
+      "completed": true,
+      "failure": null,
+      "passed_all_gates": false,
+      "original_path_moving_rms_mm": 75.11437590415854,
+      "historical_source_differences": {
+        "offroad_control.py": {
+          "historical": "2dda6e5be08f55cc991c7606eb2336338486b5f7932c26ce6584796c341b4be7",
+          "current": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3"
+        },
+        "offroad_experiments.py": {
+          "historical": "706558801d74d412aebc19fee464e0b72583351d97bbf492d1cd492150125563",
+          "current": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b"
+        },
+        "experiments.py": {
+          "historical": "88113662e829852684c72a88131bcd7118bf166f5b8d2115bae30fe16ee621e3",
+          "current": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638"
+        },
+        "rolling_allocation.py": {
+          "historical": "fd6ac7bddcd57e4cdf5980fe257ef881ca377f06d711d7fdafee1d61534e5edf",
+          "current": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092"
+        }
+      },
+      "outside_window_injections": 0,
+      "max_total_load_preservation_error_N": 3.552713678800501e-15,
+      "shadow_used_command_max_reconstruction_error": 0.0,
+      "intervention_scope": "Only feedback load shares, normalized to the original inferred total. Locator records, normal/force estimates, rolling allocation and synchronization records stay native. Feedback-held load/gain history may carry effects onward."
+    },
+    "contact_records": {
+      "full_run": {
+        "samples": 8801,
+        "elapsed_time_s": 44.00000000000406,
+        "sample_indicator_duration_s": 44.005,
+        "held_command_duration_s": 44.0,
+        "position_rms_mm": 87.27849274873734,
+        "position_max_mm": 322.66882061958313,
+        "position_end_mm": 48.60945791006088,
+        "attitude_max_deg": 14.559674263000488,
+        "saturated_fraction": 0.05124417679809112,
+        "max_requested_command_fraction": 9.10926342010498,
+        "max_applied_command_step_fraction": 1.8006951808929443,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 83,
+        "injection_eligible_calls": 98,
+        "feedback_share_changed_calls": 98
+      },
+      "intervention": {
+        "samples": 98,
+        "elapsed_time_s": 0.4849999999999035,
+        "sample_indicator_duration_s": 0.49,
+        "held_command_duration_s": 0.49,
+        "position_rms_mm": 99.549800157547,
+        "position_max_mm": 180.38611114025116,
+        "position_end_mm": 180.38611114025116,
+        "attitude_max_deg": 14.559674263000488,
+        "saturated_fraction": 0.8571428571428571,
+        "max_requested_command_fraction": 9.10926342010498,
+        "max_applied_command_step_fraction": 1.422002911567688,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 31,
+        "injection_eligible_calls": 98,
+        "feedback_share_changed_calls": 98
+      },
+      "recovery_to_32s": {
+        "samples": 523,
+        "elapsed_time_s": 2.6099999999994807,
+        "sample_indicator_duration_s": 2.615,
+        "held_command_duration_s": 2.615,
+        "position_rms_mm": 243.52775514125824,
+        "position_max_mm": 322.66882061958313,
+        "position_end_mm": 91.995008289814,
+        "attitude_max_deg": 11.711365699768066,
+        "saturated_fraction": 0.07839388145315487,
+        "max_requested_command_fraction": 2.3553621768951416,
+        "max_applied_command_step_fraction": 1.0041097402572632,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 0,
+        "injection_eligible_calls": 0,
+        "feedback_share_changed_calls": 0
+      },
+      "event_to_30_5s": {
+        "samples": 341,
+        "elapsed_time_s": 1.6999999999996618,
+        "sample_indicator_duration_s": 1.705,
+        "held_command_duration_s": 1.705,
+        "position_rms_mm": 245.55963277816772,
+        "position_max_mm": 322.66882061958313,
+        "position_end_mm": 284.390926361084,
+        "attitude_max_deg": 14.559674263000488,
+        "saturated_fraction": 0.3313782991202346,
+        "max_requested_command_fraction": 9.10926342010498,
+        "max_applied_command_step_fraction": 1.422002911567688,
+        "loaded_native_vs_last_substep_identity_disagreement_samples": 31,
+        "injection_eligible_calls": 98,
+        "feedback_share_changed_calls": 98
+      },
+      "completed": true,
+      "failure": null,
+      "passed_all_gates": false,
+      "original_path_moving_rms_mm": 79.518074372591,
+      "historical_source_differences": {
+        "offroad_control.py": {
+          "historical": "2dda6e5be08f55cc991c7606eb2336338486b5f7932c26ce6584796c341b4be7",
+          "current": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3"
+        },
+        "offroad_experiments.py": {
+          "historical": "706558801d74d412aebc19fee464e0b72583351d97bbf492d1cd492150125563",
+          "current": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b"
+        },
+        "experiments.py": {
+          "historical": "88113662e829852684c72a88131bcd7118bf166f5b8d2115bae30fe16ee621e3",
+          "current": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638"
+        },
+        "rolling_allocation.py": {
+          "historical": "fd6ac7bddcd57e4cdf5980fe257ef881ca377f06d711d7fdafee1d61534e5edf",
+          "current": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092"
+        }
+      },
+      "outside_window_injections": 0,
+      "max_total_load_preservation_error_N": 0.0,
+      "shadow_used_command_max_reconstruction_error": 0.0,
+      "intervention_scope": "Complete diagnostic true contact records replace locator output in-window; geom/body IDs remapped by actual name onto StateMirror. This changes geometry, loads, allocation, feedback, synchronization, and slip/rim inputs. Observer wrench remains native, but normal/friction filtering can change through slip/rim inputs. This does not isolate identity alone.",
+      "record_injection_calls": 98,
+      "feedback_share_injection_calls": 0,
+      "max_record_total_load_change_N": 95.26969971325433,
+      "max_record_equivalent_point_change_mm": 9.146604877605922
+    }
+  },
+  "paired_prefix_checks": {
+    "last_substep": {
+      "samples": 5780,
+      "all_fields_bit_equal": true,
+      "fields": {
+        "exact_qpos": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_qvel": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_requested": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_applied": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_observer_wrench": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_estimated_normal": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_drive_reference": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_rolling_feedforward": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_feedback_gain": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_feedback_error": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_native_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_feedback_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_truth_last_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_truth_interval_mean_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        }
+      },
+      "first_post_prefix_differences": {
+        "exact_qpos": {
+          "first_bit_difference_time_s": 28.92999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.92999999999853,
+          "max_abs_difference": 17.94270576423107
+        },
+        "exact_qvel": {
+          "first_bit_difference_time_s": 28.92999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.92999999999853,
+          "max_abs_difference": 27.743539234162633
+        },
+        "exact_requested": {
+          "first_bit_difference_time_s": 28.92499999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.92499999999853,
+          "max_abs_difference": 7.336665537899594
+        },
+        "exact_applied": {
+          "first_bit_difference_time_s": 28.92499999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.92499999999853,
+          "max_abs_difference": 1.31085462145009
+        },
+        "exact_observer_wrench": {
+          "first_bit_difference_time_s": 28.92999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.92999999999853,
+          "max_abs_difference": 17.113312896232618
+        },
+        "exact_estimated_normal": {
+          "first_bit_difference_time_s": 28.92999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.92999999999853,
+          "max_abs_difference": 0.2165237253249499
+        },
+        "exact_drive_reference": {
+          "first_bit_difference_time_s": 28.92999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.92999999999853,
+          "max_abs_difference": 2.042101959689573
+        },
+        "exact_rolling_feedforward": {
+          "first_bit_difference_time_s": 28.92999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.92999999999853,
+          "max_abs_difference": 0.04155334645360259
+        },
+        "exact_feedback_gain": {
+          "first_bit_difference_time_s": 28.92499999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.92499999999853,
+          "max_abs_difference": 29.218616069064094
+        },
+        "exact_feedback_error": {
+          "first_bit_difference_time_s": 28.92999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.92999999999853,
+          "max_abs_difference": 27.743539234162633
+        }
+      }
+    },
+    "interval_mean": {
+      "samples": 5780,
+      "all_fields_bit_equal": true,
+      "fields": {
+        "exact_qpos": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_qvel": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_requested": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_applied": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_observer_wrench": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_estimated_normal": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_drive_reference": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_rolling_feedforward": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_feedback_gain": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_feedback_error": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_native_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_feedback_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_truth_last_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_truth_interval_mean_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        }
+      },
+      "first_post_prefix_differences": {
+        "exact_qpos": {
+          "first_bit_difference_time_s": 28.904999999998534,
+          "first_abs_difference_above_1e_10_time_s": 28.904999999998534,
+          "max_abs_difference": 8.919604974629744
+        },
+        "exact_qvel": {
+          "first_bit_difference_time_s": 28.904999999998534,
+          "first_abs_difference_above_1e_10_time_s": 28.904999999998534,
+          "max_abs_difference": 31.975279189730784
+        },
+        "exact_requested": {
+          "first_bit_difference_time_s": 28.899999999998535,
+          "first_abs_difference_above_1e_10_time_s": 28.899999999998535,
+          "max_abs_difference": 7.579296032573966
+        },
+        "exact_applied": {
+          "first_bit_difference_time_s": 28.899999999998535,
+          "first_abs_difference_above_1e_10_time_s": 28.899999999998535,
+          "max_abs_difference": 1.496111795794369
+        },
+        "exact_observer_wrench": {
+          "first_bit_difference_time_s": 28.904999999998534,
+          "first_abs_difference_above_1e_10_time_s": 28.904999999998534,
+          "max_abs_difference": 17.14912882322681
+        },
+        "exact_estimated_normal": {
+          "first_bit_difference_time_s": 28.904999999998534,
+          "first_abs_difference_above_1e_10_time_s": 28.904999999998534,
+          "max_abs_difference": 0.2185158005744728
+        },
+        "exact_drive_reference": {
+          "first_bit_difference_time_s": 28.914999999998532,
+          "first_abs_difference_above_1e_10_time_s": 28.914999999998532,
+          "max_abs_difference": 3.04628862245842
+        },
+        "exact_rolling_feedforward": {
+          "first_bit_difference_time_s": 28.914999999998532,
+          "first_abs_difference_above_1e_10_time_s": 28.914999999998532,
+          "max_abs_difference": 0.04157711785451866
+        },
+        "exact_feedback_gain": {
+          "first_bit_difference_time_s": 28.899999999998535,
+          "first_abs_difference_above_1e_10_time_s": 28.899999999998535,
+          "max_abs_difference": 27.706282517722187
+        },
+        "exact_feedback_error": {
+          "first_bit_difference_time_s": 28.904999999998534,
+          "first_abs_difference_above_1e_10_time_s": 28.904999999998534,
+          "max_abs_difference": 31.975279189730784
+        }
+      }
+    },
+    "contact_records": {
+      "samples": 5780,
+      "all_fields_bit_equal": true,
+      "fields": {
+        "exact_qpos": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_qvel": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_requested": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_applied": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_observer_wrench": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_estimated_normal": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_drive_reference": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_rolling_feedforward": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_feedback_gain": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "exact_feedback_error": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_native_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_feedback_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_truth_last_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        },
+        "probe_truth_interval_mean_loads_N": {
+          "bit_equal": true,
+          "max_abs_difference": 0.0
+        }
+      },
+      "first_post_prefix_differences": {
+        "exact_qpos": {
+          "first_bit_difference_time_s": 28.91999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.91999999999853,
+          "max_abs_difference": 2.1970550221278984
+        },
+        "exact_qvel": {
+          "first_bit_difference_time_s": 28.91999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.91999999999853,
+          "max_abs_difference": 25.359262706751245
+        },
+        "exact_requested": {
+          "first_bit_difference_time_s": 28.914999999998532,
+          "first_abs_difference_above_1e_10_time_s": 28.914999999998532,
+          "max_abs_difference": 7.296724270894727
+        },
+        "exact_applied": {
+          "first_bit_difference_time_s": 28.914999999998532,
+          "first_abs_difference_above_1e_10_time_s": 28.914999999998532,
+          "max_abs_difference": 1.6419932648221796
+        },
+        "exact_observer_wrench": {
+          "first_bit_difference_time_s": 28.91999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.91999999999853,
+          "max_abs_difference": 17.10117390616168
+        },
+        "exact_estimated_normal": {
+          "first_bit_difference_time_s": 28.91999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.91999999999853,
+          "max_abs_difference": 0.17902007877626047
+        },
+        "exact_drive_reference": {
+          "first_bit_difference_time_s": 28.914999999998532,
+          "first_abs_difference_above_1e_10_time_s": 28.914999999998532,
+          "max_abs_difference": 2.6048283879529293
+        },
+        "exact_rolling_feedforward": {
+          "first_bit_difference_time_s": 28.914999999998532,
+          "first_abs_difference_above_1e_10_time_s": 28.914999999998532,
+          "max_abs_difference": 0.04135998074470349
+        },
+        "exact_feedback_gain": {
+          "first_bit_difference_time_s": 28.91999999999853,
+          "first_abs_difference_above_1e_10_time_s": 28.91999999999853,
+          "max_abs_difference": 28.654640096844094
+        },
+        "exact_feedback_error": {
+          "first_bit_difference_time_s": 28.914999999998532,
+          "first_abs_difference_above_1e_10_time_s": 28.914999999998532,
+          "max_abs_difference": 25.359262706751245
+        }
+      }
+    }
+  },
+  "saved_array_precision": "Window metrics derive from float32 rollout arrays; moving RMS and completion/gates use the original double-precision summary. Prefix checks use probe.npz double precision.",
+  "duration_convention": {
+    "validated_control_period_s": 0.005,
+    "elapsed_time_s": "Last selected timestamp minus first, using double-precision probe timestamps.",
+    "sample_indicator_duration_s": "Number of selected logged samples multiplied by the declared validated0.005s period. This includes a selected terminal sample and is not necessarily actuated duration.",
+    "held_command_duration_s": "Selected samples with a following physical interval multiplied by0.005s. The overall terminal sample is not held; full-run44s, intervention0.490s."
+  },
+  "limitations": [
+    "last_substep/interval_mean correct only feedback gain/support-torque load routing; native locator/rolling allocation/synchronization identity remains estimated. contact_records is a broader input-bundle contrast including geometry/load/force/slip/rim changes.",
+    "Native and oracle shadow commands share one instantaneous state/history. They are conditional command contrasts, not independent closed-loop predictions.",
+    "Held feedback load/gain history is updated by the intervention and may carry through later dropouts; no reset is used to erase it.",
+    "Historical28.975s disagreement is late relative to lean-error onset. This probe addresses correction amplification/recovery rather than proving initial causation.",
+    "The broader contact_records intervention changes more than identity: maximum equivalent-point change9.146605mm and total normal-load change95.269700N versus native records. Instantaneous impulses and filtered inferred loads have different timing. This is not an identity-only correction."
+  ],
+  "input_files": {
+    "runs/baseline/truth_substeps.npz": "5bdbe656e1091af8f8d5e39646bf1fb02d218aa9ed3db8b1af413ff7cd682f60",
+    "runs/baseline/probe.npz": "426dc5fc28569036cb7074bd160b59940aef744526b35f32f79adf9ac6fded82",
+    "runs/baseline/rollout.npz": "1f8170a33583cbbeb2a30b6b5828f60c50edee6e748f70604f3432b84071f902",
+    "runs/last_substep/truth_substeps.npz": "d2c2b6bfbac6a20b1442ec5533e67de4904e32e6b8fde15179897108dcccd2d7",
+    "runs/last_substep/probe.npz": "628e514699e5a38f30d52c7dd4e85a8eb9f7d644380dda9890c3bae2a8175884",
+    "runs/last_substep/rollout.npz": "fd72d4d02ffd8b98243ee5cdef8860ec4e02614ff8053412238bac422b2f52f8",
+    "runs/interval_mean/truth_substeps.npz": "cdc3686caf8e9daa7e20f0303b65d7576567cde9144b52501d0f238e39d7528f",
+    "runs/interval_mean/probe.npz": "9f228ad849d04a3bdbd8f2de89908e8f4d607fb79732bf6a450d0501a4da330d",
+    "runs/interval_mean/rollout.npz": "741f2123e06634ac3556e983313b0d0e833e15e75796cd0723bbb4255036c0d8",
+    "runs/contact_records/truth_substeps.npz": "081451aec2afbf26524e273f01b58e61fc9d5e3f84b6d663ab8c0481875bc8c1",
+    "runs/contact_records/probe.npz": "8b13cb647edeea6aae85a19ee0cf46e91ce5efefa410f0d66dc81db6beebde2d",
+    "runs/contact_records/rollout.npz": "6bc31bfc6c7b06c1baf6674470b0b4dc8c4cdd6035cb65244efb071abc76b93c",
+    "filtered_truth_load_reference.npz": "61b3fc3473c10682c4379fcce77e2e431b2bf2a3f08de4957715757430daf34a"
+  },
+  "intervention_balance_comparison": {
+    "baseline_max_lean_error_deg": 13.912954330444336,
+    "correction_max_lean_error_deg": {
+      "last_substep": 14.478062629699707,
+      "interval_mean": 14.349345207214355,
+      "contact_records": 14.559674263000488
+    },
+    "all_available_corrections_have_higher_intervention_peak_lean_error": true,
+    "scope": "Immediate explicit intervention window, separate from later closed-loop divergence. All three corrections worsened this peak in these individual trials."
+  },
+  "baseline_support_timing_audit": {
+    "window_samples": 98,
+    "native_vs_last_substep": {
+      "loaded_samples": 98,
+      "dominant_identity_disagreements": 30
+    },
+    "native_vs_5ms_mean": {
+      "loaded_samples": 98,
+      "dominant_identity_disagreements": 36
+    },
+    "last_substep_vs_5ms_mean": {
+      "loaded_samples": 98,
+      "dominant_identity_disagreements": 20
+    },
+    "intervals_with_at_least_two_mean_support_shares_above_5pct": 43,
+    "target_time_s": 28.97499999999852,
+    "target_native_loads_N": [
+      0.0,
+      0.0,
+      18.730380444782295,
+      0.0
+    ],
+    "target_last_substep_loads_N": [
+      21.9052598971478,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "target_5ms_mean_loads_N": [
+      22.021829083171877,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "offline_filtered_load_reference": {
+      "scope": "Descriptive filter applied to true per-support interval loads at100/s, initialized from first measured interval at28.805s. This is not filtering the six-axis wrench and is not a controller run or a contact estimator.",
+      "initialization_time_s": 28.804999999998554,
+      "dominant_identity_disagreements_vs_native": 41,
+      "loaded_window_samples": 98,
+      "target_filtered_loads_N": [
+        14.047139993435962,
+        0.0,
+        4.689662705184666,
+        0.0
+      ]
+    }
+  },
+  "historical_context_comparison": {
+    "source": "results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/rollout.npz",
+    "comparison_before_high_rate_audit_s": 28.8,
+    "qpos_float32_bit_equal": true,
+    "qpos_max_abs_difference_mixed_units": 0.0,
+    "native_loads_at_28_975_N": [
+      0.0,
+      0.0,
+      18.730380444782295,
+      0.0
+    ],
+    "truth_last_loads_at_28_975_N": [
+      21.9052598971478,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "full_run_common_array_comparisons": {
+      "qpos": {
+        "bit_equal_float32": true,
+        "max_abs_difference": 0.0
+      },
+      "qvel": {
+        "bit_equal_float32": true,
+        "max_abs_difference": 0.0
+      },
+      "command": {
+        "bit_equal_float32": true,
+        "max_abs_difference": 0.0
+      },
+      "input": {
+        "bit_equal_float32": true,
+        "max_abs_difference": 0.0
+      },
+      "estimated_support_loads_N": {
+        "bit_equal_float32": true,
+        "max_abs_difference": 0.0
+      },
+      "reference_xy": {
+        "bit_equal_float32": true,
+        "max_abs_difference": 0.0
+      }
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "sensing": {
+    "observer_force_error_median_N": 0.0010056316791560965,
+    "observer_force_error_p95_N": 0.06690297764927851,
+    "observer_moment_error_median_Nm": 0.00020276930142782562,
+    "observer_moment_error_p95_Nm": 0.002548477237146988
+  },
+  "terrain": "ramp",
+  "controller": "hardware",
+  "parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "engine_version": "3.16.0",
+  "contact_mode": "analytic_clipped_floor",
+  "ground_model": "Tangent plane of the analytic terrain at the surface point nearest the wheel centre.",
+  "path": {
+    "distance_m": 1.0,
+    "heading_deg": 0.0,
+    "duration_s": 12.0,
+    "start_s": 0.5,
+    "profile": "cruise",
+    "ramp_s": 1.5,
+    "origin": [
+      0.0,
+      0.0
+    ],
+    "cruise_speed_m_s": 0.09523809523809523
+  },
+  "completed": true,
+  "failure": null,
+  "completed_duration_s": 15.499999999996849,
+  "requested_duration_s": 15.5,
+  "distance_along_path_m": 0.9993689741991063,
+  "final_cross_track_m": 7.791821532543606e-11,
+  "tracking": {
+    "rms_error_m": 0.019280944692729365,
+    "max_error_m": 0.034565206594248554,
+    "final_error_m": 0.0006310258008936969,
+    "rms_error_while_moving_m": 0.019978798581157784
+  },
+  "attitude": {
+    "max_tilt_deg": 7.7497996684562445,
+    "max_error_from_reference_deg": 0.627567197191449,
+    "rms_error_from_reference_deg": 0.23622415218524254,
+    "final_error_from_reference_deg": 0.06671517196723732,
+    "heading_change_deg": 2.4459596345136876e-06
+  },
+  "ground": {
+    "max_slope_under_wheel_deg": 7.894273347440514,
+    "height_range_m": [
+      0.00012828673712090676,
+      0.08394798835976731
+    ],
+    "friction_range": [
+      0.7,
+      0.7
+    ]
+  },
+  "contact": {
+    "normal_load_fraction_min": 0.9392663683045297,
+    "normal_load_fraction_max": 1.1991455472331571,
+    "normal_load_fraction_std": 0.006897828209093776,
+    "unloaded_time_s": 0.0,
+    "utilization_mean": 0.08106574487989025,
+    "utilization_p95": 0.19711617034570064,
+    "utilization_max": 1.0000000000000002,
+    "time_above_90pct_cone_s": 0.015,
+    "max_slip_speed_m_s": 0.00047410085853350837,
+    "slip_distance_m": 0.0025448536313731267,
+    "sliding_time_s": 0.0,
+    "friction_loss_J": 0.004992731842734811,
+    "estimated_friction_min": 0.7,
+    "normal_estimate_error_rms_deg": 0.083205689535102,
+    "normal_estimate_error_max_deg": 0.9106647851751636,
+    "normal_estimate_error_median_deg": 0.014169533020872432,
+    "normal_estimate_error_p95_deg": 0.10226479048599336,
+    "support_time_share": {
+      "shell_A": 0.6849403418252177,
+      "shell_B": 0.19380844888745566,
+      "belt_A": 0.08255401483392454,
+      "belt_B": 0.038697194453402126
+    },
+    "support_handovers": 16,
+    "fork_ground_contact": false
+  },
+  "actuation": {
+    "max_input_fraction": [
+      0.2452947762522355,
+      3.660065997891801e-07,
+      5.111560275616366e-08,
+      1.1449613265097491e-07,
+      1.6558722225415812e-09
+    ],
+    "saturated_time_fraction": 0.0,
+    "rms_torque_Nm": [
+      0.16923922191847895,
+      9.077904601716433e-09,
+      1.891360130464101e-09
+    ],
+    "max_joint_speed_rad_s": [
+      1.426544905893403,
+      1.0313904443660278e-06,
+      1.2506888155108036e-06
+    ],
+    "joint_work_J": 1.545694185984936,
+    "unloaded_fade_time_s": 0.0
+  },
+  "settled_at_end": true
+}

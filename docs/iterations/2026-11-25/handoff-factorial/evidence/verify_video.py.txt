@@ -1,0 +1,55 @@
+"""Verify delivered I42 saved-state video metadata, hashes, decoding and dimensions."""
+from pathlib import Path
+import hashlib
+import json
+import imageio.v2 as imageio
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    output = HERE/'videos'
+    target = output/'qa.json'
+    if target.exists():
+        raise FileExistsError('Preserve completed video QA')
+    snapshot = output/'source_snapshot'/f'verify_video_{sha(Path(__file__))[:12]}.py'
+    assert not snapshot.exists()
+    snapshot.write_bytes(Path(__file__).read_bytes())
+    metadata = json.loads((output/'video_metadata.json').read_text())
+    for rel,digest in metadata['input_sha256'].items():
+        assert sha(ROOT/rel) == digest,rel
+    video = ROOT/metadata['video']['path']
+    assert sha(video) == metadata['video']['sha256']
+    assert metadata['window_s'] == [6.4,10.] and metadata['playback_speed'] == .5
+    assert metadata['arms'] == ['baseline','feedback_shares','sync_off','both']
+    assert metadata['camera_shared_across_all_arms_and_frames'] and metadata['single_shared_display_geometry']
+    expected = len(np.arange(0.,3.6+1e-9,.5/20))+40
+    with imageio.get_reader(video)as reader:
+        info = reader.get_meta_data(); count = reader.count_frames()
+        first = reader.get_data(0); last_motion = reader.get_data(count-41); endcard = reader.get_data(count-1)
+    assert count == expected == metadata['video']['frames']
+    assert tuple(info['size']) == (1600,1200) and info['fps'] == 20
+    assert first.std() > 10 and last_motion.std() > 10 and endcard.std() > 10
+    assert np.mean(abs(first.astype(float)-last_motion.astype(float))) > .5
+    for name,array in [('qa_decoded_first.jpg',first),('qa_decoded_last_motion.jpg',last_motion),('qa_decoded_endcard.jpg',endcard)]:
+        imageio.imwrite(output/name,array,quality=92)
+    result = {'iteration':'I-42','scope':__doc__,'passed':True,'video_sha256':sha(video),
+        'source_sha256':sha(Path(__file__)),'all_recorded_input_hashes_verified':len(metadata['input_sha256']),
+        'frames':count,'fps':20,'dimensions':[1600,1200],'duration_s':info['duration'],
+        'first_last_motion_endcard_decoded':True,'frame_variation_check':True,
+        'visual_review':'Initial successful preview inspected for all four labels, common viewpoint and XY insets. Final decoded motion/endcard stills require reviewer inspection.',
+        'scope_limit':'Verification of a saved-state presentation, not an extra Gazebo trial, forecast or controller test.'}
+    target.write_text(json.dumps(result,indent=2)+'\n')
+    files = [{'path':str(p.relative_to(output)),'bytes':p.stat().st_size,'sha256':sha(p)}for p in sorted(output.rglob('*')) if p.is_file() and '_render_scenes'not in p.parts and '__pycache__'not in p.parts and p.name!='artifact_manifest.json']
+    (output/'artifact_manifest.json').write_text(json.dumps({'iteration':'I-42','files':files},indent=2)+'\n')
+    print(json.dumps(result,indent=2))
+
+
+if __name__ == '__main__':
+    main()

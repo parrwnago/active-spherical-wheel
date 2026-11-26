@@ -1,0 +1,70 @@
+{
+  "iteration": "I-42",
+  "scope": "Verify sealed I42 launch/result/source bookkeeping only; no model calls.",
+  "launch_attempt_count": 4,
+  "new_fresh_physical_runs": 4,
+  "maximum_concurrent_process_intervals": 3,
+  "launch_source_and_snapshot_hashes_verified": 72,
+  "protocol_sha256": "fb616686edbfbca9ac6f2b3fbfb8da152be52513279fd208d825d67480e0b86f",
+  "launch_manifest_sha256": "b72a6807eeb60f0a622612b0ddcd19230bc3f0956017fdc014b35ee1c88beeeb",
+  "audit_source_sha256": "48776d2f75126c03877118f499d17b600067fc0ec8dde4190e885e03d86cf0f0",
+  "cases": {
+    "baseline": {
+      "process_exit_code": 0,
+      "simulation_completed": true,
+      "failure": null,
+      "simulation_duration_s": 44.00000000000406,
+      "saved_guarded_controller_calls": 8801,
+      "maximum_5ms_cadence_error_s": 2.557849765327802e-15,
+      "manifest_entries_verified": 67,
+      "manifest_sha256": "ec5e1c70a2ce17baba39533000b9b636fbe2e957d0b1c2d142b07f982cb9b072",
+      "precision_sha256": "35da92c6b0d41f70d472310ac18426f874da3ad032b82556b61a42a27238d69e",
+      "summary_sha256": "ab576c660f25c716df542b91af00532adabe18e8b82a10cc445625a3c510157d",
+      "physical_process_pid": 283230,
+      "existing_route_gate_acceptance": "Reported separately by sealed saved-data analysis; process/completion success does not imply acceptance."
+    },
+    "feedback_shares": {
+      "process_exit_code": 0,
+      "simulation_completed": true,
+      "failure": null,
+      "simulation_duration_s": 44.00000000000406,
+      "saved_guarded_controller_calls": 8801,
+      "maximum_5ms_cadence_error_s": 2.557849765327802e-15,
+      "manifest_entries_verified": 67,
+      "manifest_sha256": "4c91aafd73065759f56cb8d12595086596aba648298e22a98cb5796c2e678133",
+      "precision_sha256": "0577ae80b153a92577e43e205abcf405c50f862d23d7408991e496c6ee9282a9",
+      "summary_sha256": "9a9ff5af74eb7162f0e921f4699fe0557840c89810752530f88fc0ce64f9dc8f",
+      "physical_process_pid": 283229,
+      "existing_route_gate_acceptance": "Reported separately by sealed saved-data analysis; process/completion success does not imply acceptance."
+    },
+    "sync_off": {
+      "process_exit_code": 0,
+      "simulation_completed": true,
+      "failure": null,
+      "simulation_duration_s": 44.00000000000406,
+      "saved_guarded_controller_calls": 8801,
+      "maximum_5ms_cadence_error_s": 2.557849765327802e-15,
+      "manifest_entries_verified": 67,
+      "manifest_sha256": "97c1687683b743e454eca4bdd5ba0e5289a741e0d184c93b10b7ad4939777f54",
+      "precision_sha256": "2174456fcf7b9ba31b5b0a830c63477529af30e6a8d185f7c63014a9bf18b69c",
+      "summary_sha256": "26b471c65890defd709e11caab5006b254c9f85aa82d4fce1b230d2d0d53125b",
+      "physical_process_pid": 283233,
+      "existing_route_gate_acceptance": "Reported separately by sealed saved-data analysis; process/completion success does not imply acceptance."
+    },
+    "both": {
+      "process_exit_code": 0,
+      "simulation_completed": true,
+      "failure": null,
+      "simulation_duration_s": 44.00000000000406,
+      "saved_guarded_controller_calls": 8801,
+      "maximum_5ms_cadence_error_s": 2.557849765327802e-15,
+      "manifest_entries_verified": 67,
+      "manifest_sha256": "64a090f7d4e82afa16679d52e93c9934be058b2fa71e00ea47d741562fef4a3f",
+      "precision_sha256": "f579bc3cda882f43a867ba0897e03b2d699319dfeb7e379a0e0e71f9b471364f",
+      "summary_sha256": "4c8cb9282c392ad930284fd631596d6096e451e999e376e09185b89db04b42c3",
+      "physical_process_pid": 284180,
+      "existing_route_gate_acceptance": "Reported separately by sealed saved-data analysis; process/completion success does not imply acceptance."
+    }
+  },
+  "limitations": "Bookkeeping verification only. Four arms are one case each, not a robustness suite; no extra physics or automatic reruns."
+}

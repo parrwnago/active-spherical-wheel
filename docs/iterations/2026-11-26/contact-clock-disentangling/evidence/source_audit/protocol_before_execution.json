@@ -1,0 +1,26 @@
+{
+  "registered_utc": "2026-11-26T08:37:30.644323+00:00",
+  "conditions": [
+    "prior_published_pose_raw_vector",
+    "post_published_pose_raw_vector",
+    "prior_published_pose_radial_R",
+    "post_published_pose_radial_R"
+  ],
+  "primary_records": "Individual raw contact rows tagged smooth0..3, admitted row12>.5, Fn=max(F dot n,0)>.05N; first substep excluded.",
+  "pose_proxy": "Prior state_i-1 is preceding published pose proxy for cached PreUpdate geometry, NOT a proved force timestamp.",
+  "exact_band_tolerance_m": 1e-12,
+  "weighting": "Record fraction and normal-load-weighted violating fraction, separately per case.",
+  "worst_table": "Worst10 distinct substeps ranked by smallest post_raw individual-point margin; keep worst point within each substep.",
+  "source_sha256": "6ded301ba94effe1bf782b13231bd701dfc6b0ec17641239cd83033d7dd3cb46",
+  "input_sha256": {
+    "gazebo/plugin/SphericalWheelBridge.cc": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e",
+    "build/gazebo/libSphericalWheelBridge.so": "6e76050bb1555368491bbcea3861cb8ff6cd4348fa8f4ee7665c960dc74c6f90",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/truth_substeps.npz": "ba47afdb917c0b73bb6b72296bb644c6bbbbfed435de777df290c8cd258acb27",
+    "results/support_routing_timing_20261126/campaign/_workspaces/mars_compact_outback/gazebo/world/models/active_spherical_wheel/model.sdf": "65272036dd09a357fc58d6782f691a698592dcedaed592d4ade1f4a4c979f36f",
+    "results/support_routing_timing_20261126/campaign/_workspaces/mars_compact_outback/flat/model.xml": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/truth_substeps.npz": "8581ccd5f4cda595fc18f6ef57f7b37a986b97e913dcc7e825c00ad94d5170ff",
+    "results/support_routing_timing_20261126/campaign/_workspaces/flat_compact_outback/gazebo/world/models/active_spherical_wheel/model.sdf": "65272036dd09a357fc58d6782f691a698592dcedaed592d4ade1f4a4c979f36f",
+    "results/support_routing_timing_20261126/campaign/_workspaces/flat_compact_outback/flat/model.xml": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+  },
+  "scope": "No observer/filter/controller/physics invocation; no clock fitting or source/data changes."
+}

@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/results/tilt_reference_20261125/independent_raw_QA/verify_raw.py", line 214, in <module>
+    if __name__=='__main__':main()
+  File "/home/parrwnago/active-spherical-wheel/results/tilt_reference_20261125/independent_raw_QA/verify_raw.py", line 116, in main
+    np.testing.assert_allclose(raw,exact['tilt_raw_theta_rad'],atol=2e-14,rtol=0)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/testing/_private/utils.py", line 1504, in assert_allclose
+    assert_array_compare(compare, actual, desired, err_msg=str(err_msg),
+  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
+    return func(*args, **kwds)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/testing/_private/utils.py", line 797, in assert_array_compare
+    raise AssertionError(msg)
+AssertionError: 
+Not equal to tolerance rtol=0, atol=2e-14
+
+Mismatched elements: 15979 / 17602 (90.8%)
+Max absolute difference: 3.5149661e-13
+Max relative difference: 3.26693207e-10
+ x: array([[-0.121478, -0.042269],
+       [-0.121478, -0.042267],
+       [-0.121477, -0.042266],...
+ y: array([[-0.121478, -0.042269],
+       [-0.121478, -0.042267],
+       [-0.121477, -0.042266],...

@@ -1,0 +1,148 @@
+"""Authoritative I40 report from sealed saved-data analysis stages only.
+
+Retains the initial warning aggregation error and its correction. Adds runtime
+and calibration-fit descriptions without rerunning geometry or predictions.
+"""
+from __future__ import annotations
+
+from copy import deepcopy
+from datetime import datetime, timezone
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import shutil
+
+from forecast_metrics import distribution
+
+HERE = Path(__file__).resolve().parent
+FAMILY = HERE.parent
+ROOT = FAMILY.parents[1]
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def save(path, value):
+    path.write_text(json.dumps(value, indent=2, allow_nan=False)+'\n')
+
+
+def runtime_group(rows):
+    return {'n': len(rows),
+        'forecast_wall_s': distribution(x['forecast_wall_s'] for x in rows),
+        'calibration_wall_s': distribution(x['calibration_wall_s'] for x in rows),
+        'forecast_plus_calibration_wall_s': distribution(x['combined_wall_s'] for x in rows),
+        'combined_to_20ms_budget_ratio': distribution(x['combined_wall_s']/.02 for x in rows),
+        'combined_at_or_below_20ms_count': sum(x['combined_wall_s'] <= .02 for x in rows)}
+
+
+def main():
+    target = HERE/'final_report.json'
+    snapshot = HERE/'final_source_snapshot'
+    if target.exists() or snapshot.exists():
+        raise FileExistsError('Preserve this consolidation stage; choose a new stage')
+    snapshot.mkdir()
+    source = Path(__file__).resolve()
+    shutil.copyfile(source, snapshot/source.name)
+    inputs = [HERE/'report.json', HERE/'artifact_manifest.json', HERE/'endpoint_metrics.json',
+        HERE/'incoming_events.json', HERE/'corrected/report.json',
+        HERE/'corrected/artifact_manifest.json', HERE/'corrected/correction.json',
+        HERE/'analyze_forecasts.py', HERE/'forecast_metrics.py']
+    started = datetime.now(timezone.utc).isoformat()
+    original = json.loads((HERE/'report.json').read_text())
+    corrected = json.loads((HERE/'corrected/report.json').read_text())
+    report = deepcopy(corrected)
+    endpoints = json.loads((HERE/'endpoint_metrics.json').read_text())
+    runtime, fits = [], []
+    for path in sorted((FAMILY/'campaign/runs').rglob('forecasts.json')):
+        data = json.loads(path.read_text())
+        inputs.append(path)
+        for row in data['rows']:
+            forecast = float(row['forecast']['metadata']['total_wall_s'])
+            calibration = float(row['calibration']['plane_update_s'])
+            runtime.append({'case_id': data['case_id'], 'anchor_time_s': row['anchor_time_s'],
+                'selection_kind': row['selection_kind'], 'forecast_wall_s': forecast,
+                'calibration_wall_s': calibration, 'combined_wall_s': forecast+calibration})
+            fit = row['calibration']
+            fits.append({'case_id': data['case_id'], 'anchor_time_s': row['anchor_time_s'],
+                'selection_kind': row['selection_kind'],
+                'within_tolerance': bool(fit['load_fit_within_tolerance']),
+                'bracketed': bool(fit['load_fit_bracketed']),
+                'normal_load_residual_N': float(fit['normal_load_residual_N']),
+                'estimated_normal_load_N': float(fit['estimated_normal_load_N']),
+                'calibrated_normal_load_N': float(fit['calibrated_normal_load_N']),
+                'plane_offset_m': float(fit['plane_offset_m']),
+                'plane_offset_bound_m': float(fit['plane_offset_bound_m'])})
+    assert len(runtime) == report['forecast_count'] == 113
+    assert len({(x['case_id'], round(x['anchor_time_s'], 9)) for x in runtime}) == len(runtime)
+    fit_map = {(x['case_id'], round(x['anchor_time_s'], 9)): x['within_tolerance'] for x in fits}
+    spec = importlib.util.spec_from_file_location('sealed_i40_endpoint_reduction', HERE/'analyze_forecasts.py')
+    module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    # Only summarize already-computed scalar endpoint records; no Geometry instance.
+    by_fit = {str(flag): module.summarize_endpoints([x for x in endpoints
+        if fit_map[(x['case_id'], round(x['anchor_time_s'], 9))] == flag]) for flag in (True, False)}
+    runtime_summary = {'scope': 'Saved wall-clock metadata reduction only.',
+        'context': 'Forecast campaign used three concurrent workers; these are not isolated CPU benchmarks.20ms is a hypothetical slower-planner budget, not the live LQR5ms cadence.',
+        'cost_boundary': 'Sum includes private forecast generation and plane calibration. It excludes controller-history reconstruction, predictor construction and file serialization, so it is not a full online implementation timing.',
+        'all': runtime_group(runtime),
+        'by_selection_kind': {selection: runtime_group([x for x in runtime if x['selection_kind'] == selection])
+                              for selection in ('uniform', 'predeclared_event')},
+        'per_anchor': runtime,
+        'realtime_claim': False}
+    failed_fits = [x for x in fits if not x['within_tolerance']]
+    calibration_summary = {'forecast_count': len(fits), 'fit_within_tolerance_count': len(fits)-len(failed_fits),
+        'fit_outside_tolerance_count': len(failed_fits),
+        'unbracketed_count': sum(not x['bracketed'] for x in fits),
+        'absolute_load_residual_N': distribution(abs(x['normal_load_residual_N']) for x in fits),
+        'by_selection_kind': {selection: {'n': sum(x['selection_kind'] == selection for x in fits),
+            'outside_tolerance': sum(x['selection_kind'] == selection and not x['within_tolerance'] for x in fits)}
+            for selection in ('uniform', 'predeclared_event')},
+        'outside_tolerance_records': failed_fits,
+        'all_fit_records': fits,
+        'interpretation': '113 successful computations are not113 validated forecasts. All113 remain in primary accuracy metrics as declared; none are removed or repaired using truth.'}
+    controlled = [x for x in report['trajectory_cases'] if x['protocol_gate_type'] != 'existing_mars_route_gates']
+    mars = [x for x in report['trajectory_cases'] if x['protocol_gate_type'] == 'existing_mars_route_gates']
+    report['status'] = 'completed_diagnostic_analysis_authoritative_consolidation'
+    report['runtime_summary'] = runtime_summary
+    report['calibration_fit_summary'] = calibration_summary
+    report['endpoint_summaries_by_calibration_fit_flag'] = by_fit
+    report['trajectory_quality_counts'] = {
+        'completed': sum(x['completed'] for x in report['trajectory_cases']),
+        'total': len(report['trajectory_cases']),
+        'controlled_cases_passing_final1s': sum(x['protocol_gate_passed'] for x in controlled),
+        'controlled_case_count': len(controlled),
+        'mars_cases_passing_existing_route_gates': sum(x['protocol_gate_passed'] for x in mars),
+        'mars_case_count': len(mars),
+        'criteria_are_different': True}
+    report['cases_with_sustained_multiple_loaded_patch_runs'] = [x['case_id'] for x in report['trajectory_cases']
+        if x['sustained_multiple_loaded_patch_runs']]
+    for key in ('controlled_transfer_nomination', 'separate_late_x_stress_transfer'):
+        report[key]['isolation_scope'] = 'Only15ms-dwell dominant-family changes. Raw force/contact chatter can remain; this is not a guaranteed clean physical handover.'
+    stage = {'captured_before_consolidation_utc': started,
+        'scope': 'Saved-data arithmetic/metadata consolidation only; no physics, geometry or forecast rerun.',
+        'source_sha256': digest(source),
+        'derived_from': {str(path.relative_to(ROOT)): digest(path) for path in inputs},
+        'stage_notes': [
+            'Primary report is retained unchanged. Its pooled warning FP/FN/precision/recall are invalid due to generator consumption.',
+            'Corrected stage materializes the iterable and passes an adversarial nonzeroFP/FN generator test plus actual-positive denominator checks.',
+            'This final report copies all primary endpoint/trajectory results and uses corrected warning summaries, then adds saved runtime/calibration-fit reductions.',
+            'Original and corrected report/manifest hashes remain available; no failed result is overwritten.'],
+        'authoritative_result': 'analysis/final_report.json'}
+    report['consolidation'] = stage
+    save(HERE/'runtime_summary.json', runtime_summary)
+    save(HERE/'calibration_fit_summary.json', calibration_summary)
+    save(target, report)
+    save(HERE/'final_provenance.json', stage)
+    final_files = [source, snapshot/source.name, target, HERE/'runtime_summary.json',
+                   HERE/'calibration_fit_summary.json', HERE/'final_provenance.json']
+    save(HERE/'final_artifact_manifest.json', {'files': [{'path': str(p.relative_to(HERE)),
+        'bytes': p.stat().st_size, 'sha256': digest(p)} for p in final_files]})
+    print(json.dumps({'authoritative_report': str(target), 'runtime': runtime_summary['all'],
+        'calibration_fit_outside_tolerance': len(failed_fits),
+        'trajectory_quality_counts': report['trajectory_quality_counts'],
+        'controller_adoption': False}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

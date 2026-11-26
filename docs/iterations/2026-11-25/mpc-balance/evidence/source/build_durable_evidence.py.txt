@@ -1,0 +1,252 @@
+"""Archive frozen MPC experiment evidence; no model/control/test execution."""
+from pathlib import Path
+from datetime import datetime, timezone
+import hashlib
+import json
+import xml.etree.ElementTree as ET
+
+
+REPO = Path(__file__).resolve().parents[2]
+FAMILY = Path(__file__).resolve().parent
+PREDICTOR = REPO/'results/mpc_prototype_20261125/predictor_validation'
+OPTIMIZER = REPO/'results/mpc_optimizer_development_20261125'
+DEST = REPO/'docs/iterations/2026-11-25/mpc-balance/evidence'
+CASES = [('initial', 'world_x', 'mpc'), ('initial', 'world_y', 'mpc'),
+         ('initial', 'world_x', 'baseline'), ('initial', 'world_y', 'baseline'),
+         ('calibration_gate', 'world_x', 'mpc'), ('trajectory', 'world_x', 'mpc'),
+         ('trajectory', 'world_y', 'mpc')]
+ENTRIES, SOURCE_OBJECTS = [], {}
+
+
+def digest(path):
+    value = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for part in iter(lambda: stream.read(1024*1024), b''):
+            value.update(part)
+    return value.hexdigest()
+
+
+def copy(source, target, stage, description=''):
+    source, target = Path(source), DEST/target
+    assert source.exists() and source.suffix not in ('.npz', '.mp4'), source
+    assert source.name != 'plans.json', source
+    target.parent.mkdir(parents=True, exist_ok=True)
+    data = source.read_bytes(); target.write_bytes(data)
+    entry = {'snapshot': str(target.relative_to(DEST)), 'origin': str(source.relative_to(REPO)),
+             'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest(), 'source_stage': stage,
+             'description': description}
+    ENTRIES.append(entry)
+    return entry
+
+
+def generated(target, value, stage, origins):
+    target = DEST/target; target.parent.mkdir(parents=True, exist_ok=True)
+    data = (json.dumps(value, indent=2, allow_nan=False)+'\n').encode(); target.write_bytes(data)
+    ENTRIES.append({'snapshot': str(target.relative_to(DEST)), 'derived_from': origins, 'bytes': len(data),
+                    'sha256': hashlib.sha256(data).hexdigest(), 'source_stage': stage})
+
+
+def tree(source, target, stage):
+    for path in sorted(Path(source).rglob('*')):
+        if not path.is_file() or any(part in ('__pycache__', 'mirror', 'recorded_audit_mirror') for part in path.parts):
+            continue
+        if path.suffix in ('.py', '.txt', '.json', '.csv', '.log', '.xml', '.png', '.pdf', '.yaml', '.toml') and path.name != 'plans.json':
+            relative = str(path.relative_to(source))+('.txt' if path.suffix == '.py' else '')
+            copy(path, str(Path(target)/relative), stage)
+
+
+def flat(source, target, stage):
+    for path in sorted(Path(source).iterdir()):
+        if path.is_file() and path.suffix in ('.json', '.csv', '.png', '.pdf', '.log', '.xml') and path.name != 'plans.json':
+            copy(path, str(Path(target)/path.name), stage)
+
+
+def main():
+    # All mutable analyses and four clips must already be complete and frozen.
+    freeze = json.loads((FAMILY/'analysis_manifest.json').read_text())
+    for item in freeze['files']:
+        assert digest(REPO/item['path']) == item['sha256'], item['path']
+    reports = {'initial': json.loads((FAMILY/'initial/analysis/report.json').read_text()),
+               'calibration_gate': json.loads((FAMILY/'calibration_gate/analysis_against_initial/report.json').read_text()),
+               'trajectory': json.loads((FAMILY/'trajectory/analysis_against_initial/report.json').read_text())}
+    assert set(reports['trajectory']['acceptance_against_original_protocol']) == {'world_x', 'world_y'}
+    media_paths = [FAMILY/stage/'videos'/f'metadata_{direction}.json'
+                   for stage in ('initial', 'trajectory') for direction in ('world_x', 'world_y')]
+    media = [json.loads(path.read_text()) for path in media_paths]
+    for item in media:
+        assert item['final_frame_decoded'] and digest(item['file']) == item['sha256']
+
+    # Preserve the existing implementation before MPC, then reuse identical
+    # objects by original path + hash in every per-run launch-source index.
+    pre = json.loads((FAMILY/'pre_mpc_provenance.json').read_text())
+    copy(FAMILY/'pre_mpc_provenance.json', 'source/pre_mpc_provenance.json', 'pre_mpc_existing_core')
+    for original, expected in pre['files'].items():
+        path = FAMILY/'pre_mpc_existing_core'/original
+        assert digest(path) == expected
+        target = 'source/pre_mpc_existing_core/'+original+('.txt' if path.suffix == '.py' else '')
+        entry = copy(path, target, 'pre_mpc_existing_core')
+        SOURCE_OBJECTS[(original, expected)] = entry['snapshot']
+    launch_index, raw_inventory, run_summaries = [], [], []
+    for stage, direction, policy in CASES:
+        directory = FAMILY/stage/'runs'/direction/policy
+        provenance = json.loads((directory/'provenance.json').read_text())
+        summary = json.loads((directory/'summary.json').read_text())
+        run_summaries.append({'stage': stage, 'direction': direction, 'policy': policy,
+                              'completed': summary['completed'], 'failure': summary['failure'],
+                              'mpc_experiment': summary['mpc_experiment'], 'wall_time_s': summary['wall_time_s']})
+        target = f'{stage}/runs/{direction}/{policy}'
+        for name in ('summary.json', 'provenance.json', 'terrain.json'):
+            copy(directory/name, target+'/'+name, stage+'_physical_run')
+        log = FAMILY/stage/'logs'/f'{policy}_{direction}.log'
+        copy(log, target+'/runner.log', stage+'_physical_run')
+        references = []
+        for original, expected in provenance['source_sha256'].items():
+            path = directory/'source_snapshot'/original
+            assert digest(path) == expected, path
+            key = (original, expected)
+            reused = key in SOURCE_OBJECTS
+            if not reused:
+                source_target = f'source/launch_stages/{stage}/{direction}/{policy}/'+original
+                source_target += '.txt' if path.suffix == '.py' else ''
+                entry = copy(path, source_target, stage+'_exact_prelaunch_source')
+                SOURCE_OBJECTS[key] = entry['snapshot']
+            references.append({'original_path': original, 'sha256': expected,
+                                'archived_source': SOURCE_OBJECTS[key], 'deduplicated_existing_copy': reused})
+        launch_index.append({'stage': stage, 'direction': direction, 'policy': policy,
+                              'provenance': target+'/provenance.json', 'files': references})
+        for path in sorted(directory.iterdir()):
+            if path.is_file() and (path.suffix == '.npz' or path.name == 'plans.json'):
+                raw_inventory.append({'path': str(path.relative_to(REPO)), 'bytes': path.stat().st_size,
+                                      'sha256': digest(path), 'stage': stage, 'direction': direction,
+                                      'policy': policy, 'copied_into_evidence': False})
+    generated('source/launch_index.json', {'cases': launch_index,
+              'meaning': 'Every recorded prelaunch file hash was verified. Exact unchanged path/hash objects are shared rather than duplicated; MPC/harness changes retain distinct stage objects.',
+              'unique_path_hash_source_objects': len(SOURCE_OBJECTS)},
+              'verified_per_case_source_index', [f'results/mpc_balance_20261125/{s}/runs/{d}/{p}/provenance.json' for s, d, p in CASES])
+    copy(FAMILY/'harness_postrun_clarification.json', 'source/harness_postrun_clarification.json',
+         'postrun_harness_metadata_and_error_path_clarification')
+    copy(REPO/'scripts/run-mpc-comparison.py', 'source/after_run_harness/run-mpc-comparison.py.txt',
+         'postrun_harness_metadata_and_error_path_clarification',
+         'Later current harness; exact seven launch versions remain in launch_index. No numerical policy change is inferred from this later snapshot.')
+    generated('raw_inventory.json', {'omitted_run_payloads': raw_inventory,
+              'scope': 'Raw rollouts, precision traces, and full plan JSON stay local. Their hashes identify inputs without copying the payloads.'},
+              'raw_payload_inventory', [item['path'] for item in raw_inventory])
+
+    for stage in ('initial', 'calibration_gate', 'trajectory'):
+        copy(FAMILY/stage/'protocol.json', stage+'/protocol.json', stage+'_declared_protocol')
+        origin = FAMILY/'initial/analysis' if stage == 'initial' else FAMILY/stage/'analysis_against_initial'
+        flat(origin, stage+'/analysis', stage+'_frozen_analysis')
+        for path in sorted((FAMILY/stage).glob('*.log')):
+            if not path.name.startswith('render_'):
+                copy(path, stage+'/'+path.name, stage+'_analysis_log')
+    copy(FAMILY/'analysis_manifest.json', 'analysis_manifest.json', 'frozen_analysis_manifest')
+    for name in ('initial/analyze_mpc_comparison.py', 'analysis_support.py', 'analyze_candidate_stage.py'):
+        copy(FAMILY/name, 'source/analysis/'+name+'.txt',
+             'initial_immutable_analysis_source' if name.startswith('initial/') else 'later_stage_analysis_helpers')
+    for name in ('predicted_goal_progress.json', 'predicted_goal_progress.py'):
+        copy(FAMILY/'trajectory'/name, 'trajectory/'+name+('.txt' if name.endswith('.py') else ''),
+             'after_inline_analysis_reproduction_helper' if name.endswith('.py') else 'trajectory_prediction_audit')
+
+    # Preserve negative calibration/derivative evidence, with the reduced helper
+    # explicitly labeled as authored after its equivalent inline audit.
+    for name in ('report.json', 'derivatives.json', 'reduced_derivatives.json', 'load_fit_curves.png', 'load_fit_curves.pdf'):
+        copy(FAMILY/'initial/calibration_audit'/name, 'initial/calibration_audit/'+name, 'calibration_and_failed_model_audits')
+    tree(FAMILY/'initial/calibration_audit/source_snapshot', 'source/calibration_audit_pre_run', 'calibration_audit_source_snapshot')
+    for name in ('calibration_audit.py', 'calibration_derivative_audit.py', 'calibration_reduced_derivative_audit.py'):
+        copy(FAMILY/'initial'/name, 'source/calibration_helpers/'+name+'.txt',
+             'after_run_reduced_model_reproduction_helper' if 'reduced' in name else 'calibration_audit_helpers')
+
+    flat(PREDICTOR, 'predictor_validation', 'original_recorded_predictor_validation')
+    for name in ('initial_smoke_source', 'final_tested_source'):
+        tree(PREDICTOR/name, 'source/predictor_validation/'+name, 'original_predictor_source_stage')
+    copy(PREDICTOR/'audit_recorded_predictions.py', 'source/predictor_validation/audit_recorded_predictions.py.txt',
+         'original_recorded_prediction_audit_source')
+    # Test and solver source records overlap; preserve stage labels and do not
+    # turn copied records into an additive test count.
+    tree(FAMILY/'tests', 'tests', 'selected_test_and_solver_stages')
+    for path in sorted(FAMILY.glob('ltv_predictor*')):
+        if path.is_file() and path.suffix in ('.log', '.xml'):
+            copy(path, 'tests/predictor/'+path.name, 'later_predictor_test_records')
+    tree(FAMILY/'ltv_predictor_full_source', 'source/full_ltv_predictor_test_only', 'full_ltv_test_only_source')
+    tree(OPTIMIZER, 'solver_development', 'solver_failure_and_evolution_records')
+    for name in ('test_predictive_model.py', 'test_predictive_control.py', 'test_hardware_mode.py'):
+        copy(REPO/'tests'/name, 'source/current_after_tests/'+name+'.txt',
+             'after_tests_current_source_not_prelaunch', 'Current after-tests source; not asserted as exact earlier test-launch bytes.')
+
+    video_inventory, copied_renderers = [], set()
+    for metadata_path, item in zip(media_paths, media):
+        stage = metadata_path.parents[1].name
+        copy(metadata_path, stage+'/media/'+metadata_path.name, 'verified_completed_media')
+        stem = Path(item['file']).stem
+        for name in (stem+'_during_motion.jpg', stem+'_decoded_final.jpg'):
+            copy(metadata_path.parent/name, stage+'/media/'+name, 'verified_completed_media')
+        renderer = Path(item['renderer_source_snapshot'])
+        assert digest(renderer) == item['renderer_sha256']
+        if item['renderer_sha256'] not in copied_renderers:
+            copy(renderer, 'source/renderers/'+renderer.name+'.txt', 'exact_completed_clip_renderer')
+            copied_renderers.add(item['renderer_sha256'])
+        video_inventory.append({**item, 'local_video_path': str(Path(item['file']).relative_to(REPO)),
+                                'copied_into_evidence': False})
+    generated('media_inventory.json', {'completed_selected_clips_local_only': video_inventory},
+              'verified_completed_media', [str(path.relative_to(REPO)) for path in media_paths])
+    suites = []
+    for item in ENTRIES:
+        if item['snapshot'].endswith('.xml'):
+            root = ET.parse(DEST/item['snapshot']).getroot()
+            suite = root if root.tag == 'testsuite' else list(root)[0]
+            suites.append({'artifact': item['snapshot'], **suite.attrib})
+    outcome = {
+        'status': 'experimental_mpc_not_accepted_against_declared_protocol',
+        'actual_new_gazebo_campaign_runs': len(CASES), 'completed_runs': sum(item['completed'] for item in run_summaries),
+        'run_count_definition': 'Four initial runs (two LQR baselines and two frozen MPC), one new affine-calibration world-X run, and two new trajectory-MPC runs. Later analyses reuse initial baselines and earlier candidates; those rows are not new runs.',
+        'guarded_controller_calls': sum(item['mpc_experiment']['guarded_controller_calls'] for item in run_summaries),
+        'initial_acceptance': reports['initial']['acceptance'],
+        'calibration_gate_acceptance': reports['calibration_gate']['acceptance_against_original_protocol'],
+        'trajectory_acceptance': reports['trajectory']['acceptance_against_original_protocol'],
+        'trajectory_counter_clarification': {
+            'actuated_accepted_plan_updates_per_case': 230,
+            'actuated_successful_QP_calls_per_case': 232,
+            'plan_records_including_terminal_per_case': 231,
+            'successful_QP_calls_including_terminal_per_case': 233,
+            'meaning': 'First update solves three seeds. The report field actuated_qp_solved_plans is a legacy name for successful QP calls, not a count of accepted plan updates. Accepted nonlinear sequences and selected warm/SQP command sources remain separate.'},
+        'physical_runs': run_summaries,
+        'selected_test_records_not_additive': suites,
+        'evidence_separation': {
+            'prediction': 'Recorded-input and short-horizon model accuracy are diagnostic checks, not closed-loop goal success or general validity of optimized400ms plans.',
+            'model_derivatives': 'The static force-fit gap, full-state finite-difference sensitivity and failed reduced-state hypothesis are preserved; passing nominal replay does not validate local Jacobians.',
+            'solver': 'Initial fixture failure and independent external-KKT audit are retained alongside corrected solver/source stages. Accepted nonlinear plans, successful QP solves, and selected command sources are separate quantities.',
+            'runtime': 'Offline wall time and model/solve time are reported; no real-time qualification.',
+            'control_acceptance': 'Original-goal recovery, lean, path error, input bounds and fallback occupancy are judged by the predeclared protocol. A completed run or bounded QP does not imply acceptance.'},
+        'limitations': ['Simulation-only ideal measurements and belts; no hardware validation.',
+                        'Simple 16mm warm-start fixtures, not broad Mars-route or robustness qualification.',
+                        'Final trajectory cases reuse original baselines; no independent new baseline campaigns are implied.',
+                        'Full-LTV predictor test/benchmark sources are not a claim that the closed-loop trial computed all20 full finite-difference Jacobians; final protocol uses sparse stride5 nodes.',
+                        'The reduced-derivative and predicted-progress reproduction helpers were authored after equivalent inline analyses; their original outputs were not rerun.',
+                        'Selected test suites overlap; their counts must not be added into one unique/full-repository result.',
+                        'NPZ, full plan JSON and MP4 files remain local; compact reports and exact launch-source references are archived.']}
+    generated('summary.json', outcome, 'compact_derived_overview', [
+        'results/mpc_balance_20261125/initial/analysis/report.json',
+        'results/mpc_balance_20261125/calibration_gate/analysis_against_initial/report.json',
+        'results/mpc_balance_20261125/trajectory/analysis_against_initial/report.json'])
+    copy(Path(__file__).resolve(), 'source/build_durable_evidence.py.txt', 'evidence_archival_helper')
+    manifest = {'created_utc': datetime.now(timezone.utc).isoformat(),
+                'scope': 'Compact finalized MPC evidence; original sources/results retained. No new analyses, controller runs, simulations, or tests performed by this copier.',
+                'snapshot_count_excluding_this_manifest': len(ENTRIES),
+                'snapshot_bytes_excluding_this_manifest': sum(item['bytes'] for item in ENTRIES),
+                'files': ENTRIES,
+                'source_stage_distinctions': ['pre_mpc_existing_core: original non-MPC core/config archive.',
+                    'source/launch_index.json: exact prelaunch sources for all seven actual cases, deduplicated only by equal original path and SHA256.',
+                    'Predictor/solver test-stage sources are kept separate from case launch source. Full-LTV tests are not closed-loop usage evidence.',
+                    'After-run reduced-model/progress helpers and current after-tests sources are explicitly labeled; they are not claimed as earlier prelaunch code.',
+                    'Initial analysis source/result is immutable; later calibration/trajectory analyses use separately preserved shared helpers.']}
+    (DEST/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+    for item in ENTRIES:
+        assert digest(DEST/item['snapshot']) == item['sha256'], item['snapshot']
+    assert not list(DEST.rglob('*.npz')) and not list(DEST.rglob('*.mp4')) and not list(DEST.rglob('plans.json'))
+    print(json.dumps({'artifacts': len(ENTRIES), 'bytes': manifest['snapshot_bytes_excluding_this_manifest'],
+                      'new_campaign_runs': len(CASES), 'raw_files_local_only': len(raw_inventory),
+                      'unique_path_hash_source_objects': len(SOURCE_OBJECTS), 'completed_clips': len(media)}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,308 @@
+{
+  "iteration": "I-43",
+  "status": "Declared before implementation or experiments. User explicitly authorized opt-in attainable tilt-reference implementation and tests. No improvement assumed and no default promotion.",
+  "declared_utc": "2026-11-26T04:23:47.495289+00:00",
+  "presentation_date": "2026-11-25 America/New_York",
+  "question": "Does a bounded smooth tilt reference with consistent desired tilt rate reduce common loaded-belt saturation and early departure without hiding balance error or worsening turns?",
+  "baseline": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090",
+  "baseline_input_sha256": {
+    "precision.npz": "f6982688dcc4fed3ee89c4341389fcecaa8a12ed8687ec6809f3f4c2cd9b31c6",
+    "rollout.npz": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+    "summary.json": "0fcd9de44e03e54ff7f4cec8361cc9f637b1c18be330696bb655ae4599d60899",
+    "provenance.json": "4ca53165a2d2e3f712dfb97d69ba716590bbd6c343397ac1b18de3db5053d371",
+    "terrain.json": "b11e232f3f491c276f98ddbf639efef735accbb8806084f7260398155fad6a8c"
+  },
+  "pre_change_source_sha256": {
+    "config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+    "pyproject.toml": "eafbff916ee7df8d727e4f5a0a13779a8ea88ee82598778f94dc9909d99f1223",
+    "results/lqr_contact_forecast_20261125/campaign/jobs.json": "316db710ee38831966ce86153b1b0cdcc6951ea8f41de899be8645177057052a",
+    "results/lqr_contact_forecast_20261125/protocol.json": "2d671f9f7a49e7c3075ba336143c27810322239f951c0108c1d1603a5b465aac",
+    "scripts/probe-support-identity.py": "9e9b440f1357170498dae0ebee8e7b38c6b7c4ce5bdbac978b7b3e4570a74d4c",
+    "scripts/run-lqr-contact-forecast.py": "4e4d590037801f178bb05e779ddb49fb093f5cae830212b9f90d57ddce1790cf",
+    "src/spherical_wheel/__init__.py": "3ec9d9b209172f8b735dba797aee9e1b7850bd28129d86083636525edbdb4d47",
+    "src/spherical_wheel/__main__.py": "b0694f2035697f7295db710bca58167353174c77a7d92c8b620a2c150f464888",
+    "src/spherical_wheel/cli.py": "8f808e8ec874b0e2bbb8d1ccc9d9fd96c6612ab655a12adebda7e4bfe9232406",
+    "src/spherical_wheel/contact.py": "a534156e7b304d60efd3e44911477ff5b89dedd076a90eb47e0c46fb2068fb84",
+    "src/spherical_wheel/contact_diagnostics.py": "f0a927e4c230b4f181f4d72cf5216f38d34de26573dcd511027047ff5a36cbcb",
+    "src/spherical_wheel/contact_kinematics.py": "678eff4f9792e86dd3b9dece83edaaf2517b8416df3b736352cb0a0142b98351",
+    "src/spherical_wheel/contact_prediction.py": "cb9deeee1e254ea2b1eb9b88511a68eb07b1b55233fc6ac3de808b849e978f3f",
+    "src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "src/spherical_wheel/control.py": "e0c4107601e07cafe29b726341de4c32bb8151506a539e913b0d6eec2e0c8e6f",
+    "src/spherical_wheel/experiments.py": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638",
+    "src/spherical_wheel/feasible_reference.py": "c044a48fdd00efa35d1ed1094183806c10d6329748eae5eedac713b0710438aa",
+    "src/spherical_wheel/gazebo/__init__.py": "3d8aa250141d5f840b41a5a4bd1cd7b5d115942165f5b64567c72b883a1410c9",
+    "src/spherical_wheel/gazebo/__main__.py": "e6fd3883bc41a08c518f4f24c4a72ff5de9a94cff725e7959ea115c38bd2105e",
+    "src/spherical_wheel/gazebo/bridge.py": "6b1f7e2ec860e6d21a6a025d1581952836aef3515da66f60a2314d15776c18a4",
+    "src/spherical_wheel/gazebo/experiments.py": "4fd2fa15833b724a027de054261698829b87c0667a14d2821c1684f989d6308b",
+    "src/spherical_wheel/gazebo/mars.py": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63",
+    "src/spherical_wheel/gazebo/mars_compare.py": "11cd6b314bae383f150c48bfc864672878a1f109757476713ecfcee90f966ceb",
+    "src/spherical_wheel/gazebo/mars_observer.py": "f420a80f2fbd5a45f3ca926e3c76c3959e65114d65226c02c76ed24ceb49b67a",
+    "src/spherical_wheel/gazebo/mars_shapes.py": "f5205692cdeda87e1487d6f4d27f63d5fc0adf15e35682a9e11602d02791a107",
+    "src/spherical_wheel/gazebo/model_sdf.py": "34abc16930ebe04f3f8333aa8d57803c9c33c12e9eea7a12f668fb6a2da05d49",
+    "src/spherical_wheel/gazebo/parity.py": "35140f72c13af341731e8b260e2e3f80458b3876c5db04f18f78cf7840cc68b6",
+    "src/spherical_wheel/gazebo/plant.py": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d",
+    "src/spherical_wheel/gazebo/worlds.py": "ad8b8133fb57b2bcab729ce6eb215f931ac04128b925c496710d8176ef0b39d4",
+    "src/spherical_wheel/lab_runtime.py": "64bf8c70fae337553e35a55202bb626b15abe5a23f28a6d6cf02177034bfb096",
+    "src/spherical_wheel/lab_server.py": "d5af071ce3c3aeabe5a02c3e9e31ab5c9c087f9bd1076c9905318d0f2a6cf311",
+    "src/spherical_wheel/mirror.py": "8e6325a9c44f79516c32c2af079718c3355f447d0d2751c44a684b6b8cf7b038",
+    "src/spherical_wheel/mobility.py": "92c08f5fe4001065128f8b9fe7b6821c8a63d9d4b7622da961778d1fd3adbab8",
+    "src/spherical_wheel/model.py": "d41d35b283ef4732cd2b7c321539491054a8070c86a2109a577d470a8c406e72",
+    "src/spherical_wheel/offroad.py": "bb87ec5d188cc51acdc2591b8629dc94785b2c3aaff2e402947f911b993f5070",
+    "src/spherical_wheel/offroad_analysis.py": "c212949b09147b91aead5fee473594d6dc1c775f5f95860d0f189d5a0dfe10ac",
+    "src/spherical_wheel/offroad_cli.py": "a41ce3e8974862fd11006a3bf72be80602eb7d172adaf4b1c19b70f5701e8331",
+    "src/spherical_wheel/offroad_control.py": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3",
+    "src/spherical_wheel/offroad_experiments.py": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b",
+    "src/spherical_wheel/offroad_geometry.py": "b843181c5537050d544118df534a0f53e2e2905054fef32fe66d702395afc4ae",
+    "src/spherical_wheel/offroad_suite.py": "2e201f4fea2110fe6539385b0763b6eacc7bf0028683765acc45d9d030187d5c",
+    "src/spherical_wheel/offroad_view.py": "631370d0c5ee29417cb2e8531ced3139464f4ffa6bd8d6d33d12a4ae3b3c479f",
+    "src/spherical_wheel/predictive_control.py": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f",
+    "src/spherical_wheel/predictive_equilibrium.py": "c8a5c340a7ce9f52c8334f9f8a7fa0491f21ea63fd1125cb0dbabc2f58b15ad2",
+    "src/spherical_wheel/predictive_model.py": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473",
+    "src/spherical_wheel/predictive_seed.py": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca",
+    "src/spherical_wheel/recovery_control.py": "b3a6bad0870c22ada4c926a7659befb756e31f8ed5defb5506786dc466f5b17d",
+    "src/spherical_wheel/rolling_allocation.py": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092",
+    "src/spherical_wheel/sensitivity.py": "4555fc809dab22aa2629148700fc8b8464076603a2be9377b3bd0c7af2d607be",
+    "src/spherical_wheel/sim.py": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975",
+    "src/spherical_wheel/synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+    "src/spherical_wheel/terrain.py": "43ff7b6bf2d53fd3cfccfaa9d02841195f78e0d7e6cc2181b01c0589176751eb",
+    "src/spherical_wheel/transition.py": "6330b2d0bfc832167105fb44354f00731e54b6a510c2ed96a4d45482652d13f3",
+    "src/spherical_wheel/validation.py": "f66410a457be404a5934b08d0bee5c4812cc3fea5e5bdf5fa6a9d16b188fd171",
+    "src/spherical_wheel/visualize.py": "cfa603e710fe63d7ff0e63e5d2057748b6758efcb304e8f79d1a0318ef736b51",
+    "tests/test_clipped_contact.py": "418ead1be06cf21909a49f69fa14ac415612e929a9acfc90aa7df26492c0f7d9",
+    "tests/test_contact_diagnostics.py": "5e4b55e4a3c98c4b78e206028ba8b3428529a84b4f4e35df95d0fd7313dd0e05",
+    "tests/test_contact_kinematics.py": "3a0b4a92a95bb06d56903b315646ecb7fe81a05d6cc8cc2baab6f191b77c01f9",
+    "tests/test_contact_prediction.py": "8765f8c427765628b724082f49c671a580e69ae23e071b5b14862a800a079175",
+    "tests/test_control.py": "1e401af08f6d5aa8eec9c0c2a16641b1e77ea4b503f67ae80f8acb323c3025bd",
+    "tests/test_feasible_rolling_reference.py": "369e3985da9d237559167e0629eaddcae34cdd701b88d072801df77ef74c2254",
+    "tests/test_feedback_recovery_metrics.py": "f401aca320568175801a56fcb47493b923a4856178ad5f2d5bebd6e8fb4d151c",
+    "tests/test_gazebo.py": "03c363ec2f61d648a37648866ea83c0ee2026ea93a980f4cd7aed7c467855710",
+    "tests/test_hardware_mode.py": "faecdb9bdf3cf33dc9c23d30ba73d09e26a597f1c9e95e77ed714e8263589ff8",
+    "tests/test_heading_control.py": "ad5e794cb2a9316fcdb453b8c1da3e672524901a53b88028a518ee0565c6bcd0",
+    "tests/test_lab.py": "19e6692296985912ef5df3c92278c119abb506556696e9efa1772de92474fdad",
+    "tests/test_local_lqr_comparison.py": "c5964e20c2a6b05d1abc54cfe41d895a02c60394b1f27fc8084031e95c23c983",
+    "tests/test_mobility.py": "736fc65290c92b3cca34b39781fb5755456bdd78e8212128ac183ff75297a3b4",
+    "tests/test_momentum_observer.py": "651acd2b544cc04a09f55f958ee0dc0b4addaedcde0a0a7e59599e6fe2593c6d",
+    "tests/test_mpc_comparison_objective.py": "52b1628f928b5b1fbacea3fe01eb7d52ae582a95bfddb1a6700c3e1bd78eaa82",
+    "tests/test_multicontact_diagnostics.py": "7049598af22d07e01db82bd95a78a1b11e46dae1a5a7da0d73446bcfbeebf66b",
+    "tests/test_offroad_control.py": "bd4c2d231437e0fd4524836f8d2e105872357fdd05e42c51cadeb9c08d1aca41",
+    "tests/test_offroad_ground.py": "02ac69a4dc55fd212f02acd0294d074604996726ab64dab303a770b8061526fa",
+    "tests/test_physics.py": "4c3766a8f99725af2f15663fa3c2290b90bdcebcace4214b484566a8c12e3da9",
+    "tests/test_predictive_control.py": "af3d13bd8c6ae4b800f19ed0abf820978a919b01f4fef54ae5116000900ecfc5",
+    "tests/test_predictive_equilibrium.py": "fe29786b8ac464e23568ee86342d38990f31dd9f7ac10e42ab9d29e79ed2974e",
+    "tests/test_predictive_model.py": "e0771672c37c35505a48ccedf0269c408722b60b8feeb11f1052a6ef4c69eccb",
+    "tests/test_predictive_seed.py": "6966800b7fafda3d908b4b3b08d0439acb59c73992d8000bab113ef6eb921edd",
+    "tests/test_recovery.py": "75e27e50c49c9abe53eed5417bb1803d7ac56f0c8d098ec31e4df98e488af74f",
+    "tests/test_rolling_allocation.py": "9ac7ee397fbb75ec1576dca97466cf62ee4fa30c186f027c2478c20cd1c72c02",
+    "tests/test_synchronization.py": "170700f2883d48a0d50bbbd9ed6ce6da5b7db0d9f35cecd076f5a378de3353f9",
+    "tests/test_yaw_control.py": "c0501bc3053ad709744879c6f8579b9d36d775b70502011fdcb14c69a77d1178",
+    "tests/test_yaw_mechanics.py": "b15d37ca2486d9f317f46f87967a4a6ec5262279ec24df3e44dfa429b003d069"
+  },
+  "old_pack_hashes": {
+    "results/feedback_recovery_20261125/presentation-pack.zip": "ff161337e3dc5c4f5650d6f403d45c4eba62f3ba659e71ebaa875a140c3f8934",
+    "results/mpc_search_20261125/presentation-pack.zip": "ffa21bcfc82a3ecd21d2d5f7488e33abd272173bbc09efa0ab9650374d542d0b",
+    "results/mpc_horizon_20261125/presentation-pack.zip": "01d2f8f6691a8a7afee25d401cd8955c6a396ba38d7edd5c2bee33ef434d3366",
+    "results/mpc_extended_return_20261125/presentation-pack.zip": "1a07aa2b68a0d87766c0e792d5fb326a2104abefd05b47ac575e543b748b610e",
+    "results/lqr_contact_forecast_20261125/presentation-pack.zip": "c10e938518a6fcba64e5af295446650fbd74dbccbc20ca637fea618b439d5f64",
+    "results/figure8_event_audit_20261125/presentation-pack.zip": "f6476299041a8aede587c11a87e5442b586e935bd27b660832b6b4022e1b72fe",
+    "results/handoff_factorial_20261125/presentation-pack.zip": "b47d5f5a0b57394d8b80aa608f97459e175c0d534d21c588173a4218c3c3fff7"
+  },
+  "planned_new_files": [
+    "src/spherical_wheel/tilt_reference.py",
+    "tests/test_tilt_reference.py"
+  ],
+  "planned_core_changes": [
+    "Opt-in OffroadParams.tilt_reference settings, None default omitted by as_dict for legacy serialized dictionaries",
+    "Pure raw reference_attitude stays unchanged; state advances once in command; reset clears generator; clone state independently deep-copies",
+    "Controller uses shaped quaternion and optional actual-body-frame angular rate; no observer/locator/allocator/holding-torque/synchronizer or gain-bank changes"
+  ],
+  "generator": {
+    "settings": {
+      "time_constant_s": 0.08,
+      "max_rate_deg_s": 60.0,
+      "activation_time_s": 4.0,
+      "use_rate_reference": true
+    },
+    "chart": "theta=2D tilt rotation vector with q_raw=q_eq*Exp([theta_x,theta_y,0]); chart disk radius existing max_lean_deg28 by default",
+    "equations": "f(d)=R*tanh(norm(d)/(R*tau))*d/norm(d), f(0)=0; z_dot=f(raw_held-z); theta_dot=f(z-theta). Right-hand acceleration Df(z-theta)*(f(raw_now-z)-theta_dot).",
+    "integration": "SSP Heun, inner h<=min(.001,tau/4), integrate PREVIOUS held raw until current timestamp; then register current raw. No clipping or arrival snap.",
+    "bounds": "Both states remain raw tilt disk; chart speed<=R, chart acceleration<=2R/tau=1500deg/s\u00b2. World/body angular-speed target<=R via SO3 left Jacobian. Coordinate acceleration bound is not transported-body component acceleration or a measured actuator limit.",
+    "frame": "omega_world=R_eq*J_left([theta,0])*[theta_dot,0]; omega_body=R_actual.T*omega_world; set vref[3:6] before terrain_feedback. Freeze carried actual yaw for differentiation: add no measured yawdot, retain geometric z from changing tilt direction.",
+    "activation": "Native path before4s; initialize theta=z=current raw at first active sample and emit EXACT existing raw quaternion/+zero rate once. First advance4.005s; remain enabled through44s; no shutdown transient.",
+    "same_time": "Idempotent: no advance and no replacement of held raw; invalid/nonfinite/backwards times rejected.",
+    "measurement_boundary": "Only current observer-derived raw tilt, known time/previous reference state/current measured attitude. No future state/contact/terrain or solver truth."
+  },
+  "execution": {
+    "main_arms": [
+      "baseline",
+      "angle_only",
+      "consistent_rate"
+    ],
+    "main_fresh_runs": 3,
+    "duration_s": 44.0,
+    "activation_s": 4.0,
+    "same_case": {
+      "case_id": "mars_figure8_p090",
+      "terrain": "marsyard2021",
+      "phase_rad": 0.9,
+      "path": {
+        "kind": "mars_route",
+        "route": "plain_figure8"
+      },
+      "duration_s": 44.0,
+      "yaw_deg": 45.0,
+      "reanchor_at_motion_start": false,
+      "uniform_anchor_start_s": 0.4
+    },
+    "engine": "GazeboHarmonic8.10/DART6.19.5/ode;5ms native command,1ms physics",
+    "settings_angle_only": {
+      "time_constant_s": 0.08,
+      "max_rate_deg_s": 60.0,
+      "activation_time_s": 4.0,
+      "use_rate_reference": false
+    },
+    "settings_consistent_rate": {
+      "time_constant_s": 0.08,
+      "max_rate_deg_s": 60.0,
+      "activation_time_s": 4.0,
+      "use_rate_reference": true
+    },
+    "baseline_parameters": {
+      "mode": "hardware",
+      "synchronize": true,
+      "normal_source": "intrinsic",
+      "observer_cutoff_rad_s": 100.0,
+      "support_min_load_fraction": 0.05,
+      "normal_time_constant_s": 0.02,
+      "rim_aware": true,
+      "rim_time_constant_s": 0.2,
+      "rim_hold_speed_m_s": 0.02,
+      "gap_margin_m": 0.002,
+      "lean_gain": 1.0,
+      "support_feedforward": 1.0,
+      "schedule_on_ground_normal": false,
+      "shaft_error": "rolling",
+      "rolling_allocation": "least_squares",
+      "rolling_damping_m_s": 0.01,
+      "rolling_speed_limits": [
+        20.0,
+        20.0,
+        20.0,
+        0.3,
+        0.3
+      ],
+      "rolling_acceleration_limits": [
+        100.0,
+        100.0,
+        100.0,
+        3.0,
+        3.0
+      ],
+      "rolling_effort_m_s": 0.001,
+      "rolling_change_m_s": 0.001,
+      "rolling_adaptive_effort": false,
+      "rolling_weak_effort_m_s": 0.005,
+      "rolling_authority_m_s": 0.02,
+      "rolling_reference_catchup_gain_s_inv": 1.0,
+      "rolling_reference_catchup_speed_m_s": 0.06,
+      "rolling_reference_position_limit_m": 0.05,
+      "rolling_reference_balance_guard": false,
+      "rolling_reference_lean_scale_deg": 3.0,
+      "rolling_reference_rate_horizon_s": 0.1,
+      "track_contact_point": false,
+      "slip_threshold_m_s": 0.02,
+      "friction_recovery_s": 1.5,
+      "heading_gain": 0.0,
+      "heading_damping": 0.06,
+      "heading_torque_limit_Nm": 0.15,
+      "heading_min_lever": 0.12,
+      "unload_fraction": 0.3,
+      "airborne_damping_Nms": 0.01,
+      "max_lean_deg": 28.0,
+      "lqr_weights": "flat",
+      "heading_reference": "none",
+      "heading_actuation": "shells",
+      "heading_roll_budget_Nm": 0.0,
+      "fall_line_slope_deg": [
+        6.0,
+        12.0
+      ],
+      "heading_normal_time_constant_s": 0.5,
+      "heading_error_limit_rad": 0.5,
+      "fall_line_hysteresis_deg": 20.0
+    },
+    "gain_cache_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+    "fresh_processes": "One arm per isolated t0 process, no DART restore, max3 concurrent. PhysicalMarsworkspace sameI40single-routeconstruction.",
+    "truth_boundary": "Controller remains contact-free observer-only hardware surrogate. Truth may be logged by evaluator AFTER guarded controller call; no pre-command truth acquisition or injection."
+  },
+  "verification": {
+    "default_compatibility": "Default .as_dict retains old keys/values. Saved-measurement current-default native replay vs sealedI40 exactcommands/history withoutphysics; fresh main baseline must match17historicalprecisionfields. Compare common warm states/history before4 and first4s command/initialization; enabled settings deliberately differ, uninitialized dynamic tiltstate normalizedNone.",
+    "tests": [
+      "Independent quaternion finite-difference/Jacobian/body-frame/constant-yaw checks",
+      "Cascade disk/rate/coordinateacceleration/convergence/substepaccuracy",
+      "Causal previous-input update, same-time/backward/reset/activation/output isolation",
+      "Raw accessor purity and default/before-activation arithmetic preservation",
+      "Controller angular-rate/diagnostic agreement and dropout stale-rate overwrite",
+      "Enabled native-clone/seed/fine-forecast state independence and anchor cadence",
+      "Relevant existing controller/seed/predictor/contactforecast tests, identified as subset with overlaps"
+    ]
+  },
+  "analysis": {
+    "primary_window_s": [
+      6.4,
+      7.4
+    ],
+    "demand_window_s": [
+      6.6,
+      6.9
+    ],
+    "recovery_window_s": [
+      7.4,
+      10.0
+    ],
+    "full_window_s": [
+      0.0,
+      44.0
+    ],
+    "event_definition": "SameI41corrected local polyline\u00b12s reference window;20mm>=100ms afterpathstart1;report10/30sensitivitiesandboundary/branchflags.",
+    "turns": "All six fixedI41reference component reversals,[-1,+2]s,100msnew-sign dwell,geometricextremumovershoot;flagmultiplecandidates.",
+    "reference_fairness": "Report shaped-reference lean and RAW unshaped-reference lean separately, plusabsoluteplatformtilt. Raw means same pure native formula from each arm current observer, NOT identical cross-arm target quaternion after motion differs. TimedXY/V/Aprogram remains identical.",
+    "route_gates": "Save standard shaped-reference route evaluation AND separately recomputed raw-reference summary/settling/gates with unchanged summarize/evaluate_route formulas; do not claim balance improvement only against modified reference.",
+    "logged_fields": [
+      "Exactmeasuredstate/previous/currentrequested/appliedcommands,observerwrench/normal,nominaljoints,XY/V/A",
+      "Rawandshapedpre-yawquaternion/2Dcharttilt;chartvelocity/rightacceleration;world/body/usedangularreference;generatorclock/heldinput/state/hash/substeps/flags",
+      "ExactfeedbackK/error/supporttorque,vref;normal/estimatedpatchloads;existingcommandcomponents,simulatortruthforEVALUATIONonly",
+      "Raw-reference and shaped-reference lean errors,absolute tilt and existing route metrics"
+    ]
+  },
+  "main_screen": {
+    "chosen_candidate": "consistent_rate only; angle_only is mechanism ablation, not an outcome-driven substitute",
+    "conditions": [
+      "All44scompletewithoutfallandallprerequisiteinput/frame/cadence/boundchecks pass",
+      "PrimarylocalpathRMS <=.90*baseline",
+      "Demand-windowmaxabsolute beltArequested speed <=.90*baseline (all samples,notpost-selectedloadtimes)",
+      "PrimaryANDfullraw-reference peaklean <=baseline+.5deg",
+      "MovingnominalpathRMS <=1.05baseline;fullpeaknominalerror<=1.05baseline+1mm;finalerror<=baseline+5mm",
+      "Everyfixedturnovershoot <=baseline+max(2mm,.05*baselineovershoot)"
+    ],
+    "interpretation": "Predeclared provisionalscreen,not stability/robustness/adoption proof. No retuning after outcomes. Angleonlyvsrate causalcomparison is with same generator/settings;closedloopshapedtraces maydiffer duechangedmotion/observer."
+  },
+  "conditional_regression": {
+    "trigger": "Only if consistent_rate passes ALL main_screen conditions",
+    "suite": [
+      "plain_figure8 phase+.3",
+      "plain_figure8 phase+.9",
+      "plain_figure8 phase-1",
+      "shape_triangle phase+.3",
+      "shape_line_and_back phase+.3"
+    ],
+    "reuse": "Main+.9baseline/candidate exactsourcepair reused,notnewtrials. Add8fresh baseline/candidate runs forother4 cases;max11freshGzruns total. Sameuntunedsettings/activation4s/observer-onlyboundary.",
+    "decision": "Require no falls, finitebounded references, raw-reference balance and nominaltracking nonregression across all cases before considering broader adoption. No automatic default promotion."
+  },
+  "limits": [
+    "Numerical reference caps are declared design assumptions, not proven physically attainable motor/body rates.",
+    "No desired-yaw derivative; preserve existing heading policy; geometric angular-z is not new heading tracking.",
+    "No particlefilter,iLQR,LQRweightchange,allocatorchange or realrobot.",
+    "An improved smoothed-reference error alone is not acceptance.",
+    "One execution per condition does not establish statistical robustness."
+  ]
+}

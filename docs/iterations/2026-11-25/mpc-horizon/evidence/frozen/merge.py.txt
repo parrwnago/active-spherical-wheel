@@ -1,0 +1,218 @@
+"""Read-only postprocessing of the six completed I35 frozen forecasts.
+
+No simulator, controller, QP, or nonlinear objective calls are made here.
+Thresholds were declared in ../protocol.json before the numerical matrix.
+"""
+from pathlib import Path
+from datetime import datetime, timezone
+import csv
+import hashlib
+import json
+import shutil
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+import yaml
+
+ROOT=Path(__file__).resolve().parent
+REPO=ROOT.parents[2]
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def save(path,value):
+    path.write_text(json.dumps(value,indent=2,allow_nan=False)+'\n')
+
+
+def main():
+    for name in ('report.json','metrics.csv','gate_summary.csv','horizon_trajectories.png','solver_conditioning.csv'):
+        assert not (ROOT/name).exists(),f'Preserve completed postprocessing: {name}'
+    # Capture the postprocessor and its read-only input hashes before calculation.
+    snap=ROOT/'postprocess_source';snap.mkdir()
+    shutil.copy2(Path(__file__),snap/'merge.py')
+    protocol=ROOT.parent/'protocol.json'
+    shutil.copy2(protocol,snap/'protocol.json')
+    entries=[]
+    cases={}
+    for worker in ('worker_04','worker_2'):
+        assert json.loads((ROOT/worker/'report.json').read_text())['status']=='completed'
+        for source in sorted((ROOT/worker).glob('anchor_*/horizon_*/summary.json')):
+            case=source.parent
+            files={name:json.loads((case/name).read_text()) for name in
+                ('summary.json','plan.json','trajectory_quality.json')}
+            row=files['summary.json']
+            cases[(row['anchor_s'],row['horizon_s'])]=(case,files)
+            for name in files:
+                p=case/name;entries.append({'path':str(p.relative_to(ROOT)),'sha256':sha(p)})
+    assert set(cases)=={(a,h) for a in (.4,2.) for h in (.4,.8,1.2)}
+    config_path=ROOT/'worker_04/source_snapshot/config/model.yaml'
+    config=yaml.safe_load(config_path.read_text())
+    bounds=np.array([*config['actuation']['torque_limits_Nm'],*[config['actuation']['belt_speed_limit_m_s']]*2])
+    mp=ROOT/'worker_04/anchor_0.4/history_workspace/mirror/mass_properties.json'
+    mass=json.loads(mp.read_text())['total_mass_kg']
+    # Exact archived model gravity, not an assumed hardware weight.
+    gravity=float(np.linalg.norm(config['simulation']['gravity_m_s2']))
+    weight=mass*gravity
+    save(ROOT/'postprocess_provenance.json',{
+        'captured_before_postprocessing_utc':datetime.now(timezone.utc).isoformat(),
+        'source_sha256':sha(Path(__file__)),'protocol_sha256':sha(protocol),
+        'inputs':entries,'mass_properties_sha256':sha(mp),
+        'model_mass_kg':mass,'gravity_m_s2':gravity,'model_weight_N':weight,
+        'method':'Read existing JSON only; no simulation/optimization repetition. The final200ms toward-goal criterion requires both negative endpoint change and negative least-squares slope. First-input difference is the infinity norm after normalizing each physical channel by its unchanged bound.'})
+    rows=[];qp_rows=[];prefix=[];gates=[];details=[]
+    for at in (.4,2.):
+        baseline=cases[(at,.4)][1]['plan.json']
+        baseline_fine=np.asarray(baseline['native_rollout_seed']['fine_commands'])
+        baseline_coarse=baseline_fine.reshape(20,4,5).mean(axis=1)
+        for horizon in (.4,.8,1.2):
+            case,files=cases[(at,horizon)]
+            row=dict(files['summary.json']);plan=files['plan.json'];quality=files['trajectory_quality.json']
+            selected=quality['selected_trajectory'];native=quality['native_candidate_trajectory']
+            initial_nominals=[t['nominal_cost'] for t in plan['trials'] if t['refinement_iteration']==1 and 'nominal_cost' in t]
+            initial_trials=[t for t in plan['trials'] if t['refinement_iteration']==1]
+            assert len(initial_nominals)==len(initial_trials),'Cannot claim complete initial seed comparison'
+            initial_best=min(initial_nominals)
+            relative_improvement=(initial_best-row['cost'])/max(abs(initial_best),1e-30)
+            change=float(np.max(np.abs((np.asarray(plan['inputs'][0])-np.asarray(baseline['inputs'][0]))/bounds)))
+            fine=np.asarray(plan['native_rollout_seed']['fine_commands'])
+            coarse=fine.reshape(row['horizon_steps'],4,5).mean(axis=1)
+            pr={
+                'anchor_s':at,'horizon_s':horizon,
+                'target_first_20_bit_equal':bool(np.array_equal(np.asarray(plan['target_states'])[:20],baseline['target_states'])),
+                'native_fine_first_80_bit_equal':bool(np.array_equal(fine[:80],baseline_fine)),
+                'native_coarse_first_20_bit_equal':bool(np.array_equal(coarse[:20],baseline_coarse)),
+                'current_qpos_bit_equal':bool(np.array_equal(plan['qpos'],baseline['qpos'])),
+                'current_qvel_bit_equal':bool(np.array_equal(plan['qvel'],baseline['qvel'])),
+                'first_control_normalized_inf_difference_from_H04':change,
+                'selected_first_20_control_normalized_inf_difference_from_H04':float(np.max(np.abs((np.asarray(plan['inputs'])[:20]-np.asarray(baseline['inputs']))/bounds)))
+            }
+            prefix.append(pr)
+            finite_bounded=bool(np.isfinite(plan['inputs']).all() and np.all(np.abs(plan['inputs'])<=bounds+1e-10))
+            mechanical={
+                'finite_bounded_inputs':finite_bounded,
+                'substep_contact_sampling_1ms':row['contact_substep_s']==.001,
+                'contact_replay_stage_states_bit_exact':row['contact_replay_stage_states_bit_exact'],
+                'nonwheel_geom_load_max_le_005N':row['private_max_nonwheel_geom_normal_load_N']<=.05,
+                'wheel_normal_min_ge_005_weight':row['private_min_wheel_normal_load_N']>=.05*weight,
+                'world_up_tilt_max_le_20deg':row['private_peak_substep_absolute_tilt_deg']<=20.,
+            }
+            # Same-horizon cost comparison only; raw sums are never ranked across H.
+            cost_gate=row['cost']<=row['native_candidate_cost']+1e-10*max(1.,abs(row['native_candidate_cost']))
+            if at==2.:
+                behavior={
+                    'terminal_goal_le_090_initial':row['terminal_goal_error_mm']<=.9*row['initial_goal_error_mm'],
+                    'final200ms_toward_goal_slope_and_change':row['final_200ms_goal_error_slope_mm_s']<0. and row['final_200ms_goal_error_change_mm']<0.,
+                    'peak_goal_le_75mm':row['peak_goal_error_mm']<=75.,
+                    'at_least_one_solved_qp':row['qp_solved_count']>=1,
+                    'nonlinear_improvement_ge_1e4_relative':relative_improvement>=1e-4,
+                    'first_control_changed_ge_1e3_normalized':change>=1e-3,
+                }
+                thresholds={'terminal_goal_max_mm':.9*row['initial_goal_error_mm'],'peak_goal_max_mm':75.}
+            else:
+                peak_max=max(1.1*native['peak_goal_error_mm'],row['initial_goal_error_mm']+5.)
+                final_max=max(1.1*native['terminal_goal_error_mm'],5.)
+                behavior={
+                    'peak_goal_le_40mm':row['peak_goal_error_mm']<=40.,
+                    'peak_goal_le_same_native_allowance':row['peak_goal_error_mm']<=peak_max,
+                    'terminal_goal_le_same_native_allowance':row['terminal_goal_error_mm']<=final_max,
+                }
+                thresholds={'peak_goal_native_allowance_mm':peak_max,'terminal_goal_native_allowance_mm':final_max}
+            all_checks={**mechanical,**behavior,'selected_cost_le_same_horizon_native':cost_gate}
+            gate={'anchor_s':at,'horizon_s':horizon,'passed':bool(all(all_checks.values())),
+                'checks':all_checks,'failed_checks':[k for k,v in all_checks.items() if not v],
+                'threshold_values':thresholds,'minimum_wheel_load_N':.05*weight,
+                'best_initial_candidate_cost':initial_best,
+                'selected_relative_nonlinear_improvement_from_best_initial':relative_improvement,
+                'first_control_normalized_inf_difference_from_H04':change}
+            gates.append(gate)
+            solvers=[t['solver'] for t in plan['trials'] if 'solver' in t]
+            for ti,t in enumerate(plan['trials']):
+                if 'solver' not in t:continue
+                s=t['solver'];mn=s.get('hessian_min_eigenvalue');mx=s.get('hessian_max_eigenvalue')
+                qp_rows.append({'anchor_s':at,'horizon_s':horizon,'trial_index':ti,
+                    'seed':t['seed'],'refinement_iteration':t['refinement_iteration'],
+                    **{k:s.get(k) for k in ('status','iterations','hessian_min_eigenvalue','hessian_max_eigenvalue','hessian_max_abs','linear_term_max_abs','primal_residual','dual_residual','normalized_box_kkt_residual','external_box_kkt_passed','objective_rescaled','hessian_psd_projected')},
+                    'positive_eigenvalue_condition_ratio':mx/mn if mn is not None and mn>0 and mx is not None else None})
+            row.update(
+                gate_pass=gate['passed'],gate_failed_checks=';'.join(gate['failed_checks']),
+                best_initial_candidate_cost=initial_best,
+                selected_relative_nonlinear_improvement_from_best_initial=relative_improvement,
+                first_control_normalized_inf_difference_from_H04=change,
+                solver_hessian_min_eigenvalue=min(s['hessian_min_eigenvalue'] for s in solvers),
+                solver_hessian_max_eigenvalue=max(s['hessian_max_eigenvalue'] for s in solvers),
+                solver_max_positive_condition_ratio=max(s['hessian_max_eigenvalue']/s['hessian_min_eigenvalue'] for s in solvers if s['hessian_min_eigenvalue']>0),
+                solver_max_normalized_box_kkt_residual=max(s['normalized_box_kkt_residual'] for s in solvers),
+            )
+            rows.append(row)
+            details.append({'anchor_s':at,'horizon_s':horizon,'directory':str(case.relative_to(ROOT)),
+                'nonlinear_cost_progress':quality['nonlinear_cost_progress'],
+                'native_fine_vs_coarse_terminal_divergence':quality['native_fine_vs_coarse_terminal_divergence'],
+                'limitation':'Per-refinement exact nonlinear costs and QP records were retained; intermediate accepted motion/contact trajectories were not saved. Final selected and same-horizon native candidate trajectories were saved. A solved QP and fixed five-refinement budget do not establish nonlinear convergence.'})
+    assert all(all(p[k] for k in ('target_first_20_bit_equal','native_fine_first_80_bit_equal','native_coarse_first_20_bit_equal','current_qpos_bit_equal','current_qvel_bit_equal')) for p in prefix),'Prefix verification failure requires investigation'
+    passing=[h for h in (.8,1.2) if all(g['passed'] for g in gates if g['horizon_s']==h)]
+    selected_horizon=passing[0] if passing else None
+    report={
+        'status':'completed','iteration':'I-35','scope':'Six frozen private MuJoCo model forecasts; zero new Gazebo trials.',
+        'selected_longer_horizon_s':selected_horizon,'new_Gazebo_authorized_by_gate':selected_horizon is not None,
+        'decision':'No longer horizon passes both predeclared anchor gates. Stop before a new Gazebo run.' if selected_horizon is None else 'A longer horizon passes both frozen gates.',
+        'nonlinear_convergence_claimed':False,'qp_solved_count':sum(r['qp_solved_count'] for r in rows),
+        'qp_call_count':sum(r['qp_calls'] for r in rows),'failed_trials':sum(r['failed_trials'] for r in rows),
+        'source_controller_unchanged':True,'protocol_sha256':sha(protocol),
+        'model_mass_kg':mass,'gravity_m_s2':gravity,'model_weight_N':weight,'input_bounds':bounds.tolist(),
+        'rows':rows,'gates':gates,'prefix_checks':prefix,'details':details,
+        'limits':[
+            'All predictions use a private estimated-plane MuJoCo model, not measured future contacts, future Gazebo state, or an offroad map forecast.',
+            'Raw objective sums at different horizons are not ranked; selected/native cost ratios compare the same horizon only.',
+            'Longer native fine 5ms policy rollouts and open-loop coarse 20ms averaged input rollouts diverge substantially. A longer seed alone is not a successful corrective plan.',
+            'All QPs solved and passed the existing normalized KKT check, but the nonlinear search had a fixed five-refinement budget, with no convergence certificate.',
+            'No objective rescaling, PSD repair, weights, bounds, solver tolerances, observer settings, or stage duration changed.',
+            'Two anchor workers ran concurrently; reported wall times include that contention and are far above the 20ms command interval.',
+            'Mechanical gate samples 1ms private model solver contacts/forces at the simulator last-step convention. It is not hardware evidence or a stability/safety guarantee.',
+            'Per-refinement motion metrics were not captured; exact per-refinement nonlinear cost and solver diagnostics remain available. No duplicate numerical reproduction was run.'
+        ]}
+    save(ROOT/'report.json',report)
+    for name,data in [('metrics.csv',rows),('gate_summary.csv',[{'anchor_s':g['anchor_s'],'horizon_s':g['horizon_s'],'passed':g['passed'],**g['checks']} for g in gates]),('solver_conditioning.csv',qp_rows)]:
+        fields=sorted(set().union(*(d.keys() for d in data))-{'settings','solver_status_counts'})
+        with (ROOT/name).open('w',newline='') as f:
+            w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows({k:d.get(k) for k in fields} for d in data)
+    colors={.4:'#2563eb',.8:'#d97706',1.2:'#b91c1c'}
+    fig,axes=plt.subplots(3,2,figsize=(12,10),sharex='col')
+    for column,at in enumerate((.4,2.)):
+        for horizon in (.4,.8,1.2):
+            row=cases[(at,horizon)][1]['summary.json'];quality=cases[(at,horizon)][1]['trajectory_quality.json']
+            for native,style in ((False,'-'),(True,'--')):
+                tr=quality['native_candidate_trajectory' if native else 'selected_trajectory']
+                contact=tr['contact_samples'];t=[p['prediction_time_s'] for p in contact]
+                label=f'H={horizon:g}s '+('native coarse' if native else 'selected')
+                axes[0,column].plot(t,[p['goal_error_mm'] for p in contact],style,color=colors[horizon],lw=1.6,alpha=.65 if native else 1,label=label)
+                axes[1,column].plot(t,[p['absolute_tilt_deg'] for p in contact],style,color=colors[horizon],lw=1.4,alpha=.65 if native else 1)
+                axes[2,column].plot(t,[p['xy_speed_mm_s'] for p in contact],style,color=colors[horizon],lw=1.4,alpha=.65 if native else 1)
+        axes[0,column].set_title(f'Frozen anchor {at:g}s; initial goal distance {row["initial_goal_error_mm"]:.2f}mm')
+        axes[1,column].axhline(20,color='#444444',lw=.8,ls=':',label='20° gate')
+        axes[2,column].set_xlabel('Prediction time (s)')
+        for a in axes[:,column]:a.grid(alpha=.2);a.set_xlim(0,1.2)
+    for ax,label in zip(axes[:,0],('Goal distance (mm)','Absolute world-up tilt (°)','XY speed (mm/s)')):ax.set_ylabel(label)
+    axes[0,0].legend(fontsize=8,ncol=2)
+    fig.suptitle('I35: longer private forecasts did not produce a passing return plan\nSelected plans and native candidates at the SAME horizon; no new Gazebo trial',fontsize=12)
+    fig.tight_layout(rect=(0,0,1,.945));fig.savefig(ROOT/'horizon_trajectories.png',dpi=160);plt.close(fig)
+    fig,axs=plt.subplots(1,2,figsize=(11,4))
+    for ax,at in zip(axs,(.4,2.)):
+        for horizon in (.4,.8,1.2):
+            item=next(d for d in details if d['anchor_s']==at and d['horizon_s']==horizon)
+            progress=item['nonlinear_cost_progress'];initial=progress[0]['best_cost']
+            ax.plot([p['budget'] for p in progress],[p['best_cost']/initial for p in progress],marker='o',color=colors[horizon],label=f'H={horizon:g}s')
+        ax.set_yscale('log');ax.set_title(f'Frozen anchor {at:g}s');ax.set_xlabel('Refinement budget used');ax.grid(alpha=.2);ax.legend()
+    axs[0].set_ylabel('Best nonlinear cost / best initial candidate cost')
+    fig.suptitle('Improvement within each horizon; this is not a raw cost ranking across horizons')
+    fig.tight_layout();fig.savefig(ROOT/'nonlinear_cost_progress.png',dpi=160);plt.close(fig)
+    save(ROOT/'artifact_manifest.json',{'files':[{'path':str(p.relative_to(ROOT)),'bytes':p.stat().st_size,'sha256':sha(p)}
+        for p in sorted(ROOT.rglob('*')) if p.is_file() and p.name!='artifact_manifest.json' and 'history_workspace' not in p.parts and '__pycache__' not in p.parts]})
+    print(json.dumps({'selected_longer_horizon_s':selected_horizon,'qp_solved':report['qp_solved_count'],
+        'gate_failures':[{'anchor_s':g['anchor_s'],'horizon_s':g['horizon_s'],'failed':g['failed_checks']} for g in gates]},indent=2))
+
+
+if __name__=='__main__':main()

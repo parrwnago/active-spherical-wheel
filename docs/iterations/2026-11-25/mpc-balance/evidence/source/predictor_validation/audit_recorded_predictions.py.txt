@@ -1,0 +1,74 @@
+"""Offline predictive-model audit using previously saved Gazebo command sequences.
+
+No Gazebo run or control update occurs. Future saved applied inputs are used
+only to assess the predictor, not supplied to an online controller.
+"""
+from pathlib import Path
+import hashlib
+import json
+
+import mujoco
+import numpy as np
+
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+
+
+ROOT = Path(__file__).resolve().parents[3]
+OUTPUT = Path(__file__).resolve().parent
+
+
+def main():
+    mirror = StateMirror(model_dir=OUTPUT/'recorded_audit_mirror')
+    predictor = EstimatedPlanePredictor(mirror)
+    rows, inputs = [], []
+    for direction in ('world_x', 'world_y'):
+        path = ROOT/'results/fixed_contact_allocation_20261125/runs'/direction/'baseline/rollout.npz'
+        inputs.append({'path': str(path.relative_to(ROOT)), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
+        with np.load(path) as run:
+            for at in (.8, .9, 1.0, 1.2, 1.4):
+                index = int(np.argmin(abs(run['time_s']-at)))
+                q, v = run['qpos'][index].astype(float), run['qvel'][index].astype(float)
+                q[3:7] /= np.linalg.norm(q[3:7])
+                previous = run['previous_applied_input'][index].astype(float)
+                mirror.set_state(q, v, float(run['time_s'][index]), previous)
+                calibration = predictor.update(q, v, run['estimated_normal'][index],
+                    run['estimated_contact_point_m'][index],
+                    float(run['estimated_support_loads_N'][index].sum()),
+                    friction=float(run['estimated_friction'][index]))
+                A, B, f0 = predictor.linearize(q, v, previous, .005)
+                for steps in (1, 4, 20):
+                    commands = run['input'][index:index+steps].astype(float)
+                    if len(commands) != steps or index+steps >= len(run['time_s']):
+                        continue
+                    poses, velocities = predictor.rollout(q, v, commands, .005)
+                    actual_q = run['qpos'][index+steps].astype(float)
+                    actual_q[3:7] /= np.linalg.norm(actual_q[3:7])
+                    actual_v = run['qvel'][index+steps].astype(float)
+                    target = predictor.tangent(q, v, actual_q, actual_v)
+                    nonlinear = predictor.tangent(q, v, poses[-1], velocities[-1])
+                    affine = np.zeros(18)
+                    for command in commands:
+                        affine = A@affine+B@(command-previous)+f0
+                    row = {'direction': direction, 'anchor_time_s': at, 'prediction_s': steps*.005,
+                           'calibration': calibration}
+                    for name, value in [('nonlinear', nonlinear), ('frozen_affine', affine)]:
+                        row[name] = {'xy_position_error_mm': float(1000*np.linalg.norm((value-target)[:2])),
+                                     'attitude_tangent_error_deg': float(np.degrees(np.linalg.norm((value-target)[3:6]))),
+                                     'linear_velocity_error_m_s': float(np.linalg.norm((value-target)[9:12])),
+                                     'angular_velocity_error_rad_s': float(np.linalg.norm((value-target)[12:15])),
+                                     'joint_velocity_error_rad_s': float(np.linalg.norm((value-target)[15:18]))}
+                    rows.append(row)
+    report = {'scope': __doc__, 'inputs': inputs,
+              'predictor_sha256': hashlib.sha256((ROOT/'src/spherical_wheel/predictive_model.py').read_bytes()).hexdigest(),
+              'mujoco_version': mujoco.__version__, 'rows': rows}
+    for dt in (.005, .02, .1):
+        subset = [row for row in rows if np.isclose(row['prediction_s'], dt)]
+        print(dt, {method: {'xy_max_mm': max(row[method]['xy_position_error_mm'] for row in subset),
+                            'angle_max_deg': max(row[method]['attitude_tangent_error_deg'] for row in subset)}
+                   for method in ('nonlinear', 'frozen_affine')})
+    (OUTPUT/'recorded_prediction_audit.json').write_text(json.dumps(report, indent=2)+'\n')
+
+
+if __name__ == '__main__':
+    main()

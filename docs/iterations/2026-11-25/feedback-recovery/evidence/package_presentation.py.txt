@@ -1,0 +1,36 @@
+"""Package I32/I33 records, short traces and videos; no new experiments."""
+from pathlib import Path
+import hashlib,json,zipfile
+ROOT=Path(__file__).resolve().parents[2]
+FAMILY=Path(__file__).resolve().parent
+DOCS=ROOT/'docs/iterations/2026-11-25/feedback-recovery'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+bundle=FAMILY/'presentation-pack.zip'
+if bundle.exists():raise FileExistsError('Preserve earlier bundle; choose a new packaging stage')
+paths=[ROOT/'ITERATION_LOG.md',ROOT/'README.md',ROOT/'OFFROAD.md',DOCS.parent/'README.md',DOCS/'README.md',Path(__file__).resolve(),ROOT/'results/mpc_equilibrium_20261125/independent_search/report.json']
+paths += [p for p in (DOCS/'evidence').rglob('*') if p.is_file()]
+paths += [FAMILY/'videos'/name for name in ('native_feedback_recovery.mp4','feedback_recovery_native_vs_mpc.mp4')]
+folders=[FAMILY/'runs/slope'/v for v in ('native','mpc')]
+folders += [FAMILY/'extended_original_baselines/runs'/v/'baseline' for v in ('world_x','world_y')]
+for folder in folders:paths += [folder/'rollout.npz',folder/'precision.npz']
+paths=sorted(set(paths));entries=[{'path':str(p.relative_to(ROOT)),'bytes':p.stat().st_size,'sha256':sha(p)} for p in paths]
+manifest={'scope':'I32/I33 presentation pack.4newGazeboruns,privateauditsreuseactualtraces; no physics/tests duringpackaging.',
+ 'result':'Nativeheld-driftrecoveryPASS0.381mm; currentMPCFAILwithin8s31.215mm. ExtendedoriginalLQRcasesfailfinal1sgates. Offlineone-SQPsearchmissedlowercostboundedcandidate.',
+ 'tests':'3focusedmetricchecks; earlier106suitewasnotrerun oradded.',
+ 'media':'2savedGazeboreconstructionMP4s,8.4s simulationat0.5x, notprivatephysicalcomparison.',
+ 'raw_selection':'4rollout+4precisionNPZincluded; fullMPCplans/generatedmeshpayloadsomittedwithhash/locationinventories.',
+ 'artifacts':entries,'payload_count':len(entries),'payload_bytes':sum(e['bytes'] for e in entries)}
+mp=FAMILY/'presentation_manifest.json';mp.write_text(json.dumps(manifest,indent=2)+'\n')
+with zipfile.ZipFile(bundle,'x',compression=zipfile.ZIP_DEFLATED,compresslevel=6) as z:
+ for p in paths:z.write(p,p.relative_to(ROOT))
+ z.write(mp,mp.relative_to(ROOT))
+with zipfile.ZipFile(bundle) as z:
+ assert z.testzip() is None
+ for e in entries:assert hashlib.sha256(z.read(e['path'])).hexdigest()==e['sha256'],e['path']
+ assert len(z.namelist())==len(entries)+1
+v={'zip':str(bundle.relative_to(ROOT)),'zip_bytes':bundle.stat().st_size,'zip_sha256':sha(bundle),'file_count_including_manifest':len(entries)+1,'all_payload_sha256_verified':True,'zip_crc_verified':True}
+(FAMILY/'presentation_verification.json').write_text(json.dumps(v,indent=2)+'\n')
+bundle.with_suffix('.zip.sha256').write_text(v['zip_sha256']+'  '+bundle.name+'\n')
+(DOCS/'presentation_manifest.json').write_bytes(mp.read_bytes())
+(DOCS/'presentation_verification.json').write_bytes((FAMILY/'presentation_verification.json').read_bytes())
+print(json.dumps(v,indent=2))

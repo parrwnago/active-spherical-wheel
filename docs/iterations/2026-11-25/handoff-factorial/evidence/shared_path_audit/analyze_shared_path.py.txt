@@ -1,0 +1,199 @@
+"""Secondary saved-array feedback decomposition; no controller/model execution."""
+from pathlib import Path
+from datetime import datetime,timezone
+import csv
+import hashlib
+import json
+import shutil
+import xml.etree.ElementTree as ET
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+HERE=Path(__file__).resolve().parent
+FAMILY=HERE.parent
+ROOT=FAMILY.parents[1]
+INPUTS=('shaft','shell_A','shell_B','belt_A','belt_B')
+GROUPS={'position':(0,3),'attitude':(3,6),'joint_position':(6,9),
+        'linear_velocity':(9,12),'angular_velocity':(12,15),'joint_velocity':(15,18)}
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def read(path):
+    return json.loads(path.read_text())
+
+
+def npz(path):
+    with np.load(path) as z:
+        return {k:z[k] for k in z.files}
+
+
+def up(quaternions):
+    q=np.asarray(quaternions,float);q=q/np.linalg.norm(q,axis=-1,keepdims=True)
+    w,x,y,z=np.moveaxis(q,-1,0)
+    return np.stack((2*(x*z+w*y),2*(y*z-w*x),1-2*(x*x+y*y)),axis=-1)
+
+
+def angle(a,b):
+    return np.degrees(np.arctan2(np.linalg.norm(np.cross(a,b),axis=-1),np.sum(a*b,axis=-1)))
+
+
+def main():
+    out=HERE/'stage01';out.mkdir(exist_ok=False)
+    protocol=read(HERE/'protocol.json')
+    snapshot=out/'source_snapshot';snapshot.mkdir()
+    # Preserve source/protocol/index-definition inputs before arithmetic.
+    for source in [Path(__file__),HERE/'protocol.json',ROOT/'src/spherical_wheel/sim.py',
+            ROOT/'src/spherical_wheel/offroad_control.py',ROOT/'src/spherical_wheel/model.py',
+            ROOT/'generated/offroad/flat/model.xml']:
+        target=snapshot/source.relative_to(ROOT);target.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(source,target)
+    for rel,digest in protocol['input_sha256'].items():
+        assert sha(ROOT/rel)==digest,rel
+    save=lambda path,value:path.write_text(json.dumps(value,indent=2)+'\n')
+    save(out/'provenance.json',{'iteration':protocol['iteration'],'captured_before_arithmetic_utc':datetime.now(timezone.utc).isoformat(),
+        'source_sha256':sha(Path(__file__)),'protocol_sha256':sha(HERE/'protocol.json'),
+        'input_sha256':protocol['input_sha256'],'scope':'Saved-data reduction only; no controller, physics or model execution.'})
+    tree=ET.parse(ROOT/'generated/offroad/flat/model.xml');world=tree.getroot().find('worldbody')
+    assert [e.attrib['name'] for e in world.iter('freejoint')]==['base']
+    assert [e.attrib['name'] for e in world.iter('joint')]==['shaft','shell_A_joint','shell_B_joint']
+    selected=[];arrays={};checks={};arm_context={}
+    colors=dict(zip(protocol['arms'],('#246eaa','#df7529','#269e75','#a45aab')))
+    for arm in protocol['arms']:
+        folder=FAMILY/'campaign/runs'/arm
+        exact=npz(folder/'precision.npz');log=npz(folder/'rollout.npz');provenance=read(folder/'provenance.json')
+        bounds=np.asarray(provenance['input_bounds'])
+        full_t=exact['time_s'];keep=(full_t>=6.6-1e-9)&(full_t<=7.15+1e-9);indices=np.flatnonzero(keep)
+        time=full_t[keep];gain=exact['exact_feedback_gain'][keep];error=exact['exact_feedback_error'][keep]
+        direct=np.array([-k@e for k,e in zip(gain,error)])
+        grouped=np.stack([np.array([-k[:,start:stop]@e[start:stop] for k,e in zip(gain,error)])
+                          for start,stop in GROUPS.values()],axis=1)
+        assert np.max(abs((grouped.sum(axis=1)-direct)/bounds))<1e-12
+        logged=log['lqr_command'][keep];eps=np.finfo(logged.dtype).eps
+        normalized_logged_error=abs((direct-logged)/bounds)
+        assert np.all(normalized_logged_error<=4*eps*(1+abs(direct/bounds)))
+        components={'equilibrium':log['equilibrium_command'][keep].astype(float),
+                    'rolling_feedforward':log['rolling_feedforward'][keep].astype(float),
+                    'holding':exact['exact_support_torque'][keep], 'LQR':direct,
+                    'synchronization':log['transition_command_delta'][keep].astype(float),
+                    'heading':log['heading_command'][keep].astype(float),
+                    'fade':log['fade_command_delta'][keep].astype(float)}
+        summed=sum(components.values());requested=exact['exact_native_requested'][keep];applied=exact['exact_applied'][keep]
+        reconstruction=float(np.max(abs((summed-requested)/bounds)))
+        assert reconstruction<=2e-6,reconstruction
+        np.testing.assert_allclose(np.clip(requested,-bounds,bounds),applied,atol=1e-12,rtol=0)
+        actual_up=up(exact['exact_qpos'][keep,3:7]);reference_up=up(log['reference_quat'][keep])
+        actual_tilt=angle(actual_up,np.array([0.,0.,1.]));reference_tilt=angle(reference_up,np.array([0.,0.,1.]))
+        reference_up_full=up(log['reference_quat']);up_change=np.r_[0.,angle(reference_up_full[:-1],reference_up_full[1:])/np.diff(full_t)][keep]
+        actual_rates=exact['exact_qvel'][keep,3:6]
+        # These velocity-error indices are not among the heading-rotated XY entries.
+        reference_rates=actual_rates-error[:,12:15]
+        reference_joint_rates=exact['exact_qvel'][keep,6:9]-error[:,15:18]
+        assert np.max(abs(reference_rates))<1e-12
+        arrays[arm+'_time_s']=time;arrays[arm+'_feedback_group_input_contributions']=grouped
+        arrays[arm+'_exact_error']=error;arrays[arm+'_requested']=requested;arrays[arm+'_applied']=applied
+        arm_context[arm]=dict(time=time,bounds=bounds,grouped=grouped,components=components,requested=requested,applied=applied,
+            actual_tilt=actual_tilt,reference_tilt=reference_tilt,up_error=angle(actual_up,reference_up),
+            actual_rates=actual_rates,reference_up_change_deg_s=up_change,actual_up_change_deg_s=np.degrees(np.linalg.norm(actual_rates[:,:2],axis=1)))
+        checks[arm]={'context_rows':len(time),'group_sum_max_normalized_difference':float(np.max(abs((grouped.sum(axis=1)-direct)/bounds))),
+            'logged_LQR_max_normalized_float32_difference':float(np.max(normalized_logged_error)),
+            'logged_LQR_exact_after_float32_cast_fraction':float(np.mean(np.all(direct.astype(logged.dtype)==logged,axis=1))),
+            'components_vs_requested_max_normalized_difference':reconstruction,
+            'reference_generalized_angular_velocity_target_max_abs_rad_s':float(np.max(abs(reference_rates)))}
+        for nominal_time in protocol['selected_times_s']:
+            i=int(np.argmin(abs(full_t-nominal_time)));j=int(np.argmin(abs(indices-i)));assert indices[j]==i
+            labels=INPUTS[1:]
+            truth=exact['truth_feedback_loads_N'][i];native=exact['native_feedback_loads_N'][i];used=exact['used_feedback_loads_N'][i]
+            record={'arm':arm,'requested_time_s':nominal_time,'actual_saved_time_s':float(full_t[i]),
+                'actual_tilt_deg':float(actual_tilt[j]),'reference_tilt_deg':float(reference_tilt[j]),
+                'actual_up_world':actual_up[j].tolist(),'reference_up_world':reference_up[j].tolist(),
+                'up_vector_error_deg':float(angle(actual_up[j],reference_up[j])),
+                'actual_body_angular_velocity_rad_s':actual_rates[j].tolist(),'reference_generalized_angular_velocity_target_rad_s':reference_rates[j].tolist(),
+                'reference_up_finite5ms_change_speed_deg_s':float(up_change[j]),
+                'actual_joint_rates_rad_s':exact['exact_qvel'][i,6:9].tolist(),'feedback_joint_rate_reference_rad_s':reference_joint_rates[j].tolist(),
+                'nominal_reference_velocity_m_s':exact['exact_reference_velocity_m_s'][i].tolist(),
+                'nominal_reference_acceleration_m_s2':exact['exact_reference_acceleration_m_s2'][i].tolist(),
+                'exact_feedback_error':error[j].tolist(),
+                'truth_loads_N':truth.tolist(),'native_feedback_loads_N':native.tolist(),'used_feedback_loads_N':used.tolist(),
+                'dominant_truth_patch':labels[int(np.argmax(truth))] if truth.sum()>.05 else None,
+                'dominant_native_patch':labels[int(np.argmax(native))] if native.sum()>.05 else None,
+                'used_sync_weights':exact['used_sync_weights'][i].tolist(),
+                'input_terms':{}}
+            for k,name in enumerate(INPUTS):
+                contrib=grouped[j,:,k];big=int(np.argmax(abs(contrib)))
+                record['input_terms'][name]={'units':'N m' if k<3 else 'm/s','bound':float(bounds[k]),
+                    'feedback_groups':dict(zip(GROUPS,map(float,contrib))),
+                    'largest_absolute_feedback_group':list(GROUPS)[big],
+                    'components':{key:float(value[j,k]) for key,value in components.items()},
+                    'requested':float(requested[j,k]),'applied':float(applied[j,k]),
+                    'requested_over_bound':float(requested[j,k]/bounds[k]),
+                    'clipped':bool(abs(requested[j,k])>bounds[k]+1e-12)}
+            selected.append(record)
+    np.savez_compressed(out/'decomposition_context.npz',**arrays)
+    save(out/'selected_records.json',selected)
+    with (out/'selected_input_terms.csv').open('w',newline='') as f:
+        writer=csv.writer(f);writer.writerow(['arm','time_s','input','units','requested','applied','bound',*GROUPS,*components])
+        for row in selected:
+            for name,value in row['input_terms'].items():
+                writer.writerow([row['arm'],row['actual_saved_time_s'],name,value['units'],value['requested'],value['applied'],value['bound'],
+                                 *value['feedback_groups'].values(),*value['components'].values()])
+    # One figure: common native terms, then all-arm requests; normalization keeps
+    # torque and belt-speed channels separate while displaying their own limits.
+    fig,axes=plt.subplots(4,2,figsize=(16,14),sharex=True,layout='constrained')
+    baseline=arm_context['baseline'];t=baseline['time']
+    for arm,c in arm_context.items():
+        axes[0,0].plot(c['time'],c['actual_tilt'],color=colors[arm],label=arm)
+    axes[0,0].plot(t,baseline['reference_tilt'],'k--',label='baseline reference')
+    axes[0,0].set_ylabel('Absolute body-up tilt (deg)');axes[0,0].legend(ncol=2,fontsize=8)
+    axes[0,1].plot(t,baseline['actual_up_change_deg_s'],label='actual transverse body-rate norm')
+    axes[0,1].plot(t,baseline['reference_up_change_deg_s'],label='reference-up 5 ms change speed')
+    axes[0,1].axhline(0,color='black',linestyle='--',label='angular velocity target = 0')
+    axes[0,1].set_ylabel('Up-direction rates (deg/s)');axes[0,1].legend(fontsize=8)
+    for column,(channel,name) in enumerate(((3,'belt_A'),(1,'shell_A'))):
+        bound=baseline['bounds'][channel]
+        for n,group in enumerate(GROUPS):
+            axes[1,column].plot(t,baseline['grouped'][:,n,channel]/bound,label=group)
+        axes[1,column].plot(t,baseline['components']['LQR'][:,channel]/bound,'k--',label='group sum / LQR')
+        axes[1,column].set_ylabel(f'Baseline {name}: LQR group / bound');axes[1,column].legend(ncol=2,fontsize=8)
+        for key in ('LQR','holding','rolling_feedforward','synchronization'):
+            axes[2,column].plot(t,baseline['components'][key][:,channel]/bound,label=key)
+        axes[2,column].plot(t,baseline['requested'][:,channel]/bound,'k-',label='requested')
+        axes[2,column].plot(t,baseline['applied'][:,channel]/bound,'k:',label='applied')
+        axes[2,column].set_ylabel(f'Baseline {name}: component / bound');axes[2,column].legend(ncol=2,fontsize=8)
+        for arm,c in arm_context.items():
+            axes[3,column].plot(c['time'],c['requested'][:,channel]/bound,color=colors[arm],label=arm+' requested')
+            axes[3,column].plot(c['time'],c['applied'][:,channel]/bound,color=colors[arm],linestyle=':',alpha=.7)
+        axes[3,column].axhline(1,color='gray',linestyle='--');axes[3,column].axhline(-1,color='gray',linestyle='--')
+        axes[3,column].set_ylabel(name+': request / applied over bound');axes[3,column].legend(fontsize=8,ncol=2)
+    for ax in axes.flat:
+        ax.axvline(6.86,color='#b14439',linestyle='--',linewidth=1);ax.grid(alpha=.2);ax.set_xlim(6.6,7.15)
+    for ax in axes[-1]:ax.set_xlabel('Simulation time (s); red line = original first departure')
+    fig.suptitle('I42 secondary saved-data audit: common feedback path near departure\nBaseline grouped terms; actual four-arm command traces. No new controller/physics execution.',fontsize=15)
+    fig.savefig(out/'shared_feedback_terms.png',dpi=150);plt.close(fig)
+    base=[r for r in selected if r['arm']=='baseline']
+    report={'iteration':protocol['iteration'],'scope':'Secondary saved-data decomposition. Does not change main factorial report, event selection or screen.',
+        'protocol_sha256':sha(HERE/'protocol.json'),'source_sha256':sha(Path(__file__)),'reconstruction_checks':checks,
+        'state_group_indices':GROUPS,'selected_times_s':protocol['selected_times_s'],'input_names':INPUTS,
+        'baseline_selected_summary':[{'time_s':r['actual_saved_time_s'],'actual_tilt_deg':r['actual_tilt_deg'],
+            'reference_tilt_deg':r['reference_tilt_deg'],'up_error_deg':r['up_vector_error_deg'],
+            'reference_up_change_deg_s':r['reference_up_finite5ms_change_speed_deg_s'],
+            'actual_body_rates_rad_s':r['actual_body_angular_velocity_rad_s'],
+            'feedback_joint_rate_reference_rad_s':r['feedback_joint_rate_reference_rad_s'],
+            'truth_patch':r['dominant_truth_patch'],'native_patch':r['dominant_native_patch'],
+            'belt_A':r['input_terms']['belt_A'],'shell_A':r['input_terms']['shell_A']} for r in base],
+        'all_36_selected_records':'selected_records.json','plot':'shared_feedback_terms.png',
+        'limitations':protocol['limits']+['Reference quaternion and ancillary command components are standard float32 logs; gains/errors/state/requests/holding terms are exact float64.',
+            'Reference-up finite-change speed is an evaluation calculation. It is not the controller angular velocity reference, which is zero here.',
+            'A feedback group identifies arithmetic command contributions; it is not a causal attribution of the disturbance.']}
+    save(out/'report.json',report)
+    files=[{'path':str(p.relative_to(out)),'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted(out.rglob('*')) if p.is_file() and p.name!='artifact_manifest.json']
+    save(out/'artifact_manifest.json',{'files':files})
+    print(json.dumps({'completed':True,'scope':report['scope'],'reconstruction_checks':checks,'baseline_selected_summary':report['baseline_selected_summary']},indent=2))
+
+
+if __name__=='__main__':
+    main()

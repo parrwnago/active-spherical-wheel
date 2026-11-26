@@ -1,0 +1,19 @@
+{
+  "iteration": "I-43",
+  "scope": "Pure independent Rodrigues finite differences, analytic-Jacobian check and high-accuracy ODE comparison. No robot physics.",
+  "analytic_cases": 100,
+  "max_world_angular_velocity_error_rad_s": 7.084067883376665e-11,
+  "max_flow_jacobian_operator_error_s_inv": 2.3469878068702703e-09,
+  "max_SO3_rate_contraction_ratio": 0.999999988242814,
+  "400_variable_clock_updates_max_bound_ratios": {
+    "theta_disk": 0.017009792360671676,
+    "z_disk": 0.0370580659260183,
+    "rate": 0.17677477132963515,
+    "acceleration": 0.5692637117998793,
+    "substep": 0.9166666666666666
+  },
+  "max_SSP_state_error_against_DOP853_rad": 4.2651421398517964e-07,
+  "constant_target_final_error_rad": 8.435138165166119e-15,
+  "passed": true,
+  "limits": "Body transport here verifies the mathematical formula; actual controller integration is covered by its separate tests and saved-data rate reconstruction."
+}

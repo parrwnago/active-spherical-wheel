@@ -1,0 +1,24 @@
+{
+  "iteration": "I-44",
+  "passed": true,
+  "scope": "16 independent campaign contracts in two environments, including one actual native-ray\u2192DepthFrame\u2192TerrainMemory visibility fixture and yaw coverage fixture. Synthetic plane/knownbox only; no DEM/fulltrace, physics integration or controller calls.",
+  "unique_tests": 16,
+  "environments": [
+    ".venv",
+    "build/gazebo-env"
+  ],
+  "prior13_overlap": true,
+  "test_file_frozen": true,
+  "test_source_sha256": "dca3e14d65bc9ee2985aa6f94db94b3009e3a17f1835b74d96fd24b004b2aa0e",
+  "sources_match_at_seal": {
+    "tests/test_terrain_preview_campaign.py": true,
+    "scripts/run-terrain-memory.py": true,
+    "src/spherical_wheel/terrain_depth.py": true,
+    "src/spherical_wheel/terrain_memory.py": false,
+    "results/terrain_memory_20261126/protocol.json": true,
+    "results/terrain_memory_20261126/protocol_clarifications.json": true
+  },
+  "synthetic_integration_design": "Default fixed4-camera rig/ranges and default mapping settings; planez0 + declared opaque free-body box. Priorbodypose is analytically set from fixedpixel31,26, approximately\u2212.4m. Knownquerycell nearworldorigin is seen then remembered despite current visibility blindspot. A current firstrobot-hit ray is checked against evaluator-only floorhit; yaw90 shifts fixedworld+x region fromcamera000tocamera270. No settings changed toforce outcome.",
+  "new_regression": "Finite unloaded equivalent-point fallback returnsNone instead of fictitious nearest-contact error.",
+  "counting": "Earlier13 tests are a subset ofthese16; twoenvruns are not32 unique tests. Final root selected check stage covers any later prototype fixes."
+}

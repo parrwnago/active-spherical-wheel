@@ -1,0 +1,50 @@
+F..........                                                              [100%]
+=================================== FAILURES ===================================
+___ test_cv_keeps_full_unchanged_I44_preview_and_oracle_does_not_reintegrate ___
+
+    def test_cv_keeps_full_unchanged_I44_preview_and_oracle_does_not_reintegrate():
+        geometry = WheelGeometry(.12, 15.46600995, .01)
+        q = state()
+        v = np.array([.1, -.05, .01, .1, -.2, .3, .4, -.5, .6])
+        future = {h: q+np.r_[h*np.array([.2, -.3, .4]), np.zeros(4), h*np.array([4., 5., 6.])]
+                  for h in (.05, .1, .2)}
+        future[.1][3:7] = np.array([.8, .1, .3, -.2])
+        q_before, v_before, future_before = q.copy(), v.copy(), copy.deepcopy(future)
+        providers = {'observer_plane': Plane(), 'memory_four': Plane()}
+        result = generate_pose_conditions(providers, geometry, q, v, 1., future)
+        assert set(result) == set(ARMS)
+        metadata = {'pose_source', 'uses_future_configuration', 'deployable_input_condition'}
+        old = preview_contacts(Plane(), geometry, q, v, 1.)['rows']
+        for arm in ('observer_cv', 'memory_cv'):
+            for row, original in zip(result[arm], old):
+                assert not compare_values({k: x for k, x in row.items() if k not in metadata}, original, atol=0.)
+        for arm in ('observer_actual_pose', 'memory_actual_pose'):
+            for horizon, row in zip((.05, .1, .2), result[arm]):
+                np.testing.assert_array_equal(row['predicted_qpos'][:3], future[horizon][:3])
+                np.testing.assert_array_equal(row['predicted_qpos'][7:], future[horizon][7:])
+>               np.testing.assert_allclose(row['predicted_qpos'][3:7],
+                    future[horizon][3:7]/np.linalg.norm(future[horizon][3:7]), atol=1e-16, rtol=0.)
+
+tests/test_contact_pose_diagnostic.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (<function assert_allclose.<locals>.compare at 0x786defc8c550>, array([ 0.90582163,  0.1132277 ,  0.33968311, -0.22645541]), array([ 0.90582163,  0.1132277 ,  0.33968311, -0.22645541]))
+kwds = {'err_msg': '', 'verbose': True, 'header': 'Not equal to tolerance rtol=0, atol=1e-16', 'equal_nan': True}
+
+    @wraps(func)
+    def inner(*args, **kwds):
+        with self._recreate_cm():
+>           return func(*args, **kwds)
+E           AssertionError: 
+E           Not equal to tolerance rtol=0, atol=1e-16
+E           
+E           Mismatched elements: 1 / 4 (25%)
+E           Max absolute difference: 1.11022302e-16
+E           Max relative difference: 1.63420404e-16
+E            x: array([ 0.905822,  0.113228,  0.339683, -0.226455])
+E            y: array([ 0.905822,  0.113228,  0.339683, -0.226455])
+
+/usr/lib/python3.10/contextlib.py:79: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_contact_pose_diagnostic.py::test_cv_keeps_full_unchanged_I44_preview_and_oracle_does_not_reintegrate
+1 failed, 10 passed in 0.67s

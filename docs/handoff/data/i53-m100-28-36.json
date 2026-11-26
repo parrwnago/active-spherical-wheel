@@ -1,0 +1,86 @@
+{
+  "scope": "Derived exact-value field/window subset of recordedI52data, not a full rollout or new simulation; no resampling or float conversion",
+  "window_s": [
+    28,
+    36
+  ],
+  "field_prefix": "m100_{B,R,N,NR}__<originalfield>",
+  "fields": [
+    "time_s",
+    "exact_qpos",
+    "exact_qvel",
+    "exact_native_requested",
+    "exact_applied",
+    "exact_previous_applied",
+    "exact_native_joint_reference",
+    "exact_guarded_joint_reference",
+    "exact_reference_guard_delta",
+    "exact_feedback_gain",
+    "exact_feedback_error",
+    "exact_reference_xy",
+    "exact_reference_velocity_m_s",
+    "exact_reference_acceleration_m_s2",
+    "exact_reference_quat",
+    "exact_reference_qvel",
+    "exact_feedback_reference_qvel",
+    "exact_estimated_normal",
+    "exact_estimated_support_loads_N",
+    "exact_estimated_contact_point_m",
+    "truth_patch_loads_N",
+    "truth_patch_points_m",
+    "exact_equilibrium_command",
+    "exact_rolling_feedforward",
+    "exact_support_command",
+    "exact_lqr_command",
+    "exact_transition_command_delta",
+    "exact_heading_command",
+    "exact_fade_command_delta",
+    "exact_clipping_command_delta",
+    "exact_sync_weights",
+    "exact_input_bounds",
+    "exact_effective_phase_rad",
+    "exact_phase_world_vertical_rad",
+    "exact_phase_estimated_normal_rad"
+  ],
+  "sources": [
+    {
+      "case": "m100_B",
+      "source": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_B/precision.npz",
+      "source_sha256": "c614f8d1c2abaf91f4628f63ba9dc1e83e0f5a4fdc348540923988fca5b92fac",
+      "rows": 1601,
+      "first_recorded_s": 27.999999999998714,
+      "last_recorded_s": 35.999999999999964
+    },
+    {
+      "case": "m100_R",
+      "source": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_R/precision.npz",
+      "source_sha256": "8dd125cdff944aa5d1f5a6043a6233f4c57a39bddb488f74ce48bf857bafd5dd",
+      "rows": 1601,
+      "first_recorded_s": 27.999999999998714,
+      "last_recorded_s": 35.999999999999964
+    },
+    {
+      "case": "m100_N",
+      "source": "results/contact_scheduling_joint_tracking_20261126/campaign/technical_retry_m100_N/campaign/runs/m100_N/precision.npz",
+      "source_sha256": "5c596cca3b3138804a69d541ccc90a75d9f54884eeb07f93f30ce15d3a0b8299",
+      "rows": 1601,
+      "first_recorded_s": 27.999999999998714,
+      "last_recorded_s": 35.999999999999964
+    },
+    {
+      "case": "m100_NR",
+      "source": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_NR/precision.npz",
+      "source_sha256": "5d33228963351392996bf41aab256d8dc89671498ab1b9cfbc1630c9fba97284",
+      "rows": 1601,
+      "first_recorded_s": 27.999999999998714,
+      "last_recorded_s": 35.999999999999964
+    }
+  ],
+  "artifact": {
+    "path": "i53-m100-28-36.npz",
+    "bytes": 6056649,
+    "sha256": "d7109401e38792866a5cd7ae4ab193064e83e43d870a2c62e9cd650c9c4c5e34"
+  },
+  "command_clock": "input at t acts next5ms; backward acceleration endingt mustusepreviousheldinput",
+  "original_video_clock": "20fps overview intro2s,firstchapter4x:exactframe200/playback10s\u2192recorded32s; fractional times arecontinuousclock mapping betweenoriginal200msposes"
+}

@@ -1,0 +1,347 @@
+{
+  "scope": "Descriptive saved-data audit of I49 playback18s; no physics or controller call.",
+  "input_sha256": {
+    "results/belt_handoff_event_20261126/video_audit/audit_event.py": "ea512a4516efe4a489f2aef38e1bbf3c762de63fd7405ab5198a3ffc14690078",
+    "results/belt_capacity_sweep_20261126/videos/belt_capacity_comparison.mp4": "2cb063c13ff1909bae13848163e4a1d48b20d37ca800fc07f1b621487b1ef357",
+    "results/belt_capacity_sweep_20261126/videos/video_display_schedule.json": "7d69ade3ad4a2393118632209441f2b9fde350179aedc5f2dbcb2c03f93dc1ab",
+    "src/spherical_wheel/gazebo/plant.py": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap030/precision.npz": "dff68cf48f5752d12ee2f377784f96953963f28ee14b4f87a5b19bbdd3ac1b94",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap030/rollout.npz": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap030/provenance.json": "485c23c59412f8f7356a31e669ffdc2c9c43187ccbe5573728acbf6ae33cb763",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap030/artifact_manifest.json": "6574bf9cad16001b5c6ac267cf0b030cabddf2cbd80233d232fd91f40148c098",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap060/precision.npz": "9294c3315ec880444c3d65dcaf162ca9412db3ad455b02ea52c0ec95de7fd8b2",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap060/rollout.npz": "a3ce38ec30e27b53442e57de31b3cac5eb993a96cac3ffa2989046e3df969bb9",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap060/provenance.json": "3fb46ed71a67c5ca3bfdae4ed24b520ab26a23a3e06e50609b6c1d52fea3318c",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap060/artifact_manifest.json": "71ca1435f4855a032ddeec3be61b321bc51a6d3a0860f9392885a12c1ee9db14",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap090/precision.npz": "18e90b8d7ce68c3d1f4c50b6c3cd36ca29597af8e4e0c230220c2655f5803a91",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap090/rollout.npz": "79fc8dac90e0eb2522dd61afe21ef7802aab90b8511bdb0a01eb5d030d637968",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap090/provenance.json": "05f55431b41965ab0d9228b19cee3e9f1701992c97ff3f8ac3490cefc42bead1",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap090/artifact_manifest.json": "ea968fae0a14b8305151016e34c9b88027c3922368174c5569a42361ba938fdd"
+  },
+  "video_mapping": [
+    {
+      "frame": 220,
+      "display_time_s": 18.0,
+      "case_state_times_s": {
+        "mars_cap030": 18.000000000000703,
+        "mars_cap060": 18.000000000000703,
+        "mars_cap090": 18.000000000000703
+      }
+    },
+    {
+      "frame": 340,
+      "display_time_s": 30.0,
+      "case_state_times_s": {
+        "mars_cap030": 29.999999999998316,
+        "mars_cap060": 29.999999999998316,
+        "mars_cap090": 29.999999999998316
+      }
+    },
+    {
+      "frame": 350,
+      "display_time_s": 31.0,
+      "case_state_times_s": {
+        "mars_cap030": 30.999999999998117,
+        "mars_cap060": 30.999999999998117,
+        "mars_cap090": 30.999999999998117
+      }
+    },
+    {
+      "frame": 360,
+      "display_time_s": 32.0,
+      "case_state_times_s": {
+        "mars_cap030": 31.999999999997918,
+        "mars_cap060": 31.999999999997918,
+        "mars_cap090": 31.999999999997918
+      }
+    },
+    {
+      "frame": 370,
+      "display_time_s": 33.0,
+      "case_state_times_s": {
+        "mars_cap030": 32.99999999999843,
+        "mars_cap060": 32.99999999999843,
+        "mars_cap090": 32.99999999999843
+      }
+    },
+    {
+      "frame": 380,
+      "display_time_s": 34.0,
+      "case_state_times_s": {
+        "mars_cap030": 33.99999999999894,
+        "mars_cap060": 33.99999999999894,
+        "mars_cap090": 33.99999999999894
+      }
+    }
+  ],
+  "windows": {},
+  "conventions": {
+    "playback_mapping": "20fps video:2s intro then2x; frame360/playback18s displays recorded32s.",
+    "qvel": "GazeboPlant._pull stores linear world velocity and angular BODY velocity, then shaft/shell joint rates.",
+    "body_up_rotation_speed": "||omega_body[:2]|| in deg/s; rate of the platform up-vector, independent of rotation about that up-vector. Not an Euler-roll/pitch derivative.",
+    "absolute_tilt": "Angle between platform up and world vertical; not lean relative to the terrain or controller reference.",
+    "truth": "Stored current evaluator contact endpoint only; dominant argmax labels may chatter, and are not stable transfer estimates.",
+    "causality": "Descriptive timing associations only. No counterfactual controller or terrain run; no unique cause established."
+  },
+  "cases": {
+    "mars_cap030": {
+      "playback18_context": {
+        "window_s": [
+          30.5,
+          33.5
+        ],
+        "samples": 601,
+        "absolute_tilt_range_deg": [
+          1.7174688500439093,
+          12.52328073537813
+        ],
+        "body_up_rotation_peak": {
+          "time_s": 32.51499999999818,
+          "deg_s": 87.5652659053594,
+          "truth_loads_N": [
+            0.0,
+            19.274625735230973,
+            0.0,
+            0.0
+          ]
+        },
+        "body_angular_speed_peak": {
+          "time_s": 31.03499999999811,
+          "deg_s": 125.45393400350012,
+          "body_components_deg_s": [
+            3.3818425823152487,
+            -80.93536858583022,
+            95.79519199614776
+          ],
+          "truth_loads_N": [
+            0.0,
+            25.509922299529467,
+            0.0,
+            0.0
+          ]
+        },
+        "planar_speed_range_m_s": [
+          0.003117190766649878,
+          0.3192294134637731
+        ],
+        "first_instantaneous_belt_B_dominant_s": 31.02999999999811
+      },
+      "recorded18_alternative": {
+        "window_s": [
+          17.0,
+          19.0
+        ],
+        "samples": 401,
+        "absolute_tilt_range_deg": [
+          1.9509546594022236,
+          7.0067437289757555
+        ],
+        "body_up_rotation_peak": {
+          "time_s": 17.76500000000075,
+          "deg_s": 31.462349987937557,
+          "truth_loads_N": [
+            40.282719693087586,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "body_angular_speed_peak": {
+          "time_s": 19.000000000000504,
+          "deg_s": 53.431204437789205,
+          "body_components_deg_s": [
+            29.92919219614109,
+            -4.6846107794458245,
+            -44.01353750841179
+          ],
+          "truth_loads_N": [
+            0.0,
+            18.099590465551636,
+            0.0,
+            0.0
+          ]
+        },
+        "planar_speed_range_m_s": [
+          0.0061873903716214524,
+          0.19987261299479
+        ],
+        "first_instantaneous_belt_B_dominant_s": null
+      }
+    },
+    "mars_cap060": {
+      "playback18_context": {
+        "window_s": [
+          30.5,
+          33.5
+        ],
+        "samples": 601,
+        "absolute_tilt_range_deg": [
+          1.147961363853046,
+          11.598781948783145
+        ],
+        "body_up_rotation_peak": {
+          "time_s": 31.674999999997983,
+          "deg_s": 120.51531814327885,
+          "truth_loads_N": [
+            0.0,
+            16.710625369279406,
+            0.0,
+            0.0
+          ]
+        },
+        "body_angular_speed_peak": {
+          "time_s": 31.669999999997984,
+          "deg_s": 126.5668642532173,
+          "body_components_deg_s": [
+            -33.54321526133933,
+            -115.59872687456026,
+            -39.12746071245368
+          ],
+          "truth_loads_N": [
+            0.0,
+            16.270826790781822,
+            0.0,
+            0.0
+          ]
+        },
+        "planar_speed_range_m_s": [
+          0.013113193816258688,
+          0.44872992000731843
+        ],
+        "first_instantaneous_belt_B_dominant_s": 32.164999999998
+      },
+      "recorded18_alternative": {
+        "window_s": [
+          17.0,
+          19.0
+        ],
+        "samples": 401,
+        "absolute_tilt_range_deg": [
+          3.324466351796559,
+          6.347846323348649
+        ],
+        "body_up_rotation_peak": {
+          "time_s": 17.430000000000817,
+          "deg_s": 66.74495648154637,
+          "truth_loads_N": [
+            18.11218413425784,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "body_angular_speed_peak": {
+          "time_s": 17.430000000000817,
+          "deg_s": 73.62169830866763,
+          "body_components_deg_s": [
+            -64.29340256122529,
+            17.923381456180298,
+            -31.068718128190554
+          ],
+          "truth_loads_N": [
+            18.11218413425784,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "planar_speed_range_m_s": [
+          0.005494161997682485,
+          0.19082002265790235
+        ],
+        "first_instantaneous_belt_B_dominant_s": null
+      }
+    },
+    "mars_cap090": {
+      "playback18_context": {
+        "window_s": [
+          30.5,
+          33.5
+        ],
+        "samples": 601,
+        "absolute_tilt_range_deg": [
+          1.147961363853046,
+          11.598781948783145
+        ],
+        "body_up_rotation_peak": {
+          "time_s": 31.674999999997983,
+          "deg_s": 120.51531814327885,
+          "truth_loads_N": [
+            0.0,
+            16.710625369279406,
+            0.0,
+            0.0
+          ]
+        },
+        "body_angular_speed_peak": {
+          "time_s": 31.669999999997984,
+          "deg_s": 126.5668642532173,
+          "body_components_deg_s": [
+            -33.54321526133933,
+            -115.59872687456026,
+            -39.12746071245368
+          ],
+          "truth_loads_N": [
+            0.0,
+            16.270826790781822,
+            0.0,
+            0.0
+          ]
+        },
+        "planar_speed_range_m_s": [
+          0.013113193816258688,
+          0.44872992000731843
+        ],
+        "first_instantaneous_belt_B_dominant_s": 32.164999999998
+      },
+      "recorded18_alternative": {
+        "window_s": [
+          17.0,
+          19.0
+        ],
+        "samples": 401,
+        "absolute_tilt_range_deg": [
+          3.324466351796559,
+          6.347846323348649
+        ],
+        "body_up_rotation_peak": {
+          "time_s": 17.430000000000817,
+          "deg_s": 66.74495648154637,
+          "truth_loads_N": [
+            18.11218413425784,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "body_angular_speed_peak": {
+          "time_s": 17.430000000000817,
+          "deg_s": 73.62169830866763,
+          "body_components_deg_s": [
+            -64.29340256122529,
+            17.923381456180298,
+            -31.068718128190554
+          ],
+          "truth_loads_N": [
+            18.11218413425784,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "planar_speed_range_m_s": [
+          0.005494161997682485,
+          0.19082002265790235
+        ],
+        "first_instantaneous_belt_B_dominant_s": null
+      }
+    }
+  },
+  "observations": [
+    "Playback18s is recorded32s, not recorded18s. The alternative recorded18s sample has zero applied belts and shell support in every arm.",
+    "The raised .60/.90 trajectories are identical; the slow replay retains three columns for correspondence to the original video.",
+    "Shell_B/belt_B support changes occur in the mapped late window; body-up motion is already present before the principal belt-supported phase.",
+    "Estimated support, preparation weights and actual input are plotted separately from evaluator truth; truth is never sent to a controller."
+  ],
+  "raised_motion_identity": true
+}

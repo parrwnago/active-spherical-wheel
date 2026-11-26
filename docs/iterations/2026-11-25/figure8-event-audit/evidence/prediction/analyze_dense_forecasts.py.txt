@@ -1,0 +1,194 @@
+"""I41 paired saved-data reduction: normal forecast A versus hindsight replay B.
+
+Geometry evaluation is contact-free; no forecast, integration, controller call
+or Gazebo execution occurs. Reuse I40 endpoint definitions without its former
+warning-pool generator path. Event-selected anchors are not independent trials.
+"""
+from datetime import datetime, timezone
+import argparse
+import csv
+import hashlib
+import json
+from pathlib import Path
+import sys
+import types
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+from spherical_wheel.model import REPO_ROOT
+
+
+HERE = Path(__file__).resolve().parent
+I40 = REPO_ROOT / 'results/lqr_contact_forecast_20261125'
+RAW = I40 / 'campaign/runs/mars_figure8_p090'
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load_source(name, path):
+    """Execute immutable helper source without creating pycache in old evidence."""
+    module = types.ModuleType(name)
+    module.__file__ = str(path)
+    sys.modules[name] = module
+    exec(compile(path.read_text(), str(path), 'exec'), module.__dict__)
+    return module
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--dense-run', type=Path, default=HERE / 'dense_run_01')
+    parser.add_argument('--output', type=Path, default=HERE / 'reduction_stage01')
+    args = parser.parse_args()
+    args.dense_run, args.output = args.dense_run.resolve(), args.output.resolve()
+    if args.output.exists():
+        raise FileExistsError('Preserve previous reduction stage')
+    args.output.mkdir(parents=True)
+    metric_path = I40 / 'analysis/forecast_metrics.py'
+    endpoint_path = I40 / 'analysis/analyze_forecasts.py'
+    dense_provenance = json.loads((args.dense_run / 'provenance.json').read_text())
+    anchors = Path(dense_provenance['arguments']['anchors'])
+    protocol = Path(dense_provenance['arguments']['protocol'])
+    sources = [Path(__file__).resolve(), metric_path, endpoint_path, anchors, protocol]
+    source_records = []
+    for source in sources:
+        relative = source.relative_to(REPO_ROOT)
+        target = args.output / 'source_snapshot' / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+        source_records.append({'origin': str(relative), 'snapshot': str(target.relative_to(args.output)),
+                               'sha256': sha(source)})
+    provenance = {'captured_before_reduction_utc': datetime.now(timezone.utc).isoformat(),
+        'iteration': 'I-41', 'sources': source_records,
+        'inputs': {str(p.relative_to(REPO_ROOT)): sha(p) for p in
+            [args.dense_run / 'forecasts.json', args.dense_run / 'provenance.json',
+             RAW / 'precision.npz', RAW / 'rollout.npz', RAW / 'provenance.json']},
+        'scope': 'Saved-data endpoint/kinematic reduction only. No new dynamics forecast, Gazebo or controller execution.'}
+    (args.output / 'provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
+    metrics = load_source('forecast_metrics', metric_path)
+    helper = load_source('i41_endpoint_helper', endpoint_path)
+    dense = json.loads((args.dense_run / 'forecasts.json').read_text())
+    exact = helper.npz(RAW / 'precision.npz')
+    log = helper.npz(RAW / 'rollout.npz')
+    actual = json.loads((RAW / 'provenance.json').read_text())
+    weight = float(actual['weight_N'])
+    bounds = np.asarray(actual['input_bounds'], float)
+    geometry = helper.Geometry(args.output / 'geometry_workspace')
+    support_events = metrics.stable_events(exact['time_s'], exact['truth_patch_loads_N'], max(.05, .05 * weight))['events']
+    family_events = metrics.stable_dominant_family_events(exact['time_s'], exact['truth_patch_loads_N'], max(.05, .05 * weight))['stable_events']
+    endpoints, pairs = [], []
+    for entry in dense['rows']:
+        if not entry['success'] or not entry.get('offline_actual_input_replay_success'):
+            continue
+        assert entry['AB_same_initial_and_first_5ms_state_contact_input_exact']
+        assert not entry['future_actual_data_used_by_forecast']
+        assert entry['offline_actual_input_replay']['metadata']['future_actual_commands_used']
+        category = ('reference_component_reversal' if str(entry.get('event_id', '')).startswith('turn_')
+                    else 'primary_departure')
+        index = int(entry['anchor_index'])
+        forecasts = {'A_native_closed_loop_forecast': entry['forecast'],
+                     'B_OFFLINE_future_actual_input_replay': entry['offline_actual_input_replay']}
+        for horizon in (.05, .1, .2):
+            records = {}
+            for mode, forecast in forecasts.items():
+                row = helper.endpoint_metrics('mars_figure8_p090', entry, forecast, exact, log,
+                    geometry, horizon, weight, support_events, family_events)
+                row.update(mode=mode, event_id=entry.get('event_id'), event_category=category,
+                           model_B_is_hindsight_diagnostic=mode.startswith('B_'))
+                records[mode] = row
+                endpoints.append(row)
+            a, b = list(records.values())
+            steps = int(round(horizon / .005))
+            command_delta = (np.asarray(entry['forecast']['commands'])[:steps] -
+                             exact['exact_applied'][index:index + steps]) / bounds
+            pair = {'anchor_time_s': float(entry['anchor_time_s']), 'anchor_index': index,
+                'event_id': entry.get('event_id'), 'event_category': category, 'horizon_s': horizon,
+                'A_xy_error_mm': a['dynamic_xy_error_mm'], 'B_xy_error_mm': b['dynamic_xy_error_mm'],
+                'A_rotation_error_deg': a['dynamic_rotation_error_deg'], 'B_rotation_error_deg': b['dynamic_rotation_error_deg'],
+                'A_velocity_error_mm_s': a['dynamic_xy_velocity_error_mm_s'], 'B_velocity_error_mm_s': b['dynamic_xy_velocity_error_mm_s'],
+                'actual_dominant_patch': a['dynamic_support']['dominant_actual'],
+                'A_dominant_patch': a['dynamic_support']['dominant_predicted'],
+                'B_dominant_patch': b['dynamic_support']['dominant_predicted'],
+                'A_dominant_agrees': a['dynamic_support']['dominant_agrees'],
+                'B_dominant_agrees': b['dynamic_support']['dominant_agrees'],
+                'A_higher_loaded_set_agrees': a['dynamic_support']['higher_load']['exact_set_agreement'],
+                'B_higher_loaded_set_agrees': b['dynamic_support']['higher_load']['exact_set_agreement'],
+                'A_total_load_error_N': a['dynamic_support']['total_wheel_load_absolute_error_N'],
+                'B_total_load_error_N': b['dynamic_support']['total_wheel_load_absolute_error_N'],
+                'A_load_share_l1': a['dynamic_support']['load_share_l1_both_loaded'],
+                'B_load_share_l1': b['dynamic_support']['load_share_l1_both_loaded'],
+                'A_equivalent_point_error_mm': a['dynamic_equivalent_point_error_mm'],
+                'B_equivalent_point_error_mm': b['dynamic_equivalent_point_error_mm'],
+                'A_conditional_lever_errors_mm': a['dynamic_matching_loaded_patch_drive_lever_errors_mm'],
+                'B_conditional_lever_errors_mm': b['dynamic_matching_loaded_patch_drive_lever_errors_mm'],
+                'forecast_command_normalized_rms_difference_from_actual': float(np.sqrt(np.mean(command_delta ** 2))),
+                'forecast_command_normalized_peak_difference_from_actual': float(np.max(abs(command_delta))),
+                'initial_load_fit_within_tolerance': bool(entry['calibration']['load_fit_within_tolerance']),
+                'initial_load_fit_residual_N': float(entry['calibration']['normal_load_residual_N'])}
+            pairs.append(pair)
+    summary = []
+    for category in ('all_event_selected_anchors', 'primary_departure', 'reference_component_reversal'):
+        for horizon in (.05, .1, .2):
+            chosen = [r for r in pairs if r['horizon_s'] == horizon and
+                      (category == 'all_event_selected_anchors' or r['event_category'] == category)]
+            record = {'category': category, 'horizon_s': horizon, 'paired_anchor_n': len(chosen)}
+            for field in ('xy_error_mm', 'rotation_error_deg', 'velocity_error_mm_s',
+                          'total_load_error_N', 'load_share_l1', 'equivalent_point_error_mm'):
+                for mode in ('A', 'B'):
+                    record[f'{mode}_{field}'] = metrics.distribution(r[f'{mode}_{field}'] for r in chosen
+                        if r[f'{mode}_{field}'] is not None)
+            for mode in ('A', 'B'):
+                record[f'{mode}_dominant_agrees_count'] = sum(r[f'{mode}_dominant_agrees'] for r in chosen)
+                record[f'{mode}_higher_loaded_set_agrees_count'] = sum(r[f'{mode}_higher_loaded_set_agrees'] for r in chosen)
+                record[f'{mode}_conditional_lever_errors_mm'] = metrics.distribution(
+                    value for r in chosen for value in r[f'{mode}_conditional_lever_errors_mm'])
+            record['B_xy_error_lower_than_A_count'] = sum(r['B_xy_error_mm'] < r['A_xy_error_mm'] for r in chosen)
+            summary.append(record)
+    report = {'iteration': 'I-41', 'scope': provenance['scope'], 'mode_A': 'Native5ms feedback on predicted states; no future actual inputs.',
+        'mode_B': 'OFFLINE HINDSIGHT MODEL REPLAY using saved FUTURE actual5ms commands; never deployable or actuated.',
+        'unique_dense_anchors': dense['unique_requested_anchors'], 'successful_A_rows': dense['successful_rows'],
+        'successful_B_rows': dense['successful_actual_input_replay_rows'],
+        'all_first5ms_state_contact_input_exact': all(r.get('AB_same_initial_and_first_5ms_state_contact_input_exact', False) for r in dense['rows']),
+        'history_maximum_absolute_differences': dense['history_maximum_absolute_differences'],
+        'bad_initial_load_fit_count': sum(not r['calibration']['load_fit_within_tolerance'] for r in dense['rows'] if r['success']),
+        'bad_initial_load_fit_times_s': [r['anchor_time_s'] for r in dense['rows'] if r['success'] and not r['calibration']['load_fit_within_tolerance']],
+        'paired_endpoint_records': pairs, 'summary': summary,
+        'limits': ['Event-selected overlapping windows from one Mars trace; not independent experiments or population accuracy.',
+            'Both models retain the same frozen observer-fitted plane/friction and reset integration per5ms.',
+            'Model B removes divergence in future commands by using hindsight; this does not make it a deployable estimator/controller.',
+            'Contact force sampling uses the model last-physics-step convention, before integrated endpoint state; raw labels/loads can chatter.',
+            'Conditional patch-point/lever errors omit unmatched or unloaded patches; report their denominators and label errors separately.',
+            'Projected lever evaluation uses logged DEM-tangent normal for the actual side, not a DART force-weighted surface normal.',
+            'Reduced B error can identify sensitivity to predicted feedback evolution but does not uniquely establish a controller/estimator/model cause.']}
+    helper.save(args.output / 'report.json', report)
+    helper.save(args.output / 'endpoint_records.json', endpoints)
+    with (args.output / 'paired_endpoints.csv').open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(pairs[0]))
+        writer.writeheader(); writer.writerows(pairs)
+    fig, axes = plt.subplots(1, 3, figsize=(13, 4.5))
+    onset = [r for r in pairs if r['event_category'] == 'primary_departure']
+    for ax, horizon in zip(axes, (.05, .1, .2)):
+        chosen = sorted((r for r in onset if r['horizon_s'] == horizon), key=lambda r: r['anchor_time_s'])
+        for mode, label in [('A', 'A: native feedback forecast'), ('B', 'B: OFFLINE future-input replay')]:
+            ax.plot([r['anchor_time_s'] for r in chosen], [r[f'{mode}_xy_error_mm'] for r in chosen], 'o-', label=label)
+        ax.set(title=f'+{horizon*1000:.0f} ms', xlabel='Forecast anchor time (s)', ylabel='XY state mismatch (mm)')
+        ax.axvline(6.86, color='grey', linestyle=':', linewidth=1)
+        ax.grid(alpha=.25)
+    axes[0].legend(fontsize=8)
+    fig.suptitle('I41 first-departure windows: identical initial model, different future inputs\nB uses saved future commands for diagnosis; no controller change')
+    fig.tight_layout(); fig.savefig(args.output / 'onset_AB_xy_error.png', dpi=160); plt.close(fig)
+    files = []
+    for path in sorted(args.output.rglob('*')):
+        if path.is_file() and not any(part in path.parts for part in ('geometry_workspace', '__pycache__')):
+            files.append({'path': str(path.relative_to(args.output)), 'bytes': path.stat().st_size, 'sha256': sha(path)})
+    helper.save(args.output / 'artifact_manifest.json', {'files': files})
+    print(json.dumps({'summary': summary, 'primary_departure_endpoints': onset,
+                      'bad_initial_load_fit_count': report['bad_initial_load_fit_count']}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

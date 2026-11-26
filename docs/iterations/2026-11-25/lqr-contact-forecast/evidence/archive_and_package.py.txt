@@ -1,0 +1,147 @@
+"""Archive completed I40 evidence; no tests, forecasts or physics are executed."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+import zipfile
+
+FAMILY = Path(__file__).resolve().parent
+ROOT = FAMILY.parents[1]
+DOCS = ROOT / 'docs/iterations/2026-11-25/lqr-contact-forecast'
+DEST = DOCS / 'evidence'
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    pack = FAMILY / 'presentation-pack.zip'
+    if DEST.exists() or pack.exists():
+        raise FileExistsError('Preserve earlier collection; use a fresh archive stage')
+    protocol = json.loads((FAMILY / 'protocol.json').read_text())
+    assert sha(FAMILY / 'campaign/jobs.json') == protocol['jobs_sha256']
+    report = json.loads((FAMILY / 'analysis/final_report.json').read_text())
+    assert report['forecast_count'] == 113 and report['endpoint_count'] == 339
+    assert len(report['trajectory_cases']) == 8
+    assert report['calibration_fit_summary']['fit_outside_tolerance_count'] == 12
+    for rel, digest in protocol['baseline_source_sha256'].items():
+        assert sha(ROOT / rel) == sha(FAMILY / 'pre_change' / rel) == digest, rel
+    for rel, digest in protocol['old_pack_hashes'].items():
+        assert sha(ROOT / rel) == digest, rel
+    sources = generated = 0
+    for case in protocol['cases']:
+        folder = FAMILY / 'campaign/runs' / case['case_id']
+        for provenance_name in ('provenance.json', 'forecast_provenance.json'):
+            provenance = json.loads((folder / provenance_name).read_text())
+            for item in provenance['sources']:
+                assert sha(folder / item['snapshot']) == item['sha256'], item
+                sources += 1
+            for name, digest in provenance['generated_sha256'].items():
+                assert sha(folder / name) == digest, name
+                generated += 1
+    # Child manifests are independently sealed stages; verify without modifying.
+    manifest_refs = 0
+    child_manifests = sorted(set(FAMILY.rglob('artifact_manifest.json')) |
+                             set(FAMILY.rglob('*_artifact_manifest.json')))
+    for manifest_path in child_manifests:
+        manifest = json.loads(manifest_path.read_text())
+        for item in manifest.get('files', []):
+            if 'path' not in item or 'sha256' not in item:
+                continue
+            source = manifest_path.parent / item['path']
+            if not source.is_file():
+                source = ROOT / item['path']
+            assert source.is_file() and sha(source) == item['sha256'], (manifest_path, item)
+            manifest_refs += 1
+    for rel, digest in report['consolidation']['derived_from'].items():
+        assert sha(ROOT / rel) == digest, rel
+
+    DEST.mkdir(parents=True)
+    files, inventory = [], []
+    allowed = {'.json', '.md', '.txt', '.log', '.xml', '.yaml', '.yml', '.toml',
+               '.py', '.csv', '.png', '.jpg', '.jpeg', '.pdf'}
+    skip = {'_workspaces', '_forecast_workspaces', '_geometry_workspace',
+            '_render_scenes', '_render_scene', 'meshes', '__pycache__'}
+    for source in sorted(FAMILY.rglob('*')):
+        if not source.is_file():
+            continue
+        rel = source.relative_to(FAMILY)
+        if '__pycache__' in rel.parts or source.suffix == '.pyc':
+            continue
+        digest = sha(source)
+        inventory.append({'origin': str(source.relative_to(ROOT)),
+                          'bytes': source.stat().st_size, 'sha256': digest})
+        if any(part in skip for part in rel.parts) or source.suffix not in allowed:
+            continue
+        target_rel = rel.with_suffix('.py.txt') if source.suffix == '.py' else rel
+        target = DEST / target_rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+        assert sha(target) == digest
+        stage = ('pre_change_existing_controller_source' if rel.parts[0] == 'pre_change' else
+                 'exact_recorded_source__see_stage_provenance' if any('source_snapshot' in p for p in rel.parts) else
+                 'preserved_development_stage__see_status_and_logs' if 'development' in rel.parts or 'core_development' in rel.parts or 'runner_development' in rel.parts else
+                 'authoritative_corrected_final_analysis' if rel.as_posix() == 'analysis/final_report.json' else
+                 'initial_analysis__pooled_warning_fields_invalid_see_final_report' if rel.as_posix() == 'analysis/report.json' else
+                 'completed_I40_artifact_or_archival_tool')
+        files.append({'snapshot': str(target_rel), 'origin': str(source.relative_to(ROOT)),
+                      'bytes': source.stat().st_size, 'sha256': digest, 'stage': stage})
+    raw = DEST / 'raw_inventory.json'
+    raw.write_text(json.dumps(inventory, indent=2) + '\n')
+    files.append({'snapshot': raw.name, 'origin': 'archive_and_package.py',
+                  'bytes': raw.stat().st_size, 'sha256': sha(raw), 'stage': 'archival_index'})
+    manifest = {'iteration': 'I-40',
+        'scope': '8 fresh unchanged-native-LQR Gazebo/DART executions;113 private forecasts (96uniform+17truth-conditioned),339 nested endpoints. No physics/tests/forecasts during archival.',
+        'authoritative_report': 'analysis/final_report.json',
+        'stage_warning': 'Initial report pooled warning FP/FN/precision/recall invalid; retained with exact source. Separate arithmetic correction/final consolidation are authoritative; no model rerun.',
+        'verified_case_source_snapshot_references': sources,
+        'verified_case_generated_artifact_references': generated,
+        'verified_child_manifest_references_including_overlaps': manifest_refs,
+        'artifact_count_excluding_manifest': len(files),
+        'artifact_bytes_excluding_manifest': sum(f['bytes'] for f in files),
+        'files': files,
+        'tests': 'Latest45selectedchecks pass in2environments;14newforecast+15seed+16model. Stage/environment repetitions overlap; notfullrepo oradditive.',
+        'old_pack_hashes_verified_unchanged': protocol['old_pack_hashes'],
+        'payload_boundary': 'Compact evidence includes raw forecastJSON, stage sources/reports/figures, failures and inventories. Raw rollout/precisionNPZ and2MP4 are inZIP, notcompactdocs. Generated meshes/workspaces inventoried, notcopied.'}
+    (DEST / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    paths = [ROOT / 'ITERATION_LOG.md', ROOT / 'README.md', ROOT / 'OFFROAD.md',
+             DOCS.parent / 'README.md', DOCS / 'README.md',
+             ROOT / 'generated/offroad/flat/control_schedule.npz']
+    paths += [p for p in DEST.rglob('*') if p.is_file()]
+    paths += list((FAMILY / 'videos').glob('*.mp4'))
+    for case in protocol['cases']:
+        folder = FAMILY / 'campaign/runs' / case['case_id']
+        paths += [folder / name for name in ('rollout.npz', 'precision.npz')]
+    paths = sorted(set(paths))
+    entries = [{'path': str(p.relative_to(ROOT)), 'bytes': p.stat().st_size,
+                'sha256': sha(p)} for p in paths]
+    presentation = {'iteration': 'I-40', 'scope': manifest['scope'],
+        'authoritative_report': str((DEST / 'analysis/final_report.json').relative_to(ROOT)),
+        'stage_warning': manifest['stage_warning'], 'artifacts': entries,
+        'payload_count': len(entries), 'payload_bytes': sum(e['bytes'] for e in entries)}
+    manifest_path = FAMILY / 'presentation_manifest.json'
+    manifest_path.write_text(json.dumps(presentation, indent=2) + '\n')
+    with zipfile.ZipFile(pack, 'x', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
+        for path in paths:
+            archive.write(path, path.relative_to(ROOT))
+        archive.write(manifest_path, manifest_path.relative_to(ROOT))
+    with zipfile.ZipFile(pack) as archive:
+        assert archive.testzip() is None
+        for entry in entries:
+            assert hashlib.sha256(archive.read(entry['path'])).hexdigest() == entry['sha256'], entry['path']
+        assert len(archive.namelist()) == len(entries) + 1
+    verified = {'zip': str(pack.relative_to(ROOT)), 'zip_bytes': pack.stat().st_size,
+        'zip_sha256': sha(pack), 'file_count_including_manifest': len(entries) + 1,
+        'zip_crc_verified': True, 'all_payload_hashes_verified': True}
+    verification_path = FAMILY / 'presentation_verification.json'
+    verification_path.write_text(json.dumps(verified, indent=2) + '\n')
+    pack.with_suffix('.zip.sha256').write_text(verified['zip_sha256'] + '  ' + pack.name + '\n')
+    (DOCS / 'presentation_manifest.json').write_bytes(manifest_path.read_bytes())
+    (DOCS / 'presentation_verification.json').write_bytes(verification_path.read_bytes())
+    print(json.dumps({'compact': {k: v for k, v in manifest.items() if k != 'files'},
+                      'presentation': verified}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

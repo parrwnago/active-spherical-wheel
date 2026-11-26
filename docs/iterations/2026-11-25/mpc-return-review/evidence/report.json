@@ -1,0 +1,52 @@
+{
+  "iteration": "I-37",
+  "scope": "Saved-data reduction only; zero new Gazebo executions or controller changes.",
+  "video": "results/mpc_search_20261125/videos/mpc_original_vs_predicted_native_seed.mp4",
+  "rows": [
+    {
+      "case": "Original MPC",
+      "source": "results/feedback_recovery_20261125/runs/slope/mpc/precision.npz",
+      "source_sha256": "1578706d750aa647bf7c9b87ca7ba3fa5f43f8030622ccdcad21efd4e4e9e19f",
+      "peak_goal_error_mm": 88.27839728671405,
+      "peak_time_s": 4.359999999999929,
+      "distance_monotonically_decreases_after_peak": true,
+      "final_time_s": 8.399999999999913,
+      "feedback_duration_s": 7.999999999999913,
+      "final1s_start_time_s": 7.3999999999998645,
+      "final1s_samples": 201,
+      "final1s_start_error_mm": 49.51754029562091,
+      "final_goal_error_mm": 31.21498393710652,
+      "final1s_error_slope_mm_s": -18.35797569336234,
+      "final1s_all_radial_samples_inward": true,
+      "final_radial_velocity_mm_s": -17.174251639603245,
+      "final_xy_speed_mm_s": 17.797722805876223,
+      "settled_return_gate_within_recorded_window": false
+    },
+    {
+      "case": "Predicted-native-seeded MPC",
+      "source": "results/mpc_search_20261125/runs/slope/mpc/precision.npz",
+      "source_sha256": "b42fb372d188ac72be053f382440e3f42dafe6b35bc0aa0638116ef5b2477d04",
+      "peak_goal_error_mm": 88.6426780781205,
+      "peak_time_s": 4.294999999999931,
+      "distance_monotonically_decreases_after_peak": true,
+      "final_time_s": 8.399999999999913,
+      "feedback_duration_s": 7.999999999999913,
+      "final1s_start_time_s": 7.3999999999998645,
+      "final1s_samples": 201,
+      "final1s_start_error_mm": 47.93912798647733,
+      "final_goal_error_mm": 28.98166564092416,
+      "final1s_error_slope_mm_s": -19.008702318033983,
+      "final1s_all_radial_samples_inward": true,
+      "final_radial_velocity_mm_s": -17.988728721850237,
+      "final_xy_speed_mm_s": 18.224025881667753,
+      "settled_return_gate_within_recorded_window": false
+    }
+  ],
+  "audit_source_sha256": "9d33212f38abb8e7d529cd7b2a7fa52251a40df2895ada9d8eb09e091486efc7",
+  "interpretation": "Both live traces show sustained inward return, not settled recovery within the observed window. No proof of eventual settling or failure.",
+  "proposal": "Extend the unchanged matched live runs before rejecting recovery on the basis of the 8 s observation window; no extension has been launched.",
+  "old_pack_hashes_verified_unchanged": {
+    "results/mpc_search_20261125/presentation-pack.zip": "ffa21bcfc82a3ecd21d2d5f7488e33abd272173bbc09efa0ab9650374d542d0b",
+    "results/feedback_recovery_20261125/presentation-pack.zip": "ff161337e3dc5c4f5650d6f403d45c4eba62f3ba659e71ebaa875a140c3f8934"
+  }
+}

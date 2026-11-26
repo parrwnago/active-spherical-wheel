@@ -1,0 +1,32 @@
+{
+  "time_s": 6.824999999999877,
+  "LQR_groups_m_s": {
+    "position": 0.0191797201010285,
+    "attitude_tangent": 0.5455496839680146,
+    "joint_position": -1.0802882866623604e-15,
+    "linear_velocity": 0.07473805783588108,
+    "angular_velocity": 0.20209684040954345,
+    "joint_velocity": 0.0022399553360555992
+  },
+  "exact_terms_m_s": {
+    "LQR": 0.8438042576505222,
+    "rolling_feedforward": -0.009062411523163871,
+    "holding": 0.0,
+    "synchronization_delta": 0.0,
+    "heading_delta": 0.0,
+    "fade_delta": 0.0
+  },
+  "equilibrium_m_s": 0.0,
+  "requested_m_s": 0.8347418461273584,
+  "applied_m_s": 0.3,
+  "bound_m_s": 0.3,
+  "over_bound_ratio": 2.782472820424528,
+  "attitude_plus_angular_share_of_LQR": 0.886042607155474,
+  "exact_sum_residual": 0.0,
+  "requested_reference_body_velocity_m_s": [
+    0.032437248171481,
+    0.03127916914343344
+  ],
+  "zero_desired_angular_rate": true,
+  "explanation": "This command requests local belt surface speed, not robot body speed. The large positive demand comes predominantly from attitude/angular-rate feedback; nominal rolling FF is small and negative."
+}

@@ -1,0 +1,106 @@
+"""Derived geometry diagnostics from sealed series; no new terrain/model queries."""
+from pathlib import Path
+from datetime import datetime, timezone
+import hashlib
+import json
+import shutil
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+from audit_terrain_reference import angles, lean_correction, qmul, up, stats, safe
+
+HERE = Path(__file__).resolve().parent
+OUT = HERE/'facet_addendum'
+ROOT = HERE.parents[2]
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    OUT.mkdir(exist_ok=False)
+    inputs = [Path(__file__), HERE/'audit_terrain_reference.py', HERE/'terrain_series.npz', HERE/'report.json',
+              HERE/'event_terrain_context.json', HERE/'provenance.json']
+    snap = OUT/'source_snapshot'; snap.mkdir()
+    for name in ['derive_facet_addendum.py', 'audit_terrain_reference.py']:
+        shutil.copyfile(HERE/name, snap/name)
+    provenance = {'captured_before_calculation_utc': datetime.now(timezone.utc).isoformat(),
+                  'inputs_sha256': {str(p.relative_to(ROOT)): sha(p) for p in inputs},
+                  'scope': 'Derived arrays from sealed saved-state DEM audit; no simulator, terrain queries or controller mutation.'}
+    (OUT/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
+    with np.load(HERE/'terrain_series.npz') as z:
+        v = {k: z[k] for k in z.files}
+    base = json.loads((HERE/'report.json').read_text())
+    events = json.loads((HERE/'event_terrain_context.json').read_text())['events']
+    t = v['time_s']
+    # Recover the logged desired up correction from the already stored reported tilt
+    # is insufficient for quaternion composition, so compare normals and tilt metrics
+    # directly here; the first report's DEM-normal substitution remains explicitly
+    # an evaluator formula, never a physical truth/required-lean benchmark.
+    out = {'time_s': t}
+    for future_ms in [50, 100, 200]:
+        steps = int(round(future_ms/5))
+        mismatch = np.full(len(t), np.nan)
+        mismatch[:-steps] = angles(v['estimated_normal'][:-steps], v['obj_facet_normal_at_equivalent_contact_xy'][steps:])
+        out[f'anchor_estimated_plane_vs_future_contact_projected_facet_{future_ms}ms_deg'] = mismatch
+    np.savez_compressed(OUT/'derived_series.npz', **out)
+    snapshots = []
+    for event in events:
+        te = event['time_s']
+        rows = []
+        for offset in [-.5, -.2, -.1, 0., .1, .2, .5]:
+            i = int(np.argmin(abs(t-(te+offset))))
+            keys = ['dem_slope_at_body_xy_deg', 'dem_slope_at_reference_xy_deg', 'logged_dem_closest_slope_deg',
+                    'obj_facet_slope_at_equivalent_contact_xy_deg', 'estimated_slope_deg',
+                    'estimated_vs_contact_projected_obj_facet_normal_error_deg',
+                    'logged_vs_contact_projected_obj_facet_normal_error_deg',
+                    'actual_platform_tilt_deg', 'logged_reference_tilt_deg', 'actual_vs_logged_reference_up_error_deg']
+            rows.append({'offset_s': offset, 'time_s': t[i], **{k: v[k][i] for k in keys},
+                         **{k: x[i] for k, x in out.items() if k != 'time_s'}})
+        snapshots.append({'event_id': event['event_id'], 'time_s': te, 'rows': rows})
+    onset = events[0]['time_s']
+    m = (t >= onset-1) & (t <= onset+2)
+    fig, axes = plt.subplots(4, 1, figsize=(11, 11), sharex=True, constrained_layout=True)
+    for key, label in [('dem_slope_at_reference_xy_deg', 'DEM at desired XY'),
+                       ('logged_dem_closest_slope_deg', 'logged DEM closest tangent'),
+                       ('obj_facet_slope_at_equivalent_contact_xy_deg', 'OBJ facet at equivalent-contact XY'),
+                       ('estimated_slope_deg', 'observer estimate')]:
+        axes[0].plot(t[m], v[key][m], label=label)
+    axes[0].set(ylabel='slope magnitude (deg)'); axes[0].legend(fontsize=8)
+    axes[1].plot(t[m], v['estimated_vs_contact_projected_obj_facet_normal_error_deg'][m], label='estimated vs projected contact facet')
+    axes[1].plot(t[m], v['estimated_vs_logged_dem_normal_error_deg'][m], label='estimated vs logged closest tangent')
+    axes[1].set(ylabel='normal angle (deg)'); axes[1].legend(fontsize=8)
+    for key, label in [('logged_reference_tilt_deg', 'logged reference up'), ('actual_platform_tilt_deg', 'actual platform up')]:
+        axes[2].plot(t[m], v[key][m], label=label)
+    axes[2].set(ylabel='up tilt (deg)'); axes[2].legend(fontsize=8)
+    for key, array in out.items():
+        if key != 'time_s':
+            axes[3].plot(t[m], array[m], label=key.rsplit('_', 1)[0].rsplit('_', 1)[-1])
+    axes[3].set(ylabel='normal angle (deg)', xlabel='simulation time (s)')
+    axes[3].legend(title='current estimate vs future projected contact facet', fontsize=8)
+    for ax in axes:
+        ax.axvline(onset, color='red', ls='--', label='first path departure'); ax.grid(alpha=.2)
+    fig.suptitle('I41 first departure: geometry/estimate association; projected facets are not force-weighted contact normals')
+    fig.savefig(OUT/'first_departure_geometry.png', dpi=150); plt.close(fig)
+    report = {'scope': provenance['scope'], 'events': snapshots,
+              'first_departure_window_s': [onset-1, onset+2],
+              'first_departure_window_contact_facet_angle_stats': {
+                  k: stats(v[k][m]) for k in ['estimated_vs_contact_projected_obj_facet_normal_error_deg',
+                                            'logged_vs_contact_projected_obj_facet_normal_error_deg']},
+              'frozen_plane_future_angle_definition': 'Current saved observer normal compared against geometric OBJ facet at future saved equivalent physical contact XY at50/100/200ms. Evaluation-only representation-change diagnostic, not a forecast accuracy metric or force-weighted collision truth.',
+              'normal_semantics_warning': 'The earlier field truth_normal_substituted_reference_tilt_deg means substitution of evaluator DEM closest-point tangent only. It is not a ground-truth contact normal or physically required lean. Logged closest tangent can differ substantially from the facet beneath the recorded equivalent contact; observer agreement with that contact facet may then be better.',
+              'limits': ['Equivalent contact can average multiple contacts and lie over a different facet; rocks/lava omitted.',
+                         'Facet/cell switches at projected equivalent-contact XY are not proof of actual collision facet switches.',
+                         'Actual-vs-desired terrain differences after departure can be its consequence.',
+                         'Geometry associations and whole-terrain flat counterfactual do not isolate one causal slope.']}
+    (OUT/'report.json').write_text(json.dumps(safe(report), indent=2, allow_nan=False)+'\n')
+    files = [{'path': str(p.relative_to(OUT)), 'bytes': p.stat().st_size, 'sha256': sha(p)} for p in sorted(OUT.rglob('*')) if p.is_file()]
+    (OUT/'artifact_manifest.json').write_text(json.dumps({'files': files}, indent=2)+'\n')
+    print(json.dumps(safe({'samples': len(t), 'first_departure': snapshots[0]}), indent=2))
+
+
+if __name__ == '__main__':
+    main()

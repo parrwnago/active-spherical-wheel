@@ -1,0 +1,144 @@
+"""Freeze reviewed I43 runtime sources, then launch fresh isolated cases (max3)."""
+from pathlib import Path
+from datetime import datetime,timezone
+from concurrent.futures import ThreadPoolExecutor,as_completed
+import argparse
+import hashlib
+import importlib.util
+import json
+import os
+import shutil
+import subprocess
+import traceback
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+PROTOCOL_SHA = 'ea3fc0ecb988b5388ebbe8d2b1b84c30b2f1cf8397eedc5596e9966e4908f3f3'
+
+
+def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def now():return datetime.now(timezone.utc).isoformat()
+
+
+def save(path,value):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text(json.dumps(value,indent=2)+'\n')
+
+
+def helper():
+    path = HERE/'run_tilt_reference.py'
+    spec = importlib.util.spec_from_file_location('i43_launch_preflight',path)
+    module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    return module
+
+
+def freeze(reports):
+    target = HERE/'campaign/source_lock.json'
+    if target.exists():raise FileExistsError('Preserve earlier source lock; use an explicitly declared new stage')
+    assert len(reports)>=3,'Supply reviewed core, independent and campaign check reports; optional additional reviewed gates may be included'
+    module = helper()
+    protocol,_,_,preflight = module.preflight(HERE)
+    for rel,digest in protocol['old_pack_hashes'].items():assert sha(ROOT/rel)==digest,rel
+    for report in reports:
+        assert json.loads(report.read_text())['passed'] is True,report
+    sources = set((ROOT/'src/spherical_wheel').rglob('*.py'))
+    sources.update((ROOT/'tests').glob('*.py'))
+    sources.update((ROOT/'config').glob('*.yaml'))
+    sources.update([Path(__file__).resolve(),HERE/'run_tilt_reference.py',HERE/'protocol.json',HERE/'jobs.json',
+                    HERE/'conditional_jobs.json',ROOT/'scripts/run-lqr-contact-forecast.py',ROOT/'pyproject.toml'])
+    sources.update(p for p in (HERE/'tests').rglob('*')if module.bounded_check_source(p,HERE/'tests'))
+    for report in reports:
+        sources.update(p for p in report.parent.rglob('*')if module.bounded_check_source(p,report.parent))
+    snapshot = HERE/'campaign/launch_source_snapshot'
+    snapshot.mkdir(parents=True,exist_ok=False)
+    records = []
+    for source in sorted(sources):
+        rel = source.relative_to(ROOT);destination = snapshot/rel
+        destination.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,destination)
+        assert sha(destination)==sha(source)
+        records.append({'origin':str(rel),'snapshot':str(destination.relative_to(target.parent)),'sha256':sha(source)})
+    lock = {'iteration':'I-43','captured_before_any_Gazebo_execution_utc':now(),'protocol_sha256':PROTOCOL_SHA,
+            'sources':records,'reviewed_check_reports':{str(p.relative_to(ROOT)):sha(p)for p in reports},
+            'preflight':preflight,'max_concurrent_fresh_processes':3,'new_main_cases':3,'max_conditional_additional_cases':8}
+    save(target,lock)
+    print(json.dumps({'source_lock':str(target.relative_to(ROOT)),'source_sha256':sha(target),'references':len(records)},indent=2))
+
+
+def command(arm,case=None):
+    result = [str(ROOT/'build/tools/bin/micromamba'),'run','-p',str(ROOT/'build/gazebo-env'),
+              'env','MUJOCO_GL=egl','OPENBLAS_NUM_THREADS=1','OMP_NUM_THREADS=1','python','-u',
+              str(HERE/'run_tilt_reference.py'),'--output',str(HERE),'--arm',arm]
+    if case is not None:result += ['--regression-case',case]
+    return result
+
+
+def launch(regression=False):
+    lock_path = HERE/'campaign/source_lock.json'
+    lock = json.loads(lock_path.read_text())
+    assert sha(HERE/'protocol.json')==lock['protocol_sha256']==PROTOCOL_SHA
+    for item in lock['sources']:
+        assert sha(ROOT/item['origin'])==item['sha256'],item['origin']
+        assert sha(HERE/'campaign'/item['snapshot'])==item['sha256'],item['snapshot']
+    module = helper();protocol,jobs,_,_=module.preflight(HERE)
+    if regression:
+        declared = json.loads((HERE/'conditional_jobs.json').read_text())
+        pending = []
+        for job in declared['cases']:
+            for arm in declared['arms']:
+                module.select_job(HERE,protocol,jobs,arm,job['case_id'])
+                pending.append({'id':f'{job["case_id"]}_{arm}','arm':arm,'case':job['case_id'],
+                    'directory':HERE/'campaign/regression_runs'/job['case_id']/arm})
+        prefix = 'regression_launch'
+    else:
+        pending = [{'id':job['arm'],'arm':job['arm'],'case':None,'directory':HERE/'campaign/runs'/job['arm']}for job in jobs]
+        prefix = 'launch'
+    manifest = HERE/f'campaign/{prefix}_manifest.json';status_path = HERE/f'campaign/{prefix}_status.json'
+    if manifest.exists()or status_path.exists():raise FileExistsError('Preserve every previous attempt; no automatic retries')
+    for item in pending:assert not item['directory'].exists(),item['directory']
+    log_folder = HERE/'campaign/logs';log_folder.mkdir(exist_ok=True)
+    env = os.environ.copy()
+    removed = ['PYTHONPATH','LD_LIBRARY_PATH','AMENT_PREFIX_PATH','CMAKE_PREFIX_PATH','COLCON_PREFIX_PATH']
+    for name in removed:env.pop(name,None)
+    env['MAMBA_ROOT_PREFIX']=str(ROOT/'build/mamba')
+    records = [{'id':item['id'],'arm':item['arm'],'case':item['case'],'command_argv':command(item['arm'],item['case']),
+                'log':str((log_folder/f'{item["id"]}.log').relative_to(ROOT))}for item in pending]
+    save(manifest,{'iteration':'I-43','declared_before_processes_utc':now(),'stage':'conditional_regression'if regression else'main',
+        'source_lock_sha256':sha(lock_path),'protocol_sha256':PROTOCOL_SHA,'max_concurrent_processes':3,
+        'environment_removed':removed,'MAMBA_ROOT_PREFIX':env['MAMBA_ROOT_PREFIX'],'jobs':records})
+    statuses = {item['id']:{'id':item['id'],'status':'queued'}for item in pending};save(status_path,statuses)
+
+    def run(item):
+        started = now()
+        with (log_folder/f'{item["id"]}.log').open('x')as log:
+            process = subprocess.Popen(command(item['arm'],item['case']),cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT)
+            print(json.dumps({'id':item['id'],'status':'started','pid':process.pid,'utc':started}),flush=True)
+            code = process.wait()
+        record = {'id':item['id'],'status':'completed'if code==0 else'failed','exit_code':code,
+                  'started_utc':started,'finished_utc':now()}
+        print(json.dumps(record),flush=True)
+        return record
+
+    with ThreadPoolExecutor(max_workers=3)as pool:
+        futures = {pool.submit(run,item):item['id']for item in pending}
+        for future in as_completed(futures):
+            job_id = futures[future]
+            try:statuses[job_id]=future.result()
+            except Exception:statuses[job_id]={'id':job_id,'status':'launch_exception','traceback':traceback.format_exc()}
+            save(status_path,statuses)
+    for item in lock['sources']:assert sha(ROOT/item['origin'])==item['sha256'],item['origin']
+    if any(x['status']!='completed'for x in statuses.values()):raise SystemExit('An attempt failed; all partial outcomes/logs are retained. No retry performed.')
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    group=parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--freeze',action='store_true')
+    group.add_argument('--launch',action='store_true')
+    group.add_argument('--launch-regression',action='store_true')
+    parser.add_argument('--check-report',action='append',type=Path,default=[])
+    args=parser.parse_args()
+    if args.freeze:freeze([p.resolve()for p in args.check_report])
+    else:launch(args.launch_regression)
+
+
+if __name__=='__main__':main()

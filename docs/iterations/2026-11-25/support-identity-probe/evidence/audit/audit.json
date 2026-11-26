@@ -1,0 +1,1527 @@
+{
+  "scope": "Offline audit of one existing saved Gazebo/DART adaptive-bounded run. No simulation, counterfactual control execution, or causal correction is performed.",
+  "case": "plain_figure8 phase -1.00, hardware mode, bounded adaptive allocation",
+  "original_campaign": "results/weighted_allocation_20261125/bounded_adaptive",
+  "timing": {
+    "command_interval_s": 0.005,
+    "saved_median_interval_s": 0.005000114440917969,
+    "physics_step_s": 0.001,
+    "row_alignment": "State, measurement, estimates and upcoming command are logged before plant.step. Commands at t are held to next row; no post-step truth row shift is present.",
+    "truth_contact_semantics": "Bridge PostUpdate clears and replaces contact records each physics step; final 1ms substep contacts are pulled at the control boundary. They are not the preceding 5ms contact-impulse average.",
+    "observer_semantics": "Momentum reconstruction uses preceding 5ms control interval and previous applied input, then first-order filtering of wrench at 100/s (time constant10ms). SupportLocator uses this filtered wrench with current state geometry.",
+    "filter_alpha_per_5ms": 0.3934693402873666,
+    "duration_semantics": "Sample-held mismatch intervals are durations of the sampled label indicator, not proof of continuously wrong support throughout each interval. Physics contact identity can change between logged rows.",
+    "truth_reconstruction_limit": "Historical NPZ omits per-physics-substep contacts and full contact impulse history; exact time-aligned instantaneous-versus-interval separation cannot be reconstructed offline."
+  },
+  "thresholds": {
+    "loaded_comparison_threshold_N": 0.001,
+    "share_margin": "Largest minus second-largest normalized load share; diagnostic only, not calibrated confidence/probability."
+  },
+  "summary": {
+    "transition": {
+      "window_s": [
+        28.8,
+        29.45
+      ],
+      "samples": 131,
+      "loaded_comparison_samples": 130,
+      "mismatched_samples": 30,
+      "sample_held_mismatch_duration_ms": 150.0,
+      "estimated_switches": 18,
+      "truth_switches": 30,
+      "max_requested_command_step_fraction": 8.505565668855978,
+      "max_lqr_step_fraction": 8.480756740539999,
+      "max_feedforward_step_fraction": 0.050000006208816915,
+      "max_attitude_error_deg": 13.912954330444336,
+      "max_path_error_mm": 220.95941162109375
+    },
+    "lead_in": {
+      "window_s": [
+        28.2,
+        28.900000000000002
+      ],
+      "samples": 141,
+      "loaded_comparison_samples": 141,
+      "mismatched_samples": 0,
+      "sample_held_mismatch_duration_ms": 0.0,
+      "estimated_switches": 1,
+      "truth_switches": 1,
+      "max_requested_command_step_fraction": 4.382167060885148,
+      "max_lqr_step_fraction": 4.508577406065567,
+      "max_feedforward_step_fraction": 0.04999999689559154,
+      "max_attitude_error_deg": 8.272239685058594,
+      "max_path_error_mm": 58.081180572509766
+    },
+    "full_run": {
+      "window_s": [
+        0.0,
+        44.0
+      ],
+      "samples": 8801,
+      "loaded_comparison_samples": 8753,
+      "mismatched_samples": 108,
+      "sample_held_mismatch_duration_ms": 540.0,
+      "estimated_switches": 83,
+      "truth_switches": 145,
+      "max_requested_command_step_fraction": 12.107813820925799,
+      "max_lqr_step_fraction": 12.226838865306423,
+      "max_feedforward_step_fraction": 0.050000012417633834,
+      "max_attitude_error_deg": 13.912954330444336,
+      "max_path_error_mm": 317.78076171875
+    }
+  },
+  "first_lean_thresholds_in_episode": {
+    "first_over_3_deg_s": 28.585,
+    "first_over_5_deg_s": 28.77,
+    "first_over_8_deg_s": 28.895
+  },
+  "transition_mismatch_intervals": [
+    {
+      "first_index": 5785,
+      "last_index": 5787,
+      "first_sample_time_s": 28.925,
+      "last_sample_time_s": 28.935000000000002,
+      "sample_timestamp_span_ms": 10.000000000001563,
+      "sample_held_interval_end_s": 28.94,
+      "sample_held_duration_ms": 15.0,
+      "sample_count": 3,
+      "truth_supports": [
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A"
+      ],
+      "max_point_error_mm": 0.25731411576271057,
+      "max_terrain_normal_error_deg": 0.02797645330429077,
+      "max_requested_command_fraction": 5.086893833204355,
+      "belt_A_saturated_samples": 3
+    },
+    {
+      "first_index": 5789,
+      "last_index": 5790,
+      "first_sample_time_s": 28.945,
+      "last_sample_time_s": 28.95,
+      "sample_timestamp_span_ms": 4.999999999999005,
+      "sample_held_interval_end_s": 28.955,
+      "sample_held_duration_ms": 10.0,
+      "sample_count": 2,
+      "truth_supports": [
+        "belt_A"
+      ],
+      "estimated_supports": [
+        "shell_A"
+      ],
+      "max_point_error_mm": 0.23293142020702362,
+      "max_terrain_normal_error_deg": 0.0,
+      "max_requested_command_fraction": 0.7369323775397787,
+      "belt_A_saturated_samples": 0
+    },
+    {
+      "first_index": 5793,
+      "last_index": 5793,
+      "first_sample_time_s": 28.965,
+      "last_sample_time_s": 28.965,
+      "sample_timestamp_span_ms": 0.0,
+      "sample_held_interval_end_s": 28.97,
+      "sample_held_duration_ms": 5.0,
+      "sample_count": 1,
+      "truth_supports": [
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A"
+      ],
+      "max_point_error_mm": 0.3723963797092438,
+      "max_terrain_normal_error_deg": 0.0,
+      "max_requested_command_fraction": 5.544996835986899,
+      "belt_A_saturated_samples": 1
+    },
+    {
+      "first_index": 5795,
+      "last_index": 5795,
+      "first_sample_time_s": 28.975,
+      "last_sample_time_s": 28.975,
+      "sample_timestamp_span_ms": 0.0,
+      "sample_held_interval_end_s": 28.98,
+      "sample_held_duration_ms": 5.0,
+      "sample_count": 1,
+      "truth_supports": [
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A"
+      ],
+      "max_point_error_mm": 0.31549128890037537,
+      "max_terrain_normal_error_deg": 0.01978234015405178,
+      "max_requested_command_fraction": 5.688458455067537,
+      "belt_A_saturated_samples": 1
+    },
+    {
+      "first_index": 5797,
+      "last_index": 5799,
+      "first_sample_time_s": 28.985,
+      "last_sample_time_s": 28.995,
+      "sample_timestamp_span_ms": 10.000000000001563,
+      "sample_held_interval_end_s": 29.0,
+      "sample_held_duration_ms": 15.0,
+      "sample_count": 3,
+      "truth_supports": [
+        "belt_A",
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A",
+        "shell_A"
+      ],
+      "max_point_error_mm": 0.4495067298412323,
+      "max_terrain_normal_error_deg": 0.0,
+      "max_requested_command_fraction": 5.947732689073376,
+      "belt_A_saturated_samples": 2
+    },
+    {
+      "first_index": 5801,
+      "last_index": 5808,
+      "first_sample_time_s": 29.005,
+      "last_sample_time_s": 29.04,
+      "sample_timestamp_span_ms": 35.00000000000014,
+      "sample_held_interval_end_s": 29.044999999999998,
+      "sample_held_duration_ms": 40.0,
+      "sample_count": 8,
+      "truth_supports": [
+        "belt_A",
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A",
+        "shell_A"
+      ],
+      "max_point_error_mm": 0.5542156100273132,
+      "max_terrain_normal_error_deg": 0.05595290660858154,
+      "max_requested_command_fraction": 6.282472360830611,
+      "belt_A_saturated_samples": 6
+    },
+    {
+      "first_index": 5810,
+      "last_index": 5811,
+      "first_sample_time_s": 29.05,
+      "last_sample_time_s": 29.055,
+      "sample_timestamp_span_ms": 4.999999999999005,
+      "sample_held_interval_end_s": 29.06,
+      "sample_held_duration_ms": 10.0,
+      "sample_count": 2,
+      "truth_supports": [
+        "belt_A",
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A",
+        "shell_A"
+      ],
+      "max_point_error_mm": 0.35122328996658325,
+      "max_terrain_normal_error_deg": 0.048456642776727676,
+      "max_requested_command_fraction": 6.661288870919193,
+      "belt_A_saturated_samples": 1
+    },
+    {
+      "first_index": 5815,
+      "last_index": 5815,
+      "first_sample_time_s": 29.075,
+      "last_sample_time_s": 29.075,
+      "sample_timestamp_span_ms": 0.0,
+      "sample_held_interval_end_s": 29.08,
+      "sample_held_duration_ms": 5.0,
+      "sample_count": 1,
+      "truth_supports": [
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A"
+      ],
+      "max_point_error_mm": 0.46332719922065735,
+      "max_terrain_normal_error_deg": 0.0,
+      "max_requested_command_fraction": 6.96545573212879,
+      "belt_A_saturated_samples": 1
+    },
+    {
+      "first_index": 5818,
+      "last_index": 5819,
+      "first_sample_time_s": 29.09,
+      "last_sample_time_s": 29.095,
+      "sample_timestamp_span_ms": 4.999999999999005,
+      "sample_held_interval_end_s": 29.099999999999998,
+      "sample_held_duration_ms": 10.0,
+      "sample_count": 2,
+      "truth_supports": [
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A"
+      ],
+      "max_point_error_mm": 0.5725806355476379,
+      "max_terrain_normal_error_deg": 0.03426402062177658,
+      "max_requested_command_fraction": 7.225234221409392,
+      "belt_A_saturated_samples": 2
+    },
+    {
+      "first_index": 5823,
+      "last_index": 5823,
+      "first_sample_time_s": 29.115000000000002,
+      "last_sample_time_s": 29.115000000000002,
+      "sample_timestamp_span_ms": 0.0,
+      "sample_held_interval_end_s": 29.12,
+      "sample_held_duration_ms": 5.0,
+      "sample_count": 1,
+      "truth_supports": [
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A"
+      ],
+      "max_point_error_mm": 0.5256324410438538,
+      "max_terrain_normal_error_deg": 0.9194098711013794,
+      "max_requested_command_fraction": 7.462252479304771,
+      "belt_A_saturated_samples": 1
+    },
+    {
+      "first_index": 5826,
+      "last_index": 5827,
+      "first_sample_time_s": 29.13,
+      "last_sample_time_s": 29.135,
+      "sample_timestamp_span_ms": 5.000000000002558,
+      "sample_held_interval_end_s": 29.14,
+      "sample_held_duration_ms": 10.0,
+      "sample_count": 2,
+      "truth_supports": [
+        "belt_A"
+      ],
+      "estimated_supports": [
+        "shell_A"
+      ],
+      "max_point_error_mm": 0.7534686326980591,
+      "max_terrain_normal_error_deg": 0.9855619072914124,
+      "max_requested_command_fraction": 7.5178238742421515,
+      "belt_A_saturated_samples": 0
+    },
+    {
+      "first_index": 5846,
+      "last_index": 5846,
+      "first_sample_time_s": 29.23,
+      "last_sample_time_s": 29.23,
+      "sample_timestamp_span_ms": 0.0,
+      "sample_held_interval_end_s": 29.235,
+      "sample_held_duration_ms": 5.0,
+      "sample_count": 1,
+      "truth_supports": [
+        "belt_A"
+      ],
+      "estimated_supports": [
+        "shell_A"
+      ],
+      "max_point_error_mm": 0.5552739500999451,
+      "max_terrain_normal_error_deg": 0.03426402062177658,
+      "max_requested_command_fraction": 1.8810668833626556,
+      "belt_A_saturated_samples": 0
+    },
+    {
+      "first_index": 5857,
+      "last_index": 5857,
+      "first_sample_time_s": 29.285,
+      "last_sample_time_s": 29.285,
+      "sample_timestamp_span_ms": 0.0,
+      "sample_held_interval_end_s": 29.29,
+      "sample_held_duration_ms": 5.0,
+      "sample_count": 1,
+      "truth_supports": [
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A"
+      ],
+      "max_point_error_mm": 0.9481905102729797,
+      "max_terrain_normal_error_deg": 10.245936393737793,
+      "max_requested_command_fraction": 8.411206070136783,
+      "belt_A_saturated_samples": 1
+    },
+    {
+      "first_index": 5859,
+      "last_index": 5859,
+      "first_sample_time_s": 29.295,
+      "last_sample_time_s": 29.295,
+      "sample_timestamp_span_ms": 0.0,
+      "sample_held_interval_end_s": 29.3,
+      "sample_held_duration_ms": 5.0,
+      "sample_count": 1,
+      "truth_supports": [
+        "shell_A"
+      ],
+      "estimated_supports": [
+        "belt_A"
+      ],
+      "max_point_error_mm": 0.7921273112297058,
+      "max_terrain_normal_error_deg": 10.233487129211426,
+      "max_requested_command_fraction": 8.526546616294121,
+      "belt_A_saturated_samples": 1
+    },
+    {
+      "first_index": 5877,
+      "last_index": 5877,
+      "first_sample_time_s": 29.385,
+      "last_sample_time_s": 29.385,
+      "sample_timestamp_span_ms": 0.0,
+      "sample_held_interval_end_s": 29.39,
+      "sample_held_duration_ms": 5.0,
+      "sample_count": 1,
+      "truth_supports": [
+        "belt_A"
+      ],
+      "estimated_supports": [
+        "shell_A"
+      ],
+      "max_point_error_mm": 0.5702306628227234,
+      "max_terrain_normal_error_deg": 1.5397683382034302,
+      "max_requested_command_fraction": 2.0726012360016015,
+      "belt_A_saturated_samples": 0
+    }
+  ],
+  "target_snapshot": {
+    "index": 5795,
+    "time_s": 28.975,
+    "truth_support": "shell_A",
+    "estimated_support": "belt_A",
+    "truth_loads_N": [
+      21.90526008605957,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "estimated_loads_N": [
+      0.0,
+      0.0,
+      18.73038101196289,
+      0.0
+    ],
+    "truth_share_margin": 1.0,
+    "estimated_share_margin": 1.0,
+    "equivalent_point_error_mm": 0.31549128890037537,
+    "terrain_normal_error_deg": 0.01978234015405178,
+    "attitude_error_deg": 9.692367553710938,
+    "original_path_error_mm": 32.3777961730957,
+    "command": [
+      0.08435621112585068,
+      -0.061441194266080856,
+      0.030147256329655647,
+      -1.7065376043319702,
+      0.0
+    ],
+    "applied_input": [
+      0.08435621112585068,
+      -0.061441194266080856,
+      0.030147256329655647,
+      -0.30000001192092896,
+      0.0
+    ],
+    "previous_applied_input": [
+      0.14029352366924286,
+      -0.062274932861328125,
+      0.026914073154330254,
+      -0.30000001192092896,
+      0.0
+    ],
+    "lqr_command": [
+      -0.04368887469172478,
+      -0.061441194266080856,
+      0.030147256329655647,
+      -1.6587156057357788,
+      0.0
+    ],
+    "rolling_feedforward": [
+      0.0,
+      0.0,
+      0.0,
+      -0.04782192409038544,
+      0.0
+    ],
+    "transition_command_delta": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "command_step_from_previous": [
+      -0.05593731254339218,
+      0.0008337385952472687,
+      0.0032331831753253937,
+      -0.030527830123901367,
+      0.0
+    ],
+    "lqr_step_from_previous": [
+      -0.05383986048400402,
+      0.004365209490060806,
+      0.0032331831753253937,
+      -0.030703186988830566,
+      0.0
+    ],
+    "feedforward_step_from_previous": [
+      0.0,
+      0.0,
+      0.0,
+      0.00017548352479934692,
+      0.0
+    ],
+    "transition_delta_step_from_previous": [
+      0.0,
+      -0.0035314762499183416,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "actuator_saturated": [
+      false,
+      false,
+      false,
+      true,
+      false
+    ],
+    "allocation_authority_m_s": 0.2998715043067932,
+    "allocation_residual_rms_m_s": 5.655372206092579e-07,
+    "truth_force_N": [
+      -6.699174404144287,
+      -1.4966870546340942,
+      23.897737503051758
+    ],
+    "observer_force_N": [
+      0.30787742137908936,
+      -2.0648233890533447,
+      19.229867935180664
+    ]
+  },
+  "target_neighbor_snapshots": [
+    {
+      "index": 5794,
+      "time_s": 28.97,
+      "truth_support": "belt_A",
+      "estimated_support": "belt_A",
+      "truth_loads_N": [
+        0.0,
+        0.0,
+        10.200305938720703,
+        0.0
+      ],
+      "estimated_loads_N": [
+        0.0,
+        0.0,
+        16.60393524169922,
+        0.0
+      ],
+      "truth_share_margin": 1.0,
+      "estimated_share_margin": 1.0,
+      "equivalent_point_error_mm": 0.21047084033489227,
+      "terrain_normal_error_deg": 0.01978234015405178,
+      "attitude_error_deg": 9.617864608764648,
+      "original_path_error_mm": 31.765811920166016,
+      "command": [
+        0.14029352366924286,
+        -0.062274932861328125,
+        0.026914073154330254,
+        -1.6760097742080688,
+        0.0
+      ],
+      "applied_input": [
+        0.14029352366924286,
+        -0.062274932861328125,
+        0.026914073154330254,
+        -0.30000001192092896,
+        0.0
+      ],
+      "previous_applied_input": [
+        0.09417156130075455,
+        -0.07649809867143631,
+        0.011609908193349838,
+        -0.30000001192092896,
+        0.0
+      ],
+      "lqr_command": [
+        0.010150985792279243,
+        -0.06580640375614166,
+        0.026914073154330254,
+        -1.6280124187469482,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        -0.047997407615184784,
+        0.0
+      ],
+      "transition_command_delta": [
+        0.0,
+        0.0035314762499183416,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "command_step_from_previous": [
+        0.04612196236848831,
+        0.014223165810108185,
+        0.015304164960980415,
+        -0.01251065731048584,
+        0.0
+      ],
+      "lqr_step_from_previous": [
+        0.04894702695310116,
+        0.010691694915294647,
+        0.015304164960980415,
+        -0.012698888778686523,
+        0.0
+      ],
+      "feedforward_step_from_previous": [
+        0.0,
+        0.0,
+        0.0,
+        0.0001882314682006836,
+        0.0
+      ],
+      "transition_delta_step_from_previous": [
+        0.0,
+        0.0035314762499183416,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actuator_saturated": [
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "allocation_authority_m_s": 0.2998623549938202,
+      "allocation_residual_rms_m_s": 5.67385939120868e-07,
+      "truth_force_N": [
+        13.497977256774902,
+        12.225029945373535,
+        6.8705644607543945
+      ],
+      "observer_force_N": [
+        3.938693046569824,
+        0.5644582509994507,
+        16.13620948791504
+      ]
+    },
+    {
+      "index": 5796,
+      "time_s": 28.98,
+      "truth_support": "belt_A",
+      "estimated_support": "belt_A",
+      "truth_loads_N": [
+        0.0,
+        0.0,
+        10.295426368713379,
+        0.0
+      ],
+      "estimated_loads_N": [
+        0.0,
+        0.0,
+        17.24646759033203,
+        0.0
+      ],
+      "truth_share_margin": 1.0,
+      "estimated_share_margin": 1.0,
+      "equivalent_point_error_mm": 0.252865195274353,
+      "terrain_normal_error_deg": 0.01978234015405178,
+      "attitude_error_deg": 9.764067649841309,
+      "original_path_error_mm": 33.06521987915039,
+      "command": [
+        0.11016854643821716,
+        -0.029375163838267326,
+        0.043277278542518616,
+        -1.716968297958374,
+        0.0
+      ],
+      "applied_input": [
+        0.11016854643821716,
+        -0.029375163838267326,
+        0.043277278542518616,
+        -0.30000001192092896,
+        0.0
+      ],
+      "previous_applied_input": [
+        0.08435621112585068,
+        -0.061441194266080856,
+        0.030147256329655647,
+        -0.30000001192092896,
+        0.0
+      ],
+      "lqr_command": [
+        -0.01548632699996233,
+        -0.04338027164340019,
+        0.043277278542518616,
+        -1.6693146228790283,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        -0.04765375703573227,
+        0.0
+      ],
+      "transition_command_delta": [
+        0.0,
+        0.014005106873810291,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "command_step_from_previous": [
+        0.025812335312366486,
+        0.03206603042781353,
+        0.013130022212862968,
+        -0.010430693626403809,
+        0.0
+      ],
+      "lqr_step_from_previous": [
+        0.028202547691762447,
+        0.018060922622680664,
+        0.013130022212862968,
+        -0.010599017143249512,
+        0.0
+      ],
+      "feedforward_step_from_previous": [
+        0.0,
+        0.0,
+        0.0,
+        0.00016816705465316772,
+        0.0
+      ],
+      "transition_delta_step_from_previous": [
+        0.0,
+        0.014005106873810291,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actuator_saturated": [
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "allocation_authority_m_s": 0.2998795509338379,
+      "allocation_residual_rms_m_s": 5.637315325657255e-07,
+      "truth_force_N": [
+        13.395718574523926,
+        12.360100746154785,
+        6.980651378631592
+      ],
+      "observer_force_N": [
+        2.671496868133545,
+        0.21080519258975983,
+        17.07891845703125
+      ]
+    }
+  ],
+  "target_mismatch_interval": {
+    "first_index": 5795,
+    "last_index": 5795,
+    "first_sample_time_s": 28.975,
+    "last_sample_time_s": 28.975,
+    "sample_timestamp_span_ms": 0.0,
+    "sample_held_interval_end_s": 28.98,
+    "sample_held_duration_ms": 5.0,
+    "sample_count": 1,
+    "truth_supports": [
+      "shell_A"
+    ],
+    "estimated_supports": [
+      "belt_A"
+    ],
+    "max_point_error_mm": 0.31549128890037537,
+    "max_terrain_normal_error_deg": 0.01978234015405178,
+    "max_requested_command_fraction": 5.688458455067537,
+    "belt_A_saturated_samples": 1
+  },
+  "lag_sensitivity": [
+    {
+      "truth_shift_ms": 0,
+      "meaning": "Compare estimated(t) against truth(t-shift); endpoint truth only, not impulse-aligned truth.",
+      "samples": 130,
+      "mismatches": 30
+    },
+    {
+      "truth_shift_ms": 5,
+      "meaning": "Compare estimated(t) against truth(t-shift); endpoint truth only, not impulse-aligned truth.",
+      "samples": 130,
+      "mismatches": 30
+    },
+    {
+      "truth_shift_ms": 10,
+      "meaning": "Compare estimated(t) against truth(t-shift); endpoint truth only, not impulse-aligned truth.",
+      "samples": 130,
+      "mismatches": 40
+    },
+    {
+      "truth_shift_ms": 15,
+      "meaning": "Compare estimated(t) against truth(t-shift); endpoint truth only, not impulse-aligned truth.",
+      "samples": 130,
+      "mismatches": 34
+    },
+    {
+      "truth_shift_ms": 20,
+      "meaning": "Compare estimated(t) against truth(t-shift); endpoint truth only, not impulse-aligned truth.",
+      "samples": 130,
+      "mismatches": 40
+    },
+    {
+      "truth_shift_ms": 25,
+      "meaning": "Compare estimated(t) against truth(t-shift); endpoint truth only, not impulse-aligned truth.",
+      "samples": 130,
+      "mismatches": 42
+    },
+    {
+      "truth_shift_ms": 30,
+      "meaning": "Compare estimated(t) against truth(t-shift); endpoint truth only, not impulse-aligned truth.",
+      "samples": 130,
+      "mismatches": 52
+    }
+  ],
+  "largest_requested_steps": [
+    {
+      "index": 5860,
+      "time_s": 29.3,
+      "truth_support": "shell_A",
+      "estimated_support": "shell_A",
+      "truth_loads_N": [
+        17.63599395751953,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "estimated_loads_N": [
+        29.730440139770508,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "truth_share_margin": 1.0,
+      "estimated_share_margin": 1.0,
+      "equivalent_point_error_mm": 7.288712024688721,
+      "terrain_normal_error_deg": 8.933798789978027,
+      "attitude_error_deg": 13.454133987426758,
+      "original_path_error_mm": 147.6259002685547,
+      "command": [
+        -0.7575722932815552,
+        3.9680492877960205,
+        0.39028114080429077,
+        -0.0062942844815552235,
+        0.0
+      ],
+      "applied_input": [
+        -0.7575722932815552,
+        0.6000000238418579,
+        0.39028114080429077,
+        -0.0062942844815552235,
+        0.0
+      ],
+      "previous_applied_input": [
+        -0.09950287640094757,
+        0.028480036184191704,
+        0.21193911135196686,
+        -0.30000001192092896,
+        0.0
+      ],
+      "lqr_command": [
+        -0.7323336005210876,
+        4.05116605758667,
+        0.39028114080429077,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        -0.0062942844815552235,
+        0.0
+      ],
+      "transition_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "command_step_from_previous": [
+        -0.6580694168806076,
+        3.939569251611829,
+        0.1783420294523239,
+        2.5516698020510375,
+        0.0
+      ],
+      "lqr_step_from_previous": [
+        -0.687746062874794,
+        3.9459272027015686,
+        0.1783420294523239,
+        2.544227123260498,
+        0.0
+      ],
+      "feedforward_step_from_previous": [
+        0.0,
+        0.0,
+        0.0,
+        0.007442684378474951,
+        0.0
+      ],
+      "transition_delta_step_from_previous": [
+        0.0,
+        0.07675881683826447,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actuator_saturated": [
+        false,
+        true,
+        false,
+        false,
+        false
+      ],
+      "allocation_authority_m_s": 0.13381122052669525,
+      "allocation_residual_rms_m_s": 1.3844269233231898e-06,
+      "truth_force_N": [
+        -0.08010648190975189,
+        2.914705753326416,
+        17.39572525024414
+      ],
+      "observer_force_N": [
+        2.2666590213775635,
+        5.929516315460205,
+        29.085983276367188
+      ]
+    },
+    {
+      "index": 5857,
+      "time_s": 29.285,
+      "truth_support": "shell_A",
+      "estimated_support": "belt_A",
+      "truth_loads_N": [
+        14.613043785095215,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "estimated_loads_N": [
+        0.0,
+        0.0,
+        17.49225425720215,
+        0.0
+      ],
+      "truth_share_margin": 1.0,
+      "estimated_share_margin": 1.0,
+      "equivalent_point_error_mm": 0.9481905102729797,
+      "terrain_normal_error_deg": 10.245936393737793,
+      "attitude_error_deg": 13.662485122680664,
+      "original_path_error_mm": 141.05335998535156,
+      "command": [
+        -0.13704811036586761,
+        0.07221956551074982,
+        0.1980663388967514,
+        -2.523361921310425,
+        0.0
+      ],
+      "applied_input": [
+        -0.13704811036586761,
+        0.07221956551074982,
+        0.1980663388967514,
+        -0.30000001192092896,
+        0.0
+      ],
+      "previous_applied_input": [
+        -0.09250181913375854,
+        0.6000000238418579,
+        0.4194360673427582,
+        -0.005782246123999357,
+        0.0
+      ],
+      "lqr_command": [
+        -0.09359032660722733,
+        0.07221956551074982,
+        0.1980663388967514,
+        -2.5086474418640137,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        -0.014714628458023071,
+        0.0
+      ],
+      "transition_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "command_step_from_previous": [
+        -0.04454629123210907,
+        -3.2046437710523605,
+        -0.22136972844600677,
+        -2.5175796751864254,
+        0.0
+      ],
+      "lqr_step_from_previous": [
+        -0.040191151201725006,
+        -3.278551623225212,
+        -0.22136972844600677,
+        -2.5086474418640137,
+        0.0
+      ],
+      "feedforward_step_from_previous": [
+        0.0,
+        0.0,
+        0.0,
+        -0.008932382334023714,
+        0.0
+      ],
+      "transition_delta_step_from_previous": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actuator_saturated": [
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "allocation_authority_m_s": 0.299999862909317,
+      "allocation_residual_rms_m_s": 3.514596471632103e-07,
+      "truth_force_N": [
+        9.373268127441406,
+        -6.588350772857666,
+        14.285061836242676
+      ],
+      "observer_force_N": [
+        2.6411170959472656,
+        -3.6929807662963867,
+        18.052433013916016
+      ]
+    },
+    {
+      "index": 5856,
+      "time_s": 29.28,
+      "truth_support": "shell_A",
+      "estimated_support": "shell_A",
+      "truth_loads_N": [
+        19.737565994262695,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "estimated_loads_N": [
+        17.700284957885742,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "truth_share_margin": 1.0,
+      "estimated_share_margin": 1.0,
+      "equivalent_point_error_mm": 0.5571572184562683,
+      "terrain_normal_error_deg": 10.291378021240234,
+      "attitude_error_deg": 13.53685188293457,
+      "original_path_error_mm": 139.06951904296875,
+      "command": [
+        -0.09250181913375854,
+        3.2768633365631104,
+        0.4194360673427582,
+        -0.005782246123999357,
+        0.0
+      ],
+      "applied_input": [
+        -0.09250181913375854,
+        0.6000000238418579,
+        0.4194360673427582,
+        -0.005782246123999357,
+        0.0
+      ],
+      "previous_applied_input": [
+        -0.03303099796175957,
+        0.00603618286550045,
+        0.23924504220485687,
+        -0.30000001192092896,
+        0.0
+      ],
+      "lqr_command": [
+        -0.05339917540550232,
+        3.350771188735962,
+        0.4194360673427582,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        -0.005782246123999357,
+        0.0
+      ],
+      "transition_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "command_step_from_previous": [
+        -0.05947082117199898,
+        3.27082715369761,
+        0.1801910251379013,
+        2.481187463272363,
+        0.0
+      ],
+      "lqr_step_from_previous": [
+        -0.055751127656549215,
+        3.2545555755496025,
+        0.1801910251379013,
+        2.4715511798858643,
+        0.0
+      ],
+      "feedforward_step_from_previous": [
+        0.0,
+        0.0,
+        0.0,
+        0.00963624706491828,
+        0.0
+      ],
+      "transition_delta_step_from_previous": [
+        0.0,
+        0.0901794359087944,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actuator_saturated": [
+        false,
+        true,
+        false,
+        false,
+        false
+      ],
+      "allocation_authority_m_s": 0.07141034305095673,
+      "allocation_residual_rms_m_s": 0.006767884828150272,
+      "truth_force_N": [
+        2.2196662425994873,
+        -12.850367546081543,
+        21.854562759399414
+      ],
+      "observer_force_N": [
+        0.9080983996391296,
+        0.3412253260612488,
+        17.985340118408203
+      ]
+    },
+    {
+      "index": 5847,
+      "time_s": 29.235,
+      "truth_support": "belt_A",
+      "estimated_support": "belt_A",
+      "truth_loads_N": [
+        0.0,
+        0.0,
+        19.471534729003906,
+        0.0
+      ],
+      "estimated_loads_N": [
+        0.0,
+        0.0,
+        19.9168643951416,
+        0.0
+      ],
+      "truth_share_margin": 1.0,
+      "estimated_share_margin": 1.0,
+      "equivalent_point_error_mm": 0.37100735306739807,
+      "terrain_normal_error_deg": 0.06852804124355316,
+      "attitude_error_deg": 13.046061515808105,
+      "original_path_error_mm": 123.58958435058594,
+      "command": [
+        0.18946142494678497,
+        -0.2589382529258728,
+        -0.06277928501367569,
+        -2.339118003845215,
+        0.0
+      ],
+      "applied_input": [
+        0.18946142494678497,
+        -0.2589382529258728,
+        -0.06277928501367569,
+        -0.30000001192092896,
+        0.0
+      ],
+      "previous_applied_input": [
+        -0.022979557514190674,
+        -0.6000000238418579,
+        -0.19027987122535706,
+        -0.09984926879405975,
+        0.0
+      ],
+      "lqr_command": [
+        0.19570067524909973,
+        -0.2589382529258728,
+        -0.06277928501367569,
+        -2.324118137359619,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        -0.014999999664723873,
+        0.0
+      ],
+      "transition_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "command_step_from_previous": [
+        0.21244098246097565,
+        0.8697019219398499,
+        0.12750058621168137,
+        -2.239268735051155,
+        0.0
+      ],
+      "lqr_step_from_previous": [
+        0.2172851860523224,
+        0.8510485291481018,
+        0.12750058621168137,
+        -2.324118137359619,
+        0.0
+      ],
+      "feedforward_step_from_previous": [
+        0.0,
+        0.0,
+        0.0,
+        -0.014999999634632246,
+        0.0
+      ],
+      "transition_delta_step_from_previous": [
+        0.0,
+        0.0,
+        0.0,
+        0.09984926879405975,
+        0.0
+      ],
+      "actuator_saturated": [
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "allocation_authority_m_s": 0.2999236583709717,
+      "allocation_residual_rms_m_s": 0.05608879402279854,
+      "truth_force_N": [
+        -5.862776279449463,
+        10.151910781860352,
+        19.57931137084961
+      ],
+      "observer_force_N": [
+        -4.608574867248535,
+        6.075176239013672,
+        20.43863296508789
+      ]
+    },
+    {
+      "index": 5826,
+      "time_s": 29.13,
+      "truth_support": "belt_A",
+      "estimated_support": "shell_A",
+      "truth_loads_N": [
+        0.0,
+        0.0,
+        17.735254287719727,
+        0.0
+      ],
+      "estimated_loads_N": [
+        17.764101028442383,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "truth_share_margin": 1.0,
+      "estimated_share_margin": 1.0,
+      "equivalent_point_error_mm": 0.5642510652542114,
+      "terrain_normal_error_deg": 0.7233462929725647,
+      "attitude_error_deg": 12.04085636138916,
+      "original_path_error_mm": 68.68905639648438,
+      "command": [
+        0.08681729435920715,
+        4.257526874542236,
+        0.381740540266037,
+        -0.023040907457470894,
+        0.0
+      ],
+      "applied_input": [
+        0.08681729435920715,
+        0.6000000238418579,
+        0.381740540266037,
+        -0.023040907457470894,
+        0.0
+      ],
+      "previous_applied_input": [
+        0.13955985009670258,
+        0.024543311446905136,
+        0.1446671038866043,
+        -0.30000001192092896,
+        0.0
+      ],
+      "lqr_command": [
+        0.08599194139242172,
+        4.343796730041504,
+        0.381740540266037,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        -0.023040907457470894,
+        0.0
+      ],
+      "transition_command_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "command_step_from_previous": [
+        -0.05274255573749542,
+        4.232983563095331,
+        0.23707343637943268,
+        2.2367588113993406,
+        0.0
+      ],
+      "lqr_step_from_previous": [
+        -0.045552052557468414,
+        4.240410633385181,
+        0.23707343637943268,
+        2.2217586040496826,
+        0.0
+      ],
+      "feedforward_step_from_previous": [
+        0.0,
+        0.0,
+        0.0,
+        0.014999998733401299,
+        0.0
+      ],
+      "transition_delta_step_from_previous": [
+        0.0,
+        0.07884278893470764,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actuator_saturated": [
+        false,
+        true,
+        false,
+        false,
+        false
+      ],
+      "allocation_authority_m_s": 0.10694793611764908,
+      "allocation_residual_rms_m_s": 0.02667621709406376,
+      "truth_force_N": [
+        1.342569351196289,
+        -0.1250397115945816,
+        17.83635902404785
+      ],
+      "observer_force_N": [
+        1.284116506576538,
+        2.183129072189331,
+        17.765899658203125
+      ]
+    },
+    {
+      "index": 5811,
+      "time_s": 29.055,
+      "truth_support": "shell_A",
+      "estimated_support": "belt_A",
+      "truth_loads_N": [
+        12.086620330810547,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "estimated_loads_N": [
+        0.0,
+        0.0,
+        17.576841354370117,
+        0.0
+      ],
+      "truth_share_margin": 1.0,
+      "estimated_share_margin": 1.0,
+      "equivalent_point_error_mm": 0.35122328996658325,
+      "terrain_normal_error_deg": 0.02797645330429077,
+      "attitude_error_deg": 11.062438011169434,
+      "original_path_error_mm": 46.84713363647461,
+      "command": [
+        0.24696825444698334,
+        -0.16799627244472504,
+        -0.022423574700951576,
+        -1.9983867406845093,
+        0.0
+      ],
+      "applied_input": [
+        0.24696825444698334,
+        -0.16799627244472504,
+        -0.022423574700951576,
+        -0.30000001192092896,
+        0.0
+      ],
+      "previous_applied_input": [
+        0.12488405406475067,
+        0.6000000238418579,
+        0.08801446855068207,
+        -0.0025816471315920353,
+        0.0
+      ],
+      "lqr_command": [
+        0.1680781990289688,
+        -0.14423564076423645,
+        -0.022423574700951576,
+        -1.9808051586151123,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        -0.017581647261977196,
+        0.0
+      ],
+      "transition_command_delta": [
+        0.0,
+        -0.02376062422990799,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "command_step_from_previous": [
+        0.12208420038223267,
+        -1.6249512284994125,
+        -0.11043804325163364,
+        -1.9958050935529172,
+        0.0
+      ],
+      "lqr_step_from_previous": [
+        0.12751436233520508,
+        -1.6517724096775055,
+        -0.11043804325163364,
+        -1.9808051586151123,
+        0.0
+      ],
+      "feedforward_step_from_previous": [
+        0.0,
+        0.0,
+        0.0,
+        -0.01500000013038516,
+        0.0
+      ],
+      "transition_delta_step_from_previous": [
+        0.0,
+        -0.02376062422990799,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actuator_saturated": [
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "allocation_authority_m_s": 0.2999829649925232,
+      "allocation_residual_rms_m_s": 0.026194581761956215,
+      "truth_force_N": [
+        16.76544761657715,
+        -7.14893913269043,
+        9.336250305175781
+      ],
+      "observer_force_N": [
+        2.011815071105957,
+        -0.3751966059207916,
+        17.589149475097656
+      ]
+    }
+  ],
+  "interpretation": [
+    "The selected28.975s mismatch is isolated at the 5ms sample grid, matching immediately before and after. It sits inside a burst of real shell/belt physical switching, plus estimation/support-information disagreements.",
+    "Lean-error growth precedes the first observed support disagreement in this transition window, so that mismatch cannot be inferred to initiate the entire excursion.",
+    "At the target the estimated point is close while all estimated load is assigned to belt A and all last-substep true load to shell A. Both normalized share margins equal1; this is not low reported confidence.",
+    "Large LQR/belt clipping is already present, so this audit supports a targeted sensitivity/control experiment for amplification or recovery, not a claim that the wrong identity alone caused the failure.",
+    "A fixed time shift does not remove the short switching-window discrepancy; endpoint/contact-filter distinctions remain. A physical probe should preserve observer updates and label any truth injection as diagnostic.",
+    "Original timed-path error, attitude and actuator saturation must remain primary comparisons; changing support identity can simultaneously change gains, allocation geometry and synchronization."
+  ],
+  "input_files": [
+    {
+      "path": "results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/rollout.npz",
+      "sha256": "4dd1c8ceaaf7327a1ee51831c201cbb9e62f8e7295e0d309f62da49cd8d53e48",
+      "bytes": 4760772
+    },
+    {
+      "path": "results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/summary.json",
+      "sha256": "4eb32e3ac90703b3eadad82856cf10cd996f40da0ce5efc2d6cdb09c62c04a03",
+      "bytes": 6978
+    },
+    {
+      "path": "results/weighted_allocation_20261125/bounded_adaptive/provenance.json",
+      "sha256": "b960b2261e6a52b83885e2c335e45612c1c752b559dea16b8922ac020d9b5c25",
+      "bytes": 2856
+    },
+    {
+      "path": "docs/iterations/2026-11-25/adaptive_event.json",
+      "sha256": "49fcfd0d5bc9f4cd5811e5008821096b72392dac9c10bbf5f4a784ba988cb590",
+      "bytes": 17639
+    },
+    {
+      "path": "docs/iterations/2026-11-25/source/src/spherical_wheel/offroad_experiments.py.txt",
+      "sha256": "706558801d74d412aebc19fee464e0b72583351d97bbf492d1cd492150125563",
+      "bytes": 26000
+    },
+    {
+      "path": "docs/iterations/2026-11-25/source/src/spherical_wheel/offroad_control.py.txt",
+      "sha256": "2dda6e5be08f55cc991c7606eb2336338486b5f7932c26ce6584796c341b4be7",
+      "bytes": 47389
+    },
+    {
+      "path": "docs/iterations/2026-11-25/configuration-study/source/map_source_snapshot/src/spherical_wheel/contact_sensing.py.txt",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+      "bytes": 29184
+    },
+    {
+      "path": "src/spherical_wheel/gazebo/plant.py",
+      "sha256": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d",
+      "bytes": 12699
+    },
+    {
+      "path": "gazebo/plugin/SphericalWheelBridge.cc",
+      "sha256": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e",
+      "bytes": 23461
+    }
+  ],
+  "script_sha256": "026b6bdd388b05a29aecd1640eefe0a027da0a6be60d5eca16ec8aaf9d293fab"
+}

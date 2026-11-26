@@ -1,0 +1,66 @@
+{
+  "iteration": "I-31",
+  "status": "Declared before new equilibrium audit or closed-loop execution; target feasibility is a prerequisite, not assumed.",
+  "question": "Does a verified state/input goal target with dynamics-derived terminal value correct the previous MPC goal retreat?",
+  "reference_campaign": "results/mpc_balance_20261125/trajectory",
+  "reused_baselines_not_new_runs": true,
+  "fixed": {
+    "warm_s": 0.8,
+    "motion_s": 0.6,
+    "recovery_s": 4,
+    "distance_m": 0.016,
+    "phase_rad": 1.5707963267948966,
+    "slope_deg": [
+      0,
+      10
+    ],
+    "observer": "same momentum observer + contact locator, hardware mode, exact simulated qpos/qvel",
+    "horizon_steps": 20,
+    "step_s": 0.02,
+    "jacobian_stride": 5,
+    "load_residual_fraction": 0.1,
+    "physical_bounds": [
+      1.5,
+      0.6,
+      0.6,
+      0.3,
+      0.3
+    ],
+    "stage_weights": "Same AffineMPCSettings state/input/change weight magnitudes as I-30",
+    "original_goal_and_clock": "unchanged, fixed at measured warm-end origin plus16mm"
+  },
+  "audit_first": [
+    "Original analytic rest target at frozen post-pulse Y anchors: all9 acceleration residuals, bounded holding inputs, private-model support and .4s hold drift.",
+    "If needed find nearby rest configuration with fixed goalXY, no live-state reset.",
+    "Check local recovery/linearization behavior; failed Riccati/stabilizability tests recorded."
+  ],
+  "candidate_conditional": "One verified equilibrium-centered state/input target + local dynamics terminal value, only if audit supports using it. No coefficient search or automatic default promotion.",
+  "acceptance": {
+    "original_goal_error_final_mm_max": 5,
+    "peak_lean": "no worse than I-30 matching direction",
+    "fallback_active_fraction_max": 0.05,
+    "strong_x_rms": "no more than10% worse than matching I-30",
+    "physical": "complete, no falls, actual bounds respected"
+  },
+  "limitations": [
+    "Private model audits are not new Gazebo tests or hardware evidence.",
+    "Equilibrium existence does not guarantee goal reachable within .4s.",
+    "Local derivative smoothness/stabilizability and real-time execution are not assumed."
+  ],
+  "pre_change_hashes": {
+    "scripts/run-mpc-comparison.py": "9282df47063b87e8d4545ec114a6c656cf7cf4eb883ed08361cbc21892b6a547",
+    "src/spherical_wheel/predictive_model.py": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473",
+    "src/spherical_wheel/predictive_control.py": "806681e39479140271f99ab762ae07907ed02aef0a4de13edd3401f57b3c6c34"
+  },
+  "audit_prerequisites": {
+    "hold_s": 0.2,
+    "xy_drift_mm_max": 0.2,
+    "attitude_drift_deg_max": 0.1,
+    "body_speed_m_s_max": 0.002,
+    "angular_speed_rad_s_max": 0.02,
+    "internal_speed_rad_s_max": 0.05,
+    "support": "positive private-model normal load, no support injection, no real contact inputs",
+    "local_model": "half/double FD epsilon audit and small disturbance recovery; preserve weak goal direction; finite tail must be labeled, no pole clipping",
+    "stop": "If target hold or a defensible terminal model fails, preserve audit and do not launch new closed-loop candidate. A failed numerical solve does not prove physical unreachability."
+  }
+}

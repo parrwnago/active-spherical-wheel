@@ -1,0 +1,20 @@
+{
+  "scope": "40 focused LTI/LTV affine-QP tests; includes prior29 tests, notadditive. No dynamics model or robot-performance/stability certificate.",
+  "tests": 40,
+  "source_sha256": {
+    "src/spherical_wheel/predictive_control.py": "d2e4d2aac7ae51aa61ea9a72ba614854c41014f268c962ab9ae501752a6b937c",
+    "tests/test_predictive_control.py": "10088ba24ed0d0872fbf6f6b6f556cd3e7c765bc5366ae5be035ea79ae4d99f8"
+  },
+  "versions": {
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "numpy": "1.26.4",
+    "scipy": "1.15.3",
+    "osqp": "1.1.3"
+  },
+  "prior_source_stage": "results/mpc_optimizer_development_20261125/before_ltv/manifest.json",
+  "log": "results/mpc_balance_20261125/tests/solver_ltv_tests.log",
+  "xml": "results/mpc_balance_20261125/tests/solver_ltv_tests.xml",
+  "lti_unchanged_check": "lti_regression.json",
+  "model_contract": "x[k+1]=A[k]x[k]+B[k](u[k]-anchor_u[k])+f0[k]; fixedrootchart, x0=0. Constantsbroadcaststagearrays. LTIconstantarithmeticunchanged.",
+  "conditioning": "Norms/extremaleigenvaluesrecorded; noPSDprojectionorobjective rescaling."
+}

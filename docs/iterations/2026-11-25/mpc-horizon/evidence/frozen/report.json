@@ -1,0 +1,1170 @@
+{
+  "status": "completed",
+  "iteration": "I-35",
+  "scope": "Six frozen private MuJoCo model forecasts; zero new Gazebo trials.",
+  "selected_longer_horizon_s": null,
+  "new_Gazebo_authorized_by_gate": false,
+  "decision": "No longer horizon passes both predeclared anchor gates. Stop before a new Gazebo run.",
+  "nonlinear_convergence_claimed": false,
+  "qp_solved_count": 42,
+  "qp_call_count": 42,
+  "failed_trials": 0,
+  "source_controller_unchanged": true,
+  "protocol_sha256": "0f5980b611d7c1510d5f6862becb2edfd3f8f5f15b68280dac985fbed3370701",
+  "model_mass_kg": 1.8599999999999999,
+  "gravity_m_s2": 9.81,
+  "model_weight_N": 18.2466,
+  "input_bounds": [
+    1.5,
+    0.6,
+    0.6,
+    0.3,
+    0.3
+  ],
+  "rows": [
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 0.4,
+      "horizon_steps": 20,
+      "refinement_budget": 5,
+      "jacobian_stride": 1,
+      "success": true,
+      "native_seed_failure": null,
+      "selected_source": "SQP_refine_5_alpha_1",
+      "wall_s": 22.92034530399542,
+      "qp_solved_count": 8,
+      "qp_calls": 8,
+      "failed_trials": 0,
+      "solver_status_counts": {
+        "solved": 8
+      },
+      "cost": 101.03694035278326,
+      "horizon_raw_costs_comparable": false,
+      "native_candidate_cost": 129.47605801303612,
+      "selected_cost_to_native_ratio": 0.7803523053089128,
+      "native_terminal_goal_error_mm": 20.770434120355663,
+      "native_fine_coarse_terminal_xy_gap_mm": 3.768499051385611,
+      "initial_goal_error_mm": 8.12499036164075,
+      "terminal_goal_error_mm": 13.953643578223867,
+      "goal_progress_mm": -5.828653216583117,
+      "peak_goal_error_mm": 14.148605651828607,
+      "final_200ms_goal_error_slope_mm_s": 14.904210000778521,
+      "final_200ms_goal_error_change_mm": 2.879416394024666,
+      "terminal_xy_speed_mm_s": 14.435296292162873,
+      "peak_xy_speed_mm_s": 202.62434875847978,
+      "terminal_radial_velocity_mm_s": -12.810548073019683,
+      "terminal_absolute_tilt_deg": 9.991387178785466,
+      "peak_absolute_tilt_deg": 13.765986459415267,
+      "terminal_reference_lean_error_deg": 0.7637861842083264,
+      "peak_reference_lean_error_deg": 4.229630166358621,
+      "private_nonwheel_loaded_substeps": 0,
+      "private_min_wheel_normal_load_N": 16.2281172744862,
+      "private_max_nonwheel_geom_normal_load_N": 0.0,
+      "private_peak_substep_absolute_tilt_deg": 14.135848676415184,
+      "contact_substep_s": 0.001,
+      "contact_replay_stage_states_bit_exact": true,
+      "contact_sampling_caveat": "Private1msphysics-substep forces/contactnames, lastsolverstep timing; not actual contact or probabilities.",
+      "selected_inputs_sha256": "a50a22c2225fb6753bf7056ae39d2662f7d53a55cd32a871a98980861781b5a3",
+      "settings": {
+        "horizon_steps": 20,
+        "step_s": 0.02,
+        "state_scales": [
+          0.05,
+          0.05,
+          0.005,
+          0.1,
+          0.1,
+          0.5,
+          1.0,
+          1.0,
+          1.0,
+          0.1,
+          0.1,
+          0.1,
+          1.0,
+          1.0,
+          1.0,
+          10.0,
+          10.0,
+          10.0
+        ],
+        "state_weights": [
+          2.0,
+          2.0,
+          0.1,
+          50.0,
+          50.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          2.0,
+          0.05,
+          5.0,
+          5.0,
+          0.01,
+          0.005,
+          0.005,
+          0.005
+        ],
+        "input_weight": 0.02,
+        "change_weight": 0.05,
+        "terminal_multiplier": 4.0,
+        "eps_abs": 1e-06,
+        "eps_rel": 1e-06,
+        "max_iter": 4000,
+        "bound_tolerance": 1e-05,
+        "kkt_tolerance": null,
+        "regularization": 1e-09,
+        "polishing": true
+      },
+      "gate_pass": true,
+      "gate_failed_checks": "",
+      "best_initial_candidate_cost": 129.47605801303612,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.21964769469108728,
+      "first_control_normalized_inf_difference_from_H04": 0.0,
+      "solver_hessian_min_eigenvalue": 0.04058684176193456,
+      "solver_hessian_max_eigenvalue": 4301939.979030191,
+      "solver_max_positive_condition_ratio": 105993464.6847631,
+      "solver_max_normalized_box_kkt_residual": 6.480204265136168e-07
+    },
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 0.8,
+      "horizon_steps": 40,
+      "refinement_budget": 5,
+      "jacobian_stride": 1,
+      "success": true,
+      "native_seed_failure": null,
+      "selected_source": "SQP_refine_4_alpha_0.25",
+      "wall_s": 47.59249368699966,
+      "qp_solved_count": 8,
+      "qp_calls": 8,
+      "failed_trials": 0,
+      "solver_status_counts": {
+        "solved": 8
+      },
+      "cost": 273.5300555407172,
+      "horizon_raw_costs_comparable": false,
+      "native_candidate_cost": 34781.08089125342,
+      "selected_cost_to_native_ratio": 0.00786433453278628,
+      "native_terminal_goal_error_mm": 48.74375305885768,
+      "native_fine_coarse_terminal_xy_gap_mm": 80.15060174233537,
+      "initial_goal_error_mm": 8.12499036164075,
+      "terminal_goal_error_mm": 43.950679231201015,
+      "goal_progress_mm": -35.82568886956027,
+      "peak_goal_error_mm": 43.950679231201015,
+      "final_200ms_goal_error_slope_mm_s": 26.601267900046516,
+      "final_200ms_goal_error_change_mm": 6.686736958502799,
+      "terminal_xy_speed_mm_s": 120.81318807496984,
+      "peak_xy_speed_mm_s": 158.22383323091395,
+      "terminal_radial_velocity_mm_s": 114.02643697711073,
+      "terminal_absolute_tilt_deg": 10.854902708931911,
+      "peak_absolute_tilt_deg": 14.383485399614042,
+      "terminal_reference_lean_error_deg": 1.4568686264264208,
+      "peak_reference_lean_error_deg": 4.824433684710548,
+      "private_nonwheel_loaded_substeps": 0,
+      "private_min_wheel_normal_load_N": 17.483289171297812,
+      "private_max_nonwheel_geom_normal_load_N": 0.0,
+      "private_peak_substep_absolute_tilt_deg": 14.384008406622096,
+      "contact_substep_s": 0.001,
+      "contact_replay_stage_states_bit_exact": true,
+      "contact_sampling_caveat": "Private1msphysics-substep forces/contactnames, lastsolverstep timing; not actual contact or probabilities.",
+      "selected_inputs_sha256": "258a3f1e7c298eeca2617133ad7afb3df63bfdaa2674468eaf4756827f2d0992",
+      "settings": {
+        "horizon_steps": 40,
+        "step_s": 0.02,
+        "state_scales": [
+          0.05,
+          0.05,
+          0.005,
+          0.1,
+          0.1,
+          0.5,
+          1.0,
+          1.0,
+          1.0,
+          0.1,
+          0.1,
+          0.1,
+          1.0,
+          1.0,
+          1.0,
+          10.0,
+          10.0,
+          10.0
+        ],
+        "state_weights": [
+          2.0,
+          2.0,
+          0.1,
+          50.0,
+          50.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          2.0,
+          0.05,
+          5.0,
+          5.0,
+          0.01,
+          0.005,
+          0.005,
+          0.005
+        ],
+        "input_weight": 0.02,
+        "change_weight": 0.05,
+        "terminal_multiplier": 4.0,
+        "eps_abs": 1e-06,
+        "eps_rel": 1e-06,
+        "max_iter": 4000,
+        "bound_tolerance": 1e-05,
+        "kkt_tolerance": null,
+        "regularization": 1e-09,
+        "polishing": true
+      },
+      "gate_pass": false,
+      "gate_failed_checks": "peak_goal_le_40mm",
+      "best_initial_candidate_cost": 34781.08089125342,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.9921356654672138,
+      "first_control_normalized_inf_difference_from_H04": 0.5935287488364002,
+      "solver_hessian_min_eigenvalue": -68.05356996202295,
+      "solver_hessian_max_eigenvalue": 2.4191980509814422e+17,
+      "solver_max_positive_condition_ratio": 2264129187479575.5,
+      "solver_max_normalized_box_kkt_residual": 6.281594559055283e-07
+    },
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 1.2,
+      "horizon_steps": 60,
+      "refinement_budget": 5,
+      "jacobian_stride": 1,
+      "success": true,
+      "native_seed_failure": null,
+      "selected_source": "native_rollout",
+      "wall_s": 64.72907393499918,
+      "qp_solved_count": 8,
+      "qp_calls": 8,
+      "failed_trials": 0,
+      "solver_status_counts": {
+        "solved": 8
+      },
+      "cost": 176737.01257235016,
+      "horizon_raw_costs_comparable": false,
+      "native_candidate_cost": 176737.01257235016,
+      "selected_cost_to_native_ratio": 1.0,
+      "native_terminal_goal_error_mm": 81.02808248052627,
+      "native_fine_coarse_terminal_xy_gap_mm": 103.13226189409619,
+      "initial_goal_error_mm": 8.12499036164075,
+      "terminal_goal_error_mm": 81.02808248052627,
+      "goal_progress_mm": -72.90309211888551,
+      "peak_goal_error_mm": 81.02808248052627,
+      "final_200ms_goal_error_slope_mm_s": 127.03472215016693,
+      "final_200ms_goal_error_change_mm": 22.48587625229638,
+      "terminal_xy_speed_mm_s": 80.95717834829593,
+      "peak_xy_speed_mm_s": 364.33583778493426,
+      "terminal_radial_velocity_mm_s": 46.06155533540094,
+      "terminal_absolute_tilt_deg": 83.5763896598127,
+      "peak_absolute_tilt_deg": 83.5763896598127,
+      "terminal_reference_lean_error_deg": 75.25439738861827,
+      "peak_reference_lean_error_deg": 75.25439738861827,
+      "private_nonwheel_loaded_substeps": 328,
+      "private_min_wheel_normal_load_N": 0.0,
+      "private_max_nonwheel_geom_normal_load_N": 697.2047707933937,
+      "private_peak_substep_absolute_tilt_deg": 83.57638965981278,
+      "contact_substep_s": 0.001,
+      "contact_replay_stage_states_bit_exact": true,
+      "contact_sampling_caveat": "Private1msphysics-substep forces/contactnames, lastsolverstep timing; not actual contact or probabilities.",
+      "selected_inputs_sha256": "9e1797c7071a7c3e7a3ad4bc8654a0fe8bba3fca0725ccd01c297b71b5257c88",
+      "settings": {
+        "horizon_steps": 60,
+        "step_s": 0.02,
+        "state_scales": [
+          0.05,
+          0.05,
+          0.005,
+          0.1,
+          0.1,
+          0.5,
+          1.0,
+          1.0,
+          1.0,
+          0.1,
+          0.1,
+          0.1,
+          1.0,
+          1.0,
+          1.0,
+          10.0,
+          10.0,
+          10.0
+        ],
+        "state_weights": [
+          2.0,
+          2.0,
+          0.1,
+          50.0,
+          50.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          2.0,
+          0.05,
+          5.0,
+          5.0,
+          0.01,
+          0.005,
+          0.005,
+          0.005
+        ],
+        "input_weight": 0.02,
+        "change_weight": 0.05,
+        "terminal_multiplier": 4.0,
+        "eps_abs": 1e-06,
+        "eps_rel": 1e-06,
+        "max_iter": 4000,
+        "bound_tolerance": 1e-05,
+        "kkt_tolerance": null,
+        "regularization": 1e-09,
+        "polishing": true
+      },
+      "gate_pass": false,
+      "gate_failed_checks": "nonwheel_geom_load_max_le_005N;wheel_normal_min_ge_005_weight;world_up_tilt_max_le_20deg;peak_goal_le_40mm",
+      "best_initial_candidate_cost": 176737.01257235016,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.0,
+      "first_control_normalized_inf_difference_from_H04": 0.03553438344709392,
+      "solver_hessian_min_eigenvalue": -111.36431461004,
+      "solver_hessian_max_eigenvalue": 5.1843053202599974e+17,
+      "solver_max_positive_condition_ratio": 2344708626556591.5,
+      "solver_max_normalized_box_kkt_residual": 6.641618140142878e-07
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 0.4,
+      "horizon_steps": 20,
+      "refinement_budget": 5,
+      "jacobian_stride": 1,
+      "success": true,
+      "native_seed_failure": null,
+      "selected_source": "SQP_refine_5_alpha_0.5",
+      "wall_s": 14.337316176002787,
+      "qp_solved_count": 6,
+      "qp_calls": 6,
+      "failed_trials": 0,
+      "solver_status_counts": {
+        "solved": 6
+      },
+      "cost": 58.3385895074716,
+      "horizon_raw_costs_comparable": false,
+      "native_candidate_cost": 109.29903339389918,
+      "selected_cost_to_native_ratio": 0.5337521082846824,
+      "native_terminal_goal_error_mm": 51.80280699531234,
+      "native_fine_coarse_terminal_xy_gap_mm": 5.2544368188544,
+      "initial_goal_error_mm": 44.90269287958246,
+      "terminal_goal_error_mm": 58.60295440613356,
+      "goal_progress_mm": -13.700261526551103,
+      "peak_goal_error_mm": 58.60295440613356,
+      "final_200ms_goal_error_slope_mm_s": 33.60889072606054,
+      "final_200ms_goal_error_change_mm": 6.598676515630238,
+      "terminal_xy_speed_mm_s": 21.05074731878462,
+      "peak_xy_speed_mm_s": 38.57997817925427,
+      "terminal_radial_velocity_mm_s": 21.040683857267886,
+      "terminal_absolute_tilt_deg": 9.903542767631233,
+      "peak_absolute_tilt_deg": 9.903542767631233,
+      "terminal_reference_lean_error_deg": 0.18875855959049753,
+      "peak_reference_lean_error_deg": 0.2559455550217097,
+      "private_nonwheel_loaded_substeps": 0,
+      "private_min_wheel_normal_load_N": 17.702672529623115,
+      "private_max_nonwheel_geom_normal_load_N": 0.0,
+      "private_peak_substep_absolute_tilt_deg": 9.903542767631233,
+      "contact_substep_s": 0.001,
+      "contact_replay_stage_states_bit_exact": true,
+      "contact_sampling_caveat": "Private1msphysics-substep forces/contactnames, lastsolverstep timing; not actual contact or probabilities.",
+      "selected_inputs_sha256": "fad524a9a82670dc8cdd115885d2dd4b66e6c820153f9664a3359b7d410529e7",
+      "settings": {
+        "horizon_steps": 20,
+        "step_s": 0.02,
+        "state_scales": [
+          0.05,
+          0.05,
+          0.005,
+          0.1,
+          0.1,
+          0.5,
+          1.0,
+          1.0,
+          1.0,
+          0.1,
+          0.1,
+          0.1,
+          1.0,
+          1.0,
+          1.0,
+          10.0,
+          10.0,
+          10.0
+        ],
+        "state_weights": [
+          2.0,
+          2.0,
+          0.1,
+          50.0,
+          50.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          2.0,
+          0.05,
+          5.0,
+          5.0,
+          0.01,
+          0.005,
+          0.005,
+          0.005
+        ],
+        "input_weight": 0.02,
+        "change_weight": 0.05,
+        "terminal_multiplier": 4.0,
+        "eps_abs": 1e-06,
+        "eps_rel": 1e-06,
+        "max_iter": 4000,
+        "bound_tolerance": 1e-05,
+        "kkt_tolerance": null,
+        "regularization": 1e-09,
+        "polishing": true
+      },
+      "gate_pass": false,
+      "gate_failed_checks": "terminal_goal_le_090_initial;final200ms_toward_goal_slope_and_change;first_control_changed_ge_1e3_normalized",
+      "best_initial_candidate_cost": 58.78780120226458,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.007641239944447429,
+      "first_control_normalized_inf_difference_from_H04": 0.0,
+      "solver_hessian_min_eigenvalue": 0.04058684175972947,
+      "solver_hessian_max_eigenvalue": 5648065.953773119,
+      "solver_max_positive_condition_ratio": 139160025.97387627,
+      "solver_max_normalized_box_kkt_residual": 3.547612014094019e-08
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 0.8,
+      "horizon_steps": 40,
+      "refinement_budget": 5,
+      "jacobian_stride": 1,
+      "success": true,
+      "native_seed_failure": null,
+      "selected_source": "SQP_refine_4_alpha_0.25",
+      "wall_s": 28.2037742370012,
+      "qp_solved_count": 6,
+      "qp_calls": 6,
+      "failed_trials": 0,
+      "solver_status_counts": {
+        "solved": 6
+      },
+      "cost": 456.6735182047644,
+      "horizon_raw_costs_comparable": false,
+      "native_candidate_cost": 59866.51197378026,
+      "selected_cost_to_native_ratio": 0.007628196518360277,
+      "native_terminal_goal_error_mm": 37.92924334378709,
+      "native_fine_coarse_terminal_xy_gap_mm": 76.94801306814465,
+      "initial_goal_error_mm": 44.90269287958246,
+      "terminal_goal_error_mm": 71.86012619179422,
+      "goal_progress_mm": -26.957433312211762,
+      "peak_goal_error_mm": 71.86012619179422,
+      "final_200ms_goal_error_slope_mm_s": 23.24630245434175,
+      "final_200ms_goal_error_change_mm": 9.93126099977853,
+      "terminal_xy_speed_mm_s": 310.2872112731984,
+      "peak_xy_speed_mm_s": 310.2872112731984,
+      "terminal_radial_velocity_mm_s": 301.51137836457565,
+      "terminal_absolute_tilt_deg": 9.386748885606691,
+      "peak_absolute_tilt_deg": 12.073639231524119,
+      "terminal_reference_lean_error_deg": 1.5371492389438253,
+      "peak_reference_lean_error_deg": 3.7405864938804085,
+      "private_nonwheel_loaded_substeps": 0,
+      "private_min_wheel_normal_load_N": 17.640594518737444,
+      "private_max_nonwheel_geom_normal_load_N": 0.0,
+      "private_peak_substep_absolute_tilt_deg": 12.134964520892307,
+      "contact_substep_s": 0.001,
+      "contact_replay_stage_states_bit_exact": true,
+      "contact_sampling_caveat": "Private1msphysics-substep forces/contactnames, lastsolverstep timing; not actual contact or probabilities.",
+      "selected_inputs_sha256": "95858621f78afb441c8679233516f7240b6ff1590306f5408b612bb681df4414",
+      "settings": {
+        "horizon_steps": 40,
+        "step_s": 0.02,
+        "state_scales": [
+          0.05,
+          0.05,
+          0.005,
+          0.1,
+          0.1,
+          0.5,
+          1.0,
+          1.0,
+          1.0,
+          0.1,
+          0.1,
+          0.1,
+          1.0,
+          1.0,
+          1.0,
+          10.0,
+          10.0,
+          10.0
+        ],
+        "state_weights": [
+          2.0,
+          2.0,
+          0.1,
+          50.0,
+          50.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          2.0,
+          0.05,
+          5.0,
+          5.0,
+          0.01,
+          0.005,
+          0.005,
+          0.005
+        ],
+        "input_weight": 0.02,
+        "change_weight": 0.05,
+        "terminal_multiplier": 4.0,
+        "eps_abs": 1e-06,
+        "eps_rel": 1e-06,
+        "max_iter": 4000,
+        "bound_tolerance": 1e-05,
+        "kkt_tolerance": null,
+        "regularization": 1e-09,
+        "polishing": true
+      },
+      "gate_pass": false,
+      "gate_failed_checks": "terminal_goal_le_090_initial;final200ms_toward_goal_slope_and_change",
+      "best_initial_candidate_cost": 37958.2159746833,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.9879690468458964,
+      "first_control_normalized_inf_difference_from_H04": 0.12117510592073935,
+      "solver_hessian_min_eigenvalue": 0.04015041140935389,
+      "solver_hessian_max_eigenvalue": 10003459628.328148,
+      "solver_max_positive_condition_ratio": 249149617082.0713,
+      "solver_max_normalized_box_kkt_residual": 2.498669353222547e-07
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 1.2,
+      "horizon_steps": 60,
+      "refinement_budget": 5,
+      "jacobian_stride": 1,
+      "success": true,
+      "native_seed_failure": null,
+      "selected_source": "SQP_native_rollout_alpha_0.25",
+      "wall_s": 37.084501988996635,
+      "qp_solved_count": 6,
+      "qp_calls": 6,
+      "failed_trials": 0,
+      "solver_status_counts": {
+        "solved": 6
+      },
+      "cost": 200736.97081003222,
+      "horizon_raw_costs_comparable": false,
+      "native_candidate_cost": 238208.1300280432,
+      "selected_cost_to_native_ratio": 0.8426957164996859,
+      "native_terminal_goal_error_mm": 46.73958507774359,
+      "native_fine_coarse_terminal_xy_gap_mm": 81.14617953830707,
+      "initial_goal_error_mm": 44.90269287958246,
+      "terminal_goal_error_mm": 107.22787396823907,
+      "goal_progress_mm": -62.325181088656606,
+      "peak_goal_error_mm": 107.22787396823907,
+      "final_200ms_goal_error_slope_mm_s": 310.42195316953496,
+      "final_200ms_goal_error_change_mm": 60.138306690238956,
+      "terminal_xy_speed_mm_s": 482.8284006850387,
+      "peak_xy_speed_mm_s": 573.9408553346458,
+      "terminal_radial_velocity_mm_s": 416.41559765433766,
+      "terminal_absolute_tilt_deg": 98.9757480511186,
+      "peak_absolute_tilt_deg": 98.9757480511186,
+      "terminal_reference_lean_error_deg": 97.8759852854053,
+      "peak_reference_lean_error_deg": 97.8759852854053,
+      "private_nonwheel_loaded_substeps": 404,
+      "private_min_wheel_normal_load_N": 0.0,
+      "private_max_nonwheel_geom_normal_load_N": 499.6637112343741,
+      "private_peak_substep_absolute_tilt_deg": 98.97574805111864,
+      "contact_substep_s": 0.001,
+      "contact_replay_stage_states_bit_exact": true,
+      "contact_sampling_caveat": "Private1msphysics-substep forces/contactnames, lastsolverstep timing; not actual contact or probabilities.",
+      "selected_inputs_sha256": "aa7655bbe48f0dca11fafd32d32afab60094f6903eb9739db84295cb10c87a28",
+      "settings": {
+        "horizon_steps": 60,
+        "step_s": 0.02,
+        "state_scales": [
+          0.05,
+          0.05,
+          0.005,
+          0.1,
+          0.1,
+          0.5,
+          1.0,
+          1.0,
+          1.0,
+          0.1,
+          0.1,
+          0.1,
+          1.0,
+          1.0,
+          1.0,
+          10.0,
+          10.0,
+          10.0
+        ],
+        "state_weights": [
+          2.0,
+          2.0,
+          0.1,
+          50.0,
+          50.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          2.0,
+          0.05,
+          5.0,
+          5.0,
+          0.01,
+          0.005,
+          0.005,
+          0.005
+        ],
+        "input_weight": 0.02,
+        "change_weight": 0.05,
+        "terminal_multiplier": 4.0,
+        "eps_abs": 1e-06,
+        "eps_rel": 1e-06,
+        "max_iter": 4000,
+        "bound_tolerance": 1e-05,
+        "kkt_tolerance": null,
+        "regularization": 1e-09,
+        "polishing": true
+      },
+      "gate_pass": false,
+      "gate_failed_checks": "nonwheel_geom_load_max_le_005N;wheel_normal_min_ge_005_weight;world_up_tilt_max_le_20deg;terminal_goal_le_090_initial;final200ms_toward_goal_slope_and_change;peak_goal_le_75mm",
+      "best_initial_candidate_cost": 238208.1300280432,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.15730428350031408,
+      "first_control_normalized_inf_difference_from_H04": 0.112365168048205,
+      "solver_hessian_min_eigenvalue": -5065805093.009979,
+      "solver_hessian_max_eigenvalue": 1.4174695265015556e+25,
+      "solver_max_positive_condition_ratio": 134035707779273.08,
+      "solver_max_normalized_box_kkt_residual": 4.884155666784752e-07
+    }
+  ],
+  "gates": [
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 0.4,
+      "passed": true,
+      "checks": {
+        "finite_bounded_inputs": true,
+        "substep_contact_sampling_1ms": true,
+        "contact_replay_stage_states_bit_exact": true,
+        "nonwheel_geom_load_max_le_005N": true,
+        "wheel_normal_min_ge_005_weight": true,
+        "world_up_tilt_max_le_20deg": true,
+        "peak_goal_le_40mm": true,
+        "peak_goal_le_same_native_allowance": true,
+        "terminal_goal_le_same_native_allowance": true,
+        "selected_cost_le_same_horizon_native": true
+      },
+      "failed_checks": [],
+      "threshold_values": {
+        "peak_goal_native_allowance_mm": 22.861415276814053,
+        "terminal_goal_native_allowance_mm": 22.84747753239123
+      },
+      "minimum_wheel_load_N": 0.9123300000000001,
+      "best_initial_candidate_cost": 129.47605801303612,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.21964769469108728,
+      "first_control_normalized_inf_difference_from_H04": 0.0
+    },
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 0.8,
+      "passed": false,
+      "checks": {
+        "finite_bounded_inputs": true,
+        "substep_contact_sampling_1ms": true,
+        "contact_replay_stage_states_bit_exact": true,
+        "nonwheel_geom_load_max_le_005N": true,
+        "wheel_normal_min_ge_005_weight": true,
+        "world_up_tilt_max_le_20deg": true,
+        "peak_goal_le_40mm": false,
+        "peak_goal_le_same_native_allowance": true,
+        "terminal_goal_le_same_native_allowance": true,
+        "selected_cost_le_same_horizon_native": true
+      },
+      "failed_checks": [
+        "peak_goal_le_40mm"
+      ],
+      "threshold_values": {
+        "peak_goal_native_allowance_mm": 53.61812836474345,
+        "terminal_goal_native_allowance_mm": 53.61812836474345
+      },
+      "minimum_wheel_load_N": 0.9123300000000001,
+      "best_initial_candidate_cost": 34781.08089125342,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.9921356654672138,
+      "first_control_normalized_inf_difference_from_H04": 0.5935287488364002
+    },
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 1.2,
+      "passed": false,
+      "checks": {
+        "finite_bounded_inputs": true,
+        "substep_contact_sampling_1ms": true,
+        "contact_replay_stage_states_bit_exact": true,
+        "nonwheel_geom_load_max_le_005N": false,
+        "wheel_normal_min_ge_005_weight": false,
+        "world_up_tilt_max_le_20deg": false,
+        "peak_goal_le_40mm": false,
+        "peak_goal_le_same_native_allowance": true,
+        "terminal_goal_le_same_native_allowance": true,
+        "selected_cost_le_same_horizon_native": true
+      },
+      "failed_checks": [
+        "nonwheel_geom_load_max_le_005N",
+        "wheel_normal_min_ge_005_weight",
+        "world_up_tilt_max_le_20deg",
+        "peak_goal_le_40mm"
+      ],
+      "threshold_values": {
+        "peak_goal_native_allowance_mm": 89.1308907285789,
+        "terminal_goal_native_allowance_mm": 89.1308907285789
+      },
+      "minimum_wheel_load_N": 0.9123300000000001,
+      "best_initial_candidate_cost": 176737.01257235016,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.0,
+      "first_control_normalized_inf_difference_from_H04": 0.03553438344709392
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 0.4,
+      "passed": false,
+      "checks": {
+        "finite_bounded_inputs": true,
+        "substep_contact_sampling_1ms": true,
+        "contact_replay_stage_states_bit_exact": true,
+        "nonwheel_geom_load_max_le_005N": true,
+        "wheel_normal_min_ge_005_weight": true,
+        "world_up_tilt_max_le_20deg": true,
+        "terminal_goal_le_090_initial": false,
+        "final200ms_toward_goal_slope_and_change": false,
+        "peak_goal_le_75mm": true,
+        "at_least_one_solved_qp": true,
+        "nonlinear_improvement_ge_1e4_relative": true,
+        "first_control_changed_ge_1e3_normalized": false,
+        "selected_cost_le_same_horizon_native": true
+      },
+      "failed_checks": [
+        "terminal_goal_le_090_initial",
+        "final200ms_toward_goal_slope_and_change",
+        "first_control_changed_ge_1e3_normalized"
+      ],
+      "threshold_values": {
+        "terminal_goal_max_mm": 40.41242359162422,
+        "peak_goal_max_mm": 75.0
+      },
+      "minimum_wheel_load_N": 0.9123300000000001,
+      "best_initial_candidate_cost": 58.78780120226458,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.007641239944447429,
+      "first_control_normalized_inf_difference_from_H04": 0.0
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 0.8,
+      "passed": false,
+      "checks": {
+        "finite_bounded_inputs": true,
+        "substep_contact_sampling_1ms": true,
+        "contact_replay_stage_states_bit_exact": true,
+        "nonwheel_geom_load_max_le_005N": true,
+        "wheel_normal_min_ge_005_weight": true,
+        "world_up_tilt_max_le_20deg": true,
+        "terminal_goal_le_090_initial": false,
+        "final200ms_toward_goal_slope_and_change": false,
+        "peak_goal_le_75mm": true,
+        "at_least_one_solved_qp": true,
+        "nonlinear_improvement_ge_1e4_relative": true,
+        "first_control_changed_ge_1e3_normalized": true,
+        "selected_cost_le_same_horizon_native": true
+      },
+      "failed_checks": [
+        "terminal_goal_le_090_initial",
+        "final200ms_toward_goal_slope_and_change"
+      ],
+      "threshold_values": {
+        "terminal_goal_max_mm": 40.41242359162422,
+        "peak_goal_max_mm": 75.0
+      },
+      "minimum_wheel_load_N": 0.9123300000000001,
+      "best_initial_candidate_cost": 37958.2159746833,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.9879690468458964,
+      "first_control_normalized_inf_difference_from_H04": 0.12117510592073935
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 1.2,
+      "passed": false,
+      "checks": {
+        "finite_bounded_inputs": true,
+        "substep_contact_sampling_1ms": true,
+        "contact_replay_stage_states_bit_exact": true,
+        "nonwheel_geom_load_max_le_005N": false,
+        "wheel_normal_min_ge_005_weight": false,
+        "world_up_tilt_max_le_20deg": false,
+        "terminal_goal_le_090_initial": false,
+        "final200ms_toward_goal_slope_and_change": false,
+        "peak_goal_le_75mm": false,
+        "at_least_one_solved_qp": true,
+        "nonlinear_improvement_ge_1e4_relative": true,
+        "first_control_changed_ge_1e3_normalized": true,
+        "selected_cost_le_same_horizon_native": true
+      },
+      "failed_checks": [
+        "nonwheel_geom_load_max_le_005N",
+        "wheel_normal_min_ge_005_weight",
+        "world_up_tilt_max_le_20deg",
+        "terminal_goal_le_090_initial",
+        "final200ms_toward_goal_slope_and_change",
+        "peak_goal_le_75mm"
+      ],
+      "threshold_values": {
+        "terminal_goal_max_mm": 40.41242359162422,
+        "peak_goal_max_mm": 75.0
+      },
+      "minimum_wheel_load_N": 0.9123300000000001,
+      "best_initial_candidate_cost": 238208.1300280432,
+      "selected_relative_nonlinear_improvement_from_best_initial": 0.15730428350031408,
+      "first_control_normalized_inf_difference_from_H04": 0.112365168048205
+    }
+  ],
+  "prefix_checks": [
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 0.4,
+      "target_first_20_bit_equal": true,
+      "native_fine_first_80_bit_equal": true,
+      "native_coarse_first_20_bit_equal": true,
+      "current_qpos_bit_equal": true,
+      "current_qvel_bit_equal": true,
+      "first_control_normalized_inf_difference_from_H04": 0.0,
+      "selected_first_20_control_normalized_inf_difference_from_H04": 0.0
+    },
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 0.8,
+      "target_first_20_bit_equal": true,
+      "native_fine_first_80_bit_equal": true,
+      "native_coarse_first_20_bit_equal": true,
+      "current_qpos_bit_equal": true,
+      "current_qvel_bit_equal": true,
+      "first_control_normalized_inf_difference_from_H04": 0.5935287488364002,
+      "selected_first_20_control_normalized_inf_difference_from_H04": 0.7125140697555703
+    },
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 1.2,
+      "target_first_20_bit_equal": true,
+      "native_fine_first_80_bit_equal": true,
+      "native_coarse_first_20_bit_equal": true,
+      "current_qpos_bit_equal": true,
+      "current_qvel_bit_equal": true,
+      "first_control_normalized_inf_difference_from_H04": 0.03553438344709392,
+      "selected_first_20_control_normalized_inf_difference_from_H04": 0.8569619409650089
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 0.4,
+      "target_first_20_bit_equal": true,
+      "native_fine_first_80_bit_equal": true,
+      "native_coarse_first_20_bit_equal": true,
+      "current_qpos_bit_equal": true,
+      "current_qvel_bit_equal": true,
+      "first_control_normalized_inf_difference_from_H04": 0.0,
+      "selected_first_20_control_normalized_inf_difference_from_H04": 0.0
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 0.8,
+      "target_first_20_bit_equal": true,
+      "native_fine_first_80_bit_equal": true,
+      "native_coarse_first_20_bit_equal": true,
+      "current_qpos_bit_equal": true,
+      "current_qvel_bit_equal": true,
+      "first_control_normalized_inf_difference_from_H04": 0.12117510592073935,
+      "selected_first_20_control_normalized_inf_difference_from_H04": 0.12117510592073935
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 1.2,
+      "target_first_20_bit_equal": true,
+      "native_fine_first_80_bit_equal": true,
+      "native_coarse_first_20_bit_equal": true,
+      "current_qpos_bit_equal": true,
+      "current_qvel_bit_equal": true,
+      "first_control_normalized_inf_difference_from_H04": 0.112365168048205,
+      "selected_first_20_control_normalized_inf_difference_from_H04": 0.112365168048205
+    }
+  ],
+  "details": [
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 0.4,
+      "directory": "worker_04/anchor_0.4/horizon_0.4",
+      "nonlinear_cost_progress": [
+        {
+          "budget": 0,
+          "best_cost": 129.47605801303612
+        },
+        {
+          "budget": 1,
+          "best_cost": 123.40928654162833
+        },
+        {
+          "budget": 2,
+          "best_cost": 117.34762601570769
+        },
+        {
+          "budget": 3,
+          "best_cost": 111.79861891066993
+        },
+        {
+          "budget": 4,
+          "best_cost": 106.42108765198086
+        },
+        {
+          "budget": 5,
+          "best_cost": 101.03694035278326
+        }
+      ],
+      "native_fine_vs_coarse_terminal_divergence": {
+        "xy_mm": 3.768499051385611,
+        "rotation_deg": 1.967532283452608,
+        "xy_velocity_mm_s": 33.78829470881338,
+        "fine_goal_error_mm": 24.52243267210253,
+        "coarse_goal_error_mm": 20.770434120355663
+      },
+      "limitation": "Per-refinement exact nonlinear costs and QP records were retained; intermediate accepted motion/contact trajectories were not saved. Final selected and same-horizon native candidate trajectories were saved. A solved QP and fixed five-refinement budget do not establish nonlinear convergence."
+    },
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 0.8,
+      "directory": "worker_04/anchor_0.4/horizon_0.8",
+      "nonlinear_cost_progress": [
+        {
+          "budget": 0,
+          "best_cost": 34781.08089125342
+        },
+        {
+          "budget": 1,
+          "best_cost": 13543.38770001962
+        },
+        {
+          "budget": 2,
+          "best_cost": 1154.027711263517
+        },
+        {
+          "budget": 3,
+          "best_cost": 276.34691072680096
+        },
+        {
+          "budget": 4,
+          "best_cost": 273.5300555407172
+        },
+        {
+          "budget": 5,
+          "best_cost": 273.5300555407172
+        }
+      ],
+      "native_fine_vs_coarse_terminal_divergence": {
+        "xy_mm": 80.15060174233537,
+        "rotation_deg": 56.5000365923167,
+        "xy_velocity_mm_s": 252.51865257748156,
+        "fine_goal_error_mm": 31.863881222821377,
+        "coarse_goal_error_mm": 48.74375305885768
+      },
+      "limitation": "Per-refinement exact nonlinear costs and QP records were retained; intermediate accepted motion/contact trajectories were not saved. Final selected and same-horizon native candidate trajectories were saved. A solved QP and fixed five-refinement budget do not establish nonlinear convergence."
+    },
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 1.2,
+      "directory": "worker_04/anchor_0.4/horizon_1.2",
+      "nonlinear_cost_progress": [
+        {
+          "budget": 0,
+          "best_cost": 176737.01257235016
+        },
+        {
+          "budget": 1,
+          "best_cost": 176737.01257235016
+        },
+        {
+          "budget": 2,
+          "best_cost": 176737.01257235016
+        },
+        {
+          "budget": 3,
+          "best_cost": 176737.01257235016
+        },
+        {
+          "budget": 4,
+          "best_cost": 176737.01257235016
+        },
+        {
+          "budget": 5,
+          "best_cost": 176737.01257235016
+        }
+      ],
+      "native_fine_vs_coarse_terminal_divergence": {
+        "xy_mm": 103.13226189409619,
+        "rotation_deg": 75.47814965611957,
+        "xy_velocity_mm_s": 79.22211431585607,
+        "fine_goal_error_mm": 32.3113530734887,
+        "coarse_goal_error_mm": 81.02808248052627
+      },
+      "limitation": "Per-refinement exact nonlinear costs and QP records were retained; intermediate accepted motion/contact trajectories were not saved. Final selected and same-horizon native candidate trajectories were saved. A solved QP and fixed five-refinement budget do not establish nonlinear convergence."
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 0.4,
+      "directory": "worker_2/anchor_2/horizon_0.4",
+      "nonlinear_cost_progress": [
+        {
+          "budget": 0,
+          "best_cost": 58.78780120226458
+        },
+        {
+          "budget": 1,
+          "best_cost": 58.3386279167861
+        },
+        {
+          "budget": 2,
+          "best_cost": 58.3386279167861
+        },
+        {
+          "budget": 3,
+          "best_cost": 58.33859803888227
+        },
+        {
+          "budget": 4,
+          "best_cost": 58.338590465435175
+        },
+        {
+          "budget": 5,
+          "best_cost": 58.3385895074716
+        }
+      ],
+      "native_fine_vs_coarse_terminal_divergence": {
+        "xy_mm": 5.2544368188544,
+        "rotation_deg": 2.8435884159011238,
+        "xy_velocity_mm_s": 50.88124207531104,
+        "fine_goal_error_mm": 56.28465056170135,
+        "coarse_goal_error_mm": 51.80280699531234
+      },
+      "limitation": "Per-refinement exact nonlinear costs and QP records were retained; intermediate accepted motion/contact trajectories were not saved. Final selected and same-horizon native candidate trajectories were saved. A solved QP and fixed five-refinement budget do not establish nonlinear convergence."
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 0.8,
+      "directory": "worker_2/anchor_2/horizon_0.8",
+      "nonlinear_cost_progress": [
+        {
+          "budget": 0,
+          "best_cost": 37958.2159746833
+        },
+        {
+          "budget": 1,
+          "best_cost": 3816.978408214545
+        },
+        {
+          "budget": 2,
+          "best_cost": 1128.722724549573
+        },
+        {
+          "budget": 3,
+          "best_cost": 505.8814555201132
+        },
+        {
+          "budget": 4,
+          "best_cost": 456.6735182047644
+        },
+        {
+          "budget": 5,
+          "best_cost": 456.6735182047644
+        }
+      ],
+      "native_fine_vs_coarse_terminal_divergence": {
+        "xy_mm": 76.94801306814465,
+        "rotation_deg": 80.08620006132057,
+        "xy_velocity_mm_s": 140.6986546057474,
+        "fine_goal_error_mm": 53.07860068614061,
+        "coarse_goal_error_mm": 37.92924334378709
+      },
+      "limitation": "Per-refinement exact nonlinear costs and QP records were retained; intermediate accepted motion/contact trajectories were not saved. Final selected and same-horizon native candidate trajectories were saved. A solved QP and fixed five-refinement budget do not establish nonlinear convergence."
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 1.2,
+      "directory": "worker_2/anchor_2/horizon_1.2",
+      "nonlinear_cost_progress": [
+        {
+          "budget": 0,
+          "best_cost": 238208.1300280432
+        },
+        {
+          "budget": 1,
+          "best_cost": 200736.97081003222
+        },
+        {
+          "budget": 2,
+          "best_cost": 200736.97081003222
+        },
+        {
+          "budget": 3,
+          "best_cost": 200736.97081003222
+        },
+        {
+          "budget": 4,
+          "best_cost": 200736.97081003222
+        },
+        {
+          "budget": 5,
+          "best_cost": 200736.97081003222
+        }
+      ],
+      "native_fine_vs_coarse_terminal_divergence": {
+        "xy_mm": 81.14617953830707,
+        "rotation_deg": 86.10555366722492,
+        "xy_velocity_mm_s": 26.119409253766655,
+        "fine_goal_error_mm": 44.12279803564925,
+        "coarse_goal_error_mm": 46.73958507774359
+      },
+      "limitation": "Per-refinement exact nonlinear costs and QP records were retained; intermediate accepted motion/contact trajectories were not saved. Final selected and same-horizon native candidate trajectories were saved. A solved QP and fixed five-refinement budget do not establish nonlinear convergence."
+    }
+  ],
+  "limits": [
+    "All predictions use a private estimated-plane MuJoCo model, not measured future contacts, future Gazebo state, or an offroad map forecast.",
+    "Raw objective sums at different horizons are not ranked; selected/native cost ratios compare the same horizon only.",
+    "Longer native fine 5ms policy rollouts and open-loop coarse 20ms averaged input rollouts diverge substantially. A longer seed alone is not a successful corrective plan.",
+    "All QPs solved and passed the existing normalized KKT check, but the nonlinear search had a fixed five-refinement budget, with no convergence certificate.",
+    "No objective rescaling, PSD repair, weights, bounds, solver tolerances, observer settings, or stage duration changed.",
+    "Two anchor workers ran concurrently; reported wall times include that contention and are far above the 20ms command interval.",
+    "Mechanical gate samples 1ms private model solver contacts/forces at the simulator last-step convention. It is not hardware evidence or a stability/safety guarantee.",
+    "Per-refinement motion metrics were not captured; exact per-refinement nonlinear cost and solver diagnostics remain available. No duplicate numerical reproduction was run."
+  ]
+}

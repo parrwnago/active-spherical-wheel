@@ -1,0 +1,78 @@
+{
+  "iteration": "I-46",
+  "passed": true,
+  "checks": {
+    "input_hashes_unchanged": true,
+    "video_hash_matches": true,
+    "expected_full16s_schedule": true,
+    "both_actual_case_clocks": true,
+    "zero_simulation_and_controller_calls": true,
+    "shadow_unactuated": true,
+    "no_scientific_pipeline_rerun": true,
+    "resolution": true,
+    "fps": true,
+    "frames": true,
+    "duration": true,
+    "codec": true,
+    "raw_secondary_QA_passed": true,
+    "decoded_stills_nonblank": true
+  },
+  "video": {
+    "path": "results/support_routing_timing_20261126/videos/support_routing_timing.mp4",
+    "sha256": "278b6d6936395b57ce0b6ba468d54b3c78baec7924912b56ce07c30985e6f924",
+    "bytes": 2760722,
+    "frames": 441,
+    "fps": 20.0,
+    "duration_s": 22.05
+  },
+  "stills": {
+    "decoded_frame_0000.jpg": {
+      "sha256": "b650dc90ea521e4291c87f9cae2da5a3737623e0bc80f479e41b17dae55d7f4b",
+      "dimensions": [
+        1200,
+        1600,
+        3
+      ],
+      "pixel_std": 78.71020929230407
+    },
+    "decoded_frame_0040.jpg": {
+      "sha256": "8f10ba31c09fac854248b9e88c5637fa30c83130f9bf7dc52292530cb28bd336",
+      "dimensions": [
+        1200,
+        1600,
+        3
+      ],
+      "pixel_std": 64.43257494916139
+    },
+    "decoded_frame_0220.jpg": {
+      "sha256": "a099cdaf0924467f75b4a0ec9b47da6befe22ceffed5b38b08b114759eb018d4",
+      "dimensions": [
+        1200,
+        1600,
+        3
+      ],
+      "pixel_std": 64.28111042540914
+    },
+    "decoded_frame_0440.jpg": {
+      "sha256": "d7267948af47985ea20806a7a31c00ed5bdac1afc60cbd0a3664f06ff58d17ae",
+      "dimensions": [
+        1200,
+        1600,
+        3
+      ],
+      "pixel_std": 39.53631497010812
+    }
+  },
+  "scope": "Media/file/clock verification only; canonical scientific results unchanged.",
+  "visual_review": {
+    "inspected": "Source previews of actual Mars7s, combined actual7s, site intro, resultcard and decoded intro/native/endcard frames.",
+    "parent_preview_review": "Root inspected Marsactual7s+diagnostics: readable and native pose good; full16s actual video + intro/outro approved.",
+    "findings": [
+      "Both columns show saved native simulation; orange candidate commands are labeled never actuated.",
+      "Site map retains failed strict criteria and pre-control geometry revision.",
+      "Flat setup-corrected attempt is labeled; original failed setup retained separately.",
+      "Endcard separates preceding-mean discrepancy from following-hold auxiliary, with no improved actuation claim.",
+      "Historical last1ms-only cue follows saturation; largest command step remains unchanged; retain-filter decision explicit."
+    ]
+  }
+}

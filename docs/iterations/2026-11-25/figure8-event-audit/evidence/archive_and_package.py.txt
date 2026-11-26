@@ -1,0 +1,173 @@
+"""Preserve I-41 evidence and verify a fresh shareable bundle; no physics."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+import zipfile
+
+FAMILY = Path(__file__).resolve().parent
+ROOT = FAMILY.parents[1]
+DOCS = ROOT / 'docs/iterations/2026-11-25/figure8-event-audit'
+DEST = DOCS / 'evidence'
+SKIP = {'_workspaces', '_forecast_workspaces', '_geometry_workspace',
+        'geometry_workspace', '_render_scenes', '_render_scene', 'meshes',
+        '__pycache__'}
+COMPACT_EXT = {'.json', '.md', '.txt', '.log', '.xml', '.yaml', '.yml',
+               '.toml', '.py', '.csv', '.png', '.jpg', '.jpeg', '.pdf', '.npz'}
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    pack = FAMILY / 'presentation-pack.zip'
+    if DEST.exists() or pack.exists():
+        raise FileExistsError('Preserve the earlier collection; use a new stage.')
+    protocol = json.loads((FAMILY / 'protocol.json').read_text())
+    report = json.loads((FAMILY / 'final_report.json').read_text())
+    for rel, digest in protocol['source_sha256'].items():
+        assert sha(ROOT / rel) == sha(FAMILY / 'pre_change' / rel) == digest, rel
+    for rel, digest in protocol['baseline_input_sha256'].items():
+        assert sha(ROOT / protocol['baseline'] / rel) == digest, rel
+    for rel, digest in protocol['old_pack_hashes'].items():
+        assert sha(ROOT / rel) == digest, rel
+    for rel, digest in report['derived_from'].items():
+        assert sha(ROOT / rel) == digest, rel
+    assert report['prediction_hypothesis']['anchors'] == 35
+    assert report['prediction_hypothesis']['A_forecasts'] == 35
+    assert report['prediction_hypothesis']['B_hindsight_replays'] == 35
+    video = FAMILY / 'prediction/videos/mars_departure_and_direction_changes.mp4'
+    assert video.is_file() and video.stat().st_size > 100000, video
+    assert (FAMILY / 'events/branch_ambiguity_stage/report.json').is_file()
+    assert (FAMILY / 'prediction/videos/qa.json').is_file()
+
+    child_refs = source_refs = generated_refs = 0
+    child_manifests = sorted(p for p in FAMILY.rglob('*manifest.json')
+                             if not any(q in SKIP for q in p.relative_to(FAMILY).parts))
+    for path in child_manifests:
+        value = json.loads(path.read_text())
+        for entry in value.get('files', []):
+            if not isinstance(entry, dict) or 'sha256' not in entry:
+                continue
+            rel = entry.get('path', entry.get('snapshot', entry.get('origin')))
+            if rel is None:
+                continue
+            candidates = [path.parent / rel, ROOT / rel]
+            source = next((p for p in candidates if p.is_file()), None)
+            assert source and sha(source) == entry['sha256'], (path, entry)
+            child_refs += 1
+    for path in FAMILY.rglob('*provenance.json'):
+        if any(q in SKIP for q in path.relative_to(FAMILY).parts):
+            continue
+        value = json.loads(path.read_text())
+        sources = value.get('sources', [])
+        if not isinstance(sources, list):
+            continue
+        for entry in sources:
+            if not isinstance(entry, dict) or 'snapshot' not in entry or 'sha256' not in entry:
+                continue
+            source = path.parent / entry['snapshot']
+            assert source.is_file() and sha(source) == entry['sha256'], (path, entry)
+            source_refs += 1
+        for rel, digest in value.get('generated_sha256', {}).items():
+            source = path.parent / rel
+            assert source.is_file() and sha(source) == digest, (path, rel)
+            generated_refs += 1
+
+    DEST.mkdir(parents=True)
+    files, inventory = [], []
+    for source in sorted(FAMILY.rglob('*')):
+        if not source.is_file():
+            continue
+        rel = source.relative_to(FAMILY)
+        if '__pycache__' in rel.parts or source.suffix == '.pyc':
+            continue
+        digest = sha(source)
+        inventory.append({'origin': str(source.relative_to(ROOT)),
+                          'bytes': source.stat().st_size, 'sha256': digest})
+        if any(part in SKIP for part in rel.parts) or source.suffix not in COMPACT_EXT:
+            continue
+        if source.name in {'rollout.npz', 'precision.npz'}:
+            continue
+        target_rel = rel.with_suffix('.py.txt') if source.suffix == '.py' else rel
+        target = DEST / target_rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+        assert sha(target) == digest
+        stage = ('pre_change_existing_source' if rel.parts[0] == 'pre_change' else
+                 'authoritative_corrected_event_selection' if 'selection_stage02_corrected' in rel.parts else
+                 'initial_event_stage__contract_bugs_preserved_see_correction' if 'selection_stage01_initial' in rel.parts or rel.as_posix() == 'events/selection_report.json' else
+                 'preserved_development_stage__see_status_logs' if 'development' in rel.parts else
+                 'authoritative_consolidation' if rel.as_posix() == 'final_report.json' else
+                 'recorded_source_or_artifact__see_stage_provenance')
+        files.append({'snapshot': str(target_rel), 'origin': str(source.relative_to(ROOT)),
+                      'bytes': source.stat().st_size, 'sha256': digest, 'stage': stage})
+    raw = DEST / 'raw_inventory.json'
+    raw.write_text(json.dumps(inventory, indent=2) + '\n')
+    files.append({'snapshot': raw.name, 'origin': 'archive_and_package.py',
+                  'bytes': raw.stat().st_size, 'sha256': sha(raw), 'stage': 'archival_index'})
+    manifest = {
+        'iteration': 'I-41', 'scope': report['scope'],
+        'authoritative_report': 'final_report.json',
+        'authoritative_event_selection': report['authoritative_selection'],
+        'stage_warning': 'Initial event helper bugs and video preview indexing failure retained; use corrected stages and final video QA. Event correction leaves Mars measurements and anchors unchanged.',
+        'verified_child_manifest_references_including_overlaps': child_refs,
+        'verified_snapshot_references_including_overlaps': source_refs,
+        'verified_generated_artifact_references_including_overlaps': generated_refs,
+        'artifact_count_excluding_manifest': len(files),
+        'artifact_bytes_excluding_manifest': sum(f['bytes'] for f in files),
+        'files': files,
+        'old_pack_hashes_verified_unchanged': protocol['old_pack_hashes'],
+        'verification_scope': report['verification_scope'],
+        'payload_boundary': 'Compact reports, sources renamed .py.txt, derived NPZ, figures and inventories. Raw case precision/rollout and MP4 are in ZIP/local results. Generated workspace/mesh files are inventoried, not copied. Preserved scripts/docs retain original paths; restore to origin for reproduction. Final ZIP-hash verification and documentation-side manifest copy are post-package repository sidecars, outside the ZIP; the original results-side payload manifest is included.'}
+    (DEST / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+
+    paths = [ROOT / 'ITERATION_LOG.md', ROOT / 'README.md', ROOT / 'OFFROAD.md',
+             DOCS.parent / 'README.md', DOCS / 'README.md',
+             ROOT / 'generated/offroad/flat/control_schedule.npz',
+             ROOT / 'results/lqr_contact_forecast_20261125/videos/render_contact_forecasts.py']
+    paths += [p for p in DEST.rglob('*') if p.is_file()]
+    paths += [p for p in FAMILY.rglob('*') if p.is_file() and
+              not any(q in SKIP for q in p.relative_to(FAMILY).parts) and
+              (p.suffix in {'.mp4', '.npz'} or p.name == 'protocol.json')]
+    # Preserve original paths so baseline provenance references can be resolved.
+    baseline = ROOT / protocol['baseline']
+    paths += [p for p in baseline.rglob('*') if p.is_file() and
+              not any(q in SKIP for q in p.relative_to(baseline).parts) and
+              p.suffix in (COMPACT_EXT | {'.mp4'}) and p.suffix != '.pyc']
+    paths = sorted(set(paths))
+    entries = [{'path': str(p.relative_to(ROOT)), 'bytes': p.stat().st_size,
+                'sha256': sha(p)} for p in paths]
+    presentation = {'iteration': 'I-41', 'scope': report['scope'],
+        'authoritative_report': str((DEST / 'final_report.json').relative_to(ROOT)),
+        'artifacts': entries, 'payload_count': len(entries),
+        'payload_bytes': sum(e['bytes'] for e in entries)}
+    manifest_path = FAMILY / 'presentation_manifest.json'
+    manifest_path.write_text(json.dumps(presentation, indent=2) + '\n')
+    with zipfile.ZipFile(pack, 'x', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
+        for path in paths:
+            archive.write(path, path.relative_to(ROOT))
+        archive.write(manifest_path, manifest_path.relative_to(ROOT))
+    with zipfile.ZipFile(pack) as archive:
+        assert archive.testzip() is None
+        for entry in entries:
+            assert hashlib.sha256(archive.read(entry['path'])).hexdigest() == entry['sha256'], entry['path']
+        assert len(archive.namelist()) == len(entries) + 1
+    verified = {'zip': str(pack.relative_to(ROOT)), 'zip_bytes': pack.stat().st_size,
+        'zip_sha256': sha(pack), 'file_count_including_manifest': len(entries) + 1,
+        'zip_crc_verified': True, 'all_payload_hashes_verified': True}
+    verification_path = FAMILY / 'presentation_verification.json'
+    verification_path.write_text(json.dumps(verified, indent=2) + '\n')
+    pack.with_suffix('.zip.sha256').write_text(verified['zip_sha256'] + '  ' + pack.name + '\n')
+    (DOCS / 'presentation_manifest.json').write_bytes(manifest_path.read_bytes())
+    (DOCS / 'presentation_verification.json').write_bytes(verification_path.read_bytes())
+    print(json.dumps({'compact_artifacts': len(files),
+                      'compact_bytes': manifest['artifact_bytes_excluding_manifest'],
+                      'child_manifest_references': child_refs,
+                      'source_snapshot_references': source_refs,
+                      'presentation': verified}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

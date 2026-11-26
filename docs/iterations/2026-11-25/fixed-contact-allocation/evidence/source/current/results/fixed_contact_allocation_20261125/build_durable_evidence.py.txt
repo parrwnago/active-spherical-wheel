@@ -1,0 +1,216 @@
+"""Copy compact immutable evidence without changing original results or docs."""
+from pathlib import Path
+from datetime import datetime, timezone
+import difflib
+import hashlib
+import json
+import subprocess
+import xml.etree.ElementTree as ET
+
+
+REPO = Path(__file__).resolve().parents[2]
+FAMILY = Path(__file__).resolve().parent
+DEST = REPO/'docs/iterations/2026-11-25/fixed-contact-allocation/evidence'
+ENTRIES = []
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def copy(source, target, stage, description=''):
+    source = Path(source)
+    assert source.exists(), source
+    assert source.suffix not in ('.mp4', '.npz'), source
+    target = DEST/target
+    target.parent.mkdir(parents=True, exist_ok=True)
+    data = source.read_bytes()
+    target.write_bytes(data)
+    ENTRIES.append({'snapshot': str(target.relative_to(DEST)), 'origin': str(source.relative_to(REPO)),
+                    'source_stage': stage, 'bytes': len(data), 'sha256': sha(data),
+                    'description': description})
+
+
+def generated(target, value, stage, origins, description=''):
+    target = DEST/target
+    target.parent.mkdir(parents=True, exist_ok=True)
+    data = (json.dumps(value, indent=2, allow_nan=False)+'\n').encode()
+    target.write_bytes(data)
+    ENTRIES.append({'snapshot': str(target.relative_to(DEST)), 'derived_from': origins,
+                    'source_stage': stage, 'bytes': len(data), 'sha256': sha(data),
+                    'description': description})
+
+
+def main():
+    DEST.mkdir(parents=True, exist_ok=True)
+    # Reports and scientific plots retain their original bytes.
+    for name in ('physics_report.json', 'physics_metrics.csv', 'run.log'):
+        copy(FAMILY/'analysis'/name, 'analysis/'+name, 'final_analysis')
+    for path in sorted((FAMILY/'analysis').glob('*.png'))+sorted((FAMILY/'analysis').glob('*.pdf')):
+        copy(path, 'analysis/'+path.name, 'final_analysis')
+    for campaign in ('comparison_initial', 'comparison_v2', 'comparison_balance'):
+        for path in sorted((FAMILY/campaign).iterdir()):
+            if path.is_file() and path.suffix in ('.json', '.csv', '.png'):
+                copy(path, campaign+'/'+path.name, 'final_analysis')
+    for name in ('summary.json', 'comparison.png', 'comparison.pdf', 'provenance.json', 'final_run.log'):
+        copy(FAMILY/'fixed_support'/name, 'fixed_support/'+name, 'fixed_support_tested')
+    for path in sorted((FAMILY/'fixed_support/source_snapshot').rglob('*')):
+        if path.is_file():
+            relative = path.relative_to(FAMILY/'fixed_support/source_snapshot')
+            suffix = '.txt' if path.suffix == '.py' else ''
+            copy(path, 'source/fixed_support/'+str(relative)+suffix, 'fixed_support_tested',
+                 'Exact source snapshot used for the final nine-case offline benchmark.')
+    for campaign in ('baseline', 'feasible', 'ablation_no_catchup', 'ablation_wide_position',
+                     'ablation_minimal', 'feasible_v2', 'feasible_balance'):
+        copy(FAMILY/campaign/'provenance.json', 'campaigns/'+campaign+'/provenance.json', 'campaign_launch_metadata')
+        copy(FAMILY/campaign/'summary.json', 'campaigns/'+campaign+'/summary.json', 'campaign_results')
+        # Per-route summary retains original gates, parameters, and audit data.
+        for path in sorted((FAMILY/campaign).glob('*/phase_*/summary.json')):
+            copy(path, 'campaigns/'+campaign+'/'+str(path.relative_to(FAMILY/campaign)), 'campaign_results')
+
+    # Exact guard-launch bytes are separate from later live code.
+    guard = FAMILY/'feasible_balance/recorded_source'
+    hashes = json.loads((FAMILY/'feasible_balance/provenance.json').read_text())['source_sha256']
+    for name, expected in hashes.items():
+        assert sha((guard/name).read_bytes()) == expected, name
+        copy(guard/name, 'source/guard_launch/'+name+'.txt', 'guard_launch_verified',
+             'Bytes match campaign launch hash; see original manifest for the known metadata-line reconstruction.')
+    copy(guard/'manifest.json', 'source/guard_launch/original_manifest.json', 'guard_launch_verified')
+    copy(FAMILY/'feasible_balance/provenance.json', 'source/guard_launch/campaign_provenance.json', 'guard_launch_verified')
+
+    # Warm-case inputs, checks, and pre-run sources preserve the failed gates.
+    for name in ('WARM_CASES.md', 'warm_case_comparison.json', 'warm_case_comparison.csv',
+                 'warm_case_comparison.png', 'candidate_params.json', 'setup_failed_missing_gz.log'):
+        copy(FAMILY/name, 'warm/'+name, 'warm_results')
+    for variant, directory in (('long', FAMILY), ('short', FAMILY/'short_pulse')):
+        copy(directory/'summary.json', 'warm/'+variant+'/summary.json', 'warm_results')
+        for motion in ('world_x', 'world_y'):
+            copy(directory/f'pair_check_{motion}.json', f'warm/{variant}/pair_check_{motion}.json', 'warm_results')
+            for policy in ('baseline', 'candidate'):
+                copy(directory/'runs'/motion/policy/'summary.json',
+                     f'warm/{variant}/runs/{motion}/{policy}/summary.json', 'warm_results')
+        for manifest in sorted((directory/'source_snapshot').glob('*/manifest.json')):
+            stage = f'warm_{variant}_pre_run_{manifest.parent.name}'
+            expected = json.loads(manifest.read_text())
+            for origin, expected_sha in expected.items():
+                path = manifest.parent/Path(origin).name
+                assert sha(path.read_bytes()) == expected_sha, path
+                copy(path, f'source/{stage}/{path.name}.txt', stage,
+                     'Pre-invocation source; warm aggregate source_hashes identify the successful invocation.')
+            copy(manifest, f'source/{stage}/original_manifest.json', stage)
+
+    # Capture selected current implementation and test sources. These are NOT
+    # represented as the exact source for every preceding historical trial.
+    current = [REPO/'src/spherical_wheel'/name for name in (
+        'feasible_reference.py', 'rolling_allocation.py', 'offroad_control.py', 'offroad_experiments.py',
+        'experiments.py', 'contact_sensing.py', 'contact_kinematics.py', 'contact_diagnostics.py',
+        'synchronization.py', 'control.py', 'model.py', 'sim.py')]
+    current += [REPO/'scripts'/name for name in (
+        'test-fixed-contact-allocation.py', 'run-contact-diagnostics.py', 'compare-contact-allocation.py',
+        'map-rolling-configurations.py', 'run-configuration-cases.py')]
+    current += [REPO/'tests'/name for name in (
+        'test_feasible_rolling_reference.py', 'test_rolling_allocation.py', 'test_hardware_mode.py',
+        'test_contact_kinematics.py', 'test_contact_diagnostics.py', 'test_offroad_control.py',
+        'test_multicontact_diagnostics.py')]
+    current += [FAMILY/name for name in ('analyze_physics.py', 'run_warm_contact_cases.py', 'analyze_warm_cases.py',
+                                       'render_warm_comparisons.py', 'build_durable_evidence.py')]
+    current.append(FAMILY/'videos/render_mars_v2_regression.py')
+    for path in current:
+        copy(path, 'source/current/'+str(path.relative_to(REPO))+'.txt', 'current_after_final_selected_tests',
+             'Later current snapshot; restore original path before execution. Not an assertion of historical launch-byte identity.')
+    current_record = {
+        'captured_utc': datetime.now(timezone.utc).isoformat(),
+        'git_head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=REPO, text=True).strip(),
+        'stage': 'Current relevant source after final selected tests and post-launch metadata/docstring correction.',
+        'claim_limit': 'This selected snapshot does not reconstruct all earlier uncommitted working trees or certify exact test-launch bytes.',
+        'files': [entry for entry in ENTRIES if entry['source_stage'] == 'current_after_final_selected_tests']}
+    generated('source/current/manifest.json', current_record, 'current_after_final_selected_tests',
+              [str(path.relative_to(REPO)) for path in current])
+
+    for name in ('regression.log', 'regression.xml', 'final_integration.log', 'final_integration.xml'):
+        copy(FAMILY/'tests'/name, 'tests/'+name, 'selected_test_records')
+    tests = []
+    for name in ('regression', 'final_integration'):
+        tree = ET.parse(FAMILY/'tests'/f'{name}.xml').getroot()
+        suite = tree if tree.tag == 'testsuite' else list(tree)[0]
+        tests.append({'name': name, **suite.attrib})
+
+    # Metadata and stills are small durable artifacts; videos remain local.
+    media = []
+    for name, path in (
+        ('warm_long', FAMILY/'videos/video_metadata.json'),
+        ('warm_short', FAMILY/'short_pulse/videos/video_metadata.json'),
+        ('mars_v2_regression', FAMILY/'videos/metadata_mars_figure8_p030_v2_regression.json'),
+    ):
+        copy(path, 'media/'+name+'_metadata.json', 'verified_completed_media')
+        value = json.loads(path.read_text())
+        for item in value.get('videos', [value]):
+            video = Path(item['file'])
+            assert video.exists() and sha(video.read_bytes()) == item['sha256']
+            assert item['final_frame_decoded']
+            media.append({**item, 'local_video_path': str(video.relative_to(REPO)), 'copied_into_evidence': False})
+    for label, path in (
+        ('warm_long_y_motion.jpg', FAMILY/'videos/warm_world_y_baseline_vs_feasible_during_motion.jpg'),
+        ('warm_long_x_motion.jpg', FAMILY/'videos/warm_world_x_baseline_vs_feasible_during_motion.jpg'),
+        ('warm_short_y_motion.jpg', FAMILY/'short_pulse/videos/warm_world_y_baseline_vs_feasible_during_motion.jpg'),
+        ('mars_v2_regression_event.jpg', FAMILY/'videos/mars_figure8_p030_v2_regression.jpg'),
+        ('mars_v2_regression_decoded_final.jpg', FAMILY/'videos/mars_figure8_p030_v2_regression_decoded_final.jpg'),
+    ):
+        copy(path, 'media/'+label, 'verified_completed_media')
+    generated('media/inventory.json', {'videos_local_only': media}, 'verified_completed_media',
+              [str(path.relative_to(REPO)) for path in (FAMILY/'videos/video_metadata.json',
+               FAMILY/'short_pulse/videos/video_metadata.json', FAMILY/'videos/metadata_mars_figure8_p030_v2_regression.json')])
+
+    physics = json.loads((FAMILY/'analysis/physics_report.json').read_text())
+    warm = json.loads((FAMILY/'warm_case_comparison.json').read_text())
+    fixed = json.loads((FAMILY/'fixed_support/summary.json').read_text())
+    overview = {
+        'status': 'prototype_not_promoted',
+        'physics_route_executions': physics['execution_and_output_counts'],
+        'physics_guarded_controller_calls': sum(row['contact_guarded_calls'] for row in physics['rows']),
+        'families': {name: {'completed': physics[key]['completed'], 'cases': physics[key]['cases'],
+                          'lower_original_path_RMS_cases': physics[key]['lower_original_path_RMS_cases'],
+                          'passed_all_gates': physics[key]['all_gate_passes']}
+                     for name, key in (('feasible_v2', 'v2_comparison'), ('feasible_balance', 'balance_comparison'))},
+        'fixed_support': {'cases': len(fixed['cases']), 'passed_assertions': sum(fixed['assertions'].values()),
+                          'scope': fixed['scope'], 'geometry': fixed['geometry']},
+        'warm_cases': {'executed': len(warm['rows']),
+                       'same_actual_hemisphere_throughout_pulse': sum(row['single_same_actual_hemisphere_during_motion'] for row in warm['rows']),
+                       'sustained_weak_geometry_gate_passes': sum(row['true_weak_geometry_during_peak'] for row in warm['rows']),
+                       'guarded_controller_calls': sum(row['guarded_command_calls'] for row in warm['rows']),
+                       'conclusion': warm['conclusion']},
+        'selected_test_suites': tests,
+        'test_count_warning': 'These are overlapping selected suites, not additive unique tests and not a single full-repository run.',
+        'setup_and_fixture_notes': [
+            'The missing-gz setup failure is preserved; it occurred before Gazebo simulation.',
+            'The root session reports an initial balance-guard test fixture that treated cold-observer tilt as the contact normal; the fixture was corrected to prescribe flat normal. No standalone failure log was found, so no raw failure log is invented.'],
+        'source_stage_notes': [
+            'guard_launch_verified: eight archived files match exact campaign launch SHA256 values. The original archive manifest identifies the controller file reconstructed by reversing known metadata-only edits.',
+            'fixed_support_tested: exact source/configuration archive from the final offline benchmark, distinct from later controller integration.',
+            'warm_*_pre_run_*: exact pre-invocation snapshots, including a setup failure; successful aggregate source hashes identify each actual warm campaign.',
+            'current_after_final_selected_tests: later relevant implementation, scripts, and tests, archived as .py.txt. It is not claimed to equal every historical source version.'],
+        'limitations': ['Simulation state is exact and belts are ideal; no hardware validation.',
+                        'Accepted horizontal reference consistency in one fixed contact does not prove dynamic balance, friction feasibility, or goal completion.',
+                        'The warm tests retain one actual hemisphere but fail the declared sustained weak-geometry gate.',
+                        'The final guard exchanges nominal timed-path tracking for balance in some cases; it remains opt-in and is not promoted.',
+                        'Large rollout NPZ and MP4 files remain local; only verified completed media metadata/stills are copied.']}
+    generated('summary.json', overview, 'derived_final_overview',
+              ['results/fixed_contact_allocation_20261125/analysis/physics_report.json',
+               'results/fixed_contact_allocation_20261125/warm_case_comparison.json',
+               'results/fixed_contact_allocation_20261125/fixed_support/summary.json'])
+    manifest = {'created_utc': datetime.now(timezone.utc).isoformat(),
+                'scope': 'Compact durable evidence; originals retained. No README, iteration log, or control documentation is edited by this copier.',
+                'snapshot_count_excluding_this_manifest': len(ENTRIES),
+                'snapshot_bytes_excluding_this_manifest': sum(item['bytes'] for item in ENTRIES),
+                'files': ENTRIES, 'source_stage_notes': overview['source_stage_notes']}
+    (DEST/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+    for item in ENTRIES:
+        assert sha((DEST/item['snapshot']).read_bytes()) == item['sha256'], item['snapshot']
+    assert not list(DEST.rglob('*.npz')) and not list(DEST.rglob('*.mp4'))
+    print(json.dumps({'files_excluding_manifest': len(ENTRIES),
+                      'bytes_excluding_manifest': manifest['snapshot_bytes_excluding_this_manifest'],
+                      'verified_local_videos': len(media), 'source_stage_notes': overview['source_stage_notes']}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

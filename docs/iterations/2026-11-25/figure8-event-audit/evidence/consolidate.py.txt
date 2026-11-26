@@ -1,0 +1,102 @@
+"""Consolidate sealed I-41 saved-data reports; no simulation or forecast work."""
+from pathlib import Path
+import hashlib
+import json
+
+FAMILY = Path(__file__).resolve().parent
+ROOT = FAMILY.parents[1]
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    destination = FAMILY / 'final_report.json'
+    if destination.exists():
+        raise FileExistsError('Use a fresh consolidation stage; retain old results.')
+    inputs = ['protocol.json', 'events/selection_correction.json',
+              'events/selection_stage02_corrected/selection_report.json',
+              'events/full_audit/report.json', 'terrain/report.json',
+              'terrain/facet_addendum/report.json',
+              'terrain/flat_control/completion_audit.json',
+              'prediction/reduction_stage01/report.json',
+              'terrain/event_terrain_context.json',
+              'events/branch_ambiguity_stage/report.json']
+    protocol = json.loads((FAMILY / inputs[0]).read_text())
+    events = json.loads((FAMILY / 'events/full_audit/report.json').read_text())
+    forecast = json.loads((FAMILY / 'prediction/reduction_stage01/report.json').read_text())
+    correction = json.loads((FAMILY / 'events/selection_correction.json').read_text())
+    terrain = json.loads((FAMILY / 'terrain/event_terrain_context.json').read_text())
+    geometry = next(s for e in terrain['events'] if e['event_id'] == 'primary_departure'
+                    for s in e['samples'] if s['requested_offset_s'] == 0)
+    for rel, digest in protocol['source_sha256'].items():
+        assert sha(ROOT / rel) == digest, rel
+        assert sha(FAMILY / 'pre_change' / rel) == digest, rel
+    for rel, digest in protocol['baseline_input_sha256'].items():
+        assert sha(ROOT / protocol['baseline'] / rel) == digest, rel
+    for rel, digest in protocol['old_pack_hashes'].items():
+        assert sha(ROOT / rel) == digest, rel
+    assert events['reference_time_position_velocity_bit_equal']
+    assert correction['anchor_files_byte_identical']
+    assert correction['max_local_distance_change_mm'] == 0
+    assert forecast['unique_dense_anchors'] == 35
+    assert forecast['successful_A_rows'] == forecast['successful_B_rows'] == 35
+    assert forecast['all_first5ms_state_contact_input_exact']
+    assert all(v == 0 for v in forecast['history_maximum_absolute_differences'].values())
+    onset = events['mars']['event_audits'][0]
+    report = {
+        'iteration': 'I-41', 'presentation_date': protocol['presentation_date'],
+        'scope': 'One reused Mars execution, one fresh 44s flat Gazebo/DART execution, 35 paired private model diagnostics. No live controller/observer/predictor edits.',
+        'authoritative_selection': 'events/selection_stage02_corrected/selection_report.json',
+        'derived_from': {str((FAMILY / p).relative_to(ROOT)): sha(FAMILY / p) for p in inputs},
+        'controller_sources_verified_unchanged': protocol['source_sha256'],
+        'old_packs_verified_unchanged': protocol['old_pack_hashes'],
+        'causal_boundary': 'The I40/I41 200ms dynamic forecast never actuated the live trace. The older 120ms kinematic synchronizer did actuate and is audited separately.',
+        'terrain_hypothesis': {
+            'verdict': 'Supported association with changing terrain and contact handoff; local-model mismatch also measured. Individual causes not isolated.',
+            'mars_first_sustained_local_20mm_departure': events['mars']['primary_deviation'],
+            'flat_first_sustained_local_20mm_departure': events['flat']['primary_deviation'],
+            'threshold_caveat': 'Mars10mm threshold already fires at startup1.0s. Time-aligned20mm tracking error starts2.69s, largely lag. 6.86s names the declared20mm local-path event, not the first error of any size.',
+            'onset_snapshot': onset['snapshot_at_event'],
+            'onset_true_patch_changes': onset['true_patch_changes_in_window'],
+            'onset_estimated_patch_changes': onset['estimated_patch_changes_in_window'],
+            'geometry': {
+                'actual_xy_DEM_slope_deg': geometry['dem_slope_at_body_xy_deg'],
+                'desired_xy_DEM_slope_deg': geometry['dem_slope_at_reference_xy_deg'],
+                'estimated_vs_contact_projected_OBJ_facet_deg': geometry['estimated_vs_contact_projected_obj_facet_normal_error_deg'],
+                'estimated_vs_logged_DEM_tangent_deg': geometry['estimated_vs_logged_dem_normal_error_deg'],
+                'actual_platform_tilt_deg': geometry['actual_platform_tilt_deg'],
+                'logged_reference_tilt_deg': geometry['logged_reference_tilt_deg'],
+                'actual_vs_logged_reference_up_angle_deg': geometry['actual_vs_logged_reference_up_error_deg'],
+                'qualification': 'DEM closest tangent and geometric facet at equivalent contact XY are evaluator proxies, not DART force-weighted physical contact normals. Equivalent points can average several contacts.'},
+            'comparison': {name: events[name]['tracking'] for name in ['mars', 'flat']},
+            'counterfactual_limit': 'Flat removes all relief/rocks/lava and rebalances for flat terrain; initial state/history differ. Reference/time/velocity byte-identical; whole-terrain comparison does not isolate one local slope.'},
+        'turn_hypothesis': {
+            'verdict': 'First Mars turn is delayed reversal without geometric overshoot; later three selected turns have genuine geometric component overshoot. Flat also overshoots.',
+            'definition': 'First six smooth reference velocity-component reversals, full reference speed>=5mm/s; maximum signed component distance beyond reference extremum over [-1,+2]s. Actual new sign must persist>=100ms. Component reversal is not a full-reference stop.',
+            'events': events['turn_comparison'],
+            'limit': 'Different initial balancing and previous path/contact histories preclude isolating terrain amplification at every turn. One run per terrain, not statistical robustness.'},
+        'prediction_hypothesis': {
+            'verdict': 'Frozen-local-model mismatch remains even with hindsight actual commands; wrong future feedback sequence alone does not explain the departure-window prediction error.',
+            'mode_A': forecast['mode_A'], 'mode_B': forecast['mode_B'],
+            'anchors': 35, 'A_forecasts': 35, 'B_hindsight_replays': 35,
+            'paired_nested_endpoints': 105,
+            'first_5ms_A_B_state_contact_input_exact': forecast['all_first5ms_state_contact_input_exact'],
+            'history_maximum_absolute_differences': forecast['history_maximum_absolute_differences'],
+            'initial_fit_outside_tolerance_count': forecast['bad_initial_load_fit_count'],
+            'initial_fit_outside_tolerance_times_s': forecast['bad_initial_load_fit_times_s'],
+            'onset_endpoints': [r for r in forecast['paired_endpoint_records'] if r['event_category'] == 'primary_departure'],
+            'summary': forecast['summary'], 'limits': forecast['limits']},
+        'development_correction': correction,
+        'consolidation_correction': 'Initial root consolidation/source retained in development/consolidation_stage01. Exact geometry aliases corrected to derive facet angle and evaluated actual/desired DEM grades directly from sealed terrain context; all rounded findings unchanged. Secondary ambiguity report added as an input; no model or physics rerun.',
+        'verification_scope': 'Saved-data helper/adversarial contract checks; one new Gazebo run; exact source-history and first-step checks for35A+35B; source/input/old-pack hashes. I40selected45tests are earlier overlapping evidence, not a new/full-repo I41suite.',
+        'decision': 'Keep currentLQR. Before controller tuning or PF/iLQR, isolate transient patch/load classification and gain/drive handoff around6.7–6.9s in a separately declared matched diagnostic. Separately investigate flat-turn lag/damping. Dynamic local-plane prediction remains offline; no fix or causal ablation claimed.'}
+    destination.write_text(json.dumps(report, indent=2) + '\n')
+    print(json.dumps({'report': str(destination.relative_to(ROOT)), 'sha256': sha(destination),
+                      'verified_unchanged_sources': len(protocol['source_sha256']),
+                      'verified_old_packs': len(protocol['old_pack_hashes'])}))
+
+
+if __name__ == '__main__':
+    main()

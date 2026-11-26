@@ -1,0 +1,87 @@
+"""Retrospective objective-stationarity audit, with no QP or physics execution."""
+from pathlib import Path
+import hashlib
+import json
+
+import numpy as np
+from scipy import sparse
+
+from spherical_wheel.predictive_control import AffineMPC, AffineMPCSettings
+
+
+ROOT = Path.cwd()
+OUTPUT = ROOT/'results/mpc_optimizer_development_20261125/initial_external_kkt_audit'
+OUTPUT.mkdir(parents=True, exist_ok=True)
+results, inputs = [], []
+for direction in ('world_x', 'world_y'):
+    folder = ROOT/'results/mpc_balance_20261125/initial/runs'/direction/'mpc'
+    plan_path, provenance_path, precision_path = (folder/name for name in ('plans.json', 'provenance.json', 'precision.npz'))
+    inputs.extend((plan_path, provenance_path, precision_path))
+    provenance = json.loads(provenance_path.read_text())
+    settings = AffineMPCSettings(**provenance['mpc_settings'])
+    precision = np.load(precision_path)
+    times, applied = precision['time_s'], precision['exact_applied']
+    bounds = np.array([1.5, .6, .6, .3, .3])
+    nx, nu, horizon = 18, 5, settings.horizon_steps
+    Q = np.diag(np.array(settings.state_weights)/np.array(settings.state_scales)**2)
+    block = sparse.block_diag([Q]*(horizon-1)+[settings.terminal_multiplier*Q], format='csc')
+    D = np.eye(horizon*nu)
+    D[nu:, :-nu] -= np.eye((horizon-1)*nu)
+    change = np.full(horizon*nu, settings.change_weight)
+    R = np.eye(horizon*nu)*settings.input_weight
+    rows = []
+    plans = json.loads(plan_path.read_text())
+    for plan in plans:
+        if not plan.get('success'):
+            continue
+        index = int(np.argmin(abs(times-plan['time_s'])))
+        assert index > 0 and abs(times[index]-plan['time_s']) < 1e-9
+        anchor = applied[index-1]
+        T = np.eye(nx)
+        T[2, :3], T[11, 9:12] = plan['normal'], plan['normal']
+        inverse = np.linalg.inv(T)
+        A, B, f0 = T@np.array(plan['A'])@inverse, T@np.array(plan['B']), T@np.array(plan['f0'])
+        target = np.array(plan['target_states'])@T.T
+        mapping, offset = AffineMPC._prediction(A, B*bounds, f0-B@anchor, horizon)
+        z = (np.array(plan['inputs'])/bounds).ravel()
+        recorded_states = np.array(plan['affine_states'])@T.T
+        state_error = float(np.max(abs((mapping@z+offset).reshape(horizon, nx)-recorded_states)))
+        desired_change = np.zeros(horizon*nu)
+        desired_change[:nu] = anchor/bounds
+        hessian = mapping.T@(block@mapping)+R+D.T@(change[:, None]*D)
+        hessian += settings.regularization*np.eye(horizon*nu)
+        P = 2*.5*(hessian+hessian.T)
+        q = 2*(mapping.T@(block@(offset-target.ravel()))-D.T@(change*desired_change))
+        Pz = P@z
+        gradient = Pz+q
+        violation = gradient.copy()
+        high, low = z >= 1-settings.bound_tolerance, z <= -1+settings.bound_tolerance
+        violation[high] = np.maximum(gradient[high], 0.)
+        violation[low] = np.minimum(gradient[low], 0.)
+        raw = float(np.max(abs(violation)))
+        scale = max(1., float(np.max(abs(Pz))), float(np.max(abs(q))))
+        ratio = raw/scale
+        tolerance = max(1e-5, 100*max(settings.eps_abs, settings.eps_rel))
+        rows.append({'time_s': plan['time_s'], 'state_reconstruction_max_abs': state_error,
+                     'logged_box_kkt_residual': plan['solver']['box_kkt_residual'],
+                     'reconstructed_box_kkt_residual': raw,
+                     'normalized_box_kkt_residual': ratio, 'later_tolerance': tolerance,
+                     'would_be_rejected_by_later_gate': bool(ratio > tolerance),
+                     'input_bound_violation': max(0., float(np.max(abs(z)-1)))})
+    results.append({'direction': direction, 'all_plan_attempts': len(plans),
+                    'successful_recorded_plans': len(rows),
+                    'later_gate_rejections': sum(x['would_be_rejected_by_later_gate'] for x in rows),
+                    'maximum_normalized_box_kkt_residual': max(x['normalized_box_kkt_residual'] for x in rows),
+                    'maximum_raw_box_kkt_residual': max(x['reconstructed_box_kkt_residual'] for x in rows),
+                    'maximum_state_reconstruction_error': max(x['state_reconstruction_max_abs'] for x in rows),
+                    'plans': rows})
+report = {'scope': 'Retrospective audit of applied accepted v1 frozen-model plans only. No solver or physics execution; original controller gate checked backend status and bounds. The later external gate is evaluated without altering historical classification or commands.',
+          'formula': 'new-objective box normal-cone gradient infinity norm / max(1, ||Pz||inf, ||q||inf), evaluated on stored physical plan inputs normalized by declared bounds',
+          'limitations': ['Model matrices and state transforms are reconstructed from saved double-precision plan data. Previous actually applied control is taken from the preceding 5ms precision sample.',
+                         'Only plans marked successful contain all replay inputs; failed solver attempts are not reconstructed.',
+                         'This checks optimization stationarity, not model accuracy, nonlinear feasibility, balance or progress.'],
+          'results': results, 'input_sha256': {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs},
+          'script_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
+(OUTPUT/'report.json').write_text(json.dumps(report, indent=2)+'\n')
+for result in results:
+    print(json.dumps({k:v for k,v in result.items() if k != 'plans'}))

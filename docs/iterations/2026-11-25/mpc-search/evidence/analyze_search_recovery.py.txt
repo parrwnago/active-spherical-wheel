@@ -1,0 +1,98 @@
+"""I34 saved-run comparison. No integration, tuning, or new controller calls."""
+from pathlib import Path
+import json,hashlib,csv
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+ROOT=Path(__file__).resolve().parent
+REPO=ROOT.parents[1]
+OLD=ROOT.parent/'feedback_recovery_20261125'
+OUT=ROOT/'analysis';OUT.mkdir(exist_ok=True)
+CASES=[('native_5ms_reused',OLD/'runs/slope/native',True),
+       ('native_held_20ms',ROOT/'runs/slope/native',False),
+       ('mpc_original_20ms_reused',OLD/'runs/slope/mpc',True),
+       ('mpc_native_seed_20ms',ROOT/'runs/slope/mpc',False)]
+
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+
+def load(label,folder,reused):
+    with np.load(folder/'precision.npz') as z:p={k:z[k] for k in z.files}
+    with np.load(folder/'rollout.npz') as z:d={k:z[k] for k in z.files}
+    summary=json.loads((folder/'summary.json').read_text())
+    t=p['time_s'];q=p['exact_qpos'];v=p['exact_qvel'];goal=p['recovery_goal_xy'][0]
+    assert np.array_equal(p['recovery_goal_xy'],np.tile(goal,(len(t),1)))
+    error=1000*np.linalg.norm(q[:,:2]-goal,axis=1);speed=1000*np.linalg.norm(v[:,:2],axis=1)
+    tilt=np.degrees(np.arccos(np.clip(1-2*np.sum(q[:,4:6]**2,axis=1),-1,1)))
+    quat=d['reference_quat'].astype(float)
+    ref=np.degrees(np.arccos(np.clip(1-2*np.sum(quat[:,1:3]**2,axis=1)/np.sum(quat**2,axis=1),-1,1)))
+    relative=np.degrees(d['attitude_error_rad'].astype(float));active=t>=.4-1e-9;last=t>=t[-1]-1-1e-9
+    applied=active.copy();applied[-1]=False
+    completed=bool(t[-1]>=8.4-1e-8 and not summary.get('failure'))
+    bounded=bool(np.all(abs(p['exact_applied'])<=np.array([1.5,.6,.6,.3,.3])+1e-10))
+    gate=bool(completed and bounded and np.all(error[last]<=5) and np.all(speed[last]<=5) and np.all(relative[last]<=2))
+    row={'case':label,'reused_not_new_run':reused,'completed':completed,'failure':summary.get('failure'),
+         'final_goal_error_mm':float(error[-1]),'peak_goal_error_after_feedback_mm':float(error[active].max()),
+         'final_xy_speed_mm_s':float(speed[-1]),'final1s_goal_error_max_mm':float(error[last].max()),
+         'final1s_xy_speed_max_mm_s':float(speed[last].max()),'final1s_reference_lean_max_deg':float(relative[last].max()),
+         'final_absolute_platform_tilt_deg':float(tilt[-1]),'final_reference_tilt_deg':float(ref[-1]),
+         'settled_return_passed':gate,'hard_inputs_bounded':bounded,
+         'fallback_actuated_fraction':float(p['mpc_fallback'][applied].mean()),
+         'input_limit_occupancy_fraction':float(np.any(p['recovery_actual_input_at_limit'][applied],axis=1).mean()),
+         'mpc_update_wall_median_s':float(np.median(p['mpc_total_wall_s'][p['mpc_updated']])) if p['mpc_updated'].any() else None}
+    return dict(label=label,folder=folder,reused=reused,p=p,d=d,t=t,q=q,goal=goal,error=error,speed=speed,tilt=tilt,ref=ref,row=row)
+
+runs=[load(*c) for c in CASES]
+reference=runs[0];prefix={};switch={}
+keys=('time_s','exact_qpos','exact_qvel','exact_applied','exact_observer_wrench','exact_estimated_normal','recovery_native_requested','recovery_native_applied','recovery_goal_xy')
+for run in runs[1:]:
+    count=min(len(reference['t']),len(run['t']))
+    mask=reference['t'][:count]<.4-1e-9
+    prefix[run['label']]={k:bool(np.array_equal(reference['p'][k][:count][mask],run['p'][k][:count][mask],equal_nan=True)) for k in keys}
+    assert all(prefix[run['label']].values()),prefix[run['label']]
+    a=int(np.argmin(abs(reference['t']-.4)));b=int(np.argmin(abs(run['t']-.4)))
+    switch[run['label']]={k:bool(np.array_equal(reference['p'][k][a],run['p'][k][b],equal_nan=True)) for k in ('exact_qpos','exact_qvel','exact_observer_wrench','exact_estimated_normal')}
+    assert all(switch[run['label']].values()),switch[run['label']]
+plans=json.loads((runs[-1]['folder']/'plans.json').read_text());active_plans=plans[:-1]
+seed_fail=[{'time_s':p['time_s'],'failure':p['native_rollout_seed_failure']} for p in plans if 'native_rollout_seed_failure' in p]
+seed_costs=[]
+for p in plans:
+    trial=next((x for x in p['trials'] if x['seed']=='native_rollout'),None)
+    if trial is not None and 'nominal_cost' in trial:
+        assert p['nonlinear_cost']<=trial['nominal_cost']+1e-6*max(1,abs(trial['nominal_cost']))
+        seed_costs.append(p['nonlinear_cost']/max(1e-30,trial['nominal_cost']))
+p=runs[-1]['p'];mask=(p['time_s']>=.4-1e-9);mask[-1]=False
+sources={str(int(k)):int(np.sum(p['mpc_plan_source_code'][mask]==k)) for k in np.unique(p['mpc_plan_source_code'][mask])}
+plan_audit={'accepted_plans_including_terminal':sum(p.get('success',False) for p in plans),
+            'accepted_actuated_plans':sum(p.get('success',False) for p in active_plans),
+            'solved_qp_calls_including_terminal':sum(p.get('qp_solved_count',0) for p in plans),
+            'solved_qp_calls_actuated':sum(p.get('qp_solved_count',0) for p in active_plans),
+            'native_seed_failures':seed_fail,'plans_with_candidate_cost_comparison':len(seed_costs),
+            'selected_cost_to_native_candidate_ratio_max':max(seed_costs,default=None),
+            'actuated_source_counts':sources,
+            'source_codes':{'0':'true native fallback','1':'shifted predictive warm sequence','2':'initial shaft seed','3':'SQP-refined predictive sequence','4':'native-policy predicted coarse candidate, not actual native fallback'}}
+inputs=[{'path':str(path.relative_to(REPO)),'sha256':sha(path),'reused':run['reused']} for run in runs for path in (run['folder']/'rollout.npz',run['folder']/'precision.npz',run['folder']/'summary.json',run['folder']/'plans.json',run['folder']/'provenance.json')]
+report={'scope':'I34 two new Gazebo cases with explicitly reused I32 baselines; no new physics in analysis.',
+        'rows':[run['row'] for run in runs],'new_gazebo_executions':2,'reused_baselines':2,
+        'exact_shared_drift_prefix':prefix,'identical_feedback_switch_state':switch,'seeded_plan_audit':plan_audit,
+        'inputs':inputs,'source_sha256':sha(Path(__file__)),
+        'limits':'Held20msnativeusesunchanged5msdesignedgains; notretuned50HzLQR. MPCnativecandidateisprivatepredictedpolicy, notfuturemeasurement oractualnativefallback. No roughterrain/globalstability/real-timeclaim.'}
+(OUT/'report.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
+with (OUT/'metrics.csv').open('w',newline='') as f:
+    w=csv.DictWriter(f,fieldnames=list(report['rows'][0]));w.writeheader();w.writerows(report['rows'])
+fig,axes=plt.subplots(2,2,figsize=(14,8),constrained_layout=True)
+colors=['#2d845e','#7f7c82','#cc7333','#2c74b7'];names=['LQR5ms (reused)','LQR held20ms','Original MPC20ms (reused)','Native-seeded MPC20ms']
+for run,c,name in zip(runs,colors,names):
+    for ax,key in zip((axes[0,0],axes[0,1],axes[1,0]),('error','tilt','speed')):ax.plot(run['t'],run[key],color=c,label=name)
+    xy=(run['q'][:,:2]-run['goal'])*1000;axes[1,1].plot(xy[:,0],xy[:,1],color=c,label=name);axes[1,1].plot(*xy[-1],'s',color=c)
+axes[0,1].plot(runs[-1]['t'],runs[-1]['ref'],color='black',ls=':',label='Seeded MPC reference')
+for ax in (axes[0,0],axes[0,1],axes[1,0]):
+    ax.axvspan(0,.4,color='gray',alpha=.15);ax.axvline(.4,color='black',ls='--',lw=.8);ax.set_xlabel('Simulation time (s)');ax.grid(alpha=.2);ax.legend(fontsize=7)
+axes[0,0].set_ylabel('Distance from retained goal (mm)');axes[0,0].axhline(5,color='gray',ls=':')
+axes[0,1].set_ylabel('Platform normal from gravity vertical (deg)')
+axes[1,0].set_ylabel('XY speed (mm/s)');axes[1,0].axhline(5,color='gray',ls=':')
+axes[1,1].plot(0,0,'*',color='black',markersize=12,label='Retained goal');axes[1,1].add_patch(plt.Circle((0,0),5,fill=False,color='gray',ls=':'));axes[1,1].set(xlabel='World X from goal (mm)',ylabel='World Y from goal (mm)');axes[1,1].axis('equal');axes[1,1].grid(alpha=.2);axes[1,1].legend(fontsize=7)
+fig.suptitle('I34: practical initialization and control-cadence tests\nSame observer, weights, horizon and bounds; uniform10deg slope; feedback ON at0.4s',fontsize=13)
+fig.savefig(OUT/'comparison.png',dpi=180);fig.savefig(OUT/'comparison.pdf')
+print(json.dumps(report['rows'],indent=2));print(json.dumps(plan_audit,indent=2))

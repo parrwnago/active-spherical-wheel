@@ -1,0 +1,10 @@
+{
+  "stage": "Initial coarse smoke run: 351 configurations, 2808 directional samples",
+  "status": "Failed at boundary-continuity plot after computing geometry and writing CSV artifacts",
+  "exception": "AttributeError: Axes.set() got an unexpected keyword argument linthresh",
+  "failing_call": "axes[number, 2].set(ylabel=..., yscale=\"symlog\", linthresh=1.)",
+  "fix": "Set ylabel separately, then call set_yscale(\"symlog\", linthresh=1.).",
+  "initial_log_retention": "Initial smoke.log was overwritten by the successful rerun. This issue record is reconstructed from the observed tool output, not a preserved original failing log.",
+  "successful_rerun_log": "smoke.log",
+  "successful_rerun_summary": "smoke/summary.json"
+}

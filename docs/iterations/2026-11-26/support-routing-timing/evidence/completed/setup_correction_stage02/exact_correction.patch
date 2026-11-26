@@ -1,0 +1,22 @@
+--- scripts/audit-support-routing.py
++++ results/support_routing_timing_20261126/setup_correction_stage02/audit-support-routing-flat.py
+@@ -329,7 +329,7 @@
+         height = float(job.get('flat_height_m', 0.))
+         if height != 0.:
+             raise ValueError('Registered I46 flat control uses standard plane z0')
+-        terrain = Terrain(name='I46_flat_control', features=[dict(type='plane', offset=height, slope=[0., 0.])])
++        terrain = Terrain(name='I46_flat_control')
+         workspace = GazeboWorkspace(load_config(), output/'campaign/_workspaces'/case_id,
+             seed_cache=REPO_ROOT/'generated/offroad/flat/control_schedule.npz', ground='plane',
+             plant_options=dict(visual_bounds=bounds,
+@@ -407,7 +407,9 @@
+     jobs_path = output/'campaign/jobs.json'
+     jobs = json.loads(jobs_path.read_text())['cases'] if jobs_path.is_file() else protocol['cases']
+     job = next(j for j in jobs if j['case_id'] == case_id)
+-    stage = output/'campaign/runs'/case_id
++    if case_id != 'flat_compact_outback' or job['terrain'] != 'flat' or float(job.get('flat_height_m', 0.)) != 0.:
++        raise ValueError('Setup-correction collector permits only the registered flat z0 case')
++    stage = output/'campaign/runs'/(case_id+'_setup_corrected')
+     stage.mkdir(parents=True, exist_ok=False)
+     provenance = source_snapshot(stage, output, 'native_collection', case_id)
+     helper, probe = load_helper(), NativeFeedbackProbe()

@@ -1,0 +1,76 @@
+"""Compare two extended original LQR baselines with their frozen4s-recovery runs.
+
+Analysis only; source saved before new run completion/metric calculations.
+"""
+from pathlib import Path
+import hashlib
+import json
+import numpy as np
+
+ROOT=Path(__file__).resolve().parents[3]
+FAMILY=Path(__file__).resolve().parent
+OLD=ROOT/'results/mpc_balance_20261125/initial'
+KEYS=('time_s','exact_qpos','exact_qvel','exact_applied','exact_observer_wrench',
+      'mpc_native_requested','mpc_native_applied','mpc_original_goal_xy',
+      'mpc_actual_input_at_limit')
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def load(folder):
+    with np.load(folder/'precision.npz') as data:p={k:data[k] for k in data}
+    with np.load(folder/'rollout.npz') as data:r={k:data[k] for k in data}
+    return p,r,json.loads((folder/'summary.json').read_text())
+
+
+def scalar_metrics(p,r,summary):
+    time=p['time_s'];goal=p['mpc_original_goal_xy'][-1]
+    distance=np.linalg.norm(p['exact_qpos'][:,:2]-goal,axis=1)*1000
+    speed=np.linalg.norm(p['exact_qvel'][:,:2],axis=1)*1000
+    lean=np.degrees(r['attitude_error_rad'].astype(float))
+    tail=time>=time[-1]-1.-1e-9
+    snapshot=int(np.argmin(abs(time-5.4)))
+    return {'completed':summary['completed'],'failure':summary.get('failure'),
+        'completed_time_s':float(time[-1]),'original_goal_xy_m':goal.tolist(),
+        'goal_error_at_old_deadline_5p4s_mm':float(distance[snapshot]),
+        'goal_error_final_mm':float(distance[-1]),'goal_error_final1s_max_mm':float(distance[tail].max()),
+        'xy_speed_final_mm_s':float(speed[-1]),'xy_speed_final1s_max_mm_s':float(speed[tail].max()),
+        'reference_lean_error_final_deg':float(lean[-1]),
+        'reference_lean_error_final1s_max_deg':float(lean[tail].max()),
+        'absolute_platform_tilt_final_deg':float(np.degrees(r['tilt_rad'][-1])),
+        'goal_error_and_speed_and_reference_lean_final1s':bool(summary['completed'] and np.all(distance[tail]<=5.) and np.all(speed[tail]<=5.) and np.all(lean[tail]<=2.)),
+        'gate':'Final1s goal<=5mm, XYspeed<=5mm/s, referenceleanerror<=2deg; completion required.'}
+
+
+def main():
+    rows=[]
+    for direction in ('world_y','world_x'):
+        old_folder=OLD/'runs'/direction/'baseline'
+        new_folder=FAMILY/'runs'/direction/'baseline'
+        before,old_log,old_summary=load(old_folder)
+        after,new_log,new_summary=load(new_folder)
+        old_provenance=json.loads((old_folder/'provenance.json').read_text())
+        new_provenance=json.loads((new_folder/'provenance.json').read_text())
+        old_hashes,new_hashes=old_provenance['source_sha256'],new_provenance['source_sha256']
+        common_sources=set(old_hashes)&set(new_hashes)
+        changed_common_sources=[key for key in sorted(common_sources) if old_hashes[key]!=new_hashes[key]]
+        count=len(before['time_s'])
+        equality={k:bool(len(after[k])>=count and np.array_equal(before[k],after[k][:count],equal_nan=True)) for k in KEYS}
+        differences={k:float(np.nanmax(abs(before[k].astype(float)-after[k][:count].astype(float)))) if len(after[k])>=count else None for k in KEYS}
+        rows.append({'direction':direction,'reused_old_run':str(old_folder.relative_to(ROOT)),
+            'new_run':str(new_folder.relative_to(ROOT)),'old':scalar_metrics(before,old_log,old_summary),
+            'new':scalar_metrics(after,new_log,new_summary),'prefix_samples':count,
+            'prefix_through_old_duration_bit_identical':all(equality.values()),
+            'prefix_exact_equality_by_key':equality,'prefix_max_abs_difference_by_key':differences,
+            'changed_common_source_paths':changed_common_sources,
+            'shared_core_source_hashes_equal':all(old_hashes[key]==new_hashes[key] for key in common_sources if key.startswith(('src/','config/'))),
+            'inputs_sha256':{str(p.relative_to(ROOT)):sha(p) for folder in (old_folder,new_folder) for p in [folder/'precision.npz',folder/'rollout.npz',folder/'summary.json',folder/'provenance.json']}})
+    report={'scope':'Two NEW extended original LQR/FF baselines, not additional MPC or held-drift experiments. Original warm/path/goal/settings retained, recovery4s→8s.',
+        'source_sha256':sha(Path(__file__)),'new_gazebo_executions':2,'rows':rows}
+    (FAMILY/'analysis.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
+    print(json.dumps(report,indent=2,allow_nan=False))
+
+
+if __name__=='__main__':main()

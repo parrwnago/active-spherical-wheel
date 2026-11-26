@@ -1,0 +1,38 @@
+"""Finalize immutable evidence hashes after all redirected stdout has closed."""
+from pathlib import Path
+from datetime import datetime, timezone
+import hashlib
+import json
+import shutil
+
+root=Path(__file__).resolve().parent
+def digest(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def save(p,d):p.write_text(json.dumps(d,indent=2,allow_nan=False)+'\n')
+
+shutil.copy2(root/'worker_04/anchor_0.4/history_workspace/mirror/mass_properties.json',root/'model_mass_properties.json')
+checks={}
+for worker in ('worker_04','worker_2'):
+    p=root/worker
+    provenance=json.loads((p/'provenance.json').read_text())
+    checks[f'{worker}_source_hashes']=all(digest(p/s['snapshot'])==s['sha256'] for s in provenance['sources'])
+    manifest=json.loads((p/'artifact_manifest.json').read_text())
+    checks[f'{worker}_artifact_hashes']=all(digest(p/f['path'])==f['sha256'] for f in manifest['files'])
+report=json.loads((root/'report.json').read_text())
+checks['six_complete_frozen_cases']=len(report['rows'])==6
+checks['forty_two_solved_qps']=report['qp_solved_count']==report['qp_call_count']==42
+checks['no_failed_trials']=report['failed_trials']==0
+checks['no_longer_horizon_selected']=report['selected_longer_horizon_s'] is None
+checks['all_1ms_replay_endpoints_bit_exact']=all(r['contact_replay_stage_states_bit_exact'] for r in report['rows'])
+checks['all_shared_prefixes_bit_exact']=all(all(p[k] for k in ('target_first_20_bit_equal','native_fine_first_80_bit_equal','native_coarse_first_20_bit_equal','current_qpos_bit_equal','current_qvel_bit_equal')) for p in report['prefix_checks'])
+checks['current_script_exact_tested_snapshot']=digest(root.parents[2]/'scripts/diagnose-mpc-horizon.py')==digest(root/'worker_04/source_snapshot/scripts/diagnose-mpc-horizon.py')
+assert all(checks.values()),checks
+save(root/'verification.json',{
+    'checked_utc':datetime.now(timezone.utc).isoformat(),'checks':checks,
+    'manifest_note':'The merge-stage manifest was finalized after redirected postprocess stdout closed; its only stale entry was that growing log. No experiment, gate or plot was rerun or changed.',
+    'validation_scope':'Source/artifact hashes, prefix and replay records, arithmetic gate results; no new simulations or optimization calls.'})
+manifest=root/'artifact_manifest.json'
+entries=[{'path':str(p.relative_to(root)),'bytes':p.stat().st_size,'sha256':digest(p)}
+    for p in sorted(root.rglob('*')) if p.is_file() and p!=manifest and 'history_workspace' not in p.parts and '__pycache__' not in p.parts]
+save(manifest,{'files':entries,'finalized_utc':datetime.now(timezone.utc).isoformat()})
+assert all(digest(root/e['path'])==e['sha256'] for e in entries)
+print(f'All verification checks and {len(entries)} final artifact hashes passed.')

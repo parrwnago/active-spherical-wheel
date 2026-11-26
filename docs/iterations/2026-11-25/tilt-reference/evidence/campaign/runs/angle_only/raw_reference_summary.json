@@ -1,0 +1,263 @@
+{
+  "sensing": {
+    "observer_force_error_median_N": 0.019964611512130116,
+    "observer_force_error_p95_N": 0.5897221815987598,
+    "observer_moment_error_median_Nm": 0.0032357253038492323,
+    "observer_moment_error_p95_Nm": 0.04824456952676934
+  },
+  "terrain": "marsyard2021",
+  "controller": "hardware",
+  "parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "rolling_allocation": "least_squares",
+    "rolling_damping_m_s": 0.01,
+    "rolling_speed_limits": [
+      20.0,
+      20.0,
+      20.0,
+      0.3,
+      0.3
+    ],
+    "rolling_acceleration_limits": [
+      100.0,
+      100.0,
+      100.0,
+      3.0,
+      3.0
+    ],
+    "rolling_effort_m_s": 0.001,
+    "rolling_change_m_s": 0.001,
+    "rolling_adaptive_effort": false,
+    "rolling_weak_effort_m_s": 0.005,
+    "rolling_authority_m_s": 0.02,
+    "rolling_reference_catchup_gain_s_inv": 1.0,
+    "rolling_reference_catchup_speed_m_s": 0.06,
+    "rolling_reference_position_limit_m": 0.05,
+    "rolling_reference_balance_guard": false,
+    "rolling_reference_lean_scale_deg": 3.0,
+    "rolling_reference_rate_horizon_s": 0.1,
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0,
+    "tilt_reference": {
+      "time_constant_s": 0.08,
+      "max_rate_deg_s": 60.0,
+      "activation_time_s": 4.0,
+      "use_rate_reference": false
+    }
+  },
+  "engine_version": "Gazebo Harmonic (gz-sim 8.10.0)",
+  "contact_mode": "analytic_clipped_floor",
+  "ground_model": "Gazebo collision with the marsyard2021_dem (grid 0.0942 m); contacts solved by DART. The MuJoCo mirror only evaluates kinematics.",
+  "path": {
+    "kind": "figure8",
+    "duration_s": 40.0,
+    "radius_m": 0.45,
+    "clockwise": false,
+    "start_s": 1.0,
+    "origin": [
+      -1.6,
+      9.6
+    ],
+    "sampled_peak_speed_m_s": 0.18743412395355608,
+    "sampled_peak_acceleration_m_s2": 0.07802436281520816
+  },
+  "completed": true,
+  "failure": null,
+  "completed_duration_s": 44.00000000000406,
+  "requested_duration_s": 44.0,
+  "tracking": {
+    "rms_error_m": 0.05957750299235958,
+    "max_error_m": 0.1306439665987529,
+    "final_error_m": 0.06305849577122705,
+    "rms_error_while_moving_m": 0.06186323821065116
+  },
+  "attitude": {
+    "max_tilt_deg": 13.647424744197378,
+    "max_error_from_reference_deg": 13.135046875618842,
+    "rms_error_from_reference_deg": 2.6689805152027404,
+    "final_error_from_reference_deg": 1.0137181300974638,
+    "heading_change_deg": -62.85024659653587
+  },
+  "ground": {
+    "max_slope_under_wheel_deg": 14.139916687963044,
+    "height_range_m": [
+      1.1028737898372856,
+      1.1730749296206164
+    ],
+    "friction_range": [
+      0.7,
+      0.7
+    ]
+  },
+  "contact": {
+    "normal_load_fraction_min": 0.0,
+    "normal_load_fraction_max": 5.831237527842113,
+    "normal_load_fraction_std": 0.13714818308922905,
+    "unloaded_time_s": 0.155,
+    "utilization_mean": 0.18881190824414487,
+    "utilization_p95": 0.30990590318182604,
+    "utilization_max": 4.524853379666109,
+    "time_above_90pct_cone_s": 0.06,
+    "max_slip_speed_m_s": 0.2163855372070937,
+    "slip_distance_m": 0.006474008966981213,
+    "sliding_time_s": 0.045,
+    "friction_loss_J": 0.22130254376759312,
+    "estimated_friction_min": 0.08167562431156027,
+    "normal_estimate_error_rms_deg": 3.1807936651113424,
+    "normal_estimate_error_max_deg": 16.272692970271827,
+    "normal_estimate_error_median_deg": 0.008383632610440898,
+    "normal_estimate_error_p95_deg": 8.796308147683547,
+    "support_time_share": {
+      "shell_A": 0.6115165336374002,
+      "shell_B": 0.2777651083238312,
+      "belt_A": 0.043329532497149374,
+      "belt_B": 0.06738882554161915
+    },
+    "support_handovers": 34,
+    "fork_ground_contact": false
+  },
+  "actuation": {
+    "max_input_fraction": [
+      0.346239668986377,
+      1.0,
+      1.0,
+      1.0,
+      0.9694895777626708
+    ],
+    "saturated_time_fraction": 0.0009090909090909091,
+    "rms_torque_Nm": [
+      0.21661055184829647,
+      0.12095951773657751,
+      0.06360386948862698
+    ],
+    "max_joint_speed_rad_s": [
+      2.8155656576233947,
+      20.097244556633196,
+      16.436572211147357
+    ],
+    "joint_work_J": 9.433607368240736,
+    "unloaded_fade_time_s": 0.0
+  },
+  "settled_at_end": false,
+  "engine": {
+    "simulator": "Gazebo Harmonic (gz-sim 8.10.0)",
+    "physics": "DART 6.19.5 via gz-physics 7.5.0",
+    "collision_detector": "ode",
+    "step_s": 0.001,
+    "ground": "marsyard2021_dem",
+    "world_info": {
+      "ground": "marsyard2021",
+      "collision_detector": "ode",
+      "dem_mesh": "/home/parrwnago/active-spherical-wheel/results/tilt_reference_20261125/campaign/_workspaces/runs/angle_only/worker_298005/gazebo/world/marsyard2021_dem.obj",
+      "source": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain",
+      "cell_m": 0.09418837675350701,
+      "features": [
+        "lava",
+        "rocks_big",
+        "rocks_medium"
+      ]
+    }
+  },
+  "wall_time_s": 95.02150750160217,
+  "bridge_counters": {
+    "admitted": 51139,
+    "rejected": 150354,
+    "unmatched": 0
+  },
+  "evaluation_reference": "native_raw_tilt_formula_from_this_arm_current_observer",
+  "evaluation_scope": "Pure post-run reduction of the same actual Gazebo state/input log; no new simulation or commanded reference substitution.",
+  "mars": {
+    "gates": {
+      "completed": true,
+      "rms": false,
+      "p95": false,
+      "max": true,
+      "final": false,
+      "attitude": false,
+      "saturation": true,
+      "settled": false,
+      "closure": false
+    },
+    "passed": false,
+    "p95_moving_error_m": 0.10523694317872206,
+    "loop_closure_m": 0.05749938309641822,
+    "distance_travelled_m": 3.5472230444346606,
+    "reference_length_m": 2.7437439760646853,
+    "elevation_change_m": -0.001713240651493475,
+    "elevation_range_m": [
+      1.2226291255853061,
+      1.2920688739951758
+    ],
+    "max_heading_excursion_deg": 97.41910632918875,
+    "time_on_rock_s": 0.0,
+    "max_contact_height_above_dem_m": 4.466379095457995e-07
+  },
+  "tilt_reference_campaign": {
+    "iteration": "I-43",
+    "arm": "angle_only",
+    "case": {
+      "arm": "angle_only",
+      "case_id": "mars_figure8_p090",
+      "terrain": "marsyard2021",
+      "phase_rad": 0.9,
+      "path": {
+        "kind": "mars_route",
+        "route": "plain_figure8"
+      },
+      "duration_s": 44.0,
+      "yaw_deg": 45.0,
+      "reanchor_at_motion_start": false,
+      "uniform_anchor_start_s": 0.4
+    },
+    "actual_path": {
+      "kind": "figure8",
+      "duration_s": 40.0,
+      "radius_m": 0.45,
+      "clockwise": false,
+      "start_s": 1.0,
+      "origin": [
+        -1.6,
+        9.6
+      ],
+      "sampled_peak_speed_m_s": 0.18743412395355608,
+      "sampled_peak_acceleration_m_s2": 0.07802436281520816
+    },
+    "guarded_controller_calls": 8801,
+    "truth_logging": "Evaluator after guarded command only; no true contact or terrain enters the controller.",
+    "summary_reference": "native raw tilt formula, evaluator only",
+    "main_screen_reference": "raw_reference_summary.json",
+    "raw_reference_meaning": "Unshaped native tilt formula from this arm current observer; not a common future target replay."
+  }
+}

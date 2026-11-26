@@ -1,0 +1,89 @@
+{
+  "iteration": "I-41",
+  "status": "Declared before event reductions, dense forecasts or new flat comparison. User steered interrupted general fit investigation toward two video hypotheses; that earlier preflight changed no code and ran no experiments.",
+  "declared_utc": "2026-11-26T03:15:05.620627+00:00",
+  "presentation_date": "2026-11-25 America/New_York",
+  "question": [
+    "Does the first visible figure8 departure coincide with a small slope and a forecast/model error?",
+    "Does observed overshoot follow changes of reference direction, and does it also occur without terrain relief?"
+  ],
+  "baseline": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090",
+  "baseline_input_sha256": {
+    "precision.npz": "f6982688dcc4fed3ee89c4341389fcecaa8a12ed8687ec6809f3f4c2cd9b31c6",
+    "rollout.npz": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+    "summary.json": "0fcd9de44e03e54ff7f4cec8361cc9f637b1c18be330696bb655ae4599d60899",
+    "provenance.json": "4ca53165a2d2e3f712dfb97d69ba716590bbd6c343397ac1b18de3db5053d371",
+    "terrain.json": "b11e232f3f491c276f98ddbf639efef735accbb8806084f7260398155fad6a8c",
+    "forecasts.json": "f173f1850ae8ecafce027e39df5023732d62374bde4640061108aa2ec0c5323c",
+    "forecast_provenance.json": "95274a525f1231b8db592790c107044ba4eabe5f4317cf01de0b8409bb21eca1",
+    "anchor_selection.json": "849596b40e9d100ed947c401a046243ea8c18b00063e65988ae6a213fc411dd7"
+  },
+  "source_sha256": {
+    "src/spherical_wheel/offroad_control.py": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3",
+    "src/spherical_wheel/contact_prediction.py": "cb9deeee1e254ea2b1eb9b88511a68eb07b1b55233fc6ac3de808b849e978f3f",
+    "src/spherical_wheel/predictive_model.py": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473",
+    "src/spherical_wheel/predictive_seed.py": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca",
+    "src/spherical_wheel/synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+    "scripts/run-lqr-contact-forecast.py": "4e4d590037801f178bb05e779ddb49fb093f5cae830212b9f90d57ddce1790cf",
+    "src/spherical_wheel/mobility.py": "92c08f5fe4001065128f8b9fe7b6821c8a63d9d4b7622da961778d1fd3adbab8",
+    "src/spherical_wheel/gazebo/mars.py": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63",
+    "config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e"
+  },
+  "causal_boundary": "The new200msdynamicforecasts were shadow diagnostics and did not actuate I40. Existing120mskinematicContactSynchronizer DOESactuate; inspectitsdelta/weights separately. A coincidentmodel error canreveal mismatch, notcauseanunusedforecast todrivethetrace.",
+  "deviation_definition": {
+    "primary": "First branch-constrained local reference-path distance>20mm sustained>=100ms afterpathstart1s. Referencepolyline5ms spacing, orthogonal projection onto segments within+/-2s ofclippedreference time; flag boundary hits/branch ambiguity.",
+    "sensitivity_thresholds_mm": [
+      10,
+      20,
+      30
+    ],
+    "supplementary": "Time-aligned signedFrenetnormal andalongtrack error; localclosest reference-time lag. A time-lagged robotonpath isnotautomaticallycross-track departure.",
+    "normal_undefined_when_reference_speed_below_mm_s": 1
+  },
+  "turn_definition": {
+    "events": "Referencevx/vy signreversals while fullreferencevectorspeed>=5mm/s; thesearecomponentreversals,notstops. Curvaturepeakssecondary.",
+    "window_s": [
+      -1,
+      2
+    ],
+    "geometric_overshoot": "Incomingdirection sign*(actualcomponentposition-referencecomponentextremum), positivewhenbeyondextremum; distinguishfromtimealignedmovingreferenceerror.",
+    "actual_reversal": "First actualvelocitycomponent switch tonewrefsign sustained>=100ms withinwindow; reportmissing/multiple crossings/censoring.",
+    "reported": "Reversal lag, alongtracklag, signednormal/localpath errors,terrain andcommand trends."
+  },
+  "terrain_evaluation": "Evaluate actualMarsDEMheight/normal/slope alongactualbodyXY,referenceXY,andactualequivalentcontactXY. Loggedground_normal isDEM tangent nearwheelcenter, notDARTforceweightedcontactnormal. DEMnormaldoesnotincludeallrock/lavasurfaces; labelaccordingly. Counterfactualterrain-informedlean iscontrollerformulaevaluation, notphysicalminimum/balanceproof. Terraintruthonlyevaluation/controlledworldconstruction,neverforecast/controllerinput.",
+  "control_evaluation": "SeparateLQR/feedforward/support/synchronizer/heading/fade/clipping,actuationbounds,estimatedvsactualpatch/load/point,normal/gainchanges,referencev/a. Deriveestimated-load-averagedhorizontalcontactJacobianauthority fromcontactfreekinematics20Hzwholetraceand5mseventwindows withdeclaredrate normalization[5,5,5,.3,.3]; thisisdiagnosticassumptionnotmeasuredmotorlimits.",
+  "dense_forecasts": {
+    "selection": "Atprimary20mmonset offsets[-.2,-.1,0,.1,.2] andfirst6referencecomponentreversals sameoffsets; snapnearest5ms, unique, full.2future required. Atmost35Marsanchors, no qualityselection.",
+    "model_A": "Existingprivateestimatedplane/friction initializedfromcurrentobserver, native5msclosedloopclone,currentcommandprovided, nofuturetruthinput.",
+    "model_B": "Sameprivateinitialplane/model butreplayactualsavedfutureapplied5mscommands\u2014explicit OFFLINE HINDSIGHT MODEL-REPLAY DIAGNOSTIC ONLY,neverdeployableprediction/seed/command.",
+    "comparison": "50/100/200ms XY/orientation/velocity,patch/load/pointerrors,calibrationquality/contactforceoffsets. CompareA/Btoactualtohelpseparatelocalmodel/contacterrorfromsensitivepredictedfeedback divergence; neitherisnewliveactuation."
+  },
+  "flat_counterfactual": {
+    "new_Gazebo_case_count": 1,
+    "same": "SameI40figure8programorigin[-1.6,9.6],radius.45,40smotion,start1,total44,phase.9,yaw45,5msnativehardwareLSgains/FF/sync/observer/config/bounds. SamegridDOMAIN/CELL/verticeswherefeasibleverifiedbeforelaunch.",
+    "change": "ReplaceallMarsheightrelief/rocks/lava withflatnominalfriction terrain atsavedinitialDEMheight; existingterrainappropriatebalancedinitialization.",
+    "flat_height_m": 1.12813138961792,
+    "baseline_world_info": {
+      "ground": "marsyard2021",
+      "collision_detector": "ode",
+      "dem_mesh": "/home/parrwnago/active-spherical-wheel/results/lqr_contact_forecast_20261125/campaign/_workspaces/mars_figure8_p090/worker_260079/gazebo/world/marsyard2021_dem.obj",
+      "source": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain",
+      "cell_m": 0.09418837675350701,
+      "features": [
+        "lava",
+        "rocks_big",
+        "rocks_medium"
+      ]
+    },
+    "comparison": "Wholeterraincounterfactual, notisolatedsmallslopecausality. Terrainandappropriateinitialpose differ; retainstartupdifferences andcompareonset/turnwindowsbydefinitions, no retuning.",
+    "no_other_new_runs": "No newMarsrun orsync-offablation unlessfollowupevidencejustifiesseparatelydeclaredadditionalstage; no automatictuning."
+  },
+  "decision_rule": "For eachuserhypothesis, reporttimestampedevidence,contradictionsandremaininguncertainty. No forcedcausalconclusion fromcorrelatedsingletrace; flatcase helpsassesswhetherreliefisnecessaryfortheobservedturnbehavior. Do notoptimizeeventdefinitionsafterseeingoutcomes; sensitivityexplicit. No controller/predictor changes inthisaudit.",
+  "old_pack_hashes": {
+    "results/feedback_recovery_20261125/presentation-pack.zip": "ff161337e3dc5c4f5650d6f403d45c4eba62f3ba659e71ebaa875a140c3f8934",
+    "results/mpc_search_20261125/presentation-pack.zip": "ffa21bcfc82a3ecd21d2d5f7488e33abd272173bbc09efa0ab9650374d542d0b",
+    "results/mpc_horizon_20261125/presentation-pack.zip": "01d2f8f6691a8a7afee25d401cd8955c6a396ba38d7edd5c2bee33ef434d3366",
+    "results/mpc_extended_return_20261125/presentation-pack.zip": "1a07aa2b68a0d87766c0e792d5fb326a2104abefd05b47ac575e543b748b610e",
+    "results/lqr_contact_forecast_20261125/presentation-pack.zip": "c10e938518a6fcba64e5af295446650fbd74dbccbc20ca637fea618b439d5f64"
+  }
+}

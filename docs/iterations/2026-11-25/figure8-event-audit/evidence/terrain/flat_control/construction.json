@@ -1,0 +1,59 @@
+{
+  "iteration": "I-41",
+  "declared_before_run_utc": "2026-11-26T03:16:45.226136+00:00",
+  "scope": "One new Gazebo/DART flat-environment case; old Mars trace reused. No controller or sealed I40 source edit.",
+  "job": {
+    "case_id": "flat_figure8",
+    "terrain": "flat_counterfactual",
+    "phase_rad": 0.9,
+    "path": {
+      "kind": "mars_route",
+      "route": "plain_figure8"
+    },
+    "duration_s": 44.0,
+    "yaw_deg": 45.0,
+    "reanchor_at_motion_start": false,
+    "uniform_anchor_start_s": 0.4
+  },
+  "height_m": 1.12813138961792,
+  "height_source": "Saved Mars initial ground_height_m float32; construction only, never passed as a contact observation.",
+  "physical_mesh_bounds": [
+    -23.5,
+    23.5,
+    -23.5,
+    23.5
+  ],
+  "physical_mesh_vertices": [
+    500,
+    500
+  ],
+  "physical_mesh_spacing_m": 0.09418837675350701,
+  "physical_mesh_method": "Same write_dem_mesh vertex order/diagonal/6decimal OBJ formatting on a constant height array.",
+  "visual_bounds": [
+    -3.549975754889774,
+    0.34997575488977395,
+    7.8750348176310005,
+    11.324965182368999
+  ],
+  "visual_is_separate_from_physical_domain": true,
+  "friction": [
+    0.7,
+    0.005,
+    0.0001
+  ],
+  "initialization": "Same standard terrain-appropriate balanced initialization, nominal phase and yaw. Initial pose/observer differ because terrain differs.",
+  "counterfactual_limit": "Removes relief and all rocks/lava globally, not an isolated small-slope manipulation or state-matched causal experiment.",
+  "source_sha256": {
+    "results/figure8_event_audit_20261125/terrain/flat_control/run_flat_figure8.py": "80b377e4dfac579cfa248a77cddcdbcb4e801659b722d7c712d5fca9b5a001e3",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/source_snapshot/scripts/run-lqr-contact-forecast.py": "4e4d590037801f178bb05e779ddb49fb093f5cae830212b9f90d57ddce1790cf",
+    "results/figure8_event_audit_20261125/protocol.json": "b9dd9d93229636822ec1124af80c315fab99a6c36fd89dad4f9eae8690a81df0",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/source_snapshot/config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/rollout.npz": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/precision.npz": "f6982688dcc4fed3ee89c4341389fcecaa8a12ed8687ec6809f3f4c2cd9b31c6",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/provenance.json": "4ca53165a2d2e3f712dfb97d69ba716590bbd6c343397ac1b18de3db5053d371",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/terrain.json": "b11e232f3f491c276f98ddbf639efef735accbb8806084f7260398155fad6a8c",
+    "src/spherical_wheel/gazebo/worlds.py": "ad8b8133fb57b2bcab729ce6eb215f931ac04128b925c496710d8176ef0b39d4",
+    "src/spherical_wheel/gazebo/plant.py": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d",
+    "src/spherical_wheel/gazebo/mars.py": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "status": "passed_with_minor_readability_note",
+  "passed": true,
+  "stage": "stage05",
+  "reviewed_pages": [
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+  ],
+  "pdf_sha256": "4be727dd3c29942fc10015597cb51c7f63d68b5981096a9f8a395280ae7bfcdf",
+  "guide_sha256": "fb158654d266e867636fa5cd2ee7a4e2fa51536d3957b8e837709ea6178d8c08",
+  "created_utc": "2026-11-26T08:24:04.583501+00:00",
+  "delta_checks": {
+    "material_rate_comparison_corrected": true,
+    "closed_loop_angle_history_qualification": true,
+    "worked_normalization_explicit": true,
+    "worked_target_explicit": true,
+    "float32_reconstruction_explicit": true,
+    "physical_singular_units": true,
+    "reversal_dwell_scope": true,
+    "event_cases_distinct": true
+  },
+  "visual_review": {
+    "page_count": 33,
+    "no_clipping_or_overlap": true,
+    "equations_rendered": true,
+    "matrix_signs_and_units_correct": true,
+    "figures_readability": "Pages20/23 figure labels are small at100% page view; body prose and dedicated numerical examples remain clear, and full-size plot artifacts preserve detail. This is a zoom/readability limitation, not a scientific correctness issue.",
+    "notes": [
+      "Page20 shaft/loaded-shell arrows and one-contact qualification intact.",
+      "Page21 numerical matrices and feasible/infeasible requests readable.",
+      "Page22 table, S/vref, float32 caveat and distinction from6.825s are clear.",
+      "Page23 metrics/dwell qualification correct; first-turn prose readable.",
+      "Pages24\u201326 tradeoff table/figure/causal qualifications and proposed-only next steps readable."
+    ]
+  },
+  "nonblocking_precision_note": "The page22 actual logged shell reference is written\u22121760.52rad/s; nearest two-decimal rounding of saved\u22121760.525024 is\u22121760.53. Difference<.01rad/s is immaterial to the argument; unrounded source remains preserved.",
+  "earlier_review_preserved": true,
+  "root_content_edited": false,
+  "new_simulations": 0,
+  "setup_note": "Default .venv lacked fitz; temporary PDF rasterization used the already-installed build/presentation-pdf-packages pymupdf. No dependency change.",
+  "markdown_sha256": "d72ee2bb96e7a57305141235ccee158cda5f254c2c1814dc61003532a8aba094"
+}

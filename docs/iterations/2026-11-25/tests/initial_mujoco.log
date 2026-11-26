@@ -1,0 +1,29 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-9.1.1, pluggy-1.7.0 -- /home/parrwnago/active-spherical-wheel/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/parrwnago/active-spherical-wheel
+configfile: pyproject.toml
+collecting ... collected 19 items
+
+tests/test_hardware_mode.py::test_locator_finds_the_solved_surface_and_point_from_the_solved_force_and_moment[hills] PASSED [  5%]
+tests/test_hardware_mode.py::test_locator_finds_the_solved_surface_and_point_from_the_solved_force_and_moment[washboard] PASSED [ 10%]
+tests/test_hardware_mode.py::test_rims_share_the_load_by_the_lever_rule PASSED [ 15%]
+tests/test_hardware_mode.py::test_mirror_holds_only_measurements PASSED  [ 21%]
+tests/test_hardware_mode.py::test_hardware_mode_never_reads_a_contact PASSED [ 26%]
+tests/test_hardware_mode.py::test_hardware_mode_climbs_a_ramp_like_force_sensing PASSED [ 31%]
+tests/test_hardware_mode.py::test_hardware_is_its_own_controller_mode PASSED [ 36%]
+tests/test_momentum_observer.py::test_model_terms_are_the_ones_mujoco_integrates PASSED [ 42%]
+tests/test_momentum_observer.py::test_free_joint_rows_are_the_force_and_its_moment_about_the_wheel_centre PASSED [ 47%]
+tests/test_momentum_observer.py::test_a_push_in_the_air_is_recovered_and_drive_torques_cancel PASSED [ 52%]
+tests/test_momentum_observer.py::test_observer_reproduces_the_contact_impulse_the_simulator_applied[hills] PASSED [ 57%]
+tests/test_momentum_observer.py::test_observer_reproduces_the_contact_impulse_the_simulator_applied[bumps] PASSED [ 63%]
+tests/test_momentum_observer.py::test_observer_reproduces_the_contact_impulse_the_simulator_applied[washboard] PASSED [ 68%]
+tests/test_momentum_observer.py::test_static_start_finds_the_slope_without_ground_truth[8.0-0.0] PASSED [ 73%]
+tests/test_momentum_observer.py::test_static_start_finds_the_slope_without_ground_truth[0.0-6.0] PASSED [ 78%]
+tests/test_momentum_observer.py::test_static_start_finds_the_slope_without_ground_truth[10.0-5.0] PASSED [ 84%]
+tests/test_momentum_observer.py::test_observer_mode_never_uses_the_solved_force_or_moment PASSED [ 89%]
+tests/test_momentum_observer.py::test_observer_mode_climbs_a_ramp_like_force_sensing PASSED [ 94%]
+tests/test_momentum_observer.py::test_momentum_observer_is_its_own_controller_mode PASSED [100%]
+
+- generated xml file: /home/parrwnago/active-spherical-wheel/results/observer_validation_20261124/tests/junit.xml -
+======================== 19 passed in 122.93s (0:02:02) ========================

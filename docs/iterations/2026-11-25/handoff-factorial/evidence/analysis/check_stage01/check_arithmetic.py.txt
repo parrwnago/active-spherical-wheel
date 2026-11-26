@@ -1,0 +1,28 @@
+"""Preserve I42 helper source before pure validation; no rollouts are read."""
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import sys
+
+HERE=Path(__file__).resolve().parent
+sys.path.insert(0,str(HERE/'dependencies'))
+from event_metrics import arithmetic_checks
+from factorial_metrics import pure_checks
+
+
+def main():
+    out=HERE/'check_stage01'
+    out.mkdir(exist_ok=False)
+    sources={}
+    for path in (Path(__file__),HERE/'factorial_metrics.py',HERE/'dependencies/event_metrics.py'):
+        shutil.copyfile(path,out/path.name)
+        sources[path.name]=hashlib.sha256(path.read_bytes()).hexdigest()
+    (out/'source_manifest.json').write_text(json.dumps(sources,indent=2)+'\n')
+    result={'I42_factorial_arithmetic':pure_checks(),'copied_corrected_I41_geometry_checks':arithmetic_checks(),
+            'counts_limit':'The copied I41 helper assertions overlap earlier verification; this is not a repository suite or additive test count.'}
+    (out/'report.json').write_text(json.dumps(result,indent=2)+'\n')
+    print(json.dumps(result,indent=2))
+
+
+if __name__=='__main__':main()

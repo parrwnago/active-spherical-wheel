@@ -1,0 +1,214 @@
+"""Independent I43 raw QA: pure saved-input reference replay, no controller/physics."""
+from pathlib import Path
+from datetime import datetime,timezone
+import argparse
+import hashlib
+import json
+import shutil
+
+import numpy as np
+import yaml
+from scipy.spatial.transform import Rotation
+from spherical_wheel.tilt_reference import TiltReference,TiltReferenceSettings
+
+HERE=Path(__file__).resolve().parent
+FAMILY=HERE.parent
+ROOT=FAMILY.parents[1]
+ARMS=('baseline','angle_only','consistent_rate')
+HISTORICAL_FIELDS=('time_s','exact_qpos','exact_qvel','exact_applied','exact_previous_applied',
+    'exact_native_requested','exact_observer_wrench','exact_estimated_normal','exact_nominal_joints_before',
+    'exact_reference_xy','exact_reference_velocity_m_s','exact_reference_acceleration_m_s2','truth_time_s',
+    'truth_patch_loads_N','truth_patch_points_m','truth_patch_contact_counts','truth_equivalent_point_m')
+
+
+def read(path):return json.loads(path.read_text())
+def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def safe(value):
+    if isinstance(value,dict):return {str(k):safe(v) for k,v in value.items()}
+    if isinstance(value,(tuple,list)):return [safe(v) for v in value]
+    if isinstance(value,np.ndarray):return safe(value.tolist())
+    if isinstance(value,np.generic):return safe(value.item())
+    return value
+
+
+def digest(value):
+    return hashlib.sha256(json.dumps(safe(value),sort_keys=True,allow_nan=False).encode()).hexdigest()
+
+
+def load(path):
+    with np.load(path)as z:return {k:z[k]for k in z.files}
+
+
+def matrices(quats):
+    return Rotation.from_quat(np.asarray(quats)[:,[1,2,3,0]]).as_matrix()
+
+
+def jleft(phi):
+    """Independent Rodrigues differential, scalar columns explicit."""
+    angle=float(np.linalg.norm(phi));x,y,z=phi
+    skew=np.array([[0.,-z,y],[z,0.,-x],[-y,x,0.]])
+    if angle<1e-4:
+        a=.5-angle**2/24.+angle**4/720.;b=1./6.-angle**2/120.+angle**4/5040.
+    else:
+        a=(1.-np.cos(angle))/angle**2;b=(angle-np.sin(angle))/angle**3
+    return np.eye(3)+a*skew+b*skew@skew
+
+
+def verify_state(exact,index,state,clock,prefix):
+    assert bool(exact[prefix+'_initialized'][index])==(state is not None)
+    if state is None:
+        assert np.isnan(exact[prefix+'_time_s'][index])
+        for name in ('theta_rad','z_rad','held_raw_theta_rad'):assert np.isnan(exact[prefix+'_'+name][index]).all()
+    else:
+        assert exact[prefix+'_time_s'][index]==state['time_s']
+        for name in ('theta_rad','z_rad','held_raw_theta_rad'):
+            np.testing.assert_array_equal(exact[prefix+'_'+name][index],state[name])
+    label='before' if prefix.endswith('before') else 'after'
+    assert exact[f'tilt_state_fingerprint_{label}'][index]==digest(state)
+    saved_clock=exact[f'tilt_clock_{label}_s'][index]
+    assert np.isnan(saved_clock) if clock is None else saved_clock==clock
+    native=str(exact[f'native_state_fingerprint_{label}'][index])
+    assert exact[f'comparable_state_fingerprint_{label}'][index]==digest({'native':native,'tilt':state})
+    assert exact[f'full_state_fingerprint_{label}'][index]==digest({'native':native,'tilt':state,'tilt_last_seen_time':clock})
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--stage',default='stage01');args=parser.parse_args()
+    output=HERE/args.stage;output.mkdir(exist_ok=False)
+    protocol=read(FAMILY/'protocol.json')
+    source_paths=[Path(__file__),ROOT/'src/spherical_wheel/tilt_reference.py',ROOT/'src/spherical_wheel/offroad_control.py',
+        FAMILY/'protocol.json',ROOT/'config/model.yaml',ROOT/'generated/offroad/flat/mass_properties.json']
+    records=[]
+    for source in source_paths:
+        destination=output/'source_snapshot'/source.relative_to(ROOT);destination.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,destination)
+        records.append({'origin':str(source.relative_to(ROOT)),'snapshot':str(destination.relative_to(output)),'sha256':sha(source)})
+    input_paths=[]
+    for arm in ARMS:
+        input_paths.extend(FAMILY/'campaign/runs'/arm/name for name in ('precision.npz','rollout.npz','provenance.json','summary.json','raw_reference_summary.json','artifact_manifest.json'))
+    input_paths.append(ROOT/protocol['baseline']/'precision.npz')
+    captured={'scope':'Saved data and pure generator integration only. No controller, robot/dynamics model or Gazebo execution.',
+        'captured_before_calculation_utc':datetime.now(timezone.utc).isoformat(),'sources':records,
+        'input_sha256':{str(p.relative_to(ROOT)):sha(p)for p in input_paths}}
+    (output/'provenance.json').write_text(json.dumps(captured,indent=2)+'\n')
+    config=yaml.safe_load((ROOT/'config/model.yaml').read_text());mass=read(ROOT/'generated/offroad/flat/mass_properties.json')
+    radius=config['geometry']['sphere_radius_m'];gravity=abs(config['simulation']['gravity_m_s2'][2]);limit=np.radians(28.)
+    all_arrays={};arm_reports={};verified_files=0
+    for arm in ARMS:
+        directory=FAMILY/'campaign/runs'/arm;exact=load(directory/'precision.npz');log=load(directory/'rollout.npz');p=read(directory/'provenance.json')
+        for entry in read(directory/'artifact_manifest.json')['files']:
+            source=directory/entry['path'];assert sha(source)==entry['sha256']and source.stat().st_size==entry['bytes'];verified_files+=1
+        for entry in p['sources']:
+            assert sha(directory/entry['snapshot'])==entry['sha256']
+            assert sha(ROOT/entry['origin'])==entry['sha256']
+        t=exact['time_s'];np.testing.assert_allclose(np.diff(t),.005,atol=1e-12,rtol=0)
+        bounds=np.asarray(p['input_bounds']);assert np.isfinite(exact['exact_qpos']).all() and np.isfinite(exact['exact_applied']).all()
+        assert np.all(abs(exact['exact_applied'])<=bounds+1e-12)
+        for source,target in [('exact_qpos','qpos'),('exact_qvel','qvel'),('exact_applied','input'),('exact_native_requested','command')]:
+            np.testing.assert_array_equal(exact[source].astype(log[target].dtype),log[target])
+        lean_factor=p['model_mass_kg']*radius/(mass['fork']['mass_kg']*mass['fork']['com_m'][2])
+        lean=exact['exact_reference_acceleration_m_s2']/gravity-lean_factor*exact['exact_estimated_normal'][:,:2]
+        norms=np.linalg.norm(lean,axis=1);cap=np.sin(limit);large=norms>cap
+        lean[large]*=(cap/norms[large])[:,None];norms=np.linalg.norm(lean,axis=1)
+        raw=np.zeros((len(t),2));loaded=norms>=1e-12
+        raw[loaded]=np.arcsin(norms[loaded,None])*np.c_[-lean[loaded,1],lean[loaded,0]]/norms[loaded,None]
+        np.testing.assert_allclose(raw,exact['tilt_raw_theta_rad'],atol=2e-14,rtol=0)
+        raw_matrix=matrices(exact['tilt_raw_reference_quat']);actual_matrix=matrices(exact['exact_qpos'][:,3:7]);shaped_matrix=matrices(exact['tilt_shaped_reference_quat'])
+        raw_rotation=Rotation.from_rotvec(np.c_[raw,np.zeros(len(t))]).as_matrix()
+        equilibrium=raw_matrix[0]@raw_rotation[0].T
+        np.testing.assert_allclose(np.einsum('ij,njk->nik',equilibrium,raw_rotation),raw_matrix,atol=3e-14,rtol=0)
+        for matrix,name in ((raw_matrix,'raw'),(shaped_matrix,'shaped')):
+            dot=np.sum(actual_matrix[:,:,2]*matrix[:,:,2],axis=1)
+            error=np.arccos(np.clip(dot,-1.,1.))
+            np.testing.assert_allclose(error,exact[f'exact_{name}_reference_up_error_rad'],atol=5e-8,rtol=0)
+        np.testing.assert_allclose(actual_matrix[:,:,2],exact['exact_actual_up'],atol=2e-15,rtol=0)
+        np.testing.assert_allclose(np.arccos(np.clip(actual_matrix[:,2,2],-1.,1.)),exact['exact_absolute_tilt_rad'],atol=5e-8,rtol=0)
+        np.testing.assert_array_equal(exact['tilt_shaped_reference_quat'].astype(log['reference_quat'].dtype),log['reference_quat'])
+        enabled=arm!='baseline';generator=None if not enabled else TiltReference(TiltReferenceSettings(**protocol['execution'][f'settings_{arm}']),limit)
+        replayed=0;max_frame_error=0.
+        for i,instant in enumerate(t):
+            before=None if generator is None else generator.state_dict();clock=None if generator is None else generator._last_seen_time
+            before_digest=digest(before)
+            verify_state(exact,i,before,clock,'tilt_state_before')
+            if enabled:
+                row=generator.update(exact['tilt_raw_theta_rad'][i],float(instant));replayed+=1
+                for key in ('theta_rad','z_rad','held_raw_theta_rad','theta_dot_rad_s','theta_ddot_rad_s2','angular_velocity_equilibrium_rad_s'):
+                    np.testing.assert_array_equal(exact['tilt_'+key][i],row[key])
+                for key in ('active','initialized_now','advanced','substeps'):
+                    assert exact['tilt_'+key][i]==row[key]
+            else:
+                assert not exact['tilt_active'][i] and not exact['tilt_initialized_now'][i] and not exact['tilt_advanced'][i]
+                assert exact['tilt_substeps'][i]==0
+            after=None if generator is None else generator.state_dict();clock=None if generator is None else generator._last_seen_time
+            assert digest(before)==before_digest,'Pure replay changed an earlier state snapshot'
+            verify_state(exact,i,after,clock,'tilt_state_after')
+            theta,rate=exact['tilt_theta_rad'][i],exact['tilt_theta_dot_rad_s'][i]
+            omega_eq=jleft(np.r_[theta,0.])@np.r_[rate,0.]
+            world=equilibrium@omega_eq;body=actual_matrix[i].T@world
+            max_frame_error=max(max_frame_error,float(np.max(abs(world-exact['tilt_angular_velocity_world_rad_s'][i]))),float(np.max(abs(body-exact['tilt_angular_velocity_body_rad_s'][i]))))
+            if not enabled or not exact['tilt_active'][i] or exact['tilt_initialized_now'][i]:
+                np.testing.assert_array_equal(exact['tilt_raw_reference_quat'][i],exact['tilt_shaped_reference_quat'][i])
+                np.testing.assert_array_equal(exact['tilt_used_angular_velocity_body_rad_s'][i],np.zeros(3))
+            if enabled and exact['tilt_active'][i]:
+                expected=equilibrium@Rotation.from_rotvec(np.r_[theta,0.]).as_matrix()
+                np.testing.assert_allclose(expected,shaped_matrix[i],atol=3e-14,rtol=0)
+            used=body if arm=='consistent_rate'and exact['tilt_active'][i]and not exact['tilt_initialized_now'][i]else np.zeros(3)
+            np.testing.assert_allclose(used,exact['tilt_used_angular_velocity_body_rad_s'][i],atol=3e-14,rtol=0)
+        assert max_frame_error<3e-14
+        np.testing.assert_array_equal(exact['exact_feedback_reference_qvel'][:,3:6],exact['tilt_used_angular_velocity_body_rad_s'])
+        np.testing.assert_array_equal(exact['exact_feedback_error'][:,12:15],exact['exact_qvel'][:,3:6]-exact['exact_feedback_reference_qvel'][:,3:6])
+        rate_cap=np.radians(60.);accel_cap=2*rate_cap/.08
+        for key in ('theta_rad','z_rad','raw_theta_rad','held_raw_theta_rad'):
+            assert np.max(np.linalg.norm(exact['tilt_'+key],axis=1))<=limit+1e-12
+        assert np.max(np.linalg.norm(exact['tilt_theta_dot_rad_s'],axis=1))<=rate_cap+1e-12
+        assert np.max(np.linalg.norm(exact['tilt_theta_ddot_rad_s2'],axis=1))<=accel_cap+1e-12
+        assert np.max(np.linalg.norm(exact['tilt_angular_velocity_world_rad_s'],axis=1))<=rate_cap+1e-12
+        active=exact['tilt_active'];init=exact['tilt_initialized_now'];advance=exact['tilt_advanced']
+        if enabled:
+            np.testing.assert_array_equal(active,t>=4.-1e-9);assert init.sum()==1 and init[800]
+            np.testing.assert_array_equal(advance,active & ~init)
+            assert np.all(np.diff(t)[advance[1:]]/exact['tilt_substeps'][1:][advance[1:]]<=.001+1e-15)
+            np.testing.assert_array_equal(exact['tilt_clock_after_s'],t)
+            assert np.isnan(exact['tilt_clock_before_s'][0]);np.testing.assert_array_equal(exact['tilt_clock_before_s'][1:],t[:-1])
+        else:
+            assert np.isnan(exact['tilt_clock_before_s']).all()and np.isnan(exact['tilt_clock_after_s']).all()
+        all_arrays[arm]=exact
+        arm_reports[arm]={'rows':len(t),'pure_generator_input_replay_calls':replayed,
+            'generator_initializations':int(init.sum()),'generator_advances':int(advance.sum()),
+            'all_numeric_state_snapshots_and_hashes_replayed':True,'maximum_independent_frame_error_rad_s':max_frame_error,
+            'prior_state_snapshots_unchanged_during_replay':True,'inner_substeps_at_most_1ms':True,
+            'maximum_chart_rate_deg_s':float(np.degrees(np.max(np.linalg.norm(exact['tilt_theta_dot_rad_s'],axis=1)))),
+            'maximum_chart_acceleration_deg_s2':float(np.degrees(np.max(np.linalg.norm(exact['tilt_theta_ddot_rad_s2'],axis=1)))),
+            'raw_and_shaped_error_logging_verified':True,'first_activation_raw_quaternion_and_positive_zero_rate_exact':True,
+            'source_snapshots_verified':len(p['sources'])}
+    baseline=all_arrays['baseline'];historical=load(ROOT/protocol['baseline']/'precision.npz')
+    for field in HISTORICAL_FIELDS:
+        assert baseline[field].dtype==historical[field].dtype and baseline[field].shape==historical[field].shape
+        assert baseline[field].tobytes()==historical[field].tobytes(),field
+    for arm in ARMS[1:]:
+        e=all_arrays[arm];prefix=e['time_s']<=4.+1e-9;prior=e['time_s']<4.-1e-9
+        for key in ('exact_qpos','exact_qvel','exact_applied','exact_native_requested','exact_observer_wrench','exact_observer_generalized',
+            'exact_observer_interval_mean','exact_estimated_normal','exact_nominal_joints_before','exact_reference_xy',
+            'exact_reference_velocity_m_s','exact_reference_acceleration_m_s2','exact_feedback_reference_qvel',
+            'native_state_fingerprint_before','native_state_fingerprint_after','comparable_state_fingerprint_before'):
+            np.testing.assert_array_equal(e[key][prefix],baseline[key][prefix])
+        np.testing.assert_array_equal(e['comparable_state_fingerprint_after'][prior],baseline['comparable_state_fingerprint_after'][prior])
+        assert np.all(e['full_state_fingerprint_before'][1:800]!=baseline['full_state_fingerprint_before'][1:800])
+        arm_reports[arm]['native_and_comparable_dynamic_prefix_through4s_exact']=True
+        arm_reports[arm]['full_prefix_fingerprint_differs_due_only_to_explicit_auxiliary_clock']=True
+    report={'iteration':'I-43','passed':True,'scope':captured['scope'],'arms':arm_reports,'verified_raw_manifest_references':verified_files,
+        'all17_historical_baseline_precision_fields_byte_identical':True,
+        'auxiliary_clock_note':'Enabled generators record last-seen command time before activation, while baseline has no generator. Full fingerprints therefore differ from the0.005s pre-command sample onward; native and comparable dynamic histories are exact through4s. Initialized theta/z/held state is canonicallyNone until4s.',
+        'limits':['Pure generator replay verifies saved input/history and cadence; independent pre-campaign ODE/rotation tests validate its equations separately.',
+            'Reference speed/coordinate acceleration caps are declared design assumptions, not physical actuator guarantees.',
+            'Error comparisons allow5e-8rad arccos/quaternion roundoff nearzero; no trajectory metric/screens are recomputed here.']}
+    (output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
+    for rel,expected in captured['input_sha256'].items():assert sha(ROOT/rel)==expected
+    for record in records:assert sha(ROOT/record['origin'])==record['sha256']
+    files=[{'path':str(p.relative_to(output)),'bytes':p.stat().st_size,'sha256':sha(p)}for p in sorted(output.rglob('*'))if p.is_file()and p.name!='artifact_manifest.json']
+    (output/'artifact_manifest.json').write_text(json.dumps({'files':files},indent=2)+'\n')
+    print(json.dumps(report,indent=2))
+
+
+if __name__=='__main__':main()

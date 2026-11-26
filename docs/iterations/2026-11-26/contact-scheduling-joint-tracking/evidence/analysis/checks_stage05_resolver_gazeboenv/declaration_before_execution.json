@@ -1,0 +1,103 @@
+{
+  "captured_utc": "2026-11-26T10:51:07.473743+00:00",
+  "sources": [
+    {
+      "origin": "results/contact_scheduling_joint_tracking_20261126/analysis/analyze_scheduling_stage02.py",
+      "snapshot": "source_snapshot/results/contact_scheduling_joint_tracking_20261126/analysis/analyze_scheduling_stage02.py",
+      "sha256": "c0da3880d4af70a41f65de95c97b8a09979c8b39a90f1ec3ea55d13766d8902a"
+    },
+    {
+      "origin": "results/contact_scheduling_joint_tracking_20261126/analysis/analyze_scheduling.py",
+      "snapshot": "source_snapshot/results/contact_scheduling_joint_tracking_20261126/analysis/analyze_scheduling.py",
+      "sha256": "8f75ef72dc9f27571666e1032c900802da48c2f10a3baed7c22268941dfd5152"
+    },
+    {
+      "origin": "results/contact_scheduling_joint_tracking_20261126/campaign/resolved_case_paths.json",
+      "snapshot": "source_snapshot/results/contact_scheduling_joint_tracking_20261126/campaign/resolved_case_paths.json",
+      "sha256": "4f07f873cafe8ced12ef3a7fc8b6d31ddf8b1bd8a59b01b21d85c24041dbc106"
+    },
+    {
+      "origin": "results/contact_scheduling_joint_tracking_20261126/campaign/technical_failure_m100_N/failure.json",
+      "snapshot": "source_snapshot/results/contact_scheduling_joint_tracking_20261126/campaign/technical_failure_m100_N/failure.json",
+      "sha256": "7cf1fafe3dc61dd5ec740a38af422ca5ff53035a4c90c0e8f8bf2c00749faa4a"
+    },
+    {
+      "origin": "results/contact_scheduling_joint_tracking_20261126/campaign/technical_retry_m100_N/registration.json",
+      "snapshot": "source_snapshot/results/contact_scheduling_joint_tracking_20261126/campaign/technical_retry_m100_N/registration.json",
+      "sha256": "dc6a9a35e9ff83641c6fa5413580a85e51f2d2c1491b9751e2ce551d68fa6783"
+    },
+    {
+      "origin": "results/contact_scheduling_joint_tracking_20261126/analysis/factorial_metrics.py",
+      "snapshot": "source_snapshot/results/contact_scheduling_joint_tracking_20261126/analysis/factorial_metrics.py",
+      "sha256": "32deaf635f6a9a19cdc0b33af222c35212ccd443d3082b569765091a64547405"
+    },
+    {
+      "origin": "results/contact_scheduling_joint_tracking_20261126/analysis/current_residual.py",
+      "snapshot": "source_snapshot/results/contact_scheduling_joint_tracking_20261126/analysis/current_residual.py",
+      "sha256": "4b41a61d36e58965661ad5b067f9b35720fe1ea28565a5fde85f33896b852f4f"
+    },
+    {
+      "origin": "results/belt_capacity_sweep_20261126/analyze_capacity.py",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/analyze_capacity.py",
+      "sha256": "cbaf7ae18989e1a07e9dfaf4167dd2eaa75fd59d064c4259a7b75f79d05c3a6d"
+    },
+    {
+      "origin": "results/contact_scheduling_joint_tracking_20261126/protocol.json",
+      "snapshot": "source_snapshot/results/contact_scheduling_joint_tracking_20261126/protocol.json",
+      "sha256": "fd33439c9db9a6bc31183409df9f00d13e82c3393581d4c66bab7878d59767bf"
+    },
+    {
+      "origin": "results/figure8_event_audit_20261125/events/selection_stage02_corrected/selection_source/event_metrics.py",
+      "snapshot": "source_snapshot/results/figure8_event_audit_20261125/events/selection_stage02_corrected/selection_source/event_metrics.py",
+      "sha256": "144068d7b6d9d1ad1734308df564011e0d5f9799b88ac5a3de8f68d091970283"
+    },
+    {
+      "origin": "results/figure8_event_audit_20261125/events/selection_stage02_corrected/turn_events.json",
+      "snapshot": "source_snapshot/results/figure8_event_audit_20261125/events/selection_stage02_corrected/turn_events.json",
+      "sha256": "9a5a5293f93c8e8e630796793ceb6fac16362f5759e7562c95b1141171a0789b"
+    },
+    {
+      "origin": "src/spherical_wheel/mobility.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/mobility.py",
+      "sha256": "92c08f5fe4001065128f8b9fe7b6821c8a63d9d4b7622da961778d1fd3adbab8"
+    }
+  ],
+  "checks_only": true,
+  "phases": [
+    "m100",
+    "p030",
+    "p090"
+  ],
+  "variants": [
+    "B",
+    "R",
+    "N",
+    "NR"
+  ],
+  "scope": "Registered I52 per-phase2x2 reduction from sealed native logs only.\n\nNo controller, observer, forecast, model construction, kinematics or physics is\nexecuted. Immutable I49 outcome metrics and corrected I41 reference-event\ndefinitions are reused. New joint/support/phase and factorial calculations live\nin the separately frozen pure factorial_metrics.py. No phase is pooled away.\n",
+  "comparisons": "R\u2212B,N\u2212B,NR\u2212B,NR\u2212N,NR\u2212R within each phase; interaction NR\u2212N\u2212R+B. Policy screens versus ownphaseB only; all3phases must pass.",
+  "no_new_physics_controller_observer_or_forecast": true,
+  "execution_resolution": {
+    "mapping": "results/contact_scheduling_joint_tracking_20261126/campaign/resolved_case_paths.json",
+    "mapping_sha256": "4f07f873cafe8ced12ef3a7fc8b6d31ddf8b1bd8a59b01b21d85c24041dbc106",
+    "cases": {
+      "m100_B": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_B",
+      "m100_R": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_R",
+      "m100_N": "results/contact_scheduling_joint_tracking_20261126/campaign/technical_retry_m100_N/campaign/runs/m100_N",
+      "m100_NR": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_NR",
+      "p030_B": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/p030_B",
+      "p030_R": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/p030_R",
+      "p030_N": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/p030_N",
+      "p030_NR": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/p030_NR",
+      "p090_B": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/p090_B",
+      "p090_R": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/p090_R",
+      "p090_N": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/p090_N",
+      "p090_NR": "results/contact_scheduling_joint_tracking_20261126/campaign/runs/p090_NR"
+    },
+    "technical_attempts": {
+      "results/contact_scheduling_joint_tracking_20261126/campaign/technical_failure_m100_N/failure.json": "7cf1fafe3dc61dd5ec740a38af422ca5ff53035a4c90c0e8f8bf2c00749faa4a",
+      "results/contact_scheduling_joint_tracking_20261126/campaign/technical_retry_m100_N/registration.json": "dc6a9a35e9ff83641c6fa5413580a85e51f2d2c1491b9751e2ce551d68fa6783"
+    },
+    "interpretation": "Original m100_N technical exit139 is retained separately; this explicit registered retry resolves one scored cell without changing methods or control parameters."
+  }
+}

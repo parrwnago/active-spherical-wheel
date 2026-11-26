@@ -1,0 +1,120 @@
+{
+  "iteration": "I-45",
+  "date": "2026-11-26",
+  "status": "registered_before_I45_oracle_forecast_outcomes",
+  "scope": "One offline hindsight configuration ablation on reused44s native Gazebo/DART Mars figure-eight,+0.9phase,45deg initialyaw. Zero new physics/depth captures/controlcommands. LiveLQR andobserver unchanged.",
+  "inputs": {
+    "precision": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/precision.npz",
+    "native_provenance": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/provenance.json",
+    "depth": "results/terrain_memory_20261126/campaign/depth_stage01/depth_batches.npz",
+    "depth_report": "results/terrain_memory_20261126/campaign/depth_stage01/report.json",
+    "I44_predictions": "results/terrain_memory_20261126/campaign/analyze_stage01/predictions.json",
+    "I44_report": "results/terrain_memory_20261126/campaign/analyze_stage01/report.json",
+    "I44_anchor_records": "results/terrain_memory_20261126/campaign/analyze_stage01/anchor_records.json",
+    "I44_map_snapshots": "results/terrain_memory_20261126/campaign/analyze_stage01/memory_snapshots.npz",
+    "I44_protocol": "results/terrain_memory_20261126/protocol.json",
+    "I44_clarifications": "results/terrain_memory_20261126/protocol_clarifications.json",
+    "I44_archive": "results/terrain_memory_20261126/presentation-pack.zip"
+  },
+  "input_sha256": {
+    "precision": "f6982688dcc4fed3ee89c4341389fcecaa8a12ed8687ec6809f3f4c2cd9b31c6",
+    "native_provenance": "4ca53165a2d2e3f712dfb97d69ba716590bbd6c343397ac1b18de3db5053d371",
+    "depth": "a5d906ebba9dc8c32b66af528f9dbf68e0ae20c8cb0cd91e5faa565df727535c",
+    "depth_report": "4c731c476129ba09eebb915f0a5d1a46f583c4e44d57bbaaa004cc19d4b8ce95",
+    "I44_predictions": "bd4408d94eac898b4738c880000aea3da6e4715dc587da6d378edb04feaadb44",
+    "I44_report": "68e015e1ae4a964e629d6fa38b1fa400ec938b8f2653708d7b5214fb1ac28103",
+    "I44_anchor_records": "80310cf37fb1c8c5791dc8eeb78f4358e752c88f252bb86d137a37a9ffcf8dda",
+    "I44_map_snapshots": "dd9eb19a2d0e70658b2bf554803c5c7cd7c109bb0ce9bb7be69bd371dfb3399f",
+    "I44_protocol": "ce2612430792e759bd92b6e7a822633f317fca06e18734f3da6d5a4079c5e1db",
+    "I44_clarifications": "be85fecbcfe205554eaca8851b83ecb9e515bc4048efc2418a0715f6eeb218ce",
+    "I44_archive": "a89f864c7eab9f90a072fbface5814bc1b0451f2e74aff0e7ee4fa2640ec1b04"
+  },
+  "source_boundary": "All pre-existing I44 runtime/scripts/tests unchanged. New diagnostic module/runner/testfiles only. Snapshot exact code before tests/campaign and retain failures.",
+  "arms": [
+    "observer_cv",
+    "memory_cv",
+    "observer_actual_pose",
+    "memory_actual_pose"
+  ],
+  "terrain_providers": {
+    "observer": "Same I44 constructed current observer tangent,point=center\u2212R*anchor_estimatednormal; no future observer update. Not cachedsynchronizerplane.",
+    "memory": "Same I44 depth/mapsettings. Rebuildfromdepth in delivery order; no ingestion until all four conditionsatanchor complete. No unseenflatfill."
+  },
+  "configuration": {
+    "cv": "Unchanged I44 preview_contacts currentqpos/qvel/horizon.",
+    "actual_pose": "Full saved actual future qpos10 (bodytranslation,wxyzorientation,shaft,shellAjoint,shellBjoint), selected by same futureindex. Call unchangedpreview_contacts with actualqpos,zeros9,horizon0; relabel declaredhorizon/time. Zero-step normalization allowed, no extra motion integration.",
+    "hindsight": "Future qpos is diagnostic oracle unavailable online. No future qvel,depth,normals,observer history,forces,contactlabels or terrain supplied to generation."
+  },
+  "anchors": {
+    "source": "Reuse unchanged I44 make_anchors(times)",
+    "unique": 119,
+    "uniform": 109,
+    "dense_bump": 11,
+    "overlap": 1,
+    "horizons_s": [
+      0.05,
+      0.1,
+      0.2
+    ],
+    "unique_slots": 357,
+    "method_rows": 1428,
+    "future_index": "argminabs(time\u2212(anchor+horizon)),require timegap<=1e-8s; no alignmenttuning."
+  },
+  "generation_boundary": "Generate all4 conditions from anchor-frozen query-only providers and prescribedposes before invoking truthclassifier/scorer. No sceneorcontroller passed. Queryknowledge time stays anchor in all conditions; endpointtime is anchor+horizon.",
+  "truth": {
+    "load_threshold_N": "T=max(.05,.05*saved modelweight_N)",
+    "resolved_record_force_threshold_N": 0.05,
+    "primary_name": "single resolved-contact patch mean",
+    "primary_eligible": "Sum of all four savedcounts equals1; exactlyone patchload>=T; thatpatchcount1 andfinitepatchpoint; sumotherpatchloads<=.05N. Primarytarget is thatpatchs savedforceweightedpoint.",
+    "count_caveat": "Savedcounts include only records withnormalforce>.05N. Savedpatchpoint averagesALL records includingweaker ones; this is NOT guaranteedonephysicalcontact or an exact collisionpoint.",
+    "classes": [
+      "unloaded",
+      "single_resolved_patch_mean",
+      "single_patch_multiple_resolved",
+      "multiple_loaded_patches",
+      "weak_or_unresolved",
+      "invalid_truth"
+    ],
+    "legacy_equivalent": "SameI44 nonemptyloadset>=T andfiniteglobal equivalentpoint. Preserveoldmetricseparately, do not redefineI44result.",
+    "timing": "Savedqpos is integrated observation, contacts are lastcompleted1ms solverrecords. Samefutureindex convention retained; exactpose does not remove this offset/compliance/idealrimerror."
+  },
+  "scoring": {
+    "primary_distance": "Nearest ANYgeometriccandidate to declaredsingle-resolved-patchmean, only complete/nonempty previews in matchedprimary. Do not exclude wrongpredictedpatches; identity scored separately.",
+    "identity": "Actualeligiblepatch membership in candidatepatchset. Unknown/empty/incomplete countsfalse in all-eligible table. Onmatchedcommon denominator compareidentitywithout droppingwronglabels.",
+    "ambiguity": "Existingpreview.ambiguous; oncomplete rows means multiplepatchlabels. Reportcandidatecardinality aswell.",
+    "legacy_distance": "NearestANYcandidate toglobalequivalentpoint, sameI44 eligibility evenifpartial; separate completefourway pairedtable.",
+    "strata": "PrimaryUNIFORM. Densebump andeachhorizon reportedseparately. Counts nested/correlated withinonehistoricalexecution, notindependenttrials.",
+    "coverage": "All357slots anduniform327 first; surface_supported,completepreview,complete_nonempty,known_no_contact,unknown andpartial separate.",
+    "matching": "Keys(anchor_index,horizon_s),samefuturetargetindex/trutheligibility across4conditions. Fourwaycomplete+nonempty intersection fixesprimarymatchedset. Reportexcludedcounts/reasons. No filteringonpredictedidentity,errors, orsuccessadvantage."
+  },
+  "integrity": {
+    "CV_reproduction": "Forobserver_cv/memory_cv compareall357 oldI44 source rows:sharedCVpose,surfaceavailability/reasons,height/normal/supportstats,candidatesidentity/features/points/clearances,complete/ambiguous flags andlegacydistance. Numeric tolerance1e-10 absolute, None/empty/status exact.",
+    "map_prefix": "Availablecapture/deliveryprefix matchesoldanchorrecords. Firstprefix observedcells,count,times,means matcholdmap snapshot; knowledge frozenforfourcalls.",
+    "immutability": "Hashallinputs before/afterexecution plusoldruntime andpreviousarchives. Onintegrityfailure no outcomeinterpretation; preservefailedstage beforecorrection.",
+    "tests": "Meaningful zeroextraadvance,providerknowledgeclock/noingest,truthcountcaveat,unloadedfallback,wrongidentityretention,fourwaymatching/gate tests beforemainrun."
+  },
+  "registered_decision_thresholds": {
+    "primary_common_min_n": 30,
+    "primary_common_fraction_min": 0.5,
+    "RMS_relative_improvement_min": 0.1,
+    "RMS_absolute_improvement_m_min": 0.0005,
+    "p95_error_increase_m_max": 0.0005,
+    "matched_identity_recall_loss_max": 0.05,
+    "matched_ambiguity_fraction_increase_max": 0.05,
+    "uniform_memory_complete_nonempty_coverage_min": 0.7,
+    "oracle_memory_coverage_loss_vs_CV_memory_max": 0.05,
+    "comparison": "Oracle memoryvsoracleobserver onfixedfourwayprimarycommonset. Also calculateCVmemoryvsCVobserverwithsamequalitycriteria. Identity/ambiguity gate denominators are SAMEfixedfourwayprimarycommonset. CoveragecomparesmapactualposevsmapCV, notobserverplaneextrapolation.",
+    "interpretation": "Diagnosticprioritization only; no livecontrolleradoption/hardware/sensoraccuracyclaim."
+  },
+  "decision_branches": [
+    "Integrityfails: no scientificinterpretation; preserve failure andfiximplementationonly.",
+    "InsufficientcommonN/fraction: inconclusive; no integration or expandedcamera/controllerwork.",
+    "OraclememoryRMS worse thanoracleobserver: parkcurrentmap-to-contactintegration; CVextrapolationalone cannotexplain disadvantage.",
+    "Oraclequalityallpass butCVqualityfails: investigate motionpredictionnext, keepLQRunchanged.",
+    "Oraclequalityallpass andCVqualitypass: advantageisalready presentinthisdeclaredresolved-contactstratum; auditmetric/aggregation/stratification beforeclaimingmotionissolebottleneck.",
+    "OracleRMSlower butmaterialqualityconditionsfail: insufficientusefuladvantage; nointegration. Retainmixedresults.",
+    "Densecoveragepoor: no demonstratedfixfor6.86sonset regardlessuniformresult."
+  ],
+  "settings_policy": "All I44 sensor/map/contactsettings heldfixed; no outcome-basedretuning, no newalignment or eligibilitychanges. Any furtherhypothesis isseparateiteration.",
+  "presentation": "Explainhindsightfuturepose vsdeployableCV. Showcoverage andmatchedsingle-resolvedtargeterrors separately fromlegacymeans. Anyvideo retainsunchangednative motion, fixedearly6.4\u201310s/late30\u201336s or purediagnosticplots, no drivingimprovementclaim."
+}

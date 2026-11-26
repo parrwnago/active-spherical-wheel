@@ -9,6 +9,9 @@ description = "Provisional active spherical wheel balance and tracking simulatio
 requires-python = ">=3.10"
 dependencies = ["mujoco==3.16.0", "numpy>=1.24,<2", "scipy>=1.10", "matplotlib>=3.7", "PyYAML>=6", "imageio>=2.30", "imageio-ffmpeg>=0.5"]
 
+[project.optional-dependencies]
+mpc = ["osqp>=1.0,<2"]
+
 [project.scripts]
 spherical-wheel = "spherical_wheel.cli:main"
 

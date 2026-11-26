@@ -1,0 +1,985 @@
+{
+  "iteration": "I-51",
+  "diagnostic": "separately_registered_late_phase_schedule",
+  "baseline_id": "base030",
+  "candidate_id": "phase_late030",
+  "prefix": {
+    "samples": 7600,
+    "all_common_precision_fields_byte_identical": {
+      "cap_m_s": true,
+      "exact_allocation_drive_reference": true,
+      "exact_applied": true,
+      "exact_clipping_command_delta": true,
+      "exact_equilibrium_command": true,
+      "exact_error": true,
+      "exact_estimated_contact_point_m": true,
+      "exact_estimated_normal": true,
+      "exact_estimated_support_loads_N": true,
+      "exact_fade_command_delta": true,
+      "exact_feedback_error": true,
+      "exact_feedback_gain": true,
+      "exact_feedback_reference_qvel": true,
+      "exact_guarded_joint_reference": true,
+      "exact_handoff_command_delta": true,
+      "exact_heading_command": true,
+      "exact_input_bounds": true,
+      "exact_lqr_command": true,
+      "exact_native_applied": true,
+      "exact_native_clipping_command_delta": true,
+      "exact_native_joint_reference": true,
+      "exact_native_requested": true,
+      "exact_nominal_joints_before": true,
+      "exact_observer_generalized": true,
+      "exact_observer_interval_mean": true,
+      "exact_observer_wrench": true,
+      "exact_previous_applied": true,
+      "exact_qpos": true,
+      "exact_qvel": true,
+      "exact_reference_acceleration_m_s2": true,
+      "exact_reference_guard_delta": true,
+      "exact_reference_qpos": true,
+      "exact_reference_quat": true,
+      "exact_reference_qvel": true,
+      "exact_reference_velocity_m_s": true,
+      "exact_reference_xy": true,
+      "exact_rolling_feedforward": true,
+      "exact_support_command": true,
+      "exact_sync_weights": true,
+      "exact_transition_command_delta": true,
+      "mirror_previous_applied_matches_physical": true,
+      "time_s": true,
+      "truth_equivalent_point_m": true,
+      "truth_patch_contact_counts": true,
+      "truth_patch_loads_N": true,
+      "truth_patch_points_m": true,
+      "truth_time_s": true
+    },
+    "state_and_reference_at38_equal": {
+      "exact_qpos": true,
+      "exact_qvel": true,
+      "exact_previous_applied": true,
+      "exact_observer_wrench": true,
+      "exact_estimated_normal": true,
+      "exact_nominal_joints_before": true,
+      "exact_reference_xy": true,
+      "exact_reference_qvel": true
+    }
+  },
+  "first_gain_difference_s": 38.00000000000099,
+  "cases": {
+    "base030": {
+      "completed": true,
+      "failure": null,
+      "timed_tracking": {
+        "moving_rms_m": 0.05048647310171891,
+        "moving_p95_m": 0.08783446214121796,
+        "moving_samples": 8000,
+        "full_peak_m": 0.19090118139250975,
+        "final_m": 0.1901914888984886,
+        "full_rms_m": 0.05651941507255893,
+        "moving_window_complete": true
+      },
+      "attitude": {
+        "peak_absolute_deg": 13.784268251668951,
+        "peak_reference_error_deg": 8.708537758069829
+      },
+      "original_settling": {
+        "passed": false,
+        "checks": {
+          "completed": true,
+          "relative_lean_below1deg": false,
+          "planar_speed_below030": false,
+          "angular_rate_below080": false
+        },
+        "tail_s": [
+          43.00500000000355,
+          44.00000000000406
+        ],
+        "max_relative_lean_deg": 8.708537758069829,
+        "max_planar_speed_m_s": 0.2767143217808734,
+        "max_angular_rate_rad_s": 1.994164157666359
+      },
+      "original_route_gates": {
+        "gates": {
+          "completed": true,
+          "rms": false,
+          "p95": true,
+          "max": true,
+          "final": false,
+          "attitude": false,
+          "saturation": true,
+          "settled": false,
+          "closure": false
+        },
+        "passed": false
+      },
+      "commands": {
+        "requested": {
+          "max_common030_normalized": 235.11228491456754,
+          "max_own_cap_normalized": 235.11228491456754,
+          "max_step_common030_normalized": 251.14967699941786,
+          "max_step_own_cap_normalized": 251.14967699941786
+        },
+        "applied": {
+          "max_common030_normalized": 1.0,
+          "max_own_cap_normalized": 1.0,
+          "max_step_common030_normalized": 2.0,
+          "max_step_own_cap_normalized": 2.0
+        },
+        "joint_torque_outside_held_duration_s": [
+          0.54,
+          0.105,
+          1.6
+        ],
+        "original_any_request_strict_saturated_fraction": 0.06295454545454546
+      },
+      "turns": [
+        {
+          "event_id": "turn_01_y",
+          "reference_time_s": 11.775142746922178,
+          "axis": "y",
+          "window_s": [
+            10.775142746922178,
+            13.775142746922178
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": 1.100938360308028,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 2576,
+              "end_index": 2845,
+              "start_s": 12.880000000000614,
+              "end_s": 14.225000000000824,
+              "duration_s": 1.3450000000002102,
+              "samples": 270,
+              "interpolated_zero_time_s": 12.876081107230206,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_02_x",
+          "reference_time_s": 15.377446019513739,
+          "axis": "x",
+          "window_s": [
+            14.377446019513739,
+            17.37744601951374
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": 0.018064769964869498,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 3080,
+              "end_index": 3192,
+              "start_s": 15.400000000001008,
+              "end_s": 15.960000000001095,
+              "duration_s": 0.5600000000000875,
+              "samples": 113,
+              "interpolated_zero_time_s": 15.395510789478609,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3249,
+              "end_index": 3467,
+              "start_s": 16.245000000001053,
+              "end_s": 17.335000000000836,
+              "duration_s": 1.0899999999997831,
+              "samples": 219,
+              "interpolated_zero_time_s": 16.241281163210164,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_03_y",
+          "reference_time_s": 18.30073407696684,
+          "axis": "y",
+          "window_s": [
+            17.30073407696684,
+            20.30073407696684
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": -0.46915226135824284,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 3567,
+              "end_index": 3595,
+              "start_s": 17.835000000000736,
+              "end_s": 17.97500000000071,
+              "duration_s": 0.13999999999997215,
+              "samples": 29,
+              "interpolated_zero_time_s": 17.831581815608597,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3725,
+              "end_index": 3788,
+              "start_s": 18.62500000000058,
+              "end_s": 18.940000000000516,
+              "duration_s": 0.31499999999993733,
+              "samples": 64,
+              "interpolated_zero_time_s": 18.6208507784497,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3820,
+              "end_index": 4040,
+              "start_s": 19.100000000000485,
+              "end_s": 20.200000000000266,
+              "duration_s": 1.0999999999997812,
+              "samples": 221,
+              "interpolated_zero_time_s": 19.097450525665472,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_04_y",
+          "reference_time_s": 23.69926592303316,
+          "axis": "y",
+          "window_s": [
+            22.69926592303316,
+            25.69926592303316
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.009836278500703344,
+          "post_event_geometric_overshoot_m": 0.0032064783879892644,
+          "actual_reversal_lag_s": -0.44434883374383105,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 4651,
+              "end_index": 4685,
+              "start_s": 23.254999999999658,
+              "end_s": 23.424999999999624,
+              "duration_s": 0.16999999999996618,
+              "samples": 35,
+              "interpolated_zero_time_s": 23.25491708928933,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4715,
+              "end_index": 4736,
+              "start_s": 23.574999999999594,
+              "end_s": 23.679999999999573,
+              "duration_s": 0.10499999999997911,
+              "samples": 22,
+              "interpolated_zero_time_s": 23.572988179826993,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4742,
+              "end_index": 4771,
+              "start_s": 23.709999999999567,
+              "end_s": 23.85499999999954,
+              "duration_s": 0.14499999999997115,
+              "samples": 30,
+              "interpolated_zero_time_s": 23.705057386302105,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4991,
+              "end_index": 5309,
+              "start_s": 24.95499999999932,
+              "end_s": 26.544999999999003,
+              "duration_s": 1.5899999999996837,
+              "samples": 319,
+              "interpolated_zero_time_s": 24.95352791386228,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_05_x",
+          "reference_time_s": 26.622553980486252,
+          "axis": "x",
+          "window_s": [
+            25.622553980486252,
+            28.622553980486252
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.028022318702334736,
+          "post_event_geometric_overshoot_m": 0.011654898191987062,
+          "actual_reversal_lag_s": -0.5180118656368222,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 5221,
+              "end_index": 5983,
+              "start_s": 26.10499999999909,
+              "end_s": 29.914999999998333,
+              "duration_s": 3.809999999999242,
+              "samples": 763,
+              "interpolated_zero_time_s": 26.10454211484943,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_06_y",
+          "reference_time_s": 30.224857253077822,
+          "axis": "y",
+          "window_s": [
+            29.224857253077822,
+            32.22485725307782
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.06020396490699831,
+          "post_event_geometric_overshoot_m": 0.06020396490699831,
+          "actual_reversal_lag_s": 0.5689890958972583,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 6159,
+              "end_index": 6195,
+              "start_s": 30.794999999998158,
+              "end_s": 30.974999999998122,
+              "duration_s": 0.1799999999999642,
+              "samples": 37,
+              "interpolated_zero_time_s": 30.79384634897508,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6203,
+              "end_index": 6332,
+              "start_s": 31.014999999998114,
+              "end_s": 31.659999999997986,
+              "duration_s": 0.6449999999998717,
+              "samples": 130,
+              "interpolated_zero_time_s": 31.01016981718974,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6340,
+              "end_index": 6360,
+              "start_s": 31.699999999997978,
+              "end_s": 31.799999999997958,
+              "duration_s": 0.0999999999999801,
+              "samples": 21,
+              "interpolated_zero_time_s": 31.697082423191763,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6365,
+              "end_index": 6398,
+              "start_s": 31.824999999997953,
+              "end_s": 31.98999999999792,
+              "duration_s": 0.16499999999996717,
+              "samples": 34,
+              "interpolated_zero_time_s": 31.821272778041113,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6410,
+              "end_index": 6499,
+              "start_s": 32.049999999997944,
+              "end_s": 32.49499999999817,
+              "duration_s": 0.44500000000022766,
+              "samples": 90,
+              "interpolated_zero_time_s": 32.04637195675565,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        }
+      ],
+      "late": {
+        "primary38_42": {
+          "window_s": [
+            38.0,
+            42.0
+          ],
+          "available": true,
+          "samples": 801,
+          "window_complete": true,
+          "timed_rms_m": 0.057856612124376934,
+          "timed_peak_m": 0.09858380374733697,
+          "timed_final_m": 0.0983961767788039,
+          "local_path_rms_m": 0.057679224454588174,
+          "local_path_peak_m": 0.09858380374733697,
+          "peak_absolute_lean_deg": 10.477056414628168,
+          "peak_reference_relative_lean_deg": 1.9642208555554128,
+          "rms_reference_relative_lean_deg": 0.6750267388183518,
+          "yaw_change_from_window_start_deg": -100.94373879454959,
+          "maximum_yaw_change_from_window_start_deg": 100.94373879454959,
+          "yaw_at_window_start_deg": -475.59128519596914,
+          "joint_rate_tracking_rms_rad_s": [
+            0.28843956950637223,
+            0.8558410122453577,
+            1.102188878943354
+          ],
+          "joint_rate_tracking_max_abs_rad_s": [
+            1.3384815115136905,
+            2.0426127426753125,
+            3.356503891376176
+          ],
+          "max_abs_joint_reference_rad_s": [
+            0.1351890696881569,
+            0.0,
+            0.11899675903616368
+          ],
+          "max_abs_actual_joint_rate_rad_s": [
+            1.3502361212522442,
+            2.0426127426753125,
+            3.3582229964515258
+          ]
+        },
+        "secondary38_44": {
+          "window_s": [
+            38.0,
+            44.0
+          ],
+          "available": true,
+          "samples": 1201,
+          "window_complete": true,
+          "timed_rms_m": 0.0846516410150383,
+          "timed_peak_m": 0.19090118139250975,
+          "timed_final_m": 0.1901914888984886,
+          "local_path_rms_m": 0.08457086702744412,
+          "local_path_peak_m": 0.19090118139250975,
+          "peak_absolute_lean_deg": 13.784268251668951,
+          "peak_reference_relative_lean_deg": 8.708537758069829,
+          "rms_reference_relative_lean_deg": 1.227211068450235,
+          "yaw_change_from_window_start_deg": -109.75461498994395,
+          "maximum_yaw_change_from_window_start_deg": 134.1953690195006,
+          "yaw_at_window_start_deg": -475.59128519596914,
+          "joint_rate_tracking_rms_rad_s": [
+            0.3753788174843233,
+            2.1040812607426496,
+            2.457773276823337
+          ],
+          "joint_rate_tracking_max_abs_rad_s": [
+            3.1883312139857014,
+            8.938822744419195,
+            12.098652462712696
+          ],
+          "max_abs_joint_reference_rad_s": [
+            0.1351890696881569,
+            0.0,
+            0.11899675903616368
+          ],
+          "max_abs_actual_joint_rate_rad_s": [
+            3.1883312139857014,
+            8.938822744419195,
+            12.098652462712696
+          ]
+        }
+      }
+    },
+    "phase_late030": {
+      "completed": true,
+      "failure": null,
+      "timed_tracking": {
+        "moving_rms_m": 0.05049468705390741,
+        "moving_p95_m": 0.08783446214121796,
+        "moving_samples": 8000,
+        "full_peak_m": 0.096309421489549,
+        "final_m": 0.05399290117596281,
+        "full_rms_m": 0.05153042782891889,
+        "moving_window_complete": true
+      },
+      "attitude": {
+        "peak_absolute_deg": 13.782441654396477,
+        "peak_reference_error_deg": 6.089169815686773
+      },
+      "original_settling": {
+        "passed": false,
+        "checks": {
+          "completed": true,
+          "relative_lean_below1deg": false,
+          "planar_speed_below030": false,
+          "angular_rate_below080": false
+        },
+        "tail_s": [
+          43.00500000000355,
+          44.00000000000406
+        ],
+        "max_relative_lean_deg": 1.5652084724719868,
+        "max_planar_speed_m_s": 0.0520428249653924,
+        "max_angular_rate_rad_s": 0.5600860407186141
+      },
+      "original_route_gates": {
+        "gates": {
+          "completed": true,
+          "rms": false,
+          "p95": true,
+          "max": true,
+          "final": false,
+          "attitude": true,
+          "saturation": true,
+          "settled": false,
+          "closure": false
+        },
+        "passed": false
+      },
+      "commands": {
+        "requested": {
+          "max_common030_normalized": 235.11228491456754,
+          "max_own_cap_normalized": 235.11228491456754,
+          "max_step_common030_normalized": 251.14967699941786,
+          "max_step_own_cap_normalized": 251.14967699941786
+        },
+        "applied": {
+          "max_common030_normalized": 1.0,
+          "max_own_cap_normalized": 1.0,
+          "max_step_common030_normalized": 2.0,
+          "max_step_own_cap_normalized": 2.0
+        },
+        "joint_torque_outside_held_duration_s": [
+          0.54,
+          0.105,
+          1.585
+        ],
+        "original_any_request_strict_saturated_fraction": 0.048863636363636366
+      },
+      "turns": [
+        {
+          "event_id": "turn_01_y",
+          "reference_time_s": 11.775142746922178,
+          "axis": "y",
+          "window_s": [
+            10.775142746922178,
+            13.775142746922178
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": 1.100938360308028,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 2576,
+              "end_index": 2845,
+              "start_s": 12.880000000000614,
+              "end_s": 14.225000000000824,
+              "duration_s": 1.3450000000002102,
+              "samples": 270,
+              "interpolated_zero_time_s": 12.876081107230206,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_02_x",
+          "reference_time_s": 15.377446019513739,
+          "axis": "x",
+          "window_s": [
+            14.377446019513739,
+            17.37744601951374
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": 0.018064769964869498,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 3080,
+              "end_index": 3192,
+              "start_s": 15.400000000001008,
+              "end_s": 15.960000000001095,
+              "duration_s": 0.5600000000000875,
+              "samples": 113,
+              "interpolated_zero_time_s": 15.395510789478609,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3249,
+              "end_index": 3467,
+              "start_s": 16.245000000001053,
+              "end_s": 17.335000000000836,
+              "duration_s": 1.0899999999997831,
+              "samples": 219,
+              "interpolated_zero_time_s": 16.241281163210164,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_03_y",
+          "reference_time_s": 18.30073407696684,
+          "axis": "y",
+          "window_s": [
+            17.30073407696684,
+            20.30073407696684
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": -0.46915226135824284,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 3567,
+              "end_index": 3595,
+              "start_s": 17.835000000000736,
+              "end_s": 17.97500000000071,
+              "duration_s": 0.13999999999997215,
+              "samples": 29,
+              "interpolated_zero_time_s": 17.831581815608597,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3725,
+              "end_index": 3788,
+              "start_s": 18.62500000000058,
+              "end_s": 18.940000000000516,
+              "duration_s": 0.31499999999993733,
+              "samples": 64,
+              "interpolated_zero_time_s": 18.6208507784497,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3820,
+              "end_index": 4040,
+              "start_s": 19.100000000000485,
+              "end_s": 20.200000000000266,
+              "duration_s": 1.0999999999997812,
+              "samples": 221,
+              "interpolated_zero_time_s": 19.097450525665472,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_04_y",
+          "reference_time_s": 23.69926592303316,
+          "axis": "y",
+          "window_s": [
+            22.69926592303316,
+            25.69926592303316
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.009836278500703344,
+          "post_event_geometric_overshoot_m": 0.0032064783879892644,
+          "actual_reversal_lag_s": -0.44434883374383105,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 4651,
+              "end_index": 4685,
+              "start_s": 23.254999999999658,
+              "end_s": 23.424999999999624,
+              "duration_s": 0.16999999999996618,
+              "samples": 35,
+              "interpolated_zero_time_s": 23.25491708928933,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4715,
+              "end_index": 4736,
+              "start_s": 23.574999999999594,
+              "end_s": 23.679999999999573,
+              "duration_s": 0.10499999999997911,
+              "samples": 22,
+              "interpolated_zero_time_s": 23.572988179826993,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4742,
+              "end_index": 4771,
+              "start_s": 23.709999999999567,
+              "end_s": 23.85499999999954,
+              "duration_s": 0.14499999999997115,
+              "samples": 30,
+              "interpolated_zero_time_s": 23.705057386302105,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4991,
+              "end_index": 5309,
+              "start_s": 24.95499999999932,
+              "end_s": 26.544999999999003,
+              "duration_s": 1.5899999999996837,
+              "samples": 319,
+              "interpolated_zero_time_s": 24.95352791386228,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_05_x",
+          "reference_time_s": 26.622553980486252,
+          "axis": "x",
+          "window_s": [
+            25.622553980486252,
+            28.622553980486252
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.028022318702334736,
+          "post_event_geometric_overshoot_m": 0.011654898191987062,
+          "actual_reversal_lag_s": -0.5180118656368222,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 5221,
+              "end_index": 5983,
+              "start_s": 26.10499999999909,
+              "end_s": 29.914999999998333,
+              "duration_s": 3.809999999999242,
+              "samples": 763,
+              "interpolated_zero_time_s": 26.10454211484943,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_06_y",
+          "reference_time_s": 30.224857253077822,
+          "axis": "y",
+          "window_s": [
+            29.224857253077822,
+            32.22485725307782
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.06020396490699831,
+          "post_event_geometric_overshoot_m": 0.06020396490699831,
+          "actual_reversal_lag_s": 0.5689890958972583,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 6159,
+              "end_index": 6195,
+              "start_s": 30.794999999998158,
+              "end_s": 30.974999999998122,
+              "duration_s": 0.1799999999999642,
+              "samples": 37,
+              "interpolated_zero_time_s": 30.79384634897508,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6203,
+              "end_index": 6332,
+              "start_s": 31.014999999998114,
+              "end_s": 31.659999999997986,
+              "duration_s": 0.6449999999998717,
+              "samples": 130,
+              "interpolated_zero_time_s": 31.01016981718974,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6340,
+              "end_index": 6360,
+              "start_s": 31.699999999997978,
+              "end_s": 31.799999999997958,
+              "duration_s": 0.0999999999999801,
+              "samples": 21,
+              "interpolated_zero_time_s": 31.697082423191763,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6365,
+              "end_index": 6398,
+              "start_s": 31.824999999997953,
+              "end_s": 31.98999999999792,
+              "duration_s": 0.16499999999996717,
+              "samples": 34,
+              "interpolated_zero_time_s": 31.821272778041113,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6410,
+              "end_index": 6499,
+              "start_s": 32.049999999997944,
+              "end_s": 32.49499999999817,
+              "duration_s": 0.44500000000022766,
+              "samples": 90,
+              "interpolated_zero_time_s": 32.04637195675565,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        }
+      ],
+      "late": {
+        "primary38_42": {
+          "window_s": [
+            38.0,
+            42.0
+          ],
+          "available": true,
+          "samples": 801,
+          "window_complete": true,
+          "timed_rms_m": 0.04832251172051845,
+          "timed_peak_m": 0.07294792983754074,
+          "timed_final_m": 0.07294792983754074,
+          "local_path_rms_m": 0.048103562859016596,
+          "local_path_peak_m": 0.07294792983754074,
+          "peak_absolute_lean_deg": 9.57565374903249,
+          "peak_reference_relative_lean_deg": 1.7449677853458785,
+          "rms_reference_relative_lean_deg": 0.39654243960302554,
+          "yaw_change_from_window_start_deg": -95.3194715222574,
+          "maximum_yaw_change_from_window_start_deg": 95.3194715222574,
+          "yaw_at_window_start_deg": -475.59128519596914,
+          "joint_rate_tracking_rms_rad_s": [
+            0.24620200397242184,
+            0.934634357591381,
+            0.8433877225956462
+          ],
+          "joint_rate_tracking_max_abs_rad_s": [
+            1.3334200993834642,
+            2.143442052400548,
+            2.981324749610582
+          ],
+          "max_abs_joint_reference_rad_s": [
+            0.1351890696881569,
+            0.0,
+            0.11899675903616368
+          ],
+          "max_abs_actual_joint_rate_rad_s": [
+            1.3444804449769234,
+            2.143442052400548,
+            3.0008127129235236
+          ]
+        },
+        "secondary38_44": {
+          "window_s": [
+            38.0,
+            44.0
+          ],
+          "available": true,
+          "samples": 1201,
+          "window_complete": true,
+          "timed_rms_m": 0.056706627020898424,
+          "timed_peak_m": 0.07588724235785181,
+          "timed_final_m": 0.05399290117596281,
+          "local_path_rms_m": 0.05658233619179838,
+          "local_path_peak_m": 0.07588724235785181,
+          "peak_absolute_lean_deg": 9.57565374903249,
+          "peak_reference_relative_lean_deg": 1.7449677853458785,
+          "rms_reference_relative_lean_deg": 0.4117677294931307,
+          "yaw_change_from_window_start_deg": -142.2687659205074,
+          "maximum_yaw_change_from_window_start_deg": 142.2687659205074,
+          "yaw_at_window_start_deg": -475.59128519596914,
+          "joint_rate_tracking_rms_rad_s": [
+            0.23116281767794783,
+            0.8927378516830091,
+            0.799937429790496
+          ],
+          "joint_rate_tracking_max_abs_rad_s": [
+            1.3334200993834642,
+            2.143442052400548,
+            2.981324749610582
+          ],
+          "max_abs_joint_reference_rad_s": [
+            0.1351890696881569,
+            0.0,
+            0.11899675903616368
+          ],
+          "max_abs_actual_joint_rate_rad_s": [
+            1.3444804449769234,
+            2.143442052400548,
+            3.0008127129235236
+          ]
+        }
+      }
+    }
+  },
+  "interpretation": "Late-only scheduling diagnostic aftermatchedhistory. Effectsinthese windows support anepisode-specificcontribution, not globalnormal-phase adoption, a universalcontrollerfix or a newallocationpolicy.",
+  "limitations": [
+    "Single original route/phase; no default adoption from these four cases.",
+    "Reference guard clips joint targets; it need not minimize residual or make total LQR torque feasible.",
+    "Handoff guard constrains active episodes only; loaded feedback outside episodes remains native.",
+    "Actual belt servo remains ideal; limits are declared simulation assumptions.",
+    "Saved-signal filtering and same-state command algebra are not counterfactual physics.",
+    "Full per-preview dictionaries were not present in the old data; new tests preserve native diagnostics and exact modifiers.",
+    "Saved41s phase gap7.83deg motivates this diagnostic; it does not establish that normal-relative scheduling is correct.",
+    "Earlier global normal-relative scheduling regressions remain evidence; this is a late-only mechanism test, not a deployable policy."
+  ],
+  "clock": "Registered38s threshold uses1e-9roundoff tolerance; latewindows includeendpoints withthe sameclocktolerance. Original movingmetrics retainI49strictbounds."
+}

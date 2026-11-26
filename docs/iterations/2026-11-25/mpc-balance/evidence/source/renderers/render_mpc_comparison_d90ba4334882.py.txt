@@ -1,0 +1,243 @@
+"""Render the saved small Gazebo MPC comparisons without running physics.
+
+MUJOCO_GL=egl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -u results/mpc_balance_20261125/initial/render_mpc_comparison.py
+
+The candidate is a local affine MPC prototype with explicit native-LQR fallback.
+Successful optimization is not labelled successful nonlinear robot control.
+"""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+from PIL import Image, ImageDraw
+
+from spherical_wheel.offroad import TerrainPlant
+from spherical_wheel.offroad_view import _camera, _caption, _draw, _font
+from spherical_wheel.terrain import Terrain
+
+ROOT=Path(__file__).resolve().parent
+OUTPUT=ROOT/'videos'
+WIDTH,HEIGHT,FPS=960,720,20
+NAMES=('shaft','shell A','shell B','belt A','belt B')
+
+
+def load_run(motion,variant):
+    directory=ROOT/'runs'/motion/variant
+    for name in ('summary.json','rollout.npz','plans.json','provenance.json'):
+        assert (directory/name).is_file(),f'Run artifacts not complete: {directory/name}'
+    summary=json.loads((directory/'summary.json').read_text())
+    provenance=json.loads((directory/'provenance.json').read_text())
+    plans=json.loads((directory/'plans.json').read_text())
+    with np.load(directory/'rollout.npz') as saved:
+        log={key:value.astype(float) if value.dtype.kind=='f' else value for key,value in saved.items()}
+    warm=float(provenance['warm_s'])
+    log['planned_xy']=log['mpc_original_goal_xy'][log['time_s']>=warm-1e-6][::4]
+    active=(log['time_s']>=warm-1e-6)
+    actuated=active.copy();actuated[-1]=False
+    log['render_cumulative_occupancy_n']=np.cumsum(np.any(log['mpc_actual_input_at_limit'],axis=1)&actuated)
+    log['render_cumulative_active_n']=np.cumsum(actuated)
+    log['render_cumulative_fallback_n']=np.cumsum(log['mpc_fallback']&actuated)
+    return dict(directory=directory,motion=motion,variant=variant,summary=summary,
+                provenance=provenance,plans=plans,log=log,warm_s=warm)
+
+
+def nearest(times,moment):
+    i=min(int(np.searchsorted(times,moment)),len(times)-1)
+    return i-1 if i and abs(times[i-1]-moment)<=abs(times[i]-moment) else i
+
+
+def vector(values,digits=2):
+    return '['+','.join(f'{v:+.{digits}f}' for v in values)+']'
+
+
+def captions(run,i,moment):
+    d=run['log'];candidate=run['variant']=='mpc';warm=run['warm_s']
+    raw_error=1000*np.linalg.norm(d['qpos'][i,:2]-d['mpc_original_goal_xy'][i])
+    origin=np.asarray(run['summary']['mpc_experiment']['activation']['original_goal_origin'])
+    direction=np.array([1.,0.]) if run['motion']=='world_x' else np.array([0.,1.])
+    progress=1000*((d['qpos'][i,:2]-origin)@direction)
+    quat=d['reference_quat'][i]
+    nominal_lean=np.rad2deg(np.arccos(np.clip(1-2*np.sum(quat[1:3]**2)/np.dot(quat,quat),-1,1)))
+    near=','.join(name for name,flag in zip(NAMES,d['mpc_actual_input_at_limit'][i]) if flag) or 'none'
+    total=int(d['render_cumulative_active_n'][i])
+    occupancy=100*d['render_cumulative_occupancy_n'][i]/max(1,total)
+    stopped=moment>float(d['time_s'][-1])+1e-6
+    if stopped:
+        control=f"RUN STOPPED at {d['time_s'][i]:.3f}s; last state held | {run['summary'].get('failure')}"
+    elif moment<warm-1e-6:
+        control='ACTUAL CONTROLLER: shared native LQR warm-up'
+    elif not candidate:
+        control='ACTUAL CONTROLLER: existing contact-aware LQR + rolling feedforward + synchronization'
+    elif d['mpc_fallback'][i]:
+        control='ACTUAL CONTROLLER: NATIVE LQR FALLBACK (MPC unavailable)'
+    else:
+        control='ACTUAL CONTROLLER: MPC first action held until next nominal 20ms update'
+    lines=[
+        f"t {d['time_s'][i]:.3f}s | ORIGINAL goal error {raw_error:.1f}mm | travel along request {progress:.1f} / 16mm",
+        '10 deg side slope; initial phase pi/2 | centre goal anchored at 0.8s; nominal clock unchanged.',
+        control,
+        f"Body lean actual/nominal {np.rad2deg(d['tilt_rad'][i]):.1f}/{nominal_lean:.1f}deg | logged reference-relative lean error {np.rad2deg(d['attitude_error_rad'][i]):.1f}deg",
+        'ACTUAL joint/rotor rates [shaft,A,B] rad/s: '+vector(d['qvel'][i,6:9],1),
+        'ACTUAL torque [shaft,A,B] N m: '+vector(d['input'][i,:3])+' | belt speed commands [A,B] m/s: '+vector(d['input'][i,3:]),
+        f'At >=99% input bound now: {near} | active-command occupancy so far {occupancy:.1f}%',
+    ]
+    if candidate:
+        plans=[p for p in run['plans'] if p['time_s']<=float(d['time_s'][i])+3e-6]
+        accepted=sum(bool(p.get('success',False)) for p in plans)
+        fallback=int(d['render_cumulative_fallback_n'][i])
+        latest=plans[-1] if plans else None
+        status=('not started' if latest is None else
+                'QP solved + finite plan replay' if latest.get('success',False) else
+                str(latest.get('failure','unusable plan')).replace('_',' '))
+        updates=np.flatnonzero(d['mpc_updated'][:i+1])
+        wall=1000*d['mpc_total_wall_s'][updates[-1]] if len(updates) else np.nan
+        wall_text=f'{wall:.1f}ms' if np.isfinite(wall) else 'not yet available'
+        settings=run['provenance'].get('mpc_settings',{})
+        horizon=settings.get('horizon_steps',20);step=settings.get('step_s',.02)
+        lines += [
+            f'Usable plans / generated: {accepted}/{len(plans)} | unsuccessful: {len(plans)-accepted} | LQR fallback actuation: {fallback} x 5ms',
+            f'Last plan: {status[:64]} | planning + validation wall {wall_text}',
+            f'Private estimated-plane MuJoCo predictor; frozen affine QP {horizon} x {1000*step:g}ms = {horizon*step:.2f}s horizon.',
+            'Hard torque/belt-command bounds only; lean, joint speed and input slew have no hard constraints.',
+            'Opt-in prototype. Shadow LQR fields are not MPC commands. No nonlinear recovery or real-time qualification.',
+        ]
+    else:
+        lines += [
+            'No MPC plans or solver failures in this baseline; native LQR commands actuate the robot.',
+            'Pulse: 16mm over 0.6s with 0.2s ramps; then 4s recovery. Same original request in both branches.',
+            'Final input limits: torque +/-[1.5,0.6,0.6] N m; ideal belt speed commands +/-0.3m/s.',
+            'Actual joint/rotor rates are measured separately; those input limits do not cap joint speed.',
+            'Original goal remains evaluated throughout recovery; current controller defaults are unchanged.',
+        ]
+    return lines
+
+
+def xy_panel(frame,run,i,centre,half_range,grid):
+    d=run['log'];image=Image.fromarray(frame);draw=ImageDraw.Draw(image,'RGBA')
+    left,top,w,h=16,462,246,222
+    draw.rounded_rectangle((left,top,left+w,top+h),radius=5,fill=(10,18,27,225),outline=(125,145,160,180))
+    draw.text((left+8,top+6),f'World XY | common grid {grid*1000:g}mm',font=_font(12),fill=(235,240,245))
+    draw.text((left+8,top+23),'Orange original goal | cyan actual',font=_font(11),fill=(225,235,240))
+    x0,y0,side=left+27,top+44,164
+    def point(xy):
+        x,y=np.asarray(xy)-centre
+        return x0+side*(x/half_range+1)/2,y0+side*(1-y/half_range)/2
+    for x in np.arange(np.ceil((centre[0]-half_range)/grid)*grid,centre[0]+half_range+1e-10,grid):
+        draw.line([point([x,centre[1]-half_range]),point([x,centre[1]+half_range])],fill=(160,180,195,70))
+    for y in np.arange(np.ceil((centre[1]-half_range)/grid)*grid,centre[1]+half_range+1e-10,grid):
+        draw.line([point([centre[0]-half_range,y]),point([centre[0]+half_range,y])],fill=(160,180,195,70))
+    draw.text((x0+side+4,y0+side/2),'X',font=_font(10),fill=(235,240,245))
+    draw.text((x0+side/2+3,y0-5),'Y',font=_font(10),fill=(235,240,245))
+    for values,color in [(d['planned_xy'],(255,160,50,255)),(d['qpos'][:i+1,:2],(30,220,240,255))]:
+        if len(values)>1:draw.line([point(xy) for xy in values],fill=color,width=2)
+    for xy,color in [(d['mpc_original_goal_xy'][i],(255,160,50,255)),(d['qpos'][i,:2],(30,220,240,255))]:
+        x,y=point(xy);draw.ellipse((x-3,y-3,x+3,y+3),fill=color)
+    draw.text((left+8,top+h-15),f'Full inset width {2000*half_range:.0f}mm',font=_font(10),fill=(215,225,235))
+    return np.asarray(image)
+
+
+def input_panel(frame,run,i):
+    d=run['log'];image=Image.fromarray(frame);draw=ImageDraw.Draw(image,'RGBA')
+    left,top,w,h=644,462,300,222
+    draw.rounded_rectangle((left,top,left+w,top+h),radius=5,fill=(10,18,27,225),outline=(125,145,160,180))
+    draw.text((left+9,top+7),'Applied commands / physical bounds',font=_font(12),fill=(235,240,245))
+    centre=left+143;half=66
+    for j,name in enumerate(NAMES):
+        y=top+36+j*30
+        normalized=float(d['input'][i,j]/d['input_bounds'][i,j])
+        draw.text((left+9,y),name,font=_font(11),fill=(225,235,240))
+        draw.rectangle((centre-half,y,centre+half,y+16),fill=(70,80,90,200))
+        end=centre+half*np.clip(normalized,-1,1)
+        draw.rectangle((min(centre,end),y,max(centre,end),y+16),fill=(250,170,60,255) if abs(normalized)>=.99 else (45,195,225,255))
+        draw.line((centre,y-1,centre,y+17),fill=(235,240,245,190))
+        draw.text((left+218,y),f'{d["input"][i,j]:+.2f}',font=_font(11),fill=(235,240,245))
+    draw.text((left+9,top+h-21),'Torques: N m; belts: m/s | orange >=99%',font=_font(10),fill=(220,230,235))
+    return np.asarray(image)
+
+
+def evidence(run):
+    names=('rollout.npz','plans.json','summary.json','provenance.json')
+    return dict(variant=run['variant'],directory=str(run['directory']),
+                artifact_sha256={name:hashlib.sha256((run['directory']/name).read_bytes()).hexdigest() for name in names},
+                completed=run['summary']['completed'],failure=run['summary']['failure'],
+                last_actual_state_s=float(run['log']['time_s'][-1]),experiment=run['summary']['mpc_experiment'])
+
+
+def render(plant,motion,runs,start,end,speed,source_hash,source_snapshot):
+    target=OUTPUT/f'{motion}_lqr_vs_mpc_prototype.mp4'
+    assert not target.exists(),f'Preserve existing replay; select another output name: {target}'
+    points=[]
+    for run in runs:
+        d=run['log'];window=(d['time_s']>=start-1e-6)&(d['time_s']<=end+1e-6)
+        points.extend([d['qpos'][window,:2],d['mpc_original_goal_xy'][window]])
+    points=np.vstack(points);low,high=points.min(0),points.max(0)
+    centre=(low+high)/2;half_range=max(.035,float((high-low).max())*.60)
+    raw_grid=2*half_range/4;power=10**np.floor(np.log10(raw_grid));grid=min((power,2*power,5*power,10*power),key=lambda v:abs(v-raw_grid))
+    camera_centre=np.r_[centre,.22]
+    option=mujoco.MjvOption();option.geomgroup[3:]=0
+    footer=f'Physics: Gazebo/DART | Viewer: MuJoCo | Exact simulated state; inferred support | {speed:g}x'
+    saved=plant.capture()
+    def frame_at(renderer,moment):
+        panels=[]
+        for run in runs:
+            d=run['log'];i=nearest(d['time_s'],moment)
+            camera=_camera(camera_centre,112.,-25.,1.35)
+            frame=_draw(plant,renderer,d,i,camera,option,False)
+            heading=('Existing LQR controller' if run['variant']=='baseline' else 'Opt-in MPC prototype + native LQR fallback')+' | '+motion.replace('_','-')
+            frame=_caption(frame,heading,captions(run,i,moment),footer)
+            frame=xy_panel(frame,run,i,centre,half_range,grid)
+            panels.append(input_panel(frame,run,i))
+        return np.concatenate(panels,axis=1)
+    try:
+        with mujoco.Renderer(plant.model,height=HEIGHT,width=WIDTH) as renderer:
+            writer=imageio.get_writer(target,fps=FPS,codec='libx264',quality=8,macro_block_size=2,ffmpeg_log_level='error')
+            try:
+                for moment in np.arange(start,end+1e-8,speed/FPS):writer.append_data(frame_at(renderer,moment))
+            finally:writer.close()
+            imageio.imwrite(OUTPUT/(target.stem+'_during_motion.jpg'),frame_at(renderer,1.1),quality=90)
+            imageio.imwrite(OUTPUT/(target.stem+'_final.jpg'),frame_at(renderer,end),quality=90)
+    finally:plant.restore(saved)
+    with imageio.get_reader(target) as reader:
+        meta=reader.get_meta_data();count=reader.count_frames();last=reader.get_data(count-1)
+        imageio.imwrite(OUTPUT/(target.stem+'_decoded_final.jpg'),last,quality=90)
+    return dict(file=str(target),sha256=hashlib.sha256(target.read_bytes()).hexdigest(),size_bytes=target.stat().st_size,
+                fps=meta['fps'],frames=count,dimensions=list(meta['size']),video_duration_s=meta['duration'],
+                sim_interval_s=[start,end],playback_speed=speed,final_frame_decoded=True,
+                renderer_sha256=source_hash,renderer_source_snapshot=str(source_snapshot),cases=[evidence(run) for run in runs],
+                semantics='Actual controller source switches explicitly between native LQR warm-up, MPC action and LQR fallback. Native LQR/FF/sync diagnostics remain shadows during MPC action. Original goal and trajectory clock are retained.',
+                count_semantics='Usable plans: QP solved with bounded input and finite replay; model agreement is not an acceptance gate. Generated plans include terminal sample. Fallback/occupancy count actuated samples only. Occupancy means at least99% of an input bound.',
+                limits='Only torque and ideal belt speed commands have hard bounds; no hard lean, rotor-speed or input-slew guarantee. No nonlinear configuration-recovery or real-time qualification.',
+                rendering='Saved Gazebo/DART states shown with MuJoCo terrain renderer; no new physics, controller execution or prediction rollout during rendering.')
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--motion',nargs='+',choices=('world_y','world_x'),default=['world_y','world_x'])
+    parser.add_argument('--start',type=float,default=.6)
+    parser.add_argument('--end',type=float,default=5.4)
+    parser.add_argument('--speed',type=float,default=.5)
+    args=parser.parse_args()
+    OUTPUT.mkdir(parents=True,exist_ok=True)
+    source=Path(__file__).read_bytes();sha=hashlib.sha256(source).hexdigest()
+    snapshot=OUTPUT/'source_snapshot'/('render_mpc_comparison_'+sha[:12]+'.py')
+    snapshot.parent.mkdir(exist_ok=True)
+    if not snapshot.exists():snapshot.write_bytes(source)
+    loaded={motion:[load_run(motion,variant) for variant in ('baseline','mpc')] for motion in args.motion}
+    config_path=ROOT/'_workspaces'/args.motion[0]/'baseline/flat/model_config.json'
+    config=json.loads(config_path.read_text())
+    terrain=Terrain.from_spec(json.loads((loaded[args.motion[0]][0]['directory']/'terrain.json').read_text()))
+    plant=TerrainPlant(config,terrain,OUTPUT/'_replay_scene',visual_bounds=(-.8,.8,-.8,.8))
+    reports=[render(plant,motion,runs,args.start,args.end,args.speed,sha,snapshot) for motion,runs in loaded.items()]
+    for report,motion in zip(reports,args.motion):
+        (OUTPUT/f'metadata_{motion}.json').write_text(json.dumps(report,indent=2)+'\n')
+    all_reports=[json.loads(path.read_text()) for path in sorted(OUTPUT.glob('metadata_world_*.json'))]
+    (OUTPUT/'video_metadata.json').write_text(json.dumps(dict(videos=all_reports,
+        visual_model_config=str(config_path),visual_model_config_sha256=hashlib.sha256(config_path.read_bytes()).hexdigest()),indent=2)+'\n')
+    print(json.dumps(reports,indent=2),flush=True)
+
+
+if __name__=='__main__':main()

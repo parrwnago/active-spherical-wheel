@@ -1,0 +1,89 @@
+{
+  "iteration": "I-46",
+  "previous_attempt": "../raw_integrity_stage01 (report serialization failed on numpy.bool_; unchanged data/checks rerun)",
+  "passed": true,
+  "cases": {
+    "mars_compact_outback": {
+      "passed": true,
+      "checks": {
+        "completed": true,
+        "one_feedback_call": true,
+        "shadow_immutable": true,
+        "full_16s": true,
+        "zero_interval_at_t0": true,
+        "five_samples_each_interval": true,
+        "substep_count": true,
+        "substep_spacing": true,
+        "relative_interval_end_alignment": true,
+        "state_plugin_step_iterations": true,
+        "applied_inputs_match": true,
+        "commands_match": true,
+        "qpos_match": true,
+        "truth_interval_mean_loads_N_reconstructed": true,
+        "truth_interval_mean_wrench_world_reconstructed": true,
+        "truth_interval_mean_all_external_wrench_world_reconstructed": true,
+        "truth_interval_mean_body_wrench_world_reconstructed": true,
+        "truth_interval_mean_body_load_N_reconstructed": true,
+        "sources_unchanged": true,
+        "bridge_binary_unchanged": true
+      },
+      "max_absolute_gaps": {
+        "truth_interval_mean_loads_N": 0.0,
+        "truth_interval_mean_wrench_world": 0.0,
+        "truth_interval_mean_all_external_wrench_world": 0.0,
+        "truth_interval_mean_body_wrench_world": 0.0,
+        "truth_interval_mean_body_load_N": 0.0
+      },
+      "path": "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback",
+      "physics_substeps": 16000
+    },
+    "flat_compact_outback": {
+      "passed": true,
+      "checks": {
+        "completed": true,
+        "one_feedback_call": true,
+        "shadow_immutable": true,
+        "full_16s": true,
+        "zero_interval_at_t0": true,
+        "five_samples_each_interval": true,
+        "substep_count": true,
+        "substep_spacing": true,
+        "relative_interval_end_alignment": true,
+        "state_plugin_step_iterations": true,
+        "applied_inputs_match": true,
+        "commands_match": true,
+        "qpos_match": true,
+        "truth_interval_mean_loads_N_reconstructed": true,
+        "truth_interval_mean_wrench_world_reconstructed": true,
+        "truth_interval_mean_all_external_wrench_world_reconstructed": true,
+        "truth_interval_mean_body_wrench_world_reconstructed": true,
+        "truth_interval_mean_body_load_N_reconstructed": true,
+        "sources_unchanged": true,
+        "bridge_binary_unchanged": true
+      },
+      "max_absolute_gaps": {
+        "truth_interval_mean_loads_N": 0.0,
+        "truth_interval_mean_wrench_world": 0.0,
+        "truth_interval_mean_all_external_wrench_world": 0.0,
+        "truth_interval_mean_body_wrench_world": 0.0,
+        "truth_interval_mean_body_load_N": 0.0
+      },
+      "path": "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected",
+      "physics_substeps": 16000
+    }
+  },
+  "inputs_sha256": {
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/precision.npz": "1ff9b77685fe2c4462d16cc5ba07aebfd488cf0dcd1c4f19bcd26dedf326fdde",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/truth_substeps.npz": "ba47afdb917c0b73bb6b72296bb644c6bbbbfed435de777df290c8cd258acb27",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/rollout.npz": "ffd6b314f0f49883b4aa219e99b18a8a6e484ce552319296f5d6aed2915bdfd6",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/report.json": "b800706591dfbf5166e9693a105f7327858bbb96c592e0092b0a39b04c51e881",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/provenance.json": "d7927ccf61e4c5409db5d2579783a2c80d341d61948c7a6f9ae801fe1916c48d",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/precision.npz": "ea6779d1c09acdfca2add37e0b865f32985542a087aaa8b7d0c7014791002bcf",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/truth_substeps.npz": "8581ccd5f4cda595fc18f6ef57f7b37a986b97e913dcc7e825c00ad94d5170ff",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/rollout.npz": "b7c06038e71f31626b3ad8288d6ef133c1be61118490df21dddd2b04fcbaf56d",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/report.json": "f9c6290bf9c58c14de6e8523837914e0d51b9b215f78fef8a1a4313e30a36757",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/provenance.json": "f207845441415f690dce38ae4a15d794cbec79a201245cc4aab68470ede93bab"
+  },
+  "checker_sha256": "76071c35c25c1061ee03537072c92ceeb3fd1abf08b1b6e0ddf8a7b57acb657e",
+  "scope": "Independent reconstruction of saved mean truth from each raw1ms solve about its matching moving center. No controller/physics executed; stored native applied/requested values checked after normal rollout dtype cast (float32 versus full precision), and all snapshots checked."
+}

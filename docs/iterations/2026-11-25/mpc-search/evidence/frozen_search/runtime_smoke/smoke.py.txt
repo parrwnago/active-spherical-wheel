@@ -1,0 +1,45 @@
+"""Compare the old and new runtime entry points at a saved measured state."""
+from pathlib import Path
+import importlib.util,json,hashlib
+from contextlib import ExitStack
+from unittest.mock import patch
+import numpy as np
+from spherical_wheel.offroad_control import OffroadController
+from spherical_wheel.predictive_control import AffineMPCSettings
+
+ROOT=Path.cwd();OUT=Path(__file__).resolve().parent
+if (OUT/'report.json').exists():raise FileExistsError('Preserve earlier runtime smoke')
+def load(name,path):
+ s=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
+helper=load('search_helper',ROOT/'scripts/diagnose-mpc-search.py')
+paths=[Path(__file__),ROOT/'scripts/run-mpc-comparison.py',ROOT/'scripts/diagnose-mpc-search.py',ROOT/'src/spherical_wheel/predictive_seed.py',ROOT/'src/spherical_wheel/predictive_model.py',ROOT/'src/spherical_wheel/predictive_control.py',helper.FROZEN_HARNESS]
+entries=[]
+for i,p in enumerate(paths):
+ t=OUT/'source_snapshot'/f'{i}_{p.name}';t.parent.mkdir(exist_ok=True);t.write_bytes(p.read_bytes());entries.append({'origin':str(p.relative_to(ROOT)),'snapshot':str(t.relative_to(OUT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
+helper.save(OUT/'provenance.json',{'scope':'Three private-model runtime calls only; no Gazebo','sources':entries})
+with np.load(helper.SOURCE/'precision.npz') as z:exact={k:z[k] for k in z.files}
+i=int(np.argmin(abs(exact['time_s']-.4)))
+controller,native,info,path,replay=helper.replay_native(exact,i,OUT)
+old=load('old_runtime',helper.FROZEN_HARNESS);new=load('new_runtime',ROOT/'scripts/run-mpc-comparison.py')
+settings=AffineMPCSettings()
+def state():
+ c=controller
+ return {'qpos':c.plant.data.qpos.copy(),'qvel':c.plant.data.qvel.copy(),'time':float(c.plant.data.time),'last_input':c.plant.last_input.copy(),'wrench':np.r_[c.observer.wrench()],'observer_time':c.observer._previous[0],'nominal_joints':c.nominal_joints.copy(),'normal':c.estimator.normal.copy(),'plane_point':c._plane[0].copy(),'plane_normal':c._plane[1].copy()}
+before=state();cases=[]
+for label,cls,kwargs in [('old_default',old.TrajectoryPredictiveExperiment,{}),('new_default',new.TrajectoryPredictiveExperiment,{}),('new_native_seed',new.TrajectoryPredictiveExperiment,{'native_rollout_seed':True,'refinement_steps':1,'native_command_function':OffroadController.command})]:
+ e=cls(controller.plant,path,settings,load_residual_fraction=.1,jacobian_stride=5,seed_shaft_torque=.03,**kwargs)
+ with ExitStack() as stack:
+  for g in helper.GUARDS:stack.enter_context(patch(g,helper.forbidden))
+  command,row=e.command(controller,.4,native,info)
+ assert row['mpc_success'] and not row['mpc_fallback']
+ assert np.all(abs(command)<=controller.plant.bounds+1e-10)
+ p=e.plan_rows[0];cases.append({'label':label,'command':command,'cost':p['nonlinear_cost'],'inputs':p['inputs'],'command_source':p['command_source'],'source_code':row['mpc_plan_source_code'],'native_seed_failure':p.get('native_rollout_seed_failure'),'native_seed_nominal_cost':next((t.get('nominal_cost') for t in p['trials'] if t['seed']=='native_rollout'),None)})
+ now=state()
+ for k,v in before.items():assert np.array_equal(now[k],v),k
+assert np.array_equal(cases[0]['command'],cases[1]['command'])
+assert np.array_equal(cases[0]['inputs'],cases[1]['inputs'])
+assert cases[0]['cost']==cases[1]['cost']
+assert cases[2]['native_seed_failure'] is None
+assert cases[2]['cost']<=cases[2]['native_seed_nominal_cost']+1e-9
+helper.save(OUT/'report.json',{'status':'passed','old_new_default_command_inputs_cost_bit_exact':True,'source_controller_state_unchanged':True,'seed_selected_cost_not_above_native_candidate':True,'replay':replay,'cases':cases})
+print(json.dumps([{k:v for k,v in c.items() if k not in ('command','inputs')} for c in cases],indent=2))

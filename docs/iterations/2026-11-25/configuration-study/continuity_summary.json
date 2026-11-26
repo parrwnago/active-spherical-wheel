@@ -1,0 +1,989 @@
+{
+  "scope": "Offline kinematic reconstruction and per-controller-step continuity audit of saved runs; no new physics or controller execution.",
+  "precision": "Saved states/contact locations are float32. Jacobian and baseline residual reconstructions are approximate; adaptive logged fields are identified separately.",
+  "schedule": {
+    "formula": ".001 + .004 * .02**2 / (sigma_weak**2 + .02**2)",
+    "meaning": "Continuous as a function of its scalar geometry input; not guaranteed continuous in time when selected patch/J changes.",
+    "baseline_note": "Evaluated diagnostic only; baseline controller did not use this schedule."
+  },
+  "source_files": [
+    {
+      "path": "results/configuration_study_20261125/continuity/analyze.py",
+      "bytes": 21283,
+      "sha256": "ab25eb8b1aa3cff17f3a8dbce23c7ed1a9ac5bcbb339cebe58e3ee022a1531c5"
+    },
+    {
+      "path": "src/spherical_wheel/experiments.py",
+      "bytes": 13294,
+      "sha256": "88113662e829852684c72a88131bcd7118bf166f5b8d2115bae30fe16ee621e3"
+    },
+    {
+      "path": "src/spherical_wheel/rolling_allocation.py",
+      "bytes": 6416,
+      "sha256": "72d318a602511d62b8f164afa6ac3848031153ec5851e1a6e0916677d04a7e0f"
+    },
+    {
+      "path": "src/spherical_wheel/contact_sensing.py",
+      "bytes": 29184,
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833"
+    },
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "bytes": 47389,
+      "sha256": "2dda6e5be08f55cc991c7606eb2336338486b5f7932c26ce6584796c341b4be7"
+    }
+  ],
+  "limitations": [
+    "The selected Jacobian maps drive rates into planar contact-point velocity. It is not a dynamic controllability measure.",
+    "Patch-switch comparisons are descriptive and cannot separate coupled physical contact transitions, estimated identity changes, gain changes, and state evolution.",
+    "A small desired velocity step does not imply small inverse-kinematic reference steps near weak geometry.",
+    "Temporal ordering and co-occurrence do not prove a single cause of the correction."
+  ],
+  "observations": [
+    "Desired planar velocity changes gradually in both inspected windows; its largest step is not at a patch change.",
+    "At patch changes the load-averaged normalized contact Jacobian changes substantially even though the estimated equivalent point and normal remain comparatively continuous.",
+    "The adaptive scalar coefficient is continuous in its geometry argument, but it is neither time-filtered nor slew-limited. The largest active coefficient step occurs during rapid authority loss without a patch switch.",
+    "The bounded allocator caps reference acceleration despite those changes. Reference feasibility does not bound LQR balance demand: adaptive LQR command steps reach 5.79 actuator bounds per step at patch changes.",
+    "In the baseline window every estimated dominant-patch change matches a true dominant-patch change. The phenomenon is not simply observer classification error or estimator-only chatter.",
+    "The old baseline did not use the adaptive coefficient. Its evaluated schedule shows how the same formula would respond to that saved geometry; it is not a simulated alternative trajectory."
+  ],
+  "proposed_next_policy": {
+    "status": "proposed only, contingent on controlled configuration-study findings",
+    "policy": "Bumpless shell-to-belt feedback/gain transition, retaining the current estimated contact geometry and the existing bounded allocation.",
+    "reason": "Hard selected support changes velocity channels and feedback blending even when geometric point motion is small. Bounded references already have finite steps, but LQR demand has much larger patch-aligned steps. Smoothing only a scalar coefficient cannot make those paths continuous.",
+    "risk": "Slowing feedback transfer can weaken necessary balance authority. Do not freeze an old contact identity or impose a blanket actuator slew limit as a substitute; evaluate the attitude response explicitly.",
+    "comparison": "Keep actuator/reference bounds, timed velocity reference, gain library, and effort coefficients fixed; compare with and without this single feedback-transfer policy on the controlled cases before the five trajectory cases.",
+    "checks": [
+      "Support-switch count and truth-identity disagreement duration",
+      "Selected-J and gain changes, normalized reference steps, allocation residual",
+      "Reference attitude error, applied-command saturation, tracking and actual joint speed"
+    ],
+    "caveat": "This is a targeted hypothesis, not a demonstrated correction or evidence that observer error alone caused the excursions."
+  },
+  "event_details_file": "event_details.json",
+  "step_alignment": "Each step is indexed by its ending sample inside the window; one preceding sample is read for the first visible step.",
+  "cases": [
+    {
+      "name": "adaptive_negative_phase",
+      "window_s": [
+        28.2,
+        29.0
+      ],
+      "visible_samples": 161,
+      "interval_s": {
+        "samples": 161,
+        "median": 0.0049991607666015625,
+        "p95": 0.005001068115234375,
+        "max": 0.005001068115234375
+      },
+      "patch_switch_count": 8,
+      "patch_switch_times_s": [
+        28.899999618530273,
+        28.90999984741211,
+        28.920000076293945,
+        28.940000534057617,
+        28.954999923706055,
+        28.989999771118164,
+        28.9950008392334,
+        29.0
+      ],
+      "truth_patch_switch_count_evaluation_only": 12,
+      "truth_patch_switch_times_s_evaluation_only": [
+        28.899999618530273,
+        28.90999984741211,
+        28.920000076293945,
+        28.924999237060547,
+        28.94499969482422,
+        28.96500015258789,
+        28.969999313354492,
+        28.975000381469727,
+        28.979999542236328,
+        28.985000610351562,
+        28.989999771118164,
+        28.9950008392334
+      ],
+      "estimated_truth_identity_disagreement_samples": 10,
+      "actual_effort_schedule_active": true,
+      "step_metrics": {
+        "desired_velocity_step_m_s": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.00020569409793728106,
+            "p95": 0.00020670345478379103,
+            "max": 0.00020671682524551097
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.00020317477070058452,
+            "p95": 0.00020393452688876088,
+            "max": 0.00020399162303601695
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.0002057898561138384,
+            "p95": 0.0002067049564868586,
+            "max": 0.00020671682524551097
+          }
+        },
+        "normalized_contact_jacobian_step_frobenius_m_s": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.0029218482194497126,
+            "p95": 0.008635372083562293,
+            "max": 0.339973965199934
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.3399133778139418,
+            "p95": 0.33996592091137734,
+            "max": 0.339973965199934
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.0026542909886551097,
+            "p95": 0.0077916560985700645,
+            "max": 0.008635372083562293
+          }
+        },
+        "effort_coefficient_step_m_s": {
+          "all_steps": {
+            "samples": 161,
+            "median": 5.830777809023857e-06,
+            "p95": 0.00040378281846642494,
+            "max": 0.0010247344616800547
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.0002940316335298121,
+            "p95": 0.0004307503812015056,
+            "max": 0.000447808182798326
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 5.625537596642971e-06,
+            "p95": 0.00035852068103849933,
+            "max": 0.0010247344616800547
+          }
+        },
+        "drive_reference_step_normalized_l2": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.006704464847477749,
+            "p95": 0.11783816704728997,
+            "max": 0.1500000294297981
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.14772743547136924,
+            "p95": 0.15000001970885837,
+            "max": 0.1500000294297981
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.006700380310232995,
+            "p95": 0.10657573771273195,
+            "max": 0.14999999764064947
+          }
+        },
+        "drive_reference_step_normalized_linf": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.00654215812683101,
+            "p95": 0.10000000000000009,
+            "max": 0.10000004768371584
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.10000000074505806,
+            "p95": 0.10000003308057787,
+            "max": 0.10000004768371584
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.006532716751098677,
+            "p95": 0.10000000000000009,
+            "max": 0.10000000298023225
+          }
+        },
+        "estimated_equivalent_point_step_m": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.0006953121428278906,
+            "p95": 0.0012537040805878023,
+            "max": 0.0016739597992707852
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.0011906745808096754,
+            "p95": 0.0015442141348881023,
+            "max": 0.0016739597992707852
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.0006930917593138983,
+            "p95": 0.0010896899210084722,
+            "max": 0.001523147920005908
+          }
+        },
+        "estimated_normal_step_deg": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.003638601283574006,
+            "p95": 0.10519782707188545,
+            "max": 0.13052468042645596
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.006970133031556287,
+            "p95": 0.015981447057903275,
+            "max": 0.01890480737337949
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.002650374963494587,
+            "p95": 0.10547669750393886,
+            "max": 0.13052468042645596
+          }
+        },
+        "reference_attitude_error_step_deg": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.06245756149291992,
+            "p95": 0.14229059219360352,
+            "max": 0.2113170623779297
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.0785970687866211,
+            "p95": 0.19330863952636715,
+            "max": 0.2113170623779297
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.060317039489746094,
+            "p95": 0.13525247573852542,
+            "max": 0.16820526123046875
+          }
+        },
+        "lqr_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.00521723460406065,
+            "p95": 0.15193715691566467,
+            "max": 5.790637969970703
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 5.115951061248779,
+            "p95": 5.790637969970703,
+            "max": 5.790637969970703
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.004787410609424114,
+            "p95": 0.06788667589426042,
+            "max": 0.15193715691566467
+          }
+        },
+        "requested_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.009850585833191872,
+            "p95": 0.4180733263492584,
+            "max": 5.840637683868408
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 4.927457809448242,
+            "p95": 5.840214943885803,
+            "max": 5.840637683868408
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.009445399045944214,
+            "p95": 0.08528913706541065,
+            "max": 0.4180733263492584
+          }
+        },
+        "applied_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.009850585833191872,
+            "p95": 0.4180733263492584,
+            "max": 1.1428338289260864
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.9628881216049194,
+            "p95": 1.1428338289260864,
+            "max": 1.1428338289260864
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.009445399045944214,
+            "p95": 0.061671733111143115,
+            "max": 0.4180733263492584
+          }
+        }
+      },
+      "marked_event": {
+        "time_s": 28.975000381469727,
+        "support": "Belt A",
+        "estimated_load_shares": [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "truth_load_shares_evaluation_only": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "desired_velocity_xy_m_s": [
+          0.04826999083161354,
+          -0.0440279021859169
+        ],
+        "estimated_equivalent_point_m": [
+          -1.9788751602172852,
+          9.402783393859863,
+          1.1536211967468262
+        ],
+        "normalized_contact_jacobian_m_s": [
+          [
+            -0.006156978237101374,
+            0.0,
+            0.0,
+            0.2998493293437276,
+            0.0
+          ],
+          [
+            0.5825905499753883,
+            0.0,
+            0.0,
+            0.003700225194644041,
+            0.0
+          ]
+        ],
+        "authority_reconstructed_m_s": 0.2998715190902873,
+        "authority_logged_m_s": 0.2998715043067932,
+        "effort_coefficient_m_s": 0.001017714268527925,
+        "effort_is_active": true,
+        "drive_reference": [
+          0.38292407989501953,
+          0.42459264397621155,
+          0.0,
+          -0.04782192409038544,
+          0.0
+        ],
+        "actual_joint_rates_rad_s": [
+          0.5567397475242615,
+          7.017786026000977,
+          0.09817325323820114
+        ],
+        "actual_tilt_deg": 2.9575083255767822,
+        "reference_tilt_deg": 11.752127181414066,
+        "reference_attitude_error_deg": 9.692367553710938,
+        "angular_generalized_velocity_rad_s": [
+          -0.3919530212879181,
+          -0.3608892261981964,
+          1.0398709774017334
+        ],
+        "effective_phase_rad": 1.6457747220993042,
+        "allocation_residual_logged_m_s": 5.655372206092579e-07,
+        "allocation_residual_reconstructed_m_s": 5.739887111153921e-07,
+        "allocation_active_bounds": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "lqr_command": [
+          -0.04368887469172478,
+          -0.061441194266080856,
+          0.030147256329655647,
+          -1.6587156057357788,
+          0.0
+        ],
+        "requested_command": [
+          0.08435621112585068,
+          -0.061441194266080856,
+          0.030147256329655647,
+          -1.7065376043319702,
+          0.0
+        ],
+        "applied_command": [
+          0.08435621112585068,
+          -0.061441194266080856,
+          0.030147256329655647,
+          -0.30000001192092896,
+          0.0
+        ]
+      },
+      "scalar_schedule_reconstruction_max_error_m_s": 5.113987262671954e-07,
+      "input_files": [
+        {
+          "path": "results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/rollout.npz",
+          "bytes": 4760772,
+          "sha256": "4dd1c8ceaaf7327a1ee51831c201cbb9e62f8e7295e0d309f62da49cd8d53e48"
+        },
+        {
+          "path": "results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/summary.json",
+          "bytes": 6978,
+          "sha256": "4eb32e3ac90703b3eadad82856cf10cd996f40da0ce5efc2d6cdb09c62c04a03"
+        },
+        {
+          "path": "results/weighted_allocation_20261125/bounded_adaptive/_workspaces/worker_94096/flat/model.xml",
+          "bytes": 27656,
+          "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+        }
+      ],
+      "largest_steps": {
+        "desired_velocity_step_m_s": {
+          "step": 0.00020671682524551097,
+          "before_time_s": 28.559999465942383,
+          "after_time_s": 28.565000534057617,
+          "patch_switch": false,
+          "support_before": "Shell A",
+          "support_after": "Shell A"
+        },
+        "normalized_contact_jacobian_step_frobenius_m_s": {
+          "step": 0.339973965199934,
+          "before_time_s": 28.895000457763672,
+          "after_time_s": 28.899999618530273,
+          "patch_switch": true,
+          "support_before": "Shell A",
+          "support_after": "Belt A"
+        },
+        "effort_coefficient_step_m_s": {
+          "step": 0.0010247344616800547,
+          "before_time_s": 28.415000915527344,
+          "after_time_s": 28.420000076293945,
+          "patch_switch": false,
+          "support_before": "Shell A",
+          "support_after": "Shell A"
+        },
+        "drive_reference_step_normalized_l2": {
+          "step": 0.1500000294297981,
+          "before_time_s": 28.895000457763672,
+          "after_time_s": 28.899999618530273,
+          "patch_switch": true,
+          "support_before": "Shell A",
+          "support_after": "Belt A"
+        },
+        "drive_reference_step_normalized_linf": {
+          "step": 0.10000004768371584,
+          "before_time_s": 28.895000457763672,
+          "after_time_s": 28.899999618530273,
+          "patch_switch": true,
+          "support_before": "Shell A",
+          "support_after": "Belt A"
+        },
+        "estimated_equivalent_point_step_m": {
+          "step": 0.0016739597992707852,
+          "before_time_s": 28.989999771118164,
+          "after_time_s": 28.9950008392334,
+          "patch_switch": true,
+          "support_before": "Shell A",
+          "support_after": "Belt A"
+        },
+        "estimated_normal_step_deg": {
+          "step": 0.13052468042645596,
+          "before_time_s": 28.229999542236328,
+          "after_time_s": 28.235000610351562,
+          "patch_switch": false,
+          "support_before": "Shell A",
+          "support_after": "Shell A"
+        },
+        "reference_attitude_error_step_deg": {
+          "step": 0.2113170623779297,
+          "before_time_s": 28.950000762939453,
+          "after_time_s": 28.954999923706055,
+          "patch_switch": true,
+          "support_before": "Shell A",
+          "support_after": "Belt A"
+        },
+        "lqr_command_step_normalized_linf": {
+          "step": 5.790637969970703,
+          "before_time_s": 28.989999771118164,
+          "after_time_s": 28.9950008392334,
+          "patch_switch": true,
+          "support_before": "Shell A",
+          "support_after": "Belt A"
+        },
+        "requested_command_step_normalized_linf": {
+          "step": 5.840637683868408,
+          "before_time_s": 28.9950008392334,
+          "after_time_s": 29.0,
+          "patch_switch": true,
+          "support_before": "Belt A",
+          "support_after": "Shell A"
+        },
+        "applied_command_step_normalized_linf": {
+          "step": 1.1428338289260864,
+          "before_time_s": 28.989999771118164,
+          "after_time_s": 28.9950008392334,
+          "patch_switch": true,
+          "support_before": "Shell A",
+          "support_after": "Belt A"
+        }
+      }
+    },
+    {
+      "name": "baseline_positive_phase",
+      "window_s": [
+        31.6,
+        31.7
+      ],
+      "visible_samples": 21,
+      "interval_s": {
+        "samples": 21,
+        "median": 0.0049991607666015625,
+        "p95": 0.005001068115234375,
+        "max": 0.005001068115234375
+      },
+      "patch_switch_count": 6,
+      "patch_switch_times_s": [
+        31.639999389648438,
+        31.649999618530273,
+        31.665000915527344,
+        31.68000030517578,
+        31.690000534057617,
+        31.700000762939453
+      ],
+      "truth_patch_switch_count_evaluation_only": 6,
+      "truth_patch_switch_times_s_evaluation_only": [
+        31.639999389648438,
+        31.649999618530273,
+        31.665000915527344,
+        31.68000030517578,
+        31.690000534057617,
+        31.700000762939453
+      ],
+      "estimated_truth_identity_disagreement_samples": 0,
+      "actual_effort_schedule_active": false,
+      "step_metrics": {
+        "desired_velocity_step_m_s": {
+          "all_steps": {
+            "samples": 21,
+            "median": 7.03151985895814e-05,
+            "p95": 7.256318888172038e-05,
+            "max": 7.281407561660353e-05
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 6.921062097030246e-05,
+            "p95": 7.06881607478967e-05,
+            "max": 7.081248146733513e-05
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 7.105808876077414e-05,
+            "p95": 7.263845490218533e-05,
+            "max": 7.281407561660353e-05
+          }
+        },
+        "normalized_contact_jacobian_step_frobenius_m_s": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.003793179204635804,
+            "p95": 0.3391394659085154,
+            "max": 0.33916547163926014
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 0.3390746176557473,
+            "p95": 0.33915897020657393,
+            "max": 0.33916547163926014
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.002416995516276976,
+            "p95": 0.009409920654906536,
+            "max": 0.009929619967296677
+          }
+        },
+        "effort_coefficient_step_m_s": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.00035099060584775285,
+            "p95": 0.0039761875323634085,
+            "max": 0.003981939537847893
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 0.0035884577526026024,
+            "p95": 0.003980501536476772,
+            "max": 0.003981939537847893
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.0001720521392652545,
+            "p95": 0.0006844809145533316,
+            "max": 0.0008917241370403617
+          }
+        },
+        "drive_reference_step_normalized_l2": {
+          "all_steps": {
+            "samples": 21,
+            "median": 2.2360638133893045,
+            "p95": 365.39839447249,
+            "max": 388.3164630162362
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 8.639025111334416,
+            "p95": 292.2788931387463,
+            "max": 365.39839447249
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.6096060372828368,
+            "p95": 140.89818801768104,
+            "max": 388.3164630162362
+          }
+        },
+        "drive_reference_step_normalized_linf": {
+          "all_steps": {
+            "samples": 21,
+            "median": 2.1550231933593746,
+            "p95": 352.1050048828125,
+            "max": 374.18528442382814
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 8.323739624023437,
+            "p95": 281.6481475830078,
+            "max": 352.1050048828125
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.5892398834228514,
+            "p95": 135.65768516540493,
+            "max": 374.18528442382814
+          }
+        },
+        "estimated_equivalent_point_step_m": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.0008512605405834974,
+            "p95": 0.001129686333966612,
+            "max": 0.0013041823444499298
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 0.0008657822045511302,
+            "p95": 0.0012605583418291003,
+            "max": 0.0013041823444499298
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.0008512605405834974,
+            "p95": 0.0010790648820654999,
+            "max": 0.0010950205147818289
+          }
+        },
+        "estimated_normal_step_deg": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.006746674777894418,
+            "p95": 0.015467972615406065,
+            "max": 0.017302365042171433
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 0.006779621896269395,
+            "p95": 0.013556393014679783,
+            "max": 0.014523318358313551
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.006746674777894418,
+            "p95": 0.016018290343435673,
+            "max": 0.017302365042171433
+          }
+        },
+        "reference_attitude_error_step_deg": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.10487508773803711,
+            "p95": 0.16997051239013672,
+            "max": 0.17299509048461914
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 0.10277152061462402,
+            "p95": 0.15597808361053467,
+            "max": 0.16001367568969727
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.10487508773803711,
+            "p95": 0.17087788581848143,
+            "max": 0.17299509048461914
+          }
+        },
+        "lqr_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 21,
+            "median": 1.4426696300506592,
+            "p95": 235.2696075439453,
+            "max": 251.15347290039062
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 5.939673900604248,
+            "p95": 188.3515396118164,
+            "max": 235.2696075439453
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.7676903605461121,
+            "p95": 91.54604072570777,
+            "max": 251.15347290039062
+          }
+        },
+        "requested_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 21,
+            "median": 1.4474073648452759,
+            "p95": 235.28997802734375,
+            "max": 251.149658203125
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 5.863333702087402,
+            "p95": 188.37500762939453,
+            "max": 235.28997802734375
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.7686993479728699,
+            "p95": 91.53742256164526,
+            "max": 251.149658203125
+          }
+        },
+        "applied_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.49129462242126465,
+            "p95": 2.0,
+            "max": 2.0
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 1.2909271717071533,
+            "p95": 1.877449482679367,
+            "max": 2.0
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.3500846326351166,
+            "p95": 2.0,
+            "max": 2.0
+          }
+        }
+      },
+      "marked_event": {
+        "time_s": 31.649999618530273,
+        "support": "Shell B",
+        "estimated_load_shares": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "truth_load_shares_evaluation_only": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "desired_velocity_xy_m_s": [
+          0.05808847025036812,
+          0.031170492991805077
+        ],
+        "estimated_equivalent_point_m": [
+          -1.9185221195220947,
+          9.407712936401367,
+          1.141478419303894
+        ],
+        "normalized_contact_jacobian_m_s": [
+          [
+            -0.022222318306662665,
+            0.0,
+            -0.0060069315975041886,
+            0.0,
+            0.0
+          ],
+          [
+            -0.5768065886967467,
+            0.0,
+            -0.15999322617233497,
+            0.0,
+            0.0
+          ]
+        ],
+        "authority_reconstructed_m_s": 0.00015121630255991055,
+        "authority_logged_m_s": null,
+        "effort_coefficient_m_s": 0.004999771349369427,
+        "effort_is_active": false,
+        "drive_reference": [
+          488.60137939453125,
+          0.0,
+          -1760.5250244140625,
+          0.0,
+          0.0
+        ],
+        "actual_joint_rates_rad_s": [
+          -0.08352810144424438,
+          -4.809460639953613,
+          -1.6936341524124146
+        ],
+        "actual_tilt_deg": 7.170928001403809,
+        "reference_tilt_deg": 10.66107621775728,
+        "reference_attitude_error_deg": 5.571151256561279,
+        "angular_generalized_velocity_rad_s": [
+          -0.18660898506641388,
+          0.2645588219165802,
+          0.5964149832725525
+        ],
+        "effective_phase_rad": -1.5138885974884033,
+        "allocation_residual_logged_m_s": null,
+        "allocation_residual_reconstructed_m_s": 0.0015920751864773332,
+        "allocation_active_bounds": null,
+        "lqr_command": [
+          111.50992584228516,
+          -5.364985466003418,
+          -141.03404235839844,
+          0.0,
+          0.0
+        ],
+        "requested_command": [
+          111.38871765136719,
+          -5.364985466003418,
+          -141.06736755371094,
+          0.0,
+          0.0
+        ],
+        "applied_command": [
+          1.5,
+          -0.6000000238418579,
+          -0.6000000238418579,
+          0.0,
+          0.0
+        ]
+      },
+      "scalar_schedule_reconstruction_max_error_m_s": null,
+      "input_files": [
+        {
+          "path": "results/contact_diagnostics_20261125/baseline/plain_figure8/phase_+0.90/rollout.npz",
+          "bytes": 4371340,
+          "sha256": "ddf3d74caa90f7af204fb16a5796b64ac5e7e50b1ee6df6b074f826094d470ae"
+        },
+        {
+          "path": "results/contact_diagnostics_20261125/baseline/plain_figure8/phase_+0.90/summary.json",
+          "bytes": 6494,
+          "sha256": "c763754d6e416edb8785bf74b6f96613ef2fa1a042ddcfb86592e12685f5b58c"
+        },
+        {
+          "path": "results/contact_diagnostics_20261125/baseline/_workspaces/worker_72860/flat/model.xml",
+          "bytes": 27656,
+          "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+        }
+      ],
+      "largest_steps": {
+        "desired_velocity_step_m_s": {
+          "step": 7.281407561660353e-05,
+          "before_time_s": 31.594999313354492,
+          "after_time_s": 31.600000381469727,
+          "patch_switch": false,
+          "support_before": "Shell B",
+          "support_after": "Shell B"
+        },
+        "normalized_contact_jacobian_step_frobenius_m_s": {
+          "step": 0.33916547163926014,
+          "before_time_s": 31.635000228881836,
+          "after_time_s": 31.639999389648438,
+          "patch_switch": true,
+          "support_before": "Shell B",
+          "support_after": "Belt B"
+        },
+        "effort_coefficient_step_m_s": {
+          "step": 0.003981939537847893,
+          "before_time_s": 31.645000457763672,
+          "after_time_s": 31.649999618530273,
+          "patch_switch": true,
+          "support_before": "Belt B",
+          "support_after": "Shell B"
+        },
+        "drive_reference_step_normalized_l2": {
+          "step": 388.3164630162362,
+          "before_time_s": 31.649999618530273,
+          "after_time_s": 31.655000686645508,
+          "patch_switch": false,
+          "support_before": "Shell B",
+          "support_after": "Shell B"
+        },
+        "drive_reference_step_normalized_linf": {
+          "step": 374.18528442382814,
+          "before_time_s": 31.649999618530273,
+          "after_time_s": 31.655000686645508,
+          "patch_switch": false,
+          "support_before": "Shell B",
+          "support_after": "Shell B"
+        },
+        "estimated_equivalent_point_step_m": {
+          "step": 0.0013041823444499298,
+          "before_time_s": 31.69499969482422,
+          "after_time_s": 31.700000762939453,
+          "patch_switch": true,
+          "support_before": "Belt B",
+          "support_after": "Shell B"
+        },
+        "estimated_normal_step_deg": {
+          "step": 0.017302365042171433,
+          "before_time_s": 31.649999618530273,
+          "after_time_s": 31.655000686645508,
+          "patch_switch": false,
+          "support_before": "Shell B",
+          "support_after": "Shell B"
+        },
+        "reference_attitude_error_step_deg": {
+          "step": 0.17299509048461914,
+          "before_time_s": 31.614999771118164,
+          "after_time_s": 31.6200008392334,
+          "patch_switch": false,
+          "support_before": "Shell B",
+          "support_after": "Shell B"
+        },
+        "lqr_command_step_normalized_linf": {
+          "step": 251.15347290039062,
+          "before_time_s": 31.649999618530273,
+          "after_time_s": 31.655000686645508,
+          "patch_switch": false,
+          "support_before": "Shell B",
+          "support_after": "Shell B"
+        },
+        "requested_command_step_normalized_linf": {
+          "step": 251.149658203125,
+          "before_time_s": 31.649999618530273,
+          "after_time_s": 31.655000686645508,
+          "patch_switch": false,
+          "support_before": "Shell B",
+          "support_after": "Shell B"
+        },
+        "applied_command_step_normalized_linf": {
+          "step": 2.0,
+          "before_time_s": 31.594999313354492,
+          "after_time_s": 31.600000381469727,
+          "patch_switch": false,
+          "support_before": "Shell B",
+          "support_after": "Shell B"
+        }
+      }
+    }
+  ]
+}

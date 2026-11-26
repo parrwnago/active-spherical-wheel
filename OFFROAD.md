@@ -106,6 +106,338 @@ The suite, envelope and held-out set below have not been run with it. In Gazebo 
 
 **What it does not remove.** It still needs the full state, including the base's linear velocity, which hardware would have to estimate. The per-surface loads used for gain blending and rim detection, the contact points of the rolling feedforward and the incoming-drive preview still come from the simulator. A push on the body reads as ground force while it lasts. Its slip speed is reported as zero, so the friction estimate stays at the nominal coefficient. It has not been tested with sensor noise, bias or delay, or with model parameters that differ from the plant's.
 
+### Estimated-contact correction diagnostics
+
+See the [iteration log](ITERATION_LOG.md) for the hypothesis/change/result/decision
+sequence, including rejected candidates, and the
+[presentation notes](docs/iterations/2026-11-25/README.md) for preserved evidence.
+
+The subsequent [configuration/continuity study](docs/iterations/2026-11-25/configuration-study/README.md)
+maps 17,739 kinematic configurations and eight requested travel directions,
+then compares the existing controllers in 40 short Gazebo cases. It shows
+direction-dependent feasibility and contact/feedback discontinuities; it does
+not introduce a new weight law or establish improved closed-loop performance.
+
+The separate `hardware` mode uses `StateMirror` and `SupportLocator` to estimate
+contact locations and load shares as well as the net wrench. It reads no solved
+contacts or terrain during control. Its current simulation inputs are still exact
+body pose/velocity, joint angles/rates, and ideal applied drive inputs. The name
+does not imply that a physical robot or a sensor-estimation pipeline has been tested.
+
+`run_offroad(..., record_diagnostics=True)` in this mode adds estimated contact
+points/load shares, drive-rate references, the LQR and feedforward command
+contributions, transition corrections, clipping, and rolling-consistency signals.
+The components sum to the requested command; clipping explains the applied command.
+`reference_qvel` is the allocator's velocity reference; `feedback_reference_qvel`
+also contains the vertical velocity added for tracking along the estimated slope.
+The option does not change the controller's commands. Existing contact-force,
+point, load and slip columns remain simulator truth used only by the evaluator.
+
+Rolling consistency compares tangential body velocity with the velocity predicted
+from the measured body rotation, joint rates, estimated contacts and the preceding
+interval's applied belt speeds. It does not compare desired and actual speed.
+The load-weighted RMS of individual contact residuals preserves opposing slip that
+could cancel in a vector average. A mismatch over 0.02 m/s is labelled kinematic
+inconsistency, not proof of slip or an incorrect radius. Invalid/unloaded estimates
+are marked explicitly. Previous-interval saturation flags contextualize these
+measurements; current-command saturation flags describe the upcoming interval.
+
+Inside the Gazebo environment described in [GAZEBO.md](GAZEBO.md):
+
+```bash
+MUJOCO_GL=egl python scripts/run-contact-diagnostics.py --output results/contact_diagnostics/baseline
+python -m spherical_wheel.contact_diagnostics results/contact_diagnostics/baseline/plain_figure8/phase_+0.90/rollout.npz --output results/contact_diagnostics/events
+```
+
+The study uses the existing figure-eight at phases +0.30, +0.90 and -1.00 rad,
+plus triangle and out-and-back regressions. It blocks simulator contact APIs
+during each controller call and writes annotated correction-event plots.
+
+`OffroadParams(rolling_allocation='damped', rolling_damping_m_s=.01)` is an
+opt-in allocation experiment, also selected by the script's `--variant damped`.
+It adds a least-squares penalty on normalized drive rates to prevent nearly
+singular contact Jacobians from requesting extreme opposing rates. The existing
+scales (5 rad/s for joints, 0.3 m/s for belts) are preferences, not asserted motor
+limits. The default remains `least_squares`: damping removes numerical spikes
+but did not consistently improve trajectory tracking across the tested phases.
+
+`OffroadParams(rolling_allocation='bounded')` is a second opt-in experiment.
+It minimizes estimated-contact velocity error, normalized drive-speed demand,
+and changes in those drive references using bounded least squares. Contacts
+are weighted by their estimated load share. The normalization stays at
+`(5, 5, 5, .3, .3)`; the effort and change coefficients both default to
+0.001 m/s per normalized unit and can be set with `rolling_effort_m_s` and
+`rolling_change_m_s`. Weak drive directions need larger rates to achieve the
+same velocity, so the effort cost naturally permits more error there.
+
+The declared simulation **reference** speed limits are `(20, 20, 20, .3, .3)`
+in rad/s for the shaft/shells and m/s for the belts. Reference acceleration
+limits are `(100, 100, 100, 3, 3)` per second, including starting, stopping
+and contact changes. A brief unloaded interval holds the last references.
+The 20 rad/s choice matches the existing incoming-shell preview ceiling;
+the acceleration limits are experimental assumptions. These are configurable
+through `rolling_speed_limits` and `rolling_acceleration_limits`, not identified
+motor capabilities. Actual joint speeds can exceed the reference ceilings.
+The balance LQR, holding torques, synchronization and final actuator bounds
+remain in place; final torques and belt commands are not slew limited by this
+allocator. Drive-speed cost is a proxy for command demand, not electrical
+energy or torque effort. The timed path reference is unchanged in this trial.
+
+```bash
+MUJOCO_GL=egl python scripts/run-contact-diagnostics.py --variant bounded --output results/contact_allocation/bounded
+python scripts/compare-contact-allocation.py --baseline results/contact_diagnostics/baseline --candidate results/contact_allocation/bounded --output results/contact_allocation/comparison
+```
+
+The optional diagnostics include allocated drive references, limits, active
+bounds, cost coefficients, and the residual velocity the allocation cannot
+match. Keep the default allocator until comparisons establish the desired
+tracking-versus-demand tradeoff.
+
+For a geometry-dependent cost, set `rolling_adaptive_effort=True` with the
+bounded allocator, or add `--adaptive-effort` to the study command. Let `s`
+be the smaller singular value of the normalized, load-averaged horizontal
+contact Jacobian. The speed-cost coefficient is
+`base + (weak - base) * threshold**2 / (s**2 + threshold**2)`.
+Defaults are base 0.001, weak 0.005, and threshold 0.02 m/s per normalized
+unit. These are tunable via `rolling_effort_m_s`, `rolling_weak_effort_m_s`,
+and `rolling_authority_m_s`. This raises the penalty smoothly near aligned
+drive directions or vanishing levers using estimated geometry alone. It
+does not select weights by route name. Diagnostics record `s`, the blend,
+and the coefficient actually used. The common-translation authority measure
+does not certify that all constraints in a general multi-contact situation
+can be satisfied.
+
+The focused Gazebo comparison on 2026-11-25 ran a fresh baseline and three
+bounded variants on the same five cases. All 20 runs completed; each setting
+passed all existing acceptance gates on only one of its five cases. Moving
+RMS errors in millimetres were:
+
+| Case | Existing | Fixed cost .001 | Fixed cost .005 | Geometry-adaptive .001–.005 |
+| --- | ---: | ---: | ---: | ---: |
+| Figure-eight, +0.30 rad | 57.0 | 51.8 | 62.7 | 60.7 |
+| Figure-eight, +0.90 rad | 50.5 | 67.6 | 46.2 | 55.5 |
+| Figure-eight, -1.00 rad | 41.3 | 38.6 | 38.8 | 77.1 |
+| Triangle, +0.30 rad | 24.4 | 23.8 | 35.2 | 23.4 |
+| Out-and-back, +0.30 rad | 34.0 | 30.0 | 33.5 | 33.9 |
+
+All bounded variants respected their reference speed and acceleration bounds.
+The fixed .005 cost reduced the difficult +0.90 run's largest joint reference
+from 1760.5 to 2.1 rad/s and peak position error from 190.9 to 85.3 mm, but
+increased the triangle's peak error from 68.8 to 166.2 mm. Adaptive weighting
+recovered triangle tracking but regressed the -1.00 figure-eight. Reference
+bounds also did not prevent an unloaded shell from reaching 44.3 rad/s in the
+first fixed-.001 trial. No variant consistently improved tracking and attitude,
+so `least_squares` remains the default and the broader suite was not used to
+qualify these candidates. These are single runs per setting; small Gazebo
+numerical differences can change later handovers.
+
+Raw logs, source hashes, input audits, comparison JSON/CSV/plots and videos are
+in `results/weighted_allocation_20261125/`. Reproduce the stronger fixed-cost
+trial with `--variant bounded --effort-weight .005`; the adaptive trial uses
+`--variant bounded --adaptive-effort`. The controller's timed reference path
+was identical across settings, so these results do not hide tracking error by
+slowing the requested trajectory.
+
+In the adaptive -1.00 regression, the onset at 28.975 s had only about
+0.0000006 m/s allocation residual and no active allocation bounds. The estimated
+support switched shell/belt 18 times over 28.900–29.385 s, alongside large
+attitude/velocity feedback corrections and clipped belt commands. This is
+evidence to inspect contact-transition/gain-blending continuity; it does not
+establish that remaining allocation infeasibility or position error caused
+the excursion. Event evidence is saved with the adaptive comparison.
+
+`tests/test_multicontact_diagnostics.py` includes real Gazebo fixtures for two
+loaded rims and two contacts in a V-groove. The latter supplies the exact net
+wrench to isolate the locator's equivalent-support limitation. These fixtures
+do not establish closed-loop traversal of general multi-contact terrain.
+
+### Experimental feasible motion reference
+
+`OffroadParams(rolling_allocation='feasible')` adds direction-dependent drive
+costs and a feedback motion reference consistent with the bounded allocation.
+It addresses common-shaft/hemisphere alignment at a single contact, which can
+occur without a shell/belt handover. It retains the existing gain-scheduled
+LQR and holding torques. **This is an implemented, tested prototype; trajectory
+regressions prevent promotion.** The default remains `least_squares`.
+
+For the normalized, estimated-load-averaged horizontal contact Jacobian
+`A = J S = U diag(sigma) V.T`, each drive-space mode receives the smooth cost
+`lambda_i = base + (weak-base)*threshold²/(sigma_i²+threshold²)`. The drive
+nullspace receives `weak`. Defaults are base .001, weak .005, change .001,
+threshold .02, with the same reference speed/acceleration bounds as `bounded`.
+Unlike the scalar adaptive trial, this can relax a poorly driven direction
+while retaining a useful direction. These are geometric speed costs, not
+identified motor torque/current or energy costs.
+
+After solving, the accepted horizontal body velocity is `-J @ drive_reference`.
+This velocity enters feedback. A smooth geometric response
+`P = U diag(sigma²/(sigma²+lambda²+change²)) U.T` also projects position error
+and nominal acceleration. `P` describes unconstrained modal response; it is
+not the derivative of the bounded solution. Acceleration is projected nominal
+lean feedforward, not the exact derivative of accepted velocity. With several
+estimated contacts, the accepted velocity matches their weighted mean; it
+need not satisfy every contact. `allocation_reference_residual_rms_m_s` records
+the remaining per-contact discrepancy. None of this certifies friction or
+dynamic feasibility or agreement with measured motion.
+
+The original timed path and destination stay in the evaluator. The candidate
+uses projected position error capped by `rolling_reference_position_limit_m`
+(default .05 m), plus a projected catch-up request with gain
+`rolling_reference_catchup_gain_s_inv` (1/s) and speed cap
+`rolling_reference_catchup_speed_m_s` (.06 m/s). Zero gain disables catch-up.
+The nominal goal remains available when authority returns. There is no
+autonomous reconfiguration or guarantee of reaching a permanently blocked goal.
+During missing contact estimates, drive references hold but the accepted body
+velocity is zero and its validity flag is false.
+
+An optional `rolling_reference_balance_guard=True` scales travel setpoints by
+`1/(1+((lean_error + horizon*lean_rate)/scale)⁴)`, with scale 3° and horizon
+.1 s. It leaves gains and holding torques in place; it is not a stability
+certificate. The trial with this guard improved some attitude peaks but
+increased original-path moving RMS versus the fresh LS baseline in all five
+tested cases.
+
+```bash
+MUJOCO_GL=egl python scripts/test-fixed-contact-allocation.py --output results/new_feasible/fixed_support
+MUJOCO_GL=egl python scripts/run-contact-diagnostics.py --variant feasible --output results/new_feasible/initial
+MUJOCO_GL=egl python scripts/run-contact-diagnostics.py --variant feasible --position-error-limit 1 --output results/new_feasible/wide_position
+MUJOCO_GL=egl python scripts/run-contact-diagnostics.py --variant feasible --position-error-limit 1 --balance-guard --output results/new_feasible/balance
+```
+
+Use the Gazebo environment above for trajectory runs. The fixed-support fixture
+is synthetic kinematics and does not execute physics or LQR. On 2026-11-25,
+its 14 assertions passed. A fresh five-case baseline, three five-case candidate
+families and three targeted ablations produced 23 completed Gazebo route
+executions, but no consistently better candidate. The initial candidate reduced
+moving RMS on four cases and regressed +0.90 to 161.6 mm versus 50.5 mm baseline.
+A 1 m position cap helped that case but regressed +0.30 and out-and-back.
+Reference bounds passed, while actual joint speeds still exceeded reference
+caps. See [I-17–I-21 and the presentation evidence](docs/iterations/2026-11-25/fixed-contact-allocation/README.md)
+for every setting, retained regression, test scope and videos. These results
+verify reference handling under stated geometry, not an overall robot-level fix.
+
+The later [targeted support-information probe](docs/iterations/2026-11-25/support-identity-probe/README.md)
+revisits one shell/belt disagreement with saved-state command calculations and
+four matched Gazebo runs. Last-1-ms support labels differ in timing from the
+observer's filtered 5-ms wrench. Feedback-only true-share substitutions and a
+complete valid true-contact-record substitution are confined to a declared
+late window; none resolves the excursion. These are diagnostic input ablations
+in [probe-support-identity.py](scripts/probe-support-identity.py), not new
+controller modes or robot-measurable input sources. Core control and defaults
+remain unchanged. The comparison retains original-path, attitude and endpoint
+metrics, warm-prefix checks, source versions and failed trials.
+
+### Experimental predictive balance control
+
+The [MPC investigation](docs/iterations/2026-11-25/mpc-balance/README.md) implements
+a private estimated-plane dynamics predictor and bounded finite-horizon control
+in `predictive_model.py` / `predictive_control.py`. It plans three motor torques
+and two ideal belt surface speeds. It does not read live simulator contacts or
+terrain; the existing observer/locator supplies support estimates. Private
+predicted contacts are part of its model, not measured ground truth.
+
+Use the separate [experiment runner](scripts/run-mpc-comparison.py); no existing
+`OffroadParams` mode/default is changed. The optional dependency is installed
+with `python -m pip install -e '.[mpc]'` inside the Gazebo environment. The
+initial affine and later trajectory-relinearized variants retain original
+goals and explicit fallback/model/solver diagnostics. Accepted nonlinear plans
+and solved QPs are counted separately. Input bounds are hard; state/tilt and
+slew penalties do not establish hard safety or stability guarantees.
+
+In the two 5.4 s warm-start tests, final trajectory MPC improves peak lean error
+from 9.36° to 1.72° (initially weak Y) and 1.39° to .84° (strong X), with no LQR
+fallback. Final original-goal errors remain 24.97 and 8.16 mm for a 16 mm request,
+failing the declared 5 mm criterion. Typical planning costs 1.6–2.0 s per .02 s
+simulated update, so this is an offline prototype. No broader Mars qualification
+or default promotion is claimed. Earlier failed candidates and source stages
+are preserved in I-27–I-30.
+
+The [I-31 rest-goal audit](docs/iterations/2026-11-25/mpc-equilibrium/README.md)
+adds tested optional input-reference and augmented-terminal costs, but does not
+activate them in a new controller. None of five local fitted rest targets
+passes the declared hold gates. Two separate fixed-input target pairs also
+drift in Gazebo. A terminal value around a verified equilibrium was therefore
+not derived or tested in closed loop; this failed prerequisite and its sources,
+repeated diagnostics and video are retained for presentation.
+
+The [I-32–I-33 feedback follow-up](docs/iterations/2026-11-25/feedback-recovery/README.md)
+then tests recovery directly: unchanged native LQR/feedforward settles at
+0.381 mm after the demonstrated drift, versus 31.215 mm for current MPC after
+eight seconds. A bounded offline sequence has about 196 times lower cost than
+the first selected MPC plan under the same objective, exposing a local-search
+limitation at that anchor. This does not demonstrate a deployable seed fix.
+Longer original LQR trajectories expose a separate late contact-transition
+failure. Defaults and estimator remain unchanged; no particle filter is added.
+
+The [I-34 MPC investigation](docs/iterations/2026-11-25/mpc-search/README.md)
+then adds an optional predicted-native seed and configurable refinements. The
+seed uses cloned present observer/controller history, not saved future inputs.
+Initial modeled cost improves sharply, but live final error remains 28.982 mm
+and fails settling. Sparse derivatives and short-horizon attitude/tracking
+tradeoffs are measured separately. MPC already uses observer-derived current
+contact and predicts geometry-based future contacts on a fixed local plane;
+unknown terrain and general multi-surface uncertainty remain outside this model.
+The [I-37 saved-video review](docs/iterations/2026-11-25/mpc-return-review/README.md)
+qualifies the settling result: both original and seeded MPC are steadily
+returning near the end. Failing the eight-second window does not establish
+inability to return. The [I-38 unchanged extension](docs/iterations/2026-11-25/mpc-extended-return/README.md)
+reaches 2.936 mm at 10.755 s, then retreats and ends 19.100 mm away at 16.4 s. There is
+no full-second settled hold; added-interval support stays shell A in truth and
+estimate without handovers or command saturation. This narrows the observed
+problem to holding the recovery, without establishing its cause.
+
+The [I-40 LQR forecast audit](docs/iterations/2026-11-25/lqr-contact-forecast/README.md)
+then keeps native 5 ms LQR unchanged and evaluates 113 fine-feedback private
+forecasts across eight fresh trajectories, including the Mars figure-eight.
+Four of seven controlled cases settle; Mars fails its existing route gates.
+At 200 ms, uniform motion-error p95 improves from 12.48 mm constant-velocity
+to 5.47 mm dynamic, while dominant-patch accuracy is 92/96 versus 93/96 for
+observer persistence. Twelve current-load fits miss tolerance and computation
+takes 270 ms median, so predictions do not change actuation. The authoritative
+report retains a corrected warning-aggregation stage and the failed forecast
+example; no general multi-contact or real-time capability is established.
+
+The [I-41 figure-eight event audit](docs/iterations/2026-11-25/figure8-event-audit/README.md)
+locates the first sustained 20 mm local-path departure at 6.860 s amid changing
+terrain, transient shell/belt disagreements and belt clipping. Private model
+error persists with hindsight actual commands; the unused dynamic forecast
+cannot cause the live drift. One same-reference flat run tracks better overall
+but changes initial balancing as well as terrain, so local slope causality is
+unresolved. The first Mars turn is delayed without geometric overshoot; later
+turns and the flat comparison show genuine overshoot. No controller fix is
+claimed; exact sources, negative evidence and an annotated video are retained.
+
+The [I-42 four-arm diagnostic](docs/iterations/2026-11-25/handoff-factorial/README.md)
+then replaces only feedback support shares, masks incoming-drive preparation,
+or applies both during 4–10 s. All four first depart at 6.860 s with essentially
+unchanged early errors. The mask improves later moving RMS to 41.68 mm and
+passes existing route gates in one run, but fails the declared early-error
+screen and worsens four of six turn overshoots. These results do not justify
+a default change or rule out contact geometry/rolling feedforward, which the
+feedback-share diagnostic leaves native. All sources and corrections remain
+preserved; the hardware-facing candidates still need separate validation.
+The secondary command audit instead finds large common attitude/rate feedback
+on the correctly identified loaded belt before onset, with changing lean but
+zero desired angular rate. An attainable tilt-reference/tilt-rate generator is
+a proposed next test, not an implemented fix or reason to weaken balancing.
+
+The [I-43 optional tilt generator](docs/iterations/2026-11-25/tilt-reference/README.md)
+implements that test with bounded smooth tilt and consistent actual-body-frame
+angular-rate references. Three matched +0.9 Mars runs reduce early local RMS
+38.66→29.89 mm and belt demand 0.835→0.491 m/s, but full error against the unshaped
+native lean target increases 8.71→13.58° and four turns regress. All complete
+without falling with similar absolute platform tilt. The screen fails; no
+conditional eight-case expansion or default change occurs. The feature remains
+opt-in via OffroadParams.tilt_reference; disabled history replay is bit-exact.
+
+The [I-35 horizon comparison](docs/iterations/2026-11-25/mpc-horizon/README.md)
+uses full-stage Jacobians and five refinements at two saved states, with fixed
+weights and 20 ms stages. Neither 0.8 nor 1.2 s produces a qualifying return
+plan; no new Gazebo trial follows. Long forecasts expose substantial divergence
+between the fine-feedback seed and its averaged held-input replay, along with
+severe numerical conditioning. These private predictions do not establish that
+longer lookahead cannot help or justify replacing the observer.
+
 ## What the controller does with it
 
 `offroad_control.py` keeps the flat-floor gain library unchanged and corrects the places where assuming a level floor is wrong. They are listed by how much the tuning sweep found they matter.

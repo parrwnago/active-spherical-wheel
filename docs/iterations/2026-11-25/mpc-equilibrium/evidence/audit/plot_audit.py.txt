@@ -1,0 +1,49 @@
+"""Plot the five already-completed private hold audits; no new physics."""
+from pathlib import Path
+import json
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import mujoco
+import numpy as np
+
+
+HERE = Path(__file__).resolve().parent
+
+
+def main():
+    report = json.loads((HERE/'report.json').read_text())
+    settings = report['settings']
+    fig, axes = plt.subplots(3, 2, figsize=(12, 10), constrained_layout=True)
+    axes = axes.ravel()
+    for row in report['rows']:
+        hold = row['diagnostics']['selected_audit']
+        q, v = np.array(hold['hold_qpos']), np.array(hold['hold_qvel'])
+        time = np.arange(len(q))*settings['hold_step_s']
+        rotations = []
+        for pose in q:
+            rotation = np.zeros(3)
+            mujoco.mju_subQuat(rotation, pose[3:7], q[0, 3:7])
+            rotations.append(float(np.linalg.norm(rotation)))
+        curves = [1000*np.linalg.norm(q[:, :2]-q[0, :2], axis=1), np.degrees(rotations),
+                  np.linalg.norm(v[:, :3], axis=1), np.linalg.norm(v[:, 3:6], axis=1),
+                  np.max(abs(v[:, 6:9]), axis=1)]
+        label = f'{row["direction"]} t={row["anchor_time_s"]:.1f}s'
+        for axis, curve in zip(axes, curves):
+            axis.plot(time, curve, label=label)
+    bounds = [1000*settings['max_xy_drift_m'], np.degrees(settings['max_rotation_drift_rad']),
+              settings['max_body_speed_m_s'], settings['max_body_rate_rad_s'], settings['max_joint_rate_rad_s']]
+    names = ['XY drift, mm', 'Full rotation drift, deg', 'Body speed, m/s', 'Body angular rate, rad/s', 'Largest internal joint rate, rad/s']
+    for axis, bound, name in zip(axes, bounds, names):
+        axis.axhline(bound, color='black', linestyle='--', linewidth=1.)
+        axis.set_ylabel(name);axis.set_xlabel('Private hold time, s');axis.grid(alpha=.2)
+    axes[0].legend(fontsize=8)
+    axes[5].axis('off')
+    axes[5].text(.02, .95, 'Five declared estimated-plane anchors\n\nAll fail the held-input prerequisite.\n\nGoal XY and plane remain fixed.\nNo live state reset or MPC comparison.\n\nDashed lines: predeclared peak gates.\n\nOptimizer success does not imply\na verified rest equilibrium.', va='top', fontsize=12)
+    fig.suptitle('I-31: best-found bounded holding inputs — private-model audit, not controller performance')
+    fig.savefig(HERE/'hold_audit.png', dpi=170);fig.savefig(HERE/'hold_audit.pdf');plt.close(fig)
+
+
+if __name__ == '__main__':
+    main()

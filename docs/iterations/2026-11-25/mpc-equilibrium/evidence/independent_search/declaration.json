@@ -1,0 +1,54 @@
+{
+  "scope": "Independent one bounded least-squares search, exact firstY2 reference and frozen estimated plane. No physical state reset or Gazebo simulation.",
+  "variables": [
+    "height_m",
+    "body_tangent_rx_rad",
+    "body_tangent_ry_rad",
+    "shaft_phase_rad",
+    "shaft_torque_Nm",
+    "shellA_torque_Nm",
+    "shellB_torque_Nm"
+  ],
+  "bounds_abs": [
+    0.003,
+    0.08,
+    0.08,
+    0.35,
+    1.5,
+    0.6,
+    0.6
+  ],
+  "absolute_jacobian_steps": [
+    1e-07,
+    1e-05,
+    1e-05,
+    1e-05,
+    0.0001,
+    0.0001,
+    0.0001
+  ],
+  "fixed": "GoalXY, nominal material shell angles, yaw tangent, estimated plane, friction and belts0; no plane recalibration during fit.",
+  "residual_scale": [
+    1.0,
+    1.0,
+    1.0,
+    0.12,
+    0.12,
+    0.12,
+    0.12,
+    0.12,
+    0.12
+  ],
+  "max_nfev": 200,
+  "hold_s": [
+    0.2,
+    0.4
+  ],
+  "source_sha256": {
+    "results/mpc_equilibrium_20261125/independent_search/search.py": "25d85b4c5ff914cb0e194017b952d35a2bb5bd2d3f833a894946bb25072452b1",
+    "results/mpc_equilibrium_20261125/audit/first_y2.json": "8784bbc858119f2aab53850d9719a3a035b73dd8a278097d4baef11b3923f696",
+    "results/mpc_balance_20261125/trajectory/runs/world_y/mpc/plans.json": "81b3a19026f30eb6ae86e08a20dcd738733fd0598a2254dec748c56706f16e8f",
+    "results/mpc_balance_20261125/trajectory/runs/world_y/mpc/precision.npz": "61a4415898cd0f550279f895a8a0ab158e36685600ec8ac25976ee228c75eced",
+    "src/spherical_wheel/predictive_model.py": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473"
+  }
+}

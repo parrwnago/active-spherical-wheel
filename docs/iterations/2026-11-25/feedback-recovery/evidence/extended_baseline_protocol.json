@@ -1,0 +1,21 @@
+{
+  "declared_utc": "2026-11-25T23:17:33.634945+00:00",
+  "status": "Declared before extended original-trajectory baseline runs; native I32 hold recovery has completed, MPC hold comparison still running.",
+  "question": "Did the old native trajectory case need more settling time rather than a new controller?",
+  "cases": [
+    {
+      "motion": "world_y",
+      "variant": "baseline"
+    },
+    {
+      "motion": "world_x",
+      "variant": "baseline"
+    }
+  ],
+  "reuse": "Compare exactfirst5.4s against frozenI30initialLQRbaselines; oldrawdataare reused, not additionalexecutions.",
+  "fixed": "Same original16mmpath, .8swarm+.6smotion, slope10deg, phasepi/2, existinghardwareLQR+FF/LS settings; no tuning.",
+  "change_only": "Extend post-motionrecovery from4s to8s (total9.4s).",
+  "reported": "Error/velocity atold5.4deadline andnew9.4end, final1ssettling, exactprefix comparison; distinguish differentfixtures from theI32same-driftcontrollerpair.",
+  "limitations": "Thisdoesnotre-runMPC originalpath atlongertime anddoesnotbyitselfidentifycause; explicitlyreportadditionalobservationtime.",
+  "source_sha256": "2aba2e3fc3dcb901fa6414e06123e65a9065d4a8ff491c2b9f6cb5f256a4a896"
+}

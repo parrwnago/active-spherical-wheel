@@ -1,0 +1,126 @@
+"""One declared bounded static search; private model only, no Gazebo run."""
+from pathlib import Path
+import hashlib
+import json
+from time import perf_counter
+
+import mujoco
+import numpy as np
+from scipy.optimize import least_squares
+
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.model import REPO_ROOT, load_config
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+
+
+HERE = Path(__file__).resolve().parent
+SOURCE = REPO_ROOT/'results/mpc_equilibrium_20261125/audit/first_y2.json'
+PLANS = REPO_ROOT/'results/mpc_balance_20261125/trajectory/runs/world_y/mpc/plans.json'
+PRECISION = PLANS.with_name('precision.npz')
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    declaration = {
+        'scope': 'Independent one bounded least-squares search, exact firstY2 reference and frozen estimated plane. No physical state reset or Gazebo simulation.',
+        'variables': ['height_m', 'body_tangent_rx_rad', 'body_tangent_ry_rad', 'shaft_phase_rad', 'shaft_torque_Nm', 'shellA_torque_Nm', 'shellB_torque_Nm'],
+        'bounds_abs': [.003, .08, .08, .35, 1.5, .6, .6],
+        'absolute_jacobian_steps': [1e-7, 1e-5, 1e-5, 1e-5, 1e-4, 1e-4, 1e-4],
+        'fixed': 'GoalXY, nominal material shell angles, yaw tangent, estimated plane, friction and belts0; no plane recalibration during fit.',
+        'residual_scale': [1., 1., 1., .12, .12, .12, .12, .12, .12],
+        'max_nfev': 200,
+        'hold_s': [.2, .4],
+        'source_sha256': {str(p.relative_to(REPO_ROOT)): sha(p) for p in (Path(__file__), SOURCE, PLANS, PRECISION, REPO_ROOT/'src/spherical_wheel/predictive_model.py')},
+    }
+    (HERE/'declaration.json').write_text(json.dumps(declaration, indent=2)+'\n')
+    first = json.loads(SOURCE.read_text())
+    plan = min(json.loads(PLANS.read_text()), key=lambda row: abs(row['time_s']-2.))
+    with np.load(PRECISION) as z:
+        index = int(np.argmin(abs(z['time_s']-plan['time_s'])))
+        preceding = z['exact_applied'][index-1].copy()
+    mirror = StateMirror(load_config(), HERE/'mirror')
+    mirror.set_state(plan['qpos'], plan['qvel'], plan['time_s'], preceding)
+    predictor = EstimatedPlanePredictor(mirror)
+    calibration = predictor.update(plan['qpos'], plan['qvel'], plan['normal'], plan['point_m'], plan['load_N'], command=preceding)
+    assert abs(calibration['plane_offset_m']-first['plane_calibration']['plane_offset_m']) < 1e-10
+    q_reference = np.asarray(first['rows'][0]['qpos'])
+    scales = np.asarray(declaration['bounds_abs'])
+    jac_steps = np.asarray(declaration['absolute_jacobian_steps'])/scales
+    residual_scale = np.asarray(declaration['residual_scale'])
+    zeros = np.zeros(9)
+    counter = [0]
+
+    def assign(z):
+        physical = np.asarray(z)*scales
+        tangent = np.zeros(9)
+        tangent[2:5] = physical[:3]
+        tangent[6] = physical[3]
+        q = q_reference.copy()
+        mujoco.mj_integratePos(predictor.model, q, tangent, 1.)
+        u = np.r_[physical[4:], 0., 0.]
+        predictor._assign(q, zeros, u)
+        return q, u
+
+    def residual(z):
+        counter[0] += 1
+        assign(z)
+        return predictor.data.qacc.copy()*residual_scale
+
+    def jacobian(z):
+        columns = []
+        for i, step in enumerate(jac_steps):
+            offset = np.zeros(7)
+            offset[i] = step
+            columns.append((residual(z+offset)-residual(z-offset))/(2*step))
+        return np.column_stack(columns)
+
+    def audit(z, label):
+        q, u = assign(z)
+        acceleration = predictor.data.qacc.copy()
+        constraint = predictor.data.qfrc_constraint.copy()
+        normal = predictor.normal.copy()
+        world_weight = np.array([0., 0., mirror.total_mass*9.81])
+        support = []
+        for contact in predictor.data.contact:
+            support.append({'geom_names': [mujoco.mj_id2name(predictor.model, mujoco.mjtObj.mjOBJ_GEOM, int(g)) for g in contact.geom], 'distance_m': float(contact.dist)})
+        predictor.data.qacc[:] = 0.
+        mujoco.mj_inverse(predictor.model, predictor.data)
+        inverse = predictor.data.qfrc_inverse.copy()
+        holds = {}
+        for seconds in declaration['hold_s']:
+            end_q, end_v = predictor.transition(q, zeros, u, seconds)
+            difference = predictor.tangent(q, zeros, end_q, end_v)
+            holds[str(seconds)] = {'xy_drift_mm': float(1000*np.linalg.norm(difference[:2])),
+                'attitude_drift_deg': float(np.degrees(np.linalg.norm(difference[3:6]))),
+                'body_speed_m_s': float(np.linalg.norm(end_v[:3])),
+                'angular_speed_rad_s': float(np.linalg.norm(end_v[3:6])),
+                'internal_speed_rad_s': float(np.max(abs(end_v[6:])))}
+        return {'label': label, 'variables_physical': (z*scales).tolist(), 'qpos': q.tolist(), 'input': u.tolist(),
+            'acceleration': acceleration.tolist(), 'scaled_acceleration_norm': float(np.linalg.norm(acceleration*residual_scale)),
+            'constraint_generalized': constraint.tolist(), 'required_weight_force_world_N': world_weight.tolist(),
+            'required_tangential_force_N': float(np.linalg.norm(world_weight-normal*(normal@world_weight))),
+            'inverse_zero_acceleration_generalized_force': inverse.tolist(),
+            'inverse_unactuated_base_force_tangent_N': float(np.linalg.norm(inverse[:3]-normal*(normal@inverse[:3]))),
+            'contacts': support, 'holds': holds}
+
+    initial = np.zeros(7)
+    initial[4:] = np.asarray(first['rows'][1]['input'][:3])/scales[4:]
+    before = audit(initial, 'initial_analytic_best_holding')
+    started = perf_counter()
+    fit = least_squares(residual, initial, jac=jacobian, bounds=(-np.ones(7), np.ones(7)),
+                        max_nfev=200, xtol=1e-12, ftol=1e-12, gtol=1e-12, x_scale='jac')
+    result = {'declaration': declaration, 'plane_calibration': calibration, 'initial': before,
+              'fit': {'success': bool(fit.success), 'status': int(fit.status), 'message': str(fit.message),
+                      'nfev': fit.nfev, 'njev': fit.njev, 'actual_residual_evaluations': counter[0],
+                      'cost': float(fit.cost), 'optimality': float(fit.optimality), 'wall_s': perf_counter()-started,
+                      'active_mask': fit.active_mask.tolist()},
+              'result': audit(fit.x, 'single_bounded_search')}
+    (HERE/'report.json').write_text(json.dumps(result, indent=2, allow_nan=False)+'\n')
+    print(json.dumps({'fit': result['fit'], 'result': result['result']}, indent=2), flush=True)
+
+
+if __name__ == '__main__':
+    main()

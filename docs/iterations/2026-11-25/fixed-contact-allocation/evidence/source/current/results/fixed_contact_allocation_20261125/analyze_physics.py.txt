@@ -1,0 +1,443 @@
+"""Report nominal-path performance separately from feasible-reference tracking.
+
+Reuses the repository comparison helper. Reads completed saved runs only;
+performs no physics, controller execution, or new tuning.
+"""
+from pathlib import Path
+from datetime import datetime, timezone
+import csv
+import hashlib
+import importlib.util
+import json
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+FAMILY = Path(__file__).resolve().parent
+REPO = FAMILY.parents[1]
+OUT = FAMILY/'analysis'
+ABLATIONS = ('ablation_no_catchup', 'ablation_wide_position', 'ablation_minimal')
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def fingerprint(path):
+    return {'path': str(path.relative_to(REPO)), 'bytes': path.stat().st_size, 'sha256': digest(path)}
+
+
+def snapshot():
+    entries = []
+    for source in (Path(__file__).resolve(), REPO/'scripts/compare-contact-allocation.py',
+                   REPO/'src/spherical_wheel/contact_diagnostics.py'):
+        relative = source.relative_to(REPO)
+        target = OUT/'source_snapshot'/relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+        entries.append(fingerprint(source))
+    record = {'captured_before_analysis_utc': datetime.now(timezone.utc).isoformat(), 'source_files': entries}
+    (OUT/'source_snapshot/manifest.json').write_text(json.dumps(record, indent=2)+'\n')
+    return record
+
+
+def norm(values):
+    values = np.asarray(values, float)
+    return np.linalg.norm(values, axis=1) if values.ndim == 2 else values
+
+
+def finite_stat(values, operation):
+    values = np.asarray(values, float)
+    values = values[np.isfinite(values)]
+    return float(operation(values)) if len(values) else None
+
+
+def extend(log, summary):
+    time = np.asarray(log['time_s'], float)
+    path = summary['route']['path']
+    moving = (time >= path['start_s']) & (time <= path['start_s']+path['duration_s'])
+    nominal_xy = np.asarray(log['reference_xy'], float)
+    managed_xy = np.asarray(log.get('feedback_reference_xy', nominal_xy), float)
+    position = np.asarray(log['qpos'], float)[:, :2]
+    reference_gap = norm(nominal_xy-managed_xy)
+    managed_error = norm(position-managed_xy)
+    final_goal_error = norm(position-nominal_xy[-1])
+    final_second = time >= time[-1]-1.
+    valid = np.asarray(log.get('allocation_accepted_velocity_valid', np.zeros(len(time), bool)), bool)
+    accepted = np.asarray(log.get('allocation_accepted_velocity_m_s', np.full((len(time), 2), np.nan)), float)
+    nominal_v = np.asarray(log['reference_velocity_m_s'], float)
+    requested_v = np.asarray(log.get('allocation_requested_velocity_m_s', nominal_v), float)
+    accepted_residual = np.asarray(log.get('allocation_reference_residual_rms_m_s', np.full(len(time), np.nan)), float)
+    reference_valid = valid & np.isfinite(accepted_residual)
+    loads = np.asarray(log['estimated_support_loads_N'], float)
+    loaded = np.sum(loads > 1e-9, axis=1)
+    priority = np.asarray(log.get('reference_travel_priority', np.ones(len(time))), float)
+    output = {
+        'managed_tracking_rms_moving_mm': 1000*float(np.sqrt(np.mean(managed_error[moving]**2))),
+        'managed_tracking_max_mm': 1000*float(np.max(managed_error)),
+        'managed_tracking_final_mm': 1000*float(managed_error[-1]),
+        'nominal_timed_reference_within_50mm_sample_fraction': float(np.mean(norm(position-nominal_xy) <= .05)),
+        'nominal_timed_reference_within_100mm_sample_fraction': float(np.mean(norm(position-nominal_xy) <= .1)),
+        'nominal_final_goal_last_second_within_50mm_sample_fraction': float(np.mean(final_goal_error[final_second] <= .05)),
+        'nominal_final_goal_distance_final_mm': 1000*float(final_goal_error[-1]),
+        'nominal_final_goal_final_sample_within_50mm': bool(final_goal_error[-1] <= .05),
+        'nominal_managed_reference_gap_p95_mm': 1000*float(np.percentile(reference_gap, 95)),
+        'nominal_managed_reference_gap_max_mm': 1000*float(np.max(reference_gap)),
+        'nominal_managed_reference_gap_final_mm': 1000*float(reference_gap[-1]),
+        'accepted_reference_valid_samples': int(valid.sum()),
+        'accepted_reference_valid_fraction': float(valid.mean()),
+        'per_contact_accepted_reference_residual_valid_samples': int(reference_valid.sum()),
+        'per_contact_accepted_reference_residual_p95_m_s': finite_stat(accepted_residual[reference_valid], lambda x: np.percentile(x, 95)),
+        'per_contact_accepted_reference_residual_max_m_s': finite_stat(accepted_residual[reference_valid], np.max),
+        'estimated_multiple_support_fraction': float(np.mean(loaded > 1)),
+        'estimated_max_supports': int(loaded.max()),
+        'travel_priority_min': float(np.min(priority)),
+        'travel_priority_mean_moving': float(np.mean(priority[moving])),
+        'travel_priority_below_half_fraction_moving': float(np.mean(priority[moving] < .5)),
+        'travel_priority_below_tenth_fraction_moving': float(np.mean(priority[moving] < .1)),
+        'balance_guard_metric_max_deg': float(np.degrees(np.max(log.get('reference_balance_metric_rad', np.zeros(len(time)))))),
+    }
+    for label, values in (
+        ('nominal_accepted_velocity_gap', norm(nominal_v-accepted)[valid]),
+        ('requested_accepted_velocity_gap', norm(requested_v-accepted)[valid]),
+        ('reference_catchup_velocity', norm(log.get('reference_catchup_velocity_m_s', np.zeros_like(nominal_v)))),
+        ('position_error_relaxed', norm(log.get('reference_position_error_relaxed_m', np.zeros_like(nominal_xy)))),
+    ):
+        unit = 'm' if label == 'position_error_relaxed' else 'm_s'
+        output[f'{label}_p95_{unit}'] = finite_stat(values, lambda x: np.percentile(x, 95))
+        output[f'{label}_max_{unit}'] = finite_stat(values, np.max)
+    return output
+
+
+def plot(rows, logs):
+    main = [row for row in rows if row['variant'] == 'feasible']
+    labels = [f"{row['route']} {row['phase_rad']:+.2f}" for row in main]
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10), constrained_layout=True)
+    x = np.arange(len(main))
+    for key, shift, label, color in (('rms_moving_mm', -.18, 'Original timed path', '#2878b5'),
+                                     ('managed_tracking_rms_moving_mm', .18, 'Managed feedback reference', '#269c83')):
+        axes[0, 0].bar(x+shift, [row[key] for row in main], .36, label=label, color=color)
+    axes[0, 0].set(title='Prototype tracking: two different reference definitions', ylabel='Moving RMS error (mm)',
+                    xticks=x, xticklabels=labels)
+    axes[0, 0].tick_params(axis='x', labelrotation=20)
+    axes[0, 0].legend(fontsize=8)
+    axes[0, 1].bar(x, [row['nominal_managed_reference_gap_max_mm'] for row in main], color='#df7e31')
+    axes[0, 1].set(title='Largest gap between nominal and managed reference', ylabel='mm', xticks=x, xticklabels=labels)
+    axes[0, 1].tick_params(axis='x', labelrotation=20)
+    pole = [row for row in rows if row['route'] == 'plain_figure8' and row['phase_rad'] == .9
+            and row['variant'] in ('baseline', 'feasible', *ABLATIONS)]
+    colors = ('#2878b5', '#df7e31', '#269c83', '#a06ac2', '#b44848')
+    for row, color in zip(pole, colors):
+        log = logs[row['variant']]
+        time = log['time_s']
+        error = norm(log['qpos'][:, :2]-log['reference_xy'])*1000
+        axes[1, 0].plot(time, error, label=row['variant'], color=color)
+        axes[1, 1].plot(time, np.degrees(log['attitude_error_rad']), label=row['variant'], color=color)
+    axes[1, 0].set(title='Figure-eight +0.90: preserve the regression and ablations', ylabel='Original-path error (mm)', xlabel='Time (s)')
+    axes[1, 1].set(title='Balance relative to commanded lean', ylabel='Attitude error (°)', xlabel='Time (s)')
+    for axis in axes.ravel():
+        axis.grid(alpha=.2)
+    axes[1, 0].legend(fontsize=8)
+    axes[1, 1].legend(fontsize=8)
+    fig.suptitle('Feasible-reference controller remains a prototype: original goal and balance both matter', fontsize=14)
+    fig.text(.01, -.012, 'One Gazebo run per setting; no statistical significance claim. '
+             'Managed-reference tracking is not destination success. Ablations shown only when their saved runs are available.', fontsize=8)
+    for suffix in ('png', 'pdf'):
+        fig.savefig(OUT/f'prototype_comparison.{suffix}', dpi=150, bbox_inches='tight')
+    plt.close(fig)
+
+
+def plot_balance(rows, logs):
+    candidate = [row for row in rows if row['variant'] == 'feasible_balance']
+    if not candidate:
+        return
+    maps = {variant: {(row['route'], row['phase_rad']): row for row in rows if row['variant'] == variant}
+            for variant in ('baseline', 'feasible_v2', 'feasible_balance')}
+    labels = [f"{row['route']} {row['phase_rad']:+.2f}" for row in candidate]
+    x = np.arange(len(candidate))
+    fig, axes = plt.subplots(2, 3, figsize=(18, 10), constrained_layout=True)
+    for axis, metric, title, ylabel in (
+        (axes[0, 0], 'rms_moving_mm', 'Original timed-path tracking', 'Moving RMS error (mm)'),
+        (axes[0, 1], 'max_attitude_error_deg', 'Balance relative to commanded lean', 'Max attitude error (°)'),
+        (axes[0, 2], 'final_error_mm', 'Nominal destination', 'Final error (mm)'),
+    ):
+        for variant, shift, color in (('baseline', -.27, '#2878b5'), ('feasible_v2', 0., '#df7e31'),
+                                      ('feasible_balance', .27, '#269c83')):
+            axis.bar(x+shift, [maps[variant][(row['route'], row['phase_rad'])][metric] for row in candidate],
+                     .27, label=variant, color=color)
+        axis.set(title=title, ylabel=ylabel)
+        axis.legend(fontsize=7)
+    axes[0, 1].axhline(8., color='#777777', linestyle=':')
+    axes[0, 2].axhline(50., color='#777777', linestyle=':')
+    for metric, shift, color, label in (('rms_moving_mm', -.18, '#2878b5', 'Nominal timed path'),
+                                       ('managed_tracking_rms_moving_mm', .18, '#269c83', 'Managed feedback reference')):
+        axes[1, 0].bar(x+shift, [row[metric] for row in candidate], .36, label=label, color=color)
+    axes[1, 0].set(title='Balance-gated reference definitions', ylabel='Moving RMS error (mm)')
+    axes[1, 0].legend(fontsize=7)
+    axes[1, 1].bar(x, [row['travel_priority_mean_moving'] for row in candidate], color='#269c83')
+    axes[1, 1].set(title='Mean travel priority during nominal movement', ylabel='Priority', ylim=(0., 1.05))
+    axes[1, 2].bar(x, [row['nominal_managed_reference_gap_max_mm'] for row in candidate], color='#a06ac2')
+    axes[1, 2].set(title='Largest nominal/managed reference gap', ylabel='mm')
+    for axis in axes.ravel():
+        axis.set(xticks=x, xticklabels=labels)
+        axis.tick_params(axis='x', labelrotation=20)
+        axis.grid(axis='y', alpha=.2)
+    fig.suptitle('Final balance-gated prototype: trade off travel requests and balance without changing the nominal clock', fontsize=14)
+    fig.text(.01, -.012, 'Default-off balance guard; gain library and holding torques unchanged. '
+             'Lower managed-reference error or travel priority is not autonomous goal progress. One recorded run per setting.', fontsize=8)
+    for suffix in ('png', 'pdf'):
+        fig.savefig(OUT/f'balance_tradeoff.{suffix}', dpi=150, bbox_inches='tight')
+    plt.close(fig)
+
+    fig, axes = plt.subplots(5, 3, figsize=(18, 16), constrained_layout=True)
+    for index, row in enumerate(candidate):
+        key = (row['route'], row['phase_rad'])
+        for variant, color in (('baseline', '#2878b5'), ('feasible_v2', '#df7e31'), ('feasible_balance', '#269c83')):
+            log = logs[(variant, *key)]
+            axes[index, 0].plot(log['time_s'], norm(log['qpos'][:, :2]-log['reference_xy'])*1000, label=variant, color=color)
+            axes[index, 1].plot(log['time_s'], np.degrees(log['attitude_error_rad']), color=color)
+        log = logs[('feasible_balance', *key)]
+        axes[index, 2].plot(log['time_s'], log['reference_travel_priority'], color='#269c83')
+        axes[index, 0].set(title=labels[index], ylabel='Original-path error (mm)')
+        axes[index, 1].set(title='Balance error', ylabel='Degrees')
+        axes[index, 2].set(title='Travel priority', ylabel='Priority', ylim=(-.03, 1.03))
+        axes[index, 0].legend(fontsize=7)
+        for axis in axes[index]:
+            axis.set_xlabel('Time (s)'); axis.grid(alpha=.2)
+    fig.suptitle('Final prototype histories: nominal tracking, balance, and the travel gate', fontsize=14)
+    for suffix in ('png', 'pdf'):
+        fig.savefig(OUT/f'balance_tradeoff_traces.{suffix}', dpi=150, bbox_inches='tight')
+    plt.close(fig)
+
+
+def plot_v2(rows, logs):
+    candidate = [row for row in rows if row['variant'] == 'feasible_v2']
+    if not candidate:
+        return
+    baseline = {(row['route'], row['phase_rad']): row for row in rows if row['variant'] == 'baseline'}
+    first = {(row['route'], row['phase_rad']): row for row in rows if row['variant'] == 'feasible'}
+    labels = [f"{row['route']} {row['phase_rad']:+.2f}" for row in candidate]
+    x = np.arange(len(candidate))
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10), constrained_layout=True)
+    for values, shift, label, color in (
+        ([baseline[(r['route'], r['phase_rad'])]['rms_moving_mm'] for r in candidate], -.27, 'Baseline / nominal', '#2878b5'),
+        ([r['rms_moving_mm'] for r in candidate], 0., 'V2 / nominal', '#df7e31'),
+        ([r['managed_tracking_rms_moving_mm'] for r in candidate], .27, 'V2 / managed', '#269c83'),
+    ):
+        axes[0, 0].bar(x+shift, values, .27, label=label, color=color)
+    axes[0, 0].set(title='Original timed path versus managed reference', ylabel='Moving RMS error (mm)')
+    axes[0, 0].legend(fontsize=8)
+    for values, shift, label, color in (
+        ([first[(r['route'], r['phase_rad'])]['nominal_managed_reference_gap_max_mm'] for r in candidate], -.18, 'Initial prototype', '#a06ac2'),
+        ([r['nominal_managed_reference_gap_max_mm'] for r in candidate], .18, 'V2', '#df7e31'),
+    ):
+        axes[0, 1].bar(x+shift, values, .36, label=label, color=color)
+    axes[0, 1].set(title='Largest nominal/managed reference gap', ylabel='mm')
+    axes[0, 1].legend(fontsize=8)
+    for shift, label, color in ((-.18, 'Baseline', '#2878b5'), (.18, 'V2', '#df7e31')):
+        values = ([baseline[(r['route'], r['phase_rad'])]['final_error_mm'] for r in candidate]
+                  if label == 'Baseline' else [r['final_error_mm'] for r in candidate])
+        axes[1, 0].bar(x+shift, values, .36, label=label, color=color)
+        fractions = ([baseline[(r['route'], r['phase_rad'])]['nominal_final_goal_last_second_within_50mm_sample_fraction'] for r in candidate]
+                     if label == 'Baseline' else [r['nominal_final_goal_last_second_within_50mm_sample_fraction'] for r in candidate])
+        axes[1, 1].bar(x+shift, fractions, .36, label=label, color=color)
+    axes[1, 0].axhline(50., color='#777777', linestyle=':', label='50 mm destination target')
+    axes[1, 0].set(title='Distance from the fixed nominal final goal', ylabel='Final error (mm)')
+    axes[1, 1].set(title='Last-second samples within 50 mm of nominal final goal', ylabel='Fraction', ylim=(0., 1.05))
+    for axis in axes.ravel():
+        axis.set(xticks=x, xticklabels=labels)
+        axis.tick_params(axis='x', labelrotation=20)
+        axis.grid(axis='y', alpha=.2)
+    axes[1, 0].legend(fontsize=8)
+    axes[1, 1].legend(fontsize=8)
+    fig.suptitle('V2 remains a prototype: original-goal, reference-gap, and destination checks', fontsize=14)
+    fig.text(.01, -.012, 'V2: position-error cap 1 m, catch-up gain 1/s; unchanged modal allocator. '
+             'Sample destination fractions do not establish settling or balance. The separately executed +0.90 repeat has an identical saved rollout.', fontsize=8)
+    for suffix in ('png', 'pdf'):
+        fig.savefig(OUT/f'v2_reference_and_destination.{suffix}', dpi=150, bbox_inches='tight')
+    plt.close(fig)
+
+    fig, axes = plt.subplots(5, 2, figsize=(14, 16), sharex=False, constrained_layout=True)
+    for index, row in enumerate(candidate):
+        key = (row['route'], row['phase_rad'])
+        original, changed = logs[('baseline', *key)], logs[('feasible_v2', *key)]
+        for log, label, color in ((original, 'Baseline / nominal', '#2878b5'), (changed, 'V2 / nominal', '#df7e31')):
+            axes[index, 0].plot(log['time_s'], norm(log['qpos'][:, :2]-log['reference_xy'])*1000, label=label, color=color)
+        axes[index, 0].plot(changed['time_s'], norm(changed['qpos'][:, :2]-changed['feedback_reference_xy'])*1000,
+                             label='V2 / managed', color='#269c83', alpha=.8)
+        axes[index, 1].plot(changed['time_s'], norm(changed['reference_xy']-changed['feedback_reference_xy'])*1000, color='#a06ac2')
+        axes[index, 0].set(title=labels[index], ylabel='Tracking error (mm)', xlabel='Time (s)')
+        axes[index, 1].set(title='Nominal/managed reference gap', ylabel='mm', xlabel='Time (s)')
+        axes[index, 0].legend(fontsize=7)
+        for axis in axes[index]:
+            axis.grid(alpha=.2)
+    fig.suptitle('V2 original-path and managed-reference histories: retain every focused case', fontsize=14)
+    for suffix in ('png', 'pdf'):
+        fig.savefig(OUT/f'v2_reference_traces.{suffix}', dpi=150, bbox_inches='tight')
+    plt.close(fig)
+
+
+def main():
+    OUT.mkdir(parents=True, exist_ok=True)
+    provenance = snapshot()
+    spec = importlib.util.spec_from_file_location('allocation_comparison', REPO/'scripts/compare-contact-allocation.py')
+    helper = importlib.util.module_from_spec(spec); spec.loader.exec_module(helper)
+    helper.main(['--baseline', str(FAMILY/'baseline'), '--candidate', str(FAMILY/'feasible'),
+                 '--candidate-label', 'feasible', '--output', str(FAMILY/'comparison_initial')])
+    original = json.loads((FAMILY/'comparison_initial/comparison.json').read_text())
+    rows, inputs, event_logs, all_logs = [], [], {}, {}
+    for base in original['rows']:
+        directory, log, summary = helper.load_case(FAMILY/base['variant'], base['route'], base['phase_rad'])
+        rows.append({key: value for key, value in base.items() if key != 'per_drive'} | extend(log, summary))
+        inputs.extend(fingerprint(directory/name) for name in ('summary.json', 'rollout.npz'))
+        all_logs[(base['variant'], base['route'], base['phase_rad'])] = log
+        if base['route'] == 'plain_figure8' and base['phase_rad'] == .9:
+            event_logs[base['variant']] = log
+    missing = []
+    ablation_audits = {}
+    _, baseline_log, baseline_summary = helper.load_case(FAMILY/'baseline', 'plain_figure8', .9)
+    for name in ABLATIONS:
+        directory = FAMILY/name/'plain_figure8/phase_+0.90'
+        if not (directory/'summary.json').exists() or not (directory/'rollout.npz').exists():
+            missing.append(name); continue
+        _, log, summary = helper.load_case(FAMILY/name, 'plain_figure8', .9)
+        dt, source = helper.interval_s(FAMILY/name, log)
+        row = helper.case_metrics(log, summary, name, log['allocation_speed_limits'][0],
+                                   log['allocation_acceleration_limits'][0], dt)
+        row.update(extend(log, summary)); rows.append({key: value for key, value in row.items() if key != 'per_drive'})
+        event_logs[name] = log
+        ablation_audits[name] = helper.matched_path(baseline_log, baseline_summary, log, summary)
+        inputs.extend(fingerprint(directory/file) for file in ('summary.json', 'rollout.npz'))
+    v2_pending = [f'{name}/phase_{phase:+.2f}' for name, phase in helper.CASES
+                  if not all((FAMILY/'feasible_v2'/name/f'phase_{phase:+.2f}'/file).exists()
+                             for file in ('summary.json', 'rollout.npz'))]
+    v2_report = None
+    if not v2_pending:
+        helper.main(['--baseline', str(FAMILY/'baseline'), '--candidate', str(FAMILY/'feasible_v2'),
+                     '--candidate-label', 'feasible_v2', '--output', str(FAMILY/'comparison_v2')])
+        v2_report = json.loads((FAMILY/'comparison_v2/comparison.json').read_text())
+        for base in v2_report['rows']:
+            if base['variant'] != 'feasible_v2':
+                continue
+            directory, log, summary = helper.load_case(FAMILY/'feasible_v2', base['route'], base['phase_rad'])
+            rows.append({key: value for key, value in base.items() if key != 'per_drive'} | extend(log, summary))
+            inputs.extend(fingerprint(directory/name) for name in ('summary.json', 'rollout.npz'))
+            all_logs[('feasible_v2', base['route'], base['phase_rad'])] = log
+    balance_pending = [f'{name}/phase_{phase:+.2f}' for name, phase in helper.CASES
+                       if not all((FAMILY/'feasible_balance'/name/f'phase_{phase:+.2f}'/file).exists()
+                                  for file in ('summary.json', 'rollout.npz'))]
+    balance_report = None
+    balance_vs_v2 = []
+    if not balance_pending:
+        helper.main(['--baseline', str(FAMILY/'baseline'), '--candidate', str(FAMILY/'feasible_balance'),
+                     '--candidate-label', 'feasible_balance', '--output', str(FAMILY/'comparison_balance')])
+        balance_report = json.loads((FAMILY/'comparison_balance/comparison.json').read_text())
+        for base in balance_report['rows']:
+            if base['variant'] != 'feasible_balance':
+                continue
+            directory, log, summary = helper.load_case(FAMILY/'feasible_balance', base['route'], base['phase_rad'])
+            assert summary['parameters']['rolling_reference_balance_guard']
+            assert 'reference_travel_priority' in log and np.isfinite(log['reference_travel_priority']).all()
+            assert np.all((log['reference_travel_priority'] >= 0.) & (log['reference_travel_priority'] <= 1.))
+            rows.append({key: value for key, value in base.items() if key != 'per_drive'} | extend(log, summary))
+            inputs.extend(fingerprint(directory/name) for name in ('summary.json', 'rollout.npz'))
+            all_logs[('feasible_balance', base['route'], base['phase_rad'])] = log
+            _, v2_log, v2_summary = helper.load_case(FAMILY/'feasible_v2', base['route'], base['phase_rad'])
+            balance_vs_v2.append({'route': base['route'], 'phase_rad': base['phase_rad'],
+                                  **helper.matched_path(v2_log, v2_summary, log, summary)})
+    base = {(row['route'], row['phase_rad']): row for row in rows if row['variant'] == 'baseline'}
+    candidate = [row for row in rows if row['variant'] == 'feasible']
+    v2_rows = [row for row in rows if row['variant'] == 'feasible_v2']
+    balance_rows = [row for row in rows if row['variant'] == 'feasible_balance']
+    launch_source = None
+    launch_archive = FAMILY/'feasible_balance/recorded_source'
+    if launch_archive.exists():
+        campaign_provenance = FAMILY/'feasible_balance/provenance.json'
+        launch_hashes = json.loads(campaign_provenance.read_text())['source_sha256']
+        archived = [launch_archive/name for name in launch_hashes]
+        assert all(path.exists() and digest(path) == launch_hashes[path.name] for path in archived)
+        launch_source = {
+            'archive': str(launch_archive.relative_to(REPO)),
+            'all_archived_source_hashes_match_campaign_provenance': True,
+            'source_files': [fingerprint(path) for path in archived],
+            'post_launch_difference': 'Live offroad_control.py subsequently received a module-docstring clarification and a held-request diagnostic alignment correction (multiplying recorded requested velocity by travel priority). Controller commands and completed physics results were not changed; launch-code claims refer to this archived source, not live bytes.'}
+        inputs.extend([fingerprint(campaign_provenance), *[fingerprint(path) for path in archived]])
+    hash_groups = {}
+    for item in inputs:
+        if item['path'].endswith('/rollout.npz'):
+            hash_groups.setdefault(item['sha256'], []).append(item['path'])
+    report = {
+        'status': 'prototype_not_promoted',
+        'scope': 'Five matched original timed Mars cases plus targeted +0.90 ablations; offline analysis only.',
+        'initial_comparison': {'baseline_cases': 5, 'prototype_cases': len(candidate),
+            'completed_baseline': original['aggregate']['baseline']['completed'],
+            'completed_prototype': original['aggregate']['feasible']['completed'],
+            'prototype_lower_original_path_RMS_cases': sum(row['rms_moving_mm'] < base[(row['route'], row['phase_rad'])]['rms_moving_mm'] for row in candidate),
+            'all_gate_passes_baseline': original['aggregate']['baseline']['passed_all_gates'],
+            'all_gate_passes_prototype': original['aggregate']['feasible']['passed_all_gates'],
+            'aggregate': original['aggregate'], 'path_and_start_audit': original['path_and_start_audit'],
+            'model_configurations_equal': original['model_configurations_equal']},
+        'available_ablation_cases': [name for name in ABLATIONS if name not in missing],
+        'pending_ablation_cases': missing, 'ablation_path_and_start_audits': ablation_audits,
+        'v2_comparison': ({
+            'status': 'prototype_not_promoted', 'cases': len(v2_rows),
+            'completed': v2_report['aggregate']['feasible_v2']['completed'],
+            'lower_original_path_RMS_cases': sum(row['rms_moving_mm'] < base[(row['route'], row['phase_rad'])]['rms_moving_mm'] for row in v2_rows),
+            'all_gate_passes': v2_report['aggregate']['feasible_v2']['passed_all_gates'],
+            'nominal_final_goal_final_sample_within_50mm_cases': sum(row['nominal_final_goal_final_sample_within_50mm'] for row in v2_rows),
+            'aggregate': v2_report['aggregate'], 'path_and_start_audit': v2_report['path_and_start_audit'],
+            'model_configurations_equal': v2_report['model_configurations_equal'],
+        } if v2_report else None),
+        'pending_v2_cases': v2_pending,
+        'balance_comparison': ({
+            'status': 'prototype_not_promoted', 'cases': len(balance_rows),
+            'completed': balance_report['aggregate']['feasible_balance']['completed'],
+            'lower_original_path_RMS_cases': sum(row['rms_moving_mm'] < base[(row['route'], row['phase_rad'])]['rms_moving_mm'] for row in balance_rows),
+            'all_gate_passes': balance_report['aggregate']['feasible_balance']['passed_all_gates'],
+            'nominal_final_goal_final_sample_within_50mm_cases': sum(row['nominal_final_goal_final_sample_within_50mm'] for row in balance_rows),
+            'aggregate': balance_report['aggregate'], 'path_and_start_audit': balance_report['path_and_start_audit'],
+            'model_configurations_equal': balance_report['model_configurations_equal'],
+            'matched_V2_audits': balance_vs_v2,
+            'physics_launch_source': launch_source,
+        } if balance_report else None),
+        'pending_balance_cases': balance_pending,
+        'execution_and_output_counts': {
+            'separate_recorded_route_executions': len(rows),
+            'unique_rollout_payload_sha256': len(hash_groups),
+            'identical_rollout_payload_groups': [paths for paths in hash_groups.values() if len(paths) > 1],
+            'interpretation': 'The five V2 cases were separately launched and executed. Matching payloads identify identical saved output, not copied/reused evidence and not statistically varied independent trials.'},
+        'destination_sample_metric_definitions': {
+            'nominal_timed_reference_within_50mm_sample_fraction': 'All saved samples within 50 mm of their original time-indexed reference.',
+            'nominal_final_goal_last_second_within_50mm_sample_fraction': 'Samples during the final one second within 50 mm of the fixed nominal final goal.',
+            'caveat': 'These fractions describe samples, not completion progress along a closed or self-intersecting route. They do not establish settling or attitude safety.'},
+        'interpretation': [
+            'The prototype lowers original-path moving RMS in four of five initial cases but markedly regresses +0.90 figure-eight tracking and attitude. It is not promoted.',
+            'Capping/projecting a feedback reference can make managed tracking error small while the robot remains far from the original timed path. Both errors and their reference gap are reported.',
+            'Accepted-reference residual is the logged load-weighted RMS of individual estimated-contact planar kinematic residuals after the common accepted body velocity. It is distinct from mismatch against measured body motion and is not proof of no slip.',
+            'The initial five-case baseline belongs to this campaign; earlier D10 and W20 baselines must not be substituted for it.',
+            'Targeted catch-up/position-cap ablations test only +0.90 and cannot establish improvement across all five cases or identify a unique cause by themselves.',
+            'V2 changes the position-error cap from 0.05 m to 1 m and retains catch-up gain 1/s; the modal allocator math is unchanged. It is evaluated as a separate five-case family, preserving the initial prototype and all ablations.',
+            'Fixed-contact regression establishes finite bounded allocation and an accepted horizontal body reference consistent with that allocation. It does not establish robot-level balance, nominal-destination recovery, friction feasibility, or robust behavior through changing contacts.',
+            'The final balance-guard family retains the 1 m position cap and catch-up gain 1/s, scaling travel requests, catch-up, projected position error, and nominal acceleration with a default-off smooth guard. It does not change the nominal trajectory clock, gain library, or holding torques; reduced travel demand does not guarantee autonomous progress.',
+            'Completion means the requested duration ran without a fall. Nominal destination accuracy, balance, saturation, and settling remain separate criteria.'],
+        'rows': rows,
+        'analysis_source_snapshot': provenance, 'input_files': inputs,
+    }
+    (OUT/'physics_report.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
+    keys = list(dict.fromkeys(key for row in rows for key in row))
+    with (OUT/'physics_metrics.csv').open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=keys); writer.writeheader(); writer.writerows(rows)
+    plot(rows, event_logs)
+    plot_v2(rows, all_logs)
+    plot_balance(rows, all_logs)
+    print(json.dumps({'status': report['status'], 'completed': report['initial_comparison']['completed_prototype'],
+                      'improved_RMS_cases': report['initial_comparison']['prototype_lower_original_path_RMS_cases'],
+                      'pending_ablations': missing, 'v2_cases': len(v2_rows), 'pending_v2': v2_pending,
+                      'balance_cases': len(balance_rows), 'pending_balance': balance_pending}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,57 @@
+{
+  "iteration": "I-40",
+  "render_source_snapshot": "results/lqr_contact_forecast_20261125/videos/source_snapshot/render_contact_forecasts_95d7f4ac9271.py",
+  "render_source_sha256": "95d7f4ac9271916d6e33b403bde369737fdbbd470f7d71c8d6b0ce997a6ec3aa",
+  "no_new_physics": true,
+  "preview_only": true,
+  "forecast": {
+    "selection": {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 9.16,
+      "event_time_s": 9.26,
+      "label": "Late-X stress fallback: first15ms-stable family change",
+      "selection_basis": "Root-selected predeclared fallback: intended flat_y_transfer has no stable family transfer; use the first late-X stable family event at9.260s and its sole successful pre-event anchor9.160s. Selection made without selecting for forecast quality.",
+      "root_selection_message": "Raw+forecasts complete; use first lateX transfer9.260s, sole9.160 anchor; show even if forecast bad.",
+      "selection_kind": "predeclared_event",
+      "display_caveat": "Raw patchloads chatter; stablefamilyevent usesdeclared15msdwell. Theprivateanchorloadfit isoutside tolerance."
+    },
+    "anchor_time_s": 9.160000000000032,
+    "forecast_interval_s": [
+      9.160000000000032,
+      9.360000000000031
+    ],
+    "playback_speed": 0.025,
+    "endpoint_holds_video_s": 1.0,
+    "horizon_markers_s": [
+      0.05,
+      0.1,
+      0.2
+    ],
+    "scope": "Actual recorded Gazebo future versus stored PRIVATE estimated-plane forecast under the same native5ms policy; not two live controllers.",
+    "private_reference_display": "Private panel displays the known anchor reference tilt; future cloned policy reference quaternions were not stored. Actual panel displays actual logged reference.",
+    "force_timing": "Anchor mj_forward at current state; future endpoint records are from the final physics solver step before integration.",
+    "shared_load_axis_maximum_N": 84.99506841831996,
+    "future_private_force_offset_s": -0.001
+  },
+  "input_source_sha256": {
+    "results/lqr_contact_forecast_20261125/videos/render_contact_forecasts.py": "95d7f4ac9271916d6e33b403bde369737fdbbd470f7d71c8d6b0ce997a6ec3aa",
+    "results/lqr_contact_forecast_20261125/videos/source_snapshot/render_contact_forecasts_95d7f4ac9271.py": "95d7f4ac9271916d6e33b403bde369737fdbbd470f7d71c8d6b0ce997a6ec3aa",
+    "results/lqr_contact_forecast_20261125/protocol.json": "2d671f9f7a49e7c3075ba336143c27810322239f951c0108c1d1603a5b465aac",
+    "results/lqr_contact_forecast_20261125/videos/forecast_selection.json": "253f00a1c436a5c300d58871f29c7ecf06a9708e6b1007d53011ec14a7bb977e",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late/forecasts.json": "815996a6ad5beb182678c6fd109bdd2a67dcbc7ab4dc64b44b037d3599f6a1ce",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late/forecast_provenance.json": "31865105db5b565422ed918aeced04031fe4782510838de96aafc80762608e57",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late/anchor_selection.json": "011794b413cea1ae10beab7e0cedd33a74a26aeb4e51c8fa58ae0dc3a8736cb2",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late/precision.npz": "3c643eeb4a37bc353e0379494fb18bf70d9fc440e8914fd80e64ff5aa9be8d39",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late/rollout.npz": "7766baa97927b7f72d7df3b80d06ebff31c5c76c98b7dcd35921c1b6ca69eb12",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late/summary.json": "8ed4bfe08d0cf4136b8a6c6d35d419093c18b213732a73c5b107833a20bc3b0c",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late/provenance.json": "505100acdbe156e73381079e62ef98da5228c7d8b10a3ec3b8df77d503965805",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late/terrain.json": "e02e98f80862d757dcf0f6b08afc9ffca00b11bb6af718cf0507c811293e8a3c",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late/source_snapshot/config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e"
+  },
+  "stills": {
+    "forecast_preview_lead_050ms.jpg": "d6c7ec3388ce0734401f9915e54ce5f1f98f4f0ba9a18948376cd22ea895a57e",
+    "forecast_preview_lead_200ms.jpg": "234de6fd168893339921fe3b126b7e025e9ddbb93590fca06ff2c0136eb260d2",
+    "forecast_preview_lead_000ms.jpg": "9ffe2810cd97d23989c711d76953063fd30cfad20022006525ed9c374416feb8",
+    "forecast_preview_lead_100ms.jpg": "9c6deaa3f2a47231954e02825b58156d91b84e0bfb77ccb5e63032a77bf74d15"
+  }
+}

@@ -1,0 +1,148 @@
+"""Archive the completed I42 diagnostic without executing control or physics."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+import zipfile
+
+FAMILY = Path(__file__).resolve().parent
+ROOT = FAMILY.parents[1]
+DOCS = ROOT / 'docs/iterations/2026-11-25/handoff-factorial'
+DEST = DOCS / 'evidence'
+SKIP = {'_workspaces', '_forecast_workspaces', '_geometry_workspace',
+        'geometry_workspace', '_render_scenes', '_render_scene', 'meshes', '__pycache__'}
+EXT = {'.json', '.md', '.txt', '.log', '.xml', '.yaml', '.yml', '.toml',
+       '.py', '.csv', '.png', '.jpg', '.jpeg', '.pdf', '.npz'}
+RAW_NAMES = {'precision.npz', 'rollout.npz', 'hook_rows.json', 'partial_precision.npz', 'partial_hook_rows.json'}
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    pack = FAMILY / 'presentation-pack.zip'
+    if DEST.exists() or pack.exists():
+        raise FileExistsError('Preserve earlier collection; use a new archive stage.')
+    protocol = json.loads((FAMILY / 'protocol.json').read_text())
+    report_path = FAMILY / 'analysis/stage01/report.json'
+    report = json.loads(report_path.read_text())
+    assert set(report['runs']) == set(protocol['execution']['arms'])
+    assert json.loads((FAMILY / 'harness_checks/stage01/report.json').read_text())['passed']
+    assert json.loads((FAMILY / 'independent_QA/stage02_corrected/report.json').read_text())['passed']
+    assert json.loads((FAMILY / 'shared_path_audit/delivery_qa.json').read_text())['passed']
+    assert (FAMILY / 'analysis/turn_addendum/report.json').is_file()
+    assert json.loads((FAMILY / 'videos/qa.json').read_text())['passed']
+    for rel, digest in protocol['baseline_source_sha256'].items():
+        assert sha(ROOT / rel) == sha(FAMILY / 'pre_change' / rel) == digest, rel
+    for rel, digest in protocol['baseline_input_sha256'].items():
+        assert sha(ROOT / protocol['baseline'] / rel) == digest, rel
+    for rel, digest in protocol['old_pack_hashes'].items():
+        assert sha(ROOT / rel) == digest, rel
+
+    child_refs = source_refs = generated_refs = 0
+    for path in sorted(FAMILY.rglob('*manifest.json')):
+        if any(p in SKIP for p in path.relative_to(FAMILY).parts):
+            continue
+        value = json.loads(path.read_text())
+        for entry in value.get('files', []):
+            if not isinstance(entry, dict) or 'sha256' not in entry:
+                continue
+            rel = entry.get('path', entry.get('snapshot', entry.get('origin')))
+            if rel is None:
+                continue
+            source = next((p for p in [path.parent / rel, ROOT / rel] if p.is_file()), None)
+            assert source and sha(source) == entry['sha256'], (path, entry)
+            child_refs += 1
+    provenance_paths = set(FAMILY.rglob('*provenance.json')) | {FAMILY / 'campaign/launch_manifest.json'}
+    for path in sorted(provenance_paths):
+        if any(p in SKIP for p in path.relative_to(FAMILY).parts):
+            continue
+        value = json.loads(path.read_text())
+        sources = value.get('sources', [])
+        if isinstance(sources, list):
+            for entry in sources:
+                if not isinstance(entry, dict) or not {'snapshot', 'sha256'} <= set(entry):
+                    continue
+                source = path.parent / entry['snapshot']
+                assert source.is_file() and sha(source) == entry['sha256'], (path, entry)
+                source_refs += 1
+        for rel, digest in value.get('generated_sha256', {}).items():
+            assert sha(path.parent / rel) == digest, (path, rel)
+            generated_refs += 1
+
+    DEST.mkdir(parents=True)
+    files, inventory = [], []
+    for source in sorted(FAMILY.rglob('*')):
+        if not source.is_file():
+            continue
+        rel = source.relative_to(FAMILY)
+        if '__pycache__' in rel.parts or source.suffix == '.pyc':
+            continue
+        digest = sha(source)
+        inventory.append({'origin': str(source.relative_to(ROOT)), 'bytes': source.stat().st_size, 'sha256': digest})
+        if any(p in SKIP for p in rel.parts) or source.suffix not in EXT or source.name in RAW_NAMES:
+            continue
+        target_rel = rel.with_suffix('.py.txt') if source.suffix == '.py' else rel
+        target = DEST / target_rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+        assert sha(target) == digest
+        files.append({'snapshot': str(target_rel), 'origin': str(source.relative_to(ROOT)),
+                      'bytes': source.stat().st_size, 'sha256': digest,
+                      'stage': 'pre_change_source' if rel.parts[0] == 'pre_change' else
+                               'preserved_development_stage' if 'development' in rel.parts else
+                               'completed_artifact_or_exact_stage_source__see_provenance'})
+    inventory_path = DEST / 'raw_inventory.json'
+    inventory_path.write_text(json.dumps(inventory, indent=2) + '\n')
+    files.append({'snapshot': inventory_path.name, 'origin': 'archive_and_package.py',
+                  'bytes': inventory_path.stat().st_size, 'sha256': sha(inventory_path), 'stage': 'archival_index'})
+    manifest = {'iteration': 'I-42',
+        'scope': 'Four fresh44s Gazebo diagnostic branches; one execution per arm, no default change. Oracle arms are not deployable. Archive itself runs no physics/tests.',
+        'authoritative_report': 'analysis/stage01/report.json',
+        'artifact_count_excluding_manifest': len(files), 'artifact_bytes_excluding_manifest': sum(f['bytes'] for f in files),
+        'verified_child_manifest_references_including_overlaps': child_refs,
+        'verified_source_snapshot_references_including_overlaps': source_refs,
+        'verified_generated_references_including_overlaps': generated_refs,
+        'older_bundle_hashes_verified': protocol['old_pack_hashes'], 'files': files,
+        'payload_boundary': 'Compact sources/reports/derived arrays/figures; Python renamed .py.txt. Raw case NPZ/full preview JSON/MP4 in ZIP and local results. Generated meshes/workspaces inventoried only. Scripts preserve original paths and require the repo; restore snapshots to origin for reproduction. Final ZIP-hash verification is an external post-package sidecar.'}
+    (DEST / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    paths = [ROOT / 'ITERATION_LOG.md', ROOT / 'README.md', ROOT / 'OFFROAD.md',
+             DOCS.parent / 'README.md', DOCS / 'README.md',
+             ROOT / 'generated/offroad/flat/control_schedule.npz',
+             ROOT / 'results/lqr_contact_forecast_20261125/videos/render_contact_forecasts.py']
+    paths += [p for p in DEST.rglob('*') if p.is_file()]
+    paths += [p for p in (FAMILY / 'campaign/runs').rglob('*') if p.is_file() and
+              not any(q in SKIP for q in p.relative_to(FAMILY).parts) and p.suffix in EXT]
+    paths += [p for p in FAMILY.rglob('*') if p.is_file() and
+              not any(q in SKIP for q in p.relative_to(FAMILY).parts) and
+              (p.suffix in {'.mp4', '.npz'} or p.name == 'protocol.json')]
+    paths += [ROOT / protocol['baseline'] / n for n in protocol['baseline_input_sha256']]
+    paths += [p for p in (ROOT / protocol['baseline'] / 'source_snapshot').rglob('*')
+              if p.is_file() and p.suffix in EXT and p.suffix != '.pyc']
+    paths = sorted(set(paths))
+    entries = [{'path': str(p.relative_to(ROOT)), 'bytes': p.stat().st_size, 'sha256': sha(p)} for p in paths]
+    presentation_path = FAMILY / 'presentation_manifest.json'
+    presentation_path.write_text(json.dumps({'iteration': 'I-42', 'artifacts': entries,
+        'payload_count': len(entries), 'payload_bytes': sum(e['bytes'] for e in entries)}, indent=2) + '\n')
+    with zipfile.ZipFile(pack, 'x', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
+        for path in paths:
+            archive.write(path, path.relative_to(ROOT))
+        archive.write(presentation_path, presentation_path.relative_to(ROOT))
+    with zipfile.ZipFile(pack) as archive:
+        assert archive.testzip() is None
+        assert len(archive.namelist()) == len(entries) + 1
+        for entry in entries:
+            assert hashlib.sha256(archive.read(entry['path'])).hexdigest() == entry['sha256'], entry['path']
+    verified = {'zip': str(pack.relative_to(ROOT)), 'bytes': pack.stat().st_size, 'sha256': sha(pack),
+                'files_including_manifest': len(entries) + 1, 'CRC_passed': True, 'all_payload_hashes_passed': True}
+    (FAMILY / 'presentation_verification.json').write_text(json.dumps(verified, indent=2) + '\n')
+    pack.with_suffix('.zip.sha256').write_text(verified['sha256'] + '  ' + pack.name + '\n')
+    (DOCS / 'presentation_manifest.json').write_bytes(presentation_path.read_bytes())
+    (DOCS / 'presentation_verification.json').write_bytes((FAMILY / 'presentation_verification.json').read_bytes())
+    print(json.dumps({'compact_artifacts': len(files), 'compact_bytes': manifest['artifact_bytes_excluding_manifest'],
+                      'verified_child_refs': child_refs, 'presentation': verified}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

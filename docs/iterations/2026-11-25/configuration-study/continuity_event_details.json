@@ -1,0 +1,4991 @@
+{
+  "scope": "Offline kinematic reconstruction and per-controller-step continuity audit of saved runs; no new physics or controller execution.",
+  "precision": "Saved states/contact locations are float32. Jacobian and baseline residual reconstructions are approximate; adaptive logged fields are identified separately.",
+  "schedule": {
+    "formula": ".001 + .004 * .02**2 / (sigma_weak**2 + .02**2)",
+    "meaning": "Continuous as a function of its scalar geometry input; not guaranteed continuous in time when selected patch/J changes.",
+    "baseline_note": "Evaluated diagnostic only; baseline controller did not use this schedule."
+  },
+  "source_files": [
+    {
+      "path": "results/configuration_study_20261125/continuity/analyze.py",
+      "bytes": 21283,
+      "sha256": "ab25eb8b1aa3cff17f3a8dbce23c7ed1a9ac5bcbb339cebe58e3ee022a1531c5"
+    },
+    {
+      "path": "src/spherical_wheel/experiments.py",
+      "bytes": 13294,
+      "sha256": "88113662e829852684c72a88131bcd7118bf166f5b8d2115bae30fe16ee621e3"
+    },
+    {
+      "path": "src/spherical_wheel/rolling_allocation.py",
+      "bytes": 6416,
+      "sha256": "72d318a602511d62b8f164afa6ac3848031153ec5851e1a6e0916677d04a7e0f"
+    },
+    {
+      "path": "src/spherical_wheel/contact_sensing.py",
+      "bytes": 29184,
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833"
+    },
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "bytes": 47389,
+      "sha256": "2dda6e5be08f55cc991c7606eb2336338486b5f7932c26ce6584796c341b4be7"
+    }
+  ],
+  "cases": [
+    {
+      "name": "adaptive_negative_phase",
+      "window_s": [
+        28.2,
+        29.0
+      ],
+      "visible_samples": 161,
+      "interval_s": {
+        "samples": 161,
+        "median": 0.0049991607666015625,
+        "p95": 0.005001068115234375,
+        "max": 0.005001068115234375
+      },
+      "patch_switch_count": 8,
+      "patch_switch_times_s": [
+        28.899999618530273,
+        28.90999984741211,
+        28.920000076293945,
+        28.940000534057617,
+        28.954999923706055,
+        28.989999771118164,
+        28.9950008392334,
+        29.0
+      ],
+      "truth_patch_switch_count_evaluation_only": 12,
+      "truth_patch_switch_times_s_evaluation_only": [
+        28.899999618530273,
+        28.90999984741211,
+        28.920000076293945,
+        28.924999237060547,
+        28.94499969482422,
+        28.96500015258789,
+        28.969999313354492,
+        28.975000381469727,
+        28.979999542236328,
+        28.985000610351562,
+        28.989999771118164,
+        28.9950008392334
+      ],
+      "estimated_truth_identity_disagreement_samples": 10,
+      "actual_effort_schedule_active": true,
+      "step_metrics": {
+        "desired_velocity_step_m_s": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.00020569409793728106,
+            "p95": 0.00020670345478379103,
+            "max": 0.00020671682524551097
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.00020317477070058452,
+            "p95": 0.00020393452688876088,
+            "max": 0.00020399162303601695
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.0002057898561138384,
+            "p95": 0.0002067049564868586,
+            "max": 0.00020671682524551097
+          }
+        },
+        "normalized_contact_jacobian_step_frobenius_m_s": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.0029218482194497126,
+            "p95": 0.008635372083562293,
+            "max": 0.339973965199934
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.3399133778139418,
+            "p95": 0.33996592091137734,
+            "max": 0.339973965199934
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.0026542909886551097,
+            "p95": 0.0077916560985700645,
+            "max": 0.008635372083562293
+          }
+        },
+        "effort_coefficient_step_m_s": {
+          "all_steps": {
+            "samples": 161,
+            "median": 5.830777809023857e-06,
+            "p95": 0.00040378281846642494,
+            "max": 0.0010247344616800547
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.0002940316335298121,
+            "p95": 0.0004307503812015056,
+            "max": 0.000447808182798326
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 5.625537596642971e-06,
+            "p95": 0.00035852068103849933,
+            "max": 0.0010247344616800547
+          }
+        },
+        "drive_reference_step_normalized_l2": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.006704464847477749,
+            "p95": 0.11783816704728997,
+            "max": 0.1500000294297981
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.14772743547136924,
+            "p95": 0.15000001970885837,
+            "max": 0.1500000294297981
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.006700380310232995,
+            "p95": 0.10657573771273195,
+            "max": 0.14999999764064947
+          }
+        },
+        "drive_reference_step_normalized_linf": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.00654215812683101,
+            "p95": 0.10000000000000009,
+            "max": 0.10000004768371584
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.10000000074505806,
+            "p95": 0.10000003308057787,
+            "max": 0.10000004768371584
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.006532716751098677,
+            "p95": 0.10000000000000009,
+            "max": 0.10000000298023225
+          }
+        },
+        "estimated_equivalent_point_step_m": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.0006953121428278906,
+            "p95": 0.0012537040805878023,
+            "max": 0.0016739597992707852
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.0011906745808096754,
+            "p95": 0.0015442141348881023,
+            "max": 0.0016739597992707852
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.0006930917593138983,
+            "p95": 0.0010896899210084722,
+            "max": 0.001523147920005908
+          }
+        },
+        "estimated_normal_step_deg": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.003638601283574006,
+            "p95": 0.10519782707188545,
+            "max": 0.13052468042645596
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.006970133031556287,
+            "p95": 0.015981447057903275,
+            "max": 0.01890480737337949
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.002650374963494587,
+            "p95": 0.10547669750393886,
+            "max": 0.13052468042645596
+          }
+        },
+        "reference_attitude_error_step_deg": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.06245756149291992,
+            "p95": 0.14229059219360352,
+            "max": 0.2113170623779297
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.0785970687866211,
+            "p95": 0.19330863952636715,
+            "max": 0.2113170623779297
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.060317039489746094,
+            "p95": 0.13525247573852542,
+            "max": 0.16820526123046875
+          }
+        },
+        "lqr_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.00521723460406065,
+            "p95": 0.15193715691566467,
+            "max": 5.790637969970703
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 5.115951061248779,
+            "p95": 5.790637969970703,
+            "max": 5.790637969970703
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.004787410609424114,
+            "p95": 0.06788667589426042,
+            "max": 0.15193715691566467
+          }
+        },
+        "requested_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.009850585833191872,
+            "p95": 0.4180733263492584,
+            "max": 5.840637683868408
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 4.927457809448242,
+            "p95": 5.840214943885803,
+            "max": 5.840637683868408
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.009445399045944214,
+            "p95": 0.08528913706541065,
+            "max": 0.4180733263492584
+          }
+        },
+        "applied_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 161,
+            "median": 0.009850585833191872,
+            "p95": 0.4180733263492584,
+            "max": 1.1428338289260864
+          },
+          "at_patch_switch": {
+            "samples": 8,
+            "median": 0.9628881216049194,
+            "p95": 1.1428338289260864,
+            "max": 1.1428338289260864
+          },
+          "without_patch_switch": {
+            "samples": 153,
+            "median": 0.009445399045944214,
+            "p95": 0.061671733111143115,
+            "max": 0.4180733263492584
+          }
+        }
+      },
+      "marked_event": {
+        "time_s": 28.975000381469727,
+        "support": "Belt A",
+        "estimated_load_shares": [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "truth_load_shares_evaluation_only": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "desired_velocity_xy_m_s": [
+          0.04826999083161354,
+          -0.0440279021859169
+        ],
+        "estimated_equivalent_point_m": [
+          -1.9788751602172852,
+          9.402783393859863,
+          1.1536211967468262
+        ],
+        "normalized_contact_jacobian_m_s": [
+          [
+            -0.006156978237101374,
+            0.0,
+            0.0,
+            0.2998493293437276,
+            0.0
+          ],
+          [
+            0.5825905499753883,
+            0.0,
+            0.0,
+            0.003700225194644041,
+            0.0
+          ]
+        ],
+        "authority_reconstructed_m_s": 0.2998715190902873,
+        "authority_logged_m_s": 0.2998715043067932,
+        "effort_coefficient_m_s": 0.001017714268527925,
+        "effort_is_active": true,
+        "drive_reference": [
+          0.38292407989501953,
+          0.42459264397621155,
+          0.0,
+          -0.04782192409038544,
+          0.0
+        ],
+        "actual_joint_rates_rad_s": [
+          0.5567397475242615,
+          7.017786026000977,
+          0.09817325323820114
+        ],
+        "actual_tilt_deg": 2.9575083255767822,
+        "reference_tilt_deg": 11.752127181414066,
+        "reference_attitude_error_deg": 9.692367553710938,
+        "angular_generalized_velocity_rad_s": [
+          -0.3919530212879181,
+          -0.3608892261981964,
+          1.0398709774017334
+        ],
+        "effective_phase_rad": 1.6457747220993042,
+        "allocation_residual_logged_m_s": 5.655372206092579e-07,
+        "allocation_residual_reconstructed_m_s": 5.739887111153921e-07,
+        "allocation_active_bounds": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "lqr_command": [
+          -0.04368887469172478,
+          -0.061441194266080856,
+          0.030147256329655647,
+          -1.6587156057357788,
+          0.0
+        ],
+        "requested_command": [
+          0.08435621112585068,
+          -0.061441194266080856,
+          0.030147256329655647,
+          -1.7065376043319702,
+          0.0
+        ],
+        "applied_command": [
+          0.08435621112585068,
+          -0.061441194266080856,
+          0.030147256329655647,
+          -0.30000001192092896,
+          0.0
+        ]
+      },
+      "largest_step_events": {
+        "desired_velocity_step_m_s": {
+          "step": 0.00020671682524551097,
+          "patch_switch": false,
+          "before": {
+            "time_s": 28.559999465942383,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.042596861720085144,
+              -0.0600961297750473
+            ],
+            "estimated_equivalent_point_m": [
+              -2.015038013458252,
+              9.455988883972168,
+              1.157796859741211
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.1450588018069997,
+                -0.06139628663074401,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5505371670566623,
+                0.19975547864697663,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.10510298856061417,
+            "authority_logged_m_s": 0.1051027700304985,
+            "effort_coefficient_m_s": 0.0011397795751690865,
+            "effort_is_active": true,
+            "drive_reference": [
+              -0.38375237584114075,
+              2.5618510246276855,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.35263684391975403,
+              3.7956197261810303,
+              -0.16768354177474976
+            ],
+            "actual_tilt_deg": 8.643877983093262,
+            "reference_tilt_deg": 11.04418364661951,
+            "reference_attitude_error_deg": 2.588829278945923,
+            "angular_generalized_velocity_rad_s": [
+              -0.06683425605297089,
+              -0.14318740367889404,
+              0.6891898512840271
+            ],
+            "effective_phase_rad": 1.6524863243103027,
+            "allocation_residual_logged_m_s": 6.17726800555829e-06,
+            "allocation_residual_reconstructed_m_s": 6.05723058867543e-06,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.07603393495082855,
+              0.028743404895067215,
+              -0.03843102231621742,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.13313248753547668,
+              0.023957282304763794,
+              -0.03843102231621742,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              0.13313248753547668,
+              0.023957282304763794,
+              -0.03843102231621742,
+              0.0,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 28.565000534057617,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04267270863056183,
+              -0.0599038302898407
+            ],
+            "estimated_equivalent_point_m": [
+              -2.0150978565216064,
+              9.454959869384766,
+              1.157870888710022
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.14319047698202095,
+                -0.06331716379856378,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5505056699909552,
+                0.2010074822710769,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.10656664416474773,
+            "authority_logged_m_s": 0.10656572878360748,
+            "effort_coefficient_m_s": 0.001136097707785666,
+            "effort_is_active": true,
+            "drive_reference": [
+              -0.3758380115032196,
+              2.519380807876587,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.26800617575645447,
+              3.884704351425171,
+              -0.32123512029647827
+            ],
+            "actual_tilt_deg": 8.60830307006836,
+            "reference_tilt_deg": 11.133722297273792,
+            "reference_attitude_error_deg": 2.6823315620422363,
+            "angular_generalized_velocity_rad_s": [
+              -0.06184752658009529,
+              -0.1204291507601738,
+              0.6819370985031128
+            ],
+            "effective_phase_rad": 1.6529123783111572,
+            "allocation_residual_logged_m_s": 6.007445335853845e-06,
+            "allocation_residual_reconstructed_m_s": 5.533666684501123e-06,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.09516790509223938,
+              0.02712208591401577,
+              -0.03413653001189232,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.11599037796258926,
+              0.02218192256987095,
+              -0.03413653001189232,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              0.11599037796258926,
+              0.02218192256987095,
+              -0.03413653001189232,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "normalized_contact_jacobian_step_frobenius_m_s": {
+          "step": 0.339973965199934,
+          "patch_switch": true,
+          "before": {
+            "time_s": 28.895000457763672,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.047273922711610794,
+              -0.04712515324354172
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9922386407852173,
+              9.41301441192627,
+              1.155753254890442
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.031169912556888394,
+                -0.04878030864945832,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.578411593615724,
+                0.15306551434591784,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.055106902939017495,
+            "authority_logged_m_s": 0.055106937885284424,
+            "effort_coefficient_m_s": 0.001465552719309926,
+            "effort_is_active": true,
+            "drive_reference": [
+              -0.7475895285606384,
+              4.36436128616333,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.10055680572986603,
+              4.680886745452881,
+              -1.613255262374878
+            ],
+            "actual_tilt_deg": 4.330121994018555,
+            "reference_tilt_deg": 11.74774137548459,
+            "reference_attitude_error_deg": 8.112375259399414,
+            "angular_generalized_velocity_rad_s": [
+              -0.5342165231704712,
+              -0.09009506553411484,
+              0.5673126578330994
+            ],
+            "effective_phase_rad": 1.5941035747528076,
+            "allocation_residual_logged_m_s": 3.4480439353501424e-05,
+            "allocation_residual_reconstructed_m_s": 3.451304770798795e-05,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.01093422994017601,
+              0.02254788763821125,
+              0.0006786880549043417,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.1449047476053238,
+              0.0206618532538414,
+              0.0006786880549043417,
+              -0.052923090755939484,
+              0.0
+            ],
+            "applied_command": [
+              0.1449047476053238,
+              0.0206618532538414,
+              0.0006786880549043417,
+              -0.052923090755939484,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 28.899999618530273,
+            "support": "Belt A",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04733753576874733,
+              -0.04693133383989334
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9917742013931274,
+              9.412437438964844,
+              1.1556930541992188
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.029382062426104305,
+                0.0,
+                0.0,
+                0.2992857274359357,
+                0.0
+              ],
+              [
+                0.5788364000707512,
+                0.0,
+                0.0,
+                -0.014085570786361164,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.2996142250736649,
+            "authority_logged_m_s": 0.29961422085762024,
+            "effort_coefficient_m_s": 0.0010177445365116,
+            "effort_is_active": true,
+            "drive_reference": [
+              -0.24758954346179962,
+              3.864361047744751,
+              0.0,
+              -0.014999999664723873,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.5954899787902832,
+              4.673022747039795,
+              -1.6768311262130737
+            ],
+            "actual_tilt_deg": 4.2128777503967285,
+            "reference_tilt_deg": 11.750915992880893,
+            "reference_attitude_error_deg": 8.272239685058594,
+            "angular_generalized_velocity_rad_s": [
+              -0.5498698949813843,
+              0.06612198799848557,
+              0.5004344582557678
+            ],
+            "effective_phase_rad": 1.5949875116348267,
+            "allocation_residual_logged_m_s": 0.08102118223905563,
+            "allocation_residual_reconstructed_m_s": 0.08102115538586399,
+            "allocation_active_bounds": [
+              true,
+              true,
+              false,
+              true,
+              false
+            ],
+            "lqr_command": [
+              0.14281757175922394,
+              -0.034305375069379807,
+              0.000743387034162879,
+              -1.352573275566101,
+              0.0
+            ],
+            "requested_command": [
+              0.2973390519618988,
+              -0.034305375069379807,
+              0.000743387034162879,
+              -1.3675732612609863,
+              0.0
+            ],
+            "applied_command": [
+              0.2973390519618988,
+              -0.034305375069379807,
+              0.000743387034162879,
+              -0.30000001192092896,
+              0.0
+            ]
+          }
+        },
+        "effort_coefficient_step_m_s": {
+          "step": 0.0010247344616800547,
+          "patch_switch": false,
+          "before": {
+            "time_s": 28.415000915527344,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04031753912568092,
+              -0.06563428789377213
+            ],
+            "estimated_equivalent_point_m": [
+              -2.0142712593078613,
+              9.472538948059082,
+              1.1567699909210205
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.16029415658836488,
+                0.07041312004133432,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5407413885414715,
+                0.18138374240413327,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.01509074239884712,
+            "authority_logged_m_s": 0.015092645771801472,
+            "effort_coefficient_m_s": 0.0035486312117427588,
+            "effort_is_active": true,
+            "drive_reference": [
+              3.0484659671783447,
+              -7.539586067199707,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              2.771911859512329,
+              -5.971938133239746,
+              0.306869238615036
+            ],
+            "actual_tilt_deg": 10.76038932800293,
+            "reference_tilt_deg": 10.996733166999647,
+            "reference_attitude_error_deg": 0.24857796728610992,
+            "angular_generalized_velocity_rad_s": [
+              -0.125898540019989,
+              -0.032782357186079025,
+              -0.43896016478538513
+            ],
+            "effective_phase_rad": 1.4346747398376465,
+            "allocation_residual_logged_m_s": 0.03324179723858833,
+            "allocation_residual_reconstructed_m_s": 0.033244878002040845,
+            "allocation_active_bounds": [
+              false,
+              true,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              0.041976217180490494,
+              -0.08412925899028778,
+              0.034121543169021606,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.2645816504955292,
+              0.00239543616771698,
+              0.034121543169021606,
+              -0.021512018516659737,
+              0.0
+            ],
+            "applied_command": [
+              0.2645816504955292,
+              0.00239543616771698,
+              0.034121543169021606,
+              -0.021512018516659737,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 28.420000076293945,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04039870575070381,
+              -0.06544476747512817
+            ],
+            "estimated_equivalent_point_m": [
+              -2.0141947269439697,
+              9.47203540802002,
+              1.1567827463150024
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.1615386971767892,
+                0.06238658408731694,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5405889359844142,
+                0.1832632885962735,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.006909776243339314,
+            "authority_logged_m_s": 0.006910654716193676,
+            "effort_coefficient_m_s": 0.004573365673422813,
+            "effort_is_active": true,
+            "drive_reference": [
+              3.2095632553100586,
+              -8.039586067199707,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              2.8515827655792236,
+              -6.270763874053955,
+              0.41018861532211304
+            ],
+            "actual_tilt_deg": 10.71998119354248,
+            "reference_tilt_deg": 10.995742759767417,
+            "reference_attitude_error_deg": 0.29008108377456665,
+            "angular_generalized_velocity_rad_s": [
+              -0.15711447596549988,
+              -0.03286459296941757,
+              -0.46985068917274475
+            ],
+            "effective_phase_rad": 1.4489718675613403,
+            "allocation_residual_logged_m_s": 0.045698121190071106,
+            "allocation_residual_reconstructed_m_s": 0.04569962655179221,
+            "allocation_active_bounds": [
+              false,
+              true,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              0.04186359792947769,
+              -0.0839172750711441,
+              0.03692644089460373,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.265300452709198,
+              -0.0027431342750787735,
+              0.03692644089460373,
+              -0.011818251572549343,
+              0.0
+            ],
+            "applied_command": [
+              0.265300452709198,
+              -0.0027431342750787735,
+              0.03692644089460373,
+              -0.011818251572549343,
+              0.0
+            ]
+          }
+        },
+        "drive_reference_step_normalized_l2": {
+          "step": 0.1500000294297981,
+          "patch_switch": true,
+          "before": {
+            "time_s": 28.895000457763672,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.047273922711610794,
+              -0.04712515324354172
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9922386407852173,
+              9.41301441192627,
+              1.155753254890442
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.031169912556888394,
+                -0.04878030864945832,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.578411593615724,
+                0.15306551434591784,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.055106902939017495,
+            "authority_logged_m_s": 0.055106937885284424,
+            "effort_coefficient_m_s": 0.001465552719309926,
+            "effort_is_active": true,
+            "drive_reference": [
+              -0.7475895285606384,
+              4.36436128616333,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.10055680572986603,
+              4.680886745452881,
+              -1.613255262374878
+            ],
+            "actual_tilt_deg": 4.330121994018555,
+            "reference_tilt_deg": 11.74774137548459,
+            "reference_attitude_error_deg": 8.112375259399414,
+            "angular_generalized_velocity_rad_s": [
+              -0.5342165231704712,
+              -0.09009506553411484,
+              0.5673126578330994
+            ],
+            "effective_phase_rad": 1.5941035747528076,
+            "allocation_residual_logged_m_s": 3.4480439353501424e-05,
+            "allocation_residual_reconstructed_m_s": 3.451304770798795e-05,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.01093422994017601,
+              0.02254788763821125,
+              0.0006786880549043417,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.1449047476053238,
+              0.0206618532538414,
+              0.0006786880549043417,
+              -0.052923090755939484,
+              0.0
+            ],
+            "applied_command": [
+              0.1449047476053238,
+              0.0206618532538414,
+              0.0006786880549043417,
+              -0.052923090755939484,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 28.899999618530273,
+            "support": "Belt A",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04733753576874733,
+              -0.04693133383989334
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9917742013931274,
+              9.412437438964844,
+              1.1556930541992188
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.029382062426104305,
+                0.0,
+                0.0,
+                0.2992857274359357,
+                0.0
+              ],
+              [
+                0.5788364000707512,
+                0.0,
+                0.0,
+                -0.014085570786361164,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.2996142250736649,
+            "authority_logged_m_s": 0.29961422085762024,
+            "effort_coefficient_m_s": 0.0010177445365116,
+            "effort_is_active": true,
+            "drive_reference": [
+              -0.24758954346179962,
+              3.864361047744751,
+              0.0,
+              -0.014999999664723873,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.5954899787902832,
+              4.673022747039795,
+              -1.6768311262130737
+            ],
+            "actual_tilt_deg": 4.2128777503967285,
+            "reference_tilt_deg": 11.750915992880893,
+            "reference_attitude_error_deg": 8.272239685058594,
+            "angular_generalized_velocity_rad_s": [
+              -0.5498698949813843,
+              0.06612198799848557,
+              0.5004344582557678
+            ],
+            "effective_phase_rad": 1.5949875116348267,
+            "allocation_residual_logged_m_s": 0.08102118223905563,
+            "allocation_residual_reconstructed_m_s": 0.08102115538586399,
+            "allocation_active_bounds": [
+              true,
+              true,
+              false,
+              true,
+              false
+            ],
+            "lqr_command": [
+              0.14281757175922394,
+              -0.034305375069379807,
+              0.000743387034162879,
+              -1.352573275566101,
+              0.0
+            ],
+            "requested_command": [
+              0.2973390519618988,
+              -0.034305375069379807,
+              0.000743387034162879,
+              -1.3675732612609863,
+              0.0
+            ],
+            "applied_command": [
+              0.2973390519618988,
+              -0.034305375069379807,
+              0.000743387034162879,
+              -0.30000001192092896,
+              0.0
+            ]
+          }
+        },
+        "drive_reference_step_normalized_linf": {
+          "step": 0.10000004768371584,
+          "patch_switch": true,
+          "before": {
+            "time_s": 28.895000457763672,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.047273922711610794,
+              -0.04712515324354172
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9922386407852173,
+              9.41301441192627,
+              1.155753254890442
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.031169912556888394,
+                -0.04878030864945832,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.578411593615724,
+                0.15306551434591784,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.055106902939017495,
+            "authority_logged_m_s": 0.055106937885284424,
+            "effort_coefficient_m_s": 0.001465552719309926,
+            "effort_is_active": true,
+            "drive_reference": [
+              -0.7475895285606384,
+              4.36436128616333,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.10055680572986603,
+              4.680886745452881,
+              -1.613255262374878
+            ],
+            "actual_tilt_deg": 4.330121994018555,
+            "reference_tilt_deg": 11.74774137548459,
+            "reference_attitude_error_deg": 8.112375259399414,
+            "angular_generalized_velocity_rad_s": [
+              -0.5342165231704712,
+              -0.09009506553411484,
+              0.5673126578330994
+            ],
+            "effective_phase_rad": 1.5941035747528076,
+            "allocation_residual_logged_m_s": 3.4480439353501424e-05,
+            "allocation_residual_reconstructed_m_s": 3.451304770798795e-05,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.01093422994017601,
+              0.02254788763821125,
+              0.0006786880549043417,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.1449047476053238,
+              0.0206618532538414,
+              0.0006786880549043417,
+              -0.052923090755939484,
+              0.0
+            ],
+            "applied_command": [
+              0.1449047476053238,
+              0.0206618532538414,
+              0.0006786880549043417,
+              -0.052923090755939484,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 28.899999618530273,
+            "support": "Belt A",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04733753576874733,
+              -0.04693133383989334
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9917742013931274,
+              9.412437438964844,
+              1.1556930541992188
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.029382062426104305,
+                0.0,
+                0.0,
+                0.2992857274359357,
+                0.0
+              ],
+              [
+                0.5788364000707512,
+                0.0,
+                0.0,
+                -0.014085570786361164,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.2996142250736649,
+            "authority_logged_m_s": 0.29961422085762024,
+            "effort_coefficient_m_s": 0.0010177445365116,
+            "effort_is_active": true,
+            "drive_reference": [
+              -0.24758954346179962,
+              3.864361047744751,
+              0.0,
+              -0.014999999664723873,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.5954899787902832,
+              4.673022747039795,
+              -1.6768311262130737
+            ],
+            "actual_tilt_deg": 4.2128777503967285,
+            "reference_tilt_deg": 11.750915992880893,
+            "reference_attitude_error_deg": 8.272239685058594,
+            "angular_generalized_velocity_rad_s": [
+              -0.5498698949813843,
+              0.06612198799848557,
+              0.5004344582557678
+            ],
+            "effective_phase_rad": 1.5949875116348267,
+            "allocation_residual_logged_m_s": 0.08102118223905563,
+            "allocation_residual_reconstructed_m_s": 0.08102115538586399,
+            "allocation_active_bounds": [
+              true,
+              true,
+              false,
+              true,
+              false
+            ],
+            "lqr_command": [
+              0.14281757175922394,
+              -0.034305375069379807,
+              0.000743387034162879,
+              -1.352573275566101,
+              0.0
+            ],
+            "requested_command": [
+              0.2973390519618988,
+              -0.034305375069379807,
+              0.000743387034162879,
+              -1.3675732612609863,
+              0.0
+            ],
+            "applied_command": [
+              0.2973390519618988,
+              -0.034305375069379807,
+              0.000743387034162879,
+              -0.30000001192092896,
+              0.0
+            ]
+          }
+        },
+        "estimated_equivalent_point_step_m": {
+          "step": 0.0016739597992707852,
+          "patch_switch": true,
+          "before": {
+            "time_s": 28.989999771118164,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.048451606184244156,
+              -0.0434483140707016
+            ],
+            "estimated_equivalent_point_m": [
+              -1.975650429725647,
+              9.400556564331055,
+              1.153091549873352
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.015025055567841896,
+                -0.08512345423423599,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5827286677472029,
+                0.1354972661711663,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.07937900001976564,
+            "authority_logged_m_s": 0.07937879115343094,
+            "effort_coefficient_m_s": 0.0012387705501168966,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.24100565910339355,
+              0.6024538278579712,
+              0.0,
+              -0.03249083459377289,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.1723573207855225,
+              6.135025978088379,
+              0.4716626703739166
+            ],
+            "actual_tilt_deg": 2.6488780975341797,
+            "reference_tilt_deg": 11.759274485052755,
+            "reference_attitude_error_deg": 9.92248821258545,
+            "angular_generalized_velocity_rad_s": [
+              -0.12118320912122726,
+              -0.15503771603107452,
+              0.9511480927467346
+            ],
+            "effective_phase_rad": 1.6535706520080566,
+            "allocation_residual_logged_m_s": 0.03748326376080513,
+            "allocation_residual_reconstructed_m_s": 0.03748324198494469,
+            "allocation_active_bounds": [
+              false,
+              true,
+              false,
+              true,
+              false
+            ],
+            "lqr_command": [
+              -0.030264275148510933,
+              1.0542250871658325,
+              0.12495452910661697,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.09096400439739227,
+              1.0203962326049805,
+              0.12495452910661697,
+              -0.03249083459377289,
+              0.0
+            ],
+            "applied_command": [
+              0.09096400439739227,
+              0.6000000238418579,
+              0.12495452910661697,
+              -0.03249083459377289,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 28.9950008392334,
+            "support": "Belt A",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04851178452372551,
+              -0.043255217373371124
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9743398427963257,
+              9.3995361328125,
+              1.1528836488723755
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.01851252747970643,
+                0.0,
+                0.0,
+                0.2997413430522201,
+                0.0
+              ],
+              [
+                0.582955766700713,
+                0.0,
+                0.0,
+                0.009946368744424937,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.299905909533082,
+            "authority_logged_m_s": 0.2999058961868286,
+            "effort_coefficient_m_s": 0.001017710193991661,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.3843996524810791,
+              0.2959393560886383,
+              0.0,
+              -0.04712846875190735,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.37766969203948975,
+              8.456321716308594,
+              1.3003911972045898
+            ],
+            "actual_tilt_deg": 2.5251402854919434,
+            "reference_tilt_deg": 11.751543450373207,
+            "reference_attitude_error_deg": 10.000219345092773,
+            "angular_generalized_velocity_rad_s": [
+              -0.4118664562702179,
+              -0.3909122347831726,
+              1.319373369216919
+            ],
+            "effective_phase_rad": 1.654771327972412,
+            "allocation_residual_logged_m_s": 7.295171826626756e-07,
+            "allocation_residual_reconstructed_m_s": 7.217998880443529e-07,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.030991211533546448,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -1.7371914386749268,
+              0.0
+            ],
+            "requested_command": [
+              0.0881548821926117,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -1.7843198776245117,
+              0.0
+            ],
+            "applied_command": [
+              0.0881548821926117,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -0.30000001192092896,
+              0.0
+            ]
+          }
+        },
+        "estimated_normal_step_deg": {
+          "step": 0.13052468042645596,
+          "patch_switch": false,
+          "before": {
+            "time_s": 28.229999542236328,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.03718551620841026,
+              -0.07254788279533386
+            ],
+            "estimated_equivalent_point_m": [
+              -2.0243725776672363,
+              9.493218421936035,
+              1.1576083898544312
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.1348119031917725,
+                0.26996558807125876,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5529120562961075,
+                0.10057029282256845,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.22776806374457575,
+            "authority_logged_m_s": 0.22777079045772552,
+            "effort_coefficient_m_s": 0.0010306047042831779,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.859367847442627,
+              -1.1178146600723267,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.4625171422958374,
+              -2.5413527488708496,
+              -1.2340013980865479
+            ],
+            "actual_tilt_deg": 9.334980964660645,
+            "reference_tilt_deg": 10.081863407882818,
+            "reference_attitude_error_deg": 0.7640822529792786,
+            "angular_generalized_velocity_rad_s": [
+              0.23588557541370392,
+              0.074944868683815,
+              -0.09151837229728699
+            ],
+            "effective_phase_rad": 1.057723045349121,
+            "allocation_residual_logged_m_s": 1.2771681667800294e-06,
+            "allocation_residual_reconstructed_m_s": 1.952023832416577e-06,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.008728914894163609,
+              -0.05921189486980438,
+              -0.008743065409362316,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.19010594487190247,
+              0.13527287542819977,
+              -0.008743065409362316,
+              -0.08393529802560806,
+              0.0
+            ],
+            "applied_command": [
+              0.19010594487190247,
+              0.13527287542819977,
+              -0.008743065409362316,
+              -0.08393529802560806,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 28.235000610351562,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.03727345913648605,
+              -0.07236392050981522
+            ],
+            "estimated_equivalent_point_m": [
+              -2.024336576461792,
+              9.492645263671875,
+              1.1576310396194458
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.13511411919792177,
+                0.2659685606197423,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5520796606547103,
+                0.10399830038618564,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.22288336455639896,
+            "authority_logged_m_s": 0.2228841632604599,
+            "effort_coefficient_m_s": 0.001031950581818819,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.8706833124160767,
+              -1.1429991722106934,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.4887218475341797,
+              -2.694444179534912,
+              -1.292433738708496
+            ],
+            "actual_tilt_deg": 9.407313346862793,
+            "reference_tilt_deg": 10.203842387871175,
+            "reference_attitude_error_deg": 0.8169528245925903,
+            "angular_generalized_velocity_rad_s": [
+              0.25166988372802734,
+              0.08245500922203064,
+              -0.11307787150144577
+            ],
+            "effective_phase_rad": 1.0655996799468994,
+            "allocation_residual_logged_m_s": 1.337185722150025e-06,
+            "allocation_residual_reconstructed_m_s": 1.536229020751015e-06,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.00827428512275219,
+              -0.0628911703824997,
+              -0.008487366139888763,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.1917961686849594,
+              0.13194619119167328,
+              -0.008487366139888763,
+              -0.09012769907712936,
+              0.0
+            ],
+            "applied_command": [
+              0.1917961686849594,
+              0.13194619119167328,
+              -0.008487366139888763,
+              -0.09012769907712936,
+              0.0
+            ]
+          }
+        },
+        "reference_attitude_error_step_deg": {
+          "step": 0.2113170623779297,
+          "patch_switch": true,
+          "before": {
+            "time_s": 28.950000762939453,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.047963690012693405,
+              -0.0449947826564312
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9835686683654785,
+              9.406122207641602,
+              1.154386043548584
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.010209205140781621,
+                -0.07061827426918006,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5813205537462868,
+                0.14377195830502293,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.07099891081830832,
+            "authority_logged_m_s": 0.07099925726652145,
+            "effort_coefficient_m_s": 0.0012940693413838744,
+            "effort_is_active": true,
+            "drive_reference": [
+              -0.3224406838417053,
+              2.864361047744751,
+              0.0,
+              -0.0071447258815169334,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.0335516929626465,
+              7.350332260131836,
+              -0.3807818591594696
+            ],
+            "actual_tilt_deg": 3.463031768798828,
+            "reference_tilt_deg": 11.767516470766802,
+            "reference_attitude_error_deg": 9.174127578735352,
+            "angular_generalized_velocity_rad_s": [
+              -0.7067906856536865,
+              0.02590332366526127,
+              0.879107654094696
+            ],
+            "effective_phase_rad": 1.6282649040222168,
+            "allocation_residual_logged_m_s": 0.006850919686257839,
+            "allocation_residual_reconstructed_m_s": 0.006851123381566504,
+            "allocation_active_bounds": [
+              false,
+              true,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              0.017196692526340485,
+              0.46234798431396484,
+              0.05208352208137512,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.15815681219100952,
+              0.4421594440937042,
+              0.05208352208137512,
+              -0.03981844335794449,
+              0.0
+            ],
+            "applied_command": [
+              0.15815681219100952,
+              0.4421594440937042,
+              0.05208352208137512,
+              -0.03981844335794449,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 28.954999923706055,
+            "support": "Belt A",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04802531376481056,
+              -0.044801320880651474
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9830135107040405,
+              9.405627250671387,
+              1.1543017625808716
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                0.007003799328428104,
+                0.0,
+                0.0,
+                0.29981681811858124,
+                0.0
+              ],
+              [
+                0.5818625037763029,
+                0.0,
+                0.0,
+                -0.002942858586385469,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.29983025374287636,
+            "authority_logged_m_s": 0.29983025789260864,
+            "effort_coefficient_m_s": 0.00101771904155612,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.17755933105945587,
+              2.364361047744751,
+              0.0,
+              -0.022144725546240807,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.0956039428710938,
+              9.256659507751465,
+              0.043971460312604904
+            ],
+            "actual_tilt_deg": 3.3450441360473633,
+            "reference_tilt_deg": 11.773468304501787,
+            "reference_attitude_error_deg": 9.385444641113281,
+            "angular_generalized_velocity_rad_s": [
+              -0.7353015542030334,
+              0.023038996383547783,
+              1.1097639799118042
+            ],
+            "effective_phase_rad": 1.6335532665252686,
+            "allocation_residual_logged_m_s": 0.03543536365032196,
+            "allocation_residual_reconstructed_m_s": 0.03543536304018266,
+            "allocation_active_bounds": [
+              true,
+              true,
+              false,
+              true,
+              false
+            ],
+            "lqr_command": [
+              0.15320998430252075,
+              -0.10432348400354385,
+              -0.0077529423870146275,
+              -1.5926119089126587,
+              0.0
+            ],
+            "requested_command": [
+              0.29224541783332825,
+              -0.14330635964870453,
+              -0.0077529423870146275,
+              -1.6147565841674805,
+              0.0
+            ],
+            "applied_command": [
+              0.29224541783332825,
+              -0.14330635964870453,
+              -0.0077529423870146275,
+              -0.30000001192092896,
+              0.0
+            ]
+          }
+        },
+        "lqr_command_step_normalized_linf": {
+          "step": 5.790637969970703,
+          "patch_switch": true,
+          "before": {
+            "time_s": 28.989999771118164,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.048451606184244156,
+              -0.0434483140707016
+            ],
+            "estimated_equivalent_point_m": [
+              -1.975650429725647,
+              9.400556564331055,
+              1.153091549873352
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.015025055567841896,
+                -0.08512345423423599,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5827286677472029,
+                0.1354972661711663,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.07937900001976564,
+            "authority_logged_m_s": 0.07937879115343094,
+            "effort_coefficient_m_s": 0.0012387705501168966,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.24100565910339355,
+              0.6024538278579712,
+              0.0,
+              -0.03249083459377289,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.1723573207855225,
+              6.135025978088379,
+              0.4716626703739166
+            ],
+            "actual_tilt_deg": 2.6488780975341797,
+            "reference_tilt_deg": 11.759274485052755,
+            "reference_attitude_error_deg": 9.92248821258545,
+            "angular_generalized_velocity_rad_s": [
+              -0.12118320912122726,
+              -0.15503771603107452,
+              0.9511480927467346
+            ],
+            "effective_phase_rad": 1.6535706520080566,
+            "allocation_residual_logged_m_s": 0.03748326376080513,
+            "allocation_residual_reconstructed_m_s": 0.03748324198494469,
+            "allocation_active_bounds": [
+              false,
+              true,
+              false,
+              true,
+              false
+            ],
+            "lqr_command": [
+              -0.030264275148510933,
+              1.0542250871658325,
+              0.12495452910661697,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.09096400439739227,
+              1.0203962326049805,
+              0.12495452910661697,
+              -0.03249083459377289,
+              0.0
+            ],
+            "applied_command": [
+              0.09096400439739227,
+              0.6000000238418579,
+              0.12495452910661697,
+              -0.03249083459377289,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 28.9950008392334,
+            "support": "Belt A",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04851178452372551,
+              -0.043255217373371124
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9743398427963257,
+              9.3995361328125,
+              1.1528836488723755
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.01851252747970643,
+                0.0,
+                0.0,
+                0.2997413430522201,
+                0.0
+              ],
+              [
+                0.582955766700713,
+                0.0,
+                0.0,
+                0.009946368744424937,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.299905909533082,
+            "authority_logged_m_s": 0.2999058961868286,
+            "effort_coefficient_m_s": 0.001017710193991661,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.3843996524810791,
+              0.2959393560886383,
+              0.0,
+              -0.04712846875190735,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.37766969203948975,
+              8.456321716308594,
+              1.3003911972045898
+            ],
+            "actual_tilt_deg": 2.5251402854919434,
+            "reference_tilt_deg": 11.751543450373207,
+            "reference_attitude_error_deg": 10.000219345092773,
+            "angular_generalized_velocity_rad_s": [
+              -0.4118664562702179,
+              -0.3909122347831726,
+              1.319373369216919
+            ],
+            "effective_phase_rad": 1.654771327972412,
+            "allocation_residual_logged_m_s": 7.295171826626756e-07,
+            "allocation_residual_reconstructed_m_s": 7.217998880443529e-07,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.030991211533546448,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -1.7371914386749268,
+              0.0
+            ],
+            "requested_command": [
+              0.0881548821926117,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -1.7843198776245117,
+              0.0
+            ],
+            "applied_command": [
+              0.0881548821926117,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -0.30000001192092896,
+              0.0
+            ]
+          }
+        },
+        "requested_command_step_normalized_linf": {
+          "step": 5.840637683868408,
+          "patch_switch": true,
+          "before": {
+            "time_s": 28.9950008392334,
+            "support": "Belt A",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04851178452372551,
+              -0.043255217373371124
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9743398427963257,
+              9.3995361328125,
+              1.1528836488723755
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.01851252747970643,
+                0.0,
+                0.0,
+                0.2997413430522201,
+                0.0
+              ],
+              [
+                0.582955766700713,
+                0.0,
+                0.0,
+                0.009946368744424937,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.299905909533082,
+            "authority_logged_m_s": 0.2999058961868286,
+            "effort_coefficient_m_s": 0.001017710193991661,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.3843996524810791,
+              0.2959393560886383,
+              0.0,
+              -0.04712846875190735,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.37766969203948975,
+              8.456321716308594,
+              1.3003911972045898
+            ],
+            "actual_tilt_deg": 2.5251402854919434,
+            "reference_tilt_deg": 11.751543450373207,
+            "reference_attitude_error_deg": 10.000219345092773,
+            "angular_generalized_velocity_rad_s": [
+              -0.4118664562702179,
+              -0.3909122347831726,
+              1.319373369216919
+            ],
+            "effective_phase_rad": 1.654771327972412,
+            "allocation_residual_logged_m_s": 7.295171826626756e-07,
+            "allocation_residual_reconstructed_m_s": 7.217998880443529e-07,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.030991211533546448,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -1.7371914386749268,
+              0.0
+            ],
+            "requested_command": [
+              0.0881548821926117,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -1.7843198776245117,
+              0.0
+            ],
+            "applied_command": [
+              0.0881548821926117,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -0.30000001192092896,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 29.0,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04857178032398224,
+              -0.04306216910481453
+            ],
+            "estimated_equivalent_point_m": [
+              -1.973179578781128,
+              9.39903450012207,
+              1.1526741981506348
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.022225908085761734,
+                -0.08818183914251654,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5828043750069493,
+                0.13339892137782167,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.0808032423569356,
+            "authority_logged_m_s": 0.08080180734395981,
+            "effort_coefficient_m_s": 0.0012309157755225897,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.19826573133468628,
+              0.7959393858909607,
+              0.0,
+              -0.0321284718811512,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.086241364479065,
+              7.850110054016113,
+              1.2561599016189575
+            ],
+            "actual_tilt_deg": 2.4578447341918945,
+            "reference_tilt_deg": 11.75101040098338,
+            "reference_attitude_error_deg": 10.041485786437988,
+            "angular_generalized_velocity_rad_s": [
+              -0.053038809448480606,
+              -0.1734437346458435,
+              1.2170381546020508
+            ],
+            "effective_phase_rad": 1.6586569547653198,
+            "allocation_residual_logged_m_s": 0.03367766737937927,
+            "allocation_residual_reconstructed_m_s": 0.03367743459699951,
+            "allocation_active_bounds": [
+              false,
+              true,
+              false,
+              true,
+              false
+            ],
+            "lqr_command": [
+              -0.009546857327222824,
+              1.0141993761062622,
+              0.096716970205307,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.10652413964271545,
+              0.9776899218559265,
+              0.096716970205307,
+              -0.0321284718811512,
+              0.0
+            ],
+            "applied_command": [
+              0.10652413964271545,
+              0.6000000238418579,
+              0.096716970205307,
+              -0.0321284718811512,
+              0.0
+            ]
+          }
+        },
+        "applied_command_step_normalized_linf": {
+          "step": 1.1428338289260864,
+          "patch_switch": true,
+          "before": {
+            "time_s": 28.989999771118164,
+            "support": "Shell A",
+            "estimated_load_shares": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.048451606184244156,
+              -0.0434483140707016
+            ],
+            "estimated_equivalent_point_m": [
+              -1.975650429725647,
+              9.400556564331055,
+              1.153091549873352
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.015025055567841896,
+                -0.08512345423423599,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.5827286677472029,
+                0.1354972661711663,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.07937900001976564,
+            "authority_logged_m_s": 0.07937879115343094,
+            "effort_coefficient_m_s": 0.0012387705501168966,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.24100565910339355,
+              0.6024538278579712,
+              0.0,
+              -0.03249083459377289,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.1723573207855225,
+              6.135025978088379,
+              0.4716626703739166
+            ],
+            "actual_tilt_deg": 2.6488780975341797,
+            "reference_tilt_deg": 11.759274485052755,
+            "reference_attitude_error_deg": 9.92248821258545,
+            "angular_generalized_velocity_rad_s": [
+              -0.12118320912122726,
+              -0.15503771603107452,
+              0.9511480927467346
+            ],
+            "effective_phase_rad": 1.6535706520080566,
+            "allocation_residual_logged_m_s": 0.03748326376080513,
+            "allocation_residual_reconstructed_m_s": 0.03748324198494469,
+            "allocation_active_bounds": [
+              false,
+              true,
+              false,
+              true,
+              false
+            ],
+            "lqr_command": [
+              -0.030264275148510933,
+              1.0542250871658325,
+              0.12495452910661697,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.09096400439739227,
+              1.0203962326049805,
+              0.12495452910661697,
+              -0.03249083459377289,
+              0.0
+            ],
+            "applied_command": [
+              0.09096400439739227,
+              0.6000000238418579,
+              0.12495452910661697,
+              -0.03249083459377289,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 28.9950008392334,
+            "support": "Belt A",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.04851178452372551,
+              -0.043255217373371124
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9743398427963257,
+              9.3995361328125,
+              1.1528836488723755
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.01851252747970643,
+                0.0,
+                0.0,
+                0.2997413430522201,
+                0.0
+              ],
+              [
+                0.582955766700713,
+                0.0,
+                0.0,
+                0.009946368744424937,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.299905909533082,
+            "authority_logged_m_s": 0.2999058961868286,
+            "effort_coefficient_m_s": 0.001017710193991661,
+            "effort_is_active": true,
+            "drive_reference": [
+              0.3843996524810791,
+              0.2959393560886383,
+              0.0,
+              -0.04712846875190735,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.37766969203948975,
+              8.456321716308594,
+              1.3003911972045898
+            ],
+            "actual_tilt_deg": 2.5251402854919434,
+            "reference_tilt_deg": 11.751543450373207,
+            "reference_attitude_error_deg": 10.000219345092773,
+            "angular_generalized_velocity_rad_s": [
+              -0.4118664562702179,
+              -0.3909122347831726,
+              1.319373369216919
+            ],
+            "effective_phase_rad": 1.654771327972412,
+            "allocation_residual_logged_m_s": 7.295171826626756e-07,
+            "allocation_residual_reconstructed_m_s": 7.217998880443529e-07,
+            "allocation_active_bounds": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "lqr_command": [
+              -0.030991211533546448,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -1.7371914386749268,
+              0.0
+            ],
+            "requested_command": [
+              0.0881548821926117,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -1.7843198776245117,
+              0.0
+            ],
+            "applied_command": [
+              0.0881548821926117,
+              -0.08570027351379395,
+              0.011034753173589706,
+              -0.30000001192092896,
+              0.0
+            ]
+          }
+        }
+      },
+      "scalar_schedule_reconstruction_max_error_m_s": 5.113987262671954e-07,
+      "input_files": [
+        {
+          "path": "results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/rollout.npz",
+          "bytes": 4760772,
+          "sha256": "4dd1c8ceaaf7327a1ee51831c201cbb9e62f8e7295e0d309f62da49cd8d53e48"
+        },
+        {
+          "path": "results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/summary.json",
+          "bytes": 6978,
+          "sha256": "4eb32e3ac90703b3eadad82856cf10cd996f40da0ce5efc2d6cdb09c62c04a03"
+        },
+        {
+          "path": "results/weighted_allocation_20261125/bounded_adaptive/_workspaces/worker_94096/flat/model.xml",
+          "bytes": 27656,
+          "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+        }
+      ]
+    },
+    {
+      "name": "baseline_positive_phase",
+      "window_s": [
+        31.6,
+        31.7
+      ],
+      "visible_samples": 21,
+      "interval_s": {
+        "samples": 21,
+        "median": 0.0049991607666015625,
+        "p95": 0.005001068115234375,
+        "max": 0.005001068115234375
+      },
+      "patch_switch_count": 6,
+      "patch_switch_times_s": [
+        31.639999389648438,
+        31.649999618530273,
+        31.665000915527344,
+        31.68000030517578,
+        31.690000534057617,
+        31.700000762939453
+      ],
+      "truth_patch_switch_count_evaluation_only": 6,
+      "truth_patch_switch_times_s_evaluation_only": [
+        31.639999389648438,
+        31.649999618530273,
+        31.665000915527344,
+        31.68000030517578,
+        31.690000534057617,
+        31.700000762939453
+      ],
+      "estimated_truth_identity_disagreement_samples": 0,
+      "actual_effort_schedule_active": false,
+      "step_metrics": {
+        "desired_velocity_step_m_s": {
+          "all_steps": {
+            "samples": 21,
+            "median": 7.03151985895814e-05,
+            "p95": 7.256318888172038e-05,
+            "max": 7.281407561660353e-05
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 6.921062097030246e-05,
+            "p95": 7.06881607478967e-05,
+            "max": 7.081248146733513e-05
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 7.105808876077414e-05,
+            "p95": 7.263845490218533e-05,
+            "max": 7.281407561660353e-05
+          }
+        },
+        "normalized_contact_jacobian_step_frobenius_m_s": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.003793179204635804,
+            "p95": 0.3391394659085154,
+            "max": 0.33916547163926014
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 0.3390746176557473,
+            "p95": 0.33915897020657393,
+            "max": 0.33916547163926014
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.002416995516276976,
+            "p95": 0.009409920654906536,
+            "max": 0.009929619967296677
+          }
+        },
+        "effort_coefficient_step_m_s": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.00035099060584775285,
+            "p95": 0.0039761875323634085,
+            "max": 0.003981939537847893
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 0.0035884577526026024,
+            "p95": 0.003980501536476772,
+            "max": 0.003981939537847893
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.0001720521392652545,
+            "p95": 0.0006844809145533316,
+            "max": 0.0008917241370403617
+          }
+        },
+        "drive_reference_step_normalized_l2": {
+          "all_steps": {
+            "samples": 21,
+            "median": 2.2360638133893045,
+            "p95": 365.39839447249,
+            "max": 388.3164630162362
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 8.639025111334416,
+            "p95": 292.2788931387463,
+            "max": 365.39839447249
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.6096060372828368,
+            "p95": 140.89818801768104,
+            "max": 388.3164630162362
+          }
+        },
+        "drive_reference_step_normalized_linf": {
+          "all_steps": {
+            "samples": 21,
+            "median": 2.1550231933593746,
+            "p95": 352.1050048828125,
+            "max": 374.18528442382814
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 8.323739624023437,
+            "p95": 281.6481475830078,
+            "max": 352.1050048828125
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.5892398834228514,
+            "p95": 135.65768516540493,
+            "max": 374.18528442382814
+          }
+        },
+        "estimated_equivalent_point_step_m": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.0008512605405834974,
+            "p95": 0.001129686333966612,
+            "max": 0.0013041823444499298
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 0.0008657822045511302,
+            "p95": 0.0012605583418291003,
+            "max": 0.0013041823444499298
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.0008512605405834974,
+            "p95": 0.0010790648820654999,
+            "max": 0.0010950205147818289
+          }
+        },
+        "estimated_normal_step_deg": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.006746674777894418,
+            "p95": 0.015467972615406065,
+            "max": 0.017302365042171433
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 0.006779621896269395,
+            "p95": 0.013556393014679783,
+            "max": 0.014523318358313551
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.006746674777894418,
+            "p95": 0.016018290343435673,
+            "max": 0.017302365042171433
+          }
+        },
+        "reference_attitude_error_step_deg": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.10487508773803711,
+            "p95": 0.16997051239013672,
+            "max": 0.17299509048461914
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 0.10277152061462402,
+            "p95": 0.15597808361053467,
+            "max": 0.16001367568969727
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.10487508773803711,
+            "p95": 0.17087788581848143,
+            "max": 0.17299509048461914
+          }
+        },
+        "lqr_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 21,
+            "median": 1.4426696300506592,
+            "p95": 235.2696075439453,
+            "max": 251.15347290039062
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 5.939673900604248,
+            "p95": 188.3515396118164,
+            "max": 235.2696075439453
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.7676903605461121,
+            "p95": 91.54604072570777,
+            "max": 251.15347290039062
+          }
+        },
+        "requested_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 21,
+            "median": 1.4474073648452759,
+            "p95": 235.28997802734375,
+            "max": 251.149658203125
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 5.863333702087402,
+            "p95": 188.37500762939453,
+            "max": 235.28997802734375
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.7686993479728699,
+            "p95": 91.53742256164526,
+            "max": 251.149658203125
+          }
+        },
+        "applied_command_step_normalized_linf": {
+          "all_steps": {
+            "samples": 21,
+            "median": 0.49129462242126465,
+            "p95": 2.0,
+            "max": 2.0
+          },
+          "at_patch_switch": {
+            "samples": 6,
+            "median": 1.2909271717071533,
+            "p95": 1.877449482679367,
+            "max": 2.0
+          },
+          "without_patch_switch": {
+            "samples": 15,
+            "median": 0.3500846326351166,
+            "p95": 2.0,
+            "max": 2.0
+          }
+        }
+      },
+      "marked_event": {
+        "time_s": 31.649999618530273,
+        "support": "Shell B",
+        "estimated_load_shares": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "truth_load_shares_evaluation_only": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "desired_velocity_xy_m_s": [
+          0.05808847025036812,
+          0.031170492991805077
+        ],
+        "estimated_equivalent_point_m": [
+          -1.9185221195220947,
+          9.407712936401367,
+          1.141478419303894
+        ],
+        "normalized_contact_jacobian_m_s": [
+          [
+            -0.022222318306662665,
+            0.0,
+            -0.0060069315975041886,
+            0.0,
+            0.0
+          ],
+          [
+            -0.5768065886967467,
+            0.0,
+            -0.15999322617233497,
+            0.0,
+            0.0
+          ]
+        ],
+        "authority_reconstructed_m_s": 0.00015121630255991055,
+        "authority_logged_m_s": null,
+        "effort_coefficient_m_s": 0.004999771349369427,
+        "effort_is_active": false,
+        "drive_reference": [
+          488.60137939453125,
+          0.0,
+          -1760.5250244140625,
+          0.0,
+          0.0
+        ],
+        "actual_joint_rates_rad_s": [
+          -0.08352810144424438,
+          -4.809460639953613,
+          -1.6936341524124146
+        ],
+        "actual_tilt_deg": 7.170928001403809,
+        "reference_tilt_deg": 10.66107621775728,
+        "reference_attitude_error_deg": 5.571151256561279,
+        "angular_generalized_velocity_rad_s": [
+          -0.18660898506641388,
+          0.2645588219165802,
+          0.5964149832725525
+        ],
+        "effective_phase_rad": -1.5138885974884033,
+        "allocation_residual_logged_m_s": null,
+        "allocation_residual_reconstructed_m_s": 0.0015920751864773332,
+        "allocation_active_bounds": null,
+        "lqr_command": [
+          111.50992584228516,
+          -5.364985466003418,
+          -141.03404235839844,
+          0.0,
+          0.0
+        ],
+        "requested_command": [
+          111.38871765136719,
+          -5.364985466003418,
+          -141.06736755371094,
+          0.0,
+          0.0
+        ],
+        "applied_command": [
+          1.5,
+          -0.6000000238418579,
+          -0.6000000238418579,
+          0.0,
+          0.0
+        ]
+      },
+      "largest_step_events": {
+        "desired_velocity_step_m_s": {
+          "step": 7.281407561660353e-05,
+          "patch_switch": false,
+          "before": {
+            "time_s": 31.594999313354492,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05826306343078613,
+              0.03040294721722603
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9223031997680664,
+              9.399595260620117,
+              1.142595648765564
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.016953042878611334,
+                0.0,
+                -0.012973055506922768,
+                0.0,
+                0.0
+              ],
+              [
+                -0.574000107671539,
+                0.0,
+                -0.17026912717439213,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.007611929664622136,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004493896258735005,
+            "effort_is_active": false,
+            "drive_reference": [
+              -10.445615768432617,
+              0.0,
+              36.10640335083008,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              -2.398613691329956,
+              -1.694250226020813,
+              12.842537879943848
+            ],
+            "actual_tilt_deg": 7.3098344802856445,
+            "reference_tilt_deg": 10.689481520487908,
+            "reference_attitude_error_deg": 4.379797458648682,
+            "angular_generalized_velocity_rad_s": [
+              0.19915762543678284,
+              0.026066994294524193,
+              -1.4040613174438477
+            ],
+            "effective_phase_rad": -1.5015642642974854,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 2.3967345372551374e-06,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -1.2381870746612549,
+              -0.030728591606020927,
+              1.5581016540527344,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              -1.3549888134002686,
+              -0.030728591606020927,
+              1.5180150270462036,
+              0.0,
+              0.019799113273620605
+            ],
+            "applied_command": [
+              -1.3549888134002686,
+              -0.030728591606020927,
+              0.6000000238418579,
+              0.0,
+              0.019799113273620605
+            ]
+          },
+          "after": {
+            "time_s": 31.600000381469727,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05824768543243408,
+              0.030474118888378143
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9220091104507446,
+              9.400101661682129,
+              1.1425150632858276
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.021490218117019427,
+                0.0,
+                -0.0041699983516170405,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5741380317098991,
+                0.0,
+                -0.1695630427382399,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.0020862899732687814,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.0049569424725888975,
+            "effort_is_active": false,
+            "drive_reference": [
+              38.969478607177734,
+              0.0,
+              -131.05145263671875,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              -3.8887457847595215,
+              -1.5092002153396606,
+              15.762999534606934
+            ],
+            "actual_tilt_deg": 7.21660852432251,
+            "reference_tilt_deg": 10.682727046172628,
+            "reference_attitude_error_deg": 4.424983978271484,
+            "angular_generalized_velocity_rad_s": [
+              0.26949021220207214,
+              0.36999768018722534,
+              -1.711206316947937
+            ],
+            "effective_phase_rad": -1.5177003145217896,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 5.204892402542327e-05,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              11.168845176696777,
+              -0.6305795311927795,
+              -12.327611923217773,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              11.04917049407959,
+              -0.6305795311927795,
+              -12.36129379272461,
+              0.0,
+              -0.0025703420396894217
+            ],
+            "applied_command": [
+              1.5,
+              -0.6000000238418579,
+              -0.6000000238418579,
+              0.0,
+              -0.0025703420396894217
+            ]
+          }
+        },
+        "normalized_contact_jacobian_step_frobenius_m_s": {
+          "step": 0.33916547163926014,
+          "patch_switch": true,
+          "before": {
+            "time_s": 31.635000228881836,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05813726410269737,
+              0.030964503064751625
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9203267097473145,
+              9.406041145324707,
+              1.141900658607483
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.028264728962305394,
+                0.0,
+                0.002518628247993055,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5764929143055418,
+                0.0,
+                -0.16029444766499618,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.009988525720538398,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004201468538783197,
+            "effort_is_active": false,
+            "drive_reference": [
+              7.852676868438721,
+              0.0,
+              -27.27597999572754,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.5899455547332764,
+              -6.608073711395264,
+              -0.7168625593185425
+            ],
+            "actual_tilt_deg": 7.143342018127441,
+            "reference_tilt_deg": 10.672465451393816,
+            "reference_attitude_error_deg": 5.461175918579102,
+            "angular_generalized_velocity_rad_s": [
+              0.4453358054161072,
+              -0.33643433451652527,
+              0.5238986015319824
+            ],
+            "effective_phase_rad": -1.5281692743301392,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 6.907266042524753e-06,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              0.3443933427333832,
+              0.12239755690097809,
+              -2.079493999481201,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              0.21841375529766083,
+              0.12239755690097809,
+              -2.107578992843628,
+              0.0,
+              0.003772103227674961
+            ],
+            "applied_command": [
+              0.21841375529766083,
+              0.12239755690097809,
+              -0.6000000238418579,
+              0.0,
+              0.003772103227674961
+            ]
+          },
+          "after": {
+            "time_s": 31.639999389648438,
+            "support": "Belt B",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05812109634280205,
+              0.03103344514966011
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9201200008392334,
+              9.406756401062012,
+              1.1418259143829346
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.02620957660502439,
+                0.0,
+                0.0,
+                0.0,
+                -0.29863613111265896
+              ],
+              [
+                -0.5768242739189723,
+                0.0,
+                0.0,
+                0.0,
+                0.012028776141473319
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.298872874410713,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.0010178322662370326,
+            "effort_is_active": false,
+            "drive_reference": [
+              0.2887668311595917,
+              0.0,
+              0.0,
+              0.0,
+              0.056865938007831573
+            ],
+            "actual_joint_rates_rad_s": [
+              1.9474178552627563,
+              -6.315749645233154,
+              -2.928833246231079
+            ],
+            "actual_tilt_deg": 7.130753993988037,
+            "reference_tilt_deg": 10.67358189228751,
+            "reference_attitude_error_deg": 5.621189594268799,
+            "angular_generalized_velocity_rad_s": [
+              0.45948055386543274,
+              -0.47810471057891846,
+              0.6962317824363708
+            ],
+            "effective_phase_rad": -1.5202558040618896,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 9.64252980567999e-09,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -1.820798397064209,
+              0.1731175035238266,
+              0.1253574639558792,
+              0.0,
+              0.6867080330848694
+            ],
+            "requested_command": [
+              -1.9455440044403076,
+              0.1731175035238266,
+              0.10063525289297104,
+              0.0,
+              0.7435739636421204
+            ],
+            "applied_command": [
+              -1.5,
+              0.1731175035238266,
+              0.10063525289297104,
+              0.0,
+              0.30000001192092896
+            ]
+          }
+        },
+        "effort_coefficient_step_m_s": {
+          "step": 0.003981939537847893,
+          "patch_switch": true,
+          "before": {
+            "time_s": 31.645000457763672,
+            "support": "Belt B",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05810483172535896,
+              0.03110210783779621
+            ],
+            "estimated_equivalent_point_m": [
+              -1.919461965560913,
+              9.407492637634277,
+              1.1416655778884888
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.024049816695735943,
+                0.0,
+                0.0,
+                0.0,
+                -0.29868043266186156
+              ],
+              [
+                -0.5770430696739791,
+                0.0,
+                0.0,
+                0.0,
+                0.010966952121090183
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.29887670211570677,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.0010178318115215332,
+            "effort_is_active": false,
+            "drive_reference": [
+              0.287541925907135,
+              0.0,
+              0.0,
+              0.0,
+              0.05697237327694893
+            ],
+            "actual_joint_rates_rad_s": [
+              0.5057365894317627,
+              -5.595041275024414,
+              -2.485260486602783
+            ],
+            "actual_tilt_deg": 7.151411533355713,
+            "reference_tilt_deg": 10.665405939105959,
+            "reference_attitude_error_deg": 5.665741920471191,
+            "angular_generalized_velocity_rad_s": [
+              -0.15684543550014496,
+              0.03900176286697388,
+              0.7235866785049438
+            ],
+            "effective_phase_rad": -1.5157675743103027,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 1.1978769934231724e-08,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -0.6419195532798767,
+              0.1715833991765976,
+              0.1277313530445099,
+              0.0,
+              0.6764907836914062
+            ],
+            "requested_command": [
+              -0.7646968364715576,
+              0.1715833991765976,
+              0.10662481188774109,
+              0.0,
+              0.7334631681442261
+            ],
+            "applied_command": [
+              -0.7646968364715576,
+              0.1715833991765976,
+              0.10662481188774109,
+              0.0,
+              0.30000001192092896
+            ]
+          },
+          "after": {
+            "time_s": 31.649999618530273,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05808847025036812,
+              0.031170492991805077
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9185221195220947,
+              9.407712936401367,
+              1.141478419303894
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.022222318306662665,
+                0.0,
+                -0.0060069315975041886,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5768065886967467,
+                0.0,
+                -0.15999322617233497,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.00015121630255991055,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004999771349369427,
+            "effort_is_active": false,
+            "drive_reference": [
+              488.60137939453125,
+              0.0,
+              -1760.5250244140625,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              -0.08352810144424438,
+              -4.809460639953613,
+              -1.6936341524124146
+            ],
+            "actual_tilt_deg": 7.170928001403809,
+            "reference_tilt_deg": 10.66107621775728,
+            "reference_attitude_error_deg": 5.571151256561279,
+            "angular_generalized_velocity_rad_s": [
+              -0.18660898506641388,
+              0.2645588219165802,
+              0.5964149832725525
+            ],
+            "effective_phase_rad": -1.5138885974884033,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 0.0015920751864773332,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              111.50992584228516,
+              -5.364985466003418,
+              -141.03404235839844,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              111.38871765136719,
+              -5.364985466003418,
+              -141.06736755371094,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              1.5,
+              -0.6000000238418579,
+              -0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "drive_reference_step_normalized_l2": {
+          "step": 388.3164630162362,
+          "patch_switch": false,
+          "before": {
+            "time_s": 31.649999618530273,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05808847025036812,
+              0.031170492991805077
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9185221195220947,
+              9.407712936401367,
+              1.141478419303894
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.022222318306662665,
+                0.0,
+                -0.0060069315975041886,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5768065886967467,
+                0.0,
+                -0.15999322617233497,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.00015121630255991055,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004999771349369427,
+            "effort_is_active": false,
+            "drive_reference": [
+              488.60137939453125,
+              0.0,
+              -1760.5250244140625,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              -0.08352810144424438,
+              -4.809460639953613,
+              -1.6936341524124146
+            ],
+            "actual_tilt_deg": 7.170928001403809,
+            "reference_tilt_deg": 10.66107621775728,
+            "reference_attitude_error_deg": 5.571151256561279,
+            "angular_generalized_velocity_rad_s": [
+              -0.18660898506641388,
+              0.2645588219165802,
+              0.5964149832725525
+            ],
+            "effective_phase_rad": -1.5138885974884033,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 0.0015920751864773332,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              111.50992584228516,
+              -5.364985466003418,
+              -141.03404235839844,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              111.38871765136719,
+              -5.364985466003418,
+              -141.06736755371094,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              1.5,
+              -0.6000000238418579,
+              -0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 31.655000686645508,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.058072011917829514,
+              0.031238600611686707
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9178948402404785,
+              9.407892227172852,
+              1.1413519382476807
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.01969561924258901,
+                0.0,
+                -0.008058813501599718,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5767427435704615,
+                0.0,
+                -0.16029539091594752,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.002488818718424272,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004939002395117024,
+            "effort_is_active": false,
+            "drive_reference": [
+              -30.413272857666016,
+              0.0,
+              110.40139770507812,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.9568109512329102,
+              -7.637691497802734,
+              -4.614712715148926
+            ],
+            "actual_tilt_deg": 7.170609474182129,
+            "reference_tilt_deg": 10.667234623672663,
+            "reference_attitude_error_deg": 5.582309722900391,
+            "angular_generalized_velocity_rad_s": [
+              0.19924519956111908,
+              -0.24798725545406342,
+              1.0921794176101685
+            ],
+            "effective_phase_rad": -1.5079976320266724,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 6.721251243618239e-05,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -8.630025863647461,
+              0.6934812068939209,
+              9.65805721282959,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              -8.750102996826172,
+              0.6934812068939209,
+              9.622435569763184,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              -1.5,
+              0.6000000238418579,
+              0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "drive_reference_step_normalized_linf": {
+          "step": 374.18528442382814,
+          "patch_switch": false,
+          "before": {
+            "time_s": 31.649999618530273,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05808847025036812,
+              0.031170492991805077
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9185221195220947,
+              9.407712936401367,
+              1.141478419303894
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.022222318306662665,
+                0.0,
+                -0.0060069315975041886,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5768065886967467,
+                0.0,
+                -0.15999322617233497,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.00015121630255991055,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004999771349369427,
+            "effort_is_active": false,
+            "drive_reference": [
+              488.60137939453125,
+              0.0,
+              -1760.5250244140625,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              -0.08352810144424438,
+              -4.809460639953613,
+              -1.6936341524124146
+            ],
+            "actual_tilt_deg": 7.170928001403809,
+            "reference_tilt_deg": 10.66107621775728,
+            "reference_attitude_error_deg": 5.571151256561279,
+            "angular_generalized_velocity_rad_s": [
+              -0.18660898506641388,
+              0.2645588219165802,
+              0.5964149832725525
+            ],
+            "effective_phase_rad": -1.5138885974884033,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 0.0015920751864773332,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              111.50992584228516,
+              -5.364985466003418,
+              -141.03404235839844,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              111.38871765136719,
+              -5.364985466003418,
+              -141.06736755371094,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              1.5,
+              -0.6000000238418579,
+              -0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 31.655000686645508,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.058072011917829514,
+              0.031238600611686707
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9178948402404785,
+              9.407892227172852,
+              1.1413519382476807
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.01969561924258901,
+                0.0,
+                -0.008058813501599718,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5767427435704615,
+                0.0,
+                -0.16029539091594752,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.002488818718424272,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004939002395117024,
+            "effort_is_active": false,
+            "drive_reference": [
+              -30.413272857666016,
+              0.0,
+              110.40139770507812,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.9568109512329102,
+              -7.637691497802734,
+              -4.614712715148926
+            ],
+            "actual_tilt_deg": 7.170609474182129,
+            "reference_tilt_deg": 10.667234623672663,
+            "reference_attitude_error_deg": 5.582309722900391,
+            "angular_generalized_velocity_rad_s": [
+              0.19924519956111908,
+              -0.24798725545406342,
+              1.0921794176101685
+            ],
+            "effective_phase_rad": -1.5079976320266724,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 6.721251243618239e-05,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -8.630025863647461,
+              0.6934812068939209,
+              9.65805721282959,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              -8.750102996826172,
+              0.6934812068939209,
+              9.622435569763184,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              -1.5,
+              0.6000000238418579,
+              0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "estimated_equivalent_point_step_m": {
+          "step": 0.0013041823444499298,
+          "patch_switch": true,
+          "before": {
+            "time_s": 31.69499969482422,
+            "support": "Belt B",
+            "estimated_load_shares": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05793687328696251,
+              0.031773511320352554
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9125279188156128,
+              9.408490180969238,
+              1.140316128730774
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.021728209490800975,
+                0.0,
+                0.0,
+                0.0,
+                -0.2987346970421409
+              ],
+              [
+                -0.5769695723599167,
+                0.0,
+                0.0,
+                0.0,
+                0.00976748397314175
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.2988893178613441,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.0010178303129461436,
+            "effort_is_active": false,
+            "drive_reference": [
+              0.2914055585861206,
+              0.0,
+              0.0,
+              0.0,
+              0.056910574436187744
+            ],
+            "actual_joint_rates_rad_s": [
+              -0.7470773458480835,
+              -0.18957962095737457,
+              6.905126571655273
+            ],
+            "actual_tilt_deg": 6.386650562286377,
+            "reference_tilt_deg": 10.698719336358604,
+            "reference_attitude_error_deg": 5.44541597366333,
+            "angular_generalized_velocity_rad_s": [
+              -0.32484936714172363,
+              0.7010669112205505,
+              -0.64494788646698
+            ],
+            "effective_phase_rad": -1.5153751373291016,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 1.626035805047753e-08,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              1.4017162322998047,
+              -0.03518780693411827,
+              -0.13523262739181519,
+              0.0,
+              0.7398137450218201
+            ],
+            "requested_command": [
+              1.2810230255126953,
+              -0.03518780693411827,
+              -0.14900219440460205,
+              0.0,
+              0.7967243194580078
+            ],
+            "applied_command": [
+              1.2810230255126953,
+              -0.03518780693411827,
+              -0.14900219440460205,
+              0.0,
+              0.30000001192092896
+            ]
+          },
+          "after": {
+            "time_s": 31.700000762939453,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05791955068707466,
+              0.03183913230895996
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9112482070922852,
+              9.408555030822754,
+              1.1400731801986694
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.023712827309257858,
+                0.0,
+                -0.005760905179800387,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5767976349771706,
+                0.0,
+                -0.1596818550948245,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.0007740229088389673,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004994017845309552,
+            "effort_is_active": false,
+            "drive_reference": [
+              97.55516052246094,
+              0.0,
+              -351.38787841796875,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.48470601439476013,
+              -0.34886717796325684,
+              5.9797258377075195
+            ],
+            "actual_tilt_deg": 6.411026477813721,
+            "reference_tilt_deg": 10.69020992107591,
+            "reference_attitude_error_deg": 5.301544666290283,
+            "angular_generalized_velocity_rad_s": [
+              -0.2947823405265808,
+              0.12352214008569717,
+              -0.6234023571014404
+            ],
+            "effective_phase_rad": -1.5138262510299683,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 0.00012271275591419905,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              22.458003997802734,
+              -1.1337703466415405,
+              -28.69363021850586,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              22.335905075073242,
+              -1.1337703466415405,
+              -28.72705841064453,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              1.5,
+              -0.6000000238418579,
+              -0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "estimated_normal_step_deg": {
+          "step": 0.017302365042171433,
+          "patch_switch": false,
+          "before": {
+            "time_s": 31.649999618530273,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05808847025036812,
+              0.031170492991805077
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9185221195220947,
+              9.407712936401367,
+              1.141478419303894
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.022222318306662665,
+                0.0,
+                -0.0060069315975041886,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5768065886967467,
+                0.0,
+                -0.15999322617233497,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.00015121630255991055,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004999771349369427,
+            "effort_is_active": false,
+            "drive_reference": [
+              488.60137939453125,
+              0.0,
+              -1760.5250244140625,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              -0.08352810144424438,
+              -4.809460639953613,
+              -1.6936341524124146
+            ],
+            "actual_tilt_deg": 7.170928001403809,
+            "reference_tilt_deg": 10.66107621775728,
+            "reference_attitude_error_deg": 5.571151256561279,
+            "angular_generalized_velocity_rad_s": [
+              -0.18660898506641388,
+              0.2645588219165802,
+              0.5964149832725525
+            ],
+            "effective_phase_rad": -1.5138885974884033,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 0.0015920751864773332,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              111.50992584228516,
+              -5.364985466003418,
+              -141.03404235839844,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              111.38871765136719,
+              -5.364985466003418,
+              -141.06736755371094,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              1.5,
+              -0.6000000238418579,
+              -0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 31.655000686645508,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.058072011917829514,
+              0.031238600611686707
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9178948402404785,
+              9.407892227172852,
+              1.1413519382476807
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.01969561924258901,
+                0.0,
+                -0.008058813501599718,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5767427435704615,
+                0.0,
+                -0.16029539091594752,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.002488818718424272,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004939002395117024,
+            "effort_is_active": false,
+            "drive_reference": [
+              -30.413272857666016,
+              0.0,
+              110.40139770507812,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.9568109512329102,
+              -7.637691497802734,
+              -4.614712715148926
+            ],
+            "actual_tilt_deg": 7.170609474182129,
+            "reference_tilt_deg": 10.667234623672663,
+            "reference_attitude_error_deg": 5.582309722900391,
+            "angular_generalized_velocity_rad_s": [
+              0.19924519956111908,
+              -0.24798725545406342,
+              1.0921794176101685
+            ],
+            "effective_phase_rad": -1.5079976320266724,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 6.721251243618239e-05,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -8.630025863647461,
+              0.6934812068939209,
+              9.65805721282959,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              -8.750102996826172,
+              0.6934812068939209,
+              9.622435569763184,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              -1.5,
+              0.6000000238418579,
+              0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "reference_attitude_error_step_deg": {
+          "step": 0.17299509048461914,
+          "patch_switch": false,
+          "before": {
+            "time_s": 31.614999771118164,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05820095166563988,
+              0.03068595752120018
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9213591814041138,
+              9.402563095092773,
+              1.142269253730774
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.029783125730553847,
+                0.0,
+                0.00934151613524799,
+                0.0,
+                0.0
+              ],
+              [
+                -0.574931795924519,
+                0.0,
+                -0.16590632069210198,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.017216503327254315,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.003297503805652962,
+            "effort_is_active": false,
+            "drive_reference": [
+              4.820590019226074,
+              0.0,
+              -15.780472755432129,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.7725094556808472,
+              -6.127342700958252,
+              7.366672515869141
+            ],
+            "actual_tilt_deg": 7.132960796356201,
+            "reference_tilt_deg": 10.678697970668932,
+            "reference_attitude_error_deg": 4.8250956535339355,
+            "angular_generalized_velocity_rad_s": [
+              0.43412283062934875,
+              -0.7748300433158875,
+              -0.48573750257492065
+            ],
+            "effective_phase_rad": -1.540378212928772,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 3.7971669443152023e-06,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -0.18188108503818512,
+              -0.037977226078510284,
+              -2.304152488708496,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              -0.3078499436378479,
+              -0.037977226078510284,
+              -2.328495740890503,
+              0.0,
+              -0.03316327556967735
+            ],
+            "applied_command": [
+              -0.3078499436378479,
+              -0.037977226078510284,
+              -0.6000000238418579,
+              0.0,
+              -0.03316327556967735
+            ]
+          },
+          "after": {
+            "time_s": 31.6200008392334,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05818517506122589,
+              0.030756011605262756
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9211350679397583,
+              9.403607368469238,
+              1.1421747207641602
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.03053842795857603,
+                0.0,
+                0.008984449813356351,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5752690365007334,
+                0.0,
+                -0.1645525194405126,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.01701933125366195,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.0033199917114428265,
+            "effort_is_active": false,
+            "drive_reference": [
+              4.830771446228027,
+              0.0,
+              -15.953651428222656,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              0.8884953260421753,
+              -6.558135509490967,
+              5.360168933868408
+            ],
+            "actual_tilt_deg": 7.162229061126709,
+            "reference_tilt_deg": 10.680260843926098,
+            "reference_attitude_error_deg": 4.998090744018555,
+            "angular_generalized_velocity_rad_s": [
+              0.43658044934272766,
+              -0.6265953183174133,
+              -0.19753596186637878
+            ],
+            "effective_phase_rad": -1.5397288799285889,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 1.338597588068108e-05,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -0.16115565598011017,
+              0.015218286775052547,
+              -2.0578694343566895,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              -0.2879848778247833,
+              0.015218286775052547,
+              -2.082253932952881,
+              0.0,
+              -0.020558882504701614
+            ],
+            "applied_command": [
+              -0.2879848778247833,
+              0.015218286775052547,
+              -0.6000000238418579,
+              0.0,
+              -0.020558882504701614
+            ]
+          }
+        },
+        "lqr_command_step_normalized_linf": {
+          "step": 251.15347290039062,
+          "patch_switch": false,
+          "before": {
+            "time_s": 31.649999618530273,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05808847025036812,
+              0.031170492991805077
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9185221195220947,
+              9.407712936401367,
+              1.141478419303894
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.022222318306662665,
+                0.0,
+                -0.0060069315975041886,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5768065886967467,
+                0.0,
+                -0.15999322617233497,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.00015121630255991055,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004999771349369427,
+            "effort_is_active": false,
+            "drive_reference": [
+              488.60137939453125,
+              0.0,
+              -1760.5250244140625,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              -0.08352810144424438,
+              -4.809460639953613,
+              -1.6936341524124146
+            ],
+            "actual_tilt_deg": 7.170928001403809,
+            "reference_tilt_deg": 10.66107621775728,
+            "reference_attitude_error_deg": 5.571151256561279,
+            "angular_generalized_velocity_rad_s": [
+              -0.18660898506641388,
+              0.2645588219165802,
+              0.5964149832725525
+            ],
+            "effective_phase_rad": -1.5138885974884033,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 0.0015920751864773332,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              111.50992584228516,
+              -5.364985466003418,
+              -141.03404235839844,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              111.38871765136719,
+              -5.364985466003418,
+              -141.06736755371094,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              1.5,
+              -0.6000000238418579,
+              -0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 31.655000686645508,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.058072011917829514,
+              0.031238600611686707
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9178948402404785,
+              9.407892227172852,
+              1.1413519382476807
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.01969561924258901,
+                0.0,
+                -0.008058813501599718,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5767427435704615,
+                0.0,
+                -0.16029539091594752,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.002488818718424272,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004939002395117024,
+            "effort_is_active": false,
+            "drive_reference": [
+              -30.413272857666016,
+              0.0,
+              110.40139770507812,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.9568109512329102,
+              -7.637691497802734,
+              -4.614712715148926
+            ],
+            "actual_tilt_deg": 7.170609474182129,
+            "reference_tilt_deg": 10.667234623672663,
+            "reference_attitude_error_deg": 5.582309722900391,
+            "angular_generalized_velocity_rad_s": [
+              0.19924519956111908,
+              -0.24798725545406342,
+              1.0921794176101685
+            ],
+            "effective_phase_rad": -1.5079976320266724,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 6.721251243618239e-05,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -8.630025863647461,
+              0.6934812068939209,
+              9.65805721282959,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              -8.750102996826172,
+              0.6934812068939209,
+              9.622435569763184,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              -1.5,
+              0.6000000238418579,
+              0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "requested_command_step_normalized_linf": {
+          "step": 251.149658203125,
+          "patch_switch": false,
+          "before": {
+            "time_s": 31.649999618530273,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05808847025036812,
+              0.031170492991805077
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9185221195220947,
+              9.407712936401367,
+              1.141478419303894
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.022222318306662665,
+                0.0,
+                -0.0060069315975041886,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5768065886967467,
+                0.0,
+                -0.15999322617233497,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.00015121630255991055,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004999771349369427,
+            "effort_is_active": false,
+            "drive_reference": [
+              488.60137939453125,
+              0.0,
+              -1760.5250244140625,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              -0.08352810144424438,
+              -4.809460639953613,
+              -1.6936341524124146
+            ],
+            "actual_tilt_deg": 7.170928001403809,
+            "reference_tilt_deg": 10.66107621775728,
+            "reference_attitude_error_deg": 5.571151256561279,
+            "angular_generalized_velocity_rad_s": [
+              -0.18660898506641388,
+              0.2645588219165802,
+              0.5964149832725525
+            ],
+            "effective_phase_rad": -1.5138885974884033,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 0.0015920751864773332,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              111.50992584228516,
+              -5.364985466003418,
+              -141.03404235839844,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              111.38871765136719,
+              -5.364985466003418,
+              -141.06736755371094,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              1.5,
+              -0.6000000238418579,
+              -0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          },
+          "after": {
+            "time_s": 31.655000686645508,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.058072011917829514,
+              0.031238600611686707
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9178948402404785,
+              9.407892227172852,
+              1.1413519382476807
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.01969561924258901,
+                0.0,
+                -0.008058813501599718,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5767427435704615,
+                0.0,
+                -0.16029539091594752,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.002488818718424272,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004939002395117024,
+            "effort_is_active": false,
+            "drive_reference": [
+              -30.413272857666016,
+              0.0,
+              110.40139770507812,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              1.9568109512329102,
+              -7.637691497802734,
+              -4.614712715148926
+            ],
+            "actual_tilt_deg": 7.170609474182129,
+            "reference_tilt_deg": 10.667234623672663,
+            "reference_attitude_error_deg": 5.582309722900391,
+            "angular_generalized_velocity_rad_s": [
+              0.19924519956111908,
+              -0.24798725545406342,
+              1.0921794176101685
+            ],
+            "effective_phase_rad": -1.5079976320266724,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 6.721251243618239e-05,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -8.630025863647461,
+              0.6934812068939209,
+              9.65805721282959,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              -8.750102996826172,
+              0.6934812068939209,
+              9.622435569763184,
+              0.0,
+              0.0
+            ],
+            "applied_command": [
+              -1.5,
+              0.6000000238418579,
+              0.6000000238418579,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "applied_command_step_normalized_linf": {
+          "step": 2.0,
+          "patch_switch": false,
+          "before": {
+            "time_s": 31.594999313354492,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05826306343078613,
+              0.03040294721722603
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9223031997680664,
+              9.399595260620117,
+              1.142595648765564
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.016953042878611334,
+                0.0,
+                -0.012973055506922768,
+                0.0,
+                0.0
+              ],
+              [
+                -0.574000107671539,
+                0.0,
+                -0.17026912717439213,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.007611929664622136,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.004493896258735005,
+            "effort_is_active": false,
+            "drive_reference": [
+              -10.445615768432617,
+              0.0,
+              36.10640335083008,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              -2.398613691329956,
+              -1.694250226020813,
+              12.842537879943848
+            ],
+            "actual_tilt_deg": 7.3098344802856445,
+            "reference_tilt_deg": 10.689481520487908,
+            "reference_attitude_error_deg": 4.379797458648682,
+            "angular_generalized_velocity_rad_s": [
+              0.19915762543678284,
+              0.026066994294524193,
+              -1.4040613174438477
+            ],
+            "effective_phase_rad": -1.5015642642974854,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 2.3967345372551374e-06,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              -1.2381870746612549,
+              -0.030728591606020927,
+              1.5581016540527344,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              -1.3549888134002686,
+              -0.030728591606020927,
+              1.5180150270462036,
+              0.0,
+              0.019799113273620605
+            ],
+            "applied_command": [
+              -1.3549888134002686,
+              -0.030728591606020927,
+              0.6000000238418579,
+              0.0,
+              0.019799113273620605
+            ]
+          },
+          "after": {
+            "time_s": 31.600000381469727,
+            "support": "Shell B",
+            "estimated_load_shares": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "truth_load_shares_evaluation_only": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "desired_velocity_xy_m_s": [
+              0.05824768543243408,
+              0.030474118888378143
+            ],
+            "estimated_equivalent_point_m": [
+              -1.9220091104507446,
+              9.400101661682129,
+              1.1425150632858276
+            ],
+            "normalized_contact_jacobian_m_s": [
+              [
+                -0.021490218117019427,
+                0.0,
+                -0.0041699983516170405,
+                0.0,
+                0.0
+              ],
+              [
+                -0.5741380317098991,
+                0.0,
+                -0.1695630427382399,
+                0.0,
+                0.0
+              ]
+            ],
+            "authority_reconstructed_m_s": 0.0020862899732687814,
+            "authority_logged_m_s": null,
+            "effort_coefficient_m_s": 0.0049569424725888975,
+            "effort_is_active": false,
+            "drive_reference": [
+              38.969478607177734,
+              0.0,
+              -131.05145263671875,
+              0.0,
+              0.0
+            ],
+            "actual_joint_rates_rad_s": [
+              -3.8887457847595215,
+              -1.5092002153396606,
+              15.762999534606934
+            ],
+            "actual_tilt_deg": 7.21660852432251,
+            "reference_tilt_deg": 10.682727046172628,
+            "reference_attitude_error_deg": 4.424983978271484,
+            "angular_generalized_velocity_rad_s": [
+              0.26949021220207214,
+              0.36999768018722534,
+              -1.711206316947937
+            ],
+            "effective_phase_rad": -1.5177003145217896,
+            "allocation_residual_logged_m_s": null,
+            "allocation_residual_reconstructed_m_s": 5.204892402542327e-05,
+            "allocation_active_bounds": null,
+            "lqr_command": [
+              11.168845176696777,
+              -0.6305795311927795,
+              -12.327611923217773,
+              0.0,
+              0.0
+            ],
+            "requested_command": [
+              11.04917049407959,
+              -0.6305795311927795,
+              -12.36129379272461,
+              0.0,
+              -0.0025703420396894217
+            ],
+            "applied_command": [
+              1.5,
+              -0.6000000238418579,
+              -0.6000000238418579,
+              0.0,
+              -0.0025703420396894217
+            ]
+          }
+        }
+      },
+      "scalar_schedule_reconstruction_max_error_m_s": null,
+      "input_files": [
+        {
+          "path": "results/contact_diagnostics_20261125/baseline/plain_figure8/phase_+0.90/rollout.npz",
+          "bytes": 4371340,
+          "sha256": "ddf3d74caa90f7af204fb16a5796b64ac5e7e50b1ee6df6b074f826094d470ae"
+        },
+        {
+          "path": "results/contact_diagnostics_20261125/baseline/plain_figure8/phase_+0.90/summary.json",
+          "bytes": 6494,
+          "sha256": "c763754d6e416edb8785bf74b6f96613ef2fa1a042ddcfb86592e12685f5b58c"
+        },
+        {
+          "path": "results/contact_diagnostics_20261125/baseline/_workspaces/worker_72860/flat/model.xml",
+          "bytes": 27656,
+          "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "The selected Jacobian maps drive rates into planar contact-point velocity. It is not a dynamic controllability measure.",
+    "Patch-switch comparisons are descriptive and cannot separate coupled physical contact transitions, estimated identity changes, gain changes, and state evolution.",
+    "A small desired velocity step does not imply small inverse-kinematic reference steps near weak geometry.",
+    "Temporal ordering and co-occurrence do not prove a single cause of the correction."
+  ],
+  "observations": [
+    "Desired planar velocity changes gradually in both inspected windows; its largest step is not at a patch change.",
+    "At patch changes the load-averaged normalized contact Jacobian changes substantially even though the estimated equivalent point and normal remain comparatively continuous.",
+    "The adaptive scalar coefficient is continuous in its geometry argument, but it is neither time-filtered nor slew-limited. The largest active coefficient step occurs during rapid authority loss without a patch switch.",
+    "The bounded allocator caps reference acceleration despite those changes. Reference feasibility does not bound LQR balance demand: adaptive LQR command steps reach 5.79 actuator bounds per step at patch changes.",
+    "In the baseline window every estimated dominant-patch change matches a true dominant-patch change. The phenomenon is not simply observer classification error or estimator-only chatter.",
+    "The old baseline did not use the adaptive coefficient. Its evaluated schedule shows how the same formula would respond to that saved geometry; it is not a simulated alternative trajectory."
+  ],
+  "proposed_next_policy": {
+    "status": "proposed only, contingent on controlled configuration-study findings",
+    "policy": "Bumpless shell-to-belt feedback/gain transition, retaining the current estimated contact geometry and the existing bounded allocation.",
+    "reason": "Hard selected support changes velocity channels and feedback blending even when geometric point motion is small. Bounded references already have finite steps, but LQR demand has much larger patch-aligned steps. Smoothing only a scalar coefficient cannot make those paths continuous.",
+    "risk": "Slowing feedback transfer can weaken necessary balance authority. Do not freeze an old contact identity or impose a blanket actuator slew limit as a substitute; evaluate the attitude response explicitly.",
+    "comparison": "Keep actuator/reference bounds, timed velocity reference, gain library, and effort coefficients fixed; compare with and without this single feedback-transfer policy on the controlled cases before the five trajectory cases.",
+    "checks": [
+      "Support-switch count and truth-identity disagreement duration",
+      "Selected-J and gain changes, normalized reference steps, allocation residual",
+      "Reference attitude error, applied-command saturation, tracking and actual joint speed"
+    ],
+    "caveat": "This is a targeted hypothesis, not a demonstrated correction or evidence that observer error alone caused the excursions."
+  }
+}

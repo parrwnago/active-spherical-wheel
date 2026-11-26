@@ -1,0 +1,857 @@
+"""Balance and tracking feedback that uses the measured ground reaction.
+
+The flat-floor controller assumes the ground normal is world-vertical. On a
+slope that assumption is wrong in several places. Each remedy needs only the
+contact force and moment at the wheel (``contact_sensing``). They are listed
+by how much the tuning sweep found they matter (results/offroad/tuning):
+
+1. **Where to lean.** A wheel standing on a grade touches the ground uphill of
+   its centre, so the whole machine must lean until its centre of mass is over
+   that contact point. For this wheel the lean is almost as large as the grade
+   itself. Without it the position loop has to supply the lean as a standing
+   error, roughly 0.7 m of sag on an 8 degree grade. This is the one that
+   decides the outcome: a lean 10% too small or too large is measurably worse.
+2. **What torque holds it there.** The weight acting through the offset
+   contact point loads the shaft and the loaded shell. That static torque is
+   computed from the sensed normal and fed forward, so feedback only handles
+   deviations. Removing it costs less than removing the lean.
+3. **Shaft angle that agrees with position.** Rolling without slip ties
+   position, pitch and shaft angle together. Distance travelled along
+   undulating ground breaks an integrated shaft-angle reference, so the shaft
+   error is taken from the position error instead. A small effect.
+4. **Whether it is on the ground at all.** A handover between surfaces can
+   leave one controller interval with no contact. The scheduled gain, the
+   load shares and the rolling reference of the last loaded interval are kept
+   through it. Torques also fade if the filtered normal load stays below a
+   threshold; no run in the suite ever reached it.
+
+Measuring the gain schedule's phase against the sensed normal instead of
+vertical is available (``schedule_on_ground_normal``) and off: the sweep found
+no benefit from it, and on the Mars yard it made falls more frequent.
+
+Heading is free by default. On steep rough ground it matters: the wheel holds
+a grade along its shaft-driven direction with the shaft (43 deg bound) but
+across it only with a shell (16.7 deg) or a belt cap (7.8 deg), and the flat
+library uses the unloaded shell as a roll reaction wheel whose reaction turns
+the platform. ``heading_reference='fall_line'`` with shell steering keeps the
+shaft-driven direction on the fall line of the sensed ground; it is off by
+default and evaluated in results/gazebo/mars_yaw_study.
+
+Two things were tried and are deliberately absent. Scaling torque to keep the
+implied tangential force inside an estimated friction cone made the wheel
+fall: a balancing machine's holding torque is not optional, and cutting it to
+protect traction lets the body topple. The friction estimate is therefore
+reported but does not limit any command. Freezing the sensed normal while the
+support crosses the equatorial gap left it stale whenever the wheel lingered
+there; it is slowed instead.
+
+The feedback gains themselves are the unchanged flat-floor library. No mode
+adds an external force or resets the physical state. The opt-in ``feasible``
+allocator projects travel feedback setpoints while retaining the original
+nominal trajectory and destination in evaluation; other modes retain their
+existing travel setpoints.
+In ``terrain_aware`` the state feedback and the contact wrench are simulator
+ground truth. ``momentum_observer`` is the same controller without the force
+sensor: the force and moment behind the normal and the load fraction come from
+a momentum observer (``MomentumObserver``) that reads only the state, the drive
+torques and the model. In both, the per-surface loads used for gain blending
+and rim detection, the rolling feedforward and the incoming-drive preview
+still read the simulator's contacts.
+
+``hardware`` reads nothing a real robot could not measure. The plant it is
+given is a ``StateMirror``: the measured state (motion capture for the fork,
+encoders for the joints) and the inputs sent, with collisions switched off and
+no ground. The observer's force and moment locate the support
+(``SupportLocator``): which shell, belt or rim carries the load, where and how
+much. Those estimated contacts replace the solver's in the gain blending, rim
+detection, holding-torque split and rolling feedforward, and the plane through
+the estimated support point with the sensed normal replaces the ground plane in
+the incoming-drive preview.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+from dataclasses import asdict, dataclass
+from pathlib import Path
+
+import mujoco
+import numpy as np
+from scipy.linalg import solve_discrete_are
+
+from .contact_sensing import (ContactEstimator, MomentumObserver, SupportLocator, intrinsic_normal, measure_contact,
+                              measure_records, records_from_mujoco)
+from .control import design_lqr, find_equilibrium, linearize
+from .experiments import rolling_feedforward, rolling_feedforward_records
+from .recovery_control import ScheduledBalanceFeedback, build_gain_library
+from .rolling_allocation import AllocationSettings, BoundedRollingAllocator, FeasibleRollingAllocator
+from .feasible_reference import FeasibleMotionReference, FeasibleReferenceSettings, balance_travel_priority
+from .synchronization import ContactSynchronizer
+
+# State weights of the flat-floor LQR (control.design_lqr), in its scaled
+# coordinates. Order: x y z roll pitch yaw shaft shell_A shell_B, then the
+# nine velocities. Kept here only so a variant can override some entries;
+# design_weighted_lqr with no overrides reproduces design_lqr exactly.
+_FLAT_Q = (2., 2., 1., 30., 30., .01, .001, .001, .001, 2., 2., .1, 4., 4., .05, .01, .01, .01)
+_FLAT_SCALES = (.15, .15, .005, .15, .15, .5, 1., 1., 1., 1., 1., .1, 1., 1., 1., 10., 10., 10.)
+_FLAT_R = (.3, .3, .3, 1., 1.)
+
+# Gain-library variants: state-weight overrides by index.
+#
+# 'flat' is the library as designed for the level floor. Its heading weight
+# (0.01) and shell-speed weights (0.01 at 10 rad/s) are close to zero, so the
+# LQR is free to use the unloaded shell as a roll reaction wheel: at the
+# ordinary phase that shell's roll gain is over half the loaded shell's. A
+# reaction wheel only gives transient torque. Under a lasting roll or lateral
+# error (a side slope, a facet) the unloaded shell keeps accelerating, and its
+# axis is tilted by the carrier phase, so its reaction turns the platform. On
+# the Mars yard that is the main source of heading drift.
+#
+# 'yaw_aware' also weights heading, yaw rate and both shell speeds. The
+# unloaded shell then keeps a small roll share, parks near zero speed, damps
+# yaw, and at a pole (both shells free, axes near vertical) acts as a yaw
+# reaction wheel. In the linear model this cuts heading drift under a lasting
+# side load ten- to forty-fold. In Gazebo on the Mars yard it fell on all 12
+# slope starts (results/gazebo/mars_yaw_study): the unloaded shell's roll
+# help is part of what holds the wheel on a side slope, and without it the
+# loaded shell saturates. It is kept for comparison, not recommended; steer
+# heading with heading_reference='fall_line' and the shells instead.
+LQR_WEIGHTS = {
+    'flat': None,
+    'yaw_aware': {5: 5., 14: 5., 15: 1., 16: 1., 17: 1.},
+}
+
+
+def design_weighted_lqr(plant, equilibrium, overrides=None, epsilon=1e-5):
+    """``control.design_lqr`` with some diagonal state weights replaced.
+
+    Same linearisation, scaling, reachable-subspace reduction and input
+    weights; ``overrides`` maps state index to a new weight.
+    """
+    A, B, f0 = linearize(plant, equilibrium, epsilon)
+    scales = np.array(_FLAT_SCALES)
+    q = np.array(_FLAT_Q)
+    for index, weight in (overrides or {}).items():
+        q[int(index)] = float(weight)
+    As = A*scales[None, :]/scales[:, None]
+    Bs = B*plant.bounds[None, :]/scales[:, None]
+    reach = Bs.copy()
+    for _ in range(A.shape[0]):
+        reach = np.column_stack((reach, As@reach[:, -Bs.shape[1]:]))
+    U, s, _ = np.linalg.svd(reach, full_matrices=False)
+    rank = int(np.sum(s > max(s[0]*1e-8, 1e-10)))
+    T, Tn = U[:, :rank], U[:, rank:]
+    omitted = np.linalg.eigvals(Tn.T@As@Tn) if Tn.size else np.array([])
+    if np.any(np.abs(omitted) > 1.00001):
+        raise RuntimeError(f'Unstabilizable growing modes in local model: {omitted}')
+    Ac, Bc = T.T@As@T, T.T@Bs
+    R = np.diag(_FLAT_R)
+    P = solve_discrete_are(Ac, Bc, T.T@np.diag(q)@T, R)
+    Kc = np.linalg.solve(R+Bc.T@P@Bc, Bc.T@P@Ac)
+    K = plant.bounds[:, None]*(Kc@T.T)/scales[None, :]
+    closed = np.linalg.eigvals(A-B@K)
+    return {'A': A, 'B': B, 'K': K, 'f0': f0, 'keep': np.arange(A.shape[0]), 'reachable_rank': rank,
+            'reach_singular_values': s, 'discarded_eigenvalues': omitted,
+            'open_eigenvalues': np.linalg.eigvals(A), 'closed_eigenvalues': closed,
+            'epsilon': float(epsilon), 'state_scales': scales, 'state_weights': q,
+            'method': 'full_state_lqr', 'full_closed_spectral_radius': float(max(abs(closed)))}
+
+
+def _variant_cache_path(cache_path, weights):
+    """Separate cache file per weight set; the name carries a hash of the weights.
+
+    The library fingerprint covers model and sources but not these weights,
+    so a changed weight set must not find the old file.
+    """
+    tag = hashlib.sha256(json.dumps({'q': _FLAT_Q, 'overrides': LQR_WEIGHTS[weights]},
+                                    sort_keys=True).encode()).hexdigest()[:10]
+    path = Path(cache_path)
+    return path.with_name(f'{path.stem}_{weights}_{tag}{path.suffix}')
+
+
+# 'terrain_aware' reads the solved contact force and moment (simulation only);
+# 'momentum_observer' estimates them from the motion; 'hardware' also estimates
+# the loaded surface, contact point and ground plane, reading no contact at all;
+# 'flat_baseline' ignores the ground.
+CONTROLLER_MODES = ('terrain_aware', 'momentum_observer', 'hardware', 'flat_baseline')
+OBSERVER_MODES = ('momentum_observer', 'hardware')
+
+
+@dataclass
+class OffroadParams:
+    """Controller settings. ``flat_baseline`` ignores every terrain option.
+
+    ``momentum_observer`` is ``terrain_aware`` with the ground force and moment
+    estimated from the motion by ``MomentumObserver`` instead of read from the
+    contact solver, so it needs no force sensor. ``hardware`` also estimates
+    which surface is loaded, where, and the ground plane, from the same force
+    and moment, and runs on a ``StateMirror`` that holds only measurements.
+
+    The defaults are the outcome of the tuning sweep saved in
+    results/offroad/tuning/tuning.json.
+    """
+    mode: str = 'terrain_aware'            # 'terrain_aware', 'momentum_observer', 'hardware' or 'flat_baseline'
+    synchronize: bool = True               # prepare incoming drives, as in the lab
+    normal_source: str = 'intrinsic'       # 'intrinsic' (from force and moment) or 'solver' (terrain_aware only)
+    observer_cutoff_rad_s: float = 100.    # bandwidth of the momentum observer (momentum_observer, hardware)
+    support_min_load_fraction: float = .05  # hardware: an observed load below this fraction of weight is no contact
+    normal_time_constant_s: float = .02    # low-pass on the sensed ground normal
+    rim_aware: bool = True                 # treat the equatorial rims as rims; False reads them as sphere
+    rim_time_constant_s: float = .2        # low-pass along the carrier axis while the support is on the rims
+    rim_hold_speed_m_s: float = .02        # resting on both rims below this speed, the axial part is held
+    gap_margin_m: float = .002             # treat this far beyond the gap as rim support too
+    lean_gain: float = 1.                  # 1 puts the centre of mass over the contact point
+    support_feedforward: float = 1.        # 1 applies the full static holding torque
+    schedule_on_ground_normal: bool = False  # True measures the gain phase against the sensed normal
+    shaft_error: str = 'rolling'           # 'material', 'free' or 'rolling'
+    rolling_allocation: str = 'least_squares'  # 'damped', 'bounded', 'feasible' are opt-in experiments
+    rolling_damping_m_s: float = .01       # penalty per normalized drive rate for 'damped'
+    rolling_speed_limits: tuple = (20., 20., 20., .3, .3)  # assumed reference limits: rad/s, rad/s, rad/s, m/s, m/s
+    rolling_acceleration_limits: tuple = (100., 100., 100., 3., 3.)  # assumed reference limits per second
+    rolling_effort_m_s: float = .001       # normalized speed cost for 'bounded'; not electrical effort
+    rolling_change_m_s: float = .001       # normalized reference-change cost for 'bounded'
+    rolling_adaptive_effort: bool = False  # increase speed cost as estimated horizontal authority vanishes
+    rolling_weak_effort_m_s: float = .005
+    rolling_authority_m_s: float = .02     # normalized Jacobian singular value for half of the cost increase
+    rolling_reference_catchup_gain_s_inv: float = 1.
+    rolling_reference_catchup_speed_m_s: float = .06
+    rolling_reference_position_limit_m: float = .05
+    rolling_reference_balance_guard: bool = False
+    rolling_reference_lean_scale_deg: float = 3.
+    rolling_reference_rate_horizon_s: float = .1
+    track_contact_point: bool = False      # reference applies to the ground contact point, not the wheel centre
+    slip_threshold_m_s: float = .02        # surface speed that counts as sliding for the friction estimate
+    friction_recovery_s: float = 1.5       # how fast that estimate relaxes back once sliding stops
+    heading_gain: float = 0.               # N m of yaw reaction per rad of heading error; 0 leaves heading free
+    heading_damping: float = .06           # N m s/rad on yaw rate
+    heading_torque_limit_Nm: float = .15   # bound on the idle shell's heading torque
+    heading_min_lever: float = .12         # skip the hold when the shell axis is this close to horizontal
+    unload_fraction: float = .3            # below this share of weight, feedback torque fades out
+    airborne_damping_Nms: float = .01      # relative-speed damping while unloaded
+    max_lean_deg: float = 28.              # bound on the reference lean
+    lqr_weights: str = 'flat'              # gain library: 'flat' (as designed) or 'yaw_aware' (see LQR_WEIGHTS)
+    heading_reference: str = 'none'        # heading target: 'none' (start heading if heading_gain > 0), 'start' or 'fall_line'
+    heading_actuation: str = 'shells'      # 'shells': unloaded-shell reaction torque; 'lqr': error into the LQR yaw state
+    heading_roll_budget_Nm: float = 0.     # > 0 caps the heading torque's horizontal (roll) reaction at this size
+    fall_line_slope_deg: tuple = (6., 12.)  # sensed slope over which fall-line alignment fades in
+    heading_normal_time_constant_s: float = .5  # low-pass on the normal that sets the fall line
+    heading_error_limit_rad: float = .5    # bound on the heading error used
+    fall_line_hysteresis_deg: float = 20.  # keep the chosen end of the fall line until the other is this much closer
+
+    def __post_init__(self):
+        if self.mode not in CONTROLLER_MODES:
+            raise ValueError(f'Choose a controller mode from {CONTROLLER_MODES}')
+        if self.shaft_error not in ('material', 'free', 'rolling'):
+            raise ValueError('Shaft error must be material, free or rolling')
+        if self.rolling_allocation not in ('least_squares', 'damped', 'bounded', 'feasible'):
+            raise ValueError('Rolling allocation must be least_squares, damped, bounded or feasible')
+        AllocationSettings(self.rolling_speed_limits, self.rolling_acceleration_limits,
+                           self.rolling_effort_m_s, self.rolling_change_m_s,
+                           self.rolling_weak_effort_m_s if self.rolling_adaptive_effort or self.rolling_allocation == 'feasible' else None,
+                           self.rolling_authority_m_s)
+        FeasibleReferenceSettings(self.rolling_reference_catchup_gain_s_inv,
+                                 self.rolling_reference_catchup_speed_m_s,
+                                 self.rolling_reference_position_limit_m)
+        balance_travel_priority(0., 0., np.radians(self.rolling_reference_lean_scale_deg),
+                                self.rolling_reference_rate_horizon_s)
+        if not np.isfinite(self.rolling_damping_m_s) or self.rolling_damping_m_s <= 0:
+            raise ValueError('Rolling damping must be finite and positive')
+        if self.normal_source not in ('intrinsic', 'solver'):
+            raise ValueError('Normal source must be intrinsic or solver')
+        if self.mode in OBSERVER_MODES and self.normal_source != 'intrinsic':
+            raise ValueError(f'{self.mode} reads no solved contact force; normal_source must be intrinsic')
+        if not 0 < self.support_min_load_fraction < 1:
+            raise ValueError('support_min_load_fraction must lie between 0 and 1')
+        if not self.observer_cutoff_rad_s > 0:
+            raise ValueError('observer_cutoff_rad_s must be positive')
+        if self.lqr_weights not in LQR_WEIGHTS:
+            raise ValueError(f'LQR weights must be one of {sorted(LQR_WEIGHTS)}')
+        if self.heading_reference not in ('none', 'start', 'fall_line'):
+            raise ValueError('Heading reference must be none, start or fall_line')
+        if self.heading_actuation not in ('shells', 'lqr'):
+            raise ValueError('Heading actuation must be shells or lqr')
+        if self.heading_reference != 'none' and self.heading_actuation == 'shells' and self.heading_gain <= 0:
+            raise ValueError('A heading reference acting through the shells needs heading_gain > 0')
+        if self.heading_roll_budget_Nm < 0:
+            raise ValueError('heading_roll_budget_Nm must be non-negative')
+        low, high = self.fall_line_slope_deg
+        if not 0 <= low < high:
+            raise ValueError('fall_line_slope_deg must be an increasing pair of non-negative angles')
+        self.fall_line_slope_deg = (float(low), float(high))
+
+    @property
+    def ground_aware(self):
+        """True for the modes that use the sensed ground (all but flat_baseline)."""
+        return self.mode != 'flat_baseline'
+
+    def as_dict(self):
+        return asdict(self)
+
+
+class FlatDesign:
+    """The flat-floor gain library and local designs, built once and shared.
+
+    Uses a private flat ``Plant`` for design, exactly as the interactive lab
+    does, so the terrain plant is never perturbed by a design calculation.
+    """
+
+    def __init__(self, designer, cache_path=None, weights='flat'):
+        if weights not in LQR_WEIGHTS:
+            raise ValueError(f'Unknown LQR weights {weights!r}; choose from {sorted(LQR_WEIGHTS)}')
+        self.designer, self.cache_path, self.weights = designer, cache_path, weights
+        self._local, self._variants = {}, {}
+        if LQR_WEIGHTS[weights] is None:
+            self.points, self.metadata = build_gain_library(designer, None, cache_path)
+        else:
+            path = None if cache_path is None else _variant_cache_path(cache_path, weights)
+            self.points, self.metadata = build_gain_library(designer, self._design, path)
+            self.metadata = {**self.metadata, 'lqr_weights': weights,
+                             'weight_overrides': {str(k): v for k, v in LQR_WEIGHTS[weights].items()}}
+
+    def _lqr(self, equilibrium):
+        overrides = LQR_WEIGHTS[self.weights]
+        if overrides is None:
+            return design_lqr(self.designer, equilibrium)
+        return design_weighted_lqr(self.designer, equilibrium, overrides)
+
+    def _design(self, phase):
+        equilibrium = find_equilibrium(self.designer, phase)
+        return {'equilibrium': equilibrium, 'design': self._lqr(equilibrium)}
+
+    def variant(self, weights):
+        """The same design with another weight set (built once, then cached)."""
+        if weights == self.weights:
+            return self
+        if weights not in self._variants:
+            self._variants[weights] = FlatDesign(self.designer, self.cache_path, weights)
+        return self._variants[weights]
+
+    def local(self, phase):
+        key = round(float(phase), 6)
+        if key not in self._local:
+            equilibrium = find_equilibrium(self.designer, phase)
+            design = self._lqr(equilibrium)
+            if design['full_closed_spectral_radius'] > 1.0001:
+                raise RuntimeError('Local feedback has a growing full-state mode')
+            self._local[key] = {'phase': float(phase), 'equilibrium': equilibrium, 'design': design}
+        return self._local[key]
+
+
+def _quat_from_rotation_vector(vector):
+    angle = float(np.linalg.norm(vector))
+    if angle < 1e-12:
+        return np.array([1., 0., 0., 0.])
+    return np.r_[np.cos(angle/2), np.sin(angle/2)*np.asarray(vector)/angle]
+
+
+class OffroadController:
+    """Five drive commands from the plant state and the measured ground reaction.
+
+    ``command(xy, velocity, acceleration)`` returns ``(applied, diagnostics)``
+    where ``applied`` is already inside the actuator bounds. Call
+    ``after_step()`` once the plant has advanced. ``reset(ordinary)`` selects
+    the ordinary operating point whose equilibrium and shaft-row gain anchor
+    the schedule, as the lab's scenario reset does.
+    """
+
+    def __init__(self, plant, design, params=None, phase=None, record_diagnostics=False):
+        self.params = params or OffroadParams()
+        self.record_diagnostics = bool(record_diagnostics)
+        if self.record_diagnostics and self.params.mode != 'hardware':
+            raise ValueError('Detailed contact diagnostics require hardware mode')
+        if self.params.ground_aware and self.params.lqr_weights != getattr(design, 'weights', 'flat'):
+            design = design.variant(self.params.lqr_weights)
+        self.plant, self.design = plant, design
+        self.feedback = ScheduledBalanceFeedback(plant, design.points)
+        self.synchronizer = ContactSynchronizer(plant)
+        allocator_class = FeasibleRollingAllocator if self.params.rolling_allocation == 'feasible' else BoundedRollingAllocator
+        self.rolling_allocator = (allocator_class(AllocationSettings(
+            self.params.rolling_speed_limits, self.params.rolling_acceleration_limits,
+            self.params.rolling_effort_m_s, self.params.rolling_change_m_s,
+            self.params.rolling_weak_effort_m_s if self.params.rolling_adaptive_effort or self.params.rolling_allocation == 'feasible' else None,
+            self.params.rolling_authority_m_s))
+            if self.params.rolling_allocation in ('bounded', 'feasible') else None)
+        self.motion_reference = (FeasibleMotionReference(FeasibleReferenceSettings(
+            self.params.rolling_reference_catchup_gain_s_inv,
+            self.params.rolling_reference_catchup_speed_m_s,
+            self.params.rolling_reference_position_limit_m))
+            if self.params.rolling_allocation == 'feasible' else None)
+        model = plant.model
+        self.carrier_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, 'carrier')
+        self.radius = float(plant.config['geometry']['sphere_radius_m'])
+        self.gap_half = float(plant.config['geometry'].get('equatorial_gap_half_m', 0.))
+        self.gravity = abs(float(plant.config['simulation']['gravity_m_s2'][2]))
+        self.total_mass = float(model.body_subtreemass[plant.fork_id])
+        self.weight = self.total_mass*self.gravity
+        # Lean per unit of contact offset: total weight acting at the wheel
+        # radius against the upper body's first moment about the wheel centre.
+        upper_moment = float(model.body_mass[plant.fork_id]*model.body_ipos[plant.fork_id][2])
+        self.lean_factor = self.total_mass*self.radius/upper_moment
+        self.nominal_friction = float(plant.config['contact']['friction'][0])
+        # The observer supplies the same force and moment the intrinsic estimate reads.
+        self.observer = (MomentumObserver(model, plant.fork_id, self.params.observer_cutoff_rad_s)
+                         if self.params.mode in OBSERVER_MODES else None)
+        # hardware: the observer's force and moment also say where the support is.
+        self.locator = (SupportLocator(model, plant.fork_id, self.radius, self.nominal_friction,
+                                       self.params.support_min_load_fraction*self.weight)
+                        if self.params.mode == 'hardware' else None)
+        self.estimator = ContactEstimator(self.radius, self.weight, self.nominal_friction,
+                                          self.params.normal_time_constant_s,
+                                          slip_threshold_m_s=self.params.slip_threshold_m_s,
+                                          friction_recovery_s=self.params.friction_recovery_s,
+                                          source='solver' if self.params.normal_source == 'solver' else 'intrinsic',
+                                          rim_time_constant_s=self.params.rim_time_constant_s)
+        self.reset(phase)
+
+    def reset(self, phase=None):
+        phase = self.plant.config['simulation'].get('initial_shaft_phase_rad', .30) if phase is None else phase
+        self.ordinary = self.design.local(phase)
+        self.nominal_joints = self.ordinary['equilibrium']['qpos'][7:10].copy()
+        if self.observer is not None:
+            # No ground truth: start from the static wrench of the current state.
+            data = self.plant.data
+            self.observer.reset(data.qpos, data.qvel, data.time, self.plant.last_input)
+            start = intrinsic_normal(*self.observer.wrench(), self.radius)
+            self.estimator.reset(start if start is not None else (0., 0., 1.))
+            centre = self.plant.data.xpos[self.plant.fork_id]
+            self._plane = (centre-self.radius*self.estimator.normal, self.estimator.normal.copy())
+        else:
+            ground = getattr(self.plant, 'ground', None)
+            self.estimator.reset(ground['normal'] if ground else (0., 0., 1.))
+        self._vref = np.zeros(self.plant.model.nv)
+        if self.rolling_allocator is not None:
+            self.rolling_allocator.reset()
+        self._sync = {'commands': [0.]*5, 'blend_weights': [0.]*5, 'targets': []}
+        self._held = None
+        quat = self.plant.data.qpos[3:7]
+        self.heading_reference = float(np.arctan2(2*(quat[0]*quat[3]+quat[1]*quat[2]),
+                                                  1-2*(quat[2]**2+quat[3]**2)))
+        self._slow_normal = self.estimator.normal.copy()
+        self._fall_end = None
+        self._yaw_error = None
+
+    def _update_heading_target(self, normal, yaw):
+        """Heading error to steer on, or ``None`` when no heading reference is set.
+
+        The error is used by the shell steering in ``_heading_torque`` or, with
+        ``heading_actuation='lqr'``, given to the LQR's yaw state.
+
+        'start' holds the heading the run began with. 'fall_line' turns the
+        shaft-driven direction (fork x) onto the fall line of the sensed
+        ground. The wheel holds a grade along that direction with the shaft,
+        whose bound is 43 deg; across it a shell holds 16.7 deg and a pole
+        less, so keeping the slope on the shaft keeps it on the strong drive.
+        Either end of the fall line will do; the nearer one is kept, with
+        hysteresis so a misalignment near 90 deg does not flip the choice
+        every interval. Alignment fades in with slope and is off on level
+        ground, where heading does not matter and only yaw rate is damped.
+        The normal is filtered more slowly than the balance normal so that the
+        target does not jump at every DEM facet.
+        """
+        params, dt = self.params, self.plant.dt
+        blend = dt/(params.heading_normal_time_constant_s+dt)
+        mixed = self._slow_normal+blend*(np.asarray(normal)-self._slow_normal)
+        self._slow_normal = mixed/np.linalg.norm(mixed)
+        if params.heading_reference == 'none':
+            return None
+        if params.heading_reference == 'start':
+            error = (yaw-self.heading_reference+np.pi) % (2*np.pi)-np.pi
+            return float(np.clip(error, -params.heading_error_limit_rad, params.heading_error_limit_rad))
+        n = self._slow_normal
+        slope = float(np.degrees(np.arccos(np.clip(n[2], -1., 1.))))
+        low, high = params.fall_line_slope_deg
+        weight = float(np.clip((slope-low)/(high-low), 0., 1.))
+        if weight <= 0.:
+            return 0.
+        fall = float(np.arctan2(n[1], n[0]))
+
+        def miss(end):
+            return abs((yaw-fall-end+np.pi) % (2*np.pi)-np.pi)
+        nearer = min((0., np.pi), key=miss)
+        if self._fall_end is None or miss(self._fall_end) > miss(nearer)+np.radians(params.fall_line_hysteresis_deg):
+            self._fall_end = nearer
+        error = (yaw-fall-self._fall_end+np.pi) % (2*np.pi)-np.pi
+        return weight*float(np.clip(error, -params.heading_error_limit_rad, params.heading_error_limit_rad))
+
+    def _rim_support(self, loads):
+        """``(axis, hold)`` while the support point lies in the equatorial gap, else ``(None, False)``.
+
+        There the wheel rides on one or both shell rims, up to the half gap
+        away from where a sphere would touch. The carrier angle against the
+        current normal estimate locates the support, so this needs no extra
+        sensing. ``gap_margin_m`` widens the band a little for the estimate's
+        own lag. ``axis`` is the carrier's x axis, along which a rim displaces
+        the contact. ``hold`` is true when the wheel is resting there on both
+        rims, moving slower than ``rim_hold_speed_m_s``.
+        """
+        axis = self.plant.data.xmat[self.carrier_id].reshape(3, 3)[:, 0].copy()
+        offset = self.radius*abs(float(axis@self.estimator.normal))
+        if offset > self.gap_half+self.params.gap_margin_m:
+            return None, False
+        total = sum(loads.values())
+        both = total > 0 and min(loads['shell_A'], loads['shell_B']) > .05*total
+        resting = float(np.linalg.norm(self.plant.data.qvel[:2])) < self.params.rim_hold_speed_m_s
+        return axis, bool(both and resting)
+
+    # -- reference ----------------------------------------------------------
+    def lean_vector(self, normal, acceleration):
+        """Horizontal part of the desired body-up direction."""
+        lean = np.asarray(acceleration, float)/self.gravity
+        if self.params.ground_aware:
+            lean = lean-self.params.lean_gain*self.lean_factor*np.asarray(normal)[:2]
+        limit = np.sin(np.deg2rad(self.params.max_lean_deg))
+        size = float(np.linalg.norm(lean))
+        return lean*limit/size if size > limit else lean
+
+    def reference_attitude(self, normal, acceleration):
+        """Reference quaternion before heading is applied."""
+        lean = self.lean_vector(normal, acceleration)
+        size = float(np.linalg.norm(lean))
+        vector = np.zeros(3) if size < 1e-12 else np.arcsin(size)*np.array([-lean[1], lean[0], 0.])/size
+        quat = np.empty(4)
+        mujoco.mju_mulQuat(quat, self.ordinary['equilibrium']['qpos'][3:7], _quat_from_rotation_vector(vector))
+        return quat
+
+    def support_torque(self, normal, loads):
+        """Static shaft and shell torques that carry the weight through the sensed contact point."""
+        data = self.plant.data
+        shaft_axis = data.xmat[self.plant.fork_id].reshape(3, 3)[:, 1]
+        shell_axis = data.xmat[self.carrier_id].reshape(3, 3)[:, 0]
+        total = sum(loads.values())
+        lever = self.weight*self.radius
+        torque = np.zeros(5)
+        torque[0] = lever*np.cross(shaft_axis, normal)[2]
+        if total > 1e-6:
+            shell = lever*np.cross(shell_axis, normal)[2]
+            torque[1] = shell*loads['shell_A']/total
+            torque[2] = shell*loads['shell_B']/total
+        return torque
+
+    # -- command --------------------------------------------------------------
+    def command(self, xy, velocity, acceleration):
+        plant, params = self.plant, self.params
+        equilibrium, design = self.ordinary['equilibrium'], self.ordinary['design']
+        records = None
+        if self.locator is not None:
+            # Nothing solved is read. The observer's force and moment locate the
+            # support, and the records built from them stand in for the contacts.
+            data = plant.data
+            self.observer.update(data.qpos, data.qvel, plant.last_input, data.time)
+            sensed = self.observer.measurement(self.radius)
+            records = self.locator.records(data, *self.observer.wrench())
+            measurement = measure_records(plant, records)
+            # The surface's speed over the ground at the located point: the
+            # mismatch between measured motion and rolling, i.e. the slip.
+            sensed.update(slip_velocity_m_s=measurement['slip_velocity_m_s'],
+                          slip_speed_m_s=measurement['slip_speed_m_s'])
+        else:
+            measurement = measure_contact(plant)
+            sensed = measurement
+            if self.observer is not None:
+                data = plant.data
+                self.observer.update(data.qpos, data.qvel, plant.last_input, data.time)
+                sensed = self.observer.measurement(self.radius)
+        rim = self._rim_support(measurement['loads_N']) if params.rim_aware else (None, False)
+        estimate = self.estimator.update(sensed, plant.dt, *rim)
+        aware = params.ground_aware
+        normal = estimate['normal'] if aware else np.array([0., 0., 1.])
+        if aware:
+            quat = plant.data.qpos[3:7]
+            yaw = float(np.arctan2(2*(quat[0]*quat[3]+quat[1]*quat[2]), 1-2*(quat[2]**2+quat[3]**2)))
+            self._yaw_error = self._update_heading_target(normal, yaw)
+        moving = bool(np.linalg.norm(velocity) > 0)
+        touching = sum(measurement['loads_N'].values()) > .001
+        nominal_center = np.asarray(xy, float).copy()
+        if aware and params.track_contact_point:
+            nominal_center += self.radius*normal[:2]
+        reference_acceleration = np.asarray(acceleration, float)
+        relaxed_position_error = np.zeros(2)
+        travel_priority, balance_metric = 1., 0.
+        if self.motion_reference is not None and params.rolling_reference_balance_guard:
+            desired_rotation = np.empty(9)
+            mujoco.mju_quat2Mat(desired_rotation, self.reference_attitude(normal, acceleration))
+            actual_up = plant.data.xmat[plant.fork_id].reshape(3, 3)[:, 2]
+            desired_up = desired_rotation.reshape(3, 3)[:, 2]
+            lean_error = float(np.arccos(np.clip(actual_up@desired_up, -1., 1.)))
+            # Free-joint angular rates are body-frame. Rotation about body z
+            # leaves its up vector unchanged; only the transverse rates enter.
+            lean_rate = float(np.linalg.norm(plant.data.qvel[3:5]))
+            travel_priority, balance_metric = balance_travel_priority(
+                lean_error, lean_rate, np.radians(params.rolling_reference_lean_scale_deg),
+                params.rolling_reference_rate_horizon_s)
+        damping = params.rolling_damping_m_s if params.rolling_allocation == 'damped' else 0.
+        if self.rolling_allocator is not None:
+            if (moving or self.motion_reference is not None) and aware and not touching and self._held is not None:
+                # Keep the last bounded references through a brief dropout.
+                # Their change is zero, so both reference bounds still hold.
+                drive = self.rolling_allocator.hold()
+                self.rolling_allocator.diagnostics['allocation_requested_velocity_m_s'] = travel_priority*np.asarray(velocity, float)
+                body_velocity = (self.rolling_allocator.diagnostics['allocation_accepted_velocity_m_s']
+                                 if self.motion_reference is not None else velocity)
+                vref = np.r_[body_velocity, 0., 0., 0., 0., drive[:3]]
+                feedforward = np.r_[np.zeros(3), drive[3:]]
+            else:
+                contact_records = getattr(plant, 'contact_records', None)
+                bounded_records = (records if records is not None else
+                                   contact_records() if contact_records is not None else records_from_mujoco(plant))
+                vref, feedforward = rolling_feedforward_records(
+                    plant, bounded_records, np.asarray(velocity, float), allocator=self.rolling_allocator,
+                    reference=self.motion_reference, position=nominal_center, reference_priority=travel_priority)
+        elif not moving:
+            vref, feedforward = np.zeros(9), np.zeros(5)
+        elif aware and not touching and self._held is not None:
+            # A surface handover can leave one interval with no contact. The
+            # rolling allocation needs a contact, so keep the last one rather
+            # than drop the velocity reference to zero for that interval.
+            vref, feedforward = self._held['vref'].copy(), self._held['feedforward'].copy()
+        elif records is not None:
+            vref, feedforward = rolling_feedforward_records(plant, records, np.asarray(velocity, float), damping)
+        else:
+            vref, feedforward = rolling_feedforward(plant, np.asarray(velocity, float), damping)
+        qref = equilibrium['qpos'].copy()
+        qref[:2] = xy
+        if self.motion_reference is not None:
+            allocated = self.rolling_allocator.diagnostics
+            reference = self.motion_reference.feedback(
+                nominal_center, plant.data.qpos[:2], acceleration,
+                allocated['allocation_accepted_velocity_m_s'], allocated['allocation_velocity_response'],
+                valid=allocated['allocation_accepted_velocity_valid'], priority=travel_priority)
+            qref[:2] = reference['xy']
+            vref[:2] = reference['velocity']
+            reference_acceleration = reference['acceleration']
+            relaxed_position_error = reference['relaxed_position_error_m']
+        elif aware and params.track_contact_point:
+            # The reference names where the wheel should touch the ground. The
+            # centre sits one radius along the ground normal from that point,
+            # so on a slope it is offset horizontally and need not be dragged
+            # back over the reference as the slope comes and goes.
+            qref[:2] = np.asarray(xy)+self.radius*normal[:2]
+        qref[7:10] = self.nominal_joints
+        qref[3:7] = self.reference_attitude(normal, reference_acceleration)
+        diagnostics = {'measurement': measurement, 'estimate': estimate, 'drive_fade': 1.,
+                       'observed': sensed if self.observer is not None else None,
+                       'support_torque': np.zeros(5), 'reference_quat': qref[3:7].copy(),
+                       'heading_target_error_rad': self._yaw_error if aware else None}
+        if aware:
+            command, feedback = self._terrain_feedback(qref, vref, feedforward, normal, measurement, touching)
+            diagnostics['support_torque'] = feedback.pop('support_torque')
+        else:
+            command, feedback = self.feedback.compute(qref, vref, equilibrium['u'], design['K'], feedforward)
+        diagnostics.update(effective_phase_rad=feedback['effective_phase_rad'], yaw_rad=feedback['yaw_rad'],
+                           error=feedback['error'])
+        if self.record_diagnostics:
+            pre_sync = command.copy()
+            diagnostics.update(equilibrium_command=np.array(equilibrium['u'], copy=True),
+                               rolling_feedforward=np.array(feedforward, copy=True),
+                               support_command=diagnostics['support_torque'].copy(),
+                               lqr_command=-feedback['K']@feedback['error'],
+                               feedback_reference_qvel=feedback['reference_qvel'].copy(),
+                               feedback_gain=np.array(feedback['K'], copy=True))
+        sync = {'commands': [0.]*5, 'blend_weights': [0.]*5, 'targets': []}
+        if params.synchronize and records is not None:
+            # The plane through the located support with the sensed normal,
+            # kept from the last loaded interval while the wheel is unloaded.
+            if records:
+                centre = plant.data.xpos[plant.fork_id]
+                self._plane = (centre-self.radius*estimate['normal'], estimate['normal'].copy())
+            sync = self.synchronizer.preview(command, records=records, ground=self._plane)
+            weights = np.asarray(sync['blend_weights'])
+            command = (1.-weights)*command+weights*np.asarray(sync['commands'])
+        elif params.synchronize:
+            # The preview owns a private MjData; give it the current ground plane.
+            self.synchronizer._data.mocap_pos[:] = plant.data.mocap_pos
+            self.synchronizer._data.mocap_quat[:] = plant.data.mocap_quat
+            sync = self.synchronizer.preview(command)
+            weights = np.asarray(sync['blend_weights'])
+            command = (1.-weights)*command+weights*np.asarray(sync['commands'])
+        if self.record_diagnostics:
+            diagnostics['transition_command_delta'] = command-pre_sync
+            pre_heading = command.copy()
+        if aware:
+            heading_torque, diagnostics['heading_error_rad'] = self._heading_torque(feedback['yaw_rad'])
+            command = command+heading_torque
+            if self.record_diagnostics:
+                diagnostics['heading_command'] = command-pre_heading
+                pre_fade = command.copy()
+            command, diagnostics['drive_fade'] = self._fade_when_unloaded(command, estimate, vref)
+            if self.record_diagnostics:
+                diagnostics['fade_command_delta'] = command-pre_fade
+        self._sync, self._vref = sync, vref
+        applied = np.clip(command, -plant.bounds, plant.bounds)
+        diagnostics.update(requested=command.copy(), reference_qpos=qref, reference_qvel=vref,
+                           sync_weights=np.asarray(sync['blend_weights']))
+        if self.record_diagnostics:
+            defaults = dict(
+                allocation_requested_velocity_m_s=np.asarray(velocity, float).copy(),
+                allocation_accepted_velocity_m_s=vref[:2].copy(),
+                allocation_velocity_response=np.eye(2),
+                allocation_modal_effort_m_s=np.full(2, np.nan),
+                allocation_accepted_velocity_valid=False,
+                allocation_reference_residual_rms_m_s=np.nan)
+            if self.rolling_allocator is not None:
+                defaults.update(self.rolling_allocator.diagnostics)
+            diagnostics.update(defaults)
+            diagnostics.update(feedback_reference_xy=qref[:2].copy(),
+                reference_acceleration_m_s2=reference_acceleration.copy(),
+                reference_position_error_relaxed_m=relaxed_position_error.copy(),
+                reference_catchup_velocity_m_s=defaults['allocation_requested_velocity_m_s']-travel_priority*np.asarray(velocity, float),
+                reference_travel_priority=travel_priority, reference_balance_metric_rad=balance_metric)
+            from .contact_kinematics import rolling_consistency
+            diagnostics.update(rolling_consistency(plant, records,
+                self.params.support_min_load_fraction*self.weight))
+            diagnostics.update(
+                estimated_contact_point_m=np.asarray(measurement['point_m']).copy(),
+                estimated_support_loads_N=np.array([measurement['loads_N'][name]
+                    for name in ('shell_A', 'shell_B', 'belt_A', 'belt_B')]),
+                reference_velocity_m_s=np.asarray(velocity, float).copy(),
+                tracking_velocity_error_m_s=plant.data.qvel[:2]-np.asarray(velocity, float),
+                actuator_saturated=np.abs(command) > plant.bounds+1e-12,
+                clipping_command_delta=applied-command,
+                input_bounds=plant.bounds.copy())
+            if self.rolling_allocator is not None:
+                diagnostics.update(self.rolling_allocator.diagnostics)
+            else:
+                diagnostics.update(
+                    allocation_drive_reference=np.r_[vref[6:9], feedforward[3:]],
+                    allocation_speed_limits=np.full(5, np.nan),
+                    allocation_acceleration_limits=np.full(5, np.nan),
+                    allocation_active_bounds=np.zeros(5, bool),
+                    allocation_effort_weight_m_s=damping,
+                    allocation_change_weight_m_s=0.,
+                    allocation_authority_m_s=np.nan,
+                    allocation_effort_blend=0.,
+                    allocation_residual_rms_m_s=np.nan,
+                    allocation_velocity_error_m_s=np.full(2, np.nan))
+        return applied, diagnostics
+
+    def _terrain_feedback(self, qref, vref, feedforward, normal, measurement, touching):
+        plant, params = self.plant, self.params
+        equilibrium, design = self.ordinary['equilibrium'], self.ordinary['design']
+        rotation = plant.data.xmat[self.carrier_id].reshape(3, 3)
+        support = rotation.T@(normal if params.schedule_on_ground_normal else np.array([0., 0., 1.]))
+        phase = float(np.arctan2(-support[0], support[2]))
+        if touching:
+            loads = dict(measurement['loads_N'])
+            gain = self.feedback._gain(phase, loads)
+            self._held = {'loads': loads, 'gain': gain.copy(), 'vref': np.array(vref, copy=True),
+                          'feedforward': np.array(feedforward, copy=True)}
+        elif self._held is not None:
+            # Unloaded for an interval: the surface that was carrying the wheel
+            # is still the one under it. Falling back to the ordinary-pose gain
+            # here would apply, say, shell gains while a belt is underneath.
+            loads, gain = self._held['loads'], self._held['gain'].copy()
+        else:
+            loads, gain = dict(measurement['loads_N']), np.array(design['K'], copy=True)
+        gain[0] = design['K'][0]
+        quat = plant.data.qpos[3:7]
+        yaw = float(np.arctan2(2*(quat[0]*quat[3]+quat[1]*quat[2]), 1-2*(quat[2]**2+quat[3]**2)))
+        c, s = np.cos(yaw), np.sin(yaw)
+        world_to_heading = np.array([[c, s], [-s, c]])
+        target = np.array(qref, copy=True)
+        mujoco.mju_mulQuat(target[3:7], np.array(qref[3:7]), np.array([np.cos(yaw/2), 0., 0., np.sin(yaw/2)]))
+        # Follow the ground: its height and the vertical speed of travelling
+        # along it are not errors, and no drive can act on them anyway.
+        target[2] = plant.data.qpos[2]
+        vref = np.array(vref, copy=True)
+        vref[2] = -float(normal[:2]@vref[:2])/max(normal[2], .2)
+        error = plant.error(target, vref)
+        error[:2] = world_to_heading@error[:2]
+        error[9:11] = world_to_heading@error[9:11]
+        error[6:9] = (error[6:9]+np.pi) % (2*np.pi)-np.pi
+        error[7:9] = 0.
+        if params.shaft_error == 'free':
+            error[6] = 0.
+        elif params.shaft_error == 'rolling':
+            # Rolling without slip ties x, pitch and shaft angle together:
+            # x - R (pitch + shaft) is constant. Ground travelled along an
+            # undulating surface breaks the flat bookkeeping of shaft angle, so
+            # take the shaft error that is consistent with the position error.
+            error[6] = error[0]/self.radius-error[4]
+        if self._yaw_error is not None and params.heading_actuation == 'lqr':
+            # The target above carries the current yaw, so error[5] is zero
+            # and heading is free. A heading reference replaces it.
+            error[5] = self._yaw_error
+        support_torque = params.support_feedforward*self.support_torque(normal, loads)
+        command = np.asarray(equilibrium['u'])+np.asarray(feedforward)+support_torque-gain@error
+        return command, {'effective_phase_rad': phase, 'yaw_rad': yaw, 'error': error,
+                         'support_torque': support_torque, 'K': gain, 'reference_qvel': vref}
+
+    def _heading_torque(self, yaw):
+        """Hold the starting heading with whichever shell is not carrying load.
+
+        A shell that is off the ground is a reaction wheel about the carrier's
+        x axis. That axis is tilted out of the horizontal by the carrier phase,
+        so the unloaded shell's motor reaction has a vertical component, and
+        that is the only yaw authority a single point contact leaves. Rolling
+        sideways spins the loaded shell about the same tilted axis and turns
+        the platform the other way; counter-spinning the idle shell cancels
+        it. Nothing is available when the axis is near horizontal, so the hold
+        is skipped there, and when both shells are loaded.
+
+        The reaction's horizontal part is a roll disturbance that the balance
+        feedback has to absorb, which is why the torque is kept small.
+
+        With a heading reference acting through the shells, the target is that
+        reference ('start' or 'fall_line') instead of the starting heading.
+        ``heading_roll_budget_Nm`` then bounds the horizontal part of the
+        reaction rather than the torque: near a pole, where the support is on
+        a belt and both shell axes are close to vertical, the reaction is
+        almost pure yaw and the full torque limit is used; on a shell, where the
+        axis is close to horizontal, the same budget allows only a small
+        torque. Heading is then steered mostly during pole crossings, which
+        shaft-driven travel makes twice per wheel revolution.
+        """
+        params, plant = self.params, self.plant
+        error = float((yaw-self.heading_reference+np.pi) % (2*np.pi)-np.pi)
+        torque = np.zeros(5)
+        steering = params.heading_actuation == 'shells' and self._yaw_error is not None
+        if params.heading_gain <= 0 or self._held is None:
+            return torque, error
+        if steering:
+            error = self._yaw_error
+        elif params.heading_reference != 'none':
+            return torque, error
+        loads = self._held['loads']
+        total = sum(loads.values())
+        free = [index for index, name in ((1, 'shell_A'), (2, 'shell_B')) if loads[name] <= .05*total]
+        vertical = float(plant.data.xmat[self.carrier_id].reshape(3, 3)[2, 0])
+        if not free or abs(vertical) < params.heading_min_lever:
+            return torque, error
+        velocity = np.empty(6)
+        mujoco.mj_objectVelocity(plant.model, plant.data, mujoco.mjtObj.mjOBJ_BODY, plant.fork_id, velocity, 0)
+        wanted = -(params.heading_gain*error+params.heading_damping*velocity[2])
+        limit = params.heading_torque_limit_Nm
+        if params.heading_roll_budget_Nm > 0:
+            horizontal = float(np.sqrt(max(1.-vertical*vertical, 0.)))
+            limit = min(limit, params.heading_roll_budget_Nm/max(horizontal, 1e-6))
+        # Motor torque t on a free shell reacts on the platform as -t * axis.
+        each = float(np.clip(-wanted/vertical, -limit, limit))
+        torque[free] = each/len(free)
+        return torque, error
+
+    def _fade_when_unloaded(self, command, estimate, vref):
+        """Stop driving the wheel while it carries little or no load.
+
+        Off the ground a torque only spins its drive up, and the wheel then
+        lands sliding. Below ``unload_fraction`` of weight the torques fade and
+        the drives are damped toward their rolling reference instead. The
+        filtered load is used, so a single-interval dropout at a surface
+        handover does not trigger it.
+        """
+        params, plant = self.params, self.plant
+        fade = float(np.clip(estimate['load_fraction']/max(params.unload_fraction, 1e-6), 0., 1.))
+        if fade >= 1.:
+            return command, 1.
+        command = np.array(command, copy=True)
+        damping = -params.airborne_damping_Nms*(plant.data.qvel[6:9]-vref[6:9])
+        command[:3] = fade*command[:3]+(1.-fade)*damping
+        return command, fade
+
+    def after_step(self):
+        """Advance the material joint references, as the lab runtime does."""
+        dt = self.plant.dt
+        self.nominal_joints += dt*self._vref[6:9]
+        for target in self._sync['targets']:
+            if 'target_joint_speed_rad_s' in target:
+                index = target['command_index']
+                self.nominal_joints[index] += dt*target['blend_weight']*target['target_joint_speed_rad_s']

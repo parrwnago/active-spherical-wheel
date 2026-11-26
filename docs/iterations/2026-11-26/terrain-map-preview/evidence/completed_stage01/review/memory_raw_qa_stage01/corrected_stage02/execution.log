@@ -1,0 +1,83 @@
+{
+  "iteration": "I-44",
+  "scope": "Post-primary independent saved-data QA;0 rendering/controller/physics calls.",
+  "passed": true,
+  "analysis_report_sha256": "68e015e1ae4a964e629d6fa38b1fa400ec938b8f2653708d7b5214fb1ac28103",
+  "raw_query_rows": 1071,
+  "unique_shared_query_slots": 357,
+  "anchor_prefixes_checked": 119,
+  "capture_transform_max_gap": 1.7763568394002505e-15,
+  "first_prefix_snapshot_exact": true,
+  "latest_four_fixed_spot_queries": 9,
+  "snapshot_cell_counts_range": [
+    17595,
+    155630
+  ],
+  "max_CV_rotation_matrix_gap": 4.440892098500626e-16,
+  "max_candidate_radius_gap_m": 3.191891195797325e-16,
+  "max_saved_height_error_gap_m": 0.0,
+  "max_saved_normal_angle_gap_deg": 5.4460003458104995e-09,
+  "truth_invalid_rows": 0,
+  "independent_uniform_summary": {
+    "observer_plane": {
+      "slots": 327,
+      "supported": 327,
+      "height": {
+        "n": 327,
+        "rmse": 0.001175702406336531,
+        "p90_abs": 0.0013474554664863803
+      },
+      "normal": {
+        "n": 327,
+        "rmse": 4.691451293188146,
+        "p90_abs": 8.566665344017808
+      }
+    },
+    "latest_four": {
+      "slots": 327,
+      "supported": 0,
+      "height": {
+        "n": 0,
+        "rmse": null,
+        "p90_abs": null
+      },
+      "normal": {
+        "n": 0,
+        "rmse": null,
+        "p90_abs": null
+      }
+    },
+    "memory_four": {
+      "slots": 327,
+      "supported": 277,
+      "height": {
+        "n": 277,
+        "rmse": 0.0006834462077886419,
+        "p90_abs": 0.0011007105638788151
+      },
+      "normal": {
+        "n": 277,
+        "rmse": 2.6692849013484543,
+        "p90_abs": 4.496477639470483
+      }
+    }
+  },
+  "utility_gates": {
+    "coverage": true,
+    "coverage_gain_vs_latest": true,
+    "height_rmse": true,
+    "normal_p90": true
+  },
+  "all_query_macro_loaded_patch_recall": {
+    "observer_plane": 0.9716713881019831,
+    "latest_four": 0.0,
+    "memory_four": 0.7507082152974505
+  },
+  "multi_loaded_rows_including_repeated_arms": 0,
+  "limitations": [
+    "Normal truth remains the shared compiled-mesh face proxy, not a force-weighted normal.",
+    "Partial confirmed candidate lists do not establish complete contact-set support; overlap is not force prediction.",
+    "First-cell observation lead is not first complete plane/normal availability.",
+    "No parameters or primary results changed."
+  ]
+}

@@ -1,0 +1,1719 @@
+{
+  "iteration": "I-49",
+  "cases": {
+    "mars_cap030": {
+      "cap_m_s": 0.3,
+      "completed": true,
+      "failure": null,
+      "completed_duration_s": 44.00000000000406,
+      "samples": 8801,
+      "timed_tracking": {
+        "moving_rms_m": 0.05048647310171891,
+        "moving_p95_m": 0.08783446214121796,
+        "moving_samples": 8000,
+        "full_peak_m": 0.19090118139250975,
+        "final_m": 0.1901914888984886,
+        "full_rms_m": 0.05651941507255893,
+        "moving_window_complete": true
+      },
+      "attitude": {
+        "peak_absolute_deg": 13.784268251668951,
+        "peak_reference_error_deg": 8.708537758069829,
+        "rms_reference_error_deg": 1.4187222588894248,
+        "final_reference_error_deg": 8.708537758069829
+      },
+      "original_settling": {
+        "passed": false,
+        "checks": {
+          "completed": true,
+          "relative_lean_below1deg": false,
+          "planar_speed_below030": false,
+          "angular_rate_below080": false
+        },
+        "tail_s": [
+          43.00500000000355,
+          44.00000000000406
+        ],
+        "max_relative_lean_deg": 8.708537758069829,
+        "max_planar_speed_m_s": 0.2767143217808734,
+        "max_angular_rate_rad_s": 1.994164157666359
+      },
+      "original_route_gates": {
+        "gates": {
+          "completed": true,
+          "rms": false,
+          "p95": true,
+          "max": true,
+          "final": false,
+          "attitude": false,
+          "saturation": true,
+          "settled": false,
+          "closure": false
+        },
+        "passed": false,
+        "targets": {
+          "rms_m": 0.05,
+          "p95_m": 0.1,
+          "max_m": 0.2,
+          "final_m": 0.05,
+          "attitude_deg": 8.0,
+          "saturated_fraction": 0.1,
+          "closure_m": 0.05
+        },
+        "closure_m": 0.19504217077482663
+      },
+      "belts": {
+        "belt_A": {
+          "max_requested_abs_m_s": 0.8347418461273584,
+          "max_applied_abs_m_s": 0.3,
+          "old030": {
+            "requested": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.20500000000000002,
+              "strictly_outside_duration_s": 0.20500000000000002,
+              "at_or_above_fraction": 0.004659090909090909,
+              "strictly_outside_fraction": 0.004659090909090909,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.20500000000000002,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.004659090909090909,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "own_cap": {
+            "requested": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.20500000000000002,
+              "strictly_outside_duration_s": 0.20500000000000002,
+              "at_or_above_fraction": 0.004659090909090909,
+              "strictly_outside_fraction": 0.004659090909090909,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.20500000000000002,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.004659090909090909,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "max_requested_over_old030": 2.782472820424528,
+          "max_requested_over_own_cap": 2.782472820424528
+        },
+        "belt_B": {
+          "max_requested_abs_m_s": 0.9889170250027004,
+          "max_applied_abs_m_s": 0.3,
+          "old030": {
+            "requested": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.9,
+              "strictly_outside_duration_s": 0.9,
+              "at_or_above_fraction": 0.020454545454545454,
+              "strictly_outside_fraction": 0.020454545454545454,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.9,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.020454545454545454,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "own_cap": {
+            "requested": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.9,
+              "strictly_outside_duration_s": 0.9,
+              "at_or_above_fraction": 0.020454545454545454,
+              "strictly_outside_fraction": 0.020454545454545454,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.9,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.020454545454545454,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "max_requested_over_old030": 3.296390083342335,
+          "max_requested_over_own_cap": 3.296390083342335
+        }
+      },
+      "commands": {
+        "requested": {
+          "max_common030_normalized": 235.11228491456754,
+          "max_own_cap_normalized": 235.11228491456754,
+          "max_step_common030_normalized": 251.14967699941786,
+          "max_step_own_cap_normalized": 251.14967699941786
+        },
+        "applied": {
+          "max_common030_normalized": 1.0,
+          "max_own_cap_normalized": 1.0,
+          "max_step_common030_normalized": 2.0,
+          "max_step_own_cap_normalized": 2.0
+        },
+        "joint_torque_outside_held_duration_s": [
+          0.54,
+          0.105,
+          1.6
+        ],
+        "original_any_request_strict_saturated_fraction": 0.06295454545454546
+      },
+      "departure": {
+        "first_sustained_20mm": {
+          "start_index": 1372,
+          "end_index": 1885,
+          "start_s": 6.859999999999876,
+          "end_s": 9.425000000000074,
+          "duration_s": 2.5650000000001976,
+          "samples": 514,
+          "threshold": 0.02,
+          "confirmed_at_s": 6.959999999999876
+        },
+        "context_window_s": [
+          6.4,
+          7.4
+        ],
+        "onset_location": "inside_context_window",
+        "context_left_censored": false,
+        "context_start_available": true,
+        "context_end_available": true,
+        "projection_boundary_samples": 0,
+        "interpretation": "Global onset retained even outside6.4\u20137.4; local distance is time-branch-restricted, not a globally unique cross-track distance."
+      },
+      "turns": [
+        {
+          "event_id": "turn_01_y",
+          "reference_time_s": 11.775142746922178,
+          "axis": "y",
+          "window_s": [
+            10.775142746922178,
+            13.775142746922178
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": 1.100938360308028,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 2576,
+              "end_index": 2845,
+              "start_s": 12.880000000000614,
+              "end_s": 14.225000000000824,
+              "duration_s": 1.3450000000002102,
+              "samples": 270,
+              "interpolated_zero_time_s": 12.876081107230206,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_02_x",
+          "reference_time_s": 15.377446019513739,
+          "axis": "x",
+          "window_s": [
+            14.377446019513739,
+            17.37744601951374
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": 0.018064769964869498,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 3080,
+              "end_index": 3192,
+              "start_s": 15.400000000001008,
+              "end_s": 15.960000000001095,
+              "duration_s": 0.5600000000000875,
+              "samples": 113,
+              "interpolated_zero_time_s": 15.395510789478609,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3249,
+              "end_index": 3467,
+              "start_s": 16.245000000001053,
+              "end_s": 17.335000000000836,
+              "duration_s": 1.0899999999997831,
+              "samples": 219,
+              "interpolated_zero_time_s": 16.241281163210164,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_03_y",
+          "reference_time_s": 18.30073407696684,
+          "axis": "y",
+          "window_s": [
+            17.30073407696684,
+            20.30073407696684
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": -0.46915226135824284,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 3567,
+              "end_index": 3595,
+              "start_s": 17.835000000000736,
+              "end_s": 17.97500000000071,
+              "duration_s": 0.13999999999997215,
+              "samples": 29,
+              "interpolated_zero_time_s": 17.831581815608597,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3725,
+              "end_index": 3788,
+              "start_s": 18.62500000000058,
+              "end_s": 18.940000000000516,
+              "duration_s": 0.31499999999993733,
+              "samples": 64,
+              "interpolated_zero_time_s": 18.6208507784497,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3820,
+              "end_index": 4040,
+              "start_s": 19.100000000000485,
+              "end_s": 20.200000000000266,
+              "duration_s": 1.0999999999997812,
+              "samples": 221,
+              "interpolated_zero_time_s": 19.097450525665472,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_04_y",
+          "reference_time_s": 23.69926592303316,
+          "axis": "y",
+          "window_s": [
+            22.69926592303316,
+            25.69926592303316
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.009836278500703344,
+          "post_event_geometric_overshoot_m": 0.0032064783879892644,
+          "actual_reversal_lag_s": -0.44434883374383105,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 4651,
+              "end_index": 4685,
+              "start_s": 23.254999999999658,
+              "end_s": 23.424999999999624,
+              "duration_s": 0.16999999999996618,
+              "samples": 35,
+              "interpolated_zero_time_s": 23.25491708928933,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4715,
+              "end_index": 4736,
+              "start_s": 23.574999999999594,
+              "end_s": 23.679999999999573,
+              "duration_s": 0.10499999999997911,
+              "samples": 22,
+              "interpolated_zero_time_s": 23.572988179826993,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4742,
+              "end_index": 4771,
+              "start_s": 23.709999999999567,
+              "end_s": 23.85499999999954,
+              "duration_s": 0.14499999999997115,
+              "samples": 30,
+              "interpolated_zero_time_s": 23.705057386302105,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4991,
+              "end_index": 5309,
+              "start_s": 24.95499999999932,
+              "end_s": 26.544999999999003,
+              "duration_s": 1.5899999999996837,
+              "samples": 319,
+              "interpolated_zero_time_s": 24.95352791386228,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_05_x",
+          "reference_time_s": 26.622553980486252,
+          "axis": "x",
+          "window_s": [
+            25.622553980486252,
+            28.622553980486252
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.028022318702334736,
+          "post_event_geometric_overshoot_m": 0.011654898191987062,
+          "actual_reversal_lag_s": -0.5180118656368222,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 5221,
+              "end_index": 5983,
+              "start_s": 26.10499999999909,
+              "end_s": 29.914999999998333,
+              "duration_s": 3.809999999999242,
+              "samples": 763,
+              "interpolated_zero_time_s": 26.10454211484943,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_06_y",
+          "reference_time_s": 30.224857253077822,
+          "axis": "y",
+          "window_s": [
+            29.224857253077822,
+            32.22485725307782
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.06020396490699831,
+          "post_event_geometric_overshoot_m": 0.06020396490699831,
+          "actual_reversal_lag_s": 0.5689890958972583,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 6159,
+              "end_index": 6195,
+              "start_s": 30.794999999998158,
+              "end_s": 30.974999999998122,
+              "duration_s": 0.1799999999999642,
+              "samples": 37,
+              "interpolated_zero_time_s": 30.79384634897508,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6203,
+              "end_index": 6332,
+              "start_s": 31.014999999998114,
+              "end_s": 31.659999999997986,
+              "duration_s": 0.6449999999998717,
+              "samples": 130,
+              "interpolated_zero_time_s": 31.01016981718974,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6340,
+              "end_index": 6360,
+              "start_s": 31.699999999997978,
+              "end_s": 31.799999999997958,
+              "duration_s": 0.0999999999999801,
+              "samples": 21,
+              "interpolated_zero_time_s": 31.697082423191763,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6365,
+              "end_index": 6398,
+              "start_s": 31.824999999997953,
+              "end_s": 31.98999999999792,
+              "duration_s": 0.16499999999996717,
+              "samples": 34,
+              "interpolated_zero_time_s": 31.821272778041113,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 6410,
+              "end_index": 6499,
+              "start_s": 32.049999999997944,
+              "end_s": 32.49499999999817,
+              "duration_s": 0.44500000000022766,
+              "samples": 90,
+              "interpolated_zero_time_s": 32.04637195675565,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        }
+      ],
+      "slip_contact": {
+        "source": "Standard saved rollout simulator-contact diagnostics, encoded float32; no hardware measurement claim.",
+        "held_samples": 8800,
+        "slip_max_m_s": 0.4364858865737915,
+        "slip_rms_m_s": 0.02755305597008068,
+        "slip_distance_m": 0.16484637797096688,
+        "sliding_held_duration_s": 1.035,
+        "wheel_load_fraction_min": 0.0,
+        "wheel_load_fraction_max": 7.0635299997884875,
+        "wheel_load_fraction_std": 0.2719640968750097,
+        "unloaded_held_duration_s": 0.15,
+        "body_load_max_N": 0.0,
+        "body_load_positive_held_duration_s": 0.0
+      },
+      "fixed_design": {
+        "iteration": "I-49",
+        "operating_belt_cap_m_s": 0.3,
+        "design_belt_cap_m_s": 0.3,
+        "fixed_design": {
+          "gain_bank_sha256": "4799fc67825651033a93ec989bc8f08c558ae8e2b92fef0cbd3a932dfa75a5bf",
+          "design_bounds": [
+            1.5,
+            0.6,
+            0.6,
+            0.3,
+            0.3
+          ],
+          "design_config_sha256": "ef5472907013f8bf97a5cae4d06382b4c4f3901579b79de9a3f8b57ed8505541",
+          "weights": "flat"
+        },
+        "ordinary_design_sha256": "49a6d5cc8fc29c7a46356a340c4fa6cce5a205cd73e33e4437c97324f57c0d0f",
+        "gain_cache_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+        "configuration_unchanged": true,
+        "synchronization_uses_operating_bounds": true,
+        "scope": "Ideal actuator capacity sensitivity; not a validated motor rating."
+      }
+    },
+    "mars_cap060": {
+      "cap_m_s": 0.6,
+      "completed": true,
+      "failure": null,
+      "completed_duration_s": 44.00000000000406,
+      "samples": 8801,
+      "timed_tracking": {
+        "moving_rms_m": 0.052520609300447024,
+        "moving_p95_m": 0.08965365817084872,
+        "moving_samples": 8000,
+        "full_peak_m": 0.11000853655827966,
+        "final_m": 0.049231034550834066,
+        "full_rms_m": 0.052081898070191986,
+        "moving_window_complete": true
+      },
+      "attitude": {
+        "peak_absolute_deg": 13.373886198100973,
+        "peak_reference_error_deg": 6.052574323272872,
+        "rms_reference_error_deg": 1.2743025626274285,
+        "final_reference_error_deg": 1.4895472347160235
+      },
+      "original_settling": {
+        "passed": false,
+        "checks": {
+          "completed": true,
+          "relative_lean_below1deg": false,
+          "planar_speed_below030": false,
+          "angular_rate_below080": false
+        },
+        "tail_s": [
+          43.00500000000355,
+          44.00000000000406
+        ],
+        "max_relative_lean_deg": 2.428995324893031,
+        "max_planar_speed_m_s": 0.19813674826399058,
+        "max_angular_rate_rad_s": 1.8276370101752484
+      },
+      "original_route_gates": {
+        "gates": {
+          "completed": true,
+          "rms": false,
+          "p95": true,
+          "max": true,
+          "final": true,
+          "attitude": true,
+          "saturation": true,
+          "settled": false,
+          "closure": false
+        },
+        "passed": false,
+        "targets": {
+          "rms_m": 0.05,
+          "p95_m": 0.1,
+          "max_m": 0.2,
+          "final_m": 0.05,
+          "attitude_deg": 8.0,
+          "saturated_fraction": 0.1,
+          "closure_m": 0.05
+        },
+        "closure_m": 0.061522091142490846
+      },
+      "belts": {
+        "belt_A": {
+          "max_requested_abs_m_s": 0.8347418461273584,
+          "max_applied_abs_m_s": 0.6,
+          "old030": {
+            "requested": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.075,
+              "strictly_outside_duration_s": 0.075,
+              "at_or_above_fraction": 0.0017045454545454545,
+              "strictly_outside_fraction": 0.0017045454545454545,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.075,
+              "strictly_outside_duration_s": 0.075,
+              "at_or_above_fraction": 0.0017045454545454545,
+              "strictly_outside_fraction": 0.0017045454545454545,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "own_cap": {
+            "requested": {
+              "threshold_m_s": 0.6,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.045,
+              "strictly_outside_duration_s": 0.045,
+              "at_or_above_fraction": 0.0010227272727272728,
+              "strictly_outside_fraction": 0.0010227272727272728,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.6,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.045,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.0010227272727272728,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "max_requested_over_old030": 2.782472820424528,
+          "max_requested_over_own_cap": 1.391236410212264
+        },
+        "belt_B": {
+          "max_requested_abs_m_s": 0.4513069268588694,
+          "max_applied_abs_m_s": 0.4513069268588694,
+          "old030": {
+            "requested": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.135,
+              "strictly_outside_duration_s": 0.135,
+              "at_or_above_fraction": 0.003068181818181818,
+              "strictly_outside_fraction": 0.003068181818181818,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.135,
+              "strictly_outside_duration_s": 0.135,
+              "at_or_above_fraction": 0.003068181818181818,
+              "strictly_outside_fraction": 0.003068181818181818,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "own_cap": {
+            "requested": {
+              "threshold_m_s": 0.6,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.0,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.0,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.6,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.0,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.0,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "max_requested_over_old030": 1.504356422862898,
+          "max_requested_over_own_cap": 0.752178211431449
+        }
+      },
+      "commands": {
+        "requested": {
+          "max_common030_normalized": 3.6582044916721332,
+          "max_own_cap_normalized": 3.6582044916721332,
+          "max_step_common030_normalized": 2.9484971438058936,
+          "max_step_own_cap_normalized": 1.4742485719029468
+        },
+        "applied": {
+          "max_common030_normalized": 2.0,
+          "max_own_cap_normalized": 1.0,
+          "max_step_common030_normalized": 2.174263158457724,
+          "max_step_own_cap_normalized": 1.2178434133271785
+        },
+        "joint_torque_outside_held_duration_s": [
+          0.0,
+          0.01,
+          0.365
+        ],
+        "original_any_request_strict_saturated_fraction": 0.009545454545454546
+      },
+      "departure": {
+        "first_sustained_20mm": {
+          "start_index": 1370,
+          "end_index": 1879,
+          "start_s": 6.849999999999876,
+          "end_s": 9.395000000000069,
+          "duration_s": 2.5450000000001927,
+          "samples": 510,
+          "threshold": 0.02,
+          "confirmed_at_s": 6.949999999999876
+        },
+        "context_window_s": [
+          6.4,
+          7.4
+        ],
+        "onset_location": "inside_context_window",
+        "context_left_censored": false,
+        "context_start_available": true,
+        "context_end_available": true,
+        "projection_boundary_samples": 756,
+        "interpretation": "Global onset retained even outside6.4\u20137.4; local distance is time-branch-restricted, not a globally unique cross-track distance."
+      },
+      "turns": [
+        {
+          "event_id": "turn_01_y",
+          "reference_time_s": 11.775142746922178,
+          "axis": "y",
+          "window_s": [
+            10.775142746922178,
+            13.775142746922178
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0017015827748654289,
+          "post_event_geometric_overshoot_m": 0.0017015827748654289,
+          "actual_reversal_lag_s": 1.1066092961625333,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 2577,
+              "end_index": 2853,
+              "start_s": 12.885000000000614,
+              "end_s": 14.26500000000083,
+              "duration_s": 1.3800000000002157,
+              "samples": 277,
+              "interpolated_zero_time_s": 12.881752043084711,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_02_x",
+          "reference_time_s": 15.377446019513739,
+          "axis": "x",
+          "window_s": [
+            14.377446019513739,
+            17.37744601951374
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": 0.0027624991146950606,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 3077,
+              "end_index": 3193,
+              "start_s": 15.385000000001005,
+              "end_s": 15.965000000001096,
+              "duration_s": 0.5800000000000907,
+              "samples": 117,
+              "interpolated_zero_time_s": 15.380208518628434,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3256,
+              "end_index": 3481,
+              "start_s": 16.280000000001046,
+              "end_s": 17.405000000000822,
+              "duration_s": 1.1249999999997762,
+              "samples": 226,
+              "interpolated_zero_time_s": 16.2773682665557,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_03_y",
+          "reference_time_s": 18.30073407696684,
+          "axis": "y",
+          "window_s": [
+            17.30073407696684,
+            20.30073407696684
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.003326507881340035,
+          "post_event_geometric_overshoot_m": 0.003326507881340035,
+          "actual_reversal_lag_s": 0.6727377907544714,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 3795,
+              "end_index": 4035,
+              "start_s": 18.97500000000051,
+              "end_s": 20.17500000000027,
+              "duration_s": 1.1999999999997613,
+              "samples": 241,
+              "interpolated_zero_time_s": 18.97347186772131,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_04_y",
+          "reference_time_s": 23.69926592303316,
+          "axis": "y",
+          "window_s": [
+            22.69926592303316,
+            25.69926592303316
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.017411714638138065,
+          "post_event_geometric_overshoot_m": 0.017411714638138065,
+          "actual_reversal_lag_s": 0.07418438144815198,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 4755,
+              "end_index": 4789,
+              "start_s": 23.774999999999554,
+              "end_s": 23.94499999999952,
+              "duration_s": 0.16999999999996618,
+              "samples": 35,
+              "interpolated_zero_time_s": 23.77345030448131,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4811,
+              "end_index": 5041,
+              "start_s": 24.0549999999995,
+              "end_s": 25.20499999999927,
+              "duration_s": 1.1499999999997712,
+              "samples": 231,
+              "interpolated_zero_time_s": 24.05165627649835,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 5045,
+              "end_index": 5270,
+              "start_s": 25.224999999999266,
+              "end_s": 26.349999999999042,
+              "duration_s": 1.1249999999997762,
+              "samples": 226,
+              "interpolated_zero_time_s": 25.2228552079098,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_05_x",
+          "reference_time_s": 26.622553980486252,
+          "axis": "x",
+          "window_s": [
+            25.622553980486252,
+            28.622553980486252
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.011854321172426019,
+          "post_event_geometric_overshoot_m": 0.008999222974402254,
+          "actual_reversal_lag_s": -0.6600414030680213,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 5193,
+              "end_index": 5227,
+              "start_s": 25.96499999999912,
+              "end_s": 26.134999999999085,
+              "duration_s": 0.16999999999996618,
+              "samples": 35,
+              "interpolated_zero_time_s": 25.96251257741823,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 5363,
+              "end_index": 5976,
+              "start_s": 26.81499999999895,
+              "end_s": 29.87999999999834,
+              "duration_s": 3.06499999999939,
+              "samples": 614,
+              "interpolated_zero_time_s": 26.810339593722,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_06_y",
+          "reference_time_s": 30.224857253077822,
+          "axis": "y",
+          "window_s": [
+            29.224857253077822,
+            32.22485725307782
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.05340099075282545,
+          "post_event_geometric_overshoot_m": 0.05340099075282545,
+          "actual_reversal_lag_s": 0.28532956714857605,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 6103,
+              "end_index": 6539,
+              "start_s": 30.514999999998214,
+              "end_s": 32.694999999998274,
+              "duration_s": 2.18000000000006,
+              "samples": 437,
+              "interpolated_zero_time_s": 30.510186820226398,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        }
+      ],
+      "slip_contact": {
+        "source": "Standard saved rollout simulator-contact diagnostics, encoded float32; no hardware measurement claim.",
+        "held_samples": 8800,
+        "slip_max_m_s": 0.46425849199295044,
+        "slip_rms_m_s": 0.014158352669357884,
+        "slip_distance_m": 0.040329461734972316,
+        "sliding_held_duration_s": 0.215,
+        "wheel_load_fraction_min": 0.0,
+        "wheel_load_fraction_max": 5.932980891014028,
+        "wheel_load_fraction_std": 0.20289388317052082,
+        "unloaded_held_duration_s": 0.065,
+        "body_load_max_N": 0.0,
+        "body_load_positive_held_duration_s": 0.0
+      },
+      "fixed_design": {
+        "iteration": "I-49",
+        "operating_belt_cap_m_s": 0.6,
+        "design_belt_cap_m_s": 0.3,
+        "fixed_design": {
+          "gain_bank_sha256": "4799fc67825651033a93ec989bc8f08c558ae8e2b92fef0cbd3a932dfa75a5bf",
+          "design_bounds": [
+            1.5,
+            0.6,
+            0.6,
+            0.3,
+            0.3
+          ],
+          "design_config_sha256": "ef5472907013f8bf97a5cae4d06382b4c4f3901579b79de9a3f8b57ed8505541",
+          "weights": "flat"
+        },
+        "ordinary_design_sha256": "49a6d5cc8fc29c7a46356a340c4fa6cce5a205cd73e33e4437c97324f57c0d0f",
+        "gain_cache_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+        "configuration_unchanged": true,
+        "synchronization_uses_operating_bounds": true,
+        "scope": "Ideal actuator capacity sensitivity; not a validated motor rating."
+      }
+    },
+    "mars_cap090": {
+      "cap_m_s": 0.9,
+      "completed": true,
+      "failure": null,
+      "completed_duration_s": 44.00000000000406,
+      "samples": 8801,
+      "timed_tracking": {
+        "moving_rms_m": 0.052520609300447024,
+        "moving_p95_m": 0.08965365817084872,
+        "moving_samples": 8000,
+        "full_peak_m": 0.11000853655827966,
+        "final_m": 0.049231034550834066,
+        "full_rms_m": 0.052081898070191986,
+        "moving_window_complete": true
+      },
+      "attitude": {
+        "peak_absolute_deg": 13.373886198100973,
+        "peak_reference_error_deg": 6.052574323272872,
+        "rms_reference_error_deg": 1.2743025626274285,
+        "final_reference_error_deg": 1.4895472347160235
+      },
+      "original_settling": {
+        "passed": false,
+        "checks": {
+          "completed": true,
+          "relative_lean_below1deg": false,
+          "planar_speed_below030": false,
+          "angular_rate_below080": false
+        },
+        "tail_s": [
+          43.00500000000355,
+          44.00000000000406
+        ],
+        "max_relative_lean_deg": 2.428995324893031,
+        "max_planar_speed_m_s": 0.19813674826399058,
+        "max_angular_rate_rad_s": 1.8276370101752484
+      },
+      "original_route_gates": {
+        "gates": {
+          "completed": true,
+          "rms": false,
+          "p95": true,
+          "max": true,
+          "final": true,
+          "attitude": true,
+          "saturation": true,
+          "settled": false,
+          "closure": false
+        },
+        "passed": false,
+        "targets": {
+          "rms_m": 0.05,
+          "p95_m": 0.1,
+          "max_m": 0.2,
+          "final_m": 0.05,
+          "attitude_deg": 8.0,
+          "saturated_fraction": 0.1,
+          "closure_m": 0.05
+        },
+        "closure_m": 0.061522091142490846
+      },
+      "belts": {
+        "belt_A": {
+          "max_requested_abs_m_s": 0.8347418461273584,
+          "max_applied_abs_m_s": 0.8347418461273584,
+          "old030": {
+            "requested": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.075,
+              "strictly_outside_duration_s": 0.075,
+              "at_or_above_fraction": 0.0017045454545454545,
+              "strictly_outside_fraction": 0.0017045454545454545,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.075,
+              "strictly_outside_duration_s": 0.075,
+              "at_or_above_fraction": 0.0017045454545454545,
+              "strictly_outside_fraction": 0.0017045454545454545,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "own_cap": {
+            "requested": {
+              "threshold_m_s": 0.9,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.0,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.0,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.9,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.0,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.0,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "max_requested_over_old030": 2.782472820424528,
+          "max_requested_over_own_cap": 0.9274909401415092
+        },
+        "belt_B": {
+          "max_requested_abs_m_s": 0.4513069268588694,
+          "max_applied_abs_m_s": 0.4513069268588694,
+          "old030": {
+            "requested": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.135,
+              "strictly_outside_duration_s": 0.135,
+              "at_or_above_fraction": 0.003068181818181818,
+              "strictly_outside_fraction": 0.003068181818181818,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.3,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.135,
+              "strictly_outside_duration_s": 0.135,
+              "at_or_above_fraction": 0.003068181818181818,
+              "strictly_outside_fraction": 0.003068181818181818,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "own_cap": {
+            "requested": {
+              "threshold_m_s": 0.9,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.0,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.0,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            },
+            "applied": {
+              "threshold_m_s": 0.9,
+              "held_samples": 8800,
+              "at_or_above_duration_s": 0.0,
+              "strictly_outside_duration_s": 0.0,
+              "at_or_above_fraction": 0.0,
+              "strictly_outside_fraction": 0.0,
+              "comparison_tolerance_m_s": 1e-12
+            }
+          },
+          "max_requested_over_old030": 1.504356422862898,
+          "max_requested_over_own_cap": 0.5014521409542994
+        }
+      },
+      "commands": {
+        "requested": {
+          "max_common030_normalized": 3.6582044916721332,
+          "max_own_cap_normalized": 3.6582044916721332,
+          "max_step_common030_normalized": 2.9484971438058936,
+          "max_step_own_cap_normalized": 1.4719167878992199
+        },
+        "applied": {
+          "max_common030_normalized": 2.782472820424528,
+          "max_own_cap_normalized": 1.0,
+          "max_step_common030_normalized": 2.9484971438058936,
+          "max_step_own_cap_normalized": 1.2178434133271785
+        },
+        "joint_torque_outside_held_duration_s": [
+          0.0,
+          0.01,
+          0.365
+        ],
+        "original_any_request_strict_saturated_fraction": 0.008522727272727272
+      },
+      "departure": {
+        "first_sustained_20mm": {
+          "start_index": 1370,
+          "end_index": 1879,
+          "start_s": 6.849999999999876,
+          "end_s": 9.395000000000069,
+          "duration_s": 2.5450000000001927,
+          "samples": 510,
+          "threshold": 0.02,
+          "confirmed_at_s": 6.949999999999876
+        },
+        "context_window_s": [
+          6.4,
+          7.4
+        ],
+        "onset_location": "inside_context_window",
+        "context_left_censored": false,
+        "context_start_available": true,
+        "context_end_available": true,
+        "projection_boundary_samples": 756,
+        "interpretation": "Global onset retained even outside6.4\u20137.4; local distance is time-branch-restricted, not a globally unique cross-track distance."
+      },
+      "turns": [
+        {
+          "event_id": "turn_01_y",
+          "reference_time_s": 11.775142746922178,
+          "axis": "y",
+          "window_s": [
+            10.775142746922178,
+            13.775142746922178
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0017015827748654289,
+          "post_event_geometric_overshoot_m": 0.0017015827748654289,
+          "actual_reversal_lag_s": 1.1066092961625333,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 2577,
+              "end_index": 2853,
+              "start_s": 12.885000000000614,
+              "end_s": 14.26500000000083,
+              "duration_s": 1.3800000000002157,
+              "samples": 277,
+              "interpolated_zero_time_s": 12.881752043084711,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_02_x",
+          "reference_time_s": 15.377446019513739,
+          "axis": "x",
+          "window_s": [
+            14.377446019513739,
+            17.37744601951374
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.0,
+          "post_event_geometric_overshoot_m": 0.0,
+          "actual_reversal_lag_s": 0.0027624991146950606,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 3077,
+              "end_index": 3193,
+              "start_s": 15.385000000001005,
+              "end_s": 15.965000000001096,
+              "duration_s": 0.5800000000000907,
+              "samples": 117,
+              "interpolated_zero_time_s": 15.380208518628434,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 3256,
+              "end_index": 3481,
+              "start_s": 16.280000000001046,
+              "end_s": 17.405000000000822,
+              "duration_s": 1.1249999999997762,
+              "samples": 226,
+              "interpolated_zero_time_s": 16.2773682665557,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_03_y",
+          "reference_time_s": 18.30073407696684,
+          "axis": "y",
+          "window_s": [
+            17.30073407696684,
+            20.30073407696684
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.003326507881340035,
+          "post_event_geometric_overshoot_m": 0.003326507881340035,
+          "actual_reversal_lag_s": 0.6727377907544714,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 3795,
+              "end_index": 4035,
+              "start_s": 18.97500000000051,
+              "end_s": 20.17500000000027,
+              "duration_s": 1.1999999999997613,
+              "samples": 241,
+              "interpolated_zero_time_s": 18.97347186772131,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_04_y",
+          "reference_time_s": 23.69926592303316,
+          "axis": "y",
+          "window_s": [
+            22.69926592303316,
+            25.69926592303316
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.017411714638138065,
+          "post_event_geometric_overshoot_m": 0.017411714638138065,
+          "actual_reversal_lag_s": 0.07418438144815198,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 4755,
+              "end_index": 4789,
+              "start_s": 23.774999999999554,
+              "end_s": 23.94499999999952,
+              "duration_s": 0.16999999999996618,
+              "samples": 35,
+              "interpolated_zero_time_s": 23.77345030448131,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 4811,
+              "end_index": 5041,
+              "start_s": 24.0549999999995,
+              "end_s": 25.20499999999927,
+              "duration_s": 1.1499999999997712,
+              "samples": 231,
+              "interpolated_zero_time_s": 24.05165627649835,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 5045,
+              "end_index": 5270,
+              "start_s": 25.224999999999266,
+              "end_s": 26.349999999999042,
+              "duration_s": 1.1249999999997762,
+              "samples": 226,
+              "interpolated_zero_time_s": 25.2228552079098,
+              "incoming_sign": 1,
+              "outgoing_sign": -1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_05_x",
+          "reference_time_s": 26.622553980486252,
+          "axis": "x",
+          "window_s": [
+            25.622553980486252,
+            28.622553980486252
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.011854321172426019,
+          "post_event_geometric_overshoot_m": 0.008999222974402254,
+          "actual_reversal_lag_s": -0.6600414030680213,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": true,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 5193,
+              "end_index": 5227,
+              "start_s": 25.96499999999912,
+              "end_s": 26.134999999999085,
+              "duration_s": 0.16999999999996618,
+              "samples": 35,
+              "interpolated_zero_time_s": 25.96251257741823,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            },
+            {
+              "start_index": 5363,
+              "end_index": 5976,
+              "start_s": 26.81499999999895,
+              "end_s": 29.87999999999834,
+              "duration_s": 3.06499999999939,
+              "samples": 614,
+              "interpolated_zero_time_s": 26.810339593722,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_06_y",
+          "reference_time_s": 30.224857253077822,
+          "axis": "y",
+          "window_s": [
+            29.224857253077822,
+            32.22485725307782
+          ],
+          "window_complete": true,
+          "geometric_component_overshoot_m": 0.05340099075282545,
+          "post_event_geometric_overshoot_m": 0.05340099075282545,
+          "actual_reversal_lag_s": 0.28532956714857605,
+          "actual_reversal_missing_in_window": false,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [
+            {
+              "start_index": 6103,
+              "end_index": 6539,
+              "start_s": 30.514999999998214,
+              "end_s": 32.694999999998274,
+              "duration_s": 2.18000000000006,
+              "samples": 437,
+              "interpolated_zero_time_s": 30.510186820226398,
+              "incoming_sign": -1,
+              "outgoing_sign": 1,
+              "zero_velocity_plateau_s": null
+            }
+          ],
+          "projection_boundary_samples": 0
+        }
+      ],
+      "slip_contact": {
+        "source": "Standard saved rollout simulator-contact diagnostics, encoded float32; no hardware measurement claim.",
+        "held_samples": 8800,
+        "slip_max_m_s": 0.6837425231933594,
+        "slip_rms_m_s": 0.018440669741551233,
+        "slip_distance_m": 0.04740404185303243,
+        "sliding_held_duration_s": 0.215,
+        "wheel_load_fraction_min": 0.0,
+        "wheel_load_fraction_max": 5.932980891014028,
+        "wheel_load_fraction_std": 0.20289388317052082,
+        "unloaded_held_duration_s": 0.065,
+        "body_load_max_N": 0.0,
+        "body_load_positive_held_duration_s": 0.0
+      },
+      "fixed_design": {
+        "iteration": "I-49",
+        "operating_belt_cap_m_s": 0.9,
+        "design_belt_cap_m_s": 0.3,
+        "fixed_design": {
+          "gain_bank_sha256": "4799fc67825651033a93ec989bc8f08c558ae8e2b92fef0cbd3a932dfa75a5bf",
+          "design_bounds": [
+            1.5,
+            0.6,
+            0.6,
+            0.3,
+            0.3
+          ],
+          "design_config_sha256": "ef5472907013f8bf97a5cae4d06382b4c4f3901579b79de9a3f8b57ed8505541",
+          "weights": "flat"
+        },
+        "ordinary_design_sha256": "49a6d5cc8fc29c7a46356a340c4fa6cce5a205cd73e33e4437c97324f57c0d0f",
+        "gain_cache_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+        "configuration_unchanged": true,
+        "synchronization_uses_operating_bounds": true,
+        "scope": "Ideal actuator capacity sensitivity; not a validated motor rating."
+      }
+    }
+  },
+  "baseline_id": "mars_cap030",
+  "comparisons": {
+    "mars_cap060": {
+      "passes_all_conditions": false,
+      "checks": {
+        "completed_no_fall": true,
+        "moving_window_complete": true,
+        "moving_RMS_10pct": false,
+        "peak_error_no_regression": true,
+        "final_error_no_regression": true,
+        "peak_relative_lean_no_regression": true,
+        "original_settled": false,
+        "original_route_gates": false,
+        "all_six_turn_coverage": true,
+        "every_turn_overshoot": false,
+        "every_turn_lag": false
+      },
+      "turn_changes": [
+        {
+          "event_id": "turn_01_y",
+          "coverage": true,
+          "overshoot_difference_m": 0.0017015827748654289,
+          "reversal_lag_difference_s": 0.005670935854505288,
+          "overshoot_pass": true,
+          "lag_pass": true
+        },
+        {
+          "event_id": "turn_02_x",
+          "coverage": true,
+          "overshoot_difference_m": 0.0,
+          "reversal_lag_difference_s": -0.015302270850174438,
+          "overshoot_pass": true,
+          "lag_pass": true
+        },
+        {
+          "event_id": "turn_03_y",
+          "coverage": true,
+          "overshoot_difference_m": 0.003326507881340035,
+          "reversal_lag_difference_s": 1.1418900521127142,
+          "overshoot_pass": true,
+          "lag_pass": false
+        },
+        {
+          "event_id": "turn_04_y",
+          "coverage": true,
+          "overshoot_difference_m": 0.007575436137434721,
+          "reversal_lag_difference_s": 0.518533215191983,
+          "overshoot_pass": false,
+          "lag_pass": false
+        },
+        {
+          "event_id": "turn_05_x",
+          "coverage": true,
+          "overshoot_difference_m": -0.016167997529908718,
+          "reversal_lag_difference_s": -0.14202953743119906,
+          "overshoot_pass": true,
+          "lag_pass": true
+        },
+        {
+          "event_id": "turn_06_y",
+          "coverage": true,
+          "overshoot_difference_m": -0.006802974154172858,
+          "reversal_lag_difference_s": -0.2836595287486823,
+          "overshoot_pass": true,
+          "lag_pass": true
+        }
+      ],
+      "moving_RMS_relative_reduction": -0.040290716973431444,
+      "interpretation": "One-route descriptive screen only; no default adoption, general robustness or real motor-capacity recommendation."
+    },
+    "mars_cap090": {
+      "passes_all_conditions": false,
+      "checks": {
+        "completed_no_fall": true,
+        "moving_window_complete": true,
+        "moving_RMS_10pct": false,
+        "peak_error_no_regression": true,
+        "final_error_no_regression": true,
+        "peak_relative_lean_no_regression": true,
+        "original_settled": false,
+        "original_route_gates": false,
+        "all_six_turn_coverage": true,
+        "every_turn_overshoot": false,
+        "every_turn_lag": false
+      },
+      "turn_changes": [
+        {
+          "event_id": "turn_01_y",
+          "coverage": true,
+          "overshoot_difference_m": 0.0017015827748654289,
+          "reversal_lag_difference_s": 0.005670935854505288,
+          "overshoot_pass": true,
+          "lag_pass": true
+        },
+        {
+          "event_id": "turn_02_x",
+          "coverage": true,
+          "overshoot_difference_m": 0.0,
+          "reversal_lag_difference_s": -0.015302270850174438,
+          "overshoot_pass": true,
+          "lag_pass": true
+        },
+        {
+          "event_id": "turn_03_y",
+          "coverage": true,
+          "overshoot_difference_m": 0.003326507881340035,
+          "reversal_lag_difference_s": 1.1418900521127142,
+          "overshoot_pass": true,
+          "lag_pass": false
+        },
+        {
+          "event_id": "turn_04_y",
+          "coverage": true,
+          "overshoot_difference_m": 0.007575436137434721,
+          "reversal_lag_difference_s": 0.518533215191983,
+          "overshoot_pass": false,
+          "lag_pass": false
+        },
+        {
+          "event_id": "turn_05_x",
+          "coverage": true,
+          "overshoot_difference_m": -0.016167997529908718,
+          "reversal_lag_difference_s": -0.14202953743119906,
+          "overshoot_pass": true,
+          "lag_pass": true
+        },
+        {
+          "event_id": "turn_06_y",
+          "coverage": true,
+          "overshoot_difference_m": -0.006802974154172858,
+          "reversal_lag_difference_s": -0.2836595287486823,
+          "overshoot_pass": true,
+          "lag_pass": true
+        }
+      ],
+      "moving_RMS_relative_reduction": -0.040290716973431444,
+      "interpretation": "One-route descriptive screen only; no default adoption, general robustness or real motor-capacity recommendation."
+    }
+  },
+  "integrity": {
+    "baseline17_fields_byte_exact": {
+      "time_s": true,
+      "exact_qpos": true,
+      "exact_qvel": true,
+      "exact_applied": true,
+      "exact_previous_applied": true,
+      "exact_native_requested": true,
+      "exact_observer_wrench": true,
+      "exact_estimated_normal": true,
+      "exact_nominal_joints_before": true,
+      "exact_reference_xy": true,
+      "exact_reference_velocity_m_s": true,
+      "exact_reference_acceleration_m_s2": true,
+      "truth_time_s": true,
+      "truth_patch_loads_N": true,
+      "truth_patch_points_m": true,
+      "truth_patch_contact_counts": true,
+      "truth_equivalent_point_m": true
+    },
+    "baseline_geometry_max_gaps": {
+      "time_s": 0.0,
+      "local_path_distance_m": 0.0,
+      "closest_reference_time_s": 0.0,
+      "artificial_projection_window_boundary": 0.0,
+      "closest_at_route_endpoint": 0.0
+    },
+    "fixed_reference_program": true,
+    "fixed_design_checks": {
+      "mars_cap030": {
+        "fixed_design": true,
+        "ordinary_design_sha256": true,
+        "gain_cache_sha256": true,
+        "design_belt_cap_m_s": true,
+        "design_bounds_remain030": true,
+        "gain_cache_matches_registration": true,
+        "configuration_unchanged": true
+      },
+      "mars_cap060": {
+        "fixed_design": true,
+        "ordinary_design_sha256": true,
+        "gain_cache_sha256": true,
+        "design_belt_cap_m_s": true,
+        "design_bounds_remain030": true,
+        "gain_cache_matches_registration": true,
+        "configuration_unchanged": true
+      },
+      "mars_cap090": {
+        "fixed_design": true,
+        "ordinary_design_sha256": true,
+        "gain_cache_sha256": true,
+        "design_belt_cap_m_s": true,
+        "design_bounds_remain030": true,
+        "gain_cache_matches_registration": true,
+        "configuration_unchanged": true
+      }
+    },
+    "initial_state_and_gain_checks": {
+      "mars_cap030": {
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_observer_wrench": true,
+        "exact_estimated_normal": true,
+        "exact_nominal_joints_before": true,
+        "exact_previous_applied": true,
+        "exact_feedback_gain": true
+      },
+      "mars_cap060": {
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_observer_wrench": true,
+        "exact_estimated_normal": true,
+        "exact_nominal_joints_before": true,
+        "exact_previous_applied": true,
+        "exact_feedback_gain": true
+      },
+      "mars_cap090": {
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_observer_wrench": true,
+        "exact_estimated_normal": true,
+        "exact_nominal_joints_before": true,
+        "exact_previous_applied": true,
+        "exact_feedback_gain": true
+      }
+    }
+  },
+  "conventions": {
+    "held_dt_s": 0.005,
+    "terminal_excluded": true,
+    "moving_window_s": [
+      1.0,
+      41.0
+    ],
+    "old_bound_normalization": [
+      1.5,
+      0.6,
+      0.6,
+      0.3,
+      0.3
+    ],
+    "own_cap_normalization": "Reported alongside commonold.30; not a substitute for absolute/common metrics.",
+    "turn_geometry": "All6fixedI41 component extrema/windows;100ms new-sign dwell; missing coverage fails.",
+    "settle": "Original completed+last1s referencelean<1deg,planarspeed<.03m/s,angularrate<.08rad/s."
+  },
+  "limits": [
+    "Idealbeltvelocityservo, unchangedfriction/contactmodel; no torque-speed/current/power/thermalvalidation.",
+    "Three deterministicarms atonephase/oneterraindo not provea universalcapacitychoice.",
+    "Highercapdoesnotguaranteeimprovedbalance/turning; retainallregressions.",
+    "No real motor recommendation or change to repository defaults."
+  ]
+}

@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/mock.py", line 1614, in _get_target
+    target, attribute = target.rsplit('.', 1)
+AttributeError: module 'mujoco' has no attribute 'rsplit'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/results/belt_handoff_event_20261126/sync_audit/audit_sync_geometry.py", line 133, in <module>
+    if __name__=='__main__':main()
+  File "/home/parrwnago/active-spherical-wheel/results/belt_handoff_event_20261126/sync_audit/audit_sync_geometry.py", line 69, in main
+    stack.enter_context(patch_tool(mujoco,name,forbidden))
+  File "/usr/lib/python3.10/unittest/mock.py", line 1775, in patch
+    getter, attribute = _get_target(target)
+  File "/usr/lib/python3.10/unittest/mock.py", line 1616, in _get_target
+    raise TypeError(
+TypeError: Need a valid target to patch. You supplied: <module 'mujoco' from '/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/mujoco/__init__.py'>

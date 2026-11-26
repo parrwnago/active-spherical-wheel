@@ -1,0 +1,247 @@
+"""I43 sealed saved-data analysis. No robot plant, solver or forecast is run."""
+from __future__ import annotations
+import csv
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import shutil
+import sys
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+HERE=Path(__file__).resolve().parent;FAMILY=HERE.parent;REPO=FAMILY.parents[1]
+sys.path.insert(0,str(HERE/'dependencies'))
+from event_metrics import first_sustained,actual_reversal_candidates
+from geometry import reduce_known_reference
+from window_math import summarize,equality,observation_window
+
+ARMS=('baseline','angle_only','consistent_rate')
+PROTOCOL_SHA='ea3fc0ecb988b5388ebbe8d2b1b84c30b2f1cf8397eedc5596e9966e4908f3f3'
+
+
+def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def load_npz(path):
+    with np.load(path) as z:return {k:z[k].copy() for k in z.files}
+def safe(value):
+    if isinstance(value,np.ndarray):return safe(value.tolist())
+    if isinstance(value,np.generic):return safe(value.item())
+    if isinstance(value,dict):return {str(k):safe(v) for k,v in value.items()}
+    if isinstance(value,(tuple,list)):return [safe(v) for v in value]
+    if isinstance(value,float) and not np.isfinite(value):return None
+    return value
+def save(path,value):path.write_text(json.dumps(safe(value),indent=2,allow_nan=False)+'\n')
+
+
+def matrix(quaternions):
+    q=np.asarray(quaternions);w,x,y,z=q.T
+    return np.stack((1-2*(y*y+z*z),2*(x*y-w*z),2*(x*z+w*y),
+        2*(x*y+w*z),1-2*(x*x+z*z),2*(y*z-w*x),
+        2*(x*z-w*y),2*(y*z+w*x),1-2*(x*x+y*y)),axis=1).reshape(-1,3,3)
+
+
+def lean_reconstruction(raw):
+    actual=matrix(raw['exact_qpos'][:,3:7])[:,:,2]
+    result={}
+    for label,key in [('raw','exact_raw_reference_up_error_rad'),('shaped','exact_shaped_reference_up_error_rad')]:
+        desired=matrix(raw[f'tilt_{label}_reference_quat'])[:,:,2]
+        # atan2 is independently stable near zero and avoids acos cancellation.
+        reconstructed=np.arctan2(np.linalg.norm(np.cross(actual,desired),axis=1),np.einsum('ij,ij->i',actual,desired))
+        result[f'{label}_up_error_max_gap_rad']=float(np.max(abs(reconstructed-raw[key])))
+    result['actual_up_max_gap']=float(np.max(abs(actual-raw['exact_actual_up'])))
+    result['passed']=max(result.values())<1e-6
+    return result
+
+
+def common_prefix(base,other):
+    states=('time_s','exact_qpos','exact_qvel','exact_previous_applied','exact_observer_wrench','exact_estimated_normal',
+            'exact_nominal_joints_before','native_state_fingerprint_before','comparable_state_fingerprint_before')
+    commands=('exact_native_requested','exact_applied','native_state_fingerprint_after')
+    fields={}
+    for key in states+commands:
+        # First active command deliberately emits exactly native quaternion/zero rate.
+        ma=base['time_s']<=4.+1e-9;mb=other['time_s']<=4.+1e-9
+        fields[key]=equality(base[key][ma],other[key][mb])
+    n=min(len(base['time_s']),len(other['time_s']))
+    reference={key:equality(base[key][:n],other[key][:n]) for key in (
+        'time_s','exact_reference_xy','exact_reference_velocity_m_s','exact_reference_acceleration_m_s2')}
+    return {'all_prefix_fields_bit_equal':all(x['bit_equal'] for x in fields.values()),'prefix_fields':fields,
+        'all_common_reference_fields_bit_equal':all(x['bit_equal'] for x in reference.values()),'reference_fields':reference,
+        'common_reference_samples':n,'arm_samples':len(other['time_s']),
+        'full_fingerprint_bookkeeping_difference_is_expected':'Enabled generator tracks preactivation clock; comparison uses canonical dynamic state. True full hash is not required equal.',
+        'true_full_before_warm_comparison':equality(base['full_state_fingerprint_before'][base['time_s']<=4.+1e-9],
+            other['full_state_fingerprint_before'][other['time_s']<=4.+1e-9])}
+
+
+def generator_audit(arm,folder,raw,provenance,independent):
+    record=next(x for x in provenance['sources'] if x['origin']=='src/spherical_wheel/tilt_reference.py')
+    module_path=folder/record['snapshot'];assert sha(module_path)==record['sha256']
+    spec=importlib.util.spec_from_file_location('i43_'+arm,module_path);module=importlib.util.module_from_spec(spec)
+    sys.modules[spec.name]=module;spec.loader.exec_module(module)
+    result={'module_sha256':record['sha256'],'matches_independent_tested_module':record['sha256']==independent,
+        'cadence_max_gap_s':float(np.max(abs(np.diff(raw['time_s'])-.005))) if len(raw['time_s'])>1 else None}
+    if arm=='baseline':
+        result.update(inactive_all_rows=not bool(raw['tilt_active'].any()),used_rate_max_abs=float(abs(raw['tilt_used_angular_velocity_body_rad_s']).max()))
+        result['auxiliary_clocks_correctly_absent']=bool(np.isnan(raw['tilt_clock_before_s']).all() and np.isnan(raw['tilt_clock_after_s']).all())
+        result['passed']=result['matches_independent_tested_module'] and result['inactive_all_rows'] and result['used_rate_max_abs']==0. and result['auxiliary_clocks_correctly_absent'] and result['cadence_max_gap_s'] is not None and result['cadence_max_gap_s']<1e-10
+        return result
+    settings=module.TiltReferenceSettings(**provenance['parameters']['tilt_reference'])
+    generator=module.TiltReference(settings,np.radians(provenance['parameters']['max_lean_deg']))
+    keys=('theta_rad','z_rad','held_raw_theta_rad','theta_dot_rad_s','theta_ddot_rad_s2','angular_velocity_equilibrium_rad_s')
+    gaps={key:0. for key in keys};flags=True;max_h=0.
+    for i,t in enumerate(raw['time_s']):
+        row=generator.update(raw['tilt_raw_theta_rad'][i],float(t))
+        for key in keys:gaps[key]=max(gaps[key],float(abs(row[key]-raw['tilt_'+key][i]).max()))
+        flags=flags and all(row[key]==raw['tilt_'+key][i] for key in ('active','initialized_now','advanced','substeps'))
+        if row['advanced']:max_h=max(max_h,(t-raw['time_s'][i-1])/row['substeps'])
+    active=raw['tilt_active'].astype(bool);limit=np.radians(provenance['parameters']['max_lean_deg']);rate=np.radians(settings.max_rate_deg_s)
+    bounds={'theta_disk_max_rad':float(np.linalg.norm(raw['tilt_theta_rad'][active],axis=1).max()),
+        'z_disk_max_rad':float(np.linalg.norm(raw['tilt_z_rad'][active],axis=1).max()),
+        'chart_rate_max_rad_s':float(np.linalg.norm(raw['tilt_theta_dot_rad_s'][active],axis=1).max()),
+        'chart_acceleration_max_rad_s2':float(np.linalg.norm(raw['tilt_theta_ddot_rad_s2'][active],axis=1).max()),
+        'world_rate_max_rad_s':float(np.linalg.norm(raw['tilt_angular_velocity_world_rad_s'][active],axis=1).max()),
+        'max_integrator_substep_s':float(max_h)} if active.any() else None
+    actual=matrix(raw['exact_qpos'][:,3:7])
+    transported=np.einsum('nji,nj->ni',actual,raw['tilt_angular_velocity_world_rad_s'])
+    body_gap=float(abs(transported-raw['tilt_angular_velocity_body_rad_s']).max())
+    used=raw['tilt_angular_velocity_body_rad_s'] if settings.use_rate_reference else np.zeros_like(transported)
+    used_gap=float(abs(used-raw['tilt_used_angular_velocity_body_rad_s']).max())
+    feedback_gap=float(abs(raw['exact_feedback_reference_qvel'][:,3:6]-raw['tilt_used_angular_velocity_body_rad_s']).max())
+    bounds_pass=bool(bounds is not None and bounds['theta_disk_max_rad']<=limit+1e-12 and bounds['z_disk_max_rad']<=limit+1e-12
+        and bounds['chart_rate_max_rad_s']<=rate+1e-12 and bounds['chart_acceleration_max_rad_s2']<=2*rate/settings.time_constant_s+1e-10
+        and bounds['world_rate_max_rad_s']<=rate+1e-12 and max_h<=min(.001,settings.time_constant_s/4)+1e-12)
+    result.update({'replayed_saved_raw_input_max_gaps':gaps,'replayed_flags_equal':bool(flags),'bounds':bounds,'bounds_pass':bounds_pass,
+        'actual_body_transport_max_gap_rad_s':body_gap,'used_rate_max_gap_rad_s':used_gap,'feedback_rate_max_gap_rad_s':feedback_gap})
+    result['auxiliary_clock_before_matches_previous_call']=bool(np.array_equal(raw['tilt_clock_before_s'],np.r_[np.nan,raw['time_s'][:-1]],equal_nan=True))
+    result['auxiliary_clock_after_matches_current_call']=bool(np.array_equal(raw['tilt_clock_after_s'],raw['time_s']))
+    result['passed']=bool(result['matches_independent_tested_module'] and flags and max(gaps.values())==0. and bounds_pass
+        and max(body_gap,used_gap,feedback_gap)<1e-12 and result['cadence_max_gap_s'] is not None and result['cadence_max_gap_s']<1e-10
+        and result['auxiliary_clock_before_matches_previous_call'] and result['auxiliary_clock_after_matches_current_call'])
+    return result
+
+
+def window_metrics(raw,log,geometry,bounds,window):
+    result=summarize(raw['time_s'],raw,log,geometry,bounds,window)
+    mask=observation_window(raw['time_s'],*window)
+    for name,key in [('raw','exact_raw_reference_up_error_rad'),('shaped','exact_shaped_reference_up_error_rad'),('absolute','exact_absolute_tilt_rad')]:
+        values=np.degrees(raw[key][mask])
+        result[name+'_tilt_RMS_deg']=float(np.sqrt(np.mean(values**2))) if len(values) else None
+        result[name+'_tilt_max_deg']=float(values.max()) if len(values) else None
+    result['belt_A_max_abs_requested_m_s']=float(abs(raw['exact_native_requested'][mask,3]).max()) if mask.any() else None
+    return result
+
+
+def turns(raw,geometry,events):
+    t=raw['time_s'];rows=[]
+    for event in events:
+        at=event['time_s'];lo,hi=event['window_s'];mask=observation_window(t,lo,hi);after=mask&(t>=at)
+        axis=event['axis_index'];signed=event['incoming_sign']*(raw['exact_qpos'][:,axis]-event['reference_component_extremum_m'])
+        candidates=actual_reversal_candidates(t,raw['exact_qvel'][:,axis],event['incoming_sign'],event['outgoing_sign'],lo,hi,.1)
+        rows.append({'event_id':event['event_id'],'time_s':at,'axis':event['axis'],'window_s':[lo,hi],
+            'window_complete':bool(t[0]<=lo and t[-1]>=hi),'geometric_component_overshoot_mm':max(0.,float(1000*signed[mask].max())) if mask.any() else None,
+            'actual_reversal_lag_s':candidates[0]['interpolated_zero_time_s']-at if candidates else None,
+            'actual_reversal_missing':not bool(candidates),'actual_reversal_multiple':len(candidates)>1,'actual_reversal_candidates':candidates,
+            'post_peak_local_error_mm':float(1000*geometry['local_path_distance_m'][after].max()) if after.any() else None})
+    return rows
+
+
+def plot_results(out,data):
+    fig,axes=plt.subplots(2,2,figsize=(13,9),sharex=True)
+    for arm,color in zip(ARMS,('#2878b5','#e28b2a','#27956c')):
+        raw,geometry=data[arm];time=raw['time_s'];mask=(time>=6.)&(time<=10.)
+        for ax,value in zip(axes.flat,(geometry['local_path_distance_m']*1000,
+            np.degrees(raw['exact_raw_reference_up_error_rad']),np.degrees(raw['exact_shaped_reference_up_error_rad']),raw['exact_native_requested'][:,3])):
+            ax.plot(time[mask],value[mask],label=arm,color=color)
+    for ax,label in zip(axes.flat,('Local path distance (mm)','RAW reference lean error (deg)','Shaped reference lean error (deg)','Requested belt-A speed (m/s)')):
+        ax.set_ylabel(label);ax.set_xlabel('Simulation time (s)');ax.grid(alpha=.2);ax.legend(fontsize=8);ax.axvspan(6.4,7.4,color='grey',alpha=.1)
+    fig.suptitle('I43: common raw-reference balance and shaped-target diagnostics')
+    fig.tight_layout();fig.savefig(out/'event_comparison.png',dpi=150);plt.close(fig)
+
+
+def main():
+    out=HERE/'stage01'
+    if out.exists():raise FileExistsError('Preserve prior I43 reduction')
+    protocol=json.loads((FAMILY/'protocol.json').read_text());assert sha(FAMILY/'protocol.json')==PROTOCOL_SHA
+    folders={arm:FAMILY/'campaign/runs'/arm for arm in ARMS};verified={}
+    for arm,folder in folders.items():
+        for name in ('precision.npz','rollout.npz','summary.json','raw_reference_summary.json','provenance.json','artifact_manifest.json'):
+            if not (folder/name).is_file():raise FileNotFoundError(folder/name)
+        manifest=json.loads((folder/'artifact_manifest.json').read_text())
+        for row in manifest['files']:assert sha(folder/row['path'])==row['sha256']
+        verified[arm]=len(manifest['files'])
+    out.mkdir();source=out/'source';source.mkdir()
+    for path in (Path(__file__),HERE/'geometry.py',HERE/'window_math.py',FAMILY/'protocol.json'):
+        shutil.copyfile(path,source/path.name)
+    shutil.copytree(HERE/'dependencies',source/'dependencies')
+    source_hashes={str(p.relative_to(out)):sha(p) for p in source.rglob('*') if p.is_file() and '__pycache__' not in p.parts}
+    input_hashes={str(p.relative_to(FAMILY)):sha(p) for f in folders.values() for p in f.iterdir() if p.is_file()}
+    save(out/'source_manifest.json',source_hashes);save(out/'inputs_before_reduction.json',input_hashes)
+    raw={a:load_npz(f/'precision.npz') for a,f in folders.items()};logs={a:load_npz(f/'rollout.npz') for a,f in folders.items()}
+    summaries={a:json.loads((f/'summary.json').read_text()) for a,f in folders.items()};fair={a:json.loads((f/'raw_reference_summary.json').read_text()) for a,f in folders.items()}
+    provenance={a:json.loads((f/'provenance.json').read_text()) for a,f in folders.items()}
+    original_folder=REPO/protocol['baseline']
+    for name,expected in protocol['baseline_input_sha256'].items():assert sha(original_folder/name)==expected
+    original=load_npz(original_folder/'precision.npz');program={key:original[key] for key in ('time_s','exact_reference_xy','exact_reference_velocity_m_s','exact_reference_acceleration_m_s2')}
+    historical={key:equality(raw['baseline'][key],value) for key,value in original.items() if key in raw['baseline']}
+    prefixes={a:common_prefix(raw['baseline'],raw[a]) for a in ARMS[1:]}
+    independent=json.loads((FAMILY/'independent_checks/stage02/source_manifest.json').read_text())
+    module_sha=next(x['sha256'] for x in independent['files'] if x['origin']=='src/spherical_wheel/tilt_reference.py')
+    math_pass=json.loads((FAMILY/'independent_checks/stage02/math_report.json').read_text())['passed']
+    events=json.loads((HERE/'dependencies/I41_turn_events.json').read_text())['rows'];runs={};data={};csv_rows=[]
+    windows={key.removesuffix('_window_s'):protocol['analysis'][key] for key in ('primary_window_s','demand_window_s','recovery_window_s','full_window_s')}
+    for arm in ARMS:
+        geometry=reduce_known_reference(raw[arm],program);folder=out/arm;folder.mkdir();np.savez_compressed(folder/'geometry.npz',**geometry)
+        bounds=np.asarray(provenance[arm]['input_bounds']);assert np.allclose(logs[arm]['input_bounds'],bounds,rtol=0.,atol=1e-7)
+        wm={name:window_metrics(raw[arm],logs[arm],geometry,bounds,window) for name,window in windows.items()}
+        audit=generator_audit(arm,folders[arm],raw[arm],provenance[arm],module_sha)
+        sensitivity={str(mm):first_sustained(raw[arm]['time_s'],geometry['local_path_distance_m'],mm/1000,.1,1.) for mm in (10,20,30)}
+        runs[arm]={'completed':summaries[arm]['completed'],'failure':summaries[arm].get('failure'),'actual_trace_end_s':float(raw[arm]['time_s'][-1]),
+            'standard_shaped_reference_summary':summaries[arm],'raw_reference_fair_summary':fair[arm],
+            'windows':wm,'turns':turns(raw[arm],geometry,events),'departure_sensitivity_mm':sensitivity,'generator_audit':audit,
+            'lean_reconstruction':lean_reconstruction(raw[arm])}
+        save(folder/'report.json',runs[arm]);data[arm]=(raw[arm],geometry)
+        for name,values in wm.items():csv_rows.append({'arm':arm,'window':name,**values})
+    prerequisites={'all_three_arms_completed':all(v['completed'] and v['failure'] is None for v in runs.values()),
+        'native_baseline_reproduces_all_historical_common_fields':all(v['bit_equal'] for v in historical.values()),
+        'warm_prefix_and_reference_program_equal':all(v['all_prefix_fields_bit_equal'] and v['all_common_reference_fields_bit_equal'] for v in prefixes.values()),
+        'independent_math_passed':bool(math_pass),'all_saved_generator_cadence_frame_bound_checks':all(v['generator_audit']['passed'] for v in runs.values()),
+        'all_raw_shaped_lean_reconstructions':all(v['lean_reconstruction']['passed'] for v in runs.values())}
+    base,candidate=runs['baseline'],runs['consistent_rate'];bp=base['windows']['primary'];cp=candidate['windows']['primary']
+    complete=bp['window_complete'] and cp['window_complete'];bd=base['windows']['demand'];cd=candidate['windows']['demand']
+    turn_checks=[]
+    for b,c in zip(base['turns'],candidate['turns']):
+        limit=b['geometric_component_overshoot_mm']+max(2.,.05*b['geometric_component_overshoot_mm']) if b['window_complete'] else None
+        turn_checks.append({'event_id':b['event_id'],'baseline_mm':b['geometric_component_overshoot_mm'],'consistent_rate_mm':c['geometric_component_overshoot_mm'],
+            'allowed_mm':limit,'passes':bool(b['window_complete'] and c['window_complete'] and c['geometric_component_overshoot_mm']<=limit)})
+    bt=base['raw_reference_fair_summary']['tracking'];ct=candidate['raw_reference_fair_summary']['tracking']
+    conditions={'all_prerequisites':all(prerequisites.values()),'primary_local_path_RMS_10pct_better':bool(complete and cp['local_path_rms_mm']<=.9*bp['local_path_rms_mm']),
+        'all_sample_demand_belt_A_max_10pct_lower':bool(bd['window_complete'] and cd['window_complete'] and cd['belt_A_max_abs_requested_m_s']<=.9*bd['belt_A_max_abs_requested_m_s']),
+        'primary_raw_peak_lean_within_half_degree':bool(complete and cp['raw_tilt_max_deg']<=bp['raw_tilt_max_deg']+.5),
+        'full_raw_peak_lean_within_half_degree':candidate['raw_reference_fair_summary']['attitude']['max_error_from_reference_deg']<=base['raw_reference_fair_summary']['attitude']['max_error_from_reference_deg']+.5,
+        'moving_timed_path_RMS_nonregression':ct['rms_error_while_moving_m']<=1.05*bt['rms_error_while_moving_m'],
+        'full_peak_timed_error_nonregression':ct['max_error_m']<=1.05*bt['max_error_m']+.001,'final_error_nonregression':ct['final_error_m']<=bt['final_error_m']+.005,
+        'all_six_turn_overshoots_nonregression':all(x['passes'] for x in turn_checks)}
+    report={'iteration':'I-43','protocol_sha256':PROTOCOL_SHA,'source_sha256':source_hashes,'inputs_sha256':input_hashes,
+        'verified_case_manifest_files':verified,'historical_native_precision_checks':historical,'paired_prefix_checks':prefixes,
+        'prerequisite_checks':{'conditions':prerequisites,'passes_all_conditions':all(prerequisites.values())},'runs':runs,
+        'main_screen':{'chosen_candidate':'consistent_rate','conditions':conditions,'turn_nonregression':turn_checks,'passes_all_conditions':all(conditions.values()),
+            'meaning':'Predeclared provisional screen; angle_only is an ablation, not an outcome-selected replacement.'},
+        'limits':['Window observations include endpoints; held-command metrics exclude upper endpoint and the terminal observation.',
+            'Demand belt-A maximum uses ALL6.6–6.9s samples, without selecting true-loaded contacts afterward.',
+            'Raw reference means the unchanged formula evaluated from each arm current observer, not common future quaternion replay.',
+            'Generator replay is pure saved-input ODE arithmetic; no robot/contact physics. Coordinate acceleration bounds are not transported-body component acceleration limits.',
+            'One execution per arm, simulation-state measurement surrogate; no stability/hardware/robustness or default-promotion claim.']}
+    save(out/'report.json',report)
+    with (out/'window_metrics.csv').open('w',newline='') as stream:
+        writer=csv.DictWriter(stream,fieldnames=list(csv_rows[0]));writer.writeheader();writer.writerows(csv_rows)
+    plot_results(out,data)
+    files=sorted(p for p in out.rglob('*') if p.is_file() and '__pycache__' not in p.parts)
+    save(out/'artifact_manifest.json',{'files':[{'path':str(p.relative_to(out)),'bytes':p.stat().st_size,'sha256':sha(p)} for p in files]})
+    print(json.dumps(safe({'prerequisites':prerequisites,'screen':conditions,'runs':{a:{'primary':runs[a]['windows']['primary'],
+        'demand':runs[a]['windows']['demand'],'moving_RMS_mm':1000*runs[a]['raw_reference_fair_summary']['tracking']['rms_error_while_moving_m']} for a in ARMS}}),indent=2))
+
+
+if __name__=='__main__':main()

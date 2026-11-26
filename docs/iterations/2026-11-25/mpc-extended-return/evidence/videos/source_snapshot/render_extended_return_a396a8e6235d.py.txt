@@ -1,0 +1,322 @@
+"""Render the saved I38 extended Gazebo return; never integrate physics.
+
+Run only after the extended trace is complete:
+MUJOCO_GL=egl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -u results/mpc_extended_return_20261125/videos/render_extended_return.py
+
+--preview saves the cutoff and final stills, without creating an MP4.
+"""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+from PIL import Image, ImageDraw
+import yaml
+
+from spherical_wheel.offroad import TerrainPlant
+from spherical_wheel.offroad_view import _camera, _caption, _draw, _font
+from spherical_wheel.terrain import Terrain
+
+HERE = Path(__file__).resolve().parent
+FAMILY = HERE.parent
+ROOT = HERE.parents[2]
+RUN = FAMILY / 'runs/slope/mpc'
+PREVIOUS = ROOT / 'results/mpc_search_20261125/runs/slope/mpc'
+TARGET = HERE / 'seeded_mpc_extended_return.mp4'
+WIDTH, VIEW_HEIGHT, CHART_HEIGHT = 1280, 720, 280
+FPS, SPEED, OLD_CUTOFF = 20, .5, 8.4
+ACTUAL, REFERENCE = (61, 196, 161, 255), (245, 203, 93, 255)
+
+
+def sha(path):
+    result = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            result.update(block)
+    return result.hexdigest()
+
+
+def tilt(quaternion):
+    norm = np.sum(quaternion**2, axis=1)
+    return np.degrees(np.arccos(np.clip(
+        1 - 2 * np.sum(quaternion[:, 1:3]**2, axis=1) / norm, -1, 1)))
+
+
+def load_run():
+    for name in ('summary.json', 'provenance.json', 'precision.npz',
+                 'rollout.npz', 'terrain.json', 'plans.json'):
+        if not (RUN / name).is_file():
+            raise FileNotFoundError(f'Extended run incomplete: {RUN / name}')
+    summary = json.loads((RUN / 'summary.json').read_text())
+    provenance = json.loads((RUN / 'provenance.json').read_text())
+    for name, digest in provenance['generated_sha256'].items():
+        assert sha(RUN / name) == digest, name
+    with np.load(RUN / 'rollout.npz') as data:
+        log = {key: data[key].copy() for key in data.files}
+    with np.load(RUN / 'precision.npz') as data:
+        precise = {key: data[key].copy() for key in data.files}
+    old_provenance = json.loads((PREVIOUS / 'provenance.json').read_text())
+    assert sha(PREVIOUS / 'precision.npz') == old_provenance['generated_sha256']['precision.npz']
+    with np.load(PREVIOUS / 'precision.npz') as data:
+        old = {key: data[key].copy() for key in data.files}
+    count = len(old['time_s'])
+    prefix = {}
+    for key in ('time_s', 'exact_qpos', 'exact_qvel', 'exact_applied',
+                'exact_observer_wrench', 'exact_estimated_normal',
+                'recovery_native_requested', 'recovery_native_applied',
+                'recovery_goal_xy'):
+        np.testing.assert_array_equal(precise[key][:count], old[key], err_msg=key)
+        prefix[key] = True
+    assert np.isclose(old['time_s'][-1], OLD_CUTOFF)
+    log.update(time_s=precise['time_s'], qpos=precise['exact_qpos'],
+        qvel=precise['exact_qvel'], input=precise['exact_applied'],
+        reference_xy=precise['recovery_goal_xy'])
+    log['tilt_world_deg'] = tilt(log['qpos'][:, 3:7])
+    log['reference_tilt_deg'] = tilt(log['reference_quat'])
+    log['goal_error_mm'] = 1000 * np.linalg.norm(
+        log['qpos'][:, :2] - log['reference_xy'], axis=1)
+    log['xy_speed_mm_s'] = 1000 * np.linalg.norm(log['qvel'][:, :2], axis=1)
+    log['reference_error_deg'] = np.degrees(log['attitude_error_rad'])
+    assert np.array_equal(log['reference_xy'],
+        np.tile(log['reference_xy'][0], (len(log['time_s']), 1)))
+    metrics = summary['feedback_recovery']
+    np.testing.assert_allclose(
+        [log['goal_error_mm'][-1], log['xy_speed_mm_s'][-1], log['tilt_world_deg'][-1]],
+        [metrics['goal_error_final_mm'], metrics['xy_speed_final_mm_s'],
+         metrics['absolute_platform_tilt_final_deg']], atol=1e-7, rtol=1e-7)
+    return log, precise, summary, provenance, prefix
+
+
+def nearest(times, moment):
+    index = min(int(np.searchsorted(times, moment)), len(times) - 1)
+    return index - 1 if index and abs(times[index - 1] - moment) <= abs(times[index] - moment) else index
+
+
+def draw_chart(log, index, moment, end, limits):
+    canvas = Image.new('RGB', (WIDTH, CHART_HEIGHT), (12, 22, 32))
+    draw = ImageDraw.Draw(canvas, 'RGBA')
+    time = log['time_s']
+    charts = (
+        (15, 'Distance from retained goal (mm)', 'goal_error_mm', limits[0], 5.),
+        (438, 'Body XY speed (mm/s)', 'xy_speed_mm_s', limits[1], 5.),
+        (861, 'Platform tilt from vertical (deg)', 'tilt_world_deg', limits[2], None))
+    for left, title, key, limit, threshold in charts:
+        plot_left, plot_right, top, bottom = left + 38, left + 399, 53, 211
+
+        def point(x, y):
+            return (plot_left + (plot_right - plot_left) * float(x) / end,
+                    bottom - (bottom - top) * float(y) / limit)
+
+        draw.text((left, 9), title, font=_font(15), fill=(230, 240, 247))
+        draw.rectangle([point(0, limit), point(.4, 0)], fill=(125, 138, 151, 50))
+        if moment > OLD_CUTOFF:
+            draw.rectangle([point(OLD_CUTOFF, limit), point(min(moment, end), 0)],
+                           fill=(51, 121, 96, 28))
+        for fraction in (0, .5, 1):
+            value = limit * fraction
+            draw.line([point(0, value), point(end, value)], fill=(165, 184, 201, 45), width=1)
+            draw.text((left + 1, point(0, value)[1] - 7), f'{value:g}',
+                      font=_font(11), fill=(195, 212, 224))
+        for tick in (0, 4, 8.4, 12, 16):
+            if tick > end:
+                continue
+            x, y = point(tick, 0)
+            draw.line([(x, top), (x, bottom)], fill=(150, 175, 192, 35), width=1)
+            draw.text((x - 9, y + 6), f'{tick:g}', font=_font(11), fill=(192, 210, 221))
+        cutoff_x = point(OLD_CUTOFF, 0)[0]
+        for y in range(top, bottom, 9):
+            draw.line([(cutoff_x, y), (cutoff_x, min(y + 5, bottom))],
+                      fill=(244, 224, 166, 200), width=2)
+        draw.text((cutoff_x - 42, 30), 'old video end', font=_font(11), fill=REFERENCE)
+        if threshold is not None:
+            y = point(0, threshold)[1]
+            draw.line([(plot_left, y), (plot_right, y)], fill=(166, 199, 142, 180), width=1)
+        if index:
+            draw.line([point(x, y) for x, y in zip(time[:index + 1], log[key][:index + 1])],
+                      fill=ACTUAL, width=3)
+            if key == 'tilt_world_deg':
+                draw.line([point(x, y) for x, y in zip(
+                    time[:index + 1], log['reference_tilt_deg'][:index + 1])],
+                    fill=REFERENCE, width=2)
+        x = point(min(moment, end), 0)[0]
+        draw.line([(x, top), (x, bottom)], fill=(245, 246, 247, 130), width=1)
+        x, y = point(time[index], log[key][index])
+        draw.ellipse((x - 3, y - 3, x + 3, y + 3), fill=ACTUAL)
+        legend = ('Green: actual | gold: reference | 0 deg: level' if key == 'tilt_world_deg'
+                  else 'Green: recorded motion | horizontal line: gate limit')
+        draw.text((left + 3, 244), legend, font=_font(11), fill=(210, 226, 237))
+    return np.asarray(canvas)
+
+
+def draw_top_view(picture, log, index):
+    """A fixed world-XY inset keeps goal motion independent of the 3D camera."""
+    canvas = Image.fromarray(picture)
+    draw = ImageDraw.Draw(canvas, 'RGBA')
+    left, right, top, bottom = WIDTH - 266, WIDTH - 16, 393, VIEW_HEIGHT - 43
+    draw.rounded_rectangle((left, top, right, bottom), radius=8,
+                           fill=(10, 18, 27, 225), outline=(185, 211, 220, 120))
+    draw.text((left + 12, top + 9), 'Fixed goal / body XY', font=_font(14), fill=(230, 240, 247))
+    goal = log['reference_xy'][0]
+    half_range = max(.055, float(np.abs(log['qpos'][:, :2] - goal).max()) * 1.15)
+    center = np.array([(left + right) / 2, (top + bottom) / 2 + 9])
+    scale = 93. / half_range
+
+    def point(xy):
+        delta = np.asarray(xy) - goal
+        return tuple(center + scale * np.array([delta[0], -delta[1]]))
+
+    draw.line([(center[0] - 99, center[1]), (center[0] + 99, center[1])],
+              fill=(185, 211, 220, 55), width=1)
+    draw.line([(center[0], center[1] - 99), (center[0], center[1] + 99)],
+              fill=(185, 211, 220, 55), width=1)
+    draw.text((right - 27, center[1] + 4), 'X', font=_font(11), fill=(185, 211, 220))
+    draw.text((center[0] + 4, top + 37), 'Y', font=_font(11), fill=(185, 211, 220))
+    if index:
+        draw.line([point(xy) for xy in log['qpos'][:index + 1, :2]], fill=(90, 192, 222, 240), width=2)
+    gx, gy = center
+    draw.ellipse((gx - 6, gy - 6, gx + 6, gy + 6), fill=(255, 157, 51, 255))
+    x, y = point(log['qpos'][index, :2])
+    draw.ellipse((x - 4, y - 4, x + 4, y + 4), fill=ACTUAL, outline=(240, 255, 247, 255))
+    draw.text((left + 10, bottom - 23), f'Orange: goal | full width {2 * half_range * 1000:.0f}mm',
+              font=_font(11), fill=(210, 226, 237))
+    return np.asarray(canvas)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--preview', action='store_true')
+    args = parser.parse_args()
+    if TARGET.exists():
+        raise FileExistsError('Preserve completed video; choose a new rendering stage')
+    source = Path(__file__).resolve()
+    source_hash = sha(source)
+    snapshot = HERE / 'source_snapshot' / f'render_extended_return_{source_hash[:12]}.py'
+    snapshot.parent.mkdir(parents=True, exist_ok=True)
+    if not snapshot.exists():
+        snapshot.write_bytes(source.read_bytes())
+    assert sha(snapshot) == source_hash
+    log, precise, summary, provenance, prefix = load_run()
+    requested_end = float(summary['requested_duration_s'])
+    observed_end = float(log['time_s'][-1])
+    # A failed run is shown only to its actual end, never as fabricated held dynamics.
+    end = min(requested_end, observed_end)
+    metrics = summary['feedback_recovery']
+    completed = bool(summary['completed'])
+    gate = bool(completed and metrics['final_1s_within_goal_and_speed_and_reference_lean'])
+    config_path = RUN / 'source_snapshot/config/model.yaml'
+    terrain_path = RUN / 'terrain.json'
+    config = yaml.safe_load(config_path.read_text())
+    terrain = Terrain.from_spec(json.loads(terrain_path.read_text()))
+    plant = TerrainPlant(config, terrain, HERE / '_render_scene', visual_bounds=(-.7, .7, -.7, .7))
+    saved = plant.capture()
+    option = mujoco.MjvOption()
+    option.geomgroup[3:] = 0
+    limits = (max(10., np.ceil(log['goal_error_mm'].max() / 10) * 10),
+              max(10., np.ceil(log['xy_speed_mm_s'].max() / 25) * 25),
+              max(15., np.ceil(log['tilt_world_deg'].max() / 5) * 5))
+    times = np.arange(0, end + 1e-9, SPEED / FPS)
+    if not np.isclose(times[-1], end):
+        times = np.append(times, end)
+
+    def frame(moment):
+        index = nearest(log['time_s'], moment)
+        now = float(log['time_s'][index])
+        if now < .4 - 1e-9:
+            phase = 'FIXED-INPUT DRIFT: observer advances; feedback starts at 0.4s'
+        elif now < OLD_CUTOFF - 1e-9:
+            phase = 'ORIGINAL OBSERVATION WINDOW: same controller and recorded prefix'
+        else:
+            phase = 'ADDED OBSERVATION: unchanged controller beyond the old 8.4s video end'
+        if bool(precise['mpc_fallback'][index]):
+            phase += ' | ACTUAL NATIVE FALLBACK'
+        final = moment >= end - 1e-8
+        status = (('PASS' if gate else 'NOT MET') + ' over final full second') if final else 'Assessed over a full second; goal crossing alone is insufficient'
+        speed = log['xy_speed_mm_s'][index]
+        error = log['goal_error_mm'][index]
+        torque = np.array2string(log['input'][index, :3], precision=3)
+        belts = np.array2string(log['input'][index, 3:], precision=3)
+        lines = [phase,
+            f't {now:.3f}s | feedback {max(0., now - .4):.3f}s | goal error {error:.3f}mm | XY speed {speed:.2f}mm/s',
+            f'ABSOLUTE tilt {log["tilt_world_deg"][index]:.2f}deg | reference {log["reference_tilt_deg"][index]:.2f}deg | relative error {log["reference_error_deg"][index]:.3f}deg',
+            f'Torques [shaft,A,B] Nm {torque} | belts [A,B] m/s {belts}',
+            'Contact from observer; same seed, one refinement, sparse Jacobians, 0.4s horizon, weights and bounds.',
+            'Uniform 10deg side slope, not Mars | 20ms simulated command hold / 5ms observation | offline prototype',
+            f'Settled return: {status}',
+            'Gate: distance <=5mm AND XY speed <=5mm/s AND reference attitude error <=2deg.']
+        if final and not completed:
+            lines[0] = f'RUN STOPPED at {now:.3f}s: {summary.get("failure")}'
+        focus = .5 * (log['qpos'][index, :2] + log['reference_xy'][index])
+        camera = _camera(np.r_[focus, .20], 112., -25., 1.32)
+        picture = _draw(plant, renderer, log, index, camera, option, False)
+        picture = draw_top_view(picture, log, index)
+        picture = _caption(picture, 'GAZEBO / DART: unchanged seeded MPC, longer observation', lines,
+            'Saved Gazebo dynamics rendered in MuJoCo | orange ball: retained goal | cyan trail: path | 0.5x playback | no new physics')
+        return np.concatenate([picture, draw_chart(log, index, moment, end, limits)], axis=0)
+
+    try:
+        with mujoco.Renderer(plant.model, height=VIEW_HEIGHT, width=WIDTH) as renderer:
+            if args.preview:
+                for moment, name in ((min(OLD_CUTOFF, end), 'extended_cutoff_preview.jpg'),
+                                     (end, 'extended_endpoint_preview.jpg')):
+                    imageio.imwrite(HERE / name, frame(moment), quality=93)
+                print('Cutoff and endpoint previews saved from logged states; no physics.', flush=True)
+                return
+            writer = imageio.get_writer(TARGET, fps=FPS, codec='libx264', quality=8,
+                macro_block_size=2, ffmpeg_log_level='error')
+            try:
+                for moment in times:
+                    writer.append_data(frame(float(moment)))
+            finally:
+                writer.close()
+            for moment, name in ((0., 'extended_first.jpg'), (.4, 'extended_feedback_on.jpg'),
+                    (min(OLD_CUTOFF, end), 'extended_old_cutoff.jpg'), (end, 'extended_final.jpg')):
+                imageio.imwrite(HERE / name, frame(moment), quality=93)
+    finally:
+        plant.restore(saved)
+    with imageio.get_reader(TARGET) as reader:
+        metadata = reader.get_meta_data()
+        frames = reader.count_frames()
+        last = reader.get_data(frames - 1)
+        imageio.imwrite(HERE / 'extended_decoded_final.jpg', last, quality=93)
+    assert frames == len(times)
+    assert tuple(metadata['size']) == (WIDTH, VIEW_HEIGHT + CHART_HEIGHT)
+    assert np.isclose(metadata['fps'], FPS)
+    sources = [source, snapshot, config_path, terrain_path, PREVIOUS / 'provenance.json',
+               PREVIOUS / 'precision.npz', ROOT / 'src/spherical_wheel/offroad_view.py',
+               ROOT / 'src/spherical_wheel/offroad.py', ROOT / 'src/spherical_wheel/terrain.py']
+    sources += [RUN / name for name in ('precision.npz', 'rollout.npz', 'summary.json', 'provenance.json', 'plans.json')]
+    for path in (FAMILY / 'protocol.json', FAMILY / 'analysis/report.json'):
+        if path.exists():
+            sources.append(path)
+    record = {'status': 'rendered_and_decoded_verified', 'iteration': 'I-38',
+        'video': {'path': str(TARGET.relative_to(ROOT)), 'sha256': sha(TARGET),
+            'bytes': TARGET.stat().st_size, 'dimensions': list(metadata['size']),
+            'fps': metadata['fps'], 'frames': frames, 'duration_s': metadata['duration'],
+            'observed_simulated_duration_s': end, 'requested_simulated_duration_s': requested_end,
+            'playback_speed': SPEED, 'decoded_final_verified': True},
+        'source_snapshot': str(snapshot.relative_to(ROOT)),
+        'shared_full_old_precision_prefix_verified': prefix,
+        'old_cutoff_time_s': OLD_CUTOFF, 'observed_complete': completed,
+        'final_1s_gate': gate, 'endpoint_matches_summary': True,
+        'endpoint': {'goal_error_mm': float(log['goal_error_mm'][-1]),
+            'xy_speed_mm_s': float(log['xy_speed_mm_s'][-1]),
+            'absolute_tilt_deg': float(log['tilt_world_deg'][-1]),
+            'reference_tilt_deg': float(log['reference_tilt_deg'][-1]),
+            'reference_error_deg': float(log['reference_error_deg'][-1])},
+        'source_artifact_sha256': {str(path.relative_to(ROOT)): sha(path) for path in sources},
+        'stills': {name: sha(HERE / name) for name in ('extended_first.jpg', 'extended_feedback_on.jpg',
+                    'extended_old_cutoff.jpg', 'extended_final.jpg', 'extended_decoded_final.jpg')},
+        'scope': 'One saved Gazebo/DART trace reconstructed in MuJoCo; rendering adds no physics. Original I34 prefix verified exactly.',
+        'terrain': 'Uniform10deg side slope mesh; not Mars or unknown-terrain forecast.',
+        'timing': '0-.4s fixed input, then16s feedback requested; old cutoff8.4s marked. No state/observer/goal reset.',
+        'controller': 'Unchanged I34 predicted-native-seeded MPC: .4s horizon, one refinement, stride5 Jacobians,20ms held inputs,5ms observer.',
+        'visualization': '3Dcamera tracks midpoint of robot and retained goal. Fixed-world XY inset keeps goal fixed on screen. Charts retain full-run time axes; gold dashed line marks old video end.'}
+    (HERE / 'video_metadata.json').write_text(json.dumps(record, indent=2) + '\n')
+    print(json.dumps(record['video'], indent=2), flush=True)
+
+
+if __name__ == '__main__':
+    main()

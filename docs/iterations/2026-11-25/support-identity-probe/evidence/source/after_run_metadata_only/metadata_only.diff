@@ -1,0 +1,28 @@
+--- exact_fourth_launch
++++ after_run_metadata_clarification
+@@ -1,9 +1,10 @@
+ """Targeted support-share feedback ablation on the Mars figure-eight.
+ 
+-The intended controller still sees estimated records. Only _terrain_feedback
+-receives diagnostic true support shares during a declared time window, scaled
+-to the controller's original inferred total load. Ground-truth loads are read
+-outside command(), never from StateMirror. No source controller is modified.
++The feedback-share branches keep estimated records and supply only diagnostic
++true support shares to _terrain_feedback, scaled to its inferred total load.
++The broader contact_records branch supplies complete true records to rolling
++allocation, feedback and synchronization. Truth is read outside command(),
++never from StateMirror. Neither intervention modifies source controller code.
+ """
+ from contextlib import ExitStack
+ from dataclasses import asdict
+@@ -105,7 +106,9 @@
+         'intervention_scope': ('Complete diagnostic true contact records replace locator output in-window; geom/body IDs remapped by actual name onto StateMirror. This changes geometry, loads, allocation, feedback, synchronization, and slip/rim inputs. Observer wrench remains native, but normal/friction filtering can change through slip/rim inputs. This does not isolate identity alone.'
+                                if variant == 'contact_records' else
+                                'Only feedback load shares, normalized to the original inferred total. Locator records, normal/force estimates, rolling allocation and synchronization records stay native. Feedback-held load/gain history may carry effects onward.'),
+-        'contact_boundary': 'Same estimated point remains attached to its original record; no retagging onto an incompatible patch.',
++        'contact_boundary': ('Complete true points/normals/forces/names are routed with geom/body IDs remapped by actual name. No estimated point is retagged onto an incompatible patch.'
++                             if variant == 'contact_records' else
++                             'Same estimated point remains attached to its original record; no retagging onto an incompatible patch.'),
+     }
+     (directory/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
+     return provenance

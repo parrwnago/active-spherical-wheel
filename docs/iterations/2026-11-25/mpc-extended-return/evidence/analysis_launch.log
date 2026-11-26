@@ -1,0 +1,81 @@
+{
+  "valid_exact_continuation": true,
+  "old_cutoff": {
+    "time_s": 8.399999999999913,
+    "goal_error_mm": 28.98166564092416,
+    "xy_speed_mm_s": 18.224025881667753,
+    "radial_velocity_mm_s_negative_is_inward": -17.988728721850237,
+    "absolute_platform_tilt_deg": 9.748939475186148,
+    "reference_platform_tilt_deg": 9.731115494060433,
+    "reference_lean_error_deg_from_float32_log": 0.019929219675261095,
+    "final1s_max_goal_error_mm": 47.93912798647733,
+    "final1s_max_xy_speed_mm_s": 19.66586850398299,
+    "final1s_max_reference_lean_error_deg": 0.019929219675261095,
+    "final1s_error_slope_mm_s": -19.008702318033983,
+    "final1s_all_radial_samples_inward": true,
+    "final1s_settled_gate_recomputed": false
+  },
+  "new_endpoint": {
+    "time_s": 16.40000000000102,
+    "goal_error_mm": 19.100148263583023,
+    "xy_speed_mm_s": 2.9973618187987174,
+    "radial_velocity_mm_s_negative_is_inward": -2.052254611861999,
+    "absolute_platform_tilt_deg": 9.754343230326269,
+    "reference_platform_tilt_deg": 9.730930944543816,
+    "reference_lean_error_deg_from_float32_log": 0.026227571229671908,
+    "final1s_max_goal_error_mm": 20.433572929402516,
+    "final1s_max_xy_speed_mm_s": 3.017489092528931,
+    "final1s_max_reference_lean_error_deg": 0.03575261854032513,
+    "final1s_error_slope_mm_s": -1.345538849267225,
+    "final1s_all_radial_samples_inward": true,
+    "final1s_settled_gate_recomputed": false
+  },
+  "first_1s_settled_window_start_s": null,
+  "settled_return_passed": false,
+  "counts": {
+    "including_terminal_observation": {
+      "plans": 801,
+      "accepted_plans": 801,
+      "selected_sources": {
+        "SQP_native_rollout_alpha_0.25": 2,
+        "SQP_native_rollout_alpha_0.5": 3,
+        "SQP_warm_start_alpha_0.5": 2,
+        "SQP_warm_start_alpha_1": 793,
+        "SQP_native_rollout_alpha_1": 1
+      },
+      "qp_calls_with_solver_record": 1604,
+      "solved_qp_count_from_plans": 1604,
+      "solver_statuses": {
+        "solved": 1604
+      },
+      "native_seed_generation_failures": [],
+      "trial_failures": []
+    },
+    "actuated_only": {
+      "plans": 800,
+      "accepted_plans": 800,
+      "selected_sources": {
+        "SQP_native_rollout_alpha_0.25": 2,
+        "SQP_native_rollout_alpha_0.5": 3,
+        "SQP_warm_start_alpha_0.5": 2,
+        "SQP_warm_start_alpha_1": 792,
+        "SQP_native_rollout_alpha_1": 1
+      },
+      "qp_calls_with_solver_record": 1602,
+      "solved_qp_count_from_plans": 1602,
+      "solver_statuses": {
+        "solved": 1602
+      },
+      "native_seed_generation_failures": [],
+      "trial_failures": []
+    },
+    "guarded_controller_calls": 3281,
+    "actuated_feedback_samples": 3200,
+    "true_native_fallback_actuated_samples": 0,
+    "actuated_source_code_counts": {
+      "3": 3200
+    },
+    "mpc_update_wall_median_actuated_s": 2.4408890644990606,
+    "mpc_update_wall_median_including_terminal_s": 2.4413305999987642
+  }
+}

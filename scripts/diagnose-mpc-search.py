@@ -1,0 +1,305 @@
+"""Frozen-state MPC search diagnostics with fixed objective and estimated plane.
+
+No new Gazebo run. Original seeds are compared with an additional native-policy
+rollout seed made from current state/history, never saved future commands.
+This independent loop preserves detailed directional diagnostics. The actual
+runtime-class matrix under frozen_search/runtime_entrypoints is authoritative
+for runtime refinement ordering and shared QP-cache effects.
+"""
+from contextlib import ExitStack
+from dataclasses import asdict
+from datetime import datetime, timezone
+from importlib.metadata import version
+import argparse
+import csv
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+from time import perf_counter
+import traceback
+from unittest.mock import patch
+
+import mujoco
+import numpy as np
+
+from spherical_wheel.model import REPO_ROOT, load_config
+from spherical_wheel.offroad_control import OffroadController, OffroadParams
+from spherical_wheel.offroad_experiments import ReferencePath, Workspace
+from spherical_wheel.predictive_control import AffineMPC, AffineMPCSettings
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+
+SOURCE = REPO_ROOT/'results/feedback_recovery_20261125/runs/slope/mpc'
+DEFAULT_PROTOCOL = REPO_ROOT/'results/mpc_search_20261125/protocol.json'
+FROZEN_HARNESS = SOURCE/'source_snapshot/scripts/run-mpc-comparison.py'
+GUARDS = ('spherical_wheel.offroad_control.measure_contact',
+          'spherical_wheel.offroad_control.records_from_mujoco',
+          'spherical_wheel.offroad_control.rolling_feedforward',
+          'spherical_wheel.synchronization.ContactSynchronizer._normal_loads',
+          'mujoco.mj_contactForce')
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def safe(value):
+    if isinstance(value, Path): return str(value)
+    if isinstance(value, dict): return {str(k):safe(v) for k,v in value.items()}
+    if isinstance(value, (list,tuple)): return [safe(v) for v in value]
+    if isinstance(value, np.ndarray): return safe(value.tolist())
+    if isinstance(value, np.generic): return safe(value.item())
+    if isinstance(value, float) and not np.isfinite(value): return None
+    return value
+
+
+def save(path, value):
+    path.write_text(json.dumps(safe(value), indent=2, allow_nan=False)+'\n')
+
+
+def forbidden(*args, **kwargs):
+    raise AssertionError('Native-history replay tried reading live contacts')
+
+
+def original_seed_bank(plan, exact, index, settings, bounds):
+    if abs(plan['time_s']-.4) < 1e-8:
+        warm = np.tile(exact['exact_applied'][index-1], (settings.horizon_steps,1))
+        seeds = [('warm_start', warm)]
+        for sign in (-1,1):
+            seed = warm.copy();seed[:round(.12/settings.step_s),0] += sign*.03
+            seeds.append((f'seed_shaft_{sign:+d}', np.clip(seed,-bounds,bounds)))
+        return seeds
+    # This is the actual shifted preceding selected plan, not the current
+    # selected input plan (which already contains the original SQP update).
+    assert len(plan['trials']) == 1 and plan['trials'][0]['seed'] == 'warm_start'
+    return [('warm_start',np.array(plan['model_anchor_inputs'],float))]
+
+
+def replay_native(exact, anchor_index, output):
+    """Reconstruct current native shadow state from past measurements only."""
+    workspace = Workspace(load_config(), output/'history_workspace',
+        seed_cache=REPO_ROOT/'generated/offroad/flat/control_schedule.npz')
+    mirror = workspace.mirror()
+    mirror.set_state(exact['exact_qpos'][0],exact['exact_qvel'][0],exact['time_s'][0],np.zeros(5))
+    controller = OffroadController(mirror,workspace.design,
+        OffroadParams(mode='hardware',rolling_allocation='least_squares',track_contact_point=False),
+        phase=np.pi/2,record_diagnostics=True)
+    controller.nominal_joints = mirror.data.qpos[7:10].copy()
+    goal = exact['recovery_goal_xy'][0].copy()
+    path = ReferencePath(0.,0.,1.,profile='quintic',origin=goal)
+    requested_gap=applied_gap=wrench_gap=normal_gap=0.
+    with ExitStack() as stack:
+        for target in GUARDS: stack.enter_context(patch(target,forbidden))
+        for index in range(anchor_index+1):
+            preceding = np.zeros(5) if index == 0 else exact['exact_applied'][index-1]
+            mirror.set_state(exact['exact_qpos'][index],exact['exact_qvel'][index],exact['time_s'][index],preceding)
+            assert mirror.data.ncon == 0 and mirror.ground is None and mirror.terrain is None
+            command,info = controller.command(goal,np.zeros(2),np.zeros(2))
+            requested_gap=max(requested_gap,float(np.max(abs(info['requested']-exact['recovery_native_requested'][index]))))
+            applied_gap=max(applied_gap,float(np.max(abs(command-exact['recovery_native_applied'][index]))))
+            wrench_gap=max(wrench_gap,float(np.max(abs(np.r_[controller.observer.wrench()]-exact['exact_observer_wrench'][index]))))
+            normal_gap=max(normal_gap,float(np.max(abs(info['estimate']['normal']-exact['exact_estimated_normal'][index]))))
+            if index < anchor_index: controller.after_step()
+    diagnostics={'scope':'Native shadow reconstruction from saved past/current state and actual preceding inputs only.',
+        'history_samples':anchor_index+1,'anchor_after_current_native_command':True,
+        'max_native_requested_difference':requested_gap,'max_native_applied_difference':applied_gap,
+        'max_observer_wrench_difference':wrench_gap,'max_estimated_normal_difference':normal_gap}
+    # Cross-version floating operations can differ at roundoff; a model/controller
+    # mismatch is not silently accepted as reconstructed history.
+    assert max(requested_gap,applied_gap,wrench_gap,normal_gap) < 1e-7,diagnostics
+    return controller,command,info,path,diagnostics
+
+
+def summarize_state(predictor,q0,v0,states,goal):
+    q,v=predictor.perturb(q0,v0,states[-1])
+    return {'predicted_terminal_goal_error_mm':float(1000*np.linalg.norm(q[:2]-goal)),
+        'predicted_terminal_absolute_tilt_deg':float(np.degrees(np.arccos(np.clip(1-2*np.sum(q[4:6]**2),-1,1)))),
+        'predicted_terminal_xy_speed_mm_s':float(1000*np.linalg.norm(v[:2]))}
+
+
+def score_states(settings,states,target,transform,inputs,bounds,previous):
+    residual=((states-target)@transform.T)/np.asarray(settings.state_scales)
+    weights=np.asarray(settings.state_weights)
+    state=float(np.sum(residual[:-1]**2*weights)+settings.terminal_multiplier*np.sum(residual[-1]**2*weights))
+    u=inputs/bounds;change=np.diff(np.vstack((previous/bounds,u)),axis=0)
+    return state+float(np.sum(u*u*np.asarray(settings.input_weight)))+float(np.sum(change*change*np.asarray(settings.change_weight)))
+
+
+def refine_chain(label,initial,evaluator,q0,v0,target,transform,bounds,previous,goal,steps,stride):
+    settings=evaluator.settings;predictor=evaluator.predictor
+    optimizer=AffineMPC(settings)
+    nominal=initial.copy();start=perf_counter()
+    states,cost,components=evaluator.evaluate(q0,v0,nominal,target,transform,bounds,previous)
+    history=[{'refinement':0,'cost':cost,'cost_components':components,'inputs':nominal.tolist(),
+              'nonlinear_states':states.tolist(),**summarize_state(predictor,q0,v0,states,goal)}]
+    trials=[];inverse=np.linalg.inv(transform)
+    for iteration in range(1,steps+1):
+        begin=perf_counter();trial={'refinement':iteration,'cost_before':cost}
+        try:
+            A,B,f0,xbar=predictor.linearize_trajectory(q0,v0,nominal,settings.step_s,jacobian_stride=stride)
+            trial['linearization_diagnostics']=dict(predictor.diagnostics)
+            result=optimizer.solve(transform@A@inverse,transform@B,f0@transform.T,target@transform.T,
+                                   nominal,previous,bounds)
+            trial['solver']=result.diagnostics
+            candidates=[(cost,nominal,states,components,0.)]
+            if result.success:
+                trial['line_search']=[]
+                for alpha in (1.,.5,.25):
+                    inputs=nominal+alpha*(result.inputs-nominal)
+                    assert np.all(abs(inputs)<=bounds+1e-10)
+                    ns,nc,parts=evaluator.evaluate(q0,v0,inputs,target,transform,bounds,previous)
+                    predicted=np.zeros(18);affine=[]
+                    for a,b,c,u,u0 in zip(A,B,f0,inputs,nominal):
+                        predicted=a@predicted+b@(u-u0)+c;affine.append(predicted.copy())
+                    pc=score_states(settings,np.asarray(affine),target,transform,inputs,bounds,previous)
+                    trial['line_search'].append({'alpha':alpha,'actual_nonlinear_cost':nc,'affine_predicted_cost':pc,
+                        'predicted_cost_reduction':cost-pc,'actual_cost_reduction':cost-nc})
+                    candidates.append((nc,inputs,ns,parts,alpha))
+            best=min(candidates,key=lambda candidate:candidate[0])
+            old=cost;cost,nominal,states,components,alpha=best
+            assert cost<=old+1e-9
+            trial.update(chosen_alpha=alpha,cost_after=cost,actual_cost_reduction=old-cost,
+                         improved=bool(cost<old-1e-9))
+        except (ValueError,RuntimeError,np.linalg.LinAlgError) as error:
+            trial.update(failure=str(error),cost_after=cost,improved=False)
+        trial['wall_s']=perf_counter()-begin;trials.append(trial)
+        history.append({'refinement':iteration,'cost':cost,'cost_components':components,
+            'inputs':nominal.tolist(),'nonlinear_states':states.tolist(),
+            'cumulative_wall_s':perf_counter()-start,**summarize_state(predictor,q0,v0,states,goal)})
+    return {'seed':label,'history':history,'trials':trials,'total_wall_s':perf_counter()-start}
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--protocol',type=Path,default=DEFAULT_PROTOCOL)
+    parser.add_argument('--anchors',type=float,nargs='+',default=[.4,2.])
+    parser.add_argument('--iterations',type=int,nargs='+',default=[1,2,5])
+    parser.add_argument('--jacobian-stride',type=int,default=5)
+    parser.add_argument('--search-order',choices=('global-best','per-seed'),default='global-best')
+    args=parser.parse_args();output=args.output.resolve()
+    if output.exists():raise FileExistsError(f'Preserve earlier trial: {output}')
+    assert args.protocol.is_file(),'Declare the protocol before calculating'
+    assert args.iterations and min(args.iterations)>=1 and args.jacobian_stride>=1
+    output.mkdir(parents=True)
+    sources=[Path(__file__),FROZEN_HARNESS,REPO_ROOT/'src/spherical_wheel/predictive_seed.py',
+        REPO_ROOT/'src/spherical_wheel/predictive_model.py',REPO_ROOT/'src/spherical_wheel/predictive_control.py',
+        REPO_ROOT/'src/spherical_wheel/offroad_control.py',REPO_ROOT/'src/spherical_wheel/mirror.py',args.protocol]
+    entries=[]
+    for source in sources:
+        relative=source.resolve().relative_to(REPO_ROOT);dest=output/'source_snapshot'/relative
+        dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(source.read_bytes())
+        entries.append({'path':str(relative),'snapshot':str(dest.relative_to(output)),'sha256':digest(source)})
+    inputs=[SOURCE/name for name in ('plans.json','precision.npz','rollout.npz','provenance.json')]
+    save(output/'provenance.json',{'captured_before_calculations_utc':datetime.now(timezone.utc).isoformat(),
+        'scope':'Frozen estimated-plane input-plan search only; no new Gazebo or actual future commands for seed.',
+        'arguments':vars(args),'sources':entries,'inputs':{str(p.relative_to(REPO_ROOT)):digest(p) for p in inputs},
+        'versions':{name:version(name) for name in ('numpy','scipy','mujoco','osqp')}})
+    spec=importlib.util.spec_from_file_location('frozen_mpc_search_evaluator',FROZEN_HARNESS)
+    harness=importlib.util.module_from_spec(spec);spec.loader.exec_module(harness)
+    from spherical_wheel.predictive_seed import generate_native_rollout_seed
+    plans=json.loads((SOURCE/'plans.json').read_text())
+    with np.load(SOURCE/'precision.npz') as z:exact={k:z[k] for k in z.files}
+    with np.load(SOURCE/'rollout.npz') as z:log={k:z[k] for k in z.files}
+    provenance=json.loads((SOURCE/'provenance.json').read_text());settings=AffineMPCSettings(**provenance['mpc_settings'])
+    report={'status':'in_progress','scope':'Frozen anchors/private predictions only; no Gazebo execution or online future command replay.',
+        'settings':asdict(settings),'jacobian_stride':args.jacobian_stride,'anchors':[],'rows':[]}
+    for at in args.anchors:
+        plan=min(plans,key=lambda p:abs(p['time_s']-at));assert abs(plan['time_s']-at)<1e-8
+        index=int(np.argmin(abs(exact['time_s']-at)));q0,v0=np.array(plan['qpos']),np.array(plan['qvel'])
+        np.testing.assert_array_equal(q0,exact['exact_qpos'][index]);np.testing.assert_array_equal(v0,exact['exact_qvel'][index])
+        anchor_out=output/f'anchor_{at:g}';anchor_out.mkdir()
+        controller,native,info,path,replay_diag=replay_native(exact,index,anchor_out)
+        predictor=EstimatedPlanePredictor(controller.plant)
+        # In these saved zero-slip anchors the coefficient remains exact nominal;
+        # the older rollout column is float32 while current estimator is double.
+        friction=float(info['estimate']['friction']);assert np.float32(friction)==log['estimated_friction'][index]
+        previous=exact['exact_applied'][index-1]
+        calibration=predictor.update(q0,v0,plan['normal'],plan['point_m'],plan['load_N'],friction=friction,command=previous)
+        assert abs(calibration['plane_offset_m']-plan['calibration']['plane_offset_m'])<=1e-12
+        evaluator=object.__new__(harness.TrajectoryPredictiveExperiment);evaluator.predictor=predictor;evaluator.settings=settings
+        target=np.array(plan['target_states']);transform=np.eye(18);transform[2,:3]=plan['normal'];transform[11,9:12]=plan['normal']
+        bounds=controller.plant.bounds.copy();goal=exact['recovery_goal_xy'][index]
+        # Verify the exact frozen objective before adding/changing any seed.
+        saved_states,saved_cost,_=evaluator.evaluate(q0,v0,np.array(plan['inputs']),target,transform,bounds,previous)
+        assert saved_cost==plan['nonlinear_cost'],(saved_cost,plan['nonlinear_cost'])
+        np.testing.assert_array_equal(saved_states,np.array(plan['nonlinear_states']))
+        seeds=original_seed_bank(plan,exact,index,settings,bounds)
+        with ExitStack() as stack:
+            for guard in GUARDS:stack.enter_context(patch(guard,forbidden))
+            native_seed,seed_diag=generate_native_rollout_seed(controller,predictor,path,float(plan['time_s']),
+                settings.horizon_steps,settings.step_s,current_command=native)
+        assert np.asarray(native_seed).shape==(settings.horizon_steps,5)
+        assert np.all(abs(native_seed)<=bounds+1e-10)
+        save(anchor_out/'native_seed.json',{'commands':native_seed,'diagnostics':seed_diag,'history_reconstruction':replay_diag})
+        chains=[]
+        for label,seed in seeds+[('native_rollout',native_seed)]:
+            chain=refine_chain(label,seed,evaluator,q0,v0,target,transform,bounds,previous,goal,
+                               1 if args.search_order=='global-best' else max(args.iterations),args.jacobian_stride)
+            chains.append(chain);save(anchor_out/(label.replace('+','plus')+'.json'),chain)
+        rows=[]
+        original=[c for c in chains if c['seed']!='native_rollout']
+        for family,bank in [('original',original),('original_plus_native',chains)]:
+            continuation=None
+            if args.search_order=='global-best' and max(args.iterations)>1:
+                first_best=min(bank,key=lambda c:c['history'][1]['cost'])
+                continuation=refine_chain(family+'_global_best',np.array(first_best['history'][1]['inputs']),
+                    evaluator,q0,v0,target,transform,bounds,previous,goal,
+                    max(args.iterations)-1,args.jacobian_stride)
+                save(anchor_out/(family+'_global_continuation.json'),continuation)
+            for n in args.iterations:
+                # Seeds remain candidates; later refinements cannot discard a
+                # lower-cost feasible plan found by an earlier iteration.
+                if args.search_order=='global-best':
+                    best_chain=min(bank,key=lambda c:c['history'][1]['cost'])
+                    best=(best_chain['history'][1] if n==1 else continuation['history'][n-1])
+                else:
+                    best_chain=min(bank,key=lambda c:c['history'][n]['cost']);best=best_chain['history'][n]
+                row={'anchor_s':at,'seed_family':family,'refinements':n,'selected_seed':best_chain['seed'],
+                     **{k:v for k,v in best.items() if k not in ('inputs','nonlinear_states','cost_components')},
+                     **{f'{k}':v for k,v in best['cost_components'].items()},
+                     'original_saved_cost':plan['nonlinear_cost'],'ratio_to_saved_cost':best['cost']/plan['nonlinear_cost'],
+                     'search_order':args.search_order}
+                rows.append(row);print(json.dumps(safe(row)),flush=True)
+        first=min(original,key=lambda c:c['history'][1]['cost'])['history'][1]
+        # Cold independent QP cache differs from the continuously warm-started
+        # run at2s. Preserve/report that difference rather than claiming exact
+        # physical commands; the saved-plan cost/states above match exactly.
+        baseline_cost_gap=float(first['cost']-plan['nonlinear_cost'])
+        baseline_input_gap=float(np.max(abs(np.array(first['inputs'])-np.array(plan['inputs']))))
+        np.testing.assert_allclose(first['cost'],plan['nonlinear_cost'],rtol=1e-5,atol=1e-8)
+        anchor_report={'anchor_s':at,'calibration':calibration,'native_history_reconstruction':replay_diag,
+            'native_seed_diagnostics':seed_diag,'selected_objective_reproduced_exactly':True,
+            'original_one_refinement_cost_within_tolerance':True,
+            'original_one_refinement_cost_relative_tolerance':1e-5,
+            'original_one_refinement_cost_gap':baseline_cost_gap,
+            'original_one_refinement_max_input_gap':baseline_input_gap,
+            'qp_cache_caveat':'Independent cold solver versus saved continuously warm solver. Exact saved-plan cost/states, not exact reoptimized command, are the reproducibility gate.',
+            'rows':rows,
+            'chain_files':[c['seed'].replace('+','plus')+'.json' for c in chains]}
+        save(anchor_out/'summary.json',anchor_report);report['anchors'].append(anchor_report);report['rows'].extend(rows)
+        save(output/'report.json',report)
+    report['status']='completed';report['limitations']=[
+        'Frozen-state private-model search does not establish closed-loop recovery, contact prediction validity, global optimality or real-time feasibility.',
+        'Native rollout uses cloned current controller state and private predicted states only. No saved future native commands are used.',
+        'Every family retains its seeds and best previous feasible candidate; QP convergence alone is not nonlinear convergence.',
+        'Original-chain calculations are shared between seed families instead of rerun and counted twice.']
+    save(output/'report.json',report)
+    keys=list(report['rows'][0])
+    with (output/'metrics.csv').open('w',newline='') as f:
+        writer=csv.DictWriter(f,fieldnames=keys);writer.writeheader();writer.writerows(report['rows'])
+    save(output/'artifact_manifest.json',{'files':[{'path':str(p.relative_to(output)),'sha256':digest(p),'bytes':p.stat().st_size}
+        for p in sorted(output.rglob('*')) if p.is_file() and 'history_workspace' not in p.parts and '__pycache__' not in p.parts]})
+
+
+if __name__=='__main__':
+    try:main()
+    except Exception:
+        # The selected fresh output (if created) keeps the failure without
+        # overwriting an earlier completed report or source stage.
+        import sys
+        if '--output' in sys.argv:
+            folder=Path(sys.argv[sys.argv.index('--output')+1]);
+            if folder.is_dir() and not (folder/'artifact_manifest.json').exists():
+                (folder/'failure.txt').write_text(traceback.format_exc())
+        raise

@@ -1,0 +1,323 @@
+{
+  "sensing": {
+    "observer_force_error_median_N": 0.00013698435053967223,
+    "observer_force_error_p95_N": 1.998675661192223,
+    "observer_moment_error_median_Nm": 1.5051160914402624e-05,
+    "observer_moment_error_p95_Nm": 0.2364159663656034
+  },
+  "terrain": "side_slope_10",
+  "controller": "hardware",
+  "parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "rolling_allocation": "feasible",
+    "rolling_damping_m_s": 0.01,
+    "rolling_speed_limits": [
+      20.0,
+      20.0,
+      20.0,
+      0.3,
+      0.3
+    ],
+    "rolling_acceleration_limits": [
+      100.0,
+      100.0,
+      100.0,
+      3.0,
+      3.0
+    ],
+    "rolling_effort_m_s": 0.001,
+    "rolling_change_m_s": 0.001,
+    "rolling_adaptive_effort": false,
+    "rolling_weak_effort_m_s": 0.005,
+    "rolling_authority_m_s": 0.02,
+    "rolling_reference_catchup_gain_s_inv": 1.0,
+    "rolling_reference_catchup_speed_m_s": 0.06,
+    "rolling_reference_position_limit_m": 0.05,
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "engine_version": "Gazebo Harmonic (gz-sim 8.10.0)",
+  "contact_mode": "analytic_clipped_floor",
+  "ground_model": "Gazebo collision with the mesh (grid 0.0400 m); contacts solved by DART. The MuJoCo mirror only evaluates kinematics.",
+  "path": {
+    "distance_m": 0.0044,
+    "heading_deg": 0.0,
+    "duration_s": 0.16,
+    "start_s": 0.8,
+    "profile": "cruise",
+    "ramp_s": 0.05,
+    "origin": [
+      -1.1690362005545123e-05,
+      -0.020756870016445286
+    ],
+    "cruise_speed_m_s": 0.04
+  },
+  "completed": true,
+  "failure": null,
+  "completed_duration_s": 1.359999999999993,
+  "requested_duration_s": 1.36,
+  "distance_along_path_m": 0.0038749721050067927,
+  "final_cross_track_m": 0.0010957164122989,
+  "tracking": {
+    "rms_error_m": 0.016102683920018245,
+    "max_error_m": 0.020833452154469335,
+    "final_error_m": 0.0012150097722661212,
+    "rms_error_while_moving_m": 0.006457358757842918
+  },
+  "attitude": {
+    "max_tilt_deg": 10.33960975237405,
+    "max_error_from_reference_deg": 7.09934271073464,
+    "rms_error_from_reference_deg": 1.4357135199064444,
+    "final_error_from_reference_deg": 0.5556870476490686,
+    "heading_change_deg": 0.6687651714362893
+  },
+  "ground": {
+    "max_slope_under_wheel_deg": 9.999999999999975,
+    "height_range_m": [
+      0.0,
+      0.0002074522681681176
+    ],
+    "friction_range": [
+      0.7,
+      0.7
+    ]
+  },
+  "contact": {
+    "normal_load_fraction_min": 0.9285622958871241,
+    "normal_load_fraction_max": 1.0560737003164755,
+    "normal_load_fraction_std": 0.012160658064538457,
+    "unloaded_time_s": 0.0,
+    "utilization_mean": 0.3489877207546758,
+    "utilization_p95": 0.4956435038686922,
+    "utilization_max": 0.539247658779107,
+    "time_above_90pct_cone_s": 0.0,
+    "max_slip_speed_m_s": 0.0004554982262915515,
+    "slip_distance_m": 2.3529942757907708e-05,
+    "sliding_time_s": 0.0,
+    "friction_loss_J": 9.97997312702709e-05,
+    "estimated_friction_min": 0.7,
+    "normal_estimate_error_rms_deg": 0.04010291660660479,
+    "normal_estimate_error_max_deg": 0.27330852805626404,
+    "normal_estimate_error_median_deg": 0.004406400810326747,
+    "normal_estimate_error_p95_deg": 0.04040532375405866,
+    "support_time_share": {
+      "shell_A": 1.0,
+      "shell_B": 0.0,
+      "belt_A": 0.0,
+      "belt_B": 0.0
+    },
+    "support_handovers": 0,
+    "fork_ground_contact": false
+  },
+  "actuation": {
+    "max_input_fraction": [
+      1.0,
+      0.30016203061721447,
+      0.04505082969696231,
+      0.040591654695357075,
+      0.0
+    ],
+    "saturated_time_fraction": 0.03308823529411765,
+    "rms_torque_Nm": [
+      0.3524901083963417,
+      0.037007098656146764,
+      0.006225027352410543
+    ],
+    "max_joint_speed_rad_s": [
+      5.846813350912097,
+      1.7981296091545478,
+      0.6625650949531808
+    ],
+    "joint_work_J": 0.34079756875888995,
+    "unloaded_fade_time_s": 0.0
+  },
+  "settled_at_end": false,
+  "engine": {
+    "simulator": "Gazebo Harmonic (gz-sim 8.10.0)",
+    "physics": "DART 6.19.5 via gz-physics 7.5.0",
+    "collision_detector": "ode",
+    "step_s": 0.001,
+    "ground": "mesh",
+    "world_info": {
+      "ground": "mesh",
+      "collision_detector": "ode",
+      "mesh": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/short_pulse/_workspace/gazebo/world/terrain_mesh_96a05c5b410e.obj",
+      "bounds": [
+        -0.8999999999999999,
+        0.8999999999999999,
+        -0.8999999999999999,
+        0.8999999999999999
+      ],
+      "vertices": [
+        46,
+        46
+      ],
+      "cell_m": 0.039999999999999994,
+      "low_m": -0.15869428263761845,
+      "high_m": 0.15869428263761845,
+      "terrain": {
+        "name": "side_slope_10",
+        "description": "",
+        "yaw_deg": 0.0,
+        "origin": [
+          0.0,
+          0.0
+        ],
+        "base_friction": null,
+        "features": [
+          {
+            "type": "plane",
+            "slope": [
+              0.0,
+              0.17632698070846498
+            ]
+          }
+        ],
+        "friction_patches": []
+      }
+    }
+  },
+  "wall_time_s": 2.5621232986450195,
+  "bridge_counters": {
+    "admitted": 9595,
+    "rejected": 28785,
+    "unmatched": 0
+  },
+  "warm_fixed_contact_case": {
+    "motion": "world_x",
+    "variant": "candidate",
+    "terrain": {
+      "name": "side_slope_10",
+      "description": "",
+      "yaw_deg": 0.0,
+      "origin": [
+        0.0,
+        0.0
+      ],
+      "base_friction": null,
+      "features": [
+        {
+          "type": "plane",
+          "slope": [
+            0.0,
+            0.17632698070846498
+          ]
+        }
+      ],
+      "friction_patches": []
+    },
+    "phase_rad": 1.5707963267948966,
+    "warmup_s": 0.8,
+    "motion_s": 0.16,
+    "recovery_s": 0.4,
+    "peak_speed_m_s": 0.04,
+    "candidate_overrides": {
+      "rolling_allocation": "feasible",
+      "rolling_adaptive_effort": false
+    },
+    "ramp_s": 0.05,
+    "activation": {
+      "time_s": 0.8000000000000006,
+      "observer_previous_time_s": 0.7950000000000006,
+      "observer_object_preserved": true,
+      "estimator_object_preserved": true,
+      "state_not_reset": true,
+      "qpos": [
+        -1.1690362005545123e-05,
+        -0.020756870016445286,
+        0.11816582981754487,
+        0.9963690145247048,
+        -0.08513973318012588,
+        1.751028293096126e-05,
+        -0.00011145616009128502,
+        1.572013301305727,
+        0.0036110177315199516,
+        -0.004654148953402597
+      ],
+      "qvel": [
+        7.660264340170469e-05,
+        0.000346100778245253,
+        6.092080991331252e-05,
+        -0.0029255423011177797,
+        -0.00037539013401160484,
+        -0.000645960933659438,
+        0.0026141880732475213,
+        0.0036976024769256573,
+        -0.0028258440855612565
+      ],
+      "nominal_joints": [
+        1.5707963267948963,
+        0.0,
+        0.0
+      ],
+      "original_warm_reference_origin": [
+        0.0,
+        0.0
+      ],
+      "active_center_goal_origin": [
+        -1.1690362005545123e-05,
+        -0.020756870016445286
+      ]
+    },
+    "checks": {
+      "single_same_actual_hemisphere_during_motion": true,
+      "min_total_load_fraction_during_motion": 0.9285622958871241,
+      "sufficient_actual_load": true,
+      "actual_start_support": "shell_A",
+      "actual_patch_handovers_during_motion": 0,
+      "minimum_start_shell_load_share": 1.0,
+      "authority_at_motion_start_m_s": 0.0006738570528002259,
+      "authority_max_during_motion_m_s": 0.04963175079873346,
+      "true_authority_at_motion_start_m_s": 0.0006699284320807555,
+      "true_authority_max_during_motion_m_s": 0.049561357282826214,
+      "true_weak_geometry_during_peak": false,
+      "weak_demand_mean_during_peak_m_s": 0.0007914086733110388,
+      "true_weak_demand_mean_during_peak_m_s": 0.0007863119568672695,
+      "requested_speed_peak_m_s": 0.04,
+      "requested_displacement_mm": 4.4,
+      "actual_displacement_along_request_mm": 7.874602536638742,
+      "fractional_goal_completion_at_motion_end": 1.789682394690623,
+      "raw_goal_error_rms_during_motion_mm": 6.387473536769257,
+      "raw_goal_error_peak_during_motion_mm": 9.930312756406867,
+      "raw_goal_error_at_motion_end_mm": 3.4748484797052512,
+      "center_reference_error_rms_during_motion_mm": 6.387419606551888,
+      "center_reference_error_peak_during_motion_mm": 9.930234123196831,
+      "maximum_joint_reference_rad_s": 0.45366688834921887,
+      "maximum_measured_joint_rate_rad_s": 5.846813350912097,
+      "guarded_command_calls": 273
+    },
+    "scope": "Short allocator mechanism test, not trajectory qualification. Fixed-contact claim requires support and authority gates."
+  }
+}

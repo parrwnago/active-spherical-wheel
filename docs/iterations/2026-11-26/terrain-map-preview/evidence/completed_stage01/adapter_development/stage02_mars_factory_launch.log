@@ -1,0 +1,132 @@
+{
+  "passed": true,
+  "scope": "One saved initial pose plus20 repeats for throughput only; no fulltrace sensor replay or physics.",
+  "compile_s": 2.787098387008882,
+  "single_capture_s": 0.014033472994924523,
+  "twenty_capture_s": 0.2894169810024323,
+  "rays_per_s": 849155.4267091695,
+  "extrapolated_880_capture_s": 12.734347164107021,
+  "source_sha256": "476f87cc8f4a9b1081d7ea2be4c6b15e89ebb2efade31f9c3516a5d6dd24a549",
+  "geometry_parity_checks": [
+    {
+      "origin": [
+        -1.6,
+        9.6,
+        10.0
+      ],
+      "range_error_m": 4.508087236843039e-08,
+      "normal_vector_error": 4.146187233855356e-07
+    },
+    {
+      "origin": [
+        -1.53,
+        9.58,
+        10.0
+      ],
+      "range_error_m": 5.0642974258607865e-09,
+      "normal_vector_error": 1.0777865610406162e-06
+    },
+    {
+      "origin": [
+        -1.67,
+        9.63,
+        10.0
+      ],
+      "range_error_m": 1.1373902708555761e-08,
+      "normal_vector_error": 8.299531591938703e-07
+    }
+  ],
+  "scene": {
+    "scene": "Mars collision geometry, ideal optical robot selfmask",
+    "bounds_xy_m": [
+      -4.37802231870233,
+      1.130182325840717,
+      7.014796035093002,
+      12.134836278500703
+    ],
+    "crop_rule": "All triangles whose world XY AABB intersects bounds; vertices need not lie inside crop.",
+    "source_assets": [
+      {
+        "name": "dem",
+        "path": "/home/parrwnago/active-spherical-wheel/results/lqr_contact_forecast_20261125/campaign/_workspaces/mars_figure8_p090/worker_260079/gazebo/world/marsyard2021_dem.obj",
+        "sha256": "cd62cacba94c8cd04576627811e330a23c9385b8de23aece98c2025ddd35f6a6",
+        "vertices": 250000,
+        "triangles": 498002
+      },
+      {
+        "name": "lava",
+        "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/lava.obj",
+        "sha256": "7c5db43cb0b1d2aa509c793d662f02d13c41f34cf43c2a8232acc1be57a5f2a9",
+        "vertices": 7528,
+        "triangles": 13836
+      },
+      {
+        "name": "rocks_big",
+        "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_big.obj",
+        "sha256": "7a8e0be5a3f1c7bbc7ffe8c5a511be14b25485c713a8caf6cf42dd20e9fdb49f",
+        "vertices": 3333,
+        "triangles": 6510
+      },
+      {
+        "name": "rocks_medium",
+        "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_medium.obj",
+        "sha256": "ccf20567f10256c2617879d73a1d842d4275cf36c9d6a2f93f4162584614d342",
+        "vertices": 38673,
+        "triangles": 70318
+      }
+    ],
+    "cropped_assets": [
+      {
+        "name": "dem",
+        "path": "/home/parrwnago/active-spherical-wheel/results/terrain_memory_20261126/adapter_development/stage02_mars_factory/scene/dem_collision_crop.obj",
+        "sha256": "3d612411ec05185a0028341a5946225a93a1d0147faff854ddd947535e629f8a",
+        "vertices": 3420,
+        "triangles": 6608
+      },
+      {
+        "name": "lava",
+        "path": "/home/parrwnago/active-spherical-wheel/results/terrain_memory_20261126/adapter_development/stage02_mars_factory/scene/lava_collision_crop.obj",
+        "sha256": "0087bd649cd0bfdeb113aedc5442e8a410f8d3dc0501accc8822942d03ec9bd7",
+        "vertices": 33,
+        "triangles": 39
+      },
+      {
+        "name": "rocks_big",
+        "path": "/home/parrwnago/active-spherical-wheel/results/terrain_memory_20261126/adapter_development/stage02_mars_factory/scene/rocks_big_collision_crop.obj",
+        "sha256": "96ec84cdd1c6adcaa499af7d2330c39d1ce540ac89d8056ce9d54d893f473997",
+        "vertices": 76,
+        "triangles": 120
+      },
+      {
+        "name": "rocks_medium",
+        "path": "/home/parrwnago/active-spherical-wheel/results/terrain_memory_20261126/adapter_development/stage02_mars_factory/scene/rocks_medium_collision_crop.obj",
+        "sha256": "7e1efcf56bcf19c93faf72a3e10f94f13c49b202e42c2c1e8351667350f2bbcd",
+        "vertices": 16,
+        "triangles": 28
+      }
+    ],
+    "scene_xml": "/home/parrwnago/active-spherical-wheel/results/terrain_memory_20261126/adapter_development/stage02_mars_factory/scene/depth_scene.xml",
+    "scene_xml_sha256": "a235a257b79ec5fb202d3c30297a68344797c3abfa1e0a336e5bef8132a2cb48",
+    "feature_link_yaw_rad": 1.5707963268,
+    "feature_local_z_offsets_m": {
+      "lava": 0.0,
+      "rocks_big": 0.0,
+      "rocks_medium": -0.03
+    },
+    "environment_policy": "Saved collision DEM triangles and original lava/rock faces; no visual heightmap/resampling or smooth vertex normals.",
+    "robot_policy": "Generated visible CAD/fork/shaft/belt geoms; groups3/5 hidden wedges/proxies excluded. Known-model self-first-hits masked, not transparent. Not an exact Gazebo robot optical sensor.",
+    "robot_model_xml": "/home/parrwnago/active-spherical-wheel/results/terrain_memory_20261126/adapter_development/stage02_mars_factory/scene/robot/model.xml",
+    "robot_model_xml_sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36",
+    "backend": "MuJoCo mj_multiRay/mj_ray triangle first-hit; no dynamics",
+    "mujoco_version": "3.16.0",
+    "environment_geom_count": 4,
+    "robot_occluder_geom_count": 10,
+    "numerical_geometry": "Source triangle coordinates preserved in assets; MuJoCo compiled mesh vertices use float32. Face normals, never OBJ smooth vn."
+  },
+  "fixture_valid_pixels": {
+    "camera_000": 3030,
+    "camera_090": 2740,
+    "camera_180": 2613,
+    "camera_270": 2299
+  }
+}

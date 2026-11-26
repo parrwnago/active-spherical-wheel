@@ -1,0 +1,64 @@
+{
+  "file": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/videos/mars_figure8_p030_v2_regression.mp4",
+  "sha256": "db250db3a8e3d9dbb1d462ef668653b6cbbef49b34c62cec8d104ca54b6c276e",
+  "size_bytes": 1697379,
+  "fps": 20.0,
+  "frames": 161,
+  "dimensions": [
+    1920,
+    720
+  ],
+  "video_duration_s": 8.05,
+  "sim_interval_s": [
+    29.020000457763672,
+    31.020000457763672
+  ],
+  "event_time_s": 30.020000457763672,
+  "playback_speed": 0.25,
+  "final_frame_decoded": true,
+  "event_selection": "Largest candidate error to ORIGINAL nominal path; +/-1 simulation second.",
+  "candidate": "feasible_v2; position-error cap 1m, catch-up gain 1/s, catch-up speed cap 0.06m/s, balance guard off.",
+  "scope": "Saved Gazebo/DART states drawn in the MuJoCo Mars viewer; no new physics or controller calls.",
+  "evidence": [
+    {
+      "variant": "baseline",
+      "directory": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/baseline/plain_figure8/phase_+0.30",
+      "rollout_sha256": "a2012cac8ce86080192388873a0e83b43fbd091fd1d0eb246bd348d3a3b0c936",
+      "full_run_tracking": {
+        "rms_error_m": 0.05465742540362825,
+        "max_error_m": 0.15428047208758613,
+        "final_error_m": 0.02082132786489683,
+        "rms_error_while_moving_m": 0.05696276278790229
+      },
+      "full_run_attitude": {
+        "max_tilt_deg": 12.712802728556042,
+        "max_error_from_reference_deg": 9.483546074520923,
+        "rms_error_from_reference_deg": 1.3679253913524763,
+        "final_error_from_reference_deg": 0.5140658423830536,
+        "heading_change_deg": -288.515612528198
+      },
+      "event_original_path_error_mm": 76.68448852946602,
+      "event_feedback_reference_error_mm": 76.68448852946602
+    },
+    {
+      "variant": "feasible_v2",
+      "directory": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/feasible_v2/plain_figure8/phase_+0.30",
+      "rollout_sha256": "cee0ac509000cce4b0ced6931f376d6577a96bb7a1a9f39c175004b2c13b5cd1",
+      "full_run_tracking": {
+        "rms_error_m": 0.061667724586044984,
+        "max_error_m": 0.29590898657321807,
+        "final_error_m": 0.017501755213694497,
+        "rms_error_while_moving_m": 0.06431343149429719
+      },
+      "full_run_attitude": {
+        "max_tilt_deg": 16.118855821993886,
+        "max_error_from_reference_deg": 12.507335278767437,
+        "rms_error_from_reference_deg": 2.286176865810329,
+        "final_error_from_reference_deg": 0.4093899921630989,
+        "heading_change_deg": -43.14352206823717
+      },
+      "event_original_path_error_mm": 295.90894981200495,
+      "event_feedback_reference_error_mm": 295.9048497310071
+    }
+  ]
+}

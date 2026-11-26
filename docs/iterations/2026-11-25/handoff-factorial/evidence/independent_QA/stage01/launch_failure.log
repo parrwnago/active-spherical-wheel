@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/results/handoff_factorial_20261125/independent_QA/verify_raw_interventions.py", line 155, in <module>
+    main()
+  File "/home/parrwnago/active-spherical-wheel/results/handoff_factorial_20261125/independent_QA/verify_raw_interventions.py", line 57, in main
+    np.testing.assert_array_equal(time,log['time_s'])
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/testing/_private/utils.py", line 920, in assert_array_equal
+    assert_array_compare(operator.__eq__, x, y, err_msg=err_msg,
+  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
+    return func(*args, **kwds)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/testing/_private/utils.py", line 797, in assert_array_compare
+    raise AssertionError(msg)
+AssertionError: 
+Arrays are not equal
+
+Mismatched elements: 8800 / 8801 (100%)
+Max absolute difference: 1.8310587e-06
+Max relative difference: 5.71400447e-08
+ x: array([0.0000e+00, 5.0000e-03, 1.0000e-02, ..., 4.3990e+01, 4.3995e+01,
+       4.4000e+01])
+ y: array([0.0000e+00, 5.0000e-03, 1.0000e-02, ..., 4.3990e+01, 4.3995e+01,
+       4.4000e+01], dtype=float32)

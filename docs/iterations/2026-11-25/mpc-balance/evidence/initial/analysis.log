@@ -1,0 +1,73 @@
+{
+  "status": "initial_candidate_not_accepted",
+  "acceptance": {
+    "world_x": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": true,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": false,
+        "path_rms_regression_at_most_10pct": false
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "fallback_at_most_5pct",
+        "path_rms_regression_at_most_10pct"
+      ]
+    },
+    "world_y": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": false,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": true,
+        "lower_lean_integral": true,
+        "lower_original_clock_path_rms": true
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "final_goal_within_5mm"
+      ]
+    }
+  },
+  "rows": [
+    {
+      "direction": "world_x",
+      "variant": "baseline",
+      "original_clock_path_rms_mm": 10.366450957688176,
+      "original_goal_final_error_mm": 5.300235765395867,
+      "final_progress_mm": 15.519110780197632,
+      "peak_reference_lean_deg": 1.3909749613839726,
+      "fallback_fraction": 0.0
+    },
+    {
+      "direction": "world_x",
+      "variant": "mpc",
+      "original_clock_path_rms_mm": 13.57912090988503,
+      "original_goal_final_error_mm": 1.7941750013339828,
+      "final_progress_mm": 15.2726764464549,
+      "peak_reference_lean_deg": 0.9242801949497546,
+      "fallback_fraction": 0.6826086956521739
+    },
+    {
+      "direction": "world_y",
+      "variant": "baseline",
+      "original_clock_path_rms_mm": 235.6309365968619,
+      "original_goal_final_error_mm": 98.82571930310188,
+      "final_progress_mm": -74.46692210339017,
+      "peak_reference_lean_deg": 9.362855757652037,
+      "fallback_fraction": 0.0
+    },
+    {
+      "direction": "world_y",
+      "variant": "mpc",
+      "original_clock_path_rms_mm": 20.07124066238992,
+      "original_goal_final_error_mm": 25.081235430644366,
+      "final_progress_mm": -8.753198551085285,
+      "peak_reference_lean_deg": 1.768385921874607,
+      "fallback_fraction": 0.0
+    }
+  ]
+}

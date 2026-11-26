@@ -1,0 +1,72 @@
+"""Check finite-difference sensitivity at the four audited force-gap states."""
+from pathlib import Path
+import hashlib
+import json
+
+import numpy as np
+
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+from spherical_wheel.predictive_control import ROBOT_STATE_SCALES
+
+
+HERE = Path(__file__).resolve().parent
+OUT = HERE/'calibration_audit'
+ROOT = HERE.parents[2]
+
+
+def main():
+    folder = HERE/'runs/world_x/mpc'
+    plans = json.loads((folder/'plans.json').read_text())
+    with np.load(folder/'precision.npz') as data:
+        exact = {key: data[key] for key in data}
+    with np.load(folder/'rollout.npz') as data:
+        log = {key: data[key] for key in data}
+    mirror = StateMirror(model_dir=OUT/'derivative_mirror')
+    predictor = EstimatedPlanePredictor(mirror)
+    scales = np.array(ROBOT_STATE_SCALES)
+    rows = []
+    for at in (1.66, 1.70, 2., 3.):
+        plan = min(plans, key=lambda row: abs(row['time_s']-at))
+        index = int(np.argmin(abs(exact['time_s']-plan['time_s'])))
+        q, v = np.array(plan['qpos']), np.array(plan['qvel'])
+        command = exact['exact_applied'][index-1]
+        mirror.set_state(q, v, plan['time_s'], command)
+        calibration = predictor.update(q, v, plan['normal'], plan['point_m'], plan['load_N'],
+                                      friction=float(log['estimated_friction'][index]), command=command)
+        entries, first = [], None
+        for epsilon in (1e-5, 5e-6, 1e-6):
+            A, B, f0 = predictor.linearize(q, v, command, .02, epsilon)
+            scaled_A = A*scales[None, :]/scales[:, None]
+            scaled_B = B*mirror.bounds[None, :]/scales[:, None]
+            if first is None:
+                first = (scaled_A.copy(), scaled_B.copy())
+            rng = np.random.default_rng(71)
+            dx = rng.normal(size=18)*scales*1e-7
+            du = rng.normal(size=5)*mirror.bounds*1e-7
+            qq, vv = predictor.perturb(q, v, dx)
+            pq, pv = predictor.transition(qq, vv, command+du, .02)
+            actual = predictor.tangent(q, v, pq, pv)
+            predicted = f0+A@dx+B@du
+            error = actual-predicted
+            A20 = np.linalg.matrix_power(scaled_A, 20)
+            entries.append({'epsilon': epsilon, 'scaled_A_max_abs': float(np.max(abs(scaled_A))),
+                'spectral_radius': float(np.max(abs(np.linalg.eigvals(A)))),
+                'log10_max_abs_scaled_A_power20': float(np.log10(max(1e-300, np.max(abs(A20))))),
+                'scaled_A_relative_difference_from_1e_5': float(np.linalg.norm(scaled_A-first[0])/np.linalg.norm(first[0])),
+                'scaled_B_relative_difference_from_1e_5': float(np.linalg.norm(scaled_B-first[1])/np.linalg.norm(first[1])),
+                'independent_direction_scaled_relative_prediction_error': float(np.linalg.norm(error/scales)/np.linalg.norm((actual-f0)/scales)),
+                'independent_direction_xy_absolute_error_mm': float(1000*np.linalg.norm(error[:2])),
+                'independent_direction_rotation_absolute_error_deg': float(np.degrees(np.linalg.norm(error[3:6])))})
+        rows.append({'time_s': plan['time_s'], 'calibration': calibration, 'entries': entries})
+    report = {'scope': __doc__, 'rows': rows,
+              'limits': 'This audits local derivatives on recorded states, not a new controller trial or proof of long-horizon accuracy.',
+              'source_sha256': {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
+                               for path in [ROOT/'src/spherical_wheel/predictive_model.py', Path(__file__)]}}
+    (OUT/'derivatives.json').write_text(json.dumps(report, indent=2)+'\n')
+    for row in rows:
+        print(json.dumps({'time_s': row['time_s'], 'entries': row['entries']}))
+
+
+if __name__ == '__main__':
+    main()

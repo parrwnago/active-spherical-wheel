@@ -1,0 +1,105 @@
+{
+  "file": "/home/parrwnago/active-spherical-wheel/results/support_identity_probe_20261125/videos/probe_baseline_vs_interval_mean.mp4",
+  "sha256": "0ffd1070ef1da5132bc80fcd2d9625675ecd52db188ea1352289874710fc193e",
+  "size_bytes": 2039675,
+  "fps": 20.0,
+  "frames": 201,
+  "dimensions": [
+    1920,
+    720
+  ],
+  "video_duration_s": 10.05,
+  "sim_interval_s": [
+    28.7,
+    31.7
+  ],
+  "playback_speed": 0.3,
+  "preview_s": 28.975,
+  "final_frame_decoded": true,
+  "rendering": "Saved states only. No new physics, controller calls or counterfactual state updates.",
+  "timing": "Observer: preceding5ms momentum plus10ms wrench filter. Last1ms support is instantaneous at control boundary; preceding-five-substep mean is unfiltered.",
+  "semantics": "A sampled support-label disagreement is not labelled continuously wrong. Diagnostic oracle feedback-share injection is not deployable sensing.",
+  "renderer_sha256": "ff48543df3b2abe580b75889b14d11947dd8dc53c8adf5b05d22d907080a9783",
+  "sources": [
+    {
+      "branch": "baseline",
+      "directory": "/home/parrwnago/active-spherical-wheel/results/support_identity_probe_20261125/runs/baseline",
+      "historical": false,
+      "artifact_sha256": {
+        "rollout.npz": "1f8170a33583cbbeb2a30b6b5828f60c50edee6e748f70604f3432b84071f902",
+        "summary.json": "814afc856b984ab77f93d450731e4b7769bb142ba9001fed55584395b13ad632",
+        "probe.npz": "426dc5fc28569036cb7074bd160b59940aef744526b35f32f79adf9ac6fded82",
+        "truth_substeps.npz": "5bdbe656e1091af8f8d5e39646bf1fb02d218aa9ed3db8b1af413ff7cd682f60",
+        "provenance.json": "3c7b5a4568c9145155210c7000b93b4a370e52be8fff3a54566d33f1188ae8e9"
+      },
+      "tracking": {
+        "rms_error_m": 0.09402800673423463,
+        "max_error_m": 0.3177809676289623,
+        "final_error_m": 0.08765705406435653,
+        "rms_error_while_moving_m": 0.07707637214846595
+      },
+      "attitude": {
+        "max_tilt_deg": 14.13178569441368,
+        "max_error_from_reference_deg": 13.912955436423516,
+        "rms_error_from_reference_deg": 2.4270130144135584,
+        "final_error_from_reference_deg": 1.1194856254027021,
+        "heading_change_deg": -186.00772807364788
+      },
+      "intervention": {
+        "variant": "baseline",
+        "feedback_load_share_only": true,
+        "intervention_window_s": [
+          28.9,
+          29.385
+        ],
+        "intervened_calls": 0,
+        "guarded_controller_calls": 8801,
+        "outside_window_injections": 0,
+        "total_load_preservation_max_error_N": 0.0,
+        "controller_component_identities_preserved": true,
+        "truth_timing": "last_substep: latest completed 1 ms; interval_mean: mean of all five preceding 1 ms substep loads. Neither is observer-filtered.",
+        "scope": "Only feedback load shares, normalized to the original inferred total. Locator records, normal/force estimates, rolling allocation and synchronization records stay native. Feedback-held load/gain history may carry effects onward."
+      }
+    },
+    {
+      "branch": "interval_mean",
+      "directory": "/home/parrwnago/active-spherical-wheel/results/support_identity_probe_20261125/runs/interval_mean",
+      "historical": false,
+      "artifact_sha256": {
+        "rollout.npz": "741f2123e06634ac3556e983313b0d0e833e15e75796cd0723bbb4255036c0d8",
+        "summary.json": "39ad043d198ef6d74db3b58cb60b631f3105179e2d8a034c0ce5695165c8d2fe",
+        "probe.npz": "9f228ad849d04a3bdbd8f2de89908e8f4d607fb79732bf6a450d0501a4da330d",
+        "truth_substeps.npz": "cdc3686caf8e9daa7e20f0303b65d7576567cde9144b52501d0f238e39d7528f",
+        "provenance.json": "a7997d872bd773151de1c3cc865012d2c3bbe8e98a84780229ed7dda705a6262"
+      },
+      "tracking": {
+        "rms_error_m": 0.09563962596987548,
+        "max_error_m": 0.34086797275301217,
+        "final_error_m": 0.20652920003506145,
+        "rms_error_while_moving_m": 0.07511437590415854
+      },
+      "attitude": {
+        "max_tilt_deg": 14.467392452762525,
+        "max_error_from_reference_deg": 16.759822411322478,
+        "rms_error_from_reference_deg": 2.5198394575841494,
+        "final_error_from_reference_deg": 0.5012891450438177,
+        "heading_change_deg": -93.0807879531443
+      },
+      "intervention": {
+        "variant": "interval_mean",
+        "feedback_load_share_only": true,
+        "intervention_window_s": [
+          28.9,
+          29.385
+        ],
+        "intervened_calls": 98,
+        "guarded_controller_calls": 8801,
+        "outside_window_injections": 0,
+        "total_load_preservation_max_error_N": 3.552713678800501e-15,
+        "controller_component_identities_preserved": true,
+        "truth_timing": "last_substep: latest completed 1 ms; interval_mean: mean of all five preceding 1 ms substep loads. Neither is observer-filtered.",
+        "scope": "Only feedback load shares, normalized to the original inferred total. Locator records, normal/force estimates, rolling allocation and synchronization records stay native. Feedback-held load/gain history may carry effects onward."
+      }
+    }
+  ]
+}

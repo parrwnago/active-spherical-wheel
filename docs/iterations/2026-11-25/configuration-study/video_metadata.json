@@ -1,0 +1,330 @@
+{
+  "config_source": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/controlled/_workspaces/worker_111267/flat/model_config.json",
+  "videos": [
+    {
+      "file": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/videos/world_y_baseline_vs_adaptive.mp4",
+      "size_bytes": 1653544,
+      "sha256": "aa88c8b973cb13b1d3f31fd95c0e740ecb8bd36919619cbc90a3c81053175e3b",
+      "fps": 20.0,
+      "dimensions": [
+        1920,
+        720
+      ],
+      "frames": 161,
+      "video_duration_s": 8.05,
+      "simulation_interval_s": [
+        0.0,
+        4.0
+      ],
+      "playback_speed": 0.5,
+      "final_frame_decoded": true,
+      "comparison": "Same world-Y reference and initial physical geometry; baseline versus existing adaptive allocator.",
+      "render_scope": "Logged Gazebo/DART qpos in analytical MuJoCo terrain viewer; no new physics.",
+      "sensing": "Exact state inputs, estimated contacts. Actual support displayed for evaluation only.",
+      "limits": "Adaptive bounds apply to drive references; final torque/belt-command limits are separate; actual joint rates need not obey reference bounds.",
+      "runs": [
+        {
+          "directory": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/controlled/runs/side_slope_10/phase_1.5708/pitch_0/world_y/baseline",
+          "rollout_sha256": "b8b42b4d225236563edf8eed2871543fb2f85753a035ce85c6fec8f0f9815ffb",
+          "tracking": {
+            "rms_error_m": 0.27506951387520273,
+            "max_error_m": 0.4689787753692985,
+            "final_error_m": 0.3057865075986769,
+            "rms_error_while_moving_m": 0.23341341787492295
+          },
+          "attitude": {
+            "max_tilt_deg": 19.956789626949366,
+            "max_error_from_reference_deg": 11.275896455067155,
+            "rms_error_from_reference_deg": 4.610614710137688,
+            "final_error_from_reference_deg": 0.4185709403226137,
+            "heading_change_deg": 87.80665956866076
+          },
+          "estimated_patch_changes": 66,
+          "configuration": {
+            "output": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/controlled",
+            "case_id": "side_slope_10/phase_1.5708/pitch_0/world_y",
+            "terrain": "side_slope_10",
+            "phase_rad": 1.5707963267948966,
+            "fork_pitch_offset_deg": 0.0,
+            "motion": "world_y",
+            "variant": "baseline",
+            "placement": {
+              "carrier_rotation_max_error": 0.0,
+              "shaft_axis_max_error": 7.89622610514017e-29,
+              "terrain_normal": [
+                -0.0,
+                -0.17364817766693036,
+                0.9848077530122081
+              ],
+              "initial_qpos": [
+                -6.744573267049733e-19,
+                -0.020833452154469318,
+                0.1181523784435176,
+                0.9963964915469263,
+                -0.08481763751116916,
+                1.6177783937751703e-18,
+                -1.3771243529482041e-19,
+                1.5707963267948968,
+                -3.790836570765118e-18,
+                -5.881051456869282e-27
+              ],
+              "initialization": "Existing terrain-informed balance, then compensated fork pitch; static observer reset in every case."
+            },
+            "reference": {
+              "distance_m": 0.12,
+              "heading_deg": 90.0,
+              "duration_s": 2.5,
+              "start_s": 0.5,
+              "profile": "cruise",
+              "ramp_s": 0.5,
+              "origin": [
+                0.0,
+                0.0
+              ],
+              "cruise_speed_m_s": 0.06
+            },
+            "scope": "Four-second mechanism comparison, not Mars-route qualification.",
+            "cold_observer_window_s": [
+              0.0,
+              0.3
+            ],
+            "motion_starts_s": 0.5,
+            "contact_truth_api_guarded_calls": 801
+          }
+        },
+        {
+          "directory": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/controlled/runs/side_slope_10/phase_1.5708/pitch_0/world_y/adaptive",
+          "rollout_sha256": "3a367bc350d3139f16008d0ba88ac688f420f8e6521957ac26ad666bd3382eb3",
+          "tracking": {
+            "rms_error_m": 0.2785242183942061,
+            "max_error_m": 0.4772330681540428,
+            "final_error_m": 0.31956578866919366,
+            "rms_error_while_moving_m": 0.2311137114654284
+          },
+          "attitude": {
+            "max_tilt_deg": 19.924972538898988,
+            "max_error_from_reference_deg": 11.313254527309164,
+            "rms_error_from_reference_deg": 4.637913225527922,
+            "final_error_from_reference_deg": 0.5894466713017971,
+            "heading_change_deg": 87.72123109325976
+          },
+          "estimated_patch_changes": 74,
+          "configuration": {
+            "output": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/controlled",
+            "case_id": "side_slope_10/phase_1.5708/pitch_0/world_y",
+            "terrain": "side_slope_10",
+            "phase_rad": 1.5707963267948966,
+            "fork_pitch_offset_deg": 0.0,
+            "motion": "world_y",
+            "variant": "adaptive",
+            "placement": {
+              "carrier_rotation_max_error": 0.0,
+              "shaft_axis_max_error": 4.8836287082313236e-30,
+              "terrain_normal": [
+                -0.0,
+                -0.17364817766693036,
+                0.9848077530122081
+              ],
+              "initial_qpos": [
+                -6.744573266062843e-19,
+                -0.02083345215446932,
+                0.1181523784435176,
+                0.9963964915469263,
+                -0.08481763751116916,
+                1.617778393538451e-18,
+                -1.3771243535072732e-19,
+                1.5707963267948968,
+                -3.790836569976145e-18,
+                -5.881051456869281e-27
+              ],
+              "initialization": "Existing terrain-informed balance, then compensated fork pitch; static observer reset in every case."
+            },
+            "reference": {
+              "distance_m": 0.12,
+              "heading_deg": 90.0,
+              "duration_s": 2.5,
+              "start_s": 0.5,
+              "profile": "cruise",
+              "ramp_s": 0.5,
+              "origin": [
+                0.0,
+                0.0
+              ],
+              "cruise_speed_m_s": 0.06
+            },
+            "scope": "Four-second mechanism comparison, not Mars-route qualification.",
+            "cold_observer_window_s": [
+              0.0,
+              0.3
+            ],
+            "motion_starts_s": 0.5,
+            "contact_truth_api_guarded_calls": 801
+          }
+        }
+      ]
+    },
+    {
+      "file": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/videos/baseline_world_x_vs_world_y.mp4",
+      "size_bytes": 1363731,
+      "sha256": "5054758a5e2da9bc2f80f5fac84b92639321d911cd24cff84a7e962e4979b555",
+      "fps": 20.0,
+      "dimensions": [
+        1920,
+        720
+      ],
+      "frames": 161,
+      "video_duration_s": 8.05,
+      "simulation_interval_s": [
+        0.0,
+        4.0
+      ],
+      "playback_speed": 0.5,
+      "final_frame_decoded": true,
+      "comparison": "Different reference directions, same baseline algorithm and initial physical geometry. Not an algorithm improvement comparison.",
+      "render_scope": "Logged Gazebo/DART qpos in analytical MuJoCo terrain viewer; no new physics.",
+      "sensing": "Exact state inputs, estimated contacts. Actual support displayed for evaluation only.",
+      "limits": "Adaptive bounds apply to drive references; final torque/belt-command limits are separate; actual joint rates need not obey reference bounds.",
+      "runs": [
+        {
+          "directory": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/controlled/runs/side_slope_10/phase_1.5708/pitch_0/world_x/baseline",
+          "rollout_sha256": "32008f63799ed8d8cd1c0dd601963bc8599a916b42f2deb39d79bb2f8a515b37",
+          "tracking": {
+            "rms_error_m": 0.016262173676152885,
+            "max_error_m": 0.024119338461205054,
+            "final_error_m": 0.012405820600104077,
+            "rms_error_while_moving_m": 0.01706648902431647
+          },
+          "attitude": {
+            "max_tilt_deg": 10.127735329680855,
+            "max_error_from_reference_deg": 1.4467597760792124,
+            "rms_error_from_reference_deg": 0.4083686163246531,
+            "final_error_from_reference_deg": 0.15850228383159254,
+            "heading_change_deg": 4.473671660772012
+          },
+          "estimated_patch_changes": 0,
+          "configuration": {
+            "output": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/controlled",
+            "case_id": "side_slope_10/phase_1.5708/pitch_0/world_x",
+            "terrain": "side_slope_10",
+            "phase_rad": 1.5707963267948966,
+            "fork_pitch_offset_deg": 0.0,
+            "motion": "world_x",
+            "variant": "baseline",
+            "placement": {
+              "carrier_rotation_max_error": 0.0,
+              "shaft_axis_max_error": 5.537019701164137e-29,
+              "terrain_normal": [
+                -0.0,
+                -0.17364817766693036,
+                0.9848077530122081
+              ],
+              "initial_qpos": [
+                -6.744573266062843e-19,
+                -0.02083345215446932,
+                0.1181523784435176,
+                0.9963964915469263,
+                -0.08481763751116916,
+                1.617778393538451e-18,
+                -1.3771243535072732e-19,
+                1.5707963267948968,
+                -3.790836569976145e-18,
+                -5.881051456869281e-27
+              ],
+              "initialization": "Existing terrain-informed balance, then compensated fork pitch; static observer reset in every case."
+            },
+            "reference": {
+              "distance_m": 0.12,
+              "heading_deg": 0.0,
+              "duration_s": 2.5,
+              "start_s": 0.5,
+              "profile": "cruise",
+              "ramp_s": 0.5,
+              "origin": [
+                0.0,
+                0.0
+              ],
+              "cruise_speed_m_s": 0.06
+            },
+            "scope": "Four-second mechanism comparison, not Mars-route qualification.",
+            "cold_observer_window_s": [
+              0.0,
+              0.3
+            ],
+            "motion_starts_s": 0.5,
+            "contact_truth_api_guarded_calls": 801
+          }
+        },
+        {
+          "directory": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/controlled/runs/side_slope_10/phase_1.5708/pitch_0/world_y/baseline",
+          "rollout_sha256": "b8b42b4d225236563edf8eed2871543fb2f85753a035ce85c6fec8f0f9815ffb",
+          "tracking": {
+            "rms_error_m": 0.27506951387520273,
+            "max_error_m": 0.4689787753692985,
+            "final_error_m": 0.3057865075986769,
+            "rms_error_while_moving_m": 0.23341341787492295
+          },
+          "attitude": {
+            "max_tilt_deg": 19.956789626949366,
+            "max_error_from_reference_deg": 11.275896455067155,
+            "rms_error_from_reference_deg": 4.610614710137688,
+            "final_error_from_reference_deg": 0.4185709403226137,
+            "heading_change_deg": 87.80665956866076
+          },
+          "estimated_patch_changes": 66,
+          "configuration": {
+            "output": "/home/parrwnago/active-spherical-wheel/results/configuration_study_20261125/controlled",
+            "case_id": "side_slope_10/phase_1.5708/pitch_0/world_y",
+            "terrain": "side_slope_10",
+            "phase_rad": 1.5707963267948966,
+            "fork_pitch_offset_deg": 0.0,
+            "motion": "world_y",
+            "variant": "baseline",
+            "placement": {
+              "carrier_rotation_max_error": 0.0,
+              "shaft_axis_max_error": 7.89622610514017e-29,
+              "terrain_normal": [
+                -0.0,
+                -0.17364817766693036,
+                0.9848077530122081
+              ],
+              "initial_qpos": [
+                -6.744573267049733e-19,
+                -0.020833452154469318,
+                0.1181523784435176,
+                0.9963964915469263,
+                -0.08481763751116916,
+                1.6177783937751703e-18,
+                -1.3771243529482041e-19,
+                1.5707963267948968,
+                -3.790836570765118e-18,
+                -5.881051456869282e-27
+              ],
+              "initialization": "Existing terrain-informed balance, then compensated fork pitch; static observer reset in every case."
+            },
+            "reference": {
+              "distance_m": 0.12,
+              "heading_deg": 90.0,
+              "duration_s": 2.5,
+              "start_s": 0.5,
+              "profile": "cruise",
+              "ramp_s": 0.5,
+              "origin": [
+                0.0,
+                0.0
+              ],
+              "cruise_speed_m_s": 0.06
+            },
+            "scope": "Four-second mechanism comparison, not Mars-route qualification.",
+            "cold_observer_window_s": [
+              0.0,
+              0.3
+            ],
+            "motion_starts_s": 0.5,
+            "contact_truth_api_guarded_calls": 801
+          }
+        }
+      ]
+    }
+  ],
+  "caveat": "Four-second mechanism cases, not route qualification. No new smooth-weight policy was implemented."
+}

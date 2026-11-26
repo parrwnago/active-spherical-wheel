@@ -1,0 +1,44 @@
+{
+  "iteration": "I-42",
+  "stage": "Post-primary turn-regression addendum",
+  "declared_utc": "2026-11-26T04:03:49.082625+00:00",
+  "status": "Declared after primary four-arm results, before any turn comparison calculations; secondary diagnostic only.",
+  "arms": [
+    "baseline",
+    "feedback_shares",
+    "sync_off",
+    "both"
+  ],
+  "fixed_events": "All EXACT first six I41 component-turn times, axes, incoming/outgoing signs and analytic component extrema from corrected turn_events.json; no favorable event selection.",
+  "windows": "Each fixed reference event time minus1s through plus2s, both observation endpoints included.",
+  "geometric_overshoot": "max(0,incoming_sign*(actual_component_position-reference_component_extremum)) over full declared window; report post-event maximum separately.",
+  "actual_reversal": "First actual component sign change to the reference outgoing sign sustained>=100ms inside window. Use copied corrected I41 actual_reversal_candidates, including literal-zero plateau handling; report missing/multiple candidates.",
+  "reported": "Per-arm six-turn geometric overshoot, first actual reversal lag, local/time-aligned errors and projection boundary flags. Compare each against baseline descriptively, no statistical claims.",
+  "unchanged": "Primary report, its screen, simulations and defaults remain unchanged. Reference component reversals occur at nonzero vector speed and are not full robot stops.",
+  "primary_report": {
+    "path": "stage01/report.json",
+    "sha256": "3f8e448e9c92c3da6462ee9ac6b40be2f899d013e04f34426f7941e2b397bcc2"
+  },
+  "sources": [
+    {
+      "path": "source/I41_turn_events.json",
+      "origin": "results/figure8_event_audit_20261125/events/selection_stage02_corrected/turn_events.json",
+      "sha256": "9a5a5293f93c8e8e630796793ceb6fac16362f5759e7562c95b1141171a0789b"
+    },
+    {
+      "path": "source/event_metrics.py",
+      "origin": "results/handoff_factorial_20261125/analysis/dependencies/event_metrics.py",
+      "sha256": "144068d7b6d9d1ad1734308df564011e0d5f9799b88ac5a3de8f68d091970283"
+    },
+    {
+      "path": "source/I41_select_events.py",
+      "origin": "results/handoff_factorial_20261125/analysis/dependencies/select_events.py",
+      "sha256": "700632fd1eb8c75584aa9c908a050220d7625766a6b7bc37b4eef9b592cff7d5"
+    },
+    {
+      "path": "source/I41_selection_correction.json",
+      "origin": "results/handoff_factorial_20261125/analysis/dependencies/I41_selection_correction.json",
+      "sha256": "6ba98769142f6fd9b686f86a2735a50faa63a4d2fdf0745d94972dba9ed9f8f0"
+    }
+  ]
+}

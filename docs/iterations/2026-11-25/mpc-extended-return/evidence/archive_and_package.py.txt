@@ -1,0 +1,136 @@
+"""Preserve completed I38 evidence without running physics or tests."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+import zipfile
+
+FAMILY = Path(__file__).resolve().parent
+ROOT = FAMILY.parents[1]
+DOCS = ROOT / 'docs/iterations/2026-11-25/mpc-extended-return'
+DEST = DOCS / 'evidence'
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    pack = FAMILY / 'presentation-pack.zip'
+    if DEST.exists() or pack.exists():
+        raise FileExistsError('Preserve earlier collection; choose a fresh archive stage')
+    protocol = json.loads((FAMILY / 'protocol.json').read_text())
+    folder = FAMILY / 'runs/slope/mpc'
+    provenance = json.loads((folder / 'provenance.json').read_text())
+    assert (FAMILY / 'analysis/report.json').is_file()
+    assert (FAMILY / 'videos/video_metadata.json').is_file()
+    source_checks = 0
+    for rel, digest in provenance['source_sha256'].items():
+        assert sha(folder / 'source_snapshot' / rel) == digest, rel
+        assert digest == protocol['reference_source_sha256'][rel], rel
+        source_checks += 1
+    for name, digest in provenance['generated_sha256'].items():
+        assert sha(folder / name) == digest, name
+    baseline = ROOT / protocol['reference_source']
+    for name, digest in protocol['reference_artifact_sha256'].items():
+        assert sha(baseline / name) == digest, name
+    for rel, digest in protocol['old_pack_hashes'].items():
+        assert sha(ROOT / rel) == digest, rel
+    child_artifact_checks = 0
+    for name in ('artifact_manifest.json', 'return_events_manifest.json'):
+        child = json.loads((FAMILY / 'analysis' / name).read_text())
+        for item in child['files']:
+            assert sha(FAMILY / 'analysis' / item['path']) == item['sha256'], item
+            child_artifact_checks += 1
+    video = json.loads((FAMILY / 'videos/video_metadata.json').read_text())
+    assert sha(ROOT / video['video']['path']) == video['video']['sha256']
+    for rel, digest in video['source_artifact_sha256'].items():
+        assert sha(ROOT / rel) == digest, rel
+    for name, digest in video['stills'].items():
+        assert sha(FAMILY / 'videos' / name) == digest, name
+    DEST.mkdir(parents=True)
+    files, inventory = [], []
+
+    def copy(source, relative, stage):
+        target = DEST / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+        assert sha(source) == sha(target)
+        files.append({'snapshot': str(relative), 'origin': str(source.relative_to(ROOT)),
+                      'bytes': source.stat().st_size, 'sha256': sha(source), 'stage': stage})
+
+    allowed = {'.json', '.log', '.csv', '.png', '.jpg', '.jpeg', '.md', '.txt',
+               '.py', '.yaml', '.yml', '.toml', '.xml', '.pdf'}
+    for source in sorted(FAMILY.rglob('*')):
+        if not source.is_file():
+            continue
+        rel = source.relative_to(FAMILY)
+        if '__pycache__' in rel.parts or source.suffix == '.pyc':
+            continue
+        inventory.append({'origin': str(source.relative_to(ROOT)),
+                          'bytes': source.stat().st_size, 'sha256': sha(source)})
+        generated = any(x in rel.parts for x in ('_workspaces', '_render_scene', 'meshes'))
+        if generated or source.name == 'plans.json' or source.suffix not in allowed or source.stat().st_size > 5 * 1024 * 1024:
+            continue
+        target_rel = rel.with_suffix(rel.suffix + '.txt') if source.suffix == '.py' else rel
+        stage = ('exact_launch_source' if 'source_snapshot' in rel.parts and rel.parts[0] == 'runs' else
+                 'saved_state_render_source__not_new_physics' if rel.parts[0] == 'videos' else
+                 'completed_I38_artifact_or_read_only_postprocessing')
+        copy(source, target_rel, stage)
+    for name in ('provenance.json', 'summary.json', 'terrain.json'):
+        copy(baseline / name, Path('reused_I34_baseline') / name, 'reused_I34__not_new_execution')
+    for rel in ('results/mpc_equilibrium_20261125/independent_search/report.json',
+                'results/mpc_search_20261125/analysis/report.json'):
+        copy(ROOT / rel, Path('reused_inputs') / rel, 'reused_source_or_baseline__not_new_execution')
+    raw = DEST / 'raw_inventory.json'
+    raw.write_text(json.dumps(inventory, indent=2) + '\n')
+    files.append({'snapshot': raw.name, 'origin': 'archive_and_package.py',
+                  'bytes': raw.stat().st_size, 'sha256': sha(raw), 'stage': 'archival_index'})
+    manifest = {'iteration': 'I-38', 'scope': 'One new Gazebo/DART execution, unchanged I34 seeded controller with longer duration. Earlier comparisons explicitly reused. Collection runs no physics or tests.',
+        'files': files, 'artifact_count_excluding_manifest': len(files),
+        'artifact_bytes_excluding_manifest': sum(f['bytes'] for f in files),
+        'verified_launch_source_references': source_checks,
+        'verified_sealed_analysis_artifact_references': child_artifact_checks,
+        'video_input_source_still_and_media_hashes_verified': True,
+        'old_packs_verified_unchanged': protocol['old_pack_hashes'],
+        'raw_boundary': 'Full plans JSON and generated workspace/meshes are local and hash-inventoried. New and I34 baseline precision/rollout NPZ plus video are included in the shareable ZIP, not compact docs evidence.',
+        'tests': 'No new unit-test suite; source/prefix/metric/media/hash/archive checks recorded separately. Earlier124 checks are not added.'}
+    (DEST / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    paths = [ROOT / 'ITERATION_LOG.md', ROOT / 'README.md', ROOT / 'OFFROAD.md',
+             DOCS.parent / 'README.md', DOCS / 'README.md',
+             ROOT / 'generated/offroad/flat/control_schedule.npz']
+    paths += [p for p in DEST.rglob('*') if p.is_file()]
+    paths += list((FAMILY / 'videos').glob('*.mp4'))
+    for directory in (folder, baseline):
+        paths += [directory / name for name in ('precision.npz', 'rollout.npz')]
+    paths = sorted(set(paths))
+    entries = [{'path': str(p.relative_to(ROOT)), 'bytes': p.stat().st_size,
+                'sha256': sha(p)} for p in paths]
+    presentation = {'iteration': 'I-38', 'scope': manifest['scope'],
+        'raw_boundary': manifest['raw_boundary'], 'artifacts': entries,
+        'payload_count': len(entries), 'payload_bytes': sum(e['bytes'] for e in entries)}
+    manifest_path = FAMILY / 'presentation_manifest.json'
+    manifest_path.write_text(json.dumps(presentation, indent=2) + '\n')
+    with zipfile.ZipFile(pack, 'x', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
+        for path in paths:
+            archive.write(path, path.relative_to(ROOT))
+        archive.write(manifest_path, manifest_path.relative_to(ROOT))
+    with zipfile.ZipFile(pack) as archive:
+        assert archive.testzip() is None
+        for entry in entries:
+            assert hashlib.sha256(archive.read(entry['path'])).hexdigest() == entry['sha256']
+        assert len(archive.namelist()) == len(entries) + 1
+    verified = {'zip': str(pack.relative_to(ROOT)), 'zip_bytes': pack.stat().st_size,
+        'zip_sha256': sha(pack), 'file_count_including_manifest': len(entries) + 1,
+        'zip_crc_verified': True, 'all_payload_hashes_verified': True}
+    verification_path = FAMILY / 'presentation_verification.json'
+    verification_path.write_text(json.dumps(verified, indent=2) + '\n')
+    pack.with_suffix('.zip.sha256').write_text(verified['zip_sha256'] + '  ' + pack.name + '\n')
+    (DOCS / 'presentation_manifest.json').write_bytes(manifest_path.read_bytes())
+    (DOCS / 'presentation_verification.json').write_bytes(verification_path.read_bytes())
+    print(json.dumps({'compact': {k: v for k, v in manifest.items() if k != 'files'},
+                      'presentation': verified}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

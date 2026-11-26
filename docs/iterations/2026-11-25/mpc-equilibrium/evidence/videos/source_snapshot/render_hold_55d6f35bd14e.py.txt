@@ -1,0 +1,133 @@
+"""Render frozen I31 hold traces only. No physics or controller is run.
+
+MUJOCO_GL=egl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python results/mpc_equilibrium_20261125/videos/render_hold.py
+"""
+from pathlib import Path
+import hashlib
+import json
+
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+from PIL import Image, ImageDraw
+
+from spherical_wheel.offroad import TerrainPlant
+from spherical_wheel.offroad_view import _camera, _caption, _draw, _font
+from spherical_wheel.terrain import Terrain
+
+HERE=Path(__file__).resolve().parent
+ROOT=HERE.parents[2]
+SOURCE=HERE.parent/'independent_search/gazebo_hold'
+CASE='nearby_pose_independent_fit'
+WIDTH,HEIGHT,FPS,SPEED=960,720,20,.1
+TARGET=HERE/'nearby_goal_hold_gazebo_vs_private.mp4'
+
+
+def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def inset(frame, log, i):
+    image=Image.fromarray(frame);draw=ImageDraw.Draw(image,'RGBA')
+    left,top,w,h=18,452,275,220
+    draw.rounded_rectangle((left,top,left+w,top+h),radius=6,fill=(10,18,27,232),outline=(122,147,163,200))
+    draw.text((left+10,top+6),'XY drift from retained initial goal',font=_font(13),fill=(233,241,247))
+    draw.text((left+10,top+25),'Orange goal; cyan robot; 5 mm grid',font=_font(11),fill=(211,229,239))
+    x0,y0,side=left+43,top+45,156
+    centre=log['qpos'][0,:2];extent=.012
+    def point(xy):
+        xy=(np.asarray(xy)-centre)/extent
+        return x0+side*(xy[0]+1)/2,y0+side*(1-xy[1])/2
+    for delta in np.arange(-.01,.0101,.005):
+        draw.line([point(centre+[delta,-extent]),point(centre+[delta,extent])],fill=(150,180,196,75))
+        draw.line([point(centre+[-extent,delta]),point(centre+[extent,delta])],fill=(150,180,196,75))
+    if i:
+        draw.line([point(q[:2]) for q in log['qpos'][:i+1]],fill=(35,220,240,255),width=3)
+    for xy,color in [(centre,(255,165,55,255)),(log['qpos'][i,:2],(35,220,240,255))]:
+        x,y=point(xy);draw.ellipse((x-4,y-4,x+4,y+4),fill=color)
+    draw.text((left+10,top+h-17),'Full width 24 mm; motion scale enlarged',font=_font(11),fill=(215,230,238))
+    return np.asarray(image)
+
+
+def main():
+    if TARGET.exists(): raise FileExistsError('Preserve existing clip; select a fresh output name')
+    report=json.loads((SOURCE/'report.json').read_text());assert report['status']=='completed'
+    case=report['cases'][CASE]
+    source_bytes=Path(__file__).read_bytes();source_sha=sha(Path(__file__))
+    snap=HERE/'source_snapshot'/f'render_hold_{source_sha[:12]}.py'
+    snap.parent.mkdir(exist_ok=True);snap.write_bytes(source_bytes)
+    config_path=SOURCE/'gazebo_mirror/model_config.json'
+    config=json.loads(config_path.read_text())
+    terrain=Terrain.from_spec(report['world_info']['terrain'])
+    logs=[]
+    for engine in ('gazebo_dart','private_mujoco'):
+        path=SOURCE/CASE/engine/'trace.npz'
+        with np.load(path) as f:log={k:f[k].copy() for k in f.files}
+        assert len(log['time_s'])==81 and np.isclose(log['time_s'][-1],.4)
+        log['ground_height_m']=np.array([terrain.height(float(x),float(y)) for x,y in log['qpos'][:,:2]])
+        log['reference_xy']=np.tile(log['qpos'][0,:2],(81,1))
+        logs.append((engine,path,log))
+    np.testing.assert_array_equal(logs[0][2]['qpos'][0],logs[1][2]['qpos'][0])
+    np.testing.assert_array_equal(logs[0][2]['qvel'][0],logs[1][2]['qvel'][0])
+    plant=TerrainPlant(config,terrain,HERE/'_render_scene',visual_bounds=(-.5,.5,-.5,.5))
+    option=mujoco.MjvOption();option.geomgroup[3:]=0
+    centre=np.r_[logs[0][2]['qpos'][0,:2],.22]
+    camera=_camera(centre,112.,-25.,1.32)
+    saved=plant.capture()
+    endpoint_checks=[]
+    for engine,path,log in logs:
+        delta=np.zeros(9);mujoco.mj_differentiatePos(plant.model,delta,1.,log['qpos'][0],log['qpos'][-1])
+        metrics=case['engines'][engine]['metrics']['0.4']
+        drift=1000*np.linalg.norm(delta[:2]);rotation=np.degrees(np.linalg.norm(delta[3:6]))
+        np.testing.assert_allclose([drift,rotation],[metrics['xy_drift_end_mm'],metrics['rotation_end_deg']],atol=1e-10)
+        endpoint_checks.append({'engine':engine,'xy_drift_mm':float(drift),'rotation_change_deg':float(rotation),'matches_saved_report':True})
+    def frame_at(renderer,i):
+        panels=[]
+        for engine,path,log in logs:
+            delta=np.zeros(9);mujoco.mj_differentiatePos(plant.model,delta,1.,log['qpos'][0],log['qpos'][i])
+            drift=1000*np.linalg.norm(delta[:2]);rotation=np.degrees(np.linalg.norm(delta[3:6]));v=log['qvel'][i]
+            actual=engine=='gazebo_dart';name='GAZEBO / DART saved physics' if actual else 'PRIVATE MuJoCo prediction model'
+            point2=case['engines'][engine]['metrics']['0.2']
+            lines=[
+                'OPEN-LOOP HOLD: fixed fitted torques, no feedback controller',
+                f"t {log['time_s'][i]:.3f} s | XY drift {drift:.3f} mm | attitude change {rotation:.3f} deg",
+                'Torque [shaft,A,B] Nm: '+np.array2string(log['fixed_input'][:3],precision=3)+'; belts 0 m/s',
+                f"Body speed {1000*np.linalg.norm(v[:3]):.2f} mm/s | angular {np.linalg.norm(v[3:6]):.3f} rad/s | load {log['support_loads_N'][i].sum():.2f} N",
+                f"0.2s hold check: {point2['xy_drift_end_mm']:.3f} mm / {point2['rotation_end_deg']:.3f} deg -- FAIL",
+                'Declared limits: XY <=0.2 mm; attitude <=0.1 deg over 0.2 s.',
+                'Nearby fitted pose; original XY fixed; identical tiny startup twist.',
+                'Ground: actual 10 deg mesh' if actual else 'Ground: frozen estimated plane; shown on common visual slope',
+            ]
+            frame=_draw(plant,renderer,log,i,camera,option,False)
+            frame=_caption(frame,name,lines,'Saved-state reconstruction in MuJoCo viewer | 0.1x playback | No new physics or controller run')
+            panels.append(inset(frame,log,i))
+        return np.concatenate(panels,axis=1)
+    try:
+        with mujoco.Renderer(plant.model,height=HEIGHT,width=WIDTH) as renderer:
+            writer=imageio.get_writer(TARGET,fps=FPS,codec='libx264',quality=8,macro_block_size=2,ffmpeg_log_level='error')
+            try:
+                for i in range(81):writer.append_data(frame_at(renderer,i))
+            finally:writer.close()
+            imageio.imwrite(HERE/'hold_first.jpg',frame_at(renderer,0),quality=92)
+            imageio.imwrite(HERE/'hold_final.jpg',frame_at(renderer,80),quality=92)
+    finally:plant.restore(saved)
+    with imageio.get_reader(TARGET) as reader:
+        meta=reader.get_meta_data();frames=reader.count_frames();last=reader.get_data(frames-1)
+        imageio.imwrite(HERE/'hold_decoded_final.jpg',last,quality=92)
+    assert frames==81 and tuple(meta['size'])==(1920,720) and np.isclose(meta['fps'],20)
+    artifacts=[SOURCE/'report.json',SOURCE/'declaration.json',config_path,
+        *(path for _,path,_ in logs),Path(__file__),snap,
+        ROOT/'src/spherical_wheel/offroad_view.py',ROOT/'src/spherical_wheel/offroad.py',ROOT/'src/spherical_wheel/terrain.py']
+    inventory={'status':'rendered_and_decoded_verified','video':{'path':str(TARGET.relative_to(ROOT)),'sha256':sha(TARGET),'size_bytes':TARGET.stat().st_size,
+        'dimensions':list(meta['size']),'fps':meta['fps'],'frames':frames,'duration_s':meta['duration'],'simulated_duration_s':.4,'playback_speed':SPEED,'final_frame_decoded':True},
+        'case':CASE,'source_snapshot':str(snap.relative_to(ROOT)),'endpoint_checks':endpoint_checks,
+        'source_artifact_sha256':{str(p.relative_to(ROOT)):sha(p) for p in artifacts},
+        'stills':{p.name:sha(p) for p in (HERE/'hold_first.jpg',HERE/'hold_final.jpg',HERE/'hold_decoded_final.jpg')},
+        'scope':'One saved-data reconstruction of two separate open-loop fixed-input hold fixtures (one target/input pair, two engines); no MPC, LQR, observer or new physics during rendering.',
+        'initialization':'Same returned Gazebo state after its documented1us idle reset microstep; tiny nonzero twist is preserved in both engine traces. No ongoing performance trajectory reset.',
+        'visualization_limit':'Both states are drawn with common MuJoCo model/actual10deg terrain visuals; private physics used its own frozen estimated plane, not the actual mesh. Cyan path and inset are saved centreXY, orange marker is retained initial goal.',
+        'physics_count_note':'Corrected capture repeats two distinct target/input fixtures after a contact-name logging correction; movie presents nearby pair only. Repeated executions are not new distinct trajectory cases.'}
+    (HERE/'video_metadata.json').write_text(json.dumps(inventory,indent=2)+'\n')
+    print(json.dumps(inventory['video'],indent=2),flush=True)
+
+
+if __name__=='__main__':main()

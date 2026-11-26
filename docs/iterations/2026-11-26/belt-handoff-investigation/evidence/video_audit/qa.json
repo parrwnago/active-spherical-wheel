@@ -1,0 +1,89 @@
+{
+  "iteration": "I-50",
+  "passed": true,
+  "checks": {
+    "all_original_scope_inputs_unchanged": true,
+    "all_final_render_inputs_unchanged": true,
+    "all_audit_inputs_unchanged": true,
+    "video_hash_matches": true,
+    "playback18_maps_recorded32": true,
+    "slow_full_window": true,
+    "all_3_actual_state_clocks_match": true,
+    "quarter_speed_10ms_pose_sampling": true,
+    "same_camera_explicit": true,
+    "original_actual_states": true,
+    "no_new_physics_or_controller": true,
+    "truth_not_controller_input": true,
+    "no_unique_cause_claim": true,
+    "h264": true,
+    "dimensions": true,
+    "fps": true,
+    "frames": true,
+    "duration": true,
+    "decoded_frames_nonblank": true
+  },
+  "video": {
+    "path": "results/belt_handoff_event_20261126/video_audit/belt_handoff_slow.mp4",
+    "bytes": 3645107,
+    "sha256": "9a1ae3f2f28bc2bec6efc06687e289ed4ddcaba0b0b143cc961f16d4827a97c4",
+    "frames": 426,
+    "fps": 25,
+    "duration_s": 17.04
+  },
+  "decoded_frames": {
+    "slow_decoded_0000.jpg": {
+      "sha256": "cebc8e252aeb5b0713964ec116e1e68650889eae7e3412698d58333e2a1c76ad",
+      "shape": [
+        1200,
+        1800,
+        3
+      ],
+      "pixel_std": 30.80125720366184
+    },
+    "slow_decoded_0050.jpg": {
+      "sha256": "79d96188f7bb70becbcd8f292c1aaf0df4c2690aebe7f51f39c80482043404ca",
+      "shape": [
+        1200,
+        1800,
+        3
+      ],
+      "pixel_std": 66.66070244790446
+    },
+    "slow_decoded_0200.jpg": {
+      "sha256": "13e0bb183622605c239a48135f1dead97c9b13bbeb80eebbbb1a4c0a45afdaf8",
+      "shape": [
+        1200,
+        1800,
+        3
+      ],
+      "pixel_std": 66.4226907631645
+    },
+    "slow_decoded_0425.jpg": {
+      "sha256": "86fb01f3701a6ff9eebdb7a937c316dbdf5827485f950780ab6f75b2b39a6490",
+      "shape": [
+        1200,
+        1800,
+        3
+      ],
+      "pixel_std": 29.374427518495736
+    }
+  },
+  "limitations": [
+    "Visual poses are sampled10ms from original5ms logs; plots retain all5ms samples. Video alone cannot resolve every5ms contact toggle.",
+    "Truth support is current evaluator endpoint, not5ms averaged load or hardware measurement.",
+    "Preparation blend weight is not proof of achieved surface speed matching.",
+    "Absolute tilt is relative to world vertical; body-up rotation speed is not an Euler-angle derivative.",
+    "This is an unchanged-trajectory observational replay; no unique physical cause or improved controller is claimed."
+  ],
+  "visual_review": {
+    "inspected": [
+      "First preview31.670s and intro/endcard",
+      "Final decoded recorded32.000s and resultcard"
+    ],
+    "findings": [
+      "Shared camera and three-arm labels readable. Recorded and original-playback clocks explicit.",
+      "Truth/observer support and preparation weights separate. Requested/applied beltB curves separate.",
+      "Initial preview footer clipping corrected before final encoding; prior source/previews preserved."
+    ]
+  }
+}

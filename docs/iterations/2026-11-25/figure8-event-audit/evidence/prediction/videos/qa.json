@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "scope": "All-frame saved MP4 decode and exact source/input/still hashes; no physics, controller or forecast execution.",
+  "video": {
+    "path": "results/figure8_event_audit_20261125/prediction/videos/mars_departure_and_direction_changes.mp4",
+    "sha256": "47f8b38d006bc81b82c8cb5cf4c67dc56e1821d0aee4a708a6c1ef62e61abbbb",
+    "bytes": 8496765,
+    "frames": 423,
+    "fps": 20,
+    "dimensions": [
+      1920,
+      920
+    ],
+    "video_duration_s": 21.15,
+    "decoded_final_verified": true,
+    "endcard_duration_s": 3.0
+  },
+  "render_source_sha256": "21f50f7beb55caf6cc4446f320526553a40b9796c9d890d8e374f2c95bcaeb2e",
+  "QA_source_sha256": "7e01f9cfd012c25e04e374688afd41bb55ed8edde8361f595b559af9075c0755",
+  "QA_source_snapshot": "results/figure8_event_audit_20261125/prediction/videos/source_snapshot/verify_video_7e01f9cfd012.py",
+  "all_423_frames_decoded": true,
+  "all_frames_nonblank_and_expected_dimensions": true,
+  "input_hashes_verified": 23,
+  "exact_reference_and_program_timestamps_between_actual_cases": true,
+  "matched_event_windows": true,
+  "maximum_endpoint_sampling_offset_s": 0.0025,
+  "decoded_evaluation_frames": [
+    {
+      "index": 40,
+      "path": "qa_decoded_chapter01_event.jpg",
+      "sha256": "4e69753aaf4f23ef4a83ad260cfc45d08ab03f659877228a69a3e8cd5d9b014b"
+    },
+    {
+      "index": 161,
+      "path": "qa_decoded_chapter02_event.jpg",
+      "sha256": "1e3211fc4d78c02e4002c06790f07a72eab89b95a079ab3a816e3267c9b144b1"
+    },
+    {
+      "index": 282,
+      "path": "qa_decoded_chapter03_event.jpg",
+      "sha256": "91866353c0a5978fde2cc30b829ed8b09bcd56c86aa458fa8dae75759737fb3c"
+    },
+    {
+      "index": 422,
+      "path": "qa_decoded_endcard.jpg",
+      "sha256": "bb3834c103fb83f193535fbb8c1f9830035e556c9d852753cb92a5c36c696a4a"
+    }
+  ],
+  "labels_reviewed": [
+    "Actual Gazebo/DART state replay rendered with MuJoCo; no new dynamics run.",
+    "Mars actual DEM and flat full-terrain counterfactual; balanced initial pose also differs.",
+    "Same native LQR and active kinematic synchronizer; shadow forecasts never actuated.",
+    "First turn lag is distinct from geometric overshoot; later turn06 actual overshoot is shown.",
+    "B uses FUTURE actual inputs only as explicit offline hindsight diagnostic.",
+    "Endcard onset anchor passes initial load fit; five poor fits remain included."
+  ],
+  "development_stages_preserved": [
+    "development/stage01_preview_boundary_failure",
+    "development/stage02_initial_endcard"
+  ],
+  "saved_data_prediction_QA": "../saved_data_QA/report.json"
+}

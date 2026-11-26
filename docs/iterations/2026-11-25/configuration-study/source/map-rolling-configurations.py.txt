@@ -1,0 +1,444 @@
+"""Map synthetic rolling geometry without running a controller or physics trial.
+
+The contact normal and zero-moment normal wrench are prescribed offline. The
+existing SupportLocator selects valid spherical patch points or its rim fallback.
+These synthetic contacts must never be used as controller measurements. This is
+a kinematic reference-feasibility study, not evidence of dynamic balance, friction
+feasibility, motor capability, or actual simultaneous rim contacts.
+"""
+from __future__ import annotations
+
+import argparse
+import csv
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib.colors import BoundaryNorm, ListedColormap, LogNorm
+import matplotlib.pyplot as plt
+import mujoco
+import numpy as np
+from scipy.optimize import brentq, lsq_linear
+
+from spherical_wheel.contact_sensing import SupportLocator
+from spherical_wheel.model import REPO_ROOT, generate_model, load_config
+
+
+SCALE = np.array([5., 5., 5., .3, .3])
+LIMITS = np.array([20., 20., 20., .3, .3])
+SUPPORTS = ('shell_A', 'shell_B', 'belt_A', 'belt_B', 'rim_fallback')
+COLORS = ('#2878b5', '#df7e31', '#269c83', '#a06ac2', '#aaaaaa')
+DISCLAIMER = ('Synthetic contact geometry for offline analysis only; no controller receives these contacts. '
+              'Kinematic reference limits do not establish dynamic balance, friction feasibility, or actual motor limits.')
+
+
+def sha256(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def snapshot(output, parameters):
+    """Preserve the exact source bytes used by this invocation before computing."""
+    directory = output/'source_snapshot'
+    directory.mkdir(parents=True, exist_ok=True)
+    paths = sorted((REPO_ROOT/'src'/'spherical_wheel').rglob('*.py'))
+    paths += sorted((REPO_ROOT/'config').glob('*.yaml'))+[Path(__file__).resolve()]
+    hashes = {}
+    for path in paths:
+        relative = path.relative_to(REPO_ROOT)
+        data = path.read_bytes()
+        target = directory/relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+        hashes[str(relative)] = sha256(data)
+    provenance = {
+        'captured_utc': datetime.now(timezone.utc).isoformat(),
+        'git_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=REPO_ROOT, text=True).strip(),
+        'source_sha256': hashes,
+        'parameters': parameters,
+        'parameter_sha256': sha256(json.dumps(parameters, sort_keys=True).encode()),
+        'mujoco_version': mujoco.__version__,
+        'numpy_version': np.__version__,
+        'interpretation': DISCLAIMER,
+    }
+    (directory/'working_tree.patch').write_bytes(subprocess.check_output(['git', 'diff', '--binary'], cwd=REPO_ROOT))
+    (output/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
+    return provenance
+
+
+def write_csv(path, rows):
+    with path.open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+class Geometry:
+    def __init__(self, config, model_path, boundary_band_m):
+        self.config = config
+        self.model = mujoco.MjModel.from_xml_path(str(model_path))
+        self.model.opt.disableflags |= int(mujoco.mjtDisableBit.mjDSBL_CONTACT)
+        self.data = mujoco.MjData(self.model)
+        self.fork = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, 'fork')
+        self.carrier = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, 'carrier')
+        self.radius = config['geometry']['sphere_radius_m']
+        self.gap = config['geometry']['equatorial_gap_half_m']
+        self.polar = self.radius*np.cos(np.radians(config['geometry']['polar_cap_angle_deg']))
+        self.weight = float(self.model.body_subtreemass[self.fork])*abs(config['simulation']['gravity_m_s2'][2])
+        self.locator = SupportLocator(self.model, self.fork, self.radius,
+                                      config['contact']['friction'][0], .05*self.weight)
+        self.boundary_band_m = boundary_band_m
+        self.fork_boxes = [geom for geom in range(self.model.ngeom)
+                           if self.model.geom_bodyid[geom] == self.fork
+                           and self.model.geom_type[geom] == mujoco.mjtGeom.mjGEOM_BOX]
+
+    def pose(self, roll_deg, pitch_deg, phase_deg, normal):
+        roll, pitch = np.radians([roll_deg, pitch_deg])/2
+        rx = np.array([np.cos(roll), np.sin(roll), 0., 0.])
+        ry = np.array([np.cos(pitch), 0., np.sin(pitch), 0.])
+        quat = np.empty(4)
+        mujoco.mju_mulQuat(quat, ry, rx)  # world orientation Ry(pitch) Rx(roll), zero yaw
+        self.data.qpos[:] = np.r_[self.radius*normal, quat, np.radians(phase_deg), 0., 0.]
+        self.data.qvel[:] = 0.
+        mujoco.mj_kinematics(self.model, self.data)
+        mujoco.mj_comPos(self.model, self.data)
+
+    def axial(self, roll_deg, pitch_deg, phase_deg, normal):
+        self.pose(roll_deg, pitch_deg, phase_deg, normal)
+        axis = self.data.xmat[self.carrier].reshape(3, 3)[:, 0]
+        return float(axis@(-self.radius*normal))
+
+    def evaluate(self, roll_deg, pitch_deg, phase_deg, normal, normal_name):
+        axial = self.axial(roll_deg, pitch_deg, phase_deg, normal)
+        records = self.locator.records(self.data, self.weight*normal, np.zeros(3))
+        assert records and self.data.ncon == 0
+        matrices, loads, points = [], [], []
+        for record in records:
+            point = np.asarray(record['pos'])
+            offset = point-self.data.xpos[self.fork]
+            assert abs(np.linalg.norm(offset)-self.radius) < 1e-10
+            patch = next(item for item in self.locator.patches if item['name'] == record['name'])
+            axis = self.data.xmat[record['body']].reshape(3, 3)[:, 0]
+            signed = patch['sign']*float(axis@offset)
+            assert patch['lower']-1e-10 <= signed <= patch['upper']+1e-10
+            jacobian = np.zeros((3, self.model.nv))
+            mujoco.mj_jac(self.model, self.data, jacobian, None, point, record['body'])
+            matrix = np.zeros((2, 5))
+            matrix[:, :3] = jacobian[:2, 6:9]
+            if record['name'].startswith('belt'):
+                side = 0 if record['name'].startswith('belt_A') else 1
+                matrix[:, 3+side] = self.data.geom_xmat[record['geom']].reshape(3, 3)[:2, 1]
+            matrices.append(matrix)
+            loads.append(record['normal_force'])
+            points.append(point)
+        shares = np.array(loads)/sum(loads)
+        matrices = np.asarray(matrices)
+        mean = np.sum(shares[:, None, None]*matrices, axis=0)
+        weighted = (np.sqrt(shares)[:, None, None]*matrices).reshape(-1, 5)
+        left, singular, _ = np.linalg.svd(mean*SCALE, full_matrices=False)
+        stacked = np.linalg.svd(weighted*SCALE, compute_uv=False)
+        rim = abs(axial) < self.gap-1e-12
+        support = 'rim_fallback' if rim else records[0]['name'].removesuffix('_smooth')
+        equator_distance, polar_distance = abs(abs(axial)-self.gap), abs(abs(axial)-self.polar)
+        distance = min(equator_distance, polar_distance)
+        near = distance <= self.boundary_band_m
+        heights = np.asarray(points)@normal
+        clearances = []
+        for geom in self.fork_boxes:
+            rotation = self.data.geom_xmat[geom].reshape(3, 3)
+            clearances.append(float(normal@self.data.geom_xpos[geom]
+                                    -np.abs(normal@rotation)@self.model.geom_size[geom]))
+        clearance = min(clearances)
+        row = {
+            'normal': normal_name, 'normal_x': normal[0], 'normal_y': normal[1], 'normal_z': normal[2],
+            'roll_deg': float(roll_deg), 'pitch_deg': float(pitch_deg), 'shaft_phase_deg': float(phase_deg),
+            'absolute_platform_tilt_deg': float(np.degrees(np.arccos(np.clip(
+                self.data.xmat[self.fork].reshape(3, 3)[2, 2], -1., 1.)))),
+            'support': support, 'support_count': len(records), 'support_names': '|'.join(r['name'] for r in records),
+            'axial_coordinate_mm': 1000*axial, 'nearest_boundary': 'equator' if equator_distance < polar_distance else 'polar',
+            'boundary_distance_mm': 1000*distance, 'near_boundary': bool(near),
+            'patch_interior': bool(not rim and not near), 'body_clear_of_plane': bool(clearance > 0.),
+            'fork_plane_clearance_mm': 1000*clearance,
+            'candidate_plane_height_spread_mm': 1000*float(np.ptp(heights)),
+            'candidate_min_plane_height_mm': 1000*float(np.min(heights)),
+            'sigma1_m_s': float(singular[0]), 'sigma2_m_s': float(singular[1]),
+            'stacked_sigma2_m_s': float(stacked[1]),
+            'condition_number': float(singular[0]/singular[1]) if singular[1] > 1e-12 else None,
+            'weak_direction_deg': float(np.degrees(np.arctan2(left[1, 1], left[0, 1])) % 180.),
+        }
+        context = dict(matrix=weighted, mean=mean, shares=shares, left=left)
+        return row, context
+
+
+def direction_metrics(context, direction_deg, speed_m_s):
+    velocity = speed_m_s*np.array([np.cos(np.radians(direction_deg)), np.sin(np.radians(direction_deg))])
+    matrix, shares = context['matrix'], context['shares']
+    target = (-np.sqrt(shares)[:, None]*velocity).ravel()
+    normalized = np.linalg.lstsq(matrix*SCALE, target, rcond=1e-7)[0]
+    unbounded = SCALE*normalized
+    if np.all(abs(unbounded) <= LIMITS):
+        bounded = unbounded
+    else:
+        solution = lsq_linear(matrix*SCALE, target, bounds=(-LIMITS/SCALE, LIMITS/SCALE),
+                              method='bvls', tol=1e-11, max_iter=100)
+        assert solution.success, solution.message
+        bounded = np.clip(solution.x*SCALE, -LIMITS, LIMITS)
+    assert np.all(np.isfinite(bounded)) and np.all(abs(bounded) <= LIMITS+1e-10)
+    residual = matrix@bounded-target
+    result = {
+        'travel_direction_deg': float(direction_deg), 'requested_speed_m_s': speed_m_s,
+        'weak_direction_demand_m_s': abs(float(context['left'][:, 1]@velocity)),
+        'unbounded_normalized_rate_norm': float(np.linalg.norm(normalized)),
+        'unbounded_max_speed_ratio': float(np.max(abs(unbounded)/LIMITS)),
+        'unbounded_residual_m_s': float(np.linalg.norm(matrix@unbounded-target)),
+        'speed_box_residual_m_s': float(np.linalg.norm(residual)),
+        'speed_box_residual_fraction': float(np.linalg.norm(residual)/speed_m_s),
+        'speed_box_active': bool(np.any(np.isclose(abs(bounded), LIMITS, atol=1e-8, rtol=0.))),
+    }
+    for name, value in zip(('shaft', 'shell_A', 'shell_B', 'belt_A', 'belt_B'), bounded):
+        result[f'bounded_{name}_reference'] = float(value)
+    return result
+
+
+def same_tilt_assertion(geometry):
+    normal = np.array([0., 0., 1.])
+    examples = []
+    for phase in (np.degrees(-.6), -90.):
+        row, context = geometry.evaluate(-20., 0., phase, normal, 'flat')
+        shaft, shell = context['mean'][:, 0], context['mean'][:, 2]
+        angle = float(np.degrees(np.arccos(np.clip(shaft@shell/np.linalg.norm(shaft)/np.linalg.norm(shell), -1., 1.))))
+        assert row['support'] == 'shell_B' and row['patch_interior'] and row['body_clear_of_plane']
+        examples.append({**row, 'rolling_direction_angle_deg': angle,
+                         'y_direction': direction_metrics(context, 90., .06),
+                         'directions': [direction_metrics(context, direction, .06)
+                                        for direction in np.arange(0., 360., 45.)]})
+    assert abs(examples[0]['absolute_platform_tilt_deg']-20.) < 1e-10
+    assert abs(examples[1]['absolute_platform_tilt_deg']-20.) < 1e-10
+    assert abs(examples[0]['sigma2_m_s']-.4653370722014548) < 1e-9
+    assert examples[1]['sigma2_m_s'] < 1e-12
+    assert examples[0]['y_direction']['speed_box_residual_m_s'] < 1e-9
+    assert abs(examples[1]['y_direction']['speed_box_residual_m_s']-.06) < 1e-9
+    return {'assertion': 'I-11: identical platform attitude and shell-B support do not imply identical rolling authority',
+            'interpretation': 'Instantaneous kinematically admissible poses; no static or dynamic balance claim.',
+            'cases': examples}
+
+
+def continuity_scans(geometry, normals, speed, directions):
+    cases = [('flat_upright', 'flat', 0., 0.), ('flat_roll_minus10', 'flat', -10., 0.),
+             ('flat_roll_minus15_45', 'flat', -15.45, 0.), ('slope_x10_upright', 'slope_x10', 0., 0.)]
+    offsets = np.unique(np.round(np.r_[np.linspace(-1., 1., 201),
+                                        [-.1, -.01, -.001, -.0001, .0001, .001, .01, .1]], 12))
+    rows, jumps = [], []
+    for name, ground, roll, pitch in cases:
+        normal = normals[ground]
+        def margin(phase):
+            return -geometry.axial(roll, pitch, phase, normal)-geometry.polar
+        bracket = np.linspace(-90., 0., 181)
+        roots = [brentq(margin, first, second, xtol=1e-12)
+                 for first, second in zip(bracket[:-1], bracket[1:]) if margin(first)*margin(second) < 0]
+        assert roots, (name, 'No shell-B / belt-B boundary in the declared scan interval')
+        boundary = max(roots)
+        cache = {}
+        for offset in offsets:
+            state, context = geometry.evaluate(roll, pitch, boundary+offset, normal, ground)
+            metrics = [direction_metrics(context, direction, speed) for direction in directions]
+            cache[round(float(offset), 8)] = (state, metrics)
+            for metric in metrics:
+                rows.append({'scan': name, 'phase_offset_deg': float(offset), 'boundary_phase_deg': boundary,
+                             **state, **metric})
+        for epsilon in (.1, .01, .001, .0001):
+            first, left = cache[-epsilon]
+            second, right = cache[epsilon]
+            jumps.append({
+                'scan': name, 'epsilon_deg': epsilon, 'boundary_phase_deg': boundary,
+                'left_support': first['support'], 'right_support': second['support'],
+                'sigma2_jump_m_s': abs(second['sigma2_m_s']-first['sigma2_m_s']),
+                'max_direction_residual_jump_m_s': max(abs(a['speed_box_residual_m_s']-b['speed_box_residual_m_s'])
+                                                      for a, b in zip(left, right)),
+                'max_unbounded_effort_jump': max(abs(a['unbounded_normalized_rate_norm']-b['unbounded_normalized_rate_norm'])
+                                                for a, b in zip(left, right)),
+            })
+    return rows, jumps
+
+
+def figures(output, states, directions, scans, attitudes, phases, normals, example):
+    chosen_pitches = [float(attitudes[0]), 0., float(attitudes[-1])]
+    state_lookup = {(row['normal'], row['pitch_deg'], row['roll_deg'], row['shaft_phase_deg']): row for row in states}
+    worst = {}
+    for row in directions:
+        worst[row['state_id']] = max(worst.get(row['state_id'], 0.), row['speed_box_residual_fraction'])
+    specs = [
+        ('authority_map.png', 'Weak-direction authority of the normalized horizontal Jacobian', 'sigma2_m_s',
+         LogNorm(vmin=1e-5, vmax=.6), 'viridis', 'Second singular value (m/s)'),
+        ('feasibility_map.png', 'Worst requested-direction error within the declared reference speed box', 'error',
+         None, 'magma', f'Residual / requested {directions[0]["requested_speed_m_s"]:.3g} m/s'),
+        ('support_map.png', 'Synthetic support selection and patch boundaries', 'support',
+         BoundaryNorm(np.arange(-.5, 5.5), 5), ListedColormap(COLORS), 'Support'),
+    ]
+    for filename, title, field, norm, cmap, label in specs:
+        figure, axes = plt.subplots(len(normals), 3, figsize=(15, 10), sharex=True, sharey=True,
+                                    constrained_layout=True)
+        for row_index, ground in enumerate(normals):
+            for column, pitch in enumerate(chosen_pitches):
+                rows = [[state_lookup[ground, pitch, float(roll), float(phase)] for phase in phases] for roll in attitudes]
+                value = np.array([[SUPPORTS.index(item['support']) if field == 'support' else
+                                   worst[item['state_id']] if field == 'error' else item[field]
+                                   for item in row] for row in rows])
+                if field == 'sigma2_m_s':
+                    value = np.maximum(value, 1e-5)
+                axis = axes[row_index, column]
+                kwargs = {'vmin': 0., 'vmax': 1.} if field == 'error' else {'norm': norm}
+                mesh = axis.pcolormesh(phases, attitudes, value, shading='nearest', cmap=cmap, **kwargs)
+                boundary = np.array([[item['near_boundary'] for item in row] for row in rows])
+                rim = np.array([[item['support'] == 'rim_fallback' for item in row] for row in rows])
+                if field != 'support' and rim.any():
+                    axis.contourf(phases, attitudes, rim, levels=[.5, 1.5], colors='none', hatches=['///'])
+                rr, pp = np.where(boundary)
+                axis.scatter(phases[pp], attitudes[rr], s=4, color='white' if field != 'support' else 'black', alpha=.7)
+                axis.set(title=f'{ground.replace("_", " ")} | pitch {pitch:+.0f}°', xlabel='Shaft phase (deg)',
+                         ylabel='Platform roll (deg)', xticks=np.arange(-180, 181, 90))
+        colorbar = figure.colorbar(mesh, ax=axes, shrink=.86, pad=.02, label=label)
+        if field == 'support':
+            colorbar.set_ticks(range(5), labels=['Shell A', 'Shell B', 'Belt A', 'Belt B', 'Rim fallback'])
+        figure.suptitle(title, fontsize=14)
+        figure.text(.01, -.015, 'Dots: within 0.5 mm axial distance of a patch boundary. '
+                    'Hatching: rim fallback, not confirmed simultaneous contact.\n'+DISCLAIMER, fontsize=8)
+        figure.savefig(output/filename, dpi=160, bbox_inches='tight')
+        plt.close(figure)
+
+    names = list(dict.fromkeys(row['scan'] for row in scans))
+    figure, axes = plt.subplots(len(names), 3, figsize=(15, 12), constrained_layout=True)
+    for number, name in enumerate(names):
+        subset = [row for row in scans if row['scan'] == name]
+        first = [row for row in subset if row['travel_direction_deg'] == 0.]
+        x = [row['phase_offset_deg'] for row in first]
+        axes[number, 0].plot(x, [row['sigma2_m_s'] for row in first], color='#2878b5')
+        axes[number, 0].set(title=name.replace('_', ' '), ylabel='Weak authority (m/s)')
+        for direction, color in ((0., '#df7e31'), (90., '#269c83')):
+            selected = [row for row in subset if row['travel_direction_deg'] == direction]
+            shown_residual = [0. if row['speed_box_residual_m_s'] < 1e-9 else row['speed_box_residual_m_s']*1000
+                              for row in selected]
+            axes[number, 1].plot(x, shown_residual,
+                                 label=f'Travel {direction:.0f}°', color=color)
+            axes[number, 2].plot(x, [row['unbounded_normalized_rate_norm'] for row in selected],
+                                 label=f'Travel {direction:.0f}°', color=color)
+        axes[number, 1].set(ylabel='Speed-box residual (mm/s)', ylim=(-1., 65.))
+        axes[number, 2].set(ylabel='Unbounded normalized rate norm')
+        axes[number, 2].set_yscale('log')
+        axes[number, 2].set_ylim(.05, 20.)
+        for axis in axes[number]:
+            axis.axvline(0., color='#555555', linestyle='--', linewidth=1.)
+            axis.set(xlabel='Shaft phase relative to shell/belt boundary (deg)', xlim=(-1., 1.))
+            axis.grid(alpha=.2)
+        axes[number, 1].legend(fontsize=8)
+        axes[number, 2].legend(fontsize=8)
+    figure.suptitle('Small configuration perturbations across shell-B / belt-B selection boundaries', fontsize=14)
+    figure.text(.01, -.015, 'Changing the selected drive can produce a finite cross-boundary jump. '
+                'Residuals below 10⁻⁹ m/s are shown as zero; saved values are unchanged.\n'
+                +DISCLAIMER, fontsize=8)
+    figure.savefig(output/'boundary_continuity.png', dpi=160, bbox_inches='tight')
+    plt.close(figure)
+
+    figure, axis = plt.subplots(figsize=(10, 5), constrained_layout=True)
+    for item, color in zip(example['cases'], ('#2878b5', '#df7e31')):
+        metrics = item['directions']+[item['directions'][0]]
+        axis.plot(np.arange(0., 361., 45.), [row['speed_box_residual_m_s']*1000 for row in metrics],
+                  '-o', color=color, label=f"Shaft {item['shaft_phase_deg']:.2f}°; rolling directions "
+                  f"{item['rolling_direction_angle_deg']:.1f}° apart")
+    axis.set(xlabel='Requested horizontal travel direction (deg)', ylabel='Best speed-box residual (mm/s)',
+             xticks=np.arange(0, 361, 45), ylim=(-2, 65), xlim=(0, 360),
+             title='Same platform attitude and shell B support; different shaft configuration')
+    axis.grid(alpha=.2)
+    axis.legend(loc='upper right', fontsize=9)
+    figure.text(.01, -.025, 'Platform roll −20°, pitch 0°; flat normal; requested speed 60 mm/s. '
+                'Zero residual means kinematic feasibility only.\n'+DISCLAIMER, fontsize=8)
+    figure.savefig(output/'same_attitude_directional_feasibility.png', dpi=160, bbox_inches='tight')
+    plt.close(figure)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, default=REPO_ROOT/'results/configuration_study_20261125/map')
+    parser.add_argument('--attitude-step-deg', type=float, default=5.)
+    parser.add_argument('--phase-step-deg', type=float, default=5.)
+    parser.add_argument('--speed-m-s', type=float, default=.06)
+    args = parser.parse_args()
+    if (args.attitude_step_deg <= 0 or args.phase_step_deg <= 0 or args.speed_m_s <= 0
+            or not np.isclose(20./args.attitude_step_deg, round(20./args.attitude_step_deg))
+            or not np.isclose(360./args.phase_step_deg, round(360./args.phase_step_deg))):
+        parser.error('Positive steps must divide 20 degrees (attitude) and 360 degrees (shaft); speed must be positive')
+    output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    attitudes = np.linspace(-20., 20., 2*round(20./args.attitude_step_deg)+1)
+    phases = np.linspace(-180., 180., round(360./args.phase_step_deg)+1)
+    directions = np.arange(0., 360., 45.)
+    angle = np.radians(10.)
+    normals = {'flat': np.array([0., 0., 1.]), 'slope_x10': np.array([np.sin(angle), 0., np.cos(angle)]),
+               'slope_y10': np.array([0., np.sin(angle), np.cos(angle)])}
+    parameters = {
+        'roll_deg': attitudes.tolist(), 'pitch_deg': attitudes.tolist(), 'shaft_phase_deg': phases.tolist(),
+        'orientation': 'World Ry(pitch) Rx(roll); yaw zero; shell joint angles zero',
+        'normal_vectors': {name: normal.tolist() for name, normal in normals.items()},
+        'travel_direction_deg': directions.tolist(), 'horizontal_requested_speed_m_s': args.speed_m_s,
+        'normalization': SCALE.tolist(), 'reference_speed_limits': LIMITS.tolist(),
+        'speed_limit_units': ['rad/s', 'rad/s', 'rad/s', 'm/s', 'm/s'],
+        'boundary_band_m': .0005, 'unbounded_lstsq_rcond': 1e-7,
+        'feasibility_objective': 'Minimum load-weighted XY rolling residual inside the speed box; no effort or change penalty',
+        'acceleration_limits': 'Not applied: instantaneous configuration map has no reference history',
+        'base_angular_motion': 'Zero; the same horizontal feedforward Jacobian used by the controller',
+        'synthetic_wrench': 'Force = model weight times prescribed normal; moment about wheel centre = zero',
+        'rim_caveat': 'Locator fallback points may not be coplanar. Report height spread and exclude rim fallback from patch-interior statistics.',
+    }
+    provenance = snapshot(output, parameters)
+    config = load_config()
+    geometry = Geometry(config, generate_model(config, output/'model'), parameters['boundary_band_m'])
+    example = same_tilt_assertion(geometry)
+    states, directional = [], []
+    for ground, normal in normals.items():
+        for pitch in attitudes:
+            for roll in attitudes:
+                for phase in phases:
+                    row, context = geometry.evaluate(roll, pitch, phase, normal, ground)
+                    row = {'state_id': len(states), **row}
+                    states.append(row)
+                    for direction in directions:
+                        directional.append({'state_id': row['state_id'], **direction_metrics(context, direction, args.speed_m_s)})
+            print(json.dumps({'normal': ground, 'pitch_deg': float(pitch), 'configurations': len(states)}), flush=True)
+    scans, jumps = continuity_scans(geometry, normals, args.speed_m_s, directions)
+    write_csv(output/'configurations.csv', states)
+    write_csv(output/'directional_feasibility.csv', directional)
+    write_csv(output/'boundary_scans.csv', scans)
+    write_csv(output/'boundary_jumps.csv', jumps)
+    (output/'same_tilt_example.json').write_text(json.dumps(example, indent=2, allow_nan=False)+'\n')
+    figures(output, states, directional, scans, attitudes, phases, normals, example)
+    interior_ids = {row['state_id'] for row in states if row['patch_interior'] and row['body_clear_of_plane']}
+    interior = [row for row in directional if row['state_id'] in interior_ids]
+    summary = {
+        'interpretation': DISCLAIMER, 'configurations': len(states), 'directional_samples': len(directional),
+        'patch_interiors_clear_of_plane': len(interior_ids),
+        'near_boundary_configurations': sum(row['near_boundary'] for row in states),
+        'rim_fallback_configurations': sum(row['support'] == 'rim_fallback' for row in states),
+        'body_intersects_plane_configurations': sum(not row['body_clear_of_plane'] for row in states),
+        'interior_weak_authority_below_002_fraction': float(np.mean([row['sigma2_m_s'] < .02 for row in states
+                                                                  if row['state_id'] in interior_ids])),
+        'interior_direction_error_over_10pct_fraction': float(np.mean([row['speed_box_residual_fraction'] > .1 for row in interior])),
+        'interior_direction_error_over_50pct_fraction': float(np.mean([row['speed_box_residual_fraction'] > .5 for row in interior])),
+        'max_rim_candidate_plane_height_spread_mm': max(row['candidate_plane_height_spread_mm'] for row in states
+                                                      if row['support'] == 'rim_fallback'),
+        'same_tilt_assertion': example,
+        'boundary_smallest_perturbations': [row for row in jumps if row['epsilon_deg'] == .0001],
+        'source_sha256': provenance['source_sha256'], 'parameter_sha256': provenance['parameter_sha256'],
+    }
+    (output/'summary.json').write_text(json.dumps(summary, indent=2, allow_nan=False)+'\n')
+    changed = [name for name, digest in provenance['source_sha256'].items()
+               if sha256((REPO_ROOT/name).read_bytes()) != digest]
+    (output/'source_check.json').write_text(json.dumps({'source_changed_during_map': changed}, indent=2)+'\n')
+    print(json.dumps({'output': str(output), 'configurations': len(states), 'directional_samples': len(directional),
+                      'source_changed_during_map': changed}), flush=True)
+
+
+if __name__ == '__main__':
+    main()

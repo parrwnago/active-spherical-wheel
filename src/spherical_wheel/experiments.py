@@ -26,11 +26,29 @@ def reference(t, duration, mode):
     return position,derivative*ds,second*ds**2+derivative*dds
 
 
-def rolling_feedforward(plant, velocity):
+def _rolling_allocation(rows, rhs, regularization_m_s=0.):
+    """Scaled rolling least squares, optionally damped near a vanishing lever.
+
+    The scales are the existing allocation preferences, not motor speed limits.
+    A positive regularization penalizes large normalized drive rates even if
+    an almost singular contact Jacobian can algebraically match the velocity.
+    """
+    if not np.isfinite(regularization_m_s) or regularization_m_s < 0:
+        raise ValueError('Rolling regularization must be finite and nonnegative')
+    scale=np.array([5.,5.,5.,.3,.3])
+    matrix=np.asarray(rows)*scale
+    target=np.asarray(rhs)
+    if regularization_m_s > 0:
+        matrix=np.vstack((matrix, regularization_m_s*np.eye(5)))
+        target=np.r_[target, np.zeros(5)]
+    return scale*np.linalg.lstsq(matrix,target,rcond=1e-7)[0]
+
+
+def rolling_feedforward(plant, velocity, regularization_m_s=0.):
     """Minimum normalized contact-speed allocation; no extra forces are applied."""
     records=getattr(plant,'contact_records',None)
     if records is not None:
-        return rolling_feedforward_records(plant,records(),velocity)
+        return rolling_feedforward_records(plant,records(),velocity,regularization_m_s)
     rows=[]; rhs=[]
     for c in plant.data.contact:
         if c.efc_address < 0:
@@ -52,16 +70,16 @@ def rolling_feedforward(plant, velocity):
         rows.extend(row);rhs.extend(-velocity)
     if not rows:
         return np.zeros(9),np.zeros(5)
-    scale=np.array([5.,5.,5.,.3,.3])
-    allocated=scale*np.linalg.lstsq(np.asarray(rows)*scale,np.asarray(rhs),rcond=1e-7)[0]
+    allocated=_rolling_allocation(rows,rhs,regularization_m_s)
     qvel=np.r_[velocity,0.,0.,0.,0.,allocated[:3]]
     u=np.r_[np.zeros(3),allocated[3:]]
     return qvel,u
 
 
-def rolling_feedforward_records(plant, records, velocity):
+def rolling_feedforward_records(plant, records, velocity, regularization_m_s=0., allocator=None,
+                                reference=None, position=None, reference_priority=1.):
     """``rolling_feedforward`` from contact records (see contact_sensing.records_from_mujoco)."""
-    rows=[]; rhs=[]
+    rows=[]; rhs=[]; loads=[]
     for record in records:
         name=record['name']
         if not name.startswith(('shell_','belt_')):
@@ -73,10 +91,37 @@ def rolling_feedforward_records(plant, records, velocity):
             side=0 if name.startswith('belt_A') else 1
             row[:,3+side]=plant.data.geom_xmat[int(record['geom'])].reshape(3,3)[:2,1]
         rows.extend(row);rhs.extend(-velocity)
+        loads.append(max(float(record.get('normal_force', 0.)), 0.))
+    if allocator is not None:
+        # Normalize load shares so adding duplicate contact records does not
+        # change the relative tracking/effort costs. No solver loads are read.
+        shares = np.asarray(loads, float)
+        if len(shares):
+            shares = shares/shares.sum() if shares.sum() > 0 else np.ones(len(shares))/len(shares)
+        weights = np.repeat(np.sqrt(shares), 2)
+        matrix = np.asarray(rows, float).reshape(-1, 5)
+        target = np.asarray(rhs, float)
+        authority = (shares[:, None, None]*matrix.reshape(-1, 2, 5)).sum(axis=0)
+        if reference is not None:
+            velocity = reference.request(position, velocity, plant.data.qpos[:2],
+                                         response=allocator.velocity_response(authority), priority=reference_priority)
+            target = np.tile(-velocity, len(shares))
+        allocated = allocator.solve(matrix*weights[:, None], target*weights, plant.dt,
+                                    authority_matrix=authority)
+        allocator.diagnostics['allocation_requested_velocity_m_s'] = np.asarray(velocity, float).copy()
+        residual = (matrix@allocated-target).reshape(-1, 2)
+        allocator.diagnostics['allocation_velocity_error_m_s'] = (
+            -(shares[:, None]*residual).sum(axis=0) if len(shares) else np.full(2, np.nan))
+        body_velocity = velocity
+        if 'allocation_accepted_velocity_m_s' in allocator.diagnostics:
+            body_velocity = allocator.diagnostics['allocation_accepted_velocity_m_s']
+            reference_residual = (matrix@allocated).reshape(-1, 2)+body_velocity
+            allocator.diagnostics['allocation_reference_residual_rms_m_s'] = (
+                float(np.sqrt(np.sum(shares[:, None]*reference_residual**2))) if len(shares) else np.nan)
+        return np.r_[body_velocity, 0., 0., 0., 0., allocated[:3]], np.r_[np.zeros(3), allocated[3:]]
     if not rows:
         return np.zeros(9),np.zeros(5)
-    scale=np.array([5.,5.,5.,.3,.3])
-    allocated=scale*np.linalg.lstsq(np.asarray(rows)*scale,np.asarray(rhs),rcond=1e-7)[0]
+    allocated=_rolling_allocation(rows,rhs,regularization_m_s)
     qvel=np.r_[velocity,0.,0.,0.,0.,allocated[:3]]
     u=np.r_[np.zeros(3),allocated[3:]]
     return qvel,u

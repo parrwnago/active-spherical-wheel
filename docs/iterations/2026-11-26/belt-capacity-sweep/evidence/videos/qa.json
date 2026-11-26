@@ -1,0 +1,79 @@
+{
+  "iteration": "I-49",
+  "passed": true,
+  "checks": {
+    "input_hashes_unchanged": true,
+    "video_hash_matches": true,
+    "full44s_actual_schedule": true,
+    "actual_state_clocks_match_program": true,
+    "same_fixed_camera_and_worldxy": true,
+    "original_design_and_actual_caps_explicit": true,
+    "motion_identity_not_input_identity": true,
+    "no_new_simulation_or_controller": true,
+    "no_scientific_reduction_rerun": true,
+    "defaults_unchanged": true,
+    "h264": true,
+    "resolution": true,
+    "fps": true,
+    "frames": true,
+    "duration": true,
+    "decoded_frames_nonblank": true
+  },
+  "video": {
+    "path": "results/belt_capacity_sweep_20261126/videos/belt_capacity_comparison.mp4",
+    "sha256": "2cb063c13ff1909bae13848163e4a1d48b20d37ca800fc07f1b621487b1ef357",
+    "bytes": 4757880,
+    "frames": 561,
+    "fps": 20,
+    "duration_s": 28.05
+  },
+  "stills": {
+    "decoded_frame_0000.jpg": {
+      "sha256": "26459da4d0c5761925a1877f0544021ef08b40833e2f506f93226d5cb8d7f9ec",
+      "dimensions": [
+        1200,
+        1800,
+        3
+      ],
+      "pixel_std": 36.87495783150234
+    },
+    "decoded_frame_0040.jpg": {
+      "sha256": "b9aa389a3a30cda08213ba37efed825399b1c52d35daac9c4bef8bfa39131c6a",
+      "dimensions": [
+        1200,
+        1800,
+        3
+      ],
+      "pixel_std": 66.08309975230449
+    },
+    "decoded_frame_0280.jpg": {
+      "sha256": "1c049be03e12d7428631934a33a3b4ab22c103d39dfa2407e24f3ee3d3641cda",
+      "dimensions": [
+        1200,
+        1800,
+        3
+      ],
+      "pixel_std": 66.10856332097
+    },
+    "decoded_frame_0560.jpg": {
+      "sha256": "a2542fd6011194ad28e61bc727466bcbe9d59c0b1e2eb2640eccdc5044034ef1",
+      "dimensions": [
+        1200,
+        1800,
+        3
+      ],
+      "pixel_std": 34.65512592799225
+    }
+  },
+  "scope": "Only saved-media/hash/clock verification; no physics/controller/numerical analysis rerun.",
+  "visual_review": {
+    "inspected": "Three-arm6.825s preview, resultcard, tracking summary, and final decoded intro/actual/endcard.",
+    "findings": [
+      "Same fixed camera/worldXY and chart axes across three operatingcaps.",
+      "Physical motion is actual native Gazebo/DART data; title explicitly says original0.30design.",
+      "Requested/applied speeds and old/owncaps separate;0.60/0.90motionidentity not conflated with appliedinputs.",
+      "Mixed outcome retained: peak/final/lean improve, movingRMS worsens, settling/routes/provisional screen fail.",
+      "Ideal surface-speed capacity assumption does not claim actual motor response or motor sizing validation."
+    ]
+  }
+}

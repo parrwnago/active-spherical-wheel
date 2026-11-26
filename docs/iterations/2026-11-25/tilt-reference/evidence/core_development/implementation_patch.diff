@@ -1,0 +1,662 @@
+--- a/src/spherical_wheel/offroad_control.py
++++ b/src/spherical_wheel/offroad_control.py
+@@ -87,6 +87,7 @@
+ from .rolling_allocation import AllocationSettings, BoundedRollingAllocator, FeasibleRollingAllocator
+ from .feasible_reference import FeasibleMotionReference, FeasibleReferenceSettings, balance_travel_priority
+ from .synchronization import ContactSynchronizer
++from .tilt_reference import TiltReference, TiltReferenceSettings
+ 
+ # State weights of the flat-floor LQR (control.design_lqr), in its scaled
+ # coordinates. Order: x y z roll pitch yaw shaft shell_A shell_B, then the
+@@ -237,8 +238,16 @@
+     heading_normal_time_constant_s: float = .5  # low-pass on the normal that sets the fall line
+     heading_error_limit_rad: float = .5    # bound on the heading error used
+     fall_line_hysteresis_deg: float = 20.  # keep the chosen end of the fall line until the other is this much closer
++    tilt_reference: TiltReferenceSettings | dict | None = None  # opt-in bounded tilt shaping; None preserves native behavior
+ 
+     def __post_init__(self):
++        if isinstance(self.tilt_reference,dict):
++            self.tilt_reference = TiltReferenceSettings(**self.tilt_reference)
++        elif self.tilt_reference is not None and not isinstance(self.tilt_reference,TiltReferenceSettings):
++            raise ValueError('tilt_reference must be settings, a settings dictionary, or None')
++        if self.tilt_reference is not None and (not self.ground_aware or
++                not np.isfinite(self.max_lean_deg) or not 0 < self.max_lean_deg < 90):
++            raise ValueError('Tilt shaping requires ground-aware control and max_lean_deg between 0 and 90')
+         if self.mode not in CONTROLLER_MODES:
+             raise ValueError(f'Choose a controller mode from {CONTROLLER_MODES}')
+         if self.shaft_error not in ('material', 'free', 'rolling'):
+@@ -285,7 +294,10 @@
+         return self.mode != 'flat_baseline'
+ 
+     def as_dict(self):
+-        return asdict(self)
++        values = asdict(self)
++        if self.tilt_reference is None:
++            values.pop('tilt_reference')
++        return values
+ 
+ 
+ class FlatDesign:
+@@ -362,6 +374,8 @@
+         if self.params.ground_aware and self.params.lqr_weights != getattr(design, 'weights', 'flat'):
+             design = design.variant(self.params.lqr_weights)
+         self.plant, self.design = plant, design
++        self._tilt_reference = (None if self.params.tilt_reference is None else
++            TiltReference(self.params.tilt_reference,np.radians(self.params.max_lean_deg)))
+         self.feedback = ScheduledBalanceFeedback(plant, design.points)
+         self.synchronizer = ContactSynchronizer(plant)
+         allocator_class = FeasibleRollingAllocator if self.params.rolling_allocation == 'feasible' else BoundedRollingAllocator
+@@ -404,6 +418,8 @@
+         self.reset(phase)
+ 
+     def reset(self, phase=None):
++        if self._tilt_reference is not None:
++            self._tilt_reference.reset()
+         phase = self.plant.config['simulation'].get('initial_shaft_phase_rad', .30) if phase is None else phase
+         self.ordinary = self.design.local(phase)
+         self.nominal_joints = self.ordinary['equilibrium']['qpos'][7:10].copy()
+@@ -628,10 +644,35 @@
+             qref[:2] = np.asarray(xy)+self.radius*normal[:2]
+         qref[7:10] = self.nominal_joints
+         qref[3:7] = self.reference_attitude(normal, reference_acceleration)
++        tilt_diagnostics = None
++        if self._tilt_reference is not None:
++            raw_quat = qref[3:7].copy()
++            lean = self.lean_vector(normal,reference_acceleration)
++            size = float(np.linalg.norm(lean))
++            raw_theta = (np.zeros(2) if size < 1e-12 else
++                         np.arcsin(size)*np.array([-lean[1],lean[0]])/size)
++            tilt_diagnostics = self._tilt_reference.update(raw_theta,plant.data.time)
++            world_rate,body_rate = np.zeros(3),np.zeros(3)
++            if tilt_diagnostics['active'] and not tilt_diagnostics['initialized_now']:
++                mujoco.mju_mulQuat(qref[3:7],equilibrium['qpos'][3:7],tilt_diagnostics['q_tilt'])
++                equilibrium_rotation = np.empty(9)
++                mujoco.mju_quat2Mat(equilibrium_rotation,equilibrium['qpos'][3:7])
++                world_rate = equilibrium_rotation.reshape(3,3)@tilt_diagnostics['angular_velocity_equilibrium_rad_s']
++                body_rate = plant.data.xmat[plant.fork_id].reshape(3,3).T@world_rate
++            # Angular references from a dropout-held rolling allocation belong
++            # to the previous attitude/time. Always replace them here.
++            used_rate = (body_rate.copy() if tilt_diagnostics['active'] and
++                         self.params.tilt_reference.use_rate_reference else np.zeros(3))
++            vref[3:6] = used_rate
++            tilt_diagnostics.update(raw_reference_quat=raw_quat,shaped_reference_quat=qref[3:7].copy(),
++                angular_velocity_world_rad_s=world_rate,angular_velocity_body_rad_s=body_rate,
++                used_angular_velocity_body_rad_s=used_rate)
+         diagnostics = {'measurement': measurement, 'estimate': estimate, 'drive_fade': 1.,
+                        'observed': sensed if self.observer is not None else None,
+                        'support_torque': np.zeros(5), 'reference_quat': qref[3:7].copy(),
+                        'heading_target_error_rad': self._yaw_error if aware else None}
++        if tilt_diagnostics is not None:
++            diagnostics['tilt_reference'] = tilt_diagnostics
+         if aware:
+             command, feedback = self._terrain_feedback(qref, vref, feedforward, normal, measurement, touching)
+             diagnostics['support_torque'] = feedback.pop('support_torque')
+--- /dev/null
++++ b/src/spherical_wheel/tilt_reference.py
+@@ -0,0 +1,172 @@
++"""Opt-in causal tilt shaping; no robot, contact or terrain data is accessed.
++
++The two states stay in the raw tilt disk under SSP Heun. Chart speed is bounded
++by R and chart acceleration by 2R/tau. These are reference-design bounds, not
++proof that a physical actuator can attain the requested motion.
++"""
++from __future__ import annotations
++
++from dataclasses import dataclass
++import math
++
++import numpy as np
++
++
++@dataclass(frozen=True)
++class TiltReferenceSettings:
++    time_constant_s: float = .08
++    max_rate_deg_s: float = 60.
++    activation_time_s: float = 0.
++    use_rate_reference: bool = True
++
++    def __post_init__(self):
++        for name in ('time_constant_s', 'max_rate_deg_s'):
++            value = float(getattr(self, name))
++            if not np.isfinite(value) or value <= 0:
++                raise ValueError(f'{name} must be finite and positive')
++            object.__setattr__(self, name, value)
++        activation = float(self.activation_time_s)
++        if not np.isfinite(activation) or activation < 0:
++            raise ValueError('activation_time_s must be finite and nonnegative')
++        if not isinstance(self.use_rate_reference, (bool, np.bool_)):
++            raise ValueError('use_rate_reference must be a boolean')
++        object.__setattr__(self, 'activation_time_s', activation)
++        object.__setattr__(self, 'use_rate_reference', bool(self.use_rate_reference))
++
++
++def bounded_velocity(difference, time_constant_s, max_rate_rad_s):
++    """Smooth radial speed cap f(d); its derivative has norm <= 1/tau."""
++    difference = np.asarray(difference, float)
++    size = float(np.linalg.norm(difference))
++    u = size / (max_rate_rad_s * time_constant_s)
++    factor = (1. - u*u/3. + 2.*u**4/15.) if u < 1e-4 else np.tanh(u)/u
++    return difference * (factor/time_constant_s)
++
++
++def bounded_velocity_jacobian(difference, time_constant_s, max_rate_rad_s):
++    difference = np.asarray(difference, float)
++    size = float(np.linalg.norm(difference))
++    if size == 0:
++        return np.eye(len(difference))/time_constant_s
++    u = size/(max_rate_rad_s*time_constant_s)
++    tangent = ((1.-u*u/3.+2.*u**4/15.) if u < 1e-4 else np.tanh(u)/u)/time_constant_s
++    radial = (1.-np.tanh(u)**2)/time_constant_s
++    direction = difference/size
++    return tangent*np.eye(len(difference))+(radial-tangent)*np.outer(direction,direction)
++
++
++def left_jacobian_so3(phi):
++    """Spatial angular velocity of Exp(phi): omega = J_left(phi) phi_dot."""
++    phi = np.asarray(phi, float)
++    if phi.shape != (3,) or not np.isfinite(phi).all():
++        raise ValueError('Rotation vector must contain three finite values')
++    x,y,z = phi
++    skew = np.array([[0.,-z,y],[z,0.,-x],[-y,x,0.]])
++    squared = float(phi@phi)
++    if squared < 1e-8:
++        a = .5-squared/24.+squared*squared/720.
++        b = 1./6.-squared/120.+squared*squared/5040.
++    else:
++        angle = math.sqrt(squared)
++        a = (1.-math.cos(angle))/squared
++        b = (angle-math.sin(angle))/(squared*angle)
++    return np.eye(3)+a*skew+b*(skew@skew)
++
++
++def tilt_quaternion(theta):
++    """wxyz quaternion Exp([theta_x,theta_y,0]), before equilibrium/heading."""
++    theta = np.asarray(theta, float)
++    if theta.shape != (2,) or not np.isfinite(theta).all():
++        raise ValueError('Tilt chart must contain two finite values')
++    angle = float(np.linalg.norm(theta))
++    scale = .5 if angle < 1e-12 else math.sin(angle/2.)/angle
++    return np.r_[math.cos(angle/2.), scale*theta, 0.]
++
++
++def tilt_angular_velocity(theta, theta_dot):
++    theta, theta_dot = np.asarray(theta,float), np.asarray(theta_dot,float)
++    if theta.shape != (2,) or theta_dot.shape != (2,) or not np.isfinite(theta_dot).all():
++        raise ValueError('Tilt and tilt rate must contain two finite values')
++    return left_jacobian_so3(np.r_[theta,0.])@np.r_[theta_dot,0.]
++
++
++class TiltReference:
++    """Two smooth bounded cascaded states, driven by the previous held target.
++
++    update(raw_now,now) first integrates to now using the previous held raw
++    target, then registers raw_now. A target change changes acceleration but
++    never instantly changes the angle or rate. Same-time calls neither advance
++    state nor replace held input. reset() clears state for lazy activation.
++    """
++    def __init__(self, settings: TiltReferenceSettings, max_tilt_rad: float):
++        if not isinstance(settings,TiltReferenceSettings):
++            raise ValueError('settings must be TiltReferenceSettings')
++        if not np.isfinite(max_tilt_rad) or not 0 < max_tilt_rad < np.pi/2:
++            raise ValueError('Tilt disk radius must lie strictly between 0 and pi/2')
++        self.settings = settings
++        self.max_tilt_rad = float(max_tilt_rad)
++        self.max_rate_rad_s = float(np.radians(settings.max_rate_deg_s))
++        self.max_substep_s = min(.001,settings.time_constant_s/4.)
++        self.reset()
++
++    def reset(self):
++        self._theta = self._z = self._held_raw = self._time = None
++        self._last_seen_time = None
++
++    def state_dict(self):
++        """Canonical uninitialized state is None; returned arrays never alias."""
++        if self._time is None:
++            return None
++        return {'time_s':self._time,'theta_rad':self._theta.copy(),
++                'z_rad':self._z.copy(),'held_raw_theta_rad':self._held_raw.copy()}
++
++    def _velocity(self,difference):
++        return bounded_velocity(difference,self.settings.time_constant_s,self.max_rate_rad_s)
++
++    def _rhs(self,z,theta):
++        return self._velocity(self._held_raw-z),self._velocity(z-theta)
++
++    def update(self,raw_theta,time_s):
++        raw_theta = np.asarray(raw_theta,float)
++        time_s = float(time_s)
++        if raw_theta.shape != (2,) or not np.isfinite(raw_theta).all():
++            raise ValueError('Raw tilt must contain two finite values')
++        if np.linalg.norm(raw_theta) > self.max_tilt_rad+1e-12:
++            raise ValueError('Raw tilt lies outside the configured disk')
++        if not np.isfinite(time_s) or time_s < 0:
++            raise ValueError('Reference time must be finite and nonnegative')
++        if self._last_seen_time is not None and time_s < self._last_seen_time:
++            raise ValueError('Reference time cannot move backwards; reset explicitly')
++        self._last_seen_time = time_s
++        active = self._time is not None or time_s >= self.settings.activation_time_s-1e-9
++        initialized = advanced = False
++        substeps = 0
++        if not active:
++            theta,z,held = raw_theta.copy(),raw_theta.copy(),raw_theta.copy()
++            rate,acceleration = np.zeros(2),np.zeros(2)
++        else:
++            if self._time is None:
++                self._theta,self._z,self._held_raw = raw_theta.copy(),raw_theta.copy(),raw_theta.copy()
++                self._time = time_s
++                initialized = True
++            elif time_s > self._time:
++                elapsed = time_s-self._time
++                substeps = max(1,int(math.ceil(elapsed/self.max_substep_s)))
++                h = elapsed/substeps
++                for _ in range(substeps):
++                    dz,dtheta = self._rhs(self._z,self._theta)
++                    first_z,first_theta = self._z+h*dz,self._theta+h*dtheta
++                    next_dz,next_dtheta = self._rhs(first_z,first_theta)
++                    self._z = .5*self._z+.5*(first_z+h*next_dz)
++                    self._theta = .5*self._theta+.5*(first_theta+h*next_dtheta)
++                self._time = time_s
++                self._held_raw = raw_theta.copy()
++                advanced = True
++            theta,z,held = self._theta.copy(),self._z.copy(),self._held_raw.copy()
++            rate = self._velocity(z-theta)
++            acceleration = bounded_velocity_jacobian(z-theta,self.settings.time_constant_s,self.max_rate_rad_s)@(
++                self._velocity(held-z)-rate)
++        return {'active':active,'initialized_now':initialized,'advanced':advanced,'substeps':substeps,'time_s':time_s,
++                'raw_theta_rad':raw_theta.copy(),'theta_rad':theta,'z_rad':z,'held_raw_theta_rad':held,
++                'theta_dot_rad_s':rate,'theta_ddot_rad_s2':acceleration,
++                'q_tilt':tilt_quaternion(theta),'angular_velocity_equilibrium_rad_s':tilt_angular_velocity(theta,rate)}
+--- /dev/null
++++ b/tests/test_tilt_reference.py
+@@ -0,0 +1,181 @@
++"""Independent pure mathematics and causal-state checks for the I43 tilt reference.
++
++No robot plant or contact solver is constructed. Rotation derivatives use an
++independent Rodrigues matrix calculation; the ODE comparison uses DOP853.
++"""
++from __future__ import annotations
++
++import copy
++import numpy as np
++import pytest
++from scipy.integrate import solve_ivp
++from scipy.spatial.transform import Rotation
++
++from spherical_wheel import tilt_reference as tilt
++
++
++TAU=.08
++RATE=np.radians(60.)
++LIMIT=np.radians(28.)
++
++
++def _generator(**overrides):
++    settings=tilt.TiltReferenceSettings(time_constant_s=TAU,max_rate_deg_s=60.,
++        activation_time_s=4.,use_rate_reference=True,**overrides)
++    return tilt.TiltReference(settings,max_tilt_rad=LIMIT)
++
++
++def _rotation(vector):
++    vector=np.asarray(vector,float);angle=np.linalg.norm(vector)
++    x,y,z=vector
++    skew=np.array([[0.,-z,y],[z,0.,-x],[-y,x,0.]])
++    if angle<1e-8:
++        return np.eye(3)+(1-angle**2/6)*skew+(.5-angle**2/24)*(skew@skew)
++    return np.eye(3)+np.sin(angle)/angle*skew+(1-np.cos(angle))/angle**2*(skew@skew)
++
++
++def _quat(matrix):
++    x,y,z,w=Rotation.from_matrix(matrix).as_quat()
++    return np.array([w,x,y,z])
++
++
++def _matrix(quat):
++    w,x,y,z=quat
++    return Rotation.from_quat([x,y,z,w]).as_matrix()
++
++
++def _lift(theta,equilibrium,yaw):
++    return equilibrium@_rotation(np.r_[theta,0.])@_rotation([0.,0.,yaw])
++
++
++def _reference_velocity(theta,rate,equilibrium,actual):
++    # The module returns equilibrium-frame angular velocity. The controller's
++    # actual-body transport is independently reviewed/integration-tested.
++    return actual.T@equilibrium@tilt.tilt_angular_velocity(theta,rate)
++
++
++def _independent_flow(vector):
++    vector=np.asarray(vector,float);norm=np.linalg.norm(vector)
++    return vector/TAU if norm<1e-14 else RATE*np.tanh(norm/(RATE*TAU))*vector/norm
++
++
++@pytest.mark.parametrize('theta',[[0.,0.],[1e-10,-3e-10],[.2,-.15],[.4,.2]])
++@pytest.mark.parametrize('yaw',[0.,1.2,-2.9])
++def test_lift_and_body_rate_match_independent_rotation_derivative(theta,yaw):
++    theta=np.asarray(theta);rate=np.array([.37,-.22])
++    equilibrium=_rotation([.08,-.03,.16]);actual=_rotation([-.13,.2,-.9])
++    epsilon=1e-6
++    center=_lift(theta,equilibrium,yaw)
++    derivative=(_lift(theta+epsilon*rate,equilibrium,yaw)-_lift(theta-epsilon*rate,equilibrium,yaw))/(2*epsilon)
++    skew=derivative@center.T
++    world=np.array([skew[2,1]-skew[1,2],skew[0,2]-skew[2,0],skew[1,0]-skew[0,1]])/2
++    body=_reference_velocity(theta,rate,equilibrium,actual)
++    np.testing.assert_allclose(actual@body,world,atol=2e-9,rtol=0.)
++    generated=equilibrium@_matrix(tilt.tilt_quaternion(theta))
++    np.testing.assert_allclose(generated,equilibrium@_rotation(np.r_[theta,0.]),atol=2e-14,rtol=0.)
++
++
++def test_changing_tilt_direction_keeps_geometric_angular_z():
++    theta=np.array([.3,0.]);rate=np.array([0.,.4])
++    body=_reference_velocity(theta,rate,np.eye(3),np.eye(3))
++    assert body[2]>.05
++    assert np.linalg.norm(body)<=np.linalg.norm(rate)+1e-14
++
++
++def test_measured_yaw_change_does_not_add_a_desired_yaw_rate():
++    theta=np.array([.2,-.1]);equilibrium=_rotation([.03,-.04,.1])
++    for yaw in (-3.,-1.,0.,2.8):
++        actual=_rotation([0.,0.,yaw])
++        np.testing.assert_array_equal(_reference_velocity(theta,np.zeros(2),equilibrium,actual),np.zeros(3))
++
++
++def test_previous_held_target_and_same_timestamp_are_causal():
++    generator=_generator()
++    target=np.array([.3,-.1])
++    initial=generator.update(np.zeros(2),4.)
++    now=generator.update(target,4.005)
++    np.testing.assert_array_equal(now['theta_rad'],initial['theta_rad'])
++    np.testing.assert_array_equal(now['theta_dot_rad_s'],initial['theta_dot_rad_s'])
++    assert np.linalg.norm(now['theta_ddot_rad_s2'])>0.
++    next_row=generator.update(target,4.010)
++    assert np.linalg.norm(next_row['theta_rad'])>0.
++    before=copy.deepcopy(generator)
++    duplicate=generator.update(-target,4.010)
++    np.testing.assert_array_equal(duplicate['theta_rad'],next_row['theta_rad'])
++    np.testing.assert_array_equal(duplicate['theta_dot_rad_s'],next_row['theta_dot_rad_s'])
++    continued=generator.update(target,4.015)
++    expected=before.update(target,4.015)
++    for key in ('theta_rad','theta_dot_rad_s','theta_ddot_rad_s2','z_rad','held_raw_theta_rad'):
++        np.testing.assert_array_equal(continued[key],expected[key])
++
++
++def test_cascade_remains_in_disk_and_satisfies_chart_bounds():
++    generator=_generator();time=4.
++    generator.update(np.zeros(2),time)
++    previous=None
++    for index in range(300):
++        dt=(.005,.0017,.0063)[index%3];time+=dt
++        phase=index*1.73
++        raw=LIMIT*np.array([np.cos(phase),np.sin(phase)])
++        row=generator.update(raw,time)
++        assert np.linalg.norm(row['theta_rad'])<=LIMIT+2e-14
++        assert np.linalg.norm(row['z_rad'])<=LIMIT+2e-14
++        assert np.linalg.norm(row['theta_dot_rad_s'])<=RATE+2e-14
++        assert np.linalg.norm(row['theta_ddot_rad_s2'])<=2*RATE/TAU+2e-12
++        if previous is not None:
++            # Step bounds concern the generated reference, not measured-frame rotation.
++            assert np.linalg.norm(row['theta_rad']-previous['theta_rad'])<=RATE*dt+2e-13
++            assert np.linalg.norm(row['theta_dot_rad_s']-previous['theta_dot_rad_s'])<=2*RATE/TAU*dt+2e-12
++        previous=row
++
++
++def test_ssp_solution_matches_independent_high_accuracy_ode():
++    generator=_generator();generator.update(np.zeros(2),4.)
++    target=np.array([.3,-.2]);generator.update(target,4.005)
++    def derivative(_,state):
++        z,theta=state[:2],state[2:]
++        return np.r_[_independent_flow(target-z),_independent_flow(z-theta)]
++    times=np.array([4.045,4.085,4.205,4.805])
++    exact=solve_ivp(derivative,[4.005,times[-1]],np.zeros(4),method='DOP853',
++        rtol=1e-12,atol=1e-14,t_eval=times)
++    assert exact.success
++    for i,time in enumerate(times):
++        row=generator.update(target,float(time))
++        np.testing.assert_allclose(np.r_[row['z_rad'],row['theta_rad']],exact.y[:,i],atol=5e-6,rtol=0.)
++    final=generator.update(target,7.)
++    np.testing.assert_allclose(final['theta_rad'],target,atol=1e-10,rtol=0.)
++    assert np.linalg.norm(final['theta_dot_rad_s'])<1e-9
++
++
++def test_activation_reset_and_returned_arrays_do_not_alias_state():
++    generator=_generator();raw=np.array([.2,.1])
++    inactive=generator.update(raw,3.995)
++    assert not inactive['active']
++    first=generator.update(raw,4.)
++    np.testing.assert_array_equal(first['theta_rad'],raw)
++    np.testing.assert_array_equal(first['theta_dot_rad_s'],np.zeros(2))
++    first['theta_rad'][:]=99.
++    intact=generator.update(raw,4.)
++    np.testing.assert_array_equal(intact['theta_rad'],raw)
++    clone=copy.deepcopy(generator);clone.update(-raw,4.005);changed=clone.update(-raw,4.010)
++    original=generator.update(raw,4.010)
++    assert np.linalg.norm(changed['theta_rad']-original['theta_rad'])>0.
++    generator.reset()
++    restarted=generator.update(-raw,4.)
++    np.testing.assert_array_equal(restarted['theta_rad'],-raw)
++    np.testing.assert_array_equal(restarted['theta_dot_rad_s'],np.zeros(2))
++
++
++def test_nonfinite_or_backwards_time_is_rejected():
++    generator=_generator();generator.update(np.zeros(2),4.)
++    for time in (float('nan'),float('inf'),3.9):
++        with pytest.raises(ValueError):generator.update(np.zeros(2),time)
++
++
++def test_backwards_time_before_activation_is_rejected_and_reset_clears_clock():
++    generator=_generator()
++    assert not generator.update(np.zeros(2),3.)['active']
++    with pytest.raises(ValueError):generator.update(np.zeros(2),2.9)
++    assert not generator.update(np.zeros(2),3.1)['active']
++    generator.reset()
++    assert not generator.update(np.zeros(2),2.)['active']
+--- /dev/null
++++ b/tests/test_tilt_reference_controller.py
+@@ -0,0 +1,207 @@
++"""Opt-in tilt integration and private-history contracts; no Gazebo execution."""
++import copy
++from contextlib import ExitStack
++from dataclasses import asdict
++from unittest.mock import patch
++
++import mujoco
++import numpy as np
++import pytest
++
++from spherical_wheel.contact_prediction import forecast_native_contacts
++from spherical_wheel.model import REPO_ROOT
++from spherical_wheel.offroad_control import OffroadController, OffroadParams
++from spherical_wheel.offroad_experiments import Workspace
++from spherical_wheel.predictive_model import EstimatedPlanePredictor
++from spherical_wheel.predictive_seed import clone_native_controller, generate_native_rollout_seed
++from spherical_wheel.tilt_reference import TiltReferenceSettings
++
++
++@pytest.fixture(scope='module')
++def factory(tmp_path_factory):
++    workspace=Workspace(directory=tmp_path_factory.mktemp('tilt_integration'),
++        seed_cache=REPO_ROOT/'generated/offroad/flat/control_schedule.npz')
++    def make(settings=None):
++        mirror=copy.deepcopy(workspace.mirror())
++        params=OffroadParams(mode='hardware',rolling_allocation='least_squares',tilt_reference=settings)
++        controller=OffroadController(mirror,workspace.design,params,phase=.3,record_diagnostics=True)
++        equilibrium=controller.ordinary['equilibrium']
++        mirror.set_state(equilibrium['qpos'],np.zeros(9),0.,equilibrium['u'])
++        controller.reset(.3)
++        controller.nominal_joints=mirror.data.qpos[7:10].copy()
++        return controller
++    return make
++
++
++def same(a,b):
++    if isinstance(a,dict):
++        assert a.keys()==b.keys()
++        for key in a:same(a[key],b[key])
++    elif isinstance(a,(tuple,list)):
++        assert len(a)==len(b)
++        for x,y in zip(a,b):same(x,y)
++    elif isinstance(a,np.ndarray):
++        np.testing.assert_array_equal(a,b)
++    else:
++        assert a==b
++
++
++def command_at(controller,time,acceleration=(0.,0.),velocity=(0.,0.),previous=None):
++    plant=controller.plant
++    plant.set_state(plant.data.qpos.copy(),plant.data.qvel.copy(),time,
++                    plant.last_input.copy() if previous is None else previous)
++    return controller.command(plant.data.qpos[:2].copy(),np.asarray(velocity),np.asarray(acceleration))
++
++
++def prime(controller):
++    controller.lean_vector=lambda normal,acceleration: np.asarray(acceleration,float)
++    for time,acceleration in ((4.,(0.,0.)),(4.005,(.1,.04)),(4.010,(.1,.04))):
++        current,info=command_at(controller,time,acceleration)
++    return current,info
++
++
++def test_legacy_parameter_dictionary_omits_disabled_feature():
++    params=OffroadParams(mode='hardware')
++    expected=asdict(params);expected.pop('tilt_reference')
++    assert params.as_dict()==expected
++    assert 'tilt_reference' not in params.as_dict()
++    assert OffroadParams(**params.as_dict()).as_dict()==params.as_dict()
++
++
++def test_enabled_settings_serialize_and_round_trip():
++    settings=TiltReferenceSettings(activation_time_s=4.)
++    params=OffroadParams(mode='hardware',tilt_reference=settings)
++    assert params.as_dict()['tilt_reference']==asdict(settings)
++    restored=OffroadParams(**params.as_dict())
++    assert restored.tilt_reference==settings
++    assert restored.as_dict()==params.as_dict()
++
++
++@pytest.mark.parametrize('settings',[True,{'time_constant_s':0.},{'use_rate_reference':'yes'}])
++def test_invalid_opt_in_settings_are_rejected(settings):
++    with pytest.raises(ValueError):OffroadParams(mode='hardware',tilt_reference=settings)
++
++
++def test_disabled_and_waiting_paths_preserve_native_commands_bitwise(factory):
++    baseline=factory();candidate=factory(TiltReferenceSettings(activation_time_s=4.))
++    previous=baseline.plant.last_input.copy()
++    for time in (0.,.005,.010,1.,3.995,4.):
++        a,ia=command_at(baseline,time,(.04,-.02),previous=previous)
++        b,ib=command_at(candidate,time,(.04,-.02),previous=previous)
++        np.testing.assert_array_equal(a,b)
++        for key in ('requested','reference_quat','reference_qvel','feedback_reference_qvel','feedback_gain'):
++            np.testing.assert_array_equal(ia[key],ib[key])
++        if time<4:
++            assert candidate._tilt_reference.state_dict() is None
++            assert not ib['tilt_reference']['active']
++        else:
++            assert ib['tilt_reference']['initialized_now']
++            np.testing.assert_array_equal(ib['tilt_reference']['raw_reference_quat'],ib['reference_quat'])
++            assert ib['reference_qvel'][3:6].tobytes()==np.zeros(3).tobytes()
++        previous=a
++        baseline.after_step();candidate.after_step()
++    assert baseline._tilt_reference is None
++
++
++def test_raw_accessor_and_after_step_never_advance_generator(factory):
++    controller=factory(TiltReferenceSettings(activation_time_s=4.));prime(controller)
++    before=copy.deepcopy(controller._tilt_reference.state_dict())
++    for normal in ([0.,0.,1.],[.1,-.1,.98994949366]):
++        controller.reference_attitude(normal,np.array([.1,.2]))
++        controller.reference_attitude(normal,np.array([-.1,.2]))
++    controller.after_step()
++    same(before,controller._tilt_reference.state_dict())
++    controller.reset(.3)
++    assert controller._tilt_reference.state_dict() is None
++
++
++def test_transported_rate_is_applied_before_feedback_and_logged_consistently(factory):
++    controller=factory(TiltReferenceSettings(activation_time_s=4.));_,info=prime(controller)
++    tilt=info['tilt_reference']
++    assert np.linalg.norm(tilt['theta_dot_rad_s'])>0
++    rotation=np.empty(9);mujoco.mju_quat2Mat(rotation,controller.ordinary['equilibrium']['qpos'][3:7])
++    expected_world=rotation.reshape(3,3)@tilt['angular_velocity_equilibrium_rad_s']
++    actual_rotation=controller.plant.data.xmat[controller.plant.fork_id].reshape(3,3)
++    expected_body=actual_rotation.T@expected_world
++    np.testing.assert_allclose(tilt['angular_velocity_world_rad_s'],expected_world,atol=1e-15)
++    np.testing.assert_allclose(info['reference_qvel'][3:6],expected_body,atol=1e-15)
++    np.testing.assert_array_equal(info['reference_qvel'][3:6],info['feedback_reference_qvel'][3:6])
++    np.testing.assert_array_equal(tilt['used_angular_velocity_body_rad_s'],info['reference_qvel'][3:6])
++
++
++def test_angle_only_and_rate_modes_shape_identical_saved_inputs(factory):
++    angle=factory(TiltReferenceSettings(activation_time_s=4.,use_rate_reference=False))
++    rate=factory(TiltReferenceSettings(activation_time_s=4.,use_rate_reference=True))
++    common_previous=angle.plant.last_input.copy()
++    for c in (angle,rate):c.lean_vector=lambda n,a:np.asarray(a,float)
++    for time,acceleration in ((4.,(0.,0.)),(4.005,(.1,.04)),(4.010,(.1,.04)),(4.015,(-.05,.08))):
++        _,a=command_at(angle,time,acceleration,previous=common_previous)
++        _,b=command_at(rate,time,acceleration,previous=common_previous)
++        same(angle._tilt_reference.state_dict(),rate._tilt_reference.state_dict())
++        np.testing.assert_array_equal(a['reference_quat'],b['reference_quat'])
++        np.testing.assert_array_equal(a['reference_qvel'][3:6],np.zeros(3))
++    assert np.linalg.norm(b['reference_qvel'][3:6])>0
++
++
++def test_new_rate_overwrites_stale_dropout_rolling_reference(factory,monkeypatch):
++    controller=factory(TiltReferenceSettings(activation_time_s=4.));prime(controller)
++    assert controller._held is not None
++    controller._held['vref'][3:6]=[7.,8.,9.]
++    monkeypatch.setattr(controller.locator,'records',lambda *args:[])
++    _,info=command_at(controller,4.015,(.1,.04),velocity=(.02,0.))
++    assert not info['measurement']['in_contact']
++    np.testing.assert_array_equal(info['reference_qvel'][3:6],info['tilt_reference']['used_angular_velocity_body_rad_s'])
++    np.testing.assert_array_equal(info['feedback_reference_qvel'][3:6],info['reference_qvel'][3:6])
++    assert np.linalg.norm(info['reference_qvel'][3:6])>0
++    assert not np.array_equal(info['reference_qvel'][3:6],[7.,8.,9.])
++
++
++def test_enabled_generator_is_independent_in_native_clone(factory):
++    controller=factory(TiltReferenceSettings(activation_time_s=4.));prime(controller)
++    before=copy.deepcopy(controller._tilt_reference.state_dict())
++    clone=clone_native_controller(controller)
++    assert clone._tilt_reference is not controller._tilt_reference
++    assert not np.shares_memory(clone._tilt_reference._theta,controller._tilt_reference._theta)
++    assert not np.shares_memory(clone._tilt_reference._z,controller._tilt_reference._z)
++    clone._tilt_reference.update(np.array([.02,-.01]),4.015)
++    clone._tilt_reference._theta+=.01
++    same(before,controller._tilt_reference.state_dict())
++    clone.reset(.3)
++    same(before,controller._tilt_reference.state_dict())
++
++
++def test_enabled_seed_and_fine_forecast_keep_live_reference_history_and_anchor_cadence(factory):
++    controller=factory(TiltReferenceSettings(activation_time_s=0.))
++    goal=controller.plant.data.qpos[:2].copy()
++    path=lambda t:(goal.copy(),np.array([.005,0.]),np.array([.03,.02]) if t>=.005 else np.zeros(2))
++    current=None
++    for time in (0.,.005,.010):
++        controller.plant.set_state(controller.plant.data.qpos.copy(),controller.plant.data.qvel.copy(),time,
++            controller.plant.last_input.copy() if current is None else current)
++        current,info=controller.command(*path(time))
++    assert np.linalg.norm(info['tilt_reference']['theta_dot_rad_s'])>0
++    predictor=EstimatedPlanePredictor(controller.plant)
++    predictor.update(controller.plant.data.qpos,controller.plant.data.qvel,info['estimate']['normal'],
++        info['measurement']['point_m'],sum(info['measurement']['loads_N'].values()),
++        friction=info['estimate']['friction'],command=controller.plant.last_input)
++    before=copy.deepcopy(controller._tilt_reference.state_dict())
++    original=OffroadController.command;seen=[]
++    def callback(clone,*args):
++        assert clone._tilt_reference is not controller._tilt_reference
++        seen.append(clone.plant.data.time)
++        result=original(clone,*args)
++        assert clone._tilt_reference.state_dict()['time_s']==clone.plant.data.time
++        return result
++    def forbidden(*args,**kwargs):raise AssertionError('Solved contact reached native clone')
++    with ExitStack() as stack:
++        for target in ('spherical_wheel.offroad_control.measure_contact','spherical_wheel.offroad_control.records_from_mujoco',
++                       'spherical_wheel.offroad_control.rolling_feedforward','spherical_wheel.synchronization.ContactSynchronizer._normal_loads','mujoco.mj_contactForce'):
++            stack.enter_context(patch(target,forbidden))
++        seed,_=generate_native_rollout_seed(controller,predictor,path,.010,4,.005,current_command=current,command_function=callback)
++        first_times=list(seen);seen.clear()
++        forecast=forecast_native_contacts(controller,predictor,path,.010,.020,current_command=current,command_function=callback)
++    np.testing.assert_allclose(first_times,[.015,.020,.025],atol=1e-14)
++    np.testing.assert_allclose(seen,first_times,atol=0)
++    np.testing.assert_array_equal(seed,forecast['commands'])
++    np.testing.assert_array_equal(seed[0],current)
++    same(before,controller._tilt_reference.state_dict())

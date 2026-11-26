@@ -1,0 +1,72 @@
+"""Frozen matrix through the actual runtime class, not an independent SQP loop."""
+from pathlib import Path
+import hashlib,importlib.util,json,csv
+from contextlib import ExitStack
+from unittest.mock import patch
+import numpy as np
+from spherical_wheel.offroad_control import OffroadController
+from spherical_wheel.predictive_control import AffineMPCSettings
+
+ROOT=Path.cwd();OUT=Path(__file__).resolve().parent
+if (OUT/'report.json').exists():raise FileExistsError('Preserve earlier runtime matrix')
+def load(name,path):
+ s=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
+helper=load('diagnostic_helper',ROOT/'scripts/diagnose-mpc-search.py')
+paths=[Path(__file__),ROOT/'scripts/run-mpc-comparison.py',ROOT/'scripts/diagnose-mpc-search.py',ROOT/'src/spherical_wheel/predictive_seed.py',ROOT/'src/spherical_wheel/predictive_model.py',ROOT/'src/spherical_wheel/predictive_control.py',ROOT/'results/mpc_search_20261125/protocol.json']
+entries=[]
+for i,p in enumerate(paths):
+ t=OUT/'source_snapshot'/f'{i}_{p.name}';t.parent.mkdir(exist_ok=True);t.write_bytes(p.read_bytes());entries.append({'origin':str(p.relative_to(ROOT)),'snapshot':str(t.relative_to(OUT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
+helper.save(OUT/'provenance.json',{'scope':'Actual runtime class at2frozenanchors; each callhasfreshQPcache andpriorrealMPCsequence restored. No newGazebo.','sources':entries})
+with np.load(helper.SOURCE/'precision.npz') as z:exact={k:z[k] for k in z.files}
+plans=json.loads((helper.SOURCE/'plans.json').read_text())
+runtime=load('current_runtime',ROOT/'scripts/run-mpc-comparison.py')
+settings=AffineMPCSettings();rows=[];details=[]
+for at in (.4,2.):
+ i=int(np.argmin(abs(exact['time_s']-at)))
+ directory=OUT/f'anchor_{at:g}';directory.mkdir()
+ controller,native,info,path,replay=helper.replay_native(exact,i,directory)
+ before={'q':controller.plant.data.qpos.copy(),'v':controller.plant.data.qvel.copy(),'u':controller.plant.last_input.copy(),'wrench':np.r_[controller.observer.wrench()],'nominal':controller.nominal_joints.copy(),'time':controller.observer._previous[0]}
+ original_plan=min(plans,key=lambda p:abs(p['time_s']-at))
+ for seeded in (False,True):
+  for refinements in (1,2,5):
+   case=f'{"native" if seeded else "original"}_{refinements}'
+   experiment=runtime.TrajectoryPredictiveExperiment(controller.plant,path,settings,
+      load_residual_fraction=.1,jacobian_stride=5,seed_shaft_torque=.03,
+      native_rollout_seed=seeded,refinement_steps=refinements,native_command_function=OffroadController.command)
+   if at>.4:
+    previous=min(plans,key=lambda p:abs(p['time_s']-(at-.02)))
+    experiment.sequence=np.array(previous['inputs'])
+    np.testing.assert_array_equal(np.vstack((experiment.sequence[1:],experiment.sequence[-1:])),np.array(original_plan['model_anchor_inputs']))
+   with ExitStack() as stack:
+    for g in helper.GUARDS:stack.enter_context(patch(g,helper.forbidden))
+    command,row=experiment.command(controller,at,native,info)
+   plan=experiment.plan_rows[0]
+   assert row['mpc_success'] and not row['mpc_fallback']
+   assert 'native_rollout_seed_failure' not in plan,plan.get('native_rollout_seed_failure')
+   assert np.all(abs(command)<=controller.plant.bounds+1e-10)
+   now={'q':controller.plant.data.qpos,'v':controller.plant.data.qvel,'u':controller.plant.last_input,'wrench':np.r_[controller.observer.wrench()],'nominal':controller.nominal_joints,'time':controller.observer._previous[0]}
+   for k,v in before.items():assert np.array_equal(v,now[k]),k
+   native_cost=next((p.get('nominal_cost') for p in plan['trials'] if p['seed']=='native_rollout'),None)
+   if seeded:assert plan['nonlinear_cost']<=native_cost+1e-9
+   states=np.array(plan['nonlinear_states']);goal=path.origin
+   q_end=experiment.predictor.perturb(exact['exact_qpos'][i],exact['exact_qvel'][i],states[-1])[0]
+   record={'anchor_s':at,'seed_family':'original_plus_native' if seeded else 'original','refinements':refinements,
+    'cost':plan['nonlinear_cost'],'native_seed_cost':native_cost,'selected_source':plan['command_source'],'source_code':row['mpc_plan_source_code'],
+    'predicted_terminal_goal_error_mm':float(1000*np.linalg.norm(q_end[:2]-goal)),
+    'predicted_terminal_absolute_tilt_deg':float(np.degrees(np.arccos(np.clip(1-2*np.sum(q_end[4:6]**2),-1,1)))),
+    'wall_s':row['mpc_total_wall_s'],'qp_solved_count':plan['qp_solved_count'],
+    'saved_original_cost':original_plan['nonlinear_cost'],'cold_optimizer_cache':True}
+   rows.append(record);details.append({'case':case,'anchor_s':at,'replay':replay,'plan':plan})
+   helper.save(directory/(case+'.json'),details[-1]);helper.save(OUT/'report.json',{'status':'in_progress','rows':rows})
+   print(json.dumps(record),flush=True)
+for at in (.4,2.):
+ for family in ('original','original_plus_native'):
+  values=[r['cost'] for r in rows if r['anchor_s']==at and r['seed_family']==family]
+  assert all(b<=a+1e-6 for a,b in zip(values,values[1:])),values
+helper.save(OUT/'report.json',{'status':'completed','scope':'Frozen actual runtime entrypoint matrix,12calls/no newGazebo; priorstate+pastdata only, no actualfuturecommands for seeds.','rows':rows,
+ 'source_controller_state_unchanged':True,'all_seeded_results_not_worse_than_seed':True,'all_costs_monotonic_in_refinement_budget':True,
+ 'cache_caveat':'Eachcallhasfreshoptimizer. At2s thehistoricalsavedplanusedcontinuouspriorQPcache, so physicalcommands neednotbitmatch that oldrun. Savedobjectiveevaluationbitmatches; default.4old/newruntime parity separatelyverified.'})
+keys=list(rows[0])
+with (OUT/'metrics.csv').open('w',newline='') as f:
+ w=csv.DictWriter(f,fieldnames=keys);w.writeheader();w.writerows(rows)
+helper.save(OUT/'artifact_manifest.json',{'files':[{'path':str(p.relative_to(OUT)),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(OUT.rglob('*')) if p.is_file() and 'history_workspace' not in p.parts and '__pycache__' not in p.parts]})

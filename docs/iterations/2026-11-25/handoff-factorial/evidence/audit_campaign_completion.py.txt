@@ -1,0 +1,67 @@
+"""Verify sealed I42 launch/result/source bookkeeping only; no model calls."""
+from pathlib import Path
+from datetime import datetime
+import hashlib
+import json
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    target = HERE/'campaign/completion_audit.json'
+    if target.exists():
+        raise FileExistsError('Preserve previous completion audit')
+    launch = json.loads((HERE/'campaign/launch_manifest.json').read_text())
+    status = json.loads((HERE/'campaign/launch_status.json').read_text())
+    protocol = json.loads((HERE/'protocol.json').read_text())
+    assert sha(HERE/'protocol.json') == launch['protocol_sha256']
+    for source in launch['sources']:
+        assert sha(ROOT/source['origin']) == source['sha256'],source['origin']
+        assert sha(HERE/'campaign'/source['snapshot']) == source['sha256'],source['snapshot']
+    arms = protocol['execution']['arms']
+    assert set(status) == set(arms)
+    events, cases = [], {}
+    for arm in arms:
+        entry = status[arm]
+        assert entry['status'] == 'completed' and entry['exit_code'] == 0,entry
+        events += [(datetime.fromisoformat(entry['started_utc']),1),(datetime.fromisoformat(entry['finished_utc']),-1)]
+        folder = HERE/'campaign/runs'/arm
+        manifest = json.loads((folder/'artifact_manifest.json').read_text())
+        for item in manifest['files']:
+            assert sha(folder/item['path']) == item['sha256'],(arm,item['path'])
+        summary = json.loads((folder/'summary.json').read_text())
+        provenance = json.loads((folder/'provenance.json').read_text())
+        assert provenance['parameters'] == protocol['execution']['parameters']
+        with np.load(folder/'precision.npz') as z:
+            time = z['time_s']; count = len(time)
+            cadence_error = float(np.max(abs(np.diff(time)-.005)))
+            assert cadence_error < 1e-10
+            assert count == summary['handoff_factorial']['guarded_controller_calls']
+        cases[arm] = {'process_exit_code':entry['exit_code'],'simulation_completed':summary['completed'],
+            'failure':summary['failure'],'simulation_duration_s':summary['completed_duration_s'],
+            'saved_guarded_controller_calls':count,'maximum_5ms_cadence_error_s':cadence_error,
+            'manifest_entries_verified':len(manifest['files']),'manifest_sha256':sha(folder/'artifact_manifest.json'),
+            'precision_sha256':sha(folder/'precision.npz'),'summary_sha256':sha(folder/'summary.json'),
+            'physical_process_pid':provenance['process']['pid'],
+            'existing_route_gate_acceptance':'Reported separately by sealed saved-data analysis; process/completion success does not imply acceptance.'}
+    live = maximum = 0
+    for _,delta in sorted(events):
+        live += delta; maximum = max(maximum,live)
+    assert live == 0 and maximum <= 3
+    result = {'iteration':'I-42','scope':__doc__,'launch_attempt_count':len(arms),'new_fresh_physical_runs':len(arms),
+        'maximum_concurrent_process_intervals':maximum,'launch_source_and_snapshot_hashes_verified':len(launch['sources']),
+        'protocol_sha256':sha(HERE/'protocol.json'),'launch_manifest_sha256':sha(HERE/'campaign/launch_manifest.json'),
+        'audit_source_sha256':sha(Path(__file__)),'cases':cases,
+        'limitations':'Bookkeeping verification only. Four arms are one case each, not a robustness suite; no extra physics or automatic reruns.'}
+    target.write_text(json.dumps(result,indent=2)+'\n')
+    print(json.dumps(result,indent=2))
+
+
+if __name__ == '__main__':
+    main()

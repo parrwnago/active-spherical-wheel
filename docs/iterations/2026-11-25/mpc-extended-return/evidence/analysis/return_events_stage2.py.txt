@@ -1,0 +1,85 @@
+"""Saved-data event detail after the sealed I38 primary analysis; no physics."""
+from pathlib import Path
+import hashlib
+import json
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+if (HERE/'return_events.json').exists():
+    raise FileExistsError('Preserve this completed event-reduction stage')
+primary_manifest_hash = sha(HERE/'artifact_manifest.json')
+for item in json.loads((HERE/'artifact_manifest.json').read_text())['files']:
+    assert sha(HERE/item['path']) == item['sha256'], item
+source = Path(__file__).resolve()
+snapshot = HERE/'return_events_source'/source.name
+snapshot.parent.mkdir(exist_ok=True)
+snapshot.write_bytes(source.read_bytes())
+report = json.loads((HERE/'report.json').read_text())
+assert report['valid_exact_continuation']
+run = ROOT/'results/mpc_extended_return_20261125/runs/slope/mpc/precision.npz'
+with np.load(run) as z:
+    t = z['time_s']
+    error = z['exact_qpos'][:, :2]-z['recovery_goal_xy']
+    velocity = z['exact_qvel'][:, :2]
+distance = np.linalg.norm(error, axis=1)*1000
+speed = np.linalg.norm(velocity, axis=1)*1000
+radial = np.einsum('ij,ij->i', error, velocity)/np.linalg.norm(error, axis=1)*1000
+cutoff = report['old_cutoff']['time_s']
+added = np.flatnonzero(t > cutoff+1e-9)
+minimum = added[np.argmin(distance[added])]
+following = np.arange(minimum, len(t))
+peak = following[np.argmax(distance[following])]
+intervals = report['instantaneous_all_settling_conditions_intervals']
+longest = max(intervals, key=lambda p: p['end_s']-p['start_s'], default=None)
+events = {'scope': 'Second-stage saved-data reduction only; no new simulation or analysis rerun.',
+    'primary_report_sha256': sha(HERE/'report.json'),
+    'primary_artifact_manifest_sha256': primary_manifest_hash,
+    'input_precision_sha256': sha(run), 'source_sha256': sha(source),
+    'closest_added_approach': {'time_s': float(t[minimum]), 'distance_mm': float(distance[minimum]),
+        'error_xy_mm': (error[minimum]*1000).tolist(), 'xy_speed_mm_s': float(speed[minimum]),
+        'radial_velocity_mm_s_negative_inward': float(radial[minimum])},
+    'subsequent_largest_retreat': {'time_s': float(t[peak]), 'distance_mm': float(distance[peak]),
+        'error_xy_mm': (error[peak]*1000).tolist(),
+        'distance_increase_from_closest_mm': float(distance[peak]-distance[minimum])},
+    'longest_joint_settling_conditions_interval': longest,
+    'longest_joint_settling_conditions_duration_s': float(longest['end_s']-longest['start_s']) if longest else 0,
+    'interpretation': 'The near-goal return is real, followed by renewed retreat and a later inward trend. The robot did not hold the goal under the existing settling criterion.',
+    'causal_limit': 'One recorded approach/retreat does not establish a limit cycle, asymptotic outcome, or a specific damping/gain/objective cause.'}
+(HERE/'return_events.json').write_text(json.dumps(events, indent=2)+'\n')
+fig, axes = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+axes[0].plot(t, distance, color='#158b73', lw=2)
+axes[0].scatter(t[[minimum, peak]], distance[[minimum, peak]], color='#ca7341', zorder=3)
+axes[0].annotate(f'{distance[minimum]:.2f}mm at {t[minimum]:.3f}s', (t[minimum], distance[minimum]),
+                 xytext=(t[minimum]+.12, 8), arrowprops={'arrowstyle': '-', 'color': 'gray'}, fontsize=9)
+axes[0].annotate(f'{distance[peak]:.2f}mm at {t[peak]:.3f}s', (t[peak], distance[peak]),
+                 xytext=(t[peak]-2.5, 25), arrowprops={'arrowstyle': '-', 'color': 'gray'}, fontsize=9)
+axes[0].axhline(5, color='gray', ls='--', label='5mm radius')
+axes[0].set(ylabel='Distance to goal (mm)', ylim=(0, 32)); axes[0].legend(loc='upper right', fontsize=9)
+axes[1].plot(t, speed, color='#2479b1', lw=1.5)
+axes[1].axhline(5, color='gray', ls='--', label='5mm/s criterion')
+axes[1].set(ylabel='XY speed (mm/s)', xlabel='Gazebo simulation time (s)', ylim=(0, 25))
+axes[1].legend(loc='upper right', fontsize=9)
+for ax in axes:
+    ax.set_xlim(cutoff, t[-1]); ax.grid(alpha=.2)
+    for interval in intervals:
+        if interval['end_s'] >= cutoff:
+            ax.axvspan(max(cutoff, interval['start_s']), interval['end_s'], color='#48a85b', alpha=.15)
+fig.suptitle('Added interval: approaches within3mm, then retreats\nGreen: all settling conditions satisfied; longest uninterrupted sampled interval0.53s', fontsize=12)
+fig.tight_layout(rect=(0, 0, 1, .93)); fig.savefig(HERE/'return_detail.png', dpi=150); plt.close(fig)
+assert sha(HERE/'artifact_manifest.json') == primary_manifest_hash
+files = [source, snapshot, HERE/'return_events.json', HERE/'return_detail.png']
+(HERE/'return_events_manifest.json').write_text(json.dumps({'scope': events['scope'],
+    'primary_artifact_manifest_unchanged_sha256': primary_manifest_hash,
+    'files': [{'path': str(p.relative_to(HERE)), 'bytes': p.stat().st_size, 'sha256': sha(p)} for p in files]}, indent=2)+'\n')
+print(json.dumps(events, indent=2))

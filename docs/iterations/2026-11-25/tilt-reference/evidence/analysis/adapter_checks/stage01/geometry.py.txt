@@ -1,0 +1,44 @@
+"""I43 uses the exact corrected I41/I42 known-reference projection formulas.
+
+The function below is copied verbatim from the preserved I42 source. This new
+module only supplies imports; no earlier source or numerical output is changed.
+"""
+import sys
+from pathlib import Path
+import numpy as np
+from scipy.spatial import cKDTree
+sys.path.insert(0,str(Path(__file__).resolve().parent/'dependencies'))
+from event_metrics import local_projection
+
+
+def reduce_known_reference(actual,program):
+    """I41 corrected formulas against the complete, known desired path.
+
+    The actual trace may end early. Only desired reference samples come from
+    the sealed complete program; no future actual state/contact enters.
+    """
+    t=actual['time_s'];xy=actual['exact_qpos'][:,:2]
+    ref=actual['exact_reference_xy'];velocity=actual['exact_reference_velocity_m_s']
+    acceleration=actual['exact_reference_acceleration_m_s2']
+    speed=np.linalg.norm(velocity,axis=1);valid=speed>=.001
+    tangent=np.full_like(velocity,np.nan);tangent[valid]=velocity[valid]/speed[valid,None]
+    normal=np.column_stack((-tangent[:,1],tangent[:,0]));error=xy-ref
+    along=np.einsum('ij,ij->i',error,tangent);lateral=np.einsum('ij,ij->i',error,normal)
+    active=(program['time_s']>=1.-1e-9)&(program['time_s']<=41.+1e-9)
+    rt,rxy=program['time_s'][active],program['exact_reference_xy'][active]
+    projections=[local_projection(rt,rxy,position,float(now),2.) for now,position in zip(t,xy)]
+    projected_time=np.array([x['closest_time_s'] for x in projections])
+    distance=np.array([x['distance_m'] for x in projections]);nominal=np.clip(t,rt[0],rt[-1])
+    global_distance,global_indices=cKDTree(rxy).query(xy,k=8)
+    ambiguity=np.any((abs(rt[global_indices]-nominal[:,None])>2.+1e-8)&
+                     (global_distance<=distance[:,None]+.001),axis=1)
+    curvature=np.full(len(t),np.nan);moving=speed>=.005
+    curvature[moving]=(velocity[moving,0]*acceleration[moving,1]-velocity[moving,1]*acceleration[moving,0])/speed[moving]**3
+    heading=np.full(len(t),np.nan);heading[valid]=np.unwrap(np.arctan2(velocity[valid,1],velocity[valid,0]))
+    return {'time_s':t,'reference_speed_m_s':speed,'time_aligned_error_m':np.linalg.norm(error,axis=1),
+        'time_aligned_alongtrack_m':along,'time_aligned_signed_normal_m':lateral,'local_path_distance_m':distance,
+        'closest_reference_time_s':projected_time,'closest_reference_xy_m':np.array([x['closest_point_m'] for x in projections]),
+        'reference_phase_lag_s':nominal-projected_time,
+        'artificial_projection_window_boundary':np.array([x['artificial_time_window_boundary'] for x in projections]),
+        'closest_at_route_endpoint':np.array([x['at_route_endpoint'] for x in projections]),
+        'competing_global_vertex_branch_flag':ambiguity,'curvature_per_m':curvature,'reference_tangent_heading_rad':heading}

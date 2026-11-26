@@ -1,0 +1,71 @@
+{
+  "status": "rendered_and_decoded_verified",
+  "video": {
+    "path": "results/feedback_recovery_20261125/videos/feedback_recovery_native_vs_mpc.mp4",
+    "sha256": "51347e811353ca7880f1f5ff5c6b954d2689624007c3bb2675b98e5d3ffa6a1a",
+    "bytes": 3633271,
+    "dimensions": [
+      1920,
+      960
+    ],
+    "fps": 20.0,
+    "frames": 337,
+    "duration_s": 16.85,
+    "simulated_duration_s": 8.4,
+    "playback_speed": 0.5,
+    "final_frame_decoded": true
+  },
+  "source_snapshot": "results/feedback_recovery_20261125/videos/source_snapshot/render_recovery_ca9d06d60b87.py",
+  "endpoint_checks": [
+    {
+      "variant": "native",
+      "goal_error_final_mm": 0.3810167462097668,
+      "xy_speed_final_mm_s": 0.185102641725066,
+      "absolute_platform_tilt_final_deg": 9.731527497930774,
+      "reference_platform_tilt_final_deg": 9.730941772460938,
+      "matches_saved_report": true,
+      "final_1s_gate": true
+    },
+    {
+      "variant": "mpc",
+      "goal_error_final_mm": 31.21498393710652,
+      "xy_speed_final_mm_s": 17.797722805876223,
+      "absolute_platform_tilt_final_deg": 9.739136414403866,
+      "reference_platform_tilt_final_deg": 9.731123924255371,
+      "matches_saved_report": true,
+      "final_1s_gate": false
+    }
+  ],
+  "source_artifact_sha256": {
+    "results/feedback_recovery_20261125/videos/render_recovery.py": "ca9d06d60b8742eb2d7c2856b202e8933cf2a8aad8ff401acdd0bb09b8c881fc",
+    "results/feedback_recovery_20261125/videos/source_snapshot/render_recovery_ca9d06d60b87.py": "ca9d06d60b8742eb2d7c2856b202e8933cf2a8aad8ff401acdd0bb09b8c881fc",
+    "results/feedback_recovery_20261125/runs/slope/native/source_snapshot/config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+    "results/feedback_recovery_20261125/runs/slope/native/terrain.json": "e02e98f80862d757dcf0f6b08afc9ffca00b11bb6af718cf0507c811293e8a3c",
+    "results/feedback_recovery_20261125/protocol.json": "bb05619f3cffa668e1f602d115cf854332981dbdbec573e08631ad41388951b6",
+    "src/spherical_wheel/offroad_view.py": "631370d0c5ee29417cb2e8531ced3139464f4ffa6bd8d6d33d12a4ae3b3c479f",
+    "src/spherical_wheel/offroad.py": "bb87ec5d188cc51acdc2591b8629dc94785b2c3aaff2e402947f911b993f5070",
+    "src/spherical_wheel/terrain.py": "43ff7b6bf2d53fd3cfccfaa9d02841195f78e0d7e6cc2181b01c0589176751eb",
+    "results/feedback_recovery_20261125/runs/slope/native/precision.npz": "9d3a296002dda4b1bb3e9cd7c0c1cb3f88ca6d7499c9789ee1eed41c6ed996c4",
+    "results/feedback_recovery_20261125/runs/slope/native/rollout.npz": "3a6fb2905dff63a2bedce8eaa6b22b836d498202bb6a5d4983ccdd4c2101ca06",
+    "results/feedback_recovery_20261125/runs/slope/native/summary.json": "033751105135eb2693ea8826e9cc3168b23cfa5d9ac2e4d4251cff08b2856c80",
+    "results/feedback_recovery_20261125/runs/slope/native/provenance.json": "64cdd61cb8b4e298bd716534973c6bc28b1acf03f2bbdcd80417e487fd2f2d63",
+    "results/feedback_recovery_20261125/runs/slope/native/plans.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "results/feedback_recovery_20261125/runs/slope/mpc/precision.npz": "1578706d750aa647bf7c9b87ca7ba3fa5f43f8030622ccdcad21efd4e4e9e19f",
+    "results/feedback_recovery_20261125/runs/slope/mpc/rollout.npz": "7dde1a987359a6acdfbcf5e033c10fac05f1388268790044a36a3f6ce7eff8a7",
+    "results/feedback_recovery_20261125/runs/slope/mpc/summary.json": "c523e6b740813e65fce088c8956f8ba987262aa778368781c2e7ec2d2b989cad",
+    "results/feedback_recovery_20261125/runs/slope/mpc/provenance.json": "b87cfe9b952b4e8fe48dae81543f5c8afd3c59043e260b725bf76f21d50e5715",
+    "results/feedback_recovery_20261125/runs/slope/mpc/plans.json": "d37428f760c1faafc2fcdde33444f2c4f586d7d4ac67afd88292d3fe8e11e570"
+  },
+  "stills": {
+    "recovery_first.jpg": "a7733be71644450574df2123b855296164b84183274cae026fb54dc12741f8a2",
+    "recovery_feedback_on.jpg": "35798e8b2a9b544c8b233da8e61cfe5a24da8fdb64400641e9b6880671acdc66",
+    "recovery_final.jpg": "9bee046d9907c3ba0335eef1e7b38b7f05cda7955b1f4c27ec36429680cea6ed",
+    "recovery_decoded_final.jpg": "8c12fe9b5f8cf12844ae66227a20f2dfb15cd30e130c2cfd2962a81ec4f92d54"
+  },
+  "scope": "Both panels reconstruct actual saved Gazebo/DART recovery dynamics. No private-model dynamics, controller execution or physics during rendering.",
+  "timeline": "0-.4s same fixed torques while native observer advances; feedback ON at.4s with no physical/estimator reset; originalXYgoal retained through8.4s.",
+  "platform_angles": "Absolute angle of platform normal from gravity vertical;0degmeanslevel. Gold reference intentionallyleansaboutslope; relativeattitudeerror is separate.",
+  "terrain": "Uniform10deg side-slope mesh .04m. Not Mars or rough offroad terrain.",
+  "visualization": "MuJoCo rendering only; commonphysicalmodel andanalytic10degterrain appearance. Camera follows eachrobot; lowercharts retainfixedgoalmetrics. Stoppedruns holdlaststate with explicit stoppedcaption.",
+  "result_caution": "Firstgoalradiusentry isnotsettledreturn. Finalfull1s gates andcontrollerfallback are shown; no broadterrain/hardware/real-time claim."
+}

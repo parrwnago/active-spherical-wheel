@@ -1,0 +1,96 @@
+{
+  "status": "prototype_not_promoted",
+  "physics_route_executions": {
+    "separate_recorded_route_executions": 23,
+    "unique_rollout_payload_sha256": 22,
+    "identical_rollout_payload_groups": [
+      [
+        "results/fixed_contact_allocation_20261125/ablation_wide_position/plain_figure8/phase_+0.90/rollout.npz",
+        "results/fixed_contact_allocation_20261125/feasible_v2/plain_figure8/phase_+0.90/rollout.npz"
+      ]
+    ],
+    "interpretation": "The five V2 cases were separately launched and executed. Matching payloads identify identical saved output, not copied/reused evidence and not statistically varied independent trials."
+  },
+  "physics_guarded_controller_calls": 240423,
+  "families": {
+    "feasible_v2": {
+      "completed": 5,
+      "cases": 5,
+      "lower_original_path_RMS_cases": 3,
+      "passed_all_gates": 0
+    },
+    "feasible_balance": {
+      "completed": 5,
+      "cases": 5,
+      "lower_original_path_RMS_cases": 0,
+      "passed_all_gates": 1
+    }
+  },
+  "fixed_support": {
+    "cases": 9,
+    "passed_assertions": 14,
+    "scope": "Offline synthetic kinematic fixture only. No contact transition, physics, balance controller, measured motion, or hardware capability is tested.",
+    "geometry": {
+      "samples": 1601,
+      "support": "shell_B_smooth",
+      "support_transitions": 0,
+      "contact_point_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_normalized_J_step_frobenius_m_s": 0.0012483185556433252,
+      "min_patch_margin_m": 0.0028915438656910014,
+      "min_fork_clearance_m": 0.06732889792784703,
+      "min_authority_m_s": 1.2519220604002457e-16,
+      "initial_authority_m_s": 0.4653370722014548
+    }
+  },
+  "warm_cases": {
+    "executed": 8,
+    "same_actual_hemisphere_throughout_pulse": 8,
+    "sustained_weak_geometry_gate_passes": 0,
+    "guarded_controller_calls": 2696,
+    "conclusion": "All eight runs preserve actual shell A during motion and matched warm prefixes. Neither pulse family maintains sigma2 below 0.02 m/s throughout peak demand. These transient comparisons do not validate sustained weak-geometry behavior."
+  },
+  "selected_test_suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "145",
+      "time": "244.221",
+      "timestamp": "2026-11-25T04:25:04.952182-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "110",
+      "time": "49.844",
+      "timestamp": "2026-11-25T04:35:26.925843-05:00",
+      "hostname": "PARRA-Legion"
+    }
+  ],
+  "test_count_warning": "These are overlapping selected suites, not additive unique tests and not a single full-repository run.",
+  "setup_and_fixture_notes": [
+    "The missing-gz setup failure is preserved; it occurred before Gazebo simulation.",
+    "The root session reports an initial balance-guard test fixture that treated cold-observer tilt as the contact normal; the fixture was corrected to prescribe flat normal. No standalone failure log was found, so no raw failure log is invented."
+  ],
+  "source_stage_notes": [
+    "guard_launch_verified: eight archived files match exact campaign launch SHA256 values. The original archive manifest identifies the controller file reconstructed by reversing known metadata-only edits.",
+    "fixed_support_tested: exact source/configuration archive from the final offline benchmark, distinct from later controller integration.",
+    "warm_*_pre_run_*: exact pre-invocation snapshots, including a setup failure; successful aggregate source hashes identify each actual warm campaign.",
+    "current_after_final_selected_tests: later relevant implementation, scripts, and tests, archived as .py.txt. It is not claimed to equal every historical source version."
+  ],
+  "limitations": [
+    "Simulation state is exact and belts are ideal; no hardware validation.",
+    "Accepted horizontal reference consistency in one fixed contact does not prove dynamic balance, friction feasibility, or goal completion.",
+    "The warm tests retain one actual hemisphere but fail the declared sustained weak-geometry gate.",
+    "The final guard exchanges nominal timed-path tracking for balance in some cases; it remains opt-in and is not promoted.",
+    "Large rollout NPZ and MP4 files remain local; only verified completed media metadata/stills are copied."
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "iteration": "I-45",
+  "scope": "Selected tests;61 unique cases repeated in two numerical environments, not122 distinct tests or physics executions.",
+  "tests": [
+    "tests/test_contact_pose_diagnostic.py",
+    "tests/test_contact_pose_campaign.py",
+    "tests/test_terrain_memory.py",
+    "tests/test_terrain_preview_campaign.py"
+  ],
+  "results": [
+    {
+      "environment": "venv",
+      "returncode": 0,
+      "command": [
+        "/home/parrwnago/active-spherical-wheel/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_contact_pose_diagnostic.py",
+        "tests/test_contact_pose_campaign.py",
+        "tests/test_terrain_memory.py",
+        "tests/test_terrain_preview_campaign.py"
+      ],
+      "log": "venv.log"
+    },
+    {
+      "environment": "gazebo_env",
+      "returncode": 0,
+      "command": [
+        "env",
+        "-u",
+        "PYTHONPATH",
+        "-u",
+        "LD_LIBRARY_PATH",
+        "-u",
+        "AMENT_PREFIX_PATH",
+        "-u",
+        "CMAKE_PREFIX_PATH",
+        "-u",
+        "COLCON_PREFIX_PATH",
+        "MAMBA_ROOT_PREFIX=/home/parrwnago/active-spherical-wheel/build/mamba",
+        "/home/parrwnago/active-spherical-wheel/build/tools/bin/micromamba",
+        "run",
+        "-p",
+        "/home/parrwnago/active-spherical-wheel/build/gazebo-env",
+        "env",
+        "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1",
+        "OPENBLAS_NUM_THREADS=1",
+        "OMP_NUM_THREADS=1",
+        "python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_contact_pose_diagnostic.py",
+        "tests/test_contact_pose_campaign.py",
+        "tests/test_terrain_memory.py",
+        "tests/test_terrain_preview_campaign.py"
+      ],
+      "log": "gazebo_env.log"
+    }
+  ],
+  "sources_unchanged": true,
+  "changed_sources": []
+}

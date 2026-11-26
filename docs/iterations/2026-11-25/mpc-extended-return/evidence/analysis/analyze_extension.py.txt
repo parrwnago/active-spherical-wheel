@@ -1,0 +1,339 @@
+"""Audit one unchanged I34 seeded-MPC extension using saved Gazebo outputs only.
+
+No controller, private-model rollout, optimizer or physics execution occurs here.
+Strict physical-prefix equality is reported before the added interval is assessed.
+"""
+from collections import Counter
+from datetime import datetime, timezone
+from pathlib import Path
+import argparse
+import csv
+import hashlib
+import json
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+WALL_KEYS = {
+    'assembly_time_s', 'setup_update_time_s', 'optimization_wall_time_s',
+    'osqp_solve_time_s', 'total_time_s', 'total_wall_s',
+    'plane_update_s',
+}
+BOUNDS = np.array([1.5, .6, .6, .3, .3])
+LABELS = ('shell A', 'shell B', 'belt A', 'belt B', 'wheel unloaded')
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def read_npz(path):
+    with np.load(path) as z:
+        return {key: z[key].copy() for key in z.files}
+
+
+def clean(value):
+    if isinstance(value, dict):
+        return {k: clean(v) for k, v in value.items() if k not in WALL_KEYS and 'wall_s' not in k}
+    if isinstance(value, list):
+        return [clean(v) for v in value]
+    return value
+
+
+def exact_array(old, new):
+    shape_equal = old.shape == new.shape
+    dtype_equal = old.dtype == new.dtype
+    bit_equal = shape_equal and dtype_equal and old.tobytes() == new.tobytes()
+    equal = shape_equal and np.array_equal(old, new, equal_nan=True)
+    result = {'bit_equal': bool(bit_equal), 'numeric_exact_equal_nan': bool(equal),
+              'shape_equal': bool(shape_equal), 'dtype_equal': bool(dtype_equal)}
+    if shape_equal and dtype_equal and not bit_equal:
+        a_bytes = np.ascontiguousarray(old).view(np.uint8).ravel()
+        b_bytes = np.ascontiguousarray(new).view(np.uint8).ravel()
+        byte_index = int(np.flatnonzero(a_bytes != b_bytes)[0])
+        result['first_bit_difference_array_index'] = [int(i) for i in np.unravel_index(byte_index//old.itemsize, old.shape)]
+    if shape_equal and not equal:
+        same = (old == new) | (np.isnan(old) & np.isnan(new))
+        result['first_difference_index'] = np.argwhere(~same)[0].tolist()
+        finite = np.isfinite(old) & np.isfinite(new)
+        result['max_finite_abs_difference'] = float(np.max(np.abs(old[finite].astype(float)-new[finite].astype(float)))) if finite.any() else None
+    return result
+
+
+def prefix_arrays(old, new, count):
+    rows = {}
+    assert set(old) == set(new), 'The logged field set changed'
+    for key in sorted(old):
+        if 'wall_s' in key:
+            continue
+        rows[key] = exact_array(old[key][:count], new[key][:count])
+    return rows
+
+
+def periods(t, mask):
+    indices = np.flatnonzero(mask)
+    if not len(indices):
+        return []
+    split = np.flatnonzero(np.diff(indices) > 1)+1
+    return [{'start_s': float(t[block[0]]), 'end_s': float(t[block[-1]]),
+             'sample_count': len(block)} for block in np.split(indices, split)]
+
+
+def derived(precise, rollout, drift=.4):
+    t = precise['time_s']
+    error = precise['exact_qpos'][:, :2]-precise['recovery_goal_xy']
+    velocity = precise['exact_qvel'][:, :2]
+    distance = np.linalg.norm(error, axis=1)*1000
+    speed = np.linalg.norm(velocity, axis=1)*1000
+    radial = np.divide(np.einsum('ij,ij->i', error, velocity), np.linalg.norm(error, axis=1),
+                       out=np.zeros(len(t)), where=np.linalg.norm(error, axis=1) > 0)*1000
+    lean = np.degrees(rollout['attitude_error_rad'].astype(float))
+    active = t >= drift-1e-9
+    settled = active & (distance <= 5) & (speed <= 5) & (lean <= 2)
+    hold_count = int(round(1/np.median(np.diff(t))))+1
+    starts = [int(i) for i in np.flatnonzero(active)
+              if i+hold_count <= len(t) and np.all(settled[i:i+hold_count])]
+    return {'t': t, 'error': error, 'velocity': velocity, 'distance': distance,
+            'speed': speed, 'radial': radial, 'lean': lean, 'active': active,
+            'settled': settled, 'hold_count': hold_count,
+            'first_settled_start_s': float(t[starts[0]]) if starts else None}
+
+
+def endpoint(data, precise, end):
+    t = data['t']
+    index = int(np.argmin(abs(t-end)))
+    assert abs(t[index]-end) < 1e-8, (end, t[index])
+    tail = (t >= t[index]-1-1e-9) & (t <= t[index]+1e-9)
+    return {'time_s': float(t[index]), 'goal_error_mm': float(data['distance'][index]),
+            'xy_speed_mm_s': float(data['speed'][index]),
+            'radial_velocity_mm_s_negative_is_inward': float(data['radial'][index]),
+            'absolute_platform_tilt_deg': float(precise['recovery_absolute_platform_tilt_deg'][index]),
+            'reference_platform_tilt_deg': float(precise['recovery_reference_platform_tilt_deg'][index]),
+            'reference_lean_error_deg_from_float32_log': float(data['lean'][index]),
+            'final1s_max_goal_error_mm': float(data['distance'][tail].max()),
+            'final1s_max_xy_speed_mm_s': float(data['speed'][tail].max()),
+            'final1s_max_reference_lean_error_deg': float(data['lean'][tail].max()),
+            'final1s_error_slope_mm_s': float(np.polyfit(t[tail], data['distance'][tail], 1)[0]) if tail.sum() >= 2 else None,
+            'final1s_all_radial_samples_inward': bool(np.all(data['radial'][tail] < 0)),
+            'final1s_settled_gate_recomputed': bool(t[index]-t[0] >= 1.4-1e-9 and np.all(data['settled'][tail]))}
+
+
+def plan_counts(plans):
+    solvers = [trial['solver'] for plan in plans for trial in plan.get('trials', []) if 'solver' in trial]
+    return {'plans': len(plans), 'accepted_plans': sum(bool(p.get('success')) for p in plans),
+            'selected_sources': dict(Counter(p.get('command_source', 'missing') for p in plans)),
+            'qp_calls_with_solver_record': len(solvers),
+            'solved_qp_count_from_plans': sum(p.get('qp_solved_count', 0) for p in plans),
+            'solver_statuses': dict(Counter(s.get('status', 'missing') for s in solvers)),
+            'native_seed_generation_failures': [dict(time_s=p['time_s'], error=p['native_rollout_seed_failure'])
+                for p in plans if p.get('native_rollout_seed_failure')],
+            'trial_failures': [dict(time_s=p['time_s'], error=trial.get('failure', trial.get('error')))
+                for p in plans for trial in p.get('trials', []) if trial.get('failure') or trial.get('error')]}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--run', type=Path, default=HERE.parent/'runs/slope/mpc')
+    parser.add_argument('--baseline', type=Path, default=ROOT/'results/mpc_search_20261125/runs/slope/mpc')
+    args = parser.parse_args()
+    if (HERE/'report.json').exists():
+        raise FileExistsError('Preserve the previous analysis; use a new stage')
+    for folder in (args.run, args.baseline):
+        for name in ('provenance.json', 'summary.json', 'precision.npz', 'rollout.npz', 'plans.json', 'terrain.json'):
+            if not (folder/name).is_file():
+                raise FileNotFoundError(f'Run is not ready: {folder/name}')
+    source = Path(__file__).resolve()
+    snap = HERE/'source_snapshot'/source.name
+    snap.parent.mkdir(exist_ok=True)
+    if snap.exists():
+        assert sha(snap) == sha(source), 'Do not replace a prior source stage'
+    else:
+        snap.write_bytes(source.read_bytes())
+    inputs = [folder/name for folder in (args.run, args.baseline)
+              for name in ('provenance.json', 'summary.json', 'precision.npz', 'rollout.npz', 'plans.json', 'terrain.json')]
+    provenance = {'captured_before_analysis_utc': datetime.now(timezone.utc).isoformat(),
+                  'source_sha256': sha(source), 'source_snapshot': str(snap.relative_to(ROOT)),
+                  'inputs': {str(p.relative_to(ROOT)): sha(p) for p in inputs},
+                  'scope': 'Saved-data reduction only; no physics, controller, optimizer or private rollout calls.'}
+    (HERE/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
+    old_prov, new_prov = [json.loads((f/'provenance.json').read_text()) for f in (args.baseline, args.run)]
+    old_summary, new_summary = [json.loads((f/'summary.json').read_text()) for f in (args.baseline, args.run)]
+    old_precise, new_precise = [read_npz(f/'precision.npz') for f in (args.baseline, args.run)]
+    old_log, new_log = [read_npz(f/'rollout.npz') for f in (args.baseline, args.run)]
+    old_plans, new_plans = [json.loads((f/'plans.json').read_text()) for f in (args.baseline, args.run)]
+    # Complete generated/source hash verification precedes any interpretation.
+    for folder, record in ((args.baseline, old_prov), (args.run, new_prov)):
+        for relative, expected in record['generated_sha256'].items():
+            assert sha(folder/relative) == expected, (folder, relative)
+        for relative, expected in record['source_sha256'].items():
+            assert sha(folder/'source_snapshot'/relative) == expected, (folder, relative)
+    assert old_prov['arguments']['recovery_s'] == 8
+    assert new_prov['arguments']['recovery_s'] == 16
+    old_args = {k: v for k, v in old_prov['arguments'].items() if k not in ('output', 'recovery_s')}
+    new_args = {k: v for k, v in new_prov['arguments'].items() if k not in ('output', 'recovery_s')}
+    settings = {'arguments_except_output_and_duration': old_args == new_args,
+                'source_file_hashes': old_prov['source_sha256'] == new_prov['source_sha256'],
+                'package_versions': old_prov['versions'] == new_prov['versions'],
+                'terrain_json_bytes': sha(args.baseline/'terrain.json') == sha(args.run/'terrain.json')}
+    for key in ('source_case_path', 'source_case_sha256', 'source_case', 'mpc_settings',
+                'gain_cache_sha256', 'initialization', 'activation', 'measurement_boundary'):
+        settings[key] = old_prov[key] == new_prov[key]
+    for key in ('simulator', 'physics', 'collision_detector', 'step_s', 'ground'):
+        settings['engine_'+key] = old_prov['engine'][key] == new_prov['engine'][key]
+    old_count = len(old_precise['time_s'])
+    count = min(old_count, len(new_precise['time_s']))
+    full_old_prefix_available = count == old_count
+    precision_prefix = prefix_arrays(old_precise, new_precise, count)
+    rollout_prefix = prefix_arrays(old_log, new_log, count)
+    plan_prefix = []
+    for i, old_plan in enumerate(old_plans[:len(new_plans)]):
+        new_plan = new_plans[i]
+        a, b = clean(old_plan), clean(new_plan)
+        keys = sorted(set(a)|set(b))
+        differences = [k for k in keys if k not in a or k not in b or a[k] != b[k]]
+        plan_prefix.append({'time_s': old_plan['time_s'], 'nonwall_plan_exact': not differences,
+                            'differing_top_level_fields': differences})
+    physical_bit_exact = all(v['bit_equal'] for v in precision_prefix.values()) and all(v['bit_equal'] for v in rollout_prefix.values())
+    all_plan_exact = all(p['nonwall_plan_exact'] for p in plan_prefix)
+    first_mismatches = {}
+    for label, checks in (('precision', precision_prefix), ('rollout', rollout_prefix)):
+        first_mismatches[label] = {k: v for k, v in checks.items() if not v['bit_equal']}
+    prefix = {'old_samples_including_terminal': old_count, 'old_plans_including_terminal': len(old_plans),
+              'overlapping_samples_compared': count, 'overlapping_plans_compared': len(plan_prefix),
+              'full_old_prefix_available': full_old_prefix_available,
+              'old_terminal_time_s': float(old_precise['time_s'][-1]),
+              'old_terminal_sample_now_has_a_following_actuation_interval': bool(new_precise['time_s'][-1] > old_precise['time_s'][-1]+1e-9),
+              'precision_nonwall_fields': precision_prefix, 'rollout_nonwall_fields': rollout_prefix,
+              'physical_and_controller_prefix_bit_exact': physical_bit_exact,
+              'plans_excluding_wall_time_fields_exact': all_plan_exact,
+              'first_nonwall_plan_difference': next((p for p in plan_prefix if not p['nonwall_plan_exact']), None),
+              'plan_checks': plan_prefix, 'mismatches': first_mismatches,
+              'wall_fields_excluded': sorted(k for k in old_precise if 'wall_s' in k),
+              'plan_wall_keys_excluded': sorted(WALL_KEYS)}
+    data = derived(new_precise, new_log)
+    t, active = data['t'], data['active']
+    assert np.isclose(t[-1], 16.4, atol=1e-8) or not new_summary['completed']
+    old_end = float(old_precise['time_s'][-1])
+    added = t > old_end+1e-9
+    added_with_cutoff = t >= old_end-1e-9
+    actuated = active.copy(); actuated[-1] = False
+    all_actuated = np.arange(len(t)) < len(t)-1
+    added_actuated = added_with_cutoff & actuated
+    bounded = bool(np.all(np.isfinite(new_precise['exact_applied'][all_actuated])) and
+                   np.all(abs(new_precise['exact_applied'][all_actuated]) <= BOUNDS+1e-10))
+    cutoff = endpoint(data, new_precise, old_end) if full_old_prefix_available else None
+    final = endpoint(data, new_precise, float(t[-1]))
+    stored = new_summary['feedback_recovery']
+    assert bool(final['final1s_settled_gate_recomputed']) == bool(stored['final_1s_within_goal_and_speed_and_reference_lean'])
+    assert np.isclose(final['goal_error_mm'], stored['goal_error_final_mm'], atol=1e-9)
+    assert np.isclose(final['xy_speed_mm_s'], stored['xy_speed_final_mm_s'], atol=1e-9)
+    assert data['first_settled_start_s'] == stored['first_1s_settled_window_start_s']
+    peak_candidates = np.flatnonzero(active) if active.any() else np.arange(len(t))
+    peak_index = peak_candidates[np.argmax(data['distance'][peak_candidates])]
+    drift_axis = data['error'][peak_index]/np.linalg.norm(data['error'][peak_index])
+    signed = data['error']@drift_axis
+    crossing = np.flatnonzero((signed[:-1]*signed[1:] < 0) & added_with_cutoff[1:]) + 1
+    support_truth = np.argmax(new_log['support_loads_N'], axis=1)
+    support_truth[np.max(new_log['support_loads_N'], axis=1) <= .05] = 4
+    support_estimate = np.argmax(new_log['estimated_support_loads_N'], axis=1)
+    support_estimate[np.max(new_log['estimated_support_loads_N'], axis=1) <= .05] = 4
+    source_codes = new_precise['mpc_plan_source_code']
+    updated_actuated = new_precise['mpc_updated'] & actuated
+    counts = {'including_terminal_observation': plan_counts(new_plans),
+              'actuated_only': plan_counts([p for p in new_plans if p['time_s'] < t[-1]-1e-9]),
+              'guarded_controller_calls': len(t), 'actuated_feedback_samples': int(actuated.sum()),
+              'true_native_fallback_actuated_samples': int(new_precise['mpc_fallback'][actuated].sum()),
+              'actuated_source_code_counts': {str(k): int(v) for k, v in Counter(source_codes[actuated]).items()},
+              'mpc_update_wall_median_actuated_s': float(np.median(new_precise['mpc_total_wall_s'][updated_actuated])) if updated_actuated.any() else None,
+              'mpc_update_wall_median_including_terminal_s': float(np.median(new_precise['mpc_total_wall_s'][new_precise['mpc_updated']])) if new_precise['mpc_updated'].any() else None}
+    i_min = np.flatnonzero(added_with_cutoff)[np.argmin(data['distance'][added_with_cutoff])] if added_with_cutoff.any() else None
+    support = {'labels': list(LABELS),
+               'true_dominant_patch_added_interval_samples': dict(Counter(LABELS[i] for i in support_truth[added])),
+               'estimated_dominant_patch_added_interval_samples': dict(Counter(LABELS[i] for i in support_estimate[added])),
+               'true_dominant_patch_transitions_added_interval': int(np.sum(np.diff(support_truth[added_with_cutoff]) != 0)),
+               'estimated_dominant_patch_transitions_added_interval': int(np.sum(np.diff(support_estimate[added_with_cutoff]) != 0)),
+               'dominant_patch_disagreement_added_interval_samples': int(np.sum(support_truth[added] != support_estimate[added])),
+               'minimum_logged_normal_load_added_interval_N': float(new_log['normal_force_N'][added].min()) if added.any() else None,
+               'peak_logged_fork_load_added_interval_N': float(new_log['fork_load_N'][added].max()) if added.any() else None,
+               'limits': 'Dominant wheel labels from saved evaluation loads; not a complete geometric multi-contact state or controller input.'}
+    gates = {'completed_requested_duration': bool(new_summary['completed']),
+             'no_recorded_physical_failure': new_summary['failure'] is None,
+             'actuated_inputs_finite_and_bounded': bounded,
+             'final1s_position_speed_reference_lean': bool(stored['final_1s_within_goal_and_speed_and_reference_lean'])}
+    result = {'iteration': 'I-38', 'status': 'analyzed',
+        'scope': 'One new Gazebo/DART execution requests16s feedback with unchanged seeded I34 MPC; actual completion/failure and duration are reported separately. Old baselines reused; analysis adds no physics.',
+        'requested_total_duration_s': float(new_summary['requested_duration_s']),
+        'actual_last_recorded_time_s': float(t[-1]),
+        'completed': bool(new_summary['completed']), 'failure': new_summary['failure'],
+        'fixed_settings_match': settings, 'prefix': prefix,
+        'valid_exact_continuation': bool(full_old_prefix_available and all(settings.values()) and physical_bit_exact and all_plan_exact),
+        'old_cutoff': cutoff, 'new_endpoint': final,
+        'first_1s_settled_window_start_s': data['first_settled_start_s'],
+        'goal_radius_intervals': periods(t, active & (data['distance'] <= 5)),
+        'instantaneous_all_settling_conditions_intervals': periods(t, data['settled']),
+        'added_interval': {'start_after_s': old_end, 'has_added_samples': bool(added.any()),
+            'added_observation_samples_strictly_after_cutoff': int(added.sum()),
+            'added_actuated_feedback_samples_including_cutoff_command': int(added_actuated.sum()),
+            'minimum_goal_error_mm': float(data['distance'][i_min]) if i_min is not None else None,
+            'minimum_time_s': float(t[i_min]) if i_min is not None else None,
+            'peak_goal_error_mm': float(data['distance'][added_with_cutoff].max()) if added_with_cutoff.any() else None,
+            'peak_absolute_platform_tilt_deg': float(new_precise['recovery_absolute_platform_tilt_deg'][added].max()) if added.any() else None,
+            'peak_reference_lean_error_deg': float(data['lean'][added].max()) if added.any() else None,
+            'input_limit_occupancy_sample_fraction': float(np.any(abs(new_precise['exact_applied'][added_actuated])/BOUNDS >= .99, axis=1).mean()) if added_actuated.any() else None,
+            'peak_drift_axis_goal_plane_crossing_sample_times_s': t[crossing].tolist(),
+            'axis_crossing_caveat': 'Sign changes along the original peak-error direction, not proof of reaching the2D goal.'},
+        'physical_gates': gates, 'settled_return_passed': bool(all(gates.values())),
+        'summary_gate_reconstruction_agrees': True, 'counts': counts, 'support': support,
+        'limits': ['One uniform10deg slope fixture, notMars/rough-terrain or hardware qualification.',
+            'No improvement/estimator/tuning change: only authorized observation duration changes.',
+            'Exact simulated state and known previous applied commands remain assumed measurements; current contact from observer/locator.',
+            'Relative lean recomputation uses saved float32 attitude-error log; authoritative runner gate also retained and agrees.',
+            'Old terminal8.4s plan was observation-only before, now commands the next interval; its stored output is compared too.',
+            'SolvedQP counts are distinct from accepted plans, applied samples, settling and nonlinear optimality.',
+            '20ms is simulated command hold, not real-time planning performance.']}
+    (HERE/'report.json').write_text(json.dumps(result, indent=2, allow_nan=False)+'\n')
+    (HERE/'prefix_verification.json').write_text(json.dumps({'fixed_settings_match': settings, **prefix}, indent=2, allow_nan=False)+'\n')
+    with (HERE/'endpoint_metrics.csv').open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=['endpoint', *final.keys()]); writer.writeheader()
+        if cutoff is not None:
+            writer.writerow({'endpoint': 'old_cutoff_reproduced', **cutoff})
+        writer.writerow({'endpoint': 'extended_endpoint', **final})
+    fig, axes = plt.subplots(2, 2, figsize=(13, 8), sharex=True)
+    axes[0, 0].plot(t, data['distance'], color='#158b73', label='Extended seeded MPC')
+    axes[0, 0].axhline(5, color='gray', ls='--', label='5mm criterion')
+    axes[0, 0].set_ylabel('Distance to retained goal (mm)'); axes[0, 0].legend(fontsize=8)
+    axes[0, 1].plot(t, data['speed'], color='#2479b1', label='XY speed')
+    axes[0, 1].axhline(5, color='gray', ls='--', label='5mm/s criterion')
+    axes[0, 1].set_ylabel('XY speed (mm/s)'); axes[0, 1].legend(fontsize=8)
+    axes[1, 0].plot(t, new_precise['recovery_absolute_platform_tilt_deg'], label='Absolute platform tilt')
+    axes[1, 0].plot(t, new_precise['recovery_reference_platform_tilt_deg'], label='Reference lean', ls='--')
+    axes[1, 0].set_ylabel('Platform normal from vertical (deg)'); axes[1, 0].legend(fontsize=8)
+    for i, label in enumerate(('shaft torque', 'shellA torque', 'shellB torque', 'beltA speed', 'beltB speed')):
+        axes[1, 1].plot(t, new_precise['exact_applied'][:, i]/BOUNDS[i], label=label, lw=.8)
+    for limit in (-1, 1): axes[1, 1].axhline(limit, color='gray', ls='--', lw=.8)
+    axes[1, 1].set_ylabel('Actual command / assumed bound'); axes[1, 1].legend(fontsize=7, ncol=2)
+    for ax in axes.flat:
+        ax.axvline(old_end, color='#b34d4d', ls=':', lw=1.5)
+        ax.axvspan(0, .4, color='gray', alpha=.12)
+        ax.grid(alpha=.2); ax.set_xlim(0, max(16.4, float(t[-1])))
+    for ax in axes[1]: ax.set_xlabel('Gazebo simulation time (s); dotted line = old8.4s cutoff')
+    verdict = 'PASS' if result['settled_return_passed'] else 'FAIL'
+    prefix_label = 'exact source/state/control/plan prefix verified' if result['valid_exact_continuation'] else 'PREFIX DIFFERENCE: inspect verification before interpreting'
+    fig.suptitle(f'I38 unchanged seeded MPC: final1s settled-return {verdict}\n{prefix_label}; saved Gazebo dynamics, no new physics in analysis', fontsize=12)
+    fig.tight_layout(rect=(0, 0, 1, .94))
+    fig.savefig(HERE/'extension_comparison.png', dpi=150)
+    fig.savefig(HERE/'extension_comparison.pdf')
+    plt.close(fig)
+    inventory = [{'path': str(p.relative_to(HERE)), 'bytes': p.stat().st_size, 'sha256': sha(p)}
+                 for p in sorted(HERE.rglob('*')) if p.is_file() and '__pycache__' not in p.parts and p.name != 'artifact_manifest.json']
+    (HERE/'artifact_manifest.json').write_text(json.dumps({'files': inventory}, indent=2)+'\n')
+    print(json.dumps({k: result[k] for k in ('valid_exact_continuation', 'old_cutoff', 'new_endpoint',
+        'first_1s_settled_window_start_s', 'settled_return_passed', 'counts')}, indent=2), flush=True)
+
+
+if __name__ == '__main__':
+    main()

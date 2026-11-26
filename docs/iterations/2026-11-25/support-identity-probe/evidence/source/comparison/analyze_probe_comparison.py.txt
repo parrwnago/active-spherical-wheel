@@ -1,0 +1,248 @@
+"""Analyze fresh feedback-support-share ablations; no controller or physics update."""
+import csv
+import hashlib
+import json
+from pathlib import Path
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+ROOT = Path(__file__).resolve().parent
+VARIANTS = ('baseline', 'last_substep', 'interval_mean', 'contact_records')
+WINDOW = (28.90, 29.385)
+CONTROL_PERIOD_S = .005
+COLORS = {'baseline': '#2878b5', 'last_substep': '#df7e31', 'interval_mean': '#249880', 'contact_records': '#a2479b'}
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def metrics(log, probe, mask):
+    error = np.linalg.norm(log['qpos'][:, :2]-log['reference_xy'], axis=1)
+    attitude = np.degrees(log['attitude_error_rad'])
+    bounds = log['input_bounds']
+    saturated = np.any(np.abs(log['command']) > bounds+1e-7, axis=1)
+    indices = np.flatnonzero(mask)
+    precise_time = probe['time_s']
+    assert np.allclose(np.diff(precise_time), CONTROL_PERIOD_S, rtol=0., atol=1e-10)
+    # The terminal logged sample has no following physical control interval.
+    # Sample-indicator integrals and elapsed/actuated durations are distinct.
+    held_samples = int(np.sum(mask[:-1]))
+    steps = np.diff(log['input'][indices], axis=0)/bounds[indices[1:]]
+    loads = probe['probe_native_loads_N']
+    truth = probe['probe_truth_last_loads_N']
+    loaded = mask & (loads.sum(axis=1) > .1) & (truth.sum(axis=1) > .1)
+    return {'samples': int(mask.sum()),
+            'elapsed_time_s': float(precise_time[indices[-1]]-precise_time[indices[0]]),
+            'sample_indicator_duration_s': float(mask.sum()*CONTROL_PERIOD_S),
+            'held_command_duration_s': float(held_samples*CONTROL_PERIOD_S),
+            'position_rms_mm': float(1000*np.sqrt(np.mean(error[mask]**2))),
+            'position_max_mm': float(1000*error[mask].max()),
+            'position_end_mm': float(1000*error[indices[-1]]),
+            'attitude_max_deg': float(attitude[mask].max()),
+            'saturated_fraction': float(saturated[mask].mean()),
+            'max_requested_command_fraction': float(np.max(np.abs(log['command'][mask])/bounds[mask])),
+            'max_applied_command_step_fraction': float(np.max(np.abs(steps))) if len(steps) else 0.,
+            'loaded_native_vs_last_substep_identity_disagreement_samples': int(np.sum(loads[loaded].argmax(axis=1) != truth[loaded].argmax(axis=1))),
+            'injection_eligible_calls': int(probe['probe_injected'][mask].sum()),
+            'feedback_share_changed_calls': int(np.sum(np.max(np.abs(probe['probe_feedback_loads_N'][mask]-loads[mask]), axis=1) > 1e-7))}
+
+
+def main():
+    available = [name for name in VARIANTS if (ROOT/'runs'/name/'summary.json').exists()]
+    if 'baseline' not in available:
+        raise RuntimeError('Baseline not complete')
+    logs, probes, summaries = {}, {}, {}
+    for name in available:
+        folder = ROOT/'runs'/name
+        logs[name] = dict(np.load(folder/'rollout.npz'))
+        probes[name] = dict(np.load(folder/'probe.npz'))
+        summaries[name] = json.loads((folder/'summary.json').read_text())
+    report = {'scope': 'Diagnostic feedback-load-share-only and complete-contact-record interventions on fresh current-source Gazebo runs. Original nominal trajectory remains evaluator. These are not hardware-capable controllers or statistical robustness trials.',
+              'intervention_window_s': list(WINDOW),
+              'last_intervened_command_held_until_s': 29.390,
+              'timing': 'Truth last-substep contacts are latest completed1ms. Interval mean is all5 preceding1ms substeps; neither is observer-filtered. High-rate audit28.80–29.50 changes only run call grouping, consistently in all branches.',
+              'completed_variants': available, 'runs': {}, 'paired_prefix_checks': {},
+              'saved_array_precision': 'Window metrics derive from float32 rollout arrays; moving RMS and completion/gates use the original double-precision summary. Prefix checks use probe.npz double precision.',
+              'duration_convention': {'validated_control_period_s': CONTROL_PERIOD_S,
+                  'elapsed_time_s': 'Last selected timestamp minus first, using double-precision probe timestamps.',
+                  'sample_indicator_duration_s': 'Number of selected logged samples multiplied by the declared validated0.005s period. This includes a selected terminal sample and is not necessarily actuated duration.',
+                  'held_command_duration_s': 'Selected samples with a following physical interval multiplied by0.005s. The overall terminal sample is not held; full-run44s, intervention0.490s.'},
+              'limitations': ['last_substep/interval_mean correct only feedback gain/support-torque load routing; native locator/rolling allocation/synchronization identity remains estimated. contact_records is a broader input-bundle contrast including geometry/load/force/slip/rim changes.',
+                              'Native and oracle shadow commands share one instantaneous state/history. They are conditional command contrasts, not independent closed-loop predictions.',
+                              'Held feedback load/gain history is updated by the intervention and may carry through later dropouts; no reset is used to erase it.',
+                              'Historical28.975s disagreement is late relative to lean-error onset. This probe addresses correction amplification/recovery rather than proving initial causation.'],
+              'input_files': {str(p.relative_to(ROOT)): digest(p) for name in available for p in (ROOT/'runs'/name).glob('*.npz')}}
+    flat = []
+    for name in available:
+        log, probe, summary = logs[name], probes[name], summaries[name]
+        t = log['time_s']
+        masks = {'full_run': np.ones(len(t), bool),
+                 'intervention': (t >= WINDOW[0]-1e-4) & (t <= WINDOW[1]+1e-4),
+                 'recovery_to_32s': (t >= 29.390-1e-4) & (t <= 32.+1e-4),
+                 'event_to_30_5s': (t >= 28.8-1e-4) & (t <= 30.5+1e-4)}
+        result = {label: metrics(log, probe, mask) for label, mask in masks.items()}
+        result.update(completed=summary['completed'], failure=summary['failure'],
+                      passed_all_gates=summary['mars']['passed'],
+                      original_path_moving_rms_mm=1000*summary['tracking']['rms_error_while_moving_m'])
+        source = json.loads((ROOT/'runs'/name/'provenance.json').read_text())
+        result['historical_source_differences'] = source['historical_source_differences']
+        injected = probe['probe_injected'].astype(bool)
+        in_window = probe['probe_in_window'].astype(bool)
+        result['outside_window_injections'] = int(np.sum(injected & ~in_window))
+        result['max_total_load_preservation_error_N'] = float(np.abs(probe['probe_total_load_preservation_error_N']).max())
+        field = 'native' if name == 'baseline' else name
+        if name == 'contact_records':
+            chosen = probe['probe_shadow_contact_records_command']
+            valid = probe['probe_shadow_contact_records_valid'].astype(bool)
+        else:
+            chosen = np.where(injected[:, None], probe['probe_shadow_'+field+'_command'], probe['probe_shadow_native_command'])
+            valid = np.where(injected, probe['probe_shadow_'+field+'_valid'], probe['probe_shadow_native_valid']).astype(bool)
+        result['shadow_used_command_max_reconstruction_error'] = float(np.max(np.abs(chosen[valid]-probe['probe_pre_sync_used_command'][valid])))
+        result['intervention_scope'] = source['intervention_scope']
+        if 'probe_records_injected' in probe:
+            result['record_injection_calls'] = int(probe['probe_records_injected'].sum())
+            result['feedback_share_injection_calls'] = int(probe['probe_feedback_injected'].sum())
+            result['max_record_total_load_change_N'] = float(np.max(np.abs(probe['probe_record_total_load_change_N'])))
+            point_change = np.linalg.norm(probe['probe_original_locator_point_m']-probe['probe_routed_contact_point_m'], axis=1)
+            result['max_record_equivalent_point_change_mm'] = float(1000*np.nanmax(point_change))
+        assert result['outside_window_injections'] == 0
+        assert result['max_total_load_preservation_error_N'] < 1e-10
+        assert result['shadow_used_command_max_reconstruction_error'] < 1e-8
+        report['runs'][name] = result
+        for label in masks:
+            flat.append(dict(variant=name, window=label, **result[label]))
+    baseline = probes['baseline']
+    baseline_lean = report['runs']['baseline']['intervention']['attitude_max_deg']
+    report['intervention_balance_comparison'] = {
+        'baseline_max_lean_error_deg': baseline_lean,
+        'correction_max_lean_error_deg': {name: report['runs'][name]['intervention']['attitude_max_deg'] for name in available if name != 'baseline'},
+        'all_available_corrections_have_higher_intervention_peak_lean_error': all(report['runs'][name]['intervention']['attitude_max_deg'] > baseline_lean for name in available if name != 'baseline'),
+        'scope': 'Immediate explicit intervention window, separate from later closed-loop divergence. All three corrections worsened this peak in these individual trials.'}
+    if 'contact_records' in report['runs']:
+        bundle = report['runs']['contact_records']
+        report['limitations'].append(
+            f"The broader contact_records intervention changes more than identity: maximum equivalent-point change{bundle['max_record_equivalent_point_change_mm']:.6f}mm and total normal-load change{bundle['max_record_total_load_change_N']:.6f}N versus native records. Instantaneous impulses and filtered inferred loads have different timing. This is not an identity-only correction.")
+    window = baseline['probe_in_window'].astype(bool)
+    native = baseline['probe_native_loads_N']
+    last = baseline['probe_truth_last_loads_N']
+    mean = baseline['probe_truth_interval_mean_loads_N']
+    mean_valid = baseline['probe_interval_mean_valid'].astype(bool)
+    native_loaded = native.sum(axis=1) > .1
+    last_loaded = last.sum(axis=1) > .1
+    mean_loaded = mean_valid & (np.nansum(mean, axis=1) > .1)
+    native_last_mask = window & native_loaded & last_loaded
+    native_mean_mask = window & native_loaded & mean_loaded
+    last_mean_mask = window & last_loaded & mean_loaded
+    mean_shares = mean[native_mean_mask]/mean[native_mean_mask].sum(axis=1, keepdims=True)
+    filtered = np.full_like(mean, np.nan)
+    previous = None
+    for index in np.flatnonzero(mean_valid):
+        if previous is None:
+            filtered[index] = mean[index]
+        else:
+            alpha = 1.-np.exp(-100.*(baseline['time_s'][index]-baseline['time_s'][previous]))
+            filtered[index] = filtered[previous]+alpha*(mean[index]-filtered[previous])
+        previous = index
+    filtered_mask = window & native_loaded & np.isfinite(filtered).all(axis=1) & (np.nansum(filtered, axis=1) > .1)
+    target = int(np.argmin(np.abs(baseline['time_s']-28.975)))
+    report['baseline_support_timing_audit'] = {
+        'window_samples': int(window.sum()),
+        'native_vs_last_substep': {'loaded_samples': int(native_last_mask.sum()), 'dominant_identity_disagreements': int(np.sum(native[native_last_mask].argmax(axis=1) != last[native_last_mask].argmax(axis=1)))},
+        'native_vs_5ms_mean': {'loaded_samples': int(native_mean_mask.sum()), 'dominant_identity_disagreements': int(np.sum(native[native_mean_mask].argmax(axis=1) != mean[native_mean_mask].argmax(axis=1)))},
+        'last_substep_vs_5ms_mean': {'loaded_samples': int(last_mean_mask.sum()), 'dominant_identity_disagreements': int(np.sum(last[last_mean_mask].argmax(axis=1) != mean[last_mean_mask].argmax(axis=1)))},
+        'intervals_with_at_least_two_mean_support_shares_above_5pct': int(np.sum((mean_shares > .05).sum(axis=1) >= 2)),
+        'target_time_s': float(baseline['time_s'][target]),
+        'target_native_loads_N': native[target].tolist(),
+        'target_last_substep_loads_N': last[target].tolist(),
+        'target_5ms_mean_loads_N': mean[target].tolist(),
+        'offline_filtered_load_reference': {
+            'scope': 'Descriptive filter applied to true per-support interval loads at100/s, initialized from first measured interval at28.805s. This is not filtering the six-axis wrench and is not a controller run or a contact estimator.',
+            'initialization_time_s': float(baseline['time_s'][np.flatnonzero(mean_valid)[0]]),
+            'dominant_identity_disagreements_vs_native': int(np.sum(native[filtered_mask].argmax(axis=1) != filtered[filtered_mask].argmax(axis=1))),
+            'loaded_window_samples': int(filtered_mask.sum()),
+            'target_filtered_loads_N': filtered[target].tolist()}}
+    np.savez_compressed(outside_reference := ROOT/'filtered_truth_load_reference.npz',
+                        time_s=baseline['time_s'], filtered_interval_loads_N=filtered,
+                        raw_interval_loads_N=mean, valid=mean_valid)
+    report['input_files'][str(outside_reference.relative_to(ROOT))] = digest(outside_reference)
+    prefix = baseline['time_s'] < WINDOW[0]-1e-9
+    for name in available:
+        if name == 'baseline':
+            continue
+        p = probes[name]
+        fields = {}
+        compared = ('exact_qpos', 'exact_qvel', 'exact_requested', 'exact_applied', 'exact_observer_wrench',
+                    'exact_estimated_normal', 'exact_drive_reference', 'exact_rolling_feedforward', 'exact_feedback_gain',
+                    'exact_feedback_error', 'probe_native_loads_N', 'probe_feedback_loads_N',
+                    'probe_truth_last_loads_N', 'probe_truth_interval_mean_loads_N')
+        for key in compared:
+            a, b = baseline[key][prefix], p[key][prefix]
+            fields[key] = {'bit_equal': bool(np.array_equal(a, b, equal_nan=True)),
+                           'max_abs_difference': float(np.nanmax(np.abs(a-b)))}
+        check = {'samples': int(prefix.sum()), 'all_fields_bit_equal': all(v['bit_equal'] for v in fields.values()), 'fields': fields}
+        report['paired_prefix_checks'][name] = check
+        assert check['all_fields_bit_equal'], check
+        assert np.array_equal(logs['baseline']['reference_xy'], logs[name]['reference_xy'])
+        differences = {}
+        for key in compared[:10]:
+            difference = np.abs(baseline[key]-p[key]).reshape(len(p['time_s']), -1)
+            maximum = np.max(difference, axis=1)
+            bit_indices = np.flatnonzero(maximum > 0.)
+            numerical_indices = np.flatnonzero(maximum > 1e-10)
+            differences[key] = {
+                'first_bit_difference_time_s': float(p['time_s'][bit_indices[0]]) if len(bit_indices) else None,
+                'first_abs_difference_above_1e_10_time_s': float(p['time_s'][numerical_indices[0]]) if len(numerical_indices) else None,
+                'max_abs_difference': float(maximum.max())}
+        check['first_post_prefix_differences'] = differences
+    old = Path('results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/rollout.npz')
+    if old.exists():
+        history = np.load(old)
+        fresh = logs['baseline']
+        mask = fresh['time_s'] < 28.80-1e-4
+        report['historical_context_comparison'] = {'source': str(old), 'comparison_before_high_rate_audit_s': 28.80,
+            'qpos_float32_bit_equal': bool(np.array_equal(fresh['qpos'][mask], history['qpos'][mask])),
+            'qpos_max_abs_difference_mixed_units': float(np.max(np.abs(fresh['qpos'][mask]-history['qpos'][mask]))),
+            'native_loads_at_28_975_N': probes['baseline']['probe_native_loads_N'][np.argmin(abs(probes['baseline']['time_s']-28.975))].tolist(),
+            'truth_last_loads_at_28_975_N': probes['baseline']['probe_truth_last_loads_N'][np.argmin(abs(probes['baseline']['time_s']-28.975))].tolist(),
+            'full_run_common_array_comparisons': {key: {'bit_equal_float32': bool(np.array_equal(fresh[key], history[key])),
+                'max_abs_difference': float(np.nanmax(np.abs(fresh[key]-history[key])))}
+                for key in ('qpos', 'qvel', 'command', 'input', 'estimated_support_loads_N', 'reference_xy')}}
+    out = ROOT/'comparison'
+    out.mkdir(exist_ok=True)
+    (out/'report.json').write_text(json.dumps(report, indent=2)+'\n')
+    with (out/'metrics.csv').open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(flat[0]))
+        writer.writeheader(); writer.writerows(flat)
+    fig, axes = plt.subplots(4, 1, figsize=(11, 10), sharex=True, constrained_layout=True)
+    for name in available:
+        log, probe = logs[name], probes[name]
+        t = log['time_s']
+        mask = (t >= 28.5) & (t <= 32.)
+        c = COLORS[name]
+        axes[0].plot(t[mask], 1000*np.linalg.norm(log['qpos'][mask, :2]-log['reference_xy'][mask], axis=1), color=c, label=name)
+        axes[1].plot(t[mask], np.degrees(log['attitude_error_rad'][mask]), color=c)
+        axes[2].plot(t[mask], np.max(np.abs(log['command'][mask])/log['input_bounds'][mask], axis=1), color=c)
+        delta = probe['probe_pre_sync_used_command']-probe['probe_shadow_native_command']
+        axes[3].plot(t[mask], np.max(np.abs(delta[mask])/log['input_bounds'][mask], axis=1), color=c)
+    for axis in axes:
+        axis.axvspan(*WINDOW, color='#888888', alpha=.15)
+        axis.grid(alpha=.2)
+    axes[0].set(ylabel='Original-goal error (mm)')
+    axes[1].set(ylabel='Lean-reference error (deg)')
+    axes[2].set(ylabel='Requested / actuator bound')
+    axes[3].set(ylabel='Same-state routing change\n/ actuator bound', xlabel='Simulation time (s)')
+    axes[0].legend(loc='upper left')
+    fig.suptitle('Support-input diagnostics: original nominal goal remains evaluator\nShaded: explicit intervention; exact-state sim, truth-fed inputs are diagnostic only')
+    fig.savefig(out/'comparison.png', dpi=150)
+    fig.savefig(out/'comparison.pdf')
+    plt.close(fig)
+    print(json.dumps({'completed_variants': available, 'paired_prefix_checks': {k:v['all_fields_bit_equal'] for k,v in report['paired_prefix_checks'].items()},
+                      'full_run_metrics': {k: {'moving_rms_mm':v['original_path_moving_rms_mm'], 'peak_error_mm':v['full_run']['position_max_mm'], 'attitude_max_deg':v['full_run']['attitude_max_deg']} for k,v in report['runs'].items()}}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

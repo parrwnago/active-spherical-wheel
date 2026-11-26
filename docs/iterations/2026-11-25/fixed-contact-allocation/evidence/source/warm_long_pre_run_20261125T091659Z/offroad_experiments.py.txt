@@ -1,0 +1,439 @@
+"""Reproducible off-road runs, contact-force metrics and controller comparison.
+
+A run places the wheel on a terrain, follows a straight reference path with
+one controller setting, and logs the state, the commands and the measured
+ground reaction every controller interval. ``summarize`` reduces a log to the
+quantities that decide whether the wheel coped: survival, tracking, tilt
+relative to the attitude the terrain demands, normal-load variation, how much
+of the friction cone was used, sliding, and actuator use.
+
+These are simulation results for the provisional model. See OFFROAD.md.
+"""
+from __future__ import annotations
+
+import copy
+import json
+from pathlib import Path
+import shutil
+
+import mujoco
+import numpy as np
+
+from .contact_sensing import measure_contact
+from .control import jsonable
+from .mirror import StateMirror
+from .model import REPO_ROOT, generate_model, load_config
+from .offroad import TerrainPlant
+from .offroad_control import FlatDesign, OffroadController, OffroadParams
+from .sim import Plant
+from .terrain import make_terrain
+
+SUPPORT_NAMES = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+DEFAULT_WORKSPACE = REPO_ROOT/'generated'/'offroad'
+
+
+class ReferencePath:
+    """A straight horizontal reference, at rest at both ends.
+
+    ``profile='cruise'`` accelerates smoothly over ``ramp_s``, holds a constant
+    speed and decelerates; ``'quintic'`` is the lab's minimum-jerk profile.
+    ``__call__(t)`` returns world ``(xy, velocity, acceleration)``.
+    """
+
+    def __init__(self, distance_m=0., heading_deg=0., duration_s=10., start_s=.5,
+                 profile='cruise', ramp_s=1.5, origin=(0., 0.)):
+        if profile not in ('cruise', 'quintic'):
+            raise ValueError('Profile must be cruise or quintic')
+        if duration_s <= 0 or (profile == 'cruise' and 2*ramp_s >= duration_s):
+            raise ValueError('Path duration must be positive and longer than both speed ramps')
+        self.distance_m, self.heading_deg = float(distance_m), float(heading_deg)
+        self.duration_s, self.start_s = float(duration_s), float(start_s)
+        self.profile, self.ramp_s = profile, float(ramp_s)
+        self.origin = np.asarray(origin, float)
+        angle = np.deg2rad(self.heading_deg)
+        self.direction = np.array([np.cos(angle), np.sin(angle)])
+
+    @property
+    def cruise_speed_m_s(self):
+        if self.profile == 'cruise':
+            return self.distance_m/(self.duration_s-self.ramp_s)
+        return 1.875*self.distance_m/self.duration_s
+
+    def progress(self, t):
+        """Arc length, speed and acceleration along the path at time ``t``."""
+        elapsed = float(np.clip(t-self.start_s, 0., self.duration_s))
+        total, distance = self.duration_s, self.distance_m
+        if self.profile == 'quintic':
+            r = elapsed/total
+            return (distance*(10*r**3-15*r**4+6*r**5), distance*(30*r**2-60*r**3+30*r**4)/total,
+                    distance*(60*r-180*r**2+120*r**3)/total**2)
+        ramp = self.ramp_s
+        speed = distance/(total-ramp)
+        if elapsed < ramp:
+            r = elapsed/ramp
+            return speed*ramp*(r**3-r**4/2), speed*(3*r**2-2*r**3), speed*(6*r-6*r**2)/ramp
+        if elapsed <= total-ramp:
+            return speed*(elapsed-ramp/2), speed, 0.
+        r = (total-elapsed)/ramp
+        return distance-speed*ramp*(r**3-r**4/2), speed*(3*r**2-2*r**3), -speed*(6*r-6*r**2)/ramp
+
+    def __call__(self, t):
+        s, v, a = self.progress(t)
+        return self.origin+s*self.direction, v*self.direction, a*self.direction
+
+    def spec(self):
+        return {'distance_m': self.distance_m, 'heading_deg': self.heading_deg, 'duration_s': self.duration_s,
+                'start_s': self.start_s, 'profile': self.profile, 'ramp_s': self.ramp_s,
+                'origin': self.origin.tolist(), 'cruise_speed_m_s': self.cruise_speed_m_s}
+
+    @classmethod
+    def from_spec(cls, spec):
+        return cls(**{key: value for key, value in spec.items() if key != 'cruise_speed_m_s'})
+
+
+class Workspace:
+    """Generated models and the flat-floor design shared by a set of runs.
+
+    ``seed_cache`` names an existing gain-library file to copy in, so a worker
+    process does not rebuild a library its parent already has. The library is
+    fingerprinted, so a stale copy is rebuilt rather than trusted.
+    """
+
+    def __init__(self, config=None, directory=None, seed_cache=None, plant_limit=3):
+        self.config = copy.deepcopy(config if isinstance(config, dict) else load_config(config))
+        self.directory = Path(directory or DEFAULT_WORKSPACE).resolve()
+        flat = generate_model(self.config, self.directory/'flat')
+        self.cache_path = self.directory/'flat'/'control_schedule.npz'
+        if seed_cache is not None and Path(seed_cache).is_file() and not self.cache_path.is_file():
+            shutil.copyfile(seed_cache, self.cache_path)
+        self.design = FlatDesign(Plant(self.config, flat), self.cache_path)
+        self._plants = {}
+        self._plant_limit = int(plant_limit)
+        self._built = 0
+        self._mirror = None
+
+    def plant(self, terrain):
+        """A terrain plant, reused while the terrain repeats (most recent few kept)."""
+        key = json.dumps(terrain.spec(), sort_keys=True)
+        if key in self._plants:
+            self._plants[key] = self._plants.pop(key)
+        else:
+            while len(self._plants) >= self._plant_limit:
+                self._plants.pop(next(iter(self._plants)))
+            slot = self._built % (self._plant_limit+1)
+            self._built += 1
+            self._plants[key] = TerrainPlant(self.config, terrain, self.directory/f'terrain_{slot:02d}')
+        return self._plants[key]
+
+    def mirror(self):
+        """The ``StateMirror`` a ``hardware`` controller sees the robot through (built once)."""
+        if self._mirror is None:
+            self._mirror = StateMirror(self.config, self.directory/'mirror')
+        return self._mirror
+
+
+def measure_for(controller, plant):
+    """Hand a controller that sees the robot only through its sensors the current measurement."""
+    if controller.plant is not plant:
+        controller.plant.follow(plant)
+
+
+def place_on_ground(plant, controller, origin, phase, balanced_lean=True, yaw_deg=0.):
+    """Start at rest on the terrain with the ordinary drive configuration.
+
+    With ``balanced_lean`` the body starts at the lean that puts its centre of
+    mass over the contact point, so a run that begins on a slope starts in
+    static balance for every controller being compared. The shaft joint is
+    then turned so the same patch of the wheel is on the ground as on level
+    ground. The starting state depends only on the terrain, not the controller.
+    ``yaw_deg`` turns the platform about the vertical before leaning; 0 keeps
+    the fork's x axis (shaft-driven travel) along world x.
+    """
+    equilibrium = controller.ordinary['equilibrium']
+    x, y = float(origin[0]), float(origin[1])
+    normal = plant.terrain.normal_at(x, y)
+    qpos = equilibrium['qpos'].copy()
+    if yaw_deg:
+        half = np.deg2rad(yaw_deg)/2
+        mujoco.mju_mulQuat(qpos[3:7], np.array([np.cos(half), 0., 0., np.sin(half)]), equilibrium['qpos'][3:7].copy())
+    upright = qpos[3:7].copy()
+    compression = plant.radius-equilibrium['qpos'][2]
+    qpos[:3] = np.array([x, y, plant.terrain.height(x, y)])+(plant.radius-compression)*normal
+    if balanced_lean:
+        lean = -controller.lean_factor*normal[:2]
+        size = float(np.linalg.norm(lean))
+        if size > 1e-12:
+            vector = np.arcsin(min(size, .99))*np.array([-lean[1], lean[0], 0.])/size
+            angle = np.linalg.norm(vector)
+            quat = np.r_[np.cos(angle/2), np.sin(angle/2)*vector/angle]
+            if yaw_deg:
+                # The lean is about world axes; turned with the platform it is world-fixed.
+                c, s_ = np.cos(np.deg2rad(yaw_deg)), np.sin(np.deg2rad(yaw_deg))
+                quat[1:] = np.array([[c, s_, 0.], [-s_, c, 0.], [0., 0., 1.]])@quat[1:]
+            mujoco.mju_mulQuat(qpos[3:7], upright, quat)
+    plant.reset(qpos=qpos, qvel=np.zeros(plant.model.nv))
+    rotation = plant.data.xmat[controller.carrier_id].reshape(3, 3)
+    support = rotation.T@normal
+    qpos[7] += phase-float(np.arctan2(-support[0], support[2]))
+    plant.reset(qpos=qpos, qvel=np.zeros(plant.model.nv))
+    measure_for(controller, plant)
+    controller.reset(phase)
+    controller.nominal_joints = qpos[7:10].copy()
+    return qpos
+
+
+_LOG_KEYS = ('time_s', 'qpos', 'qvel', 'command', 'input', 'reference_xy', 'reference_quat', 'tilt_rad',
+             'attitude_error_rad', 'push_N', 'ground_normal', 'estimated_normal', 'ground_height_m',
+             'ground_friction', 'estimated_friction', 'contact_force_N', 'normal_force_N',
+             'tangential_force_N', 'utilization', 'slip_speed_m_s', 'support_loads_N',
+             'effective_phase_rad', 'drive_fade', 'support_torque', 'heading_rad', 'fork_load_N',
+             'support_direction', 'contact_point_m', 'contact_moment_Nm', 'observer_force_N', 'observer_moment_Nm')
+_UNOBSERVED = np.full(3, np.nan)
+
+# Opt-in diagnostics use only controller-visible measurements/estimates.
+# Existing unprefixed contact columns remain simulator truth for evaluation.
+_DIAGNOSTIC_KEYS = (
+    'estimated_contact_point_m', 'estimated_contact_points_m', 'estimated_support_loads_N',
+    'reference_velocity_m_s', 'reference_qvel', 'feedback_reference_qvel', 'rolling_feedforward', 'lqr_command',
+    'equilibrium_command', 'support_command', 'transition_command_delta', 'heading_command',
+    'fade_command_delta', 'clipping_command_delta', 'sync_weights', 'feedback_gain',
+    'contact_velocity_residual_m_s', 'contact_velocity_residual_rms_m_s',
+    'contact_velocity_residual_max_m_s', 'predicted_body_velocity_m_s', 'measured_body_velocity_m_s',
+    'velocity_consistency_valid', 'kinematic_inconsistency', 'actuator_saturated',
+    'tracking_velocity_error_m_s', 'input_bounds', 'previous_applied_input',
+    'previous_actuator_saturated',
+    'allocation_drive_reference', 'allocation_speed_limits', 'allocation_acceleration_limits',
+    'allocation_active_bounds', 'allocation_effort_weight_m_s', 'allocation_change_weight_m_s',
+    'allocation_residual_rms_m_s', 'allocation_velocity_error_m_s',
+    'allocation_authority_m_s', 'allocation_effort_blend',
+    'allocation_requested_velocity_m_s', 'allocation_accepted_velocity_m_s',
+    'allocation_velocity_response', 'allocation_modal_effort_m_s',
+    'allocation_accepted_velocity_valid', 'allocation_reference_residual_rms_m_s',
+    'feedback_reference_xy', 'reference_acceleration_m_s2',
+    'reference_position_error_relaxed_m', 'reference_catchup_velocity_m_s',
+)
+
+
+def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=None, pushes=(),
+                balanced_lean=True, settle_s=3., yaw_deg=0., record_diagnostics=False):
+    """Simulate one run and return ``(log, summary)``.
+
+    ``pushes`` are ``(start_s, duration_s, [Fx, Fy, Fz])`` world forces on the
+    fork, as in the lab. ``settle_s`` extends the run past the end of the path.
+    The log is aligned as in the other experiments: commands logged at time t
+    are held until the next row.
+
+    A ``hardware`` controller is given the workspace's ``StateMirror``, which
+    follows the simulated robot's state before every call. Its contact
+    estimates stay in its diagnostics; the log's contact columns are the
+    solver's in every mode, so they measure what really happened.
+
+    ``record_diagnostics`` adds estimated contacts, measured rolling-consistency
+    residuals, and separate command contributions without feeding them back.
+    These additional fields currently require ``hardware`` mode.
+    """
+    params = params or OffroadParams()
+    plant = workspace.plant(terrain)
+    phase = plant.config['simulation'].get('initial_shaft_phase_rad', .30) if phase is None else phase
+    controller = OffroadController(workspace.mirror() if params.mode == 'hardware' else plant,
+                                   workspace.design, params, phase, record_diagnostics=record_diagnostics)
+    place_on_ground(plant, controller, path.origin, phase, balanced_lean, yaw_deg)
+    duration = float(duration_s if duration_s is not None else path.start_s+path.duration_s+settle_s)
+    count = int(round(duration/plant.dt))
+    keys = _LOG_KEYS+_DIAGNOSTIC_KEYS if record_diagnostics else _LOG_KEYS
+    log = {key: [] for key in keys}
+    failure = None
+    previous_requested = plant.last_input.copy()
+    for index in range(count+1):
+        now = float(plant.data.time)
+        xy, velocity, acceleration = path(now)
+        measure_for(controller, plant)
+        applied, diagnostics = controller.command(xy, velocity, acceleration)
+        push = sum((np.asarray(force, float) for start, length, force in pushes if start <= now < start+length-1e-9),
+                   start=np.zeros(3))
+        estimate = diagnostics['estimate']
+        measurement = diagnostics['measurement'] if controller.plant is plant else measure_contact(plant)
+        snapshot = plant.snapshot()
+        body_up = plant.data.xmat[plant.fork_id].reshape(3, 3)[:, 2]
+        reference_matrix = np.empty(9)
+        mujoco.mju_quat2Mat(reference_matrix, diagnostics['reference_quat'])
+        reference_up = reference_matrix.reshape(3, 3)[:, 2]
+        quat = plant.data.qpos[3:7]
+        row = {'time_s': now, 'qpos': plant.data.qpos.copy(), 'qvel': plant.data.qvel.copy(),
+               'command': diagnostics['requested'], 'input': applied.copy(), 'reference_xy': np.asarray(xy, float).copy(),
+               'reference_quat': diagnostics['reference_quat'], 'tilt_rad': snapshot['tilt_rad'],
+               'attitude_error_rad': float(np.arccos(np.clip(body_up@reference_up, -1., 1.))), 'push_N': push,
+               'ground_normal': plant.ground['normal'].copy(), 'estimated_normal': estimate['normal'],
+               'ground_height_m': float(plant.ground['point'][2]), 'ground_friction': plant.ground['friction'],
+               'estimated_friction': estimate['friction'], 'contact_force_N': measurement['force_N'],
+               'normal_force_N': measurement['normal_force_N'],
+               'tangential_force_N': measurement['tangential_force_norm_N'],
+               'utilization': measurement['utilization'], 'slip_speed_m_s': measurement['slip_speed_m_s'],
+               'support_loads_N': np.array([measurement['loads_N'][name] for name in SUPPORT_NAMES]),
+               'effective_phase_rad': diagnostics['effective_phase_rad'], 'drive_fade': diagnostics['drive_fade'],
+               'support_torque': diagnostics['support_torque'][:3],
+               'heading_rad': float(np.arctan2(2*(quat[0]*quat[3]+quat[1]*quat[2]), 1-2*(quat[2]**2+quat[3]**2))),
+               'fork_load_N': measurement['fork_load_N'],
+               # Ground normal seen from the carrier: where on the wheel the support point is.
+               'support_direction': plant.data.xmat[controller.carrier_id].reshape(3, 3).T@plant.ground['normal'],
+               'contact_point_m': np.asarray(measurement['point_m'], float).copy(),
+               # Solved moment about the wheel centre, and the observer's force and
+               # moment when the controller uses it (NaN otherwise).
+               'contact_moment_Nm': np.asarray(measurement['moment_Nm'], float).copy(),
+               'observer_force_N': (diagnostics['observed']['force_N'].copy() if diagnostics.get('observed')
+                                    else _UNOBSERVED.copy()),
+               'observer_moment_Nm': (diagnostics['observed']['moment_Nm'].copy() if diagnostics.get('observed')
+                                      else _UNOBSERVED.copy())}
+        if record_diagnostics:
+            row.update({key: diagnostics[key] for key in _DIAGNOSTIC_KEYS
+                        if key not in ('previous_applied_input', 'previous_actuator_saturated')})
+            row['previous_applied_input'] = plant.last_input.copy()
+            row['previous_actuator_saturated'] = np.abs(previous_requested) > plant.bounds+1e-12
+        for key in keys:
+            log[key].append(row[key])
+        if snapshot['balance_failed']:
+            failure = 'fork or platform touched the ground'
+        elif snapshot['tilt_rad'] > np.deg2rad(70):
+            failure = 'tilt exceeded 70 degrees'
+        elif not np.all(np.isfinite(plant.data.qpos)):
+            failure = 'nonfinite state'
+        elif np.linalg.norm(plant.data.qpos[:2]-xy) > 1.:
+            failure = 'more than 1 m from the reference'
+        if failure or index == count:
+            break
+        plant.step(applied, np.r_[push, np.zeros(3)])
+        controller.after_step()
+        previous_requested = diagnostics['requested'].copy()
+    log = {key: np.asarray(value) for key, value in log.items()}
+    summary = summarize(log, plant, path, params, failure, duration)
+    return log, summary
+
+
+def _percentile(values, level):
+    return float(np.percentile(values, level)) if len(values) else float('nan')
+
+
+def summarize(log, plant, path, params, failure=None, requested_duration_s=None):
+    """Reduce a log to survival, tracking, contact-force and actuator metrics."""
+    time = log['time_s']
+    dt = plant.dt
+    weight = plant.total_mass*abs(float(plant.config['simulation']['gravity_m_s2'][2]))
+    error = np.linalg.norm(log['qpos'][:, :2]-log['reference_xy'], axis=1)
+    moving = (time >= path.start_s) & (time <= path.start_s+path.duration_s)
+    along = (log['qpos'][:, :2]-path.origin)@path.direction
+    cross = (log['qpos'][:, :2]-path.origin)@np.array([-path.direction[1], path.direction[0]])
+    load = log['normal_force_N']/weight
+    loaded = load > .05
+    true_normal, estimated = log['ground_normal'], log['estimated_normal']
+    normal_error = np.degrees(np.arccos(np.clip(np.sum(true_normal*estimated, axis=1), -1., 1.)))
+    slope = np.degrees(np.arccos(np.clip(true_normal[:, 2], -1., 1.)))
+    utilization = log['utilization'][loaded]
+    slip = log['slip_speed_m_s']
+    inputs, commands = log['input'][:-1], log['command'][:-1]
+    joint_speed = log['qvel'][:-1, 6:9]
+    shares = log['support_loads_N']/np.maximum(log['support_loads_N'].sum(axis=1, keepdims=True), 1e-9)
+    dominant = np.argmax(shares, axis=1)[loaded]
+    heading = np.unwrap(log['heading_rad'])
+    tail = time >= time[-1]-1.
+    completed = failure is None and (requested_duration_s is None or time[-1] >= requested_duration_s-dt/2)
+    sensing = {}
+    if 'observer_force_N' in log and np.isfinite(log['observer_force_N']).all() and loaded.any():
+        # Observer against the solved contact. The observer reports an interval
+        # mean, the solver the instant at the end of the interval.
+        force_error = np.linalg.norm(log['observer_force_N']-log['contact_force_N'], axis=1)[loaded]
+        moment_error = np.linalg.norm(log['observer_moment_Nm']-log['contact_moment_Nm'], axis=1)[loaded]
+        sensing = {'observer_force_error_median_N': float(np.median(force_error)),
+                   'observer_force_error_p95_N': _percentile(force_error, 95),
+                   'observer_moment_error_median_Nm': float(np.median(moment_error)),
+                   'observer_moment_error_p95_Nm': _percentile(moment_error, 95)}
+    return {
+        'sensing': sensing,
+        'terrain': plant.terrain.name, 'controller': params.mode, 'parameters': params.as_dict(),
+        'engine_version': mujoco.__version__, 'contact_mode': plant.config['contact'].get('mode', 'faceted'),
+        'ground_model': 'Tangent plane of the analytic terrain at the surface point nearest the wheel centre.',
+        'path': path.spec(), 'completed': bool(completed), 'failure': failure,
+        'completed_duration_s': float(time[-1]), 'requested_duration_s': requested_duration_s,
+        'distance_along_path_m': float(along[-1]), 'final_cross_track_m': float(cross[-1]),
+        'tracking': {'rms_error_m': float(np.sqrt(np.mean(error**2))), 'max_error_m': float(error.max()),
+                     'final_error_m': float(error[-1]),
+                     'rms_error_while_moving_m': float(np.sqrt(np.mean(error[moving]**2))) if moving.any() else 0.},
+        'attitude': {'max_tilt_deg': float(np.degrees(log['tilt_rad']).max()),
+                     'max_error_from_reference_deg': float(np.degrees(log['attitude_error_rad']).max()),
+                     'rms_error_from_reference_deg': float(np.degrees(np.sqrt(np.mean(log['attitude_error_rad']**2)))),
+                     'final_error_from_reference_deg': float(np.degrees(log['attitude_error_rad'][-1])),
+                     'heading_change_deg': float(np.degrees(heading[-1]-heading[0]))},
+        'ground': {'max_slope_under_wheel_deg': float(slope.max()),
+                   'height_range_m': [float(log['ground_height_m'].min()), float(log['ground_height_m'].max())],
+                   'friction_range': [float(log['ground_friction'].min()), float(log['ground_friction'].max())]},
+        'contact': {'normal_load_fraction_min': float(load.min()), 'normal_load_fraction_max': float(load.max()),
+                    'normal_load_fraction_std': float(load.std()),
+                    'unloaded_time_s': float(np.sum(~loaded)*dt),
+                    'utilization_mean': float(utilization.mean()) if len(utilization) else float('nan'),
+                    'utilization_p95': _percentile(utilization, 95),
+                    'utilization_max': float(utilization.max()) if len(utilization) else float('nan'),
+                    'time_above_90pct_cone_s': float(np.sum(utilization > .9)*dt),
+                    'max_slip_speed_m_s': float(slip.max()),
+                    'slip_distance_m': float(np.sum(slip[:-1])*dt),
+                    'sliding_time_s': float(np.sum(slip > .02)*dt),
+                    'friction_loss_J': float(np.sum(log['tangential_force_N'][:-1]*slip[:-1])*dt),
+                    'estimated_friction_min': float(log['estimated_friction'].min()),
+                    'normal_estimate_error_rms_deg': float(np.sqrt(np.mean(normal_error[loaded]**2))) if loaded.any() else float('nan'),
+                    'normal_estimate_error_max_deg': float(normal_error[loaded].max()) if loaded.any() else float('nan'),
+                    'normal_estimate_error_median_deg': float(np.median(normal_error[loaded])) if loaded.any() else float('nan'),
+                    'normal_estimate_error_p95_deg': _percentile(normal_error[loaded], 95),
+                    'support_time_share': {name: float(np.mean(dominant == i)) if len(dominant) else 0.
+                                           for i, name in enumerate(SUPPORT_NAMES)},
+                    'support_handovers': int(np.count_nonzero(np.diff(dominant))) if len(dominant) > 1 else 0,
+                    'fork_ground_contact': bool(np.any(log['fork_load_N'] > 0))},
+        'actuation': {'max_input_fraction': (np.max(np.abs(inputs)/plant.bounds, axis=0).tolist() if len(inputs) else [0.]*5),
+                      'saturated_time_fraction': float(np.mean(np.any(np.abs(commands) > plant.bounds, axis=1))) if len(commands) else 0.,
+                      'rms_torque_Nm': np.sqrt(np.mean(inputs[:, :3]**2, axis=0)).tolist() if len(inputs) else [0.]*3,
+                      'max_joint_speed_rad_s': np.max(np.abs(joint_speed), axis=0).tolist() if len(joint_speed) else [0.]*3,
+                      'joint_work_J': float(np.sum(np.abs(inputs[:, :3]*joint_speed))*dt) if len(inputs) else 0.,
+                      'unloaded_fade_time_s': float(np.sum(log['drive_fade'] < .999)*dt)},
+        'settled_at_end': bool(completed and np.all(np.degrees(log['attitude_error_rad'][tail]) < 1.)
+                               and np.all(np.linalg.norm(log['qvel'][tail, :2], axis=1) < .03)
+                               and np.all(np.linalg.norm(log['qvel'][tail, 3:6], axis=1) < .08)),
+    }
+
+
+def save_run(directory, log, summary, terrain):
+    """Write the rollout, summary and terrain description for one run.
+
+    The rollout is stored in single precision to keep saved suites small. The
+    summary was computed from the double-precision log before saving.
+    """
+    directory = Path(directory)
+    directory.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(directory/'rollout.npz', **{
+        key: value.astype(np.float32) if value.dtype == np.float64 else value for key, value in log.items()})
+    (directory/'summary.json').write_text(json.dumps(jsonable(summary), indent=2)+'\n')
+    (directory/'terrain.json').write_text(json.dumps(terrain.spec(), indent=2)+'\n')
+    return directory
+
+
+# Each scenario lays a terrain out along ``course`` and drives along ``travel``.
+# Travel along 0 degrees rolls on the common shaft and crosses shell, belt and
+# equatorial-gap supports; travel along 90 degrees rolls on a shell.
+SCENARIOS = {
+    'flat_forward': {'terrain': ('flat', {}), 'course': 0., 'travel': 0., 'distance': 1.0, 'duration': 12.},
+    'ramp_forward': {'terrain': ('ramp', {'grade_deg': 8.}), 'course': 0., 'travel': 0., 'distance': 1.0, 'duration': 12.},
+    'ramp_lateral': {'terrain': ('ramp', {'grade_deg': 8.}), 'course': 90., 'travel': 90., 'distance': 1.0, 'duration': 12.},
+    'cross_slope': {'terrain': ('cross_slope', {'grade_deg': 6.}), 'course': 0., 'travel': 0., 'distance': 1.8, 'duration': 20.},
+    'hills': {'terrain': ('hills', {}), 'course': 0., 'travel': 0., 'distance': 1.8, 'duration': 20.},
+    'washboard': {'terrain': ('washboard', {}), 'course': 90., 'travel': 90., 'distance': 1.8, 'duration': 20.},
+    'bumps': {'terrain': ('bumps', {}), 'course': 0., 'travel': 0., 'distance': 1.8, 'duration': 20.},
+    'rough': {'terrain': ('rough', {}), 'course': 90., 'travel': 90., 'distance': 1.8, 'duration': 20.},
+    'mud': {'terrain': ('mud', {}), 'course': 0., 'travel': 0., 'distance': 1.3, 'duration': 14.},
+    'slick_ramp': {'terrain': ('slick_ramp', {}), 'course': 0., 'travel': 0., 'distance': 1.0, 'duration': 12.},
+    'course': {'terrain': ('course', {}), 'course': 0., 'travel': 0., 'distance': 3.9, 'duration': 42.},
+}
+
+
+def scenario(name, seed=7):
+    """Build ``(terrain, path)`` for a named scenario."""
+    item = SCENARIOS[name]
+    kind, options = item['terrain']
+    terrain = make_terrain(kind, heading_deg=item['course'], seed=seed, **options)
+    path = ReferencePath(item['distance'], item['travel'], item['duration'])
+    return terrain, path

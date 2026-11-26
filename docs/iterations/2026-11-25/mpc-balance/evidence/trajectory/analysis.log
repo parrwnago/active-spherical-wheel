@@ -1,0 +1,52 @@
+{
+  "status": "later_candidate_not_accepted",
+  "acceptance": {
+    "world_x": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": false,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": true,
+        "path_rms_regression_at_most_10pct": true
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "final_goal_within_5mm"
+      ]
+    },
+    "world_y": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": false,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": true,
+        "lower_lean_integral": true,
+        "lower_original_clock_path_rms": true
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "final_goal_within_5mm"
+      ]
+    }
+  },
+  "candidate_rows": [
+    {
+      "direction": "world_x",
+      "stage_label": "trajectory_SQP",
+      "original_clock_path_rms_mm": 9.183791887660316,
+      "original_goal_final_error_mm": 8.163008028952067,
+      "peak_reference_lean_deg": 0.8361304672126576,
+      "fallback_fraction": 0.0
+    },
+    {
+      "direction": "world_y",
+      "stage_label": "trajectory_SQP",
+      "original_clock_path_rms_mm": 19.63395175511738,
+      "original_goal_final_error_mm": 24.973062368519663,
+      "peak_reference_lean_deg": 1.7188415439043327,
+      "fallback_fraction": 0.0
+    }
+  ]
+}

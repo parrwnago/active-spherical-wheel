@@ -1,0 +1,4589 @@
+{
+  "method": "One setting varied at a time from the starting settings; a value is adopted only if it lowers the mean cost by more than the margin with no added falls; the combined choice is then checked against the start.",
+  "scenarios": [
+    "ramp_forward",
+    "ramp_lateral",
+    "cross_slope",
+    "hills",
+    "washboard",
+    "bumps",
+    "rough"
+  ],
+  "variants_seed_and_start_phase": [
+    [
+      7,
+      0.3
+    ],
+    [
+      23,
+      0.9
+    ]
+  ],
+  "travel": {
+    "distance_m": 1.1,
+    "duration_s": 12.0
+  },
+  "grid": {
+    "normal_time_constant_s": [
+      0.02,
+      0.04,
+      0.1,
+      0.25
+    ],
+    "rim_aware": [
+      false,
+      true
+    ],
+    "rim_time_constant_s": [
+      0.1,
+      0.2,
+      0.5
+    ],
+    "lean_gain": [
+      0.0,
+      0.5,
+      0.9,
+      1.0,
+      1.1
+    ],
+    "support_feedforward": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "shaft_error": [
+      "material",
+      "free",
+      "rolling"
+    ],
+    "schedule_on_ground_normal": [
+      false,
+      true
+    ],
+    "unload_fraction": [
+      0.0,
+      0.3
+    ],
+    "synchronize": [
+      false,
+      true
+    ],
+    "track_contact_point": [
+      false,
+      true
+    ],
+    "heading_gain": [
+      0.0,
+      0.2
+    ],
+    "normal_source": [
+      "intrinsic",
+      "solver"
+    ]
+  },
+  "cost": {
+    "terms_and_the_value_that_costs_1": {
+      "rms_tracking_error_m": 0.03,
+      "max_tracking_error_m": 0.1,
+      "final_error_m": 0.02,
+      "max_attitude_error_deg": 4.0,
+      "impact_load_above_weight": 2.0,
+      "sliding_distance_m": 0.05
+    },
+    "failure_cost": 30.0
+  },
+  "chosen": {
+    "mode": "terrain_aware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0
+  },
+  "defaults_in_code": {
+    "mode": "terrain_aware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0
+  },
+  "ablation": [
+    {
+      "label": "Contact-aware controller, settings at the start of the sweep",
+      "cost": 2.745654738817209,
+      "failures": 0,
+      "reference": true
+    },
+    {
+      "label": "No balancing lean from the sensed slope",
+      "cost": 26.06412716206473,
+      "failures": 0,
+      "parameter": "lean_gain",
+      "value": 0.0
+    },
+    {
+      "label": "No static holding torque",
+      "cost": 3.3753122679284218,
+      "failures": 0,
+      "parameter": "support_feedforward",
+      "value": 0.0
+    },
+    {
+      "label": "Shaft angle held to its flat-floor bookkeeping",
+      "cost": 2.63001814070773,
+      "failures": 0,
+      "parameter": "shaft_error",
+      "value": "material"
+    },
+    {
+      "label": "Rim contact read like the spherical surface",
+      "cost": 3.375734956028584,
+      "failures": 0,
+      "parameter": "rim_aware",
+      "value": false
+    },
+    {
+      "label": "No torque fade while unloaded",
+      "cost": 2.745654738817209,
+      "failures": 0,
+      "parameter": "unload_fraction",
+      "value": 0.0
+    },
+    {
+      "label": "No incoming-drive preparation",
+      "cost": 2.6988580439443264,
+      "failures": 0,
+      "parameter": "synchronize",
+      "value": false
+    },
+    {
+      "label": "Normal read from the solver, not force and moment",
+      "cost": 2.726732511372529,
+      "failures": 0,
+      "parameter": "normal_source",
+      "value": "solver"
+    },
+    {
+      "label": "Gains scheduled against the sensed ground",
+      "cost": 2.6436046468742234,
+      "failures": 0,
+      "parameter": "schedule_on_ground_normal",
+      "value": true
+    },
+    {
+      "label": "Reference applied to the contact point",
+      "cost": 2.748988081404003,
+      "failures": 0,
+      "parameter": "track_contact_point",
+      "value": true
+    },
+    {
+      "label": "Heading held with the idle shell",
+      "cost": 2.9213493029352926,
+      "failures": 0,
+      "parameter": "heading_gain",
+      "value": 0.2
+    },
+    {
+      "label": "Flat-floor baseline",
+      "cost": 29.672021811775192,
+      "failures": 1
+    }
+  ],
+  "start": {
+    "mode": "terrain_aware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0
+  },
+  "margin": 0.05,
+  "sweeps": [
+    {
+      "parameter": "normal_time_constant_s",
+      "values": [
+        0.02,
+        0.04,
+        0.1,
+        0.25
+      ],
+      "costs": [
+        2.745654738817209,
+        2.7867086861467647,
+        3.1820208664564857,
+        4.647205787265227
+      ],
+      "failures": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.2833129460776976,
+        0.31467849215744587,
+        0.49998252211968625,
+        0.5384963179402347
+      ],
+      "start": 0.02,
+      "chosen": 0.02
+    },
+    {
+      "parameter": "rim_aware",
+      "values": [
+        false,
+        true
+      ],
+      "costs": [
+        3.375734956028584,
+        2.745654738817209
+      ],
+      "failures": [
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.233907723203839,
+        0.2833129460776976
+      ],
+      "start": true,
+      "chosen": true
+    },
+    {
+      "parameter": "rim_time_constant_s",
+      "values": [
+        0.1,
+        0.2,
+        0.5
+      ],
+      "costs": [
+        2.6390054602229376,
+        2.745654738817209,
+        2.867076043832583
+      ],
+      "failures": [
+        0,
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.21679715838061125,
+        0.2833129460776976,
+        0.37662217398084413
+      ],
+      "start": 0.2,
+      "chosen": 0.2
+    },
+    {
+      "parameter": "lean_gain",
+      "values": [
+        0.0,
+        0.5,
+        0.9,
+        1.0,
+        1.1
+      ],
+      "costs": [
+        26.06412716206473,
+        13.809508989193072,
+        3.9748250988105904,
+        2.745654738817209,
+        4.482438201230241
+      ],
+      "failures": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "standard_errors": [
+        2.062133340938728,
+        1.4997755447274952,
+        0.34438875740560926,
+        0.2833129460776976,
+        0.2991911936197426
+      ],
+      "start": 1.0,
+      "chosen": 1.0
+    },
+    {
+      "parameter": "support_feedforward",
+      "values": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "costs": [
+        3.3753122679284218,
+        2.8157545358660414,
+        2.745654738817209
+      ],
+      "failures": [
+        0,
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.32328037487266365,
+        0.23324527132304973,
+        0.2833129460776976
+      ],
+      "start": 1.0,
+      "chosen": 1.0
+    },
+    {
+      "parameter": "shaft_error",
+      "values": [
+        "material",
+        "free",
+        "rolling"
+      ],
+      "costs": [
+        2.63001814070773,
+        2.7982592831539668,
+        2.745654738817209
+      ],
+      "failures": [
+        0,
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.2851405841816733,
+        0.2152950796753433,
+        0.2833129460776976
+      ],
+      "start": "rolling",
+      "chosen": "rolling"
+    },
+    {
+      "parameter": "schedule_on_ground_normal",
+      "values": [
+        false,
+        true
+      ],
+      "costs": [
+        2.745654738817209,
+        2.6436046468742234
+      ],
+      "failures": [
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.2833129460776976,
+        0.25705077025708806
+      ],
+      "start": false,
+      "chosen": false
+    },
+    {
+      "parameter": "unload_fraction",
+      "values": [
+        0.0,
+        0.3
+      ],
+      "costs": [
+        2.745654738817209,
+        2.745654738817209
+      ],
+      "failures": [
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.2833129460776976,
+        0.2833129460776976
+      ],
+      "start": 0.3,
+      "chosen": 0.3
+    },
+    {
+      "parameter": "synchronize",
+      "values": [
+        false,
+        true
+      ],
+      "costs": [
+        2.6988580439443264,
+        2.745654738817209
+      ],
+      "failures": [
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.2384704469546358,
+        0.2833129460776976
+      ],
+      "start": true,
+      "chosen": true
+    },
+    {
+      "parameter": "track_contact_point",
+      "values": [
+        false,
+        true
+      ],
+      "costs": [
+        2.745654738817209,
+        2.748988081404003
+      ],
+      "failures": [
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.2833129460776976,
+        0.22197505507074153
+      ],
+      "start": false,
+      "chosen": false
+    },
+    {
+      "parameter": "heading_gain",
+      "values": [
+        0.0,
+        0.2
+      ],
+      "costs": [
+        2.745654738817209,
+        2.9213493029352926
+      ],
+      "failures": [
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.2833129460776976,
+        0.3382434573838028
+      ],
+      "start": 0.0,
+      "chosen": 0.0
+    },
+    {
+      "parameter": "normal_source",
+      "values": [
+        "intrinsic",
+        "solver"
+      ],
+      "costs": [
+        2.745654738817209,
+        2.726732511372529
+      ],
+      "failures": [
+        0,
+        0
+      ],
+      "standard_errors": [
+        0.2833129460776976,
+        0.4460800019547037
+      ],
+      "start": "intrinsic",
+      "chosen": "intrinsic"
+    }
+  ],
+  "confirmation": null,
+  "flat_baseline": {
+    "params": {
+      "mode": "flat_baseline"
+    },
+    "cost": 29.672021811775192,
+    "cost_standard_error": 3.152849191773414,
+    "failures": 1,
+    "runs": [
+      {
+        "scenario": "ramp_forward",
+        "seed": 7,
+        "phase_rad": 0.3,
+        "cost": 29.87029130545292,
+        "completed": true,
+        "max_error_m": 0.7748567752598363,
+        "final_error_m": 0.7748567752598363,
+        "max_attitude_error_deg": 7.854600891193692,
+        "max_load_fraction": 1.2477194592917658
+      },
+      {
+        "scenario": "ramp_forward",
+        "seed": 23,
+        "phase_rad": 0.9,
+        "cost": 30.797794215319378,
+        "completed": true,
+        "max_error_m": 0.841819020868703,
+        "final_error_m": 0.841819020868703,
+        "max_attitude_error_deg": 8.75330333204657,
+        "max_load_fraction": 1.319938896988679
+      },
+      {
+        "scenario": "ramp_lateral",
+        "seed": 7,
+        "phase_rad": 0.3,
+        "cost": 29.724467196176484,
+        "completed": true,
+        "max_error_m": 0.7812965172400944,
+        "final_error_m": 0.7761479207938369,
+        "max_attitude_error_deg": 6.865571838027144,
+        "max_load_fraction": 1.26209586291456
+      },
+      {
+        "scenario": "ramp_lateral",
+        "seed": 23,
+        "phase_rad": 0.9,
+        "cost": 31.687517863612843,
+        "completed": true,
+        "max_error_m": 0.8210504763746352,
+        "final_error_m": 0.7360090974866512,
+        "max_attitude_error_deg": 8.18144948150314,
+        "max_load_fraction": 3.630230155522302
+      },
+      {
+        "scenario": "cross_slope",
+        "seed": 7,
+        "phase_rad": 0.3,
+        "cost": 66.85338587039448,
+        "completed": false,
+        "max_error_m": 0.5833547457000842,
+        "final_error_m": 0.5833547457000842,
+        "max_attitude_error_deg": 48.58078063550091,
+        "max_load_fraction": 3.718169934450065
+      },
+      {
+        "scenario": "cross_slope",
+        "seed": 23,
+        "phase_rad": 0.9,
+        "cost": 32.648600514287736,
+        "completed": true,
+        "max_error_m": 0.7238942386728483,
+        "final_error_m": 0.7238942386728483,
+        "max_attitude_error_deg": 8.488796634151962,
+        "max_load_fraction": 6.6225234171714815
+      },
+      {
+        "scenario": "hills",
+        "seed": 7,
+        "phase_rad": 0.3,
+        "cost": 28.505463132810846,
+        "completed": true,
+        "max_error_m": 0.6479616570559069,
+        "final_error_m": 0.6462157603734108,
+        "max_attitude_error_deg": 6.113644893510577,
+        "max_load_fraction": 1.8551398354913686
+      },
+      {
+        "scenario": "hills",
+        "seed": 23,
+        "phase_rad": 0.9,
+        "cost": 28.236412050412806,
+        "completed": true,
+        "max_error_m": 0.6515515992253649,
+        "final_error_m": 0.6463426461646262,
+        "max_attitude_error_deg": 6.138747878943301,
+        "max_load_fraction": 1.2623550245147834
+      },
+      {
+        "scenario": "washboard",
+        "seed": 7,
+        "phase_rad": 0.3,
+        "cost": 19.487054370560976,
+        "completed": true,
+        "max_error_m": 0.3145831212957022,
+        "final_error_m": 0.1766869660199153,
+        "max_attitude_error_deg": 4.759569417941514,
+        "max_load_fraction": 3.1429187720282825
+      },
+      {
+        "scenario": "washboard",
+        "seed": 23,
+        "phase_rad": 0.9,
+        "cost": 19.916140117594132,
+        "completed": true,
+        "max_error_m": 0.33545886051859164,
+        "final_error_m": 0.1774453819341825,
+        "max_attitude_error_deg": 4.723264249391051,
+        "max_load_fraction": 2.769826805494488
+      },
+      {
+        "scenario": "bumps",
+        "seed": 7,
+        "phase_rad": 0.3,
+        "cost": 24.75841331386051,
+        "completed": true,
+        "max_error_m": 0.3310852280697669,
+        "final_error_m": 0.32521401338508954,
+        "max_attitude_error_deg": 6.102770022720984,
+        "max_load_fraction": 5.480578803814606
+      },
+      {
+        "scenario": "bumps",
+        "seed": 23,
+        "phase_rad": 0.9,
+        "cost": 30.82720445255868,
+        "completed": true,
+        "max_error_m": 0.7693655381622252,
+        "final_error_m": 0.25808140723763645,
+        "max_attitude_error_deg": 8.069309526595323,
+        "max_load_fraction": 2.7707226613033833
+      },
+      {
+        "scenario": "rough",
+        "seed": 7,
+        "phase_rad": 0.3,
+        "cost": 16.81031890917094,
+        "completed": true,
+        "max_error_m": 0.28139918822015136,
+        "final_error_m": 0.11645131520696453,
+        "max_attitude_error_deg": 4.327926690100938,
+        "max_load_fraction": 4.523349574560092
+      },
+      {
+        "scenario": "rough",
+        "seed": 23,
+        "phase_rad": 0.9,
+        "cost": 25.285242052639948,
+        "completed": true,
+        "max_error_m": 0.4335716582732894,
+        "final_error_m": 0.36805617471282326,
+        "max_attitude_error_deg": 5.1715725102698755,
+        "max_load_fraction": 2.8394403010736977
+      }
+    ]
+  },
+  "records": [
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.745654738817209,
+      "cost_standard_error": 0.2833129460776976,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.5803275382485031,
+          "completed": true,
+          "max_error_m": 0.027938532457210508,
+          "final_error_m": 0.00037595677462151823,
+          "max_attitude_error_deg": 0.7605333065771821,
+          "max_load_fraction": 1.8785604164144578
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.6332995853495575,
+          "completed": true,
+          "max_error_m": 0.030775760747785874,
+          "final_error_m": 0.0005100321767002693,
+          "max_attitude_error_deg": 0.7125069362655472,
+          "max_load_fraction": 1.8993704928280444
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.905123081606352,
+          "completed": true,
+          "max_error_m": 0.027555190785518074,
+          "final_error_m": 0.017528026041499715,
+          "max_attitude_error_deg": 1.0841704190428063,
+          "max_load_fraction": 2.630103610890642
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.732305201838145,
+          "completed": true,
+          "max_error_m": 0.04132342197609402,
+          "final_error_m": 0.03524751962529809,
+          "max_attitude_error_deg": 1.1531843491904,
+          "max_load_fraction": 1.6097073832483058
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.522477206522299,
+          "completed": true,
+          "max_error_m": 0.02335564144357473,
+          "final_error_m": 0.0012697077725570766,
+          "max_attitude_error_deg": 0.9944005458171106,
+          "max_load_fraction": 1.9238820091942335
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.474067505347869,
+          "completed": true,
+          "max_error_m": 0.023406689815950763,
+          "final_error_m": 0.0022565897501357,
+          "max_attitude_error_deg": 0.7334393889091397,
+          "max_load_fraction": 1.7683650913652826
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.5837423356184113,
+          "completed": true,
+          "max_error_m": 0.06290976277876703,
+          "final_error_m": 0.01843720730980366,
+          "max_attitude_error_deg": 1.2719910036740536,
+          "max_load_fraction": 2.4619928277132144
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.451636190209415,
+          "completed": true,
+          "max_error_m": 0.06408434753859801,
+          "final_error_m": 0.0036875835662311643,
+          "max_attitude_error_deg": 1.043132002020101,
+          "max_load_fraction": 1.8286574896144505
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.3284760997604566,
+          "completed": true,
+          "max_error_m": 0.028605940146291826,
+          "final_error_m": 0.020136751651215534,
+          "max_attitude_error_deg": 2.1751222656316624,
+          "max_load_fraction": 2.7551804645685385
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.325289002796333,
+          "completed": true,
+          "max_error_m": 0.05480836616995029,
+          "final_error_m": 0.00024254636100472793,
+          "max_attitude_error_deg": 4.501381298300035,
+          "max_load_fraction": 3.0050244073017573
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 5.24649539548876,
+          "completed": true,
+          "max_error_m": 0.09455067611426501,
+          "final_error_m": 0.015261414291599199,
+          "max_attitude_error_deg": 3.0855828218711894,
+          "max_load_fraction": 3.3106324663484883
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.7642687999451225,
+          "completed": true,
+          "max_error_m": 0.05551971830739907,
+          "final_error_m": 0.008654822957109842,
+          "max_attitude_error_deg": 1.1345672402193996,
+          "max_load_fraction": 1.952994483495128
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.4119959960614716,
+          "completed": true,
+          "max_error_m": 0.044588647435669676,
+          "final_error_m": 0.006696439794653645,
+          "max_attitude_error_deg": 2.3510024863591497,
+          "max_load_fraction": 1.5840238663832327
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.4796624046482245,
+          "completed": true,
+          "max_error_m": 0.04810828673857215,
+          "final_error_m": 0.0032033860271490377,
+          "max_attitude_error_deg": 2.2434094853742312,
+          "max_load_fraction": 2.108793102089773
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.04,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.7867086861467647,
+      "cost_standard_error": 0.31467849215744587,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.5241776815345431,
+          "completed": true,
+          "max_error_m": 0.03147065173818148,
+          "final_error_m": 0.00027510521546175243,
+          "max_attitude_error_deg": 0.7476145436591595,
+          "max_load_fraction": 1.5882910811109938
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.4577248551210864,
+          "completed": true,
+          "max_error_m": 0.03404937947815162,
+          "final_error_m": 0.0003696263778990449,
+          "max_attitude_error_deg": 0.6742023790049437,
+          "max_load_fraction": 1.3988645804553412
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.6392547694949746,
+          "completed": true,
+          "max_error_m": 0.032789911853074116,
+          "final_error_m": 0.020840436058319263,
+          "max_attitude_error_deg": 1.063981056984219,
+          "max_load_fraction": 1.4328179466541535
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.2986709614153518,
+          "completed": true,
+          "max_error_m": 0.03288794936348842,
+          "final_error_m": 0.02909458306570564,
+          "max_attitude_error_deg": 1.2067490826408778,
+          "max_load_fraction": 1.5833761939426971
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.7540589097959611,
+          "completed": true,
+          "max_error_m": 0.023356295134886806,
+          "final_error_m": 0.003531144916763727,
+          "max_attitude_error_deg": 0.8144268187938905,
+          "max_load_fraction": 2.185739143180119
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.752037230731703,
+          "completed": true,
+          "max_error_m": 0.023418388712085857,
+          "final_error_m": 0.0030625790219285776,
+          "max_attitude_error_deg": 1.0706226860999297,
+          "max_load_fraction": 1.969474742471277
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.563088262399364,
+          "completed": true,
+          "max_error_m": 0.07137454650239287,
+          "final_error_m": 0.021135595000110384,
+          "max_attitude_error_deg": 1.2382257651929909,
+          "max_load_fraction": 3.806822822292167
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.4333049557887416,
+          "completed": true,
+          "max_error_m": 0.07353289648872735,
+          "final_error_m": 0.004965146484281821,
+          "max_attitude_error_deg": 1.0591379719481389,
+          "max_load_fraction": 3.248994052448925
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.014551220086536,
+          "completed": true,
+          "max_error_m": 0.031094864416321984,
+          "final_error_m": 0.009639630097901307,
+          "max_attitude_error_deg": 2.616935832913968,
+          "max_load_fraction": 1.0870412276085641
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.473430263518248,
+          "completed": true,
+          "max_error_m": 0.04879908743590404,
+          "final_error_m": 0.003480183743378424,
+          "max_attitude_error_deg": 2.9065406193559213,
+          "max_load_fraction": 1.7563034673362579
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 5.500857935413816,
+          "completed": true,
+          "max_error_m": 0.13293440065573406,
+          "final_error_m": 0.01169452374189082,
+          "max_attitude_error_deg": 3.3244337623955915,
+          "max_load_fraction": 2.357927708375104
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.8703304671275927,
+          "completed": true,
+          "max_error_m": 0.06135072733891065,
+          "final_error_m": 0.007504747724538864,
+          "max_attitude_error_deg": 1.2429104213805062,
+          "max_load_fraction": 1.8148074048315133
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.407945755255376,
+          "completed": true,
+          "max_error_m": 0.05475461352573046,
+          "final_error_m": 0.017683026336144724,
+          "max_attitude_error_deg": 2.0843918804400943,
+          "max_load_fraction": 1.9160230000028482
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.3244883383714163,
+          "completed": true,
+          "max_error_m": 0.043306720936615944,
+          "final_error_m": 0.006131021989453223,
+          "max_attitude_error_deg": 1.9945141580196606,
+          "max_load_fraction": 1.6212555627997252
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.1,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 3.1820208664564857,
+      "cost_standard_error": 0.49998252211968625,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.9938294407489212,
+          "completed": true,
+          "max_error_m": 0.042990974543858806,
+          "final_error_m": 6.261704464759415e-05,
+          "max_attitude_error_deg": 0.8133498637310445,
+          "max_load_fraction": 1.9132130546011614
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.866023196805381,
+          "completed": true,
+          "max_error_m": 0.043565316142924956,
+          "final_error_m": 0.00010044167893669884,
+          "max_attitude_error_deg": 0.8539046838812633,
+          "max_load_fraction": 1.599338251213412
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.1095997854520347,
+          "completed": true,
+          "max_error_m": 0.048291679790749255,
+          "final_error_m": 0.02361810004330922,
+          "max_attitude_error_deg": 1.0308841808319282,
+          "max_load_fraction": 1.3622688543205748
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.4883946698992765,
+          "completed": true,
+          "max_error_m": 0.043661895498184104,
+          "final_error_m": 0.026003820583259007,
+          "max_attitude_error_deg": 1.2209973488836738,
+          "max_load_fraction": 1.7324875749088726
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.6591636042541296,
+          "completed": true,
+          "max_error_m": 0.027348311828178443,
+          "final_error_m": 0.0016823971354906334,
+          "max_attitude_error_deg": 0.933282947777691,
+          "max_load_fraction": 1.8770940395254352
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.7637899334930949,
+          "completed": true,
+          "max_error_m": 0.029888624233136346,
+          "final_error_m": 0.0028035157631288105,
+          "max_attitude_error_deg": 0.7447323375690692,
+          "max_load_fraction": 1.9669975137051046
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.3201965602884265,
+          "completed": true,
+          "max_error_m": 0.1037039732394055,
+          "final_error_m": 0.013438416454979464,
+          "max_attitude_error_deg": 1.9875260412574896,
+          "max_load_fraction": 2.4817368757109177
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.188800241823717,
+          "completed": true,
+          "max_error_m": 0.10507769451117092,
+          "final_error_m": 0.009636550050985628,
+          "max_attitude_error_deg": 2.0340355234896466,
+          "max_load_fraction": 2.4948801881746228
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.8560393582526258,
+          "completed": true,
+          "max_error_m": 0.037303627683627015,
+          "final_error_m": 0.0014707549384299174,
+          "max_attitude_error_deg": 3.1616495230393156,
+          "max_load_fraction": 1.0664108576588995
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.5139031148499975,
+          "completed": true,
+          "max_error_m": 0.04322396164681317,
+          "final_error_m": 0.0007516725252854688,
+          "max_attitude_error_deg": 2.9931239949310755,
+          "max_load_fraction": 2.070741272028373
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 8.83653515406308,
+          "completed": true,
+          "max_error_m": 0.2129931042376353,
+          "final_error_m": 0.026971828750633253,
+          "max_attitude_error_deg": 3.9444287942561633,
+          "max_load_fraction": 3.3501148681256185
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.910815283910417,
+          "completed": true,
+          "max_error_m": 0.08913586538243885,
+          "final_error_m": 0.017425867558020895,
+          "max_attitude_error_deg": 1.6826695556878097,
+          "max_load_fraction": 1.3554770512248875
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.397506202589824,
+          "completed": true,
+          "max_error_m": 0.056755723747610815,
+          "final_error_m": 0.002809331259767891,
+          "max_attitude_error_deg": 1.6006437427979803,
+          "max_load_fraction": 1.738021645444117
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.6436955839598744,
+          "completed": true,
+          "max_error_m": 0.056307860653757896,
+          "final_error_m": 0.0027222317591160373,
+          "max_attitude_error_deg": 1.6411384885499554,
+          "max_load_fraction": 2.147815059144338
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.25,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 4.647205787265227,
+      "cost_standard_error": 0.5384963179402347,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.9985495353952825,
+          "completed": true,
+          "max_error_m": 0.07776137260959681,
+          "final_error_m": 0.0011787550868365003,
+          "max_attitude_error_deg": 1.2708616570007802,
+          "max_load_fraction": 1.9400432323601209
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.979312685144212,
+          "completed": true,
+          "max_error_m": 0.07827885369620147,
+          "final_error_m": 0.0014150711881951198,
+          "max_attitude_error_deg": 1.50128088195991,
+          "max_load_fraction": 1.7797981803678968
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.592658129202733,
+          "completed": true,
+          "max_error_m": 0.07993299240701468,
+          "final_error_m": 0.03023070152160453,
+          "max_attitude_error_deg": 1.2330916852565184,
+          "max_load_fraction": 1.7978551710244455
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.939847003815593,
+          "completed": true,
+          "max_error_m": 0.07107189008760952,
+          "final_error_m": 0.03493281135341005,
+          "max_attitude_error_deg": 1.2934302995907565,
+          "max_load_fraction": 1.828609617579935
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.1736682920765324,
+          "completed": true,
+          "max_error_m": 0.04981460465208606,
+          "final_error_m": 0.019650971015225335,
+          "max_attitude_error_deg": 1.53311073755937,
+          "max_load_fraction": 1.7979100044962197
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.116374363156873,
+          "completed": true,
+          "max_error_m": 0.049201609395591726,
+          "final_error_m": 0.0015756237969075907,
+          "max_attitude_error_deg": 0.8502833234482879,
+          "max_load_fraction": 1.8712168362592214
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 5.561005532522503,
+          "completed": true,
+          "max_error_m": 0.15459637261914633,
+          "final_error_m": 0.014526589553393116,
+          "max_attitude_error_deg": 3.8972355979153024,
+          "max_load_fraction": 1.9078914010056574
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 8.536590488991049,
+          "completed": true,
+          "max_error_m": 0.15452621373640704,
+          "final_error_m": 0.0671906855932487,
+          "max_attitude_error_deg": 3.937776698389009,
+          "max_load_fraction": 1.9390282750343613
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.3458090561520937,
+          "completed": true,
+          "max_error_m": 0.05947923684811462,
+          "final_error_m": 0.003111934570188978,
+          "max_attitude_error_deg": 2.9354783844664922,
+          "max_load_fraction": 1.1064266229778645
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.7862179446499753,
+          "completed": true,
+          "max_error_m": 0.057284167217134065,
+          "final_error_m": 0.007968715842958829,
+          "max_attitude_error_deg": 3.139284522019107,
+          "max_load_fraction": 1.439377857710174
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 6.67261279855948,
+          "completed": true,
+          "max_error_m": 0.17389336992745685,
+          "final_error_m": 0.0107951460426021,
+          "max_attitude_error_deg": 4.537464793399851,
+          "max_load_fraction": 1.8132957104449217
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 7.446561769138904,
+          "completed": true,
+          "max_error_m": 0.15287596324509112,
+          "final_error_m": 0.04593089467795973,
+          "max_attitude_error_deg": 3.4337983868709037,
+          "max_load_fraction": 1.7654404401158008
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 6.022668582521047,
+          "completed": true,
+          "max_error_m": 0.14021188676772167,
+          "final_error_m": 0.003476668352993847,
+          "max_attitude_error_deg": 2.4951950002727767,
+          "max_load_fraction": 4.870339383427992
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.889004840386892,
+          "completed": true,
+          "max_error_m": 0.08805338987852833,
+          "final_error_m": 0.030772234141982727,
+          "max_attitude_error_deg": 1.7664221452845887,
+          "max_load_fraction": 1.8965425090395929
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": false,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 3.375734956028584,
+      "cost_standard_error": 0.233907723203839,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.5419901914934324,
+          "completed": true,
+          "max_error_m": 0.03961490124728856,
+          "final_error_m": 0.0009812096970005027,
+          "max_attitude_error_deg": 3.3534703643453745,
+          "max_load_fraction": 2.202875746060371
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.2986173948728053,
+          "completed": true,
+          "max_error_m": 0.038124518634411075,
+          "final_error_m": 0.0005880163732231152,
+          "max_attitude_error_deg": 3.116095086657578,
+          "max_load_fraction": 1.8850604130229351
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.156204376412435,
+          "completed": true,
+          "max_error_m": 0.03165893877707398,
+          "final_error_m": 0.019295075858563063,
+          "max_attitude_error_deg": 3.435214423412911,
+          "max_load_fraction": 2.6321285271805785
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.339861746269568,
+          "completed": true,
+          "max_error_m": 0.03487349143215051,
+          "final_error_m": 0.022105361300791597,
+          "max_attitude_error_deg": 3.5996714546845827,
+          "max_load_fraction": 2.110806946877766
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.4066712780743944,
+          "completed": true,
+          "max_error_m": 0.02335564144357473,
+          "final_error_m": 0.0026772308611005256,
+          "max_attitude_error_deg": 3.1656454746449656,
+          "max_load_fraction": 2.2778903405280886
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.8211240844830385,
+          "completed": true,
+          "max_error_m": 0.023406689815950763,
+          "final_error_m": 0.0022062602480161235,
+          "max_attitude_error_deg": 3.7500207345418173,
+          "max_load_fraction": 2.8232106574648257
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.777299279990925,
+          "completed": true,
+          "max_error_m": 0.05843916049182093,
+          "final_error_m": 0.01879449408337946,
+          "max_attitude_error_deg": 3.5519413655582404,
+          "max_load_fraction": 3.2983101857829444
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.6394937528240505,
+          "completed": true,
+          "max_error_m": 0.06701865297858628,
+          "final_error_m": 0.003205675668652924,
+          "max_attitude_error_deg": 3.1648635435495334,
+          "max_load_fraction": 3.0295764412835493
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.764839636140369,
+          "completed": true,
+          "max_error_m": 0.02857946784330308,
+          "final_error_m": 0.0052609964845337495,
+          "max_attitude_error_deg": 3.7325417134792884,
+          "max_load_fraction": 1.6224588602766856
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.717033820842925,
+          "completed": true,
+          "max_error_m": 0.029442597933300983,
+          "final_error_m": 0.0035402116272608675,
+          "max_attitude_error_deg": 3.7876645699399845,
+          "max_load_fraction": 2.3114390440254877
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.734608554819123,
+          "completed": true,
+          "max_error_m": 0.07467145847159097,
+          "final_error_m": 0.008382282990923695,
+          "max_attitude_error_deg": 4.297746857502369,
+          "max_load_fraction": 2.883367665649688
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.9812095204053457,
+          "completed": true,
+          "max_error_m": 0.054811758741573194,
+          "final_error_m": 0.011259877968409259,
+          "max_attitude_error_deg": 4.177042108834879,
+          "max_load_fraction": 2.4919615532450035
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.9021719268249644,
+          "completed": true,
+          "max_error_m": 0.03226626185452017,
+          "final_error_m": 0.006043469093710899,
+          "max_attitude_error_deg": 3.6730792556743133,
+          "max_load_fraction": 2.2180139172094635
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.179163820946796,
+          "completed": true,
+          "max_error_m": 0.0331274549865305,
+          "final_error_m": 0.004285024177216916,
+          "max_attitude_error_deg": 4.476961358566566,
+          "max_load_fraction": 2.6642707248441644
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.1,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.6390054602229376,
+      "cost_standard_error": 0.21679715838061125,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.7476578510619836,
+          "completed": true,
+          "max_error_m": 0.029428222304564433,
+          "final_error_m": 0.0005006279391039412,
+          "max_attitude_error_deg": 1.2015338653760028,
+          "max_load_fraction": 1.9609037616061493
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.7477537337456432,
+          "completed": true,
+          "max_error_m": 0.03022152442572118,
+          "final_error_m": 0.0005458546060169325,
+          "max_attitude_error_deg": 1.0672128124204414,
+          "max_load_fraction": 1.969688757783128
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.7668154489523658,
+          "completed": true,
+          "max_error_m": 0.027555190785518074,
+          "final_error_m": 0.012118570828598877,
+          "max_attitude_error_deg": 1.7491001281625989,
+          "max_load_fraction": 2.6305848046121034
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.344966376355523,
+          "completed": true,
+          "max_error_m": 0.029718911057820537,
+          "final_error_m": 0.026781686825855727,
+          "max_attitude_error_deg": 1.6147765877622071,
+          "max_load_fraction": 1.9464653863821924
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.9240534707563388,
+          "completed": true,
+          "max_error_m": 0.02335564144357473,
+          "final_error_m": 0.007276873516397305,
+          "max_attitude_error_deg": 1.8267462321388444,
+          "max_load_fraction": 1.7304650697244277
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.917042385138219,
+          "completed": true,
+          "max_error_m": 0.023406689815950763,
+          "final_error_m": 0.005994055295981752,
+          "max_attitude_error_deg": 1.0495295211437154,
+          "max_load_fraction": 2.143799891982234
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.6502160506036683,
+          "completed": true,
+          "max_error_m": 0.06106748441429708,
+          "final_error_m": 0.02343220951084459,
+          "max_attitude_error_deg": 1.4754872968403807,
+          "max_load_fraction": 1.9959409741522445
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.3978823876607653,
+          "completed": true,
+          "max_error_m": 0.06395226033622153,
+          "final_error_m": 0.0027446604563151652,
+          "max_attitude_error_deg": 1.492585543251755,
+          "max_load_fraction": 1.600452782424805
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.341066471806313,
+          "completed": true,
+          "max_error_m": 0.02857946784330308,
+          "final_error_m": 0.014402849984924746,
+          "max_attitude_error_deg": 2.179912657785464,
+          "max_load_fraction": 1.390341421800016
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.6260896368798523,
+          "completed": true,
+          "max_error_m": 0.05915959527137169,
+          "final_error_m": 0.00262791850857691,
+          "max_attitude_error_deg": 4.164142791787498,
+          "max_load_fraction": 2.615658025855384
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.320132171511723,
+          "completed": true,
+          "max_error_m": 0.07414013186575512,
+          "final_error_m": 0.009480697915259982,
+          "max_attitude_error_deg": 2.716019793202448,
+          "max_load_fraction": 3.0128931531389935
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.6369763563192055,
+          "completed": true,
+          "max_error_m": 0.05618935601787651,
+          "final_error_m": 0.005412721253809759,
+          "max_attitude_error_deg": 1.5458645489916039,
+          "max_load_fraction": 1.8173731838465017
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.9754183043393054,
+          "completed": true,
+          "max_error_m": 0.03714062563133899,
+          "final_error_m": 0.0021338822291550497,
+          "max_attitude_error_deg": 1.9979303784577402,
+          "max_load_fraction": 1.520153815300915
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.550005797990222,
+          "completed": true,
+          "max_error_m": 0.038552408523590376,
+          "final_error_m": 0.005784760172187954,
+          "max_attitude_error_deg": 2.4774315517571006,
+          "max_load_fraction": 2.106971875965998
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.5,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.867076043832583,
+      "cost_standard_error": 0.37662217398084413,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.5016605620975116,
+          "completed": true,
+          "max_error_m": 0.027823805507878552,
+          "final_error_m": 0.0003368717819283893,
+          "max_attitude_error_deg": 0.6723346970595133,
+          "max_load_fraction": 1.7616241506700034
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.5713040358274535,
+          "completed": true,
+          "max_error_m": 0.0313990533557828,
+          "final_error_m": 0.0004913447293315418,
+          "max_attitude_error_deg": 0.7125069362655472,
+          "max_load_fraction": 1.750655538351201
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.4313756850516315,
+          "completed": true,
+          "max_error_m": 0.027555190785518074,
+          "final_error_m": 0.010519839981189839,
+          "max_attitude_error_deg": 0.7279460392833772,
+          "max_load_fraction": 2.629745245709349
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 5.205100407805236,
+          "completed": true,
+          "max_error_m": 0.05507701038969932,
+          "final_error_m": 0.05046185926109914,
+          "max_attitude_error_deg": 0.9389757032217398,
+          "max_load_fraction": 1.6468322227939596
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.4398829448283903,
+          "completed": true,
+          "max_error_m": 0.02335564144357473,
+          "final_error_m": 0.001235366634514643,
+          "max_attitude_error_deg": 0.677650559497008,
+          "max_load_fraction": 1.8592664427804444
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.355681197753099,
+          "completed": true,
+          "max_error_m": 0.023406689815950763,
+          "final_error_m": 0.003592425010464758,
+          "max_attitude_error_deg": 0.6958620867893153,
+          "max_load_fraction": 1.5122344703556143
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.6851679432538327,
+          "completed": true,
+          "max_error_m": 0.06182684832157744,
+          "final_error_m": 0.013893515144097812,
+          "max_attitude_error_deg": 1.0110297240727284,
+          "max_load_fraction": 1.3178047651642424
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.5244759851482907,
+          "completed": true,
+          "max_error_m": 0.0630499496357883,
+          "final_error_m": 0.004454510691286699,
+          "max_attitude_error_deg": 0.8550221017166845,
+          "max_load_fraction": 1.9901182406622313
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.4520678286300823,
+          "completed": true,
+          "max_error_m": 0.028741611445855308,
+          "final_error_m": 0.022380441233451485,
+          "max_attitude_error_deg": 2.1751222656316624,
+          "max_load_fraction": 2.7743848515157103
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.433663634850705,
+          "completed": true,
+          "max_error_m": 0.07468989624269723,
+          "final_error_m": 0.00025322903140596566,
+          "max_attitude_error_deg": 4.690708103622864,
+          "max_load_fraction": 2.405623765681833
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 6.197976325149814,
+          "completed": true,
+          "max_error_m": 0.17462305499279435,
+          "final_error_m": 0.008363063136638994,
+          "max_attitude_error_deg": 3.728090627878225,
+          "max_load_fraction": 2.2978342555886444
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.352037859399895,
+          "completed": true,
+          "max_error_m": 0.055487380401654844,
+          "final_error_m": 0.005622599126361852,
+          "max_attitude_error_deg": 0.9629261998553144,
+          "max_load_fraction": 1.4860299331141882
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.783822761848867,
+          "completed": true,
+          "max_error_m": 0.07275588726661657,
+          "final_error_m": 0.002253274459284429,
+          "max_attitude_error_deg": 2.53104710079547,
+          "max_load_fraction": 1.5331436227361404
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.204847442011346,
+          "completed": true,
+          "max_error_m": 0.07545235220934444,
+          "final_error_m": 0.003917436076077886,
+          "max_attitude_error_deg": 2.2019489088694324,
+          "max_load_fraction": 2.1101626343093924
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 0.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 26.06412716206473,
+      "cost_standard_error": 2.062133340938728,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 30.591311494401648,
+          "completed": true,
+          "max_error_m": 0.7447543798711432,
+          "final_error_m": 0.597452798114152,
+          "max_attitude_error_deg": 10.79931424082201,
+          "max_load_fraction": 1.760609587646129
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 28.95066705303135,
+          "completed": true,
+          "max_error_m": 0.6239102721947138,
+          "final_error_m": 0.6239102721947138,
+          "max_attitude_error_deg": 8.99953834188293,
+          "max_load_fraction": 1.7787549024113816
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 42.127100644324265,
+          "completed": true,
+          "max_error_m": 0.6385859897745118,
+          "final_error_m": 0.6382639946344016,
+          "max_attitude_error_deg": 14.856841812362571,
+          "max_load_fraction": 18.907285071166832
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 28.431320273052695,
+          "completed": true,
+          "max_error_m": 0.6105308856004467,
+          "final_error_m": 0.6058221754683817,
+          "max_attitude_error_deg": 8.872051332166997,
+          "max_load_fraction": 1.0420631885978622
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 27.982109964985938,
+          "completed": true,
+          "max_error_m": 0.49077134778020326,
+          "final_error_m": 0.45330716200465904,
+          "max_attitude_error_deg": 7.066939568577443,
+          "max_load_fraction": 3.142583575767138
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 39.096257557921994,
+          "completed": true,
+          "max_error_m": 0.5681928531063174,
+          "final_error_m": 0.5162240369772517,
+          "max_attitude_error_deg": 8.56889221557692,
+          "max_load_fraction": 16.74746396779721
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 18.82759495919021,
+          "completed": true,
+          "max_error_m": 0.4743930106411014,
+          "final_error_m": 0.06738441209723027,
+          "max_attitude_error_deg": 6.593064566690756,
+          "max_load_fraction": 2.8192720044134525
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 19.7091729055043,
+          "completed": true,
+          "max_error_m": 0.47121840565495865,
+          "final_error_m": 0.0677438254291689,
+          "max_attitude_error_deg": 6.498820484741376,
+          "max_load_fraction": 4.72920342402221
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 18.34521531724824,
+          "completed": true,
+          "max_error_m": 0.2952356693535409,
+          "final_error_m": 0.1795819993994519,
+          "max_attitude_error_deg": 4.978022268463758,
+          "max_load_fraction": 1.5674796774767457
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 18.726562472336248,
+          "completed": true,
+          "max_error_m": 0.2936845446853194,
+          "final_error_m": 0.17539930433461076,
+          "max_attitude_error_deg": 4.868034769879982,
+          "max_load_fraction": 2.831163761998214
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 25.237313427434753,
+          "completed": true,
+          "max_error_m": 0.3293774513032484,
+          "final_error_m": 0.3242692886216539,
+          "max_attitude_error_deg": 6.100845201156764,
+          "max_load_fraction": 6.448397339955604
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 26.56734685616722,
+          "completed": true,
+          "max_error_m": 0.5373264562037113,
+          "final_error_m": 0.18408411003098424,
+          "max_attitude_error_deg": 8.153979116102548,
+          "max_load_fraction": 3.139334362196804
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 16.2175443320621,
+          "completed": true,
+          "max_error_m": 0.2539011088404362,
+          "final_error_m": 0.11293165204455678,
+          "max_attitude_error_deg": 4.555741629126991,
+          "max_load_fraction": 5.064586555631947
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 24.08826301124529,
+          "completed": true,
+          "max_error_m": 0.36837084658535274,
+          "final_error_m": 0.36837084658535274,
+          "max_attitude_error_deg": 5.385295180246258,
+          "max_load_fraction": 2.766660214968869
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 0.5,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 13.809508989193072,
+      "cost_standard_error": 1.4997755447274952,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 11.652505990850763,
+          "completed": true,
+          "max_error_m": 0.3044118407677451,
+          "final_error_m": 0.013286656923740174,
+          "max_attitude_error_deg": 4.997933756897701,
+          "max_load_fraction": 1.5098594284220894
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 14.234424115611498,
+          "completed": true,
+          "max_error_m": 0.3438149475256287,
+          "final_error_m": 0.025074526552817042,
+          "max_attitude_error_deg": 6.249990685740408,
+          "max_load_fraction": 2.9904822861944726
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 11.50897706903596,
+          "completed": true,
+          "max_error_m": 0.3060184273805569,
+          "final_error_m": 0.012731508904738715,
+          "max_attitude_error_deg": 4.11995993663153,
+          "max_load_fraction": 1.830017955503732
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 15.453411194321495,
+          "completed": true,
+          "max_error_m": 0.3062864731456175,
+          "final_error_m": 0.022416009472384153,
+          "max_attitude_error_deg": 4.343075793521473,
+          "max_load_fraction": 7.676894834219329
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 21.330810026237774,
+          "completed": true,
+          "max_error_m": 0.31935476154967135,
+          "final_error_m": 0.2261924392282022,
+          "max_attitude_error_deg": 3.9318086471061076,
+          "max_load_fraction": 2.164565370327924
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 21.352952498292286,
+          "completed": true,
+          "max_error_m": 0.26649903221848936,
+          "final_error_m": 0.2284427530956189,
+          "max_attitude_error_deg": 4.501623741252662,
+          "max_load_fraction": 3.6426375182215076
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 10.137240306239457,
+          "completed": true,
+          "max_error_m": 0.24846903564661202,
+          "final_error_m": 0.0434251606480596,
+          "max_attitude_error_deg": 4.24465743575325,
+          "max_load_fraction": 2.248456902923464
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 10.16156618803982,
+          "completed": true,
+          "max_error_m": 0.2486793826994961,
+          "final_error_m": 0.04209537464200057,
+          "max_attitude_error_deg": 4.206679345207196,
+          "max_load_fraction": 2.401265592512607
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 8.03834460011757,
+          "completed": true,
+          "max_error_m": 0.21707180205463328,
+          "final_error_m": 0.019208411668924036,
+          "max_attitude_error_deg": 3.9120965797020943,
+          "max_load_fraction": 3.108309574663513
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 6.570451371634759,
+          "completed": true,
+          "max_error_m": 0.1792951887483695,
+          "final_error_m": 0.0200776530420705,
+          "max_attitude_error_deg": 3.3989674349547006,
+          "max_load_fraction": 1.7609378851533635
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 21.541650530037348,
+          "completed": true,
+          "max_error_m": 0.29180131642692614,
+          "final_error_m": 0.29180131642692614,
+          "max_attitude_error_deg": 4.457826575792744,
+          "max_load_fraction": 3.160475448019785
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 19.53510884928527,
+          "completed": true,
+          "max_error_m": 0.26581931958075694,
+          "final_error_m": 0.24752791645492134,
+          "max_attitude_error_deg": 4.096848775824039,
+          "max_load_fraction": 1.6404705863639657
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 5.377711401177255,
+          "completed": true,
+          "max_error_m": 0.14230805120535295,
+          "final_error_m": 0.01663043683364041,
+          "max_attitude_error_deg": 2.324884413149051,
+          "max_load_fraction": 1.5211734724935113
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 16.43797170782174,
+          "completed": true,
+          "max_error_m": 0.2224575506779847,
+          "final_error_m": 0.15378980698403757,
+          "max_attitude_error_deg": 3.4795565298918825,
+          "max_load_fraction": 2.5806589866789476
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 0.9,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 3.9748250988105904,
+      "cost_standard_error": 0.34438875740560926,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.41694347735726,
+          "completed": true,
+          "max_error_m": 0.06579539950339691,
+          "final_error_m": 0.00024254929769591837,
+          "max_attitude_error_deg": 1.067142909645047,
+          "max_load_fraction": 1.3339371078956397
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.7508304069185963,
+          "completed": true,
+          "max_error_m": 0.0645646963975578,
+          "final_error_m": 0.0004443865679798238,
+          "max_attitude_error_deg": 1.098862604294467,
+          "max_load_fraction": 1.9687338267534187
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.0717404923502696,
+          "completed": true,
+          "max_error_m": 0.07840652758451619,
+          "final_error_m": 0.010335910135384544,
+          "max_attitude_error_deg": 0.8986964715302588,
+          "max_load_fraction": 1.0001188539144261
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.1869335981161138,
+          "completed": true,
+          "max_error_m": 0.08148413255567667,
+          "final_error_m": 0.010846055796911475,
+          "max_attitude_error_deg": 0.8691645295558654,
+          "max_load_fraction": 1.0001195114832873
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.688456631141785,
+          "completed": true,
+          "max_error_m": 0.0652490915088985,
+          "final_error_m": 0.03671259854707594,
+          "max_attitude_error_deg": 1.370246401036286,
+          "max_load_fraction": 1.6400993444421457
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 5.873314835296005,
+          "completed": true,
+          "max_error_m": 0.07025504150054855,
+          "final_error_m": 0.050811410440374086,
+          "max_attitude_error_deg": 1.356893707929097,
+          "max_load_fraction": 2.1133554776550687
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.5698833809000496,
+          "completed": true,
+          "max_error_m": 0.06464365795969489,
+          "final_error_m": 0.019895432138166184,
+          "max_attitude_error_deg": 1.5891877090991555,
+          "max_load_fraction": 1.8549629824103915
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.427306463633581,
+          "completed": true,
+          "max_error_m": 0.06608513807132306,
+          "final_error_m": 0.019285313411029223,
+          "max_attitude_error_deg": 1.428150450004846,
+          "max_load_fraction": 1.7195962797019935
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.3240045774686866,
+          "completed": true,
+          "max_error_m": 0.03276226819440509,
+          "final_error_m": 0.017021955207339155,
+          "max_attitude_error_deg": 2.179896169212409,
+          "max_load_fraction": 1.023499582512393
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 5.7910127241794065,
+          "completed": true,
+          "max_error_m": 0.11208709347303561,
+          "final_error_m": 0.016234039482239965,
+          "max_attitude_error_deg": 4.09589899746857,
+          "max_load_fraction": 3.2482263530081505
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 6.310443376046851,
+          "completed": true,
+          "max_error_m": 0.08043846807277932,
+          "final_error_m": 0.05592588790985257,
+          "max_attitude_error_deg": 1.7140107950670838,
+          "max_load_fraction": 2.176053774698854
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.375998572795211,
+          "completed": true,
+          "max_error_m": 0.05644842206040312,
+          "final_error_m": 0.032523679197182645,
+          "max_attitude_error_deg": 1.423960234591177,
+          "max_load_fraction": 2.176557529290872
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.971091340504895,
+          "completed": true,
+          "max_error_m": 0.06386609634837725,
+          "final_error_m": 0.005571827100705656,
+          "max_attitude_error_deg": 1.5319815171635722,
+          "max_load_fraction": 3.8895883830634377
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.8895915066395523,
+          "completed": true,
+          "max_error_m": 0.05927968431656727,
+          "final_error_m": 0.01787279725670708,
+          "max_attitude_error_deg": 2.322098750049055,
+          "max_load_fraction": 2.3050872785956296
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.1,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 4.482438201230241,
+      "cost_standard_error": 0.2991911936197426,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.7944348596213673,
+          "completed": true,
+          "max_error_m": 0.07241309878472402,
+          "final_error_m": 0.0010866192635532346,
+          "max_attitude_error_deg": 1.4231209932075761,
+          "max_load_fraction": 1.8619438788909322
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.8850398938084747,
+          "completed": true,
+          "max_error_m": 0.07284720946142409,
+          "final_error_m": 0.0012372117999214166,
+          "max_attitude_error_deg": 1.43435350524827,
+          "max_load_fraction": 2.0101445498312933
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.9201652257607784,
+          "completed": true,
+          "max_error_m": 0.0737185241747017,
+          "final_error_m": 0.004983259575064061,
+          "max_attitude_error_deg": 2.4695045298385825,
+          "max_load_fraction": 2.402172276502304
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.9053437214897517,
+          "completed": true,
+          "max_error_m": 0.06720396689213042,
+          "final_error_m": 0.009617535608094472,
+          "max_attitude_error_deg": 1.9275796347411258,
+          "max_load_fraction": 2.234751366256904
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 5.181826525473544,
+          "completed": true,
+          "max_error_m": 0.05736803377194699,
+          "final_error_m": 0.048759328315377076,
+          "max_attitude_error_deg": 1.4403156842669633,
+          "max_load_fraction": 2.027848269544013
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 5.689901785459466,
+          "completed": true,
+          "max_error_m": 0.05830499496344479,
+          "final_error_m": 0.05756571362418421,
+          "max_attitude_error_deg": 1.1160984279457604,
+          "max_load_fraction": 2.1585860671822483
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.441906592738899,
+          "completed": true,
+          "max_error_m": 0.07794189676667511,
+          "final_error_m": 0.024659367566118646,
+          "max_attitude_error_deg": 2.1000720230170393,
+          "max_load_fraction": 1.835350213990416
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.485793137227232,
+          "completed": true,
+          "max_error_m": 0.08187826250627717,
+          "final_error_m": 0.020393627832713073,
+          "max_attitude_error_deg": 1.9858659271641772,
+          "max_load_fraction": 2.049153831360066
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.970418566423737,
+          "completed": true,
+          "max_error_m": 0.08320519916056042,
+          "final_error_m": 0.02347936873516531,
+          "max_attitude_error_deg": 5.061052041821627,
+          "max_load_fraction": 1.8744653124774509
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.626670575003131,
+          "completed": true,
+          "max_error_m": 0.08328094954193654,
+          "final_error_m": 0.023766873970714895,
+          "max_attitude_error_deg": 5.140109329888845,
+          "max_load_fraction": 1.5493216119642665
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 6.926390030872928,
+          "completed": true,
+          "max_error_m": 0.12086369126678458,
+          "final_error_m": 0.04291932386414511,
+          "max_attitude_error_deg": 2.47284248115512,
+          "max_load_fraction": 3.2324878347698442
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 5.4035576003043575,
+          "completed": true,
+          "max_error_m": 0.10926181500581024,
+          "final_error_m": 0.02258653486401344,
+          "max_attitude_error_deg": 3.9836363223776594,
+          "max_load_fraction": 2.2600830017414397
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.467608594977052,
+          "completed": true,
+          "max_error_m": 0.05780027007615017,
+          "final_error_m": 0.011446567763479888,
+          "max_attitude_error_deg": 2.304688510060852,
+          "max_load_fraction": 2.2244077439603576
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.055077708062648,
+          "completed": true,
+          "max_error_m": 0.052127335750592634,
+          "final_error_m": 0.01989330254309166,
+          "max_attitude_error_deg": 2.5401249724292048,
+          "max_load_fraction": 3.0353976152928936
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 0.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 3.3753122679284218,
+      "cost_standard_error": 0.32328037487266365,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.8144533842702897,
+          "completed": true,
+          "max_error_m": 0.047511293292717645,
+          "final_error_m": 0.000684668893274951,
+          "max_attitude_error_deg": 0.6788091970591618,
+          "max_load_fraction": 1.5528421894992852
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.00931185320371,
+          "completed": true,
+          "max_error_m": 0.047800281546522834,
+          "final_error_m": 0.0008362777921852047,
+          "max_attitude_error_deg": 0.7126638507984416,
+          "max_load_fraction": 1.8891824980769854
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.132923630015678,
+          "completed": true,
+          "max_error_m": 0.03658554422721412,
+          "final_error_m": 0.0005900661416381965,
+          "max_attitude_error_deg": 2.595090455623854,
+          "max_load_fraction": 2.712513776289925
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.0790122012280716,
+          "completed": true,
+          "max_error_m": 0.04017504164636127,
+          "final_error_m": 0.005930718093973401,
+          "max_attitude_error_deg": 2.098351380895121,
+          "max_load_fraction": 2.52648113270577
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.3006902706419963,
+          "completed": true,
+          "max_error_m": 0.0264037923419109,
+          "final_error_m": 0.00973866163967421,
+          "max_attitude_error_deg": 1.2272822854629255,
+          "max_load_fraction": 2.080211495022269
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.48205237498361,
+          "completed": true,
+          "max_error_m": 0.03338932207418188,
+          "final_error_m": 0.02298612827899333,
+          "max_attitude_error_deg": 1.0303009325510595,
+          "max_load_fraction": 2.859715745664055
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.7120133137182463,
+          "completed": true,
+          "max_error_m": 0.06610217335063133,
+          "final_error_m": 0.016733887070400754,
+          "max_attitude_error_deg": 1.9856858813182345,
+          "max_load_fraction": 2.215493208154593
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.1862631605790774,
+          "completed": true,
+          "max_error_m": 0.0663861457934675,
+          "final_error_m": 0.007002042756905738,
+          "max_attitude_error_deg": 1.8142412882960877,
+          "max_load_fraction": 2.1045759878548664
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 5.440542550632781,
+          "completed": true,
+          "max_error_m": 0.09098542257656289,
+          "final_error_m": 0.01655908743109137,
+          "max_attitude_error_deg": 5.190336971891629,
+          "max_load_fraction": 3.570623213013739
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 5.091624270173917,
+          "completed": true,
+          "max_error_m": 0.06885902322601335,
+          "final_error_m": 0.02429829908785289,
+          "max_attitude_error_deg": 4.9274323129532664,
+          "max_load_fraction": 3.05590349809959
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 5.223298540797085,
+          "completed": true,
+          "max_error_m": 0.10425531910217169,
+          "final_error_m": 0.013601156504238137,
+          "max_attitude_error_deg": 3.442440215614369,
+          "max_load_fraction": 2.4951545786709466
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.063139754016635,
+          "completed": true,
+          "max_error_m": 0.07483833043057755,
+          "final_error_m": 0.015620809203412975,
+          "max_attitude_error_deg": 1.6648408432146709,
+          "max_load_fraction": 2.924290920835646
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.142679691398217,
+          "completed": true,
+          "max_error_m": 0.03471322605399876,
+          "final_error_m": 0.006980949226130492,
+          "max_attitude_error_deg": 1.7401854203851022,
+          "max_load_fraction": 1.6166680455039772
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.5763667553386,
+          "completed": true,
+          "max_error_m": 0.04727382113831505,
+          "final_error_m": 0.008514533182506171,
+          "max_attitude_error_deg": 2.5591246321691896,
+          "max_load_fraction": 1.5839443838861624
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 0.5,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.8157545358660414,
+      "cost_standard_error": 0.23324527132304973,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.4642380872180263,
+          "completed": true,
+          "max_error_m": 0.03541437738096489,
+          "final_error_m": 0.0005188954126305997,
+          "max_attitude_error_deg": 0.7253344541983052,
+          "max_load_fraction": 1.3809235476561963
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.7485496458090812,
+          "completed": true,
+          "max_error_m": 0.03610604188336642,
+          "final_error_m": 0.0006704944815119373,
+          "max_attitude_error_deg": 0.7140200596034633,
+          "max_load_fraction": 1.893535737968121
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.856469935246896,
+          "completed": true,
+          "max_error_m": 0.035635703339790686,
+          "final_error_m": 0.005450034767903186,
+          "max_attitude_error_deg": 1.8665777690944874,
+          "max_load_fraction": 2.2138553852682863
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.133856737231252,
+          "completed": true,
+          "max_error_m": 0.031128847698703967,
+          "final_error_m": 0.005252898583084142,
+          "max_attitude_error_deg": 1.7505756567541113,
+          "max_load_fraction": 3.4685126775325146
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.8537933524120676,
+          "completed": true,
+          "max_error_m": 0.02335484963346883,
+          "final_error_m": 0.004683715895872486,
+          "max_attitude_error_deg": 1.1776763481665726,
+          "max_load_fraction": 2.0784108591591384
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.9624894683251917,
+          "completed": true,
+          "max_error_m": 0.02340034889907179,
+          "final_error_m": 0.009156976055468623,
+          "max_attitude_error_deg": 1.0284027173322166,
+          "max_load_fraction": 1.9421393783880934
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.3972794915370317,
+          "completed": true,
+          "max_error_m": 0.06266763539357877,
+          "final_error_m": 0.019954523533323394,
+          "max_attitude_error_deg": 1.3310217672546598,
+          "max_load_fraction": 1.8498920148007127
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.0796459531050155,
+          "completed": true,
+          "max_error_m": 0.06588615090811682,
+          "final_error_m": 0.003708290138841002,
+          "max_attitude_error_deg": 1.7130821060973627,
+          "max_load_fraction": 2.5176700302806525
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.433692866894209,
+          "completed": true,
+          "max_error_m": 0.09926054336346334,
+          "final_error_m": 0.012683943448776552,
+          "max_attitude_error_deg": 4.271535764861677,
+          "max_load_fraction": 1.9855752326324152
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.087058440697705,
+          "completed": true,
+          "max_error_m": 0.05877625858039796,
+          "final_error_m": 0.004792840544362825,
+          "max_attitude_error_deg": 4.541089665559506,
+          "max_load_fraction": 1.8312808991374978
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.110886243479396,
+          "completed": true,
+          "max_error_m": 0.09209909834341369,
+          "final_error_m": 0.01064931597446177,
+          "max_attitude_error_deg": 2.853131615204636,
+          "max_load_fraction": 1.7527571857304345
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.7779024290644383,
+          "completed": true,
+          "max_error_m": 0.0626976501369263,
+          "final_error_m": 0.010358534335968285,
+          "max_attitude_error_deg": 1.271339243523719,
+          "max_load_fraction": 1.4972898033186754
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.2016753941615264,
+          "completed": true,
+          "max_error_m": 0.05767519881068187,
+          "final_error_m": 0.002546214448831917,
+          "max_attitude_error_deg": 2.2441780573012813,
+          "max_load_fraction": 2.3000217778036425
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.3130254569427455,
+          "completed": true,
+          "max_error_m": 0.041950531769195325,
+          "final_error_m": 0.008032617026915533,
+          "max_attitude_error_deg": 1.9974339377303478,
+          "max_load_fraction": 1.6249071204868466
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "material",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.63001814070773,
+      "cost_standard_error": 0.2851405841816733,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.598534430438371,
+          "completed": true,
+          "max_error_m": 0.027302280523600758,
+          "final_error_m": 0.0007071150084330616,
+          "max_attitude_error_deg": 0.7906549817250451,
+          "max_load_fraction": 1.8941458090069094
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.3540614215567772,
+          "completed": true,
+          "max_error_m": 0.029596209516813243,
+          "final_error_m": 0.0005694327438289481,
+          "max_attitude_error_deg": 0.7077411616526509,
+          "max_load_fraction": 1.376436381469196
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.8419078689051354,
+          "completed": true,
+          "max_error_m": 0.02769190611788264,
+          "final_error_m": 0.008310003129169144,
+          "max_attitude_error_deg": 1.0469585784524775,
+          "max_load_fraction": 1.5339753374774197
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.796792822450385,
+          "completed": true,
+          "max_error_m": 0.03807179024841073,
+          "final_error_m": 0.012956813083910815,
+          "max_attitude_error_deg": 1.4837001881765084,
+          "max_load_fraction": 1.560424902247264
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.5467002323659347,
+          "completed": true,
+          "max_error_m": 0.023168274910170348,
+          "final_error_m": 0.0016033148498198208,
+          "max_attitude_error_deg": 1.068149878452402,
+          "max_load_fraction": 1.9714994078741233
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.4592860064205468,
+          "completed": true,
+          "max_error_m": 0.023184916114653554,
+          "final_error_m": 0.002677411986603119,
+          "max_attitude_error_deg": 0.704222312491639,
+          "max_load_fraction": 1.7686622534000969
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.321870947718753,
+          "completed": true,
+          "max_error_m": 0.059251969980832916,
+          "final_error_m": 0.020334654060362882,
+          "max_attitude_error_deg": 1.249492354873922,
+          "max_load_fraction": 3.8240761988829015
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.6011020609062303,
+          "completed": true,
+          "max_error_m": 0.06494636842600814,
+          "final_error_m": 0.005163556625594591,
+          "max_attitude_error_deg": 1.2075327590466511,
+          "max_load_fraction": 1.8070612785153655
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.93466410004627,
+          "completed": true,
+          "max_error_m": 0.0312116540635665,
+          "final_error_m": 0.023190166514628102,
+          "max_attitude_error_deg": 2.1665676536680465,
+          "max_load_fraction": 1.5253919662384674
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.220217947514917,
+          "completed": true,
+          "max_error_m": 0.06254819728993928,
+          "final_error_m": 0.004041080925865531,
+          "max_attitude_error_deg": 4.13447898170179,
+          "max_load_fraction": 2.3094646940687977
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.912521966859858,
+          "completed": true,
+          "max_error_m": 0.09832738507161223,
+          "final_error_m": 0.012060598637818849,
+          "max_attitude_error_deg": 3.0563490722631057,
+          "max_load_fraction": 2.959194811000488
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.5674592003306853,
+          "completed": true,
+          "max_error_m": 0.05795097927115729,
+          "final_error_m": 0.007916081922437644,
+          "max_attitude_error_deg": 1.1571674839680421,
+          "max_load_fraction": 1.538205845959878
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.2276964161598647,
+          "completed": true,
+          "max_error_m": 0.05495131470325112,
+          "final_error_m": 0.014665442469330435,
+          "max_attitude_error_deg": 2.8431434472430137,
+          "max_load_fraction": 1.6388105033564908
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.4374385482344936,
+          "completed": true,
+          "max_error_m": 0.054207632192912414,
+          "final_error_m": 0.0032710366607321224,
+          "max_attitude_error_deg": 2.5323076917030836,
+          "max_load_fraction": 1.5626295421607257
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "free",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.7982592831539668,
+      "cost_standard_error": 0.2152950796753433,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.9921411771538313,
+          "completed": true,
+          "max_error_m": 0.039310371862528115,
+          "final_error_m": 0.008629449453154803,
+          "max_attitude_error_deg": 0.6730748227648446,
+          "max_load_fraction": 1.2161710118531361
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.398921521000227,
+          "completed": true,
+          "max_error_m": 0.04200899109568795,
+          "final_error_m": 0.009289102819918533,
+          "max_attitude_error_deg": 0.6604236140762738,
+          "max_load_fraction": 1.868236686506391
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.565309773923438,
+          "completed": true,
+          "max_error_m": 0.02799633560284772,
+          "final_error_m": 0.021866042911262533,
+          "max_attitude_error_deg": 1.1141191669138215,
+          "max_load_fraction": 1.38564549017279
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.7487076491769504,
+          "completed": true,
+          "max_error_m": 0.03974164136421735,
+          "final_error_m": 0.03579829549749078,
+          "max_attitude_error_deg": 1.1592454357199333,
+          "max_load_fraction": 1.5237292019200033
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.6808859248973447,
+          "completed": true,
+          "max_error_m": 0.02623521249666616,
+          "final_error_m": 0.006968897454171634,
+          "max_attitude_error_deg": 0.862438599545113,
+          "max_load_fraction": 1.473856797784983
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.7682078567890078,
+          "completed": true,
+          "max_error_m": 0.026260554830610714,
+          "final_error_m": 0.007803937820614138,
+          "max_attitude_error_deg": 0.6574766667898913,
+          "max_load_fraction": 1.6921784545630925
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.8831637585195966,
+          "completed": true,
+          "max_error_m": 0.058539050574253716,
+          "final_error_m": 0.01886539942669476,
+          "max_attitude_error_deg": 1.032562390048703,
+          "max_load_fraction": 3.2196408017804923
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.907230006843485,
+          "completed": true,
+          "max_error_m": 0.06044227962910014,
+          "final_error_m": 0.007289259993980287,
+          "max_attitude_error_deg": 2.029640949842605,
+          "max_load_fraction": 1.8757842263373647
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.761147573959898,
+          "completed": true,
+          "max_error_m": 0.02864195675008061,
+          "final_error_m": 0.020665656863088595,
+          "max_attitude_error_deg": 2.1722844857307835,
+          "max_load_fraction": 1.5881974260341967
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.7070583513841546,
+          "completed": true,
+          "max_error_m": 0.04926207009402422,
+          "final_error_m": 4.8259113801237564e-05,
+          "max_attitude_error_deg": 4.818922720905736,
+          "max_load_fraction": 1.7585336000495169
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.355314570807828,
+          "completed": true,
+          "max_error_m": 0.08757644657826204,
+          "final_error_m": 0.012176776017399183,
+          "max_attitude_error_deg": 2.57291458393195,
+          "max_load_fraction": 2.428723340928702
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.3874206202410067,
+          "completed": true,
+          "max_error_m": 0.053570025051586284,
+          "final_error_m": 0.0072714687289217655,
+          "max_attitude_error_deg": 0.9245303546696891,
+          "max_load_fraction": 1.355603754111269
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.4989872761954337,
+          "completed": true,
+          "max_error_m": 0.051616801383115724,
+          "final_error_m": 0.026213475842717358,
+          "max_attitude_error_deg": 2.264155872208131,
+          "max_load_fraction": 1.5649237635823274
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.5211339032633298,
+          "completed": true,
+          "max_error_m": 0.059776096748154595,
+          "final_error_m": 0.0041730215907661745,
+          "max_attitude_error_deg": 2.3658368030469408,
+          "max_load_fraction": 1.6326148070083542
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": true,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.6436046468742234,
+      "cost_standard_error": 0.25705077025708806,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.5803275370959957,
+          "completed": true,
+          "max_error_m": 0.02793853248438738,
+          "final_error_m": 0.0003759567744948012,
+          "max_attitude_error_deg": 0.760533306556575,
+          "max_load_fraction": 1.8785604132904032
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.6332995925097549,
+          "completed": true,
+          "max_error_m": 0.030775760787745632,
+          "final_error_m": 0.0005100321743460762,
+          "max_attitude_error_deg": 0.7125069361704012,
+          "max_load_fraction": 1.8993705055149712
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.3538835754872793,
+          "completed": true,
+          "max_error_m": 0.026920787388068076,
+          "final_error_m": 0.016357037722295957,
+          "max_attitude_error_deg": 1.0436324019704912,
+          "max_load_fraction": 1.614103071787574
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.988703821456139,
+          "completed": true,
+          "max_error_m": 0.038606581201005886,
+          "final_error_m": 0.036812595724918344,
+          "max_attitude_error_deg": 1.1839511719801623,
+          "max_load_fraction": 1.6691017669977162
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.8315140851426297,
+          "completed": true,
+          "max_error_m": 0.02335564145752092,
+          "final_error_m": 0.001707696103691215,
+          "max_attitude_error_deg": 0.9985822641021354,
+          "max_load_fraction": 2.516635032242107
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.009481302225443,
+          "completed": true,
+          "max_error_m": 0.023406688948610595,
+          "final_error_m": 0.002125050911964469,
+          "max_attitude_error_deg": 0.8723008761383614,
+          "max_load_fraction": 2.7895194435272663
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.3325747348304713,
+          "completed": true,
+          "max_error_m": 0.06164676663770731,
+          "final_error_m": 0.020649895546201915,
+          "max_attitude_error_deg": 1.2012626091393936,
+          "max_load_fraction": 1.8262967122771518
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.3474857793950497,
+          "completed": true,
+          "max_error_m": 0.062402800906968356,
+          "final_error_m": 0.003640253828689927,
+          "max_attitude_error_deg": 0.8903493498952058,
+          "max_load_fraction": 1.7495119231316891
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.668982732243949,
+          "completed": true,
+          "max_error_m": 0.028627664623385635,
+          "final_error_m": 0.020602791409647672,
+          "max_attitude_error_deg": 2.1759217654709997,
+          "max_load_fraction": 1.44381564980462
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.9985956471091102,
+          "completed": true,
+          "max_error_m": 0.032622167111593534,
+          "final_error_m": 9.843432506860645e-05,
+          "max_attitude_error_deg": 2.195180147269748,
+          "max_load_fraction": 2.188375960105473
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.283798718238942,
+          "completed": true,
+          "max_error_m": 0.09444862513351154,
+          "final_error_m": 0.005856942779211885,
+          "max_attitude_error_deg": 3.031859779950443,
+          "max_load_fraction": 2.395398052317625
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.6222201954448066,
+          "completed": true,
+          "max_error_m": 0.055005766789629505,
+          "final_error_m": 0.006539459972857894,
+          "max_attitude_error_deg": 1.088162176740941,
+          "max_load_fraction": 1.9042327587725847
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.336261174463811,
+          "completed": true,
+          "max_error_m": 0.062201025950909275,
+          "final_error_m": 0.034459917824174915,
+          "max_attitude_error_deg": 2.683704395808644,
+          "max_load_fraction": 1.7025710284749593
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.023336160595744,
+          "completed": true,
+          "max_error_m": 0.037514888418805986,
+          "final_error_m": 0.0032810602680177067,
+          "max_attitude_error_deg": 2.319539155925662,
+          "max_load_fraction": 1.5090867110585637
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.0,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.745654738817209,
+      "cost_standard_error": 0.2833129460776976,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.5803275382485031,
+          "completed": true,
+          "max_error_m": 0.027938532457210508,
+          "final_error_m": 0.00037595677462151823,
+          "max_attitude_error_deg": 0.7605333065771821,
+          "max_load_fraction": 1.8785604164144578
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.6332995853495575,
+          "completed": true,
+          "max_error_m": 0.030775760747785874,
+          "final_error_m": 0.0005100321767002693,
+          "max_attitude_error_deg": 0.7125069362655472,
+          "max_load_fraction": 1.8993704928280444
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.905123081606352,
+          "completed": true,
+          "max_error_m": 0.027555190785518074,
+          "final_error_m": 0.017528026041499715,
+          "max_attitude_error_deg": 1.0841704190428063,
+          "max_load_fraction": 2.630103610890642
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.732305201838145,
+          "completed": true,
+          "max_error_m": 0.04132342197609402,
+          "final_error_m": 0.03524751962529809,
+          "max_attitude_error_deg": 1.1531843491904,
+          "max_load_fraction": 1.6097073832483058
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.522477206522299,
+          "completed": true,
+          "max_error_m": 0.02335564144357473,
+          "final_error_m": 0.0012697077725570766,
+          "max_attitude_error_deg": 0.9944005458171106,
+          "max_load_fraction": 1.9238820091942335
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.474067505347869,
+          "completed": true,
+          "max_error_m": 0.023406689815950763,
+          "final_error_m": 0.0022565897501357,
+          "max_attitude_error_deg": 0.7334393889091397,
+          "max_load_fraction": 1.7683650913652826
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.5837423356184113,
+          "completed": true,
+          "max_error_m": 0.06290976277876703,
+          "final_error_m": 0.01843720730980366,
+          "max_attitude_error_deg": 1.2719910036740536,
+          "max_load_fraction": 2.4619928277132144
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.451636190209415,
+          "completed": true,
+          "max_error_m": 0.06408434753859801,
+          "final_error_m": 0.0036875835662311643,
+          "max_attitude_error_deg": 1.043132002020101,
+          "max_load_fraction": 1.8286574896144505
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.3284760997604566,
+          "completed": true,
+          "max_error_m": 0.028605940146291826,
+          "final_error_m": 0.020136751651215534,
+          "max_attitude_error_deg": 2.1751222656316624,
+          "max_load_fraction": 2.7551804645685385
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.325289002796333,
+          "completed": true,
+          "max_error_m": 0.05480836616995029,
+          "final_error_m": 0.00024254636100472793,
+          "max_attitude_error_deg": 4.501381298300035,
+          "max_load_fraction": 3.0050244073017573
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 5.24649539548876,
+          "completed": true,
+          "max_error_m": 0.09455067611426501,
+          "final_error_m": 0.015261414291599199,
+          "max_attitude_error_deg": 3.0855828218711894,
+          "max_load_fraction": 3.3106324663484883
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.7642687999451225,
+          "completed": true,
+          "max_error_m": 0.05551971830739907,
+          "final_error_m": 0.008654822957109842,
+          "max_attitude_error_deg": 1.1345672402193996,
+          "max_load_fraction": 1.952994483495128
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.4119959960614716,
+          "completed": true,
+          "max_error_m": 0.044588647435669676,
+          "final_error_m": 0.006696439794653645,
+          "max_attitude_error_deg": 2.3510024863591497,
+          "max_load_fraction": 1.5840238663832327
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.4796624046482245,
+          "completed": true,
+          "max_error_m": 0.04810828673857215,
+          "final_error_m": 0.0032033860271490377,
+          "max_attitude_error_deg": 2.2434094853742312,
+          "max_load_fraction": 2.108793102089773
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": false,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.6988580439443264,
+      "cost_standard_error": 0.2384704469546358,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.5803275360580145,
+          "completed": true,
+          "max_error_m": 0.02793853250147038,
+          "final_error_m": 0.0003759567749093208,
+          "max_attitude_error_deg": 0.7605333067233493,
+          "max_load_fraction": 1.8785604106765992
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.6332995678483482,
+          "completed": true,
+          "max_error_m": 0.030775760766797777,
+          "final_error_m": 0.0005100321831741397,
+          "max_attitude_error_deg": 0.7125069362655472,
+          "max_load_fraction": 1.89937045838869
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.9313451718094505,
+          "completed": true,
+          "max_error_m": 0.027555190785518074,
+          "final_error_m": 0.01782243724965135,
+          "max_attitude_error_deg": 1.0745929508293381,
+          "max_load_fraction": 2.630103610890642
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.0398268181178185,
+          "completed": true,
+          "max_error_m": 0.039722695727743576,
+          "final_error_m": 0.0380895610966136,
+          "max_attitude_error_deg": 1.2405795956915546,
+          "max_load_fraction": 1.6412750632913329
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.5868639712445913,
+          "completed": true,
+          "max_error_m": 0.02335564144357473,
+          "final_error_m": 0.0011704857170327634,
+          "max_attitude_error_deg": 1.0516413544853067,
+          "max_load_fraction": 1.9393462147040499
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.7020538245190817,
+          "completed": true,
+          "max_error_m": 0.023406693426385967,
+          "final_error_m": 0.007621744321427272,
+          "max_attitude_error_deg": 1.036117019498605,
+          "max_load_fraction": 1.6673810971693304
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.9706064589477585,
+          "completed": true,
+          "max_error_m": 0.05880995331309705,
+          "final_error_m": 0.019860970384608163,
+          "max_attitude_error_deg": 1.314434436500246,
+          "max_load_fraction": 3.2206900868989083
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.7409324109921402,
+          "completed": true,
+          "max_error_m": 0.05977622553119955,
+          "final_error_m": 0.0036434178543792973,
+          "max_attitude_error_deg": 1.0424796789949364,
+          "max_load_fraction": 2.5352044363057935
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.3107589744847608,
+          "completed": true,
+          "max_error_m": 0.028605940146291826,
+          "final_error_m": 0.019915483376593827,
+          "max_attitude_error_deg": 2.1751222656316624,
+          "max_load_fraction": 2.7551804645685385
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.7382394948052053,
+          "completed": true,
+          "max_error_m": 0.049329697400141606,
+          "final_error_m": 0.0003503658266063206,
+          "max_attitude_error_deg": 4.827807432331138,
+          "max_load_fraction": 1.8277101147495138
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.017236298551619,
+          "completed": true,
+          "max_error_m": 0.08844706735784873,
+          "final_error_m": 0.004066878506845821,
+          "max_attitude_error_deg": 3.0133437605050033,
+          "max_load_fraction": 2.3142214119697826
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.6472156256039034,
+          "completed": true,
+          "max_error_m": 0.05495323347994026,
+          "final_error_m": 0.006710985250692651,
+          "max_attitude_error_deg": 1.0935121695058434,
+          "max_load_fraction": 1.92343425148282
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.3592152733576577,
+          "completed": true,
+          "max_error_m": 0.045477144859634985,
+          "final_error_m": 0.008348990198859242,
+          "max_attitude_error_deg": 1.8811765144454804,
+          "max_load_fraction": 1.5276462748310036
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.526091188880217,
+          "completed": true,
+          "max_error_m": 0.047044984498663615,
+          "final_error_m": 0.0030003514550651623,
+          "max_attitude_error_deg": 2.2549992405602555,
+          "max_load_fraction": 2.108793102089773
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": true,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.748988081404003,
+      "cost_standard_error": 0.22197505507074153,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.6906880094178853,
+          "completed": true,
+          "max_error_m": 0.03532910810754614,
+          "final_error_m": 0.00026103544080680144,
+          "max_attitude_error_deg": 0.8040893978574825,
+          "max_load_fraction": 1.8071615085064843
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.724418895853042,
+          "completed": true,
+          "max_error_m": 0.03677630561353784,
+          "final_error_m": 0.00042236675987106996,
+          "max_attitude_error_deg": 0.7001561415188526,
+          "max_load_fraction": 1.8465909302020673
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.435647559853459,
+          "completed": true,
+          "max_error_m": 0.032184889586011706,
+          "final_error_m": 0.017530908522726926,
+          "max_attitude_error_deg": 1.2410042363087999,
+          "max_load_fraction": 1.4370612305641843
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 4.6480215780998595,
+          "completed": true,
+          "max_error_m": 0.049272002112434835,
+          "final_error_m": 0.04140259713209526,
+          "max_attitude_error_deg": 1.0384936089166223,
+          "max_load_fraction": 1.791383620291368
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.3636416533781355,
+          "completed": true,
+          "max_error_m": 0.030555620980321493,
+          "final_error_m": 0.012961063628879872,
+          "max_attitude_error_deg": 1.0427692115403453,
+          "max_load_fraction": 1.893809242617767
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.3716809889434884,
+          "completed": true,
+          "max_error_m": 0.02702101580436671,
+          "final_error_m": 0.01494059187101849,
+          "max_attitude_error_deg": 0.71493497406316,
+          "max_load_fraction": 1.8606812887823678
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.3674097764148607,
+          "completed": true,
+          "max_error_m": 0.06094613923138205,
+          "final_error_m": 0.021884140396344953,
+          "max_attitude_error_deg": 0.940251468934131,
+          "max_load_fraction": 1.8506788963602767
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.542374515497437,
+          "completed": true,
+          "max_error_m": 0.06312828817444385,
+          "final_error_m": 0.007387498903358954,
+          "max_attitude_error_deg": 1.0640842248307885,
+          "max_load_fraction": 1.6776474076575616
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.7719134124948064,
+          "completed": true,
+          "max_error_m": 0.02680665765821623,
+          "final_error_m": 0.018988633282060043,
+          "max_attitude_error_deg": 2.1271827798764993,
+          "max_load_fraction": 1.817939129887799
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.474380126826813,
+          "completed": true,
+          "max_error_m": 0.03333309571609954,
+          "final_error_m": 0.007345492585865552,
+          "max_attitude_error_deg": 2.617091199238307,
+          "max_load_fraction": 2.1606179452142067
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.996630244883081,
+          "completed": true,
+          "max_error_m": 0.08377158355089641,
+          "final_error_m": 0.01058118506087767,
+          "max_attitude_error_deg": 2.913185743711065,
+          "max_load_fraction": 1.7987451040238869
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.3562180365978658,
+          "completed": true,
+          "max_error_m": 0.051311977228698576,
+          "final_error_m": 0.0013441626260777156,
+          "max_attitude_error_deg": 0.9619967640539427,
+          "max_load_fraction": 2.047545537472695
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.341947865888343,
+          "completed": true,
+          "max_error_m": 0.046542758417440204,
+          "final_error_m": 0.0032801935071432014,
+          "max_attitude_error_deg": 2.291115567303101,
+          "max_load_fraction": 1.6102691456139546
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.4008604755069616,
+          "completed": true,
+          "max_error_m": 0.04664228939181218,
+          "final_error_m": 0.005747879312882554,
+          "max_attitude_error_deg": 2.5691096554074355,
+          "max_load_fraction": 3.5349559183400427
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "intrinsic",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.2,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.9213493029352926,
+      "cost_standard_error": 0.3382434573838028,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.580327536682269,
+          "completed": true,
+          "max_error_m": 0.02793853247144462,
+          "final_error_m": 0.00037595677444917573,
+          "max_attitude_error_deg": 0.7605333072874109,
+          "max_load_fraction": 1.8785604135572518
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.63329957273131,
+          "completed": true,
+          "max_error_m": 0.030775760734806923,
+          "final_error_m": 0.0005100321815231587,
+          "max_attitude_error_deg": 0.7125069368957615,
+          "max_load_fraction": 1.8993704687257036
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.965592190968144,
+          "completed": true,
+          "max_error_m": 0.03709529339114186,
+          "final_error_m": 0.03353120919767146,
+          "max_attitude_error_deg": 1.1725497333559476,
+          "max_load_fraction": 2.335735141291322
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 3.5452242252785022,
+          "completed": true,
+          "max_error_m": 0.0364198293199418,
+          "final_error_m": 0.0324347845169438,
+          "max_attitude_error_deg": 1.1378017270435017,
+          "max_load_fraction": 1.607649501897994
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 4.516718101994694,
+          "completed": true,
+          "max_error_m": 0.0421445418989533,
+          "final_error_m": 0.0421445418989533,
+          "max_attitude_error_deg": 0.8721416310565095,
+          "max_load_fraction": 2.8524936609354596
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.5867601030622447,
+          "completed": true,
+          "max_error_m": 0.023406871522159107,
+          "final_error_m": 0.006731971962119509,
+          "max_attitude_error_deg": 0.7468981510163125,
+          "max_load_fraction": 1.5454411636987135
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.902579998446303,
+          "completed": true,
+          "max_error_m": 0.06261429063872961,
+          "final_error_m": 0.02432110179629346,
+          "max_attitude_error_deg": 1.0999987304304364,
+          "max_load_fraction": 2.4786584506059652
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.91830179240005,
+          "completed": true,
+          "max_error_m": 0.061465500259921264,
+          "final_error_m": 0.007531107654512092,
+          "max_attitude_error_deg": 0.9579480597973868,
+          "max_load_fraction": 2.5083031552589263
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.8087341068796414,
+          "completed": true,
+          "max_error_m": 0.03545132066746081,
+          "final_error_m": 0.006649337589217755,
+          "max_attitude_error_deg": 2.22326070374613,
+          "max_load_fraction": 1.0258962433042964
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.229230678660602,
+          "completed": true,
+          "max_error_m": 0.04168305046714184,
+          "final_error_m": 0.011966614826278673,
+          "max_attitude_error_deg": 2.3208007250258773,
+          "max_load_fraction": 1.0295049948745496
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 5.797191849689936,
+          "completed": true,
+          "max_error_m": 0.08428846485829519,
+          "final_error_m": 0.03200320421041435,
+          "max_attitude_error_deg": 2.858001350324829,
+          "max_load_fraction": 3.110391785071283
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.5083901768160373,
+          "completed": true,
+          "max_error_m": 0.054012001054288064,
+          "final_error_m": 0.005539293374137905,
+          "max_attitude_error_deg": 1.1280129603512297,
+          "max_load_fraction": 1.7877117350331073
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.4541090904685987,
+          "completed": true,
+          "max_error_m": 0.03761449009247989,
+          "final_error_m": 0.01422339586365295,
+          "max_attitude_error_deg": 1.173594121448697,
+          "max_load_fraction": 1.5709550290091037
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.4524308170157654,
+          "completed": true,
+          "max_error_m": 0.04024829396098482,
+          "final_error_m": 0.024178623183010253,
+          "max_attitude_error_deg": 0.6040245292009615,
+          "max_load_fraction": 1.0000520159635613
+        }
+      ]
+    },
+    {
+      "params": {
+        "mode": "terrain_aware",
+        "synchronize": true,
+        "normal_source": "solver",
+        "normal_time_constant_s": 0.02,
+        "rim_aware": true,
+        "rim_time_constant_s": 0.2,
+        "rim_hold_speed_m_s": 0.02,
+        "gap_margin_m": 0.002,
+        "lean_gain": 1.0,
+        "support_feedforward": 1.0,
+        "schedule_on_ground_normal": false,
+        "shaft_error": "rolling",
+        "track_contact_point": false,
+        "slip_threshold_m_s": 0.02,
+        "friction_recovery_s": 1.5,
+        "heading_gain": 0.0,
+        "heading_damping": 0.06,
+        "heading_torque_limit_Nm": 0.15,
+        "heading_min_lever": 0.12,
+        "unload_fraction": 0.3,
+        "airborne_damping_Nms": 0.01,
+        "max_lean_deg": 28.0
+      },
+      "cost": 2.726732511372529,
+      "cost_standard_error": 0.4460800019547037,
+      "failures": 0,
+      "runs": [
+        {
+          "scenario": "ramp_forward",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 1.4542192048416447,
+          "completed": true,
+          "max_error_m": 0.027331931638118978,
+          "final_error_m": 0.00035104298667968856,
+          "max_attitude_error_deg": 0.6722534342221914,
+          "max_load_fraction": 1.6857635645827536
+        },
+        {
+          "scenario": "ramp_forward",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.2895294623726856,
+          "completed": true,
+          "max_error_m": 0.027881142102680334,
+          "final_error_m": 0.00048546239028178707,
+          "max_attitude_error_deg": 0.6722534341273123,
+          "max_load_fraction": 1.316662753033772
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.5494497535964196,
+          "completed": true,
+          "max_error_m": 0.02757320423762433,
+          "final_error_m": 0.01190831037599752,
+          "max_attitude_error_deg": 0.6114259005765424,
+          "max_load_fraction": 2.6963759932417246
+        },
+        {
+          "scenario": "ramp_lateral",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.3321544845377304,
+          "completed": true,
+          "max_error_m": 0.029384124475110796,
+          "final_error_m": 0.017962603469394663,
+          "max_attitude_error_deg": 0.6639233771905374,
+          "max_load_fraction": 1.5856223718703402
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.133808704291282,
+          "completed": true,
+          "max_error_m": 0.02335310514250416,
+          "final_error_m": 0.000613214095393087,
+          "max_attitude_error_deg": 0.6775931539841029,
+          "max_load_fraction": 3.3694418078898503
+        },
+        {
+          "scenario": "cross_slope",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.4444367933149986,
+          "completed": true,
+          "max_error_m": 0.02356953446457492,
+          "final_error_m": 0.0022563428746550265,
+          "max_attitude_error_deg": 0.6776121826071558,
+          "max_load_fraction": 1.8695131879605622
+        },
+        {
+          "scenario": "hills",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.4980629341485443,
+          "completed": true,
+          "max_error_m": 0.058770114045969,
+          "final_error_m": 0.024340133131765328,
+          "max_attitude_error_deg": 0.7903470986480167,
+          "max_load_fraction": 2.05171073570121
+        },
+        {
+          "scenario": "hills",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.0725776964014977,
+          "completed": true,
+          "max_error_m": 0.05782721702681399,
+          "final_error_m": 0.0018183102401941856,
+          "max_attitude_error_deg": 0.6824952099042834,
+          "max_load_fraction": 1.707614624783783
+        },
+        {
+          "scenario": "washboard",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 2.7425721562123253,
+          "completed": true,
+          "max_error_m": 0.028598397650240557,
+          "final_error_m": 0.012613736639452259,
+          "max_attitude_error_deg": 2.175488676450219,
+          "max_load_fraction": 2.4506053995074537
+        },
+        {
+          "scenario": "washboard",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 1.8962581939885952,
+          "completed": true,
+          "max_error_m": 0.028912669891878837,
+          "final_error_m": 0.0004925747640967024,
+          "max_attitude_error_deg": 2.2390209599251056,
+          "max_load_fraction": 1.9639827003949997
+        },
+        {
+          "scenario": "bumps",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 3.599952671687364,
+          "completed": true,
+          "max_error_m": 0.07412501486688418,
+          "final_error_m": 0.010167771512730326,
+          "max_attitude_error_deg": 1.319368892036427,
+          "max_load_fraction": 2.2200561784459882
+        },
+        {
+          "scenario": "bumps",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.3682831580807853,
+          "completed": true,
+          "max_error_m": 0.05600764535538957,
+          "final_error_m": 0.005748224326560833,
+          "max_attitude_error_deg": 0.9126718746450962,
+          "max_load_fraction": 1.5158077100086282
+        },
+        {
+          "scenario": "rough",
+          "seed": 7,
+          "phase_rad": 0.3,
+          "cost": 7.993496314704459,
+          "completed": true,
+          "max_error_m": 0.08792940998920751,
+          "final_error_m": 0.08785107502047283,
+          "max_attitude_error_deg": 2.0302184251442164,
+          "max_load_fraction": 1.7523206510006024
+        },
+        {
+          "scenario": "rough",
+          "seed": 23,
+          "phase_rad": 0.9,
+          "cost": 2.7994536310370783,
+          "completed": true,
+          "max_error_m": 0.032910061951299696,
+          "final_error_m": 0.009228786637197759,
+          "max_attitude_error_deg": 0.6620823220411303,
+          "max_load_fraction": 3.4798082585423833
+        }
+      ]
+    }
+  ]
+}

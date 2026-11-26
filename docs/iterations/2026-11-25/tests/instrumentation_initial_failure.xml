@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="13" time="43.418" timestamp="2026-11-25T01:26:40.473951-05:00" hostname="PARRA-Legion"><testcase classname="tests.test_contact_kinematics" name="test_pure_rolling_predicts_measured_translation_from_joint_motion" time="0.028" /><testcase classname="tests.test_contact_kinematics" name="test_belt_uses_current_applied_surface_motion" time="0.002" /><testcase classname="tests.test_contact_kinematics" name="test_opposing_contact_residuals_do_not_cancel_the_rms" time="0.002" /><testcase classname="tests.test_contact_kinematics" name="test_no_support_is_invalid_rather_than_zero_slip" time="0.002" /><testcase classname="tests.test_hardware_mode" name="test_locator_finds_the_solved_surface_and_point_from_the_solved_force_and_moment[hills]" time="7.978" /><testcase classname="tests.test_hardware_mode" name="test_locator_finds_the_solved_surface_and_point_from_the_solved_force_and_moment[washboard]" time="6.578" /><testcase classname="tests.test_hardware_mode" name="test_rims_share_the_load_by_the_lever_rule" time="0.579" /><testcase classname="tests.test_hardware_mode" name="test_mirror_holds_only_measurements" time="0.617" /><testcase classname="tests.test_hardware_mode" name="test_hardware_mode_never_reads_a_contact" time="3.085" /><testcase classname="tests.test_hardware_mode" name="test_hardware_mode_climbs_a_ramp_like_force_sensing" time="23.304" /><testcase classname="tests.test_hardware_mode" name="test_hardware_is_its_own_controller_mode" time="0.001" /><testcase classname="tests.test_hardware_mode" name="test_diagnostic_logging_preserves_commands_and_separates_contributions" time="0.515" /><testcase classname="tests.test_hardware_mode" name="test_detailed_rollout_keeps_previous_interval_inputs_aligned" time="0.001"><failure message="ValueError: Path duration must be positive and longer than both speed ramps">workspace = &lt;spherical_wheel.offroad_experiments.Workspace object at 0x7d62f6f101f0&gt;
+
+    def test_detailed_rollout_keeps_previous_interval_inputs_aligned(workspace):
+        from spherical_wheel.offroad_experiments import run_offroad
+        log, _ = run_offroad(workspace, make_terrain('slope', grade_deg=8.),
+&gt;                            ReferencePath(.2, 0., 2., start_s=.05, ramp_s=.3),
+                             OffroadParams(mode='hardware'), duration_s=.4,
+                             record_diagnostics=True)
+
+tests/test_hardware_mode.py:214: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;spherical_wheel.offroad_experiments.ReferencePath object at 0x7d62f70df520&gt;
+distance_m = 0.2, heading_deg = 0.0, duration_s = 2.0, start_s = 0.05
+profile = 'cruise', ramp_s = 1.5, origin = (0.0, 0.0)
+
+    def __init__(self, distance_m=0., heading_deg=0., duration_s=10., start_s=.5,
+                 profile='cruise', ramp_s=1.5, origin=(0., 0.)):
+        if profile not in ('cruise', 'quintic'):
+            raise ValueError('Profile must be cruise or quintic')
+        if duration_s &lt;= 0 or (profile == 'cruise' and 2*ramp_s &gt;= duration_s):
+&gt;           raise ValueError('Path duration must be positive and longer than both speed ramps')
+E           ValueError: Path duration must be positive and longer than both speed ramps
+
+src/spherical_wheel/offroad_experiments.py:48: ValueError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,289 @@
+{
+  "status": "Proposed candidate only; no implementation/controller/physics execution.",
+  "question": "Would a smooth/rate-limited tilt reference with a consistent desired tilt rate improve the common balance-tracking saturation while preserving static ground lean and current heading behavior?",
+  "evidence": "All36 selected saved angular velocity reference vectors are exactly zero while the desired up vector changes. This is a reference-consistency observation, not proof of a controller bug or fix.",
+  "source_support": [
+    {
+      "path": "src/spherical_wheel/experiments.py",
+      "line": 125,
+      "role": "Least-squares rolling reference has zero generalized angular velocity.",
+      "sha256": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638"
+    },
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "line": 497,
+      "role": "Ground-normal and acceleration-dependent tilt reference; retain static ground lean.",
+      "sha256": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3"
+    },
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "line": 750,
+      "role": "Target orientation intentionally carries current actual yaw; preserve heading behavior."
+    },
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "line": 755,
+      "role": "Feedback copies velocity target and updates only its vertical component."
+    }
+  ],
+  "boundaries": [
+    "No naive yaw differentiation.",
+    "A desired tilt rate must be smoothed/bounded rather than differentiating noisy normal estimates directly.",
+    "Do not reduce required static lean or balancing authority merely to suppress commands.",
+    "A future candidate requires a declared comparison and regressions; main I42 results and screen remain unchanged."
+  ],
+  "direct_saved_checks": [
+    {
+      "arm": "baseline",
+      "time_s": [
+        6.65999999999988,
+        6.699999999999879,
+        6.724999999999879,
+        6.759999999999878,
+        6.824999999999877,
+        6.854999999999876,
+        6.859999999999876,
+        6.899999999999875,
+        7.099999999999871
+      ],
+      "saved_feedback_reference_angular_velocity_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "rollout_sha256": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+      "precision_sha256": "35da92c6b0d41f70d472310ac18426f874da3ad032b82556b61a42a27238d69e"
+    },
+    {
+      "arm": "feedback_shares",
+      "time_s": [
+        6.65999999999988,
+        6.699999999999879,
+        6.724999999999879,
+        6.759999999999878,
+        6.824999999999877,
+        6.854999999999876,
+        6.859999999999876,
+        6.899999999999875,
+        7.099999999999871
+      ],
+      "saved_feedback_reference_angular_velocity_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "rollout_sha256": "9fcaa82aefc79df0d470d17428deded4165c897c8abd9abdbe5e99684fd68dc2",
+      "precision_sha256": "0577ae80b153a92577e43e205abcf405c50f862d23d7408991e496c6ee9282a9"
+    },
+    {
+      "arm": "sync_off",
+      "time_s": [
+        6.65999999999988,
+        6.699999999999879,
+        6.724999999999879,
+        6.759999999999878,
+        6.824999999999877,
+        6.854999999999876,
+        6.859999999999876,
+        6.899999999999875,
+        7.099999999999871
+      ],
+      "saved_feedback_reference_angular_velocity_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "rollout_sha256": "2c1aa469f716ffc8ac31e617dc31461a94d5d134c56dde3a3b8d7b4af6a67070",
+      "precision_sha256": "2174456fcf7b9ba31b5b0a830c63477529af30e6a8d185f7c63014a9bf18b69c"
+    },
+    {
+      "arm": "both",
+      "time_s": [
+        6.65999999999988,
+        6.699999999999879,
+        6.724999999999879,
+        6.759999999999878,
+        6.824999999999877,
+        6.854999999999876,
+        6.859999999999876,
+        6.899999999999875,
+        7.099999999999871
+      ],
+      "saved_feedback_reference_angular_velocity_rad_s": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "rollout_sha256": "0b4f5e15452a4445f0dc6d01b33c2a90b47dbc201921ae2a334f3db4c80a99c2",
+      "precision_sha256": "f579bc3cda882f43a867ba0897e03b2d699319dfeb7e379a0e0e71f9b471364f"
+    }
+  ]
+}

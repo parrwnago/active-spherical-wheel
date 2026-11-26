@@ -4,6 +4,60 @@ This is a working MuJoCo design study for the supplied active spherical wheel. I
 
 The simulation is intended to answer whether the interpreted mechanism can balance and follow slow local trajectories under its stated assumptions. The result files record what each run actually achieved. They do not establish hardware performance or global stability through every shell/belt contact transition.
 
+**For teammates: [start with the current handoff](docs/TEAMMATE_HANDOFF.md).**
+It explains the dynamics/control/observer loop, active versus parked experiments,
+the latest three-configuration results, the acceleration failure around 10 s of
+the comparison video, and fresh-clone reproduction. Selected videos and reports
+are committed under `docs/handoff/`; the frozen workspace recipe restores the
+recent experimental runners and required inputs without changing old snapshots.
+
+The [iteration log](ITERATION_LOG.md) records hypotheses, experiments, unsuccessful
+trials, and the decisions they informed. [Presentation notes and evidence snapshots](docs/iterations/2026-11-25/README.md)
+preserve the development sequence alongside measured results.
+The [experimental MPC record](docs/iterations/2026-11-25/mpc-balance/README.md)
+includes balancing improvements, unresolved goal recovery, source snapshots and
+comparison videos. The existing controller remains the default.
+The [rest-goal follow-up](docs/iterations/2026-11-25/mpc-equilibrium/README.md)
+preserves failed equilibrium searches, matched Gazebo hold diagnostics and the
+decision to verify a goal-holding operating point before terminal-cost changes.
+The subsequent [feedback recovery and planning audit](docs/iterations/2026-11-25/feedback-recovery/README.md)
+shows unchanged native LQR recovering the demonstrated drift, current MPC
+failing the same settling gate, and a missed lower-cost bounded MPC candidate.
+It records longer trajectory runs and a separate late contact-transition issue.
+The [MPC search/contact follow-up](docs/iterations/2026-11-25/mpc-search/README.md)
+tests practical initialization and refinement without changing the observer or
+weights. It lowers modeled starting cost but still fails live settling; the
+record separates predicted contacts, sparse-derivative limitations and the
+short-horizon balance/tracking tradeoff.
+The [video return review](docs/iterations/2026-11-25/mpc-return-review/README.md)
+confirms both MPC variants are moving steadily toward the goal when the eight-
+second feedback window ends. The [unchanged extension](docs/iterations/2026-11-25/mpc-extended-return/README.md)
+then reaches 2.94 mm from the goal, moves away again and ends 19.10 mm away at 16.4 s;
+near-goal return is demonstrated, while a settled hold remains unobserved.
+The [longer-horizon comparison](docs/iterations/2026-11-25/mpc-horizon/README.md)
+tests 0.4/0.8/1.2 s forecasts with full-stage derivatives. Neither longer horizon
+produces an acceptable return plan, so no new Gazebo trial is launched. The
+record preserves seed-averaging divergence and numerical-conditioning limits.
+The [LQR contact-forecast audit](docs/iterations/2026-11-25/lqr-contact-forecast/README.md)
+adds eight unchanged-LQR trajectories and 113 private 5 ms-feedback forecasts.
+Motion prediction improves at 100–200 ms in this study, but contact warnings,
+load-fit failures and runtime keep it diagnostic. Trajectory and forecast
+videos preserve both useful predictions and unresolved tracking failures.
+The [figure-eight event investigation](docs/iterations/2026-11-25/figure8-event-audit/README.md)
+then separates an early terrain/contact-transition departure from later turning
+response. One flat comparison and paired model diagnostics show local prediction
+mismatch, delayed first reversal and later genuine overshoot. The recorded
+dynamic forecast never actuated the robot; live LQR remains unchanged.
+The [matched handoff diagnostics](docs/iterations/2026-11-25/handoff-factorial/README.md)
+then leave the first departure unchanged in all four arms. Temporarily masking
+incoming-drive preparation improves later tracking in one run but worsens
+four of six turn overshoots, so it is retained as a tradeoff rather than adopted.
+The [optional tilt-reference experiment](docs/iterations/2026-11-25/tilt-reference/README.md)
+then smooths the desired lean and supplies its matching tilt rate. Early path
+RMS improves 22.7% and belt demand 41.2%, but full raw-target lean error and
+four turning overshoots worsen. The tested prototype remains optional; native
+defaults are unchanged and exact baseline replay is verified.
+
 ## Interactive browser lab on Linux or Ubuntu under WSL2
 
 From the project directory, run:
@@ -24,7 +78,7 @@ For **Ubuntu under WSL2**, run the command in the Ubuntu terminal, then open **h
 
 The interface runs live MuJoCo physics with manual force pulses, initial tilt, belt/controller switches, and forward, lateral, and curved trajectories. Start with **Polar belt**, **Roll 2°**, **Pitch 0°**, **Reset**, then **Run**. Try a **0.5 N** push for **0.10 s** using A/D, the direction buttons, or a drag in the view. Push controls remain available while a trajectory runs.
 
-The lab now defaults to **Transition aware** feedback with **Prepare incoming drives** enabled. It follows the actual shell/belt support and current heading, and uses a short kinematic preview to prepare an incoming drive's ground-tangent surface speed before load transfer. **Original local LQR** remains available for comparison. The 0.3.0 upgrade reduced falls from 20 to 2 in 81 matched repeated-push cases. Version 0.3.1 removes shell material-angle feedback that could sustain a delayed spin, and adds heading and vertical spin readings. See [YAW_BEHAVIOR.md](YAW_BEHAVIOR.md) for the physical yaw mechanisms and measured comparisons; settling and position bias remain limitations. The physical model and actuator bounds are unchanged; no MPC is implemented. See [CONTROL_UPGRADE.md](CONTROL_UPGRADE.md) for measured results and comparison instructions.
+The lab now defaults to **Transition aware** feedback with **Prepare incoming drives** enabled. It follows the actual shell/belt support and current heading, and uses a short kinematic preview to prepare an incoming drive's ground-tangent surface speed before load transfer. **Original local LQR** remains available for comparison. The 0.3.0 upgrade reduced falls from 20 to 2 in 81 matched repeated-push cases. Version 0.3.1 removes shell material-angle feedback that could sustain a delayed spin, and adds heading and vertical spin readings. See [YAW_BEHAVIOR.md](YAW_BEHAVIOR.md) for the physical yaw mechanisms and measured comparisons; settling and position bias remain limitations. The physical model and actuator bounds are unchanged. The offline MPC prototype linked above is separate from the lab controller. See [CONTROL_UPGRADE.md](CONTROL_UPGRADE.md) for measured results and comparison instructions.
 
 At polar contact the driven transverse belt can move the support point beneath the upper body's center of mass. Independent ±2° roll and ±0.5 N push checks recovered with active belts; the same cases fell when belt commands were held at zero. That comparison retains belt friction and uses ideal speed servos. See the [interaction guide](INTERACTIVE_LAB.md), [polar belt evidence](results/polar_belt_check/README.md), and [browser screenshot](results/lab_ui/desktop.png).
 
@@ -56,7 +110,7 @@ See [GAZEBO.md](GAZEBO.md) for how the port works, the checks that it matches Mu
 
 ## Controllers
 
-Each controller is a named mode. The interactive lab runs on level ground. The off-road study and the Gazebo runs use the three modes of the off-road controller, which share the flat-floor gain library.
+Each controller is a named mode. The interactive lab runs on level ground. The off-road study and the Gazebo runs share the flat-floor gain library across the modes below.
 
 | Name | Used in | What it knows about the ground |
 | --- | --- | --- |
@@ -65,6 +119,7 @@ Each controller is a named mode. The interactive lab runs on level ground. The o
 | `flat_baseline` | Off-road study, Gazebo | Level floor. The flat-floor gain library with no terrain correction. |
 | `terrain_aware` | Off-road study, Gazebo (default) | The ground force and moment at the wheel, read from the contact solver. Only a simulator or a hub load cell provides these. |
 | `momentum_observer` | Off-road study, Gazebo | The same as `terrain_aware`, with the ground force and moment estimated from the motion, the drive torques and the model. Needs no force sensor. |
+| `hardware` | Selected recent research runs | Momentum-observer wrench plus geometry-based support records replace solved contact data in control. Body/joint state is still exact simulation state in these experiments. |
 
 `momentum_observer` still reads the simulator's per-surface contact loads (gain blending, rim detection), contact points (rolling feedforward) and ground plane (incoming-drive preview), and the full simulator state. See [OFFROAD.md](OFFROAD.md#without-a-force-sensor-momentum_observer) for how it works and what was checked, and [GAZEBO.md](GAZEBO.md#contact-aware-control-without-force-sensing-momentum_observer) for the Mars yard runs.
 
@@ -108,11 +163,16 @@ MUJOCO_GL=egl .venv/bin/python -m spherical_wheel render \
 
 The viewer computes a fresh equilibrium and full-state local controller for the loaded model, avoiding reuse of gains from a different configuration. Its initialization was checked headlessly; an interactive desktop session was not available for GUI testing.
 
-The current automated suite has 154 passing tests, 98 of them for the uneven-ground work. Run it with:
+Run the automated suite with:
 
 ```bash
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -q
 ```
+
+The 2026-11-26 publication check passed 579 existing tests with 6 skipped.
+The new portable-workspace tools passed 21 separate tests. See the
+[handoff](docs/TEAMMATE_HANDOFF.md) for scope and evidence; these checks are
+distinct from the native simulation campaigns.
 
 ## Demonstrated results
 

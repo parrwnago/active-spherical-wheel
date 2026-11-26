@@ -1,0 +1,31 @@
+{
+  "captured_before_consolidation_utc": "2026-11-26T02:37:53.012449+00:00",
+  "scope": "Saved-data arithmetic/metadata consolidation only; no physics, geometry or forecast rerun.",
+  "source_sha256": "21213cd6f3a65d5674027c8499957afcb34a980139a881e75aa1940c3f08fe9d",
+  "derived_from": {
+    "results/lqr_contact_forecast_20261125/analysis/report.json": "0b215f4a1486d5f0f3042642871d07f74c76d4de79ae139e0a92faf5372cf7af",
+    "results/lqr_contact_forecast_20261125/analysis/artifact_manifest.json": "52fa2962ec7b0265a4d5dfac02b295ce2cdccd9fa6f62add1cdddf9030aa36c4",
+    "results/lqr_contact_forecast_20261125/analysis/endpoint_metrics.json": "cb5047745dca42d5bd8520c16f5cbc4ec35f37bee85613bd1f6356eaa43a65b1",
+    "results/lqr_contact_forecast_20261125/analysis/incoming_events.json": "399d701f79bd3f0e29a45a67b8d8de253d53935418e896b38cf67cf42a77221d",
+    "results/lqr_contact_forecast_20261125/analysis/corrected/report.json": "c7ce28ef1db3f63631f647408fc7c0163097620704edd11b5d33d4891fa1d857",
+    "results/lqr_contact_forecast_20261125/analysis/corrected/artifact_manifest.json": "d4c5415ed45d8444b800030e3b27877a14595c241e8071acf6dc0428704c76b7",
+    "results/lqr_contact_forecast_20261125/analysis/corrected/correction.json": "5753a6697c016e9454b0b892d0a96a5c0adac2acb8503e44b8a93b9626d950db",
+    "results/lqr_contact_forecast_20261125/analysis/analyze_forecasts.py": "8a6b4c534d29d21cac2d6bfe2befdbc2d37bd2c654cdcc833ae483f1bcb69aab",
+    "results/lqr_contact_forecast_20261125/analysis/forecast_metrics.py": "40d74eb91dfe397334cea9c6b9b6ff94298d98c9835067f9d0b10cdd19656edd",
+    "results/lqr_contact_forecast_20261125/campaign/runs/flat_hold/forecasts.json": "6662f90232a7f1a2321c6fbb8af30d80d4ef55ffc15e923814501666dcc7de81",
+    "results/lqr_contact_forecast_20261125/campaign/runs/flat_outback/forecasts.json": "85b5dcd47651359f55fd836a5ce639e4cf219ba3884c47da0c3d73700db35946",
+    "results/lqr_contact_forecast_20261125/campaign/runs/flat_triangle/forecasts.json": "c954ef4facf98bcc55d1eacefef0299fb83ae1f90b66a3317de6019fccb08530",
+    "results/lqr_contact_forecast_20261125/campaign/runs/flat_x/forecasts.json": "09210e03a816f578e5c47e61c7663a991d7afd9d228689acf79ed2cfdf25f032",
+    "results/lqr_contact_forecast_20261125/campaign/runs/flat_y_transfer/forecasts.json": "745402fdec5068a98a95848a2844d6c2ddff3f3a3472032bc797b740d83b5002",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/forecasts.json": "f173f1850ae8ecafce027e39df5023732d62374bde4640061108aa2ec0c5323c",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late/forecasts.json": "815996a6ad5beb182678c6fd109bdd2a67dcbc7ab4dc64b44b037d3599f6a1ce",
+    "results/lqr_contact_forecast_20261125/campaign/runs/slope_y/forecasts.json": "3428f7261f8e307ce94b5bafdbfaf0b6bee8abc86193bf92ec1aa4e0ab6526ad"
+  },
+  "stage_notes": [
+    "Primary report is retained unchanged. Its pooled warning FP/FN/precision/recall are invalid due to generator consumption.",
+    "Corrected stage materializes the iterable and passes an adversarial nonzeroFP/FN generator test plus actual-positive denominator checks.",
+    "This final report copies all primary endpoint/trajectory results and uses corrected warning summaries, then adds saved runtime/calibration-fit reductions.",
+    "Original and corrected report/manifest hashes remain available; no failed result is overwritten."
+  ],
+  "authoritative_result": "analysis/final_report.json"
+}

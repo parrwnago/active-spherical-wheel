@@ -1,0 +1,73 @@
+{
+  "captured_before_calculations_utc": "2026-11-26T00:04:18.228919+00:00",
+  "scope": "Frozen estimated-plane input-plan search only; no new Gazebo or actual future commands for seed.",
+  "arguments": {
+    "output": "results/mpc_search_20261125/frozen_search/runtime_aligned",
+    "protocol": "/home/parrwnago/active-spherical-wheel/results/mpc_search_20261125/protocol.json",
+    "anchors": [
+      0.4,
+      2.0
+    ],
+    "iterations": [
+      1,
+      2,
+      5
+    ],
+    "jacobian_stride": 5,
+    "search_order": "global-best"
+  },
+  "sources": [
+    {
+      "path": "scripts/diagnose-mpc-search.py",
+      "snapshot": "source_snapshot/scripts/diagnose-mpc-search.py",
+      "sha256": "d4a387d50eab368a21e5405b300075a09adbedb2d0455291c4e433e8484d3690"
+    },
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/mpc/source_snapshot/scripts/run-mpc-comparison.py",
+      "snapshot": "source_snapshot/results/feedback_recovery_20261125/runs/slope/mpc/source_snapshot/scripts/run-mpc-comparison.py",
+      "sha256": "2aba2e3fc3dcb901fa6414e06123e65a9065d4a8ff491c2b9f6cb5f256a4a896"
+    },
+    {
+      "path": "src/spherical_wheel/predictive_seed.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_seed.py",
+      "sha256": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca"
+    },
+    {
+      "path": "src/spherical_wheel/predictive_model.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_model.py",
+      "sha256": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473"
+    },
+    {
+      "path": "src/spherical_wheel/predictive_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_control.py",
+      "sha256": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f"
+    },
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_control.py",
+      "sha256": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3"
+    },
+    {
+      "path": "src/spherical_wheel/mirror.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/mirror.py",
+      "sha256": "8e6325a9c44f79516c32c2af079718c3355f447d0d2751c44a684b6b8cf7b038"
+    },
+    {
+      "path": "results/mpc_search_20261125/protocol.json",
+      "snapshot": "source_snapshot/results/mpc_search_20261125/protocol.json",
+      "sha256": "366be7eccc17055aade35aafc8129e51347f2fe9aa7c0126922d30901ecddd22"
+    }
+  ],
+  "inputs": {
+    "results/feedback_recovery_20261125/runs/slope/mpc/plans.json": "d37428f760c1faafc2fcdde33444f2c4f586d7d4ac67afd88292d3fe8e11e570",
+    "results/feedback_recovery_20261125/runs/slope/mpc/precision.npz": "1578706d750aa647bf7c9b87ca7ba3fa5f43f8030622ccdcad21efd4e4e9e19f",
+    "results/feedback_recovery_20261125/runs/slope/mpc/rollout.npz": "7dde1a987359a6acdfbcf5e033c10fac05f1388268790044a36a3f6ce7eff8a7",
+    "results/feedback_recovery_20261125/runs/slope/mpc/provenance.json": "b87cfe9b952b4e8fe48dae81543f5c8afd3c59043e260b725bf76f21d50e5715"
+  },
+  "versions": {
+    "numpy": "1.26.4",
+    "scipy": "1.15.3",
+    "mujoco": "3.16.0",
+    "osqp": "1.1.3"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "iteration": "I-32",
+  "declared_utc": "2026-11-25T23:13:57.669727+00:00",
+  "status": "Declared before new feedback recovery physics. No tuning or new controller design.",
+  "question": "After the exact demonstrated fixed-input drift, can existing feedback bring the robot back to its original XY goal and settle?",
+  "matrix": [
+    {
+      "terrain": "slope",
+      "variant": "native"
+    },
+    {
+      "terrain": "slope",
+      "variant": "mpc"
+    }
+  ],
+  "terrain": "Uniform10degside slope, Gazebo/DART mesh .04m; notMars/roughterrain",
+  "initial_pose": "I31 independent nearby fitted pose, original goalXY; it is NOT a verified equilibrium. Gazebo documented1usresetstep retained.",
+  "timeline": {
+    "fixed_torques_s": [
+      0,
+      0.4
+    ],
+    "feedback_active_s": [
+      0.4,
+      8.4
+    ],
+    "sensing_s": 0.005,
+    "controller_observer": "Native observer/locator runs once each5ms duringforceddrift andfeedback, actualinputhistory preserved, no state/estimatorresetat.4switch.",
+    "goal": "InitialXYfixedthroughout; no reanchoratfeedbackactivation"
+  },
+  "controller": {
+    "native": "Existing gain-scheduled LQR+estimatedcontactfeedforward+sync, hardwaremode/least_squares, track_contact_point=False",
+    "mpc": "Existing I30 trajectorySQP/nonlinearscreenedMPC, N20 dt.02, stride5, .10loadgate, \u00b1.03Nm initial shaftseeds, sameweights/bounds. Nativeestimator shadowcontinuous; directMPCinput afteractivation.",
+    "ordinary_design_anchor_rad": 1.5707963267948966,
+    "nominal_joints": "Actualinitialqjointsoncet0, no resetatswitch",
+    "production_defaults_changed": false,
+    "new_equilibrium_or_terminal_design": false,
+    "runtime": "Offlineprototype, not real-timequalified"
+  },
+  "metrics": [
+    "erroratfeedbackactivation, min/peak/finaldistancefromfixedgoal",
+    "first5mmradiusentry andsustainedreturn, notbriefcrossingonly",
+    "XYspeedlast1s, allabsoluteplatformtiltfromworldvertical, native referencelean andrelativeattitudeerror",
+    "supportidentity/loads,evaluationtruthvsestimatedcontact,state/input/fallback histories",
+    "exactsharedfixed-inputprefix/stateatfeedbackswitch"
+  ],
+  "settled_return_gate": {
+    "final_1s_goal_error_mm_max": 5,
+    "final_1s_xy_speed_mm_s_max": 5,
+    "final_1s_reference_attitude_error_deg_max": 2,
+    "physical": "complete withoutfall, inputsbounded",
+    "platform": "Absoluteplatformtiltshown; currentreferenceincludes slopelean. Horizontaldeckisnot silentlyclaimed."
+  },
+  "decision_rule": "Reportmeasuredrecoveryunderunchangedsettings. Failuredoesnotidentifyestimationvscontrollercause, prove tuningcannothelp, or showphysicalgoalunreachable. Successdoesnotbroadlyqualifyoffroadterrain. Noparametersearchonthismatrix.",
+  "source_hashes_at_declaration": {
+    "scripts/run-mpc-comparison.py": "2aba2e3fc3dcb901fa6414e06123e65a9065d4a8ff491c2b9f6cb5f256a4a896",
+    "src/spherical_wheel/predictive_model.py": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473",
+    "src/spherical_wheel/predictive_control.py": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f",
+    "src/spherical_wheel/offroad_control.py": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3",
+    "src/spherical_wheel/offroad_experiments.py": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b",
+    "config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+    "results/mpc_equilibrium_20261125/independent_search/report.json": "71a450a4cd875660e49527c2ac0f1ffb6f8f3fd1b20de11f5f58c8b2054f609c"
+  },
+  "older_pack_hashes": {
+    "results/mpc_balance_20261125/presentation-pack.zip": "166e2589d724ad0c11ed8948ce039d52e917138c95981f382bd10d9bb23d2d73",
+    "results/mpc_equilibrium_20261125/presentation-pack.zip": "b00f43031618189bd4cfe80d88378c6582bb7daf59ed3624a56389d6ce8e0a19"
+  }
+}

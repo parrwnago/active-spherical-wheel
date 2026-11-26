@@ -1,0 +1,62 @@
+"""Arithmetic boundary checks only; no simulation, controller or model rollout."""
+import json
+
+import numpy as np
+
+from analyze_forecasts import controlled_transfer, event_summary
+from forecast_metrics import self_check, stable_dominant_family_events, warning_confusion
+
+
+def main():
+    result = self_check()
+    # Repeated forecast anchors cannot create extra independent true events.
+    truth = {'time_s': .05, 'incoming_patches': ['belt_A'],
+             'outgoing_patches': ['shell_A'], 'from_patches': ['shell_A'], 'to_patches': ['belt_A']}
+    cases = [{'case_id': 'synthetic', 'stable_support_events': {'events': [truth]}}]
+    rows = []
+    for at in (0., .005):
+        rows.append({'case_id': 'synthetic', 'selection_kind': 'uniform', 'anchor_time_s': at,
+            'dynamic_incoming_proxy': warning_confusion(['belt_A'], ['belt_A']),
+            'native_kinematic_preparation_warning_proxy': warning_confusion([], ['belt_A']),
+            'dynamic_matched_incoming_timing_error_ms': [0.],
+            'native_sync_geometry_at_selected_times': []})
+    summary = event_summary(rows, cases)[0]
+    assert summary['dynamic_incoming_proxy']['anchor_patch_tp'] == 2
+    assert summary['unique_actual_incoming_events'] == 1
+    assert summary['unique_actual_incoming_events_covered_by_forecast_window'] == 1
+    assert summary['covered_unique_events_dynamically_warned'] == 1
+    # An event outside every sparse forecast window is uncovered, not a miss.
+    summary = event_summary([{**rows[0], 'anchor_time_s': .2}], cases)[0]
+    assert summary['unique_actual_incoming_events'] == 1
+    assert summary['unique_actual_incoming_events_covered_by_forecast_window'] == 0
+    # No-event results must not manufacture100% precision/recall.
+    empty_case = [{'case_id': 'synthetic', 'stable_support_events': {'events': []}}]
+    no_warning = {**rows[0], 'dynamic_incoming_proxy': warning_confusion([], []),
+                  'native_kinematic_preparation_warning_proxy': warning_confusion([], [])}
+    summary = event_summary([no_warning], empty_case)[0]
+    assert summary['dynamic_incoming_proxy']['precision'] is None
+    assert summary['dynamic_incoming_proxy']['recall'] is None
+    assert summary['unique_actual_incoming_events'] == 0
+    # ShellA-to-shellB is a patch change, not a shell-to-belt family handover.
+    t = np.arange(14)*.005; loads = np.zeros((14, 4))
+    loads[:5, 0] = 10; loads[5:10, 1] = 10; loads[10:, 2] = 10
+    family = stable_dominant_family_events(t, loads, 1.)
+    assert family['stable_shell_belt_handover_count'] == 1
+    assert abs(family['stable_events'][0]['time_s']-.05) < 1e-12
+    # A later isolated event must not replace the first nominated stress event.
+    events = [{'time_s': .5, 'is_shell_belt_handover': True},
+              {'time_s': .55, 'is_shell_belt_handover': True},
+              {'time_s': 1., 'is_shell_belt_handover': True}]
+    candidate = controlled_transfer([{'case_id': 'test',
+        'stable_dominant_family_events': {'stable_events': events}}], [], 'test', .3)
+    assert candidate['candidate']['time_s'] == .5
+    assert candidate['isolated_plus_minus_100ms'] is False
+    assert candidate['covering_forecast_count'] == 0
+    result.update(event_deduplication=True, uncovered_event_censoring=True,
+                  zero_event_denominators=True, shell_belt_family_semantics=True,
+                  first_candidate_not_cherrypicked=True)
+    print(json.dumps(result, indent=2))
+
+
+if __name__ == '__main__':
+    main()

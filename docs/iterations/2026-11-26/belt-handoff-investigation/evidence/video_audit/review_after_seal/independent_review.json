@@ -1,0 +1,809 @@
+{
+  "iteration": "I-50",
+  "passed": true,
+  "scope": "Bounded independent I50 interpretation/arithmetic review; saved files only.",
+  "checks": {
+    "baseline_raw_drive_rates_match_geometry_report": true,
+    "baseline_normalized_matrix_singular_values_match": true,
+    "baseline_matrix_solution_reconstructs_rates": true,
+    "baseline_joint_velocity_error_is_measured_minus_reference": true,
+    "baseline_lqr_matches_saved_minus_K_error": true,
+    "joint_velocity_decomposition_matches_selected_report_samples": true,
+    "baseline_sync_zero_at_singular_sample": true,
+    "baseline_all3_applied_torques_reverse_next5ms": true,
+    "raised_first_loaded_belt_command_is_lqr_plus_rolling": true,
+    "baseline_terminal_error_matches_separate_late_report_sample": true
+  },
+  "input_sha256": {
+    "results/belt_handoff_event_20261126/video_audit/review_after_seal/independent_review.py": "16333b914920034cc95c904168e8b3263271836e4190348b27fc959a557619ee",
+    "results/belt_handoff_event_20261126/sync_audit/stage05_rolling_geometry/report.json": "20d548b28a70ae717426894ef3fa90d51ea170e284925d9fefeb4fd224ffbae7",
+    "results/belt_handoff_event_20261126/sync_audit/audit_rolling_geometry.py": "2b1e3f707b143f33f6ea8df048a0029ed6c0a0a345c79d4414fb1304ea84a3f8",
+    "results/belt_handoff_event_20261126/deviation_audit/stage01/report.json": "35622db01a61d91fdb3c0af7bd8774e6c6cef2d54154ff8360af890f0d1b9e4c",
+    "results/belt_handoff_event_20261126/deviation_audit/analyze_deviation.py": "64025e54499269ceff7ce1f36a7f6fc31428e0cd36a57f60a08ef06f992cee60",
+    "results/belt_handoff_event_20261126/video_audit/artifact_manifest.json": "d5bcb96429fe404337e4026b63a6fbd3966529b566e375a78d58379da2871bf3",
+    "results/belt_handoff_event_20261126/video_audit/qa.json": "db8451dd807b91d7229925734385b009f45a30e0d4e93520a5d022aadb4a0024",
+    "src/spherical_wheel/experiments.py": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638",
+    "src/spherical_wheel/offroad_control.py": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+    "src/spherical_wheel/synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap030/precision.npz": "dff68cf48f5752d12ee2f377784f96953963f28ee14b4f87a5b19bbdd3ac1b94",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap060/precision.npz": "9294c3315ec880444c3d65dcaf162ca9412db3ad455b02ea52c0ec95de7fd8b2"
+  },
+  "baseline_singular_sample": {
+    "before": {
+      "index": 6329,
+      "time_s": 31.64499999999799,
+      "drive_reference": [
+        0.2875419135140016,
+        0.0,
+        0.0,
+        0.0,
+        0.05697237233935849
+      ],
+      "requested": [
+        -0.7646968190287549,
+        0.17158340496507624,
+        0.10662481472549042,
+        0.0,
+        0.7334631463156533
+      ],
+      "applied": [
+        -0.7646968190287549,
+        0.17158340496507624,
+        0.10662481472549042,
+        0.0,
+        0.3
+      ],
+      "lqr": [
+        -0.6419195760188111,
+        0.17158340496507624,
+        0.1277313483048042,
+        0.0,
+        0.6764907739762949
+      ],
+      "joint_velocity_lqr": [
+        -0.049871060967724624,
+        0.06789625430545594,
+        0.024044197634106697,
+        0.0,
+        -0.0020743058404214245
+      ],
+      "other_lqr_groups": [
+        -0.5920485150510865,
+        0.1036871506596203,
+        0.1036871506706975,
+        0.0,
+        0.6785650798167163
+      ],
+      "estimated_loads_N": [
+        0.0,
+        0.0,
+        0.0,
+        16.20775410529966
+      ],
+      "truth_loads_N": [
+        0.0,
+        0.0,
+        0.0,
+        14.083001394081986
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.35,
+        0.0,
+        0.0
+      ],
+      "transition": [
+        0.0,
+        0.0,
+        -0.021106533579313788,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.05697237233935849
+      ],
+      "timed_error_mm": 64.38701734659448,
+      "final_goal_error_mm": 351.19592977782196
+    },
+    "event": {
+      "index": 6330,
+      "time_s": 31.649999999997988,
+      "drive_reference": [
+        488.6013701017815,
+        0.0,
+        -1760.5250547052035,
+        0.0,
+        0.0
+      ],
+      "requested": [
+        111.38871846409357,
+        -5.364985418156276,
+        -141.06737094874052,
+        0.0,
+        0.0
+      ],
+      "applied": [
+        1.5,
+        -0.6,
+        -0.6,
+        0.0,
+        0.0
+      ],
+      "lqr": [
+        111.50992466688922,
+        -5.364985418156276,
+        -141.03404456568936,
+        0.0,
+        0.0
+      ],
+      "joint_velocity_lqr": [
+        111.69492004661394,
+        -5.528979205117657,
+        -141.53891292239544,
+        0.0,
+        0.0
+      ],
+      "other_lqr_groups": [
+        -0.18499537972472524,
+        0.163993786961381,
+        0.5048683567060834,
+        0.0,
+        0.0
+      ],
+      "estimated_loads_N": [
+        0.0,
+        17.303427305521417,
+        0.0,
+        0.0
+      ],
+      "truth_loads_N": [
+        0.0,
+        23.27467252614439,
+        0.0,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "transition": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "timed_error_mm": 63.7648545046023,
+      "final_goal_error_mm": 350.24811909374455
+    },
+    "next": {
+      "index": 6331,
+      "time_s": 31.654999999997987,
+      "drive_reference": [
+        -30.413273633947647,
+        0.0,
+        110.4013942996923,
+        0.0,
+        0.0
+      ],
+      "requested": [
+        -8.750103401255263,
+        0.6934811849384932,
+        9.62243525091019,
+        0.0,
+        0.0
+      ],
+      "applied": [
+        -1.5,
+        0.6,
+        0.6,
+        0.0,
+        0.0
+      ],
+      "lqr": [
+        -8.63002555636469,
+        0.6934811849384932,
+        9.658057354641544,
+        0.0,
+        0.0
+      ],
+      "joint_velocity_lqr": [
+        -7.398579365972046,
+        0.44220297124055086,
+        8.858914919136941,
+        0.0,
+        0.0
+      ],
+      "other_lqr_groups": [
+        -1.231446190392643,
+        0.25127821369794234,
+        0.7991424355046028,
+        0.0,
+        0.0
+      ],
+      "estimated_loads_N": [
+        0.0,
+        18.10159221649255,
+        0.0,
+        0.0
+      ],
+      "truth_loads_N": [
+        0.0,
+        19.416529631129283,
+        0.0,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "transition": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "timed_error_mm": 63.45154915114677,
+      "final_goal_error_mm": 349.45893774886196
+    },
+    "normalized_singular_values_m_s": [
+      0.5990274026132255,
+      0.00015557104506190675
+    ],
+    "condition_number": 3850.507029600869,
+    "acute_drive_column_angle_deg": 0.057774706516036355,
+    "independent_reconstructed_shaft_shellB_rates_rad_s": [
+      488.6013701016501,
+      -1760.5250547047176
+    ]
+  },
+  "raised_handoff_samples": [
+    {
+      "index": 6433,
+      "time_s": 32.164999999998,
+      "drive_reference": [
+        0.6696764370775603,
+        0.0,
+        -0.6598119828376431,
+        0.0,
+        0.0
+      ],
+      "requested": [
+        -0.6178342578827117,
+        0.008672134396497087,
+        0.07363926399841603,
+        0.0,
+        -0.012112105614942088
+      ],
+      "applied": [
+        -0.6178342578827117,
+        0.008672134396497087,
+        0.07363926399841603,
+        0.0,
+        -0.012112105614942088
+      ],
+      "lqr": [
+        -0.33809082134471324,
+        0.008672134396497087,
+        0.08444464675269875,
+        0.0,
+        0.0
+      ],
+      "joint_velocity_lqr": [
+        -0.03404138470274117,
+        0.02160890006601438,
+        -0.14714700019022436,
+        0.0,
+        0.0
+      ],
+      "other_lqr_groups": [
+        -0.3040494366419721,
+        -0.012936765669517292,
+        0.2315916469429231,
+        0.0,
+        0.0
+      ],
+      "estimated_loads_N": [
+        0.0,
+        19.696230015795525,
+        0.0,
+        0.0
+      ],
+      "truth_loads_N": [
+        0.0,
+        0.0,
+        0.0,
+        18.483930734577584
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "transition": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.012112105614942088
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "timed_error_mm": 20.840705365466583,
+      "final_goal_error_mm": 291.8318390690021
+    },
+    {
+      "index": 6434,
+      "time_s": 32.169999999998005,
+      "drive_reference": [
+        0.5473370043603422,
+        0.0,
+        0.0,
+        0.0,
+        0.016445050385733115
+      ],
+      "requested": [
+        -0.7416818271451858,
+        0.014341944789426866,
+        -0.017663065725043635,
+        0.0,
+        -0.3033613807195354
+      ],
+      "applied": [
+        -0.7416818271451858,
+        0.014341944789426866,
+        -0.017663065725043635,
+        0.0,
+        -0.3033613807195354
+      ],
+      "lqr": [
+        -0.48559303221265304,
+        0.014341944789426866,
+        -0.017663065725043635,
+        0.0,
+        -0.3198064311052685
+      ],
+      "joint_velocity_lqr": [
+        0.02496917625564654,
+        0.027719625642641618,
+        -0.004285384871264841,
+        0.0,
+        0.0010126186359908922
+      ],
+      "other_lqr_groups": [
+        -0.5105622084682996,
+        -0.013377680853214752,
+        -0.013377680853778794,
+        0.0,
+        -0.3208190497412594
+      ],
+      "estimated_loads_N": [
+        0.0,
+        0.0,
+        0.0,
+        19.628127499005664
+      ],
+      "truth_loads_N": [
+        0.0,
+        0.0,
+        0.0,
+        19.444211077099343
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "transition": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.016445050385733115
+      ],
+      "timed_error_mm": 20.858023034812682,
+      "final_goal_error_mm": 291.445680602847
+    },
+    {
+      "index": 6437,
+      "time_s": 32.18499999999801,
+      "drive_reference": [
+        0.5497180123336067,
+        0.0,
+        0.0,
+        0.0,
+        0.01571849363438015
+      ],
+      "requested": [
+        -0.30430958272873754,
+        0.0116643036726779,
+        -0.03020433581719166,
+        0.0,
+        -0.4513069268588694
+      ],
+      "applied": [
+        -0.30430958272873754,
+        0.0116643036726779,
+        -0.03020433581719166,
+        0.0,
+        -0.4513069268588694
+      ],
+      "lqr": [
+        -0.10462364987411776,
+        0.0116643036726779,
+        -0.04764500917727262,
+        0.0,
+        -0.4670254204932496
+      ],
+      "joint_velocity_lqr": [
+        0.39230014886459386,
+        0.027157687220202658,
+        -0.03215162562889352,
+        0.0,
+        -0.0002162028257771736
+      ],
+      "other_lqr_groups": [
+        -0.4969237987387116,
+        -0.015493383547524758,
+        -0.015493383548379105,
+        0.0,
+        -0.4668092176674724
+      ],
+      "estimated_loads_N": [
+        0.0,
+        0.0,
+        0.0,
+        19.554474816106573
+      ],
+      "truth_loads_N": [
+        0.0,
+        18.201457080722513,
+        0.0,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.35,
+        0.0,
+        0.0
+      ],
+      "transition": [
+        0.0,
+        0.0,
+        0.017440673360080962,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.01571849363438015
+      ],
+      "timed_error_mm": 22.463639432987208,
+      "final_goal_error_mm": 291.3234035217408
+    },
+    {
+      "index": 6438,
+      "time_s": 32.189999999998015,
+      "drive_reference": [
+        0.6591358789514484,
+        0.0,
+        -0.602703792693084,
+        0.0,
+        0.0
+      ],
+      "requested": [
+        -0.05063166959522325,
+        0.012220899478350415,
+        0.18256553506071804,
+        0.0,
+        0.0
+      ],
+      "applied": [
+        -0.05063166959522325,
+        0.012220899478350415,
+        0.18256553506071804,
+        0.0,
+        0.0
+      ],
+      "lqr": [
+        0.15427050704714196,
+        0.012220899478350415,
+        0.19209117731947495,
+        0.0,
+        0.0
+      ],
+      "joint_velocity_lqr": [
+        0.4166780186696712,
+        0.010420238656688516,
+        -0.320839611028341,
+        0.0,
+        0.0
+      ],
+      "other_lqr_groups": [
+        -0.26240751162252923,
+        0.001800660821661899,
+        0.512930788347816,
+        0.0,
+        0.0
+      ],
+      "estimated_loads_N": [
+        0.0,
+        18.943600382900723,
+        0.0,
+        0.0
+      ],
+      "truth_loads_N": [
+        0.0,
+        17.911732850620137,
+        0.0,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "transition": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "timed_error_mm": 22.926716412987272,
+      "final_goal_error_mm": 291.4129166257991
+    }
+  ],
+  "late_samples": [
+    {
+      "index": 8125,
+      "time_s": 40.62500000000233,
+      "drive_reference": [
+        -7.148674545831877e-05,
+        0.0,
+        0.005907595013875,
+        0.0,
+        0.0
+      ],
+      "requested": [
+        0.2461559372365894,
+        0.0005315766612882036,
+        0.02836857368122653,
+        0.0,
+        0.0
+      ],
+      "applied": [
+        0.2461559372365894,
+        0.0005315766612882036,
+        0.02836857368122653,
+        0.0,
+        0.0
+      ],
+      "lqr": [
+        0.01610355174823369,
+        0.0005315766612882036,
+        0.02513759329817955,
+        0.0,
+        0.0
+      ],
+      "joint_velocity_lqr": [
+        -0.060199450423350856,
+        -0.0012082281727717513,
+        -0.17084793751224706,
+        0.0,
+        0.0
+      ],
+      "other_lqr_groups": [
+        0.07630300217158455,
+        0.001739804834059955,
+        0.1959855308104266,
+        0.0,
+        0.0
+      ],
+      "estimated_loads_N": [
+        0.0,
+        18.054523935388826,
+        0.0,
+        0.0
+      ],
+      "truth_loads_N": [
+        0.0,
+        18.05821845977009,
+        0.0,
+        0.0
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "transition": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "timed_error_mm": 50.09601614323055,
+      "final_goal_error_mm": 50.07664281922941
+    },
+    {
+      "index": 8797,
+      "time_s": 43.98500000000405,
+      "drive_reference": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "requested": [
+        0.5154429542857095,
+        0.06325112617142419,
+        0.08187767224084094,
+        0.0,
+        -0.080852276007219
+      ],
+      "applied": [
+        0.5154429542857095,
+        0.06325112617142419,
+        0.08187767224084094,
+        0.0,
+        -0.080852276007219
+      ],
+      "lqr": [
+        0.322983567624882,
+        0.06325112617142419,
+        0.08187767224084094,
+        0.0,
+        -0.080852276007219
+      ],
+      "joint_velocity_lqr": [
+        -0.6289543001288442,
+        0.0903184015059841,
+        0.10894494758897119,
+        0.0,
+        0.012744391579066441
+      ],
+      "other_lqr_groups": [
+        0.9519378677537262,
+        -0.02706727533455991,
+        -0.02706727534813025,
+        0.0,
+        -0.09359666758628545
+      ],
+      "estimated_loads_N": [
+        0.0,
+        0.0,
+        0.0,
+        21.103090734542743
+      ],
+      "truth_loads_N": [
+        0.0,
+        0.0,
+        0.0,
+        19.283367190377238
+      ],
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "transition": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rolling_feedforward": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "timed_error_mm": 190.90118139250976,
+      "final_goal_error_mm": 190.90118139250976
+    }
+  ],
+  "findings": [
+    "Confirmed command origin at baseline31.650s: near-collinear shell-contact rolling columns produce huge desired joint rates. Joint-velocity LQR contributions dominate the requested torque, then the physical torque clip bounds allthree motor torques. The raw drive-rate numbers are not actual joint velocities or torque commands.",
+    "Incoming synchronization is zero at that singular sample. This does not make the event unrelated to contact switching: observer and truth say belt_B at31.645 and shell_B at31.650, and prior belt blips exist. It is incorrect to say the singular sample predates every shell/belt handoff.",
+    "Raised32.170s is a distinct source mechanism: incoming-belt preparation ceases when belt_B is classified loaded, and the belt LQR channel activates. Its speed request is\u22120.319806 LQR+0.016445 rolling=\u22120.303361m/s, from the prior\u22120.012112 prep request. The subsequent32.190 return to shell support removes belt feedback and returns the belt command tozero.",
+    "The190.901mm baseline maximum at43.985s is a separate terminal excursion. Baseline already reaches50.096mm timed error at40.625s while both truth/observer are shell_B, before the later~43s belt activity. This trace identifies command origins and chronology, not the sole physical cause of later drift or the counterfactual effect of removing one earlier event."
+  ],
+  "source_references": [
+    {
+      "path": "src/spherical_wheel/experiments.py",
+      "lines": "29\u201344,79\u2013135",
+      "meaning": "Normalized least-squares rolling allocation and joint-rate versus belt-speed output split; scales are preferences, not physical limits."
+    },
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "lines": "596\u2013626,757\u2013816",
+      "meaning": "Native least-squares reference selection and terrain-feedback command ueq+feedforward+support\u2212Kerror."
+    },
+    {
+      "path": "src/spherical_wheel/synchronization.py",
+      "lines": "211\u2013255",
+      "meaning": "Incoming unloaded-fraction preparation weights and target construction; a blend weight is not achieved speed matching."
+    }
+  ],
+  "qualifications": [
+    "Normalized singular values use5rad/s shaft/shell preferences; D physical columns are m/rad, not torque-to-velocity gains.",
+    "Current recorded state precedes application of the command computed at that timestamp; same-tick state/command association alone is not a measured response to that command.",
+    "Late deviation may carry prior history; this review neither proves nor rules out influence from earlier events. It rejects sole-cause claims unsupported by a controlled counterfactual.",
+    "The sealed slow-replay phrase before the principal belt-supported phase must not be paraphrased as before any contact switch.",
+    "This review_after_seal subdirectory was added after video_audit/artifact_manifest.json. That earlier manifest remains immutable and does not cover this new review; this report provides its own source/input hashes."
+  ],
+  "no_new_physics_or_controller": true,
+  "no_old_artifact_changes": true,
+  "blocking_scientific_findings": []
+}

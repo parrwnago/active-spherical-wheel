@@ -1,0 +1,58 @@
+{
+  "status": "complete",
+  "saved_data_only": true,
+  "new_simulations": 0,
+  "new_controller_replays": 0,
+  "runtime_edits": 0,
+  "registered_window_s": [
+    28.0,
+    36.0
+  ],
+  "playback_to_recorded": {
+    "video_10_s_frame": 200,
+    "recorded_time_s": 32.0,
+    "playback_9_11_s_recorded_window_s": [
+      28.0,
+      36.0
+    ]
+  },
+  "key_findings": [
+    "R reaches 1.025432 m/s at recorded 32.305 s, with its desired reference slew still within 100 rad/s\u00b2. That reference bound does not bound actual acceleration or LQR torque.",
+    "At 32.250 s both solver and estimated support change belt B to shell B. The shell-B request is \u22127.718970 N m, clipped to \u22120.60 N m; the LQR jump is dominated by the \u22127.601677 N m gain-change term, with \u22120.011469 N m error-change contribution.",
+    "The platform already has large balance and rotational errors before this handoff. Its moderate current estimated rolling condition, 3.734659, differs from the earlier +0.9 rad near-singularity episode.",
+    "The instantaneous guarded-reference contribution softens shell-B demand by +0.097545 N m at the same frozen state and gain. It does not identify or remove preceding policy-history effects.",
+    "N has lower peak speed and 50 ms acceleration RMS in this fixed context, but short transients remain and no I52 candidate passes the complete cross-phase policy screen."
+  ],
+  "causal_limits": [
+    "A command sampled at an endpoint acts over the next hold, not the velocity increment ending at that endpoint.",
+    "Solver contact truth is the last 1 ms endpoint sample, not a full 5 ms hold mean.",
+    "The command origin is identified algebraically; the unique physical cause of the whole coupled burst is not established by one saved history."
+  ],
+  "authoritative_compact_data": "compact_stage02/summary.json",
+  "readable_report": "README.md",
+  "final_plots": [
+    "plots_stage02_readable/all_four_m100_context.png",
+    "plots_stage02_readable/all_four_m100_context.pdf",
+    "plots_stage02_readable/R_handoff_detail.png",
+    "plots_stage02_readable/R_handoff_detail.pdf"
+  ],
+  "integrity": {
+    "all_declared_inputs_unchanged": true,
+    "unique_input_files_verified": 39,
+    "stage_file_references_verified": 19,
+    "all_stage_manifests_verified": true,
+    "all_execution_logs_closed_without_traceback": true
+  },
+  "preserved_stages": [
+    "stage01",
+    "compact_stage02",
+    "plots_stage01",
+    "plots_stage02_readable"
+  ],
+  "presentation_revision": "plots_stage02_readable changes title/annotation spacing only; original plots_stage01 is retained.",
+  "derived_from_sha256": {
+    "stage01/report.json": "d026382fa70053eab09a2d1b5c9a076bf20f8faf9ae0d77eff406b96b24242a0",
+    "compact_stage02/summary.json": "609b9874b5e79e24335905920638129da8a3f2e1502b26b0d622190acb8ec75a",
+    "README.md": "9cd792cecbdd8e2bd123a7e0613ca10b0585842744c1ed410d1105e8d4f93f66"
+  }
+}

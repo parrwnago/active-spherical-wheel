@@ -1,0 +1,130 @@
+{
+  "iteration": "I-52",
+  "passed": true,
+  "checks": {
+    "all_render_inputs_unchanged": true,
+    "video_hash_matches": true,
+    "all3chapters_all12cases": true,
+    "all_phase_clock_checks": true,
+    "same_original_camera_worldXY": true,
+    "shared_plot_axes_declared": true,
+    "explicit_retry_resolver_used": true,
+    "raw_integrity_passed": true,
+    "canonical_integrity_passed": true,
+    "independent_metrics_QA_passed_for_same_canonical": true,
+    "caption_all12complete44": true,
+    "caption_no_policy_passes_all3": true,
+    "positive_route_results_retained": true,
+    "p030_NR_settled_routefail_distinct": true,
+    "no_new_physics_controller_or_scientific_reduction": true,
+    "defaults_unchanged": true,
+    "h264": true,
+    "resolution": true,
+    "fps": true,
+    "frame_count": true,
+    "duration": true,
+    "4x_overview_explicit": true,
+    "decoded_stills_nonblank": true
+  },
+  "phase_checks": {
+    "m100": {
+      "full_recorded0_44": true,
+      "all4cells_present": true,
+      "actual_state_clocks_match": true,
+      "exact_playback_frame_map": true,
+      "pose_interval200ms": true
+    },
+    "p030": {
+      "full_recorded0_44": true,
+      "all4cells_present": true,
+      "actual_state_clocks_match": true,
+      "exact_playback_frame_map": true,
+      "pose_interval200ms": true
+    },
+    "p090": {
+      "full_recorded0_44": true,
+      "all4cells_present": true,
+      "actual_state_clocks_match": true,
+      "exact_playback_frame_map": true,
+      "pose_interval200ms": true
+    }
+  },
+  "video": {
+    "path": "results/contact_scheduling_joint_tracking_20261126/videos/scheduling_joint_tracking_overview.mp4",
+    "sha256": "4537930d2178c5fa2d6f6b5193f99c70e3d7abe6ff20ec4d024907e8b752e8df",
+    "bytes": 12658126,
+    "frames": 873,
+    "fps": 20,
+    "duration_s": 43.65
+  },
+  "stills": {
+    "decoded_0000.jpg": {
+      "sha256": "5caed440f6f2797215c5935a872ebb3ac704b1a773f2fd1ab2744dca02c5e89d",
+      "shape": [
+        1500,
+        1800,
+        3
+      ],
+      "pixel_std": 36.61867809025375
+    },
+    "decoded_0040.jpg": {
+      "sha256": "15c76d2cea80c4ae1270e8022ef093219167b57fc579dcf684292bb16dc40fea",
+      "shape": [
+        1500,
+        1800,
+        3
+      ],
+      "pixel_std": 74.31528819669529
+    },
+    "decoded_0291.jpg": {
+      "sha256": "2fa5bbd168cf5e2eaf481bde35f1706ed9f26cdc1906ce4f54579006a792f004",
+      "shape": [
+        1500,
+        1800,
+        3
+      ],
+      "pixel_std": 74.29838958655304
+    },
+    "decoded_0542.jpg": {
+      "sha256": "83b9220b7ea5ffbc9c2aabd086c7e7c798f82fd446f920196ae13e33493a5b5e",
+      "shape": [
+        1500,
+        1800,
+        3
+      ],
+      "pixel_std": 74.3204086501417
+    },
+    "decoded_0872.jpg": {
+      "sha256": "8f7dd958807463da63d89d124a5094c231eec9c7241758d01c82d43519bfbab8",
+      "shape": [
+        1500,
+        1800,
+        3
+      ],
+      "pixel_std": 31.448522692319724
+    }
+  },
+  "scientific_QA_source": {
+    "path": "results/contact_scheduling_joint_tracking_20261126/frame_audit/reducer_review/final_report.json",
+    "sha256": "7646062e6b3eac2ea9c6f062ae76549937ff319b30084c3f65fcd83db7861db3",
+    "meaning": "Saved-metric assertions, not extra repository tests or physical trials."
+  },
+  "visual_review": {
+    "inspected": [
+      "Firstpreview m10032s, p090phasecard andfinalcard",
+      "Finaldecodedchapterstarts andfinalcard"
+    ],
+    "findings": [
+      "Alltwelve actual trajectories remain visible in fixedphaseorder with sharedcamera/scales.",
+      "N/NRoriginalroute/settling successes are separate fromfailedregisteredturnscreens.",
+      "m100Rregression is retained; no pooledaverage hidesphasefailure.",
+      "Per-frame phase is labeledrequestedlookup because a gaincanbeheld whileunloaded."
+    ]
+  },
+  "limitations": [
+    "4x overview poses sample200ms of recordedtime, soindividual5ms twitches cannot be assessed from thismovie.",
+    "Full5ms plots andearlierslowclips remain available.",
+    "Reference assumptions and currentkinematicresidual are not motor-response identification, achievednoslip orhardwarevalidation.",
+    "Thirteenprocessattemptsincludeonepreservednon-scoredtechnicalcrash andoneexact-source retry; twelvevalidcells are shown."
+  ]
+}

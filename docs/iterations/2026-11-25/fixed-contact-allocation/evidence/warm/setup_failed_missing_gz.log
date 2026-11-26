@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/run_warm_contact_cases.py", line 268, in <module>
+    main()
+  File "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/run_warm_contact_cases.py", line 252, in main
+    runs[variant] = run_case(workspace, terrain, motion, variant, overrides, output)
+  File "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/run_warm_contact_cases.py", line 151, in run_case
+    log, summary = run_gazebo(workspace, terrain, path, parameters, phase=PHASE,
+  File "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/gazebo/experiments.py", line 55, in run_gazebo
+    log, summary = run_offroad(workspace, terrain, path, params, **options)
+  File "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_experiments.py", line 236, in run_offroad
+    plant = workspace.plant(terrain)
+  File "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/gazebo/experiments.py", line 46, in plant
+    plant = GazeboPlant(self.config, terrain, self.directory/'gazebo'/'mirror',
+  File "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/gazebo/plant.py", line 89, in __init__
+    self.sim = GazeboSim(self.world_path, plugin_dir)
+  File "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/gazebo/bridge.py", line 57, in __init__
+    import gz.math7  # noqa: F401  (registers the math types the bindings return)
+ModuleNotFoundError: No module named 'gz'

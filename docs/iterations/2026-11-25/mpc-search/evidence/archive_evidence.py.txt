@@ -1,0 +1,52 @@
+"""Freeze completed I34 evidence, without running physics, tests or analyses."""
+from pathlib import Path
+import hashlib,json,shutil
+FAMILY=Path(__file__).resolve().parent
+REPO=FAMILY.parents[1]
+DEST=REPO/'docs/iterations/2026-11-25/mpc-search/evidence'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+folders=[FAMILY/'runs/slope'/v for v in ('native','mpc')]
+for folder in folders:
+ for name in ('summary.json','precision.npz','rollout.npz','plans.json','provenance.json'):assert (folder/name).is_file(),folder/name
+for relative in ('analysis/report.json','tests/integration.xml','frozen_search/runtime_entrypoints/report.json','frozen_search/derivative_audit/report.json','contact_prediction/summary.json','videos/video_metadata.json'):
+ assert (FAMILY/relative).is_file(),relative
+if DEST.exists():raise FileExistsError('Preserve earlier archive; choose a fresh collection stage')
+DEST.mkdir(parents=True)
+files=[];inventory=[]
+def copy(source,relative,stage):
+ target=DEST/relative;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,target)
+ assert sha(source)==sha(target)
+ files.append({'snapshot':str(relative),'origin':str(source.relative_to(REPO)),'bytes':source.stat().st_size,'sha256':sha(source),'stage':stage})
+allowed={'.json','.log','.xml','.csv','.png','.jpg','.jpeg','.pdf','.yaml','.yml','.md','.txt','.py','.toml','.sdf'}
+for source in sorted(FAMILY.rglob('*')):
+ if not source.is_file():continue
+ rel=source.relative_to(FAMILY)
+ if '__pycache__' in rel.parts or source.suffix=='.pyc':continue
+ inventory.append({'path':str(source.relative_to(REPO)),'bytes':source.stat().st_size,'sha256':sha(source)})
+ generated=any(part in {'_workspaces','meshes','_render_scene','private_model','private_mirror'} for part in rel.parts)
+ if generated or source.name=='plans.json' or source.suffix not in allowed or source.stat().st_size>5*1024*1024:continue
+ stage=('exact_recorded_source_snapshot__see_provenance' if 'source_snapshot' in rel.parts else
+        'pre_change_source' if rel.parts[0]=='pre_change' else
+        'I34_recorded_artifact__exploratory_vs_authoritative_stages_labelled_in_reports')
+ copy(source,rel.with_suffix(rel.suffix+'.txt') if source.suffix=='.py' else rel,stage)
+launch=[]
+for folder in folders:
+ provenance=json.loads((folder/'provenance.json').read_text())
+ for rel,digest in provenance['source_sha256'].items():
+  assert sha(folder/'source_snapshot'/rel)==digest
+  launch.append({'run':str(folder.relative_to(REPO)),'path':rel,'sha256':digest})
+current=['scripts/run-mpc-comparison.py','scripts/run-feedback-recovery.py','scripts/diagnose-mpc-search.py','src/spherical_wheel/predictive_seed.py','src/spherical_wheel/predictive_model.py','src/spherical_wheel/predictive_control.py','src/spherical_wheel/offroad_control.py','src/spherical_wheel/contact_sensing.py','tests/test_predictive_seed.py']
+for rel in current:copy(REPO/rel,Path('source/current_after_runs')/(rel+'.txt'),'current_source_after_runs__exact_launch_and_test_stages_separate')
+for name,values in [('raw_inventory.json',inventory),('verified_launch_references.json',launch)]:
+ p=DEST/name;p.write_text(json.dumps(values,indent=2)+'\n');files.append({'snapshot':name,'origin':'generated_by_archive_evidence.py','bytes':p.stat().st_size,'sha256':sha(p),'stage':'archival_index_no_new_experiment'})
+protocol=json.loads((FAMILY/'protocol.json').read_text())
+for rel,digest in protocol['old_pack_hashes'].items():assert sha(REPO/rel)==digest,rel
+m={'scope':'I34 archival copy/hash verification; no physics, tests, or model calculations during collection.',
+ 'files':files,'artifact_count_excluding_manifest':len(files),'artifact_bytes_excluding_manifest':sum(f['bytes'] for f in files),
+ 'raw_inventory_count':len(inventory),'verified_live_launch_source_references':len(launch),
+ 'counts':'2 new Gazebo executions: held20ms-native and practical-seeded-one-refinementMPC; original5msLQR/20msMPC reused. Frozen optimizer calls/contact forecasts are private diagnostics, not Gazebo cases.',
+ 'tests':'124 selected integration checks;15 standalone seed checks in2environments overlap, not additive.',
+ 'stage_distinctions':['Exploratory per-seed/global-chain stages retained; runtime_entrypoints is authoritative matrix.','Original cold-cache comparison assertion failure retained; exact savedplan replay/default parity separately verified.','Derivative fullstride checks are offline; no fullstride controller adopted.','Practical seeds use current cloned estimated state, not recordedfuturecontrols.','Source4 is a predicted native-policy candidate, not actual native fallback.'],
+ 'old_pack_hashes_verified_unchanged':protocol['old_pack_hashes']}
+(DEST/'manifest.json').write_text(json.dumps(m,indent=2)+'\n')
+print(json.dumps({k:v for k,v in m.items() if k!='files'},indent=2))

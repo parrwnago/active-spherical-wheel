@@ -1,0 +1,310 @@
+"""I42 saved-data factorial reduction. Never constructs or advances a plant."""
+from __future__ import annotations
+
+import csv
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import sys
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.spatial import cKDTree
+
+HERE=Path(__file__).resolve().parent
+FAMILY=HERE.parent
+REPO=FAMILY.parents[1]
+sys.path.insert(0,str(HERE/'dependencies'))
+from event_metrics import first_sustained,local_projection
+from factorial_metrics import ARMS,command_steps,equality,factorial,held_window,observation_window,summarize
+
+COLORS={'baseline':'#2878b5','feedback_shares':'#e28b2a','sync_off':'#27956c','both':'#a3489a'}
+
+
+def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def read_npz(path):
+    with np.load(path) as z:return {k:z[k].copy() for k in z.files}
+def safe(value):
+    if isinstance(value,np.ndarray):return safe(value.tolist())
+    if isinstance(value,np.generic):return safe(value.item())
+    if isinstance(value,dict):return {str(k):safe(v) for k,v in value.items()}
+    if isinstance(value,(tuple,list)):return [safe(v) for v in value]
+    if isinstance(value,float) and not np.isfinite(value):return None
+    return value
+def save(path,value):path.write_text(json.dumps(safe(value),indent=2,allow_nan=False)+'\n')
+
+
+def prefix_check(base,other,activation):
+    time=base['time_s']; pre=time<activation-1e-9; through=time<=activation+1e-9
+    other_pre=other['time_s']<activation-1e-9
+    other_through=other['time_s']<=activation+1e-9
+    states=('time_s','exact_qpos','exact_qvel','exact_previous_applied','exact_observer_wrench',
+            'exact_estimated_normal','exact_nominal_joints_before','controller_fingerprint_before')
+    commands=('exact_native_requested','exact_applied','controller_fingerprint_after')
+    result={}
+    for key in states+commands:
+        if key not in base or key not in other:
+            result[key]={'missing':True,'bit_equal':False};continue
+        result[key]=equality(base[key][through if key in states else pre],
+                             other[key][other_through if key in states else other_pre])
+    return {'all_fields_bit_equal':all(x['bit_equal'] for x in result.values()),'fields':result,
+            'state_samples_through_activation':int(through.sum()),'command_samples_before_activation':int(pre.sum())}
+
+
+def historical_check(base,original):
+    fields={key:equality(value,original[key]) for key,value in base.items()
+            if key in original and isinstance(value,np.ndarray)}
+    return {'all_common_precision_fields_bit_equal':all(x['bit_equal'] for x in fields.values()),
+            'common_field_count':len(fields),'fields':fields,
+            'scope':'Same fresh baseline versus sealed I40 full saved double-precision arrays; no source-reproduction assumption.'}
+
+
+def common_reference_check(base,other):
+    count=min(len(base['time_s']),len(other['time_s']))
+    keys=('time_s','exact_reference_xy','exact_reference_velocity_m_s','exact_reference_acceleration_m_s2')
+    fields={key:equality(base[key][:count],other[key][:count]) for key in keys}
+    return {'common_samples':count,'baseline_samples':len(base['time_s']),'arm_samples':len(other['time_s']),
+        'same_trace_length':len(base['time_s'])==len(other['time_s']),
+        'all_common_reference_fields_bit_equal':all(row['bit_equal'] for row in fields.values()),'fields':fields}
+
+
+def reduce_known_reference(actual,program):
+    """I41 corrected formulas against the complete, known desired path.
+
+    The actual trace may end early. Only desired reference samples come from
+    the sealed complete program; no future actual state/contact enters.
+    """
+    t=actual['time_s'];xy=actual['exact_qpos'][:,:2]
+    ref=actual['exact_reference_xy'];velocity=actual['exact_reference_velocity_m_s']
+    acceleration=actual['exact_reference_acceleration_m_s2']
+    speed=np.linalg.norm(velocity,axis=1);valid=speed>=.001
+    tangent=np.full_like(velocity,np.nan);tangent[valid]=velocity[valid]/speed[valid,None]
+    normal=np.column_stack((-tangent[:,1],tangent[:,0]));error=xy-ref
+    along=np.einsum('ij,ij->i',error,tangent);lateral=np.einsum('ij,ij->i',error,normal)
+    active=(program['time_s']>=1.-1e-9)&(program['time_s']<=41.+1e-9)
+    rt,rxy=program['time_s'][active],program['exact_reference_xy'][active]
+    projections=[local_projection(rt,rxy,position,float(now),2.) for now,position in zip(t,xy)]
+    projected_time=np.array([x['closest_time_s'] for x in projections])
+    distance=np.array([x['distance_m'] for x in projections]);nominal=np.clip(t,rt[0],rt[-1])
+    global_distance,global_indices=cKDTree(rxy).query(xy,k=8)
+    ambiguity=np.any((abs(rt[global_indices]-nominal[:,None])>2.+1e-8)&
+                     (global_distance<=distance[:,None]+.001),axis=1)
+    curvature=np.full(len(t),np.nan);moving=speed>=.005
+    curvature[moving]=(velocity[moving,0]*acceleration[moving,1]-velocity[moving,1]*acceleration[moving,0])/speed[moving]**3
+    heading=np.full(len(t),np.nan);heading[valid]=np.unwrap(np.arctan2(velocity[valid,1],velocity[valid,0]))
+    return {'time_s':t,'reference_speed_m_s':speed,'time_aligned_error_m':np.linalg.norm(error,axis=1),
+        'time_aligned_alongtrack_m':along,'time_aligned_signed_normal_m':lateral,'local_path_distance_m':distance,
+        'closest_reference_time_s':projected_time,'closest_reference_xy_m':np.array([x['closest_point_m'] for x in projections]),
+        'reference_phase_lag_s':nominal-projected_time,
+        'artificial_projection_window_boundary':np.array([x['artificial_time_window_boundary'] for x in projections]),
+        'closest_at_route_endpoint':np.array([x['at_route_endpoint'] for x in projections]),
+        'competing_global_vertex_branch_flag':ambiguity,'curvature_per_m':curvature,'reference_tangent_heading_rad':heading}
+
+
+def scope_audit(raw,window):
+    t=raw['time_s']; active=(t>=window[0]-1e-9)&(t<window[1]-1e-9)
+    # Controller command is also evaluated at the terminal state, but no terminal
+    # command is held. This study's window ends before terminal time.
+    assert np.array_equal(raw['intervention_window_active'].astype(bool),active)
+    requested=raw['oracle_requested'].astype(bool)
+    applied=raw['oracle_applied'].astype(bool)
+    masked=raw['sync_mask_active'].astype(bool)
+    native=raw['native_feedback_loads_N'];used=raw['used_feedback_loads_N']
+    native_w=raw['native_sync_weights'];used_w=raw['used_sync_weights']
+    native_inc=raw['native_sync_nominal_increment'];used_inc=raw['used_sync_nominal_increment']
+    changed=np.max(abs(native-used),axis=1)>1e-9
+    total_gap=np.max(abs(used.sum(axis=1)-native.sum(axis=1)))
+    zero_weight_gap=float(np.max(abs(used_w[masked]))) if masked.any() else 0.
+    zero_increment_gap=float(np.max(abs(used_inc[masked]))) if masked.any() else 0.
+    outside_weight=equality(native_w[~masked],used_w[~masked])
+    outside_increment=equality(native_inc[~masked],used_inc[~masked])
+    assert not np.any((applied|masked)&~active)
+    assert not np.any(applied&~requested)
+    assert total_gap<1e-10
+    assert zero_weight_gap==0. and zero_increment_gap==0.
+    assert outside_weight['bit_equal'] and outside_increment['bit_equal']
+    same_state={key:bool(np.asarray(value).all()) for key,value in raw.items()
+                if key.startswith('scope_') and key.endswith('_unchanged')}
+    assert same_state and all(same_state.values())
+    return {'window_active_command_calls':int(active.sum()),'oracle_requested_calls':int(requested.sum()),
+        'oracle_applied_calls':int(applied.sum()),'feedback_share_changed_calls':int(changed.sum()),
+        'oracle_coverage_fraction_of_requested':float(applied[requested].mean()) if requested.any() else None,
+        'oracle_fallback_requested_counts':{str(code):int(np.sum(requested&(raw['oracle_fallback_code']==code))) for code in (2,3,4)},
+        'oracle_fallback_code_legend':{'0':'applied','1':'arm inactive','2':'not touching','3':'inferred total<=.001N','4':'truth total<=.05N'},
+        'sync_mask_command_calls':int(masked.sum()),'native_sync_nonzero_during_mask_calls':int((masked&np.any(native_w!=0,axis=1)).sum()),
+        'max_inferred_total_load_preservation_error_N':float(total_gap),
+        'max_used_weight_inside_mask':zero_weight_gap,'max_used_nominal_increment_inside_mask':zero_increment_gap,
+        'unmasked_sync_weights_bit_equal':outside_weight['bit_equal'],
+        'unmasked_sync_nominal_increments_bit_equal':outside_increment['bit_equal'],
+        'same_state_invariants':same_state}
+
+
+def first_difference(base,other,key):
+    a,b=base[key],other[key]
+    count=min(len(a),len(b));different_length=len(a)!=len(b);a,b=a[:count],b[:count]
+    if a.shape!=b.shape:return {'shape_mismatch':True}
+    axes=tuple(range(1,a.ndim))
+    diff=np.any(a!=b,axis=axes) if axes else a!=b
+    indices=np.flatnonzero(diff)
+    return {'first_time_s':float(base['time_s'][indices[0]]) if len(indices) else None,
+            'different_common_samples':len(indices),'common_samples':count,'different_trace_lengths':different_length}
+
+
+def make_plots(out,raws,logs,geometries,bounds):
+    fig,axes=plt.subplots(3,2,figsize=(14,11),sharex=True)
+    for arm in ARMS:
+        raw,log,geometry=raws[arm],logs[arm],geometries[arm]
+        t=raw['time_s'];selected=(t>=3.8)&(t<=10.5)
+        data=(1000*geometry['local_path_distance_m'],
+              1000*np.linalg.norm(raw['exact_qpos'][:,:2]-raw['exact_reference_xy'],axis=1),
+              np.degrees(log['attitude_error_rad']),
+              np.max(abs(raw['exact_native_requested'])/bounds,axis=1),
+              np.max(abs(log['transition_command_delta'])/bounds,axis=1),
+              np.linalg.norm(raw['exact_qvel'][:,:2],axis=1)*1000)
+        for ax,values in zip(axes.flat,data):ax.plot(t[selected],values[selected],label=arm,color=COLORS[arm])
+    for ax,label in zip(axes.flat,['Local path distance (mm)','Timed position error (mm)',
+                                 'Reference lean error (deg)','Largest request / bound','Sync delta / bound','Body speed (mm/s)']):
+        ax.axvspan(6.4,7.4,color='grey',alpha=.1);ax.axvline(4,color='grey',ls=':');ax.axvline(10,color='grey',ls=':')
+        ax.set_ylabel(label);ax.grid(alpha=.2);ax.legend(fontsize=8);ax.set_xlabel('Simulation time (s)')
+    fig.suptitle('I42 diagnostic factorial: observer feedback shares × incoming-drive preparation')
+    fig.tight_layout();fig.savefig(out/'event_comparison.png',dpi=150);plt.close(fig)
+    fig,axes=plt.subplots(1,2,figsize=(13,6))
+    reference=raws['baseline']['exact_reference_xy'];axes[0].plot(*reference.T,'--',color='black',label='Timed reference')
+    for arm in ARMS:
+        raw=raws[arm];axes[0].plot(*raw['exact_qpos'][:,:2].T,color=COLORS[arm],label=arm)
+        axes[1].plot(raw['time_s'],1000*geometries[arm]['local_path_distance_m'],color=COLORS[arm],label=arm)
+    axes[0].axis('equal');axes[0].set(xlabel='World x (m)',ylabel='World y (m)')
+    axes[1].set(xlabel='Simulation time (s)',ylabel='Local path distance (mm)')
+    for ax in axes:ax.grid(alpha=.2);ax.legend(fontsize=8)
+    fig.suptitle('Four fresh44s runs; truth-share branches are diagnostic oracles')
+    fig.tight_layout();fig.savefig(out/'full_trajectory_comparison.png',dpi=150);plt.close(fig)
+
+
+def main():
+    out=HERE/'stage01'
+    if out.exists():raise FileExistsError('Preserve prior I42 analysis stage')
+    protocol_path=FAMILY/'protocol.json';protocol=json.loads(protocol_path.read_text())
+    assert sha(protocol_path)=='fb616686edbfbca9ac6f2b3fbfb8da152be52513279fd208d825d67480e0b86f'
+    depmanifest=json.loads((HERE/'dependencies/manifest.json').read_text())
+    for item in depmanifest['files']:assert sha(HERE/'dependencies'/item['path'])==item['sha256']
+    folders={arm:FAMILY/'campaign/runs'/arm for arm in ARMS}
+    for folder in folders.values():
+        for name in ('precision.npz','rollout.npz','summary.json','provenance.json','hook_rows.json','artifact_manifest.json'):
+            if not (folder/name).is_file():raise FileNotFoundError(folder/name)
+    verified_case_files={}
+    for arm,folder in folders.items():
+        manifest=json.loads((folder/'artifact_manifest.json').read_text())
+        for item in manifest['files']:
+            assert sha(folder/item['path'])==item['sha256'],(arm,item['path'])
+        verified_case_files[arm]=len(manifest['files'])
+    out.mkdir();source=out/'source';source.mkdir()
+    for path in (Path(__file__),HERE/'factorial_metrics.py',protocol_path,HERE/'dependencies/manifest.json'):
+        shutil.copyfile(path,source/path.name)
+    shutil.copytree(HERE/'dependencies',source/'dependencies',ignore=shutil.ignore_patterns('__pycache__'))
+    sources={str(p.relative_to(out)):sha(p) for p in source.rglob('*') if p.is_file()}
+    save(out/'source_manifest.json',sources)
+    input_files={str(p.relative_to(FAMILY)):sha(p) for folder in folders.values() for p in folder.iterdir() if p.is_file()}
+    save(out/'inputs_before_reduction.json',{'source_sha256':sources,'input_sha256':input_files,
+        'captured_utc':datetime.now(timezone.utc).isoformat()})
+    raws={arm:read_npz(folder/'precision.npz') for arm,folder in folders.items()}
+    logs={arm:read_npz(folder/'rollout.npz') for arm,folder in folders.items()}
+    summaries={arm:json.loads((folder/'summary.json').read_text()) for arm,folder in folders.items()}
+    provenance={arm:json.loads((folder/'provenance.json').read_text()) for arm,folder in folders.items()}
+    original_folder=REPO/protocol['baseline']
+    bounds=np.asarray(json.loads((original_folder/'provenance.json').read_text())['input_bounds'],float)
+    for name,expected in protocol['baseline_input_sha256'].items():assert sha(original_folder/name)==expected
+    original=read_npz(original_folder/'precision.npz')
+    desired_program={key:original[key] for key in ('time_s','exact_reference_xy',
+        'exact_reference_velocity_m_s','exact_reference_acceleration_m_s2')}
+    historical=historical_check(raws['baseline'],original)
+    prefixes={arm:prefix_check(raws['baseline'],raws[arm],4.) for arm in ARMS[1:]}
+    references={arm:common_reference_check(raws['baseline'],raws[arm]) for arm in ARMS[1:]}
+    geometry={};runs={};rows=[]
+    windows={'primary':protocol['analysis']['primary_window_s'],'recovery':protocol['analysis']['recovery_window_s'],
+             'intervention':protocol['analysis']['intervention_window_s'],'full':[0.,44.]}
+    for arm in ARMS:
+        raw,log=raws[arm],logs[arm];time=raw['time_s']
+        assert np.allclose(np.diff(time),.005,atol=1e-10,rtol=0.)
+        assert np.all(np.asarray(log['input_bounds'])==bounds)
+        geometry[arm]=reduce_known_reference(raw,desired_program)
+        caseout=out/arm;caseout.mkdir()
+        np.savez_compressed(caseout/'geometry.npz',**geometry[arm])
+        sensitivity={str(mm):first_sustained(time,geometry[arm]['local_path_distance_m'],mm/1000,.1,1.) for mm in (10,20,30)}
+        metrics={name:summarize(time,raw,log,geometry[arm],bounds,window) for name,window in windows.items()}
+        scope=scope_audit(raw,protocol['execution']['intervention_window_s'])
+        tail=time>=time[-1]-1.
+        settling={'tail_start_s':float(time[np.flatnonzero(tail)[0]]),
+            'tail_max_reference_lean_deg':float(np.degrees(log['attitude_error_rad'][tail]).max()),
+            'tail_max_horizontal_speed_m_s':float(np.linalg.norm(raw['exact_qvel'][tail,:2],axis=1).max()),
+            'tail_max_body_angular_speed_rad_s':float(np.linalg.norm(raw['exact_qvel'][tail,3:6],axis=1).max()),
+            'final_horizontal_speed_m_s':float(np.linalg.norm(raw['exact_qvel'][-1,:2]))}
+        runs[arm]={'completed':summaries[arm]['completed'],'failure':summaries[arm].get('failure'),
+            'full_summary_tracking':summaries[arm]['tracking'],'full_summary_attitude':summaries[arm]['attitude'],
+            'full_summary_actuation':summaries[arm]['actuation'],'settled_at_end':summaries[arm]['settled_at_end'],
+            'settling_diagnostics':settling,
+            'existing_route_gates':summaries[arm]['mars']['gates'],'passes_all_existing_route_gates':summaries[arm]['mars']['passed'],
+            'primary_20mm_departure':sensitivity['20'],'departure_threshold_sensitivity_mm':sensitivity,
+            'windows':metrics,'scope_audit':scope,
+            'first_differences_from_fresh_baseline':{key:first_difference(raws['baseline'],raw,key) for key in (
+                'exact_qpos','exact_qvel','exact_native_requested','exact_applied','exact_estimated_normal')},
+            'source_folder':str(folders[arm].relative_to(REPO))}
+        save(caseout/'report.json',runs[arm])
+        for name,metric in metrics.items():rows.append({'arm':arm,'window':name,**metric})
+    effect_keys=('local_path_rms_mm','local_path_max_mm','time_aligned_position_rms_mm','reference_lean_max_deg',
+                 'requested_clipping_fraction','max_requested_command_step_over_bound','max_applied_command_step_over_bound')
+    effects={}
+    for window in windows:
+        complete=all(runs[arm]['windows'][window]['window_complete'] for arm in ARMS)
+        effects[window]={'all_arms_cover_window':complete,
+            'effects':{key:factorial({arm:runs[arm]['windows'][window][key] for arm in ARMS}) for key in effect_keys} if complete else None,
+            'limit':None if complete else 'Unavailable as a matched-window factorial; partial per-arm outcomes retained.'}
+    all_completed=all(runs[arm]['completed'] for arm in ARMS)
+    full_effects={key:factorial({arm:1000*runs[arm]['full_summary_tracking'][key] for arm in ARMS})
+        for key in ('rms_error_while_moving_m','max_error_m','final_error_m')} if all_completed else None
+    base,sync=runs['baseline'],runs['sync_off']
+    primary_covered=base['windows']['primary']['window_complete'] and sync['windows']['primary']['window_complete']
+    screen={'completed_44s_without_fall':bool(sync['completed'] and sync['failure'] is None),
+        'primary_local_path_RMS_reduced_at_least_10pct':bool(primary_covered and sync['windows']['primary']['local_path_rms_mm']<=.9*base['windows']['primary']['local_path_rms_mm']),
+        'primary_peak_reference_lean_within_baseline_plus_half_degree':bool(primary_covered and sync['windows']['primary']['reference_lean_max_deg']<=base['windows']['primary']['reference_lean_max_deg']+.5),
+        'full_peak_reference_lean_within_baseline_plus_half_degree':sync['full_summary_attitude']['max_error_from_reference_deg']<=base['full_summary_attitude']['max_error_from_reference_deg']+.5,
+        'full_moving_RMS_within_105pct_baseline':sync['full_summary_tracking']['rms_error_while_moving_m']<=1.05*base['full_summary_tracking']['rms_error_while_moving_m']}
+    cached=read_npz(HERE/'dependencies/I41_baseline_reference_geometry.npz')
+    cache_check={key:equality(geometry['baseline'][key],cached[key]) for key in geometry['baseline'] if key in cached}
+    interpretation={'fresh_baseline_completed':bool(base['completed']),
+        'fresh_baseline_reproduces_complete_I40_precision':historical['all_common_precision_fields_bit_equal'],
+        'all_warm_prefixes_bit_equal':all(row['all_fields_bit_equal'] for row in prefixes.values()),
+        'all_common_reference_rows_bit_equal':all(row['all_common_reference_fields_bit_equal'] for row in references.values())}
+    report={'iteration':'I-42','scope':'Four fresh Gazebo runs reduced from sealed saved arrays. No physics, control or estimator changes made by this analyzer.',
+        'protocol_sha256':sha(protocol_path),'source_sha256':sources,'input_files_sha256':input_files,
+        'verified_case_manifest_files':verified_case_files,
+        'fresh_baseline_vs_I40':historical,'paired_warm_prefix_checks':prefixes,'reference_program_checks':references,
+        'fresh_baseline_geometry_vs_I41_cache':cache_check,'runs':runs,'factorial_window_effects':effects,
+        'factorial_full_route_tracking_effects_in_mm':full_effects,
+        'interpretation_prerequisites':interpretation,'controlled_comparison_interpretable':all(interpretation.values()),
+        'sync_off_provisional_screen':{'conditions':screen,'passes_all_conditions':all(screen.values()),'is_adoption_criterion':False},
+        'window_convention':'State observations include both endpoints. Held command intervals include lower/exclude upper endpoint and exclude overall terminal sample. Command jump at t includes preceding command even outside selected window.',
+        'numeric_precision':'Geometry, commands, observer and state comparisons use precision.npz double arrays. Window lean uses saved float32 rollout attitude_error_rad; full-route metrics/gates use the original double-precision run summary.',
+        'limits':['One deterministic run per arm; effect differences and interactions are descriptive, not statistical significance.',
+            'Truth shares are latest completed1ms force compared with interval-mean/filtered observer output; successful oracle is not a deployable controller.',
+            'Oracle changes feedback gain/support routing and retained held history, not records/normal/rolling FF/synchronizer inputs within that state.',
+            'Sync mask jointly removes preparatory command blending and nominal-reference increments, with private preview warm.',
+            'No default change or stability/robustness guarantee. Prefix equality and source manifests delimit the comparison.'],
+        'completed_utc':datetime.now(timezone.utc).isoformat()}
+    save(out/'report.json',report)
+    with (out/'window_metrics.csv').open('w',newline='') as stream:
+        writer=csv.DictWriter(stream,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
+    make_plots(out,raws,logs,geometry,bounds)
+    files=sorted(p for p in out.rglob('*') if p.is_file())
+    save(out/'artifact_manifest.json',{'files':[{'path':str(p.relative_to(out)),'bytes':p.stat().st_size,'sha256':sha(p)} for p in files]})
+    print(json.dumps(safe({'warm_prefixes':{k:v['all_fields_bit_equal'] for k,v in prefixes.items()},
+        'baseline_reproduces_I40':historical['all_common_precision_fields_bit_equal'],
+        'runs':{arm:{'onset':runs[arm]['primary_20mm_departure'],'primary':runs[arm]['windows']['primary'],
+            'moving_rms_mm':1000*runs[arm]['full_summary_tracking']['rms_error_while_moving_m']} for arm in ARMS},
+        'sync_off_screen':screen}),indent=2))
+
+
+if __name__=='__main__':main()

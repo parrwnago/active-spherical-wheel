@@ -1,0 +1,122 @@
+{
+  "scope": "Private estimated-plane actual-input replay; reused completed Gazebo rollout, no new Gazebo or controller run.",
+  "aggregates": [
+    {
+      "horizon_s": 0.02,
+      "anchors": 6,
+      "xy_error_mm": {
+        "median": 0.002607032207827967,
+        "max": 0.0029216772439311133
+      },
+      "rotation_error_deg": {
+        "median": 0.0006662169262214873,
+        "max": 0.0007578603255645583
+      },
+      "linear_body_velocity_error_mm_s": {
+        "median": 0.13425318327826452,
+        "max": 0.4938779474569302
+      },
+      "angular_body_velocity_error_rad_s": {
+        "median": 0.0006413768111340819,
+        "max": 0.0018382991440712112
+      }
+    },
+    {
+      "horizon_s": 0.1,
+      "anchors": 6,
+      "xy_error_mm": {
+        "median": 0.012720040034811907,
+        "max": 0.06491378231769145
+      },
+      "rotation_error_deg": {
+        "median": 0.0036714417414711095,
+        "max": 0.01743186052621684
+      },
+      "linear_body_velocity_error_mm_s": {
+        "median": 0.12592334886699919,
+        "max": 1.994827014592432
+      },
+      "angular_body_velocity_error_rad_s": {
+        "median": 0.0007046261471759317,
+        "max": 0.008982082928980256
+      }
+    },
+    {
+      "horizon_s": 0.4,
+      "anchors": 6,
+      "xy_error_mm": {
+        "median": 0.11546806764309231,
+        "max": 1.4539661878772159
+      },
+      "rotation_error_deg": {
+        "median": 0.05756452177837727,
+        "max": 0.6386386199577595
+      },
+      "linear_body_velocity_error_mm_s": {
+        "median": 0.9281861628142917,
+        "max": 12.901061581838373
+      },
+      "angular_body_velocity_error_rad_s": {
+        "median": 0.008978089029452851,
+        "max": 0.11185883378810707
+      }
+    }
+  ],
+  "forecasts": [
+    {
+      "anchor_s": 0.40000000000000024,
+      "scope": "Own selected 0.4s nonlinear forecast, distinct from actual-input replay",
+      "goal_distance_start_mm": 8.12499036164075,
+      "goal_distance_predicted_terminal_mm": 117.97250576279203,
+      "predicted_distance_change_mm": 109.84751540115127,
+      "predicts_net_retreat": true,
+      "selected_source": "SQP_seed_shaft_+1_alpha_1"
+    },
+    {
+      "anchor_s": 0.6000000000000004,
+      "scope": "Own selected 0.4s nonlinear forecast, distinct from actual-input replay",
+      "goal_distance_start_mm": 9.556309172127735,
+      "goal_distance_predicted_terminal_mm": 10.10333174598633,
+      "predicted_distance_change_mm": 0.5470225738585945,
+      "predicts_net_retreat": true,
+      "selected_source": "SQP_warm_start_alpha_1"
+    },
+    {
+      "anchor_s": 1.0000000000000007,
+      "scope": "Own selected 0.4s nonlinear forecast, distinct from actual-input replay",
+      "goal_distance_start_mm": 10.360740448834198,
+      "goal_distance_predicted_terminal_mm": 19.0050702114082,
+      "predicted_distance_change_mm": 8.644329762574001,
+      "predicts_net_retreat": true,
+      "selected_source": "SQP_warm_start_alpha_1"
+    },
+    {
+      "anchor_s": 1.9999999999999793,
+      "scope": "Own selected 0.4s nonlinear forecast, distinct from actual-input replay",
+      "goal_distance_start_mm": 44.90269287958246,
+      "goal_distance_predicted_terminal_mm": 58.60403272101331,
+      "predicted_distance_change_mm": 13.701339841430851,
+      "predicts_net_retreat": true,
+      "selected_source": "SQP_warm_start_alpha_1"
+    },
+    {
+      "anchor_s": 3.999999999999937,
+      "scope": "Own selected 0.4s nonlinear forecast, distinct from actual-input replay",
+      "goal_distance_start_mm": 87.40655570502882,
+      "goal_distance_predicted_terminal_mm": 88.09773715071977,
+      "predicted_distance_change_mm": 0.691181445690944,
+      "predicts_net_retreat": true,
+      "selected_source": "SQP_warm_start_alpha_1"
+    },
+    {
+      "anchor_s": 6.999999999999873,
+      "scope": "Own selected 0.4s nonlinear forecast, distinct from actual-input replay",
+      "goal_distance_start_mm": 57.02134959815288,
+      "goal_distance_predicted_terminal_mm": 49.70421706062069,
+      "predicted_distance_change_mm": -7.3171325375321885,
+      "predicts_net_retreat": false,
+      "selected_source": "SQP_warm_start_alpha_1"
+    }
+  ],
+  "interpretation": "Small replay errors at these six anchors do not support treating plant-model mismatch as the sole explanation. Selected forecasts themselves retreat at some anchors. This does not establish causal attribution, Jacobian validity or a tuning fix."
+}

@@ -1,0 +1,38 @@
+{
+  "iteration": "I-42",
+  "scope": "Four actual saved I42 arm replays with common camera, XY bounds and program time.\n\nNo physics integration, controller call or forecast. Oracle arms are explicitly\ndiagnostic; they use true simulator load shares in feedback routing only.\n",
+  "preview": true,
+  "window_s": [
+    6.4,
+    10.0
+  ],
+  "arms": [
+    "baseline",
+    "feedback_shares",
+    "sync_off",
+    "both"
+  ],
+  "fps": 20,
+  "playback_speed": 0.5,
+  "camera_shared_across_all_arms_and_frames": true,
+  "single_shared_display_geometry": true,
+  "camera_center_xyz_m": [
+    -1.4691068211167915,
+    9.716237371982071,
+    1.2368483799807755
+  ],
+  "camera_distance_m": 1.25,
+  "xy_bounds_shared_m": [
+    -1.5823288559139936,
+    -1.3558847863195893,
+    9.614150300278043,
+    9.818324443686102
+  ],
+  "frame_dimensions": [
+    1600,
+    1200
+  ],
+  "reference_arrays_exact": true,
+  "limits": "True feedback shares are a diagnostic oracle. Window4<=t<10 changes commands and nominal reference; later histories differ. One execution per arm; no standalone adoption claim.",
+  "rendered_frames": 3
+}

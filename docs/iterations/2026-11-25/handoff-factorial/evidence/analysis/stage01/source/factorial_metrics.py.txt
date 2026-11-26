@@ -1,0 +1,130 @@
+"""Pure saved-array arithmetic for the predeclared I42 factorial screen."""
+from __future__ import annotations
+
+import numpy as np
+
+ARMS = ('baseline', 'feedback_shares', 'sync_off', 'both')
+
+
+def observation_window(times, lower, upper):
+    return (times >= lower-1e-9) & (times <= upper+1e-9)
+
+
+def held_window(times, lower, upper):
+    mask = (times >= lower-1e-9) & (times < upper-1e-9)
+    mask[-1] = False
+    return mask
+
+
+def command_steps(commands, bounds):
+    commands, bounds = np.asarray(commands), np.asarray(bounds)
+    if bounds.ndim == 1: bounds = np.broadcast_to(bounds, commands.shape)
+    return np.r_[np.nan, np.max(abs(np.diff(commands, axis=0))/bounds[1:], axis=1)]
+
+
+def finite_max(values):
+    values=np.asarray(values); values=values[np.isfinite(values)]
+    return float(values.max()) if len(values) else None
+
+
+def rms(values): return float(np.sqrt(np.mean(np.asarray(values)**2)))
+
+
+def equality(first, second, mask=None):
+    first, second=np.asarray(first),np.asarray(second)
+    if mask is not None: first,second=first[mask],second[mask]
+    same_shape=first.shape==second.shape
+    bit_equal=bool(same_shape and first.dtype==second.dtype and first.tobytes()==second.tobytes())
+    max_gap=None
+    if same_shape and first.dtype.kind in 'biuf' and second.dtype.kind in 'biuf':
+        difference=abs(first.astype(float)-second.astype(float))
+        finite=difference[np.isfinite(difference)]
+        max_gap=float(finite.max()) if finite.size else 0.
+    return {'bit_equal':bit_equal,'same_shape':same_shape,'max_absolute_gap':max_gap,
+            'compared_samples':len(first) if first.ndim else 1}
+
+
+def factorial(values):
+    """Differences in supplied outcome units, without stochastic interpretation."""
+    base,feedback,sync,both=(float(values[k]) for k in ARMS)
+    return {'feedback_with_native_sync':feedback-base,
+            'feedback_with_sync_off':both-sync,
+            'sync_off_with_native_shares':sync-base,
+            'sync_off_with_true_shares':both-feedback,
+            'combined_minus_baseline':both-base,
+            'interaction_both_minus_feedback_minus_sync_plus_baseline':both-feedback-sync+base}
+
+
+def summarize(time, raw, log, geometry, bounds, window):
+    lower,upper=window
+    observed=observation_window(time,lower,upper)
+    held=held_window(time,lower,upper)
+    coverage={'window_s':[float(lower),float(upper)],'observation_samples':int(observed.sum()),
+        'window_complete':bool(time[0]<=lower+1e-9 and time[-1]>=upper-1e-9),
+        'available':bool(observed.any()),'actual_trace_end_s':float(time[-1]),
+        'held_command_intervals':int(held.sum()),'held_command_duration_s':float(held.sum()*.005)}
+    if not observed.any():
+        return {**coverage,**{key:None for key in ('observation_elapsed_s','local_path_rms_mm','local_path_max_mm',
+            'local_path_end_mm','time_aligned_position_rms_mm','time_aligned_position_max_mm','time_aligned_position_end_mm',
+            'reference_lean_rms_deg','reference_lean_max_deg','requested_clipping_fraction',
+            'max_requested_command_step_over_bound','max_applied_command_step_over_bound','max_requested_command_over_bound',
+            'projection_window_boundary_samples','existing_vertex_competing_branch_samples','native_vs_truth_loaded_comparisons',
+            'native_vs_truth_dominant_disagreements','native_vs_truth_dominant_disagreement_fraction','native_vs_truth_load_share_L1_mean')}}
+    position=1000*np.linalg.norm(raw['exact_qpos'][:,:2]-raw['exact_reference_xy'],axis=1)
+    local=1000*geometry['local_path_distance_m']
+    lean=np.degrees(log['attitude_error_rad'])
+    requested=raw['exact_native_requested']; applied=raw['exact_applied']
+    saturation=np.any(abs(requested)>np.asarray(bounds)+1e-10,axis=1)
+    request_step=command_steps(requested,bounds); applied_step=command_steps(applied,bounds)
+    truth=raw['truth_patch_loads_N']; native=log['estimated_support_loads_N']
+    loaded=observed&(truth.sum(axis=1)>.05)&(native.sum(axis=1)>.05)
+    disagreement=(truth.argmax(axis=1)!=native.argmax(axis=1))
+    truth_share=truth/np.maximum(truth.sum(axis=1,keepdims=True),1e-15)
+    native_share=native/np.maximum(native.sum(axis=1,keepdims=True),1e-15)
+    selected=np.flatnonzero(observed)
+    return {**coverage,
+        'observation_elapsed_s':float(time[selected[-1]]-time[selected[0]]),
+        'held_command_intervals':int(held.sum()),'held_command_duration_s':float(held.sum()*.005),
+        'local_path_rms_mm':rms(local[observed]),'local_path_max_mm':float(local[observed].max()),
+        'local_path_end_mm':float(local[selected[-1]]),
+        'time_aligned_position_rms_mm':rms(position[observed]),
+        'time_aligned_position_max_mm':float(position[observed].max()),
+        'time_aligned_position_end_mm':float(position[selected[-1]]),
+        'reference_lean_rms_deg':rms(lean[observed]),'reference_lean_max_deg':float(lean[observed].max()),
+        'requested_clipping_fraction':float(saturation[held].mean()) if held.any() else None,
+        'max_requested_command_step_over_bound':finite_max(request_step[held]),
+        'max_applied_command_step_over_bound':finite_max(applied_step[held]),
+        'max_requested_command_over_bound':float(np.max(abs(requested[held])/bounds)) if held.any() else None,
+        'projection_window_boundary_samples':int(geometry['artificial_projection_window_boundary'][observed].sum()),
+        'existing_vertex_competing_branch_samples':int(geometry['competing_global_vertex_branch_flag'][observed].sum()),
+        'native_vs_truth_loaded_comparisons':int(loaded.sum()),
+        'native_vs_truth_dominant_disagreements':int((loaded&disagreement).sum()),
+        'native_vs_truth_dominant_disagreement_fraction':float(disagreement[loaded].mean()) if loaded.any() else None,
+        'native_vs_truth_load_share_L1_mean':float(abs(truth_share[loaded]-native_share[loaded]).sum(axis=1).mean()) if loaded.any() else None}
+
+
+def pure_checks():
+    t=np.arange(0.,.020001,.005)
+    assert observation_window(t,.005,.015).tolist()==[False,True,True,True,False]
+    assert held_window(t,.005,.015).tolist()==[False,True,True,False,False]
+    assert held_window(t,0.,.025).sum()==4  # terminal sample never actuated
+    command=np.array([[0.,0.],[0.,0.],[2.,0.],[2.,0.],[2.,0.]])
+    steps=command_steps(command,np.array([2.,1.]))
+    assert np.max(steps[held_window(t,.010,.015)])==1.  # include boundary's prior command
+    assert equality(np.array([0.]),np.array([-0.]))['bit_equal'] is False
+    assert equality(np.arange(5.),np.array([0.,1.,2.,9.,9.]),observation_window(t,0.,.010))['bit_equal']
+    values={'baseline':10.,'feedback_shares':8.,'sync_off':7.,'both':4.}
+    effect=factorial(values)
+    assert effect['feedback_with_native_sync']==-2. and effect['sync_off_with_true_shares']==-4.
+    assert effect['interaction_both_minus_feedback_minus_sync_plus_baseline']==-1.
+    dummy={'exact_qpos':np.zeros((5,10)),'exact_reference_xy':np.zeros((5,2)),
+        'exact_native_requested':np.zeros((5,5)),'exact_applied':np.zeros((5,5)),
+        'truth_patch_loads_N':np.ones((5,4))}
+    log={'attitude_error_rad':np.zeros(5),'estimated_support_loads_N':np.ones((5,4))}
+    geometry={'local_path_distance_m':np.zeros(5),'artificial_projection_window_boundary':np.zeros(5,bool),
+        'competing_global_vertex_branch_flag':np.zeros(5,bool)}
+    absent=summarize(t,dummy,log,geometry,np.ones(5),(.030,.040))
+    partial=summarize(t,dummy,log,geometry,np.ones(5),(.010,.030))
+    assert not absent['available'] and absent['local_path_rms_mm'] is None and not absent['window_complete']
+    assert partial['available'] and not partial['window_complete'] and partial['held_command_intervals']==2
+    return {'assertions_passed':10,'scope':'Window boundaries, terminal holds, command switch boundary, bit identity, factorial sign/interaction, absent/partial windows after early termination; no simulation.'}

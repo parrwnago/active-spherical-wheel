@@ -1,0 +1,150 @@
+"""Trace private predicted contact modes at two frozen selected-plan anchors.
+
+This replays saved candidate controls on the SAME observer-derived estimated
+plane. No Gazebo plant, live contact data or future true terrain is queried.
+Run only after the parent campaign protocol has been declared.
+"""
+from datetime import datetime, timezone
+from pathlib import Path
+import argparse
+import csv
+import hashlib
+import json
+import traceback
+
+import mujoco
+import numpy as np
+
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.model import REPO_ROOT
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+
+HERE=Path(__file__).resolve().parent
+INPUT=REPO_ROOT/'results/feedback_recovery_20261125/runs/slope/mpc'
+SUPPORTS=('shell_A','shell_B','belt_A','belt_B','platform')
+LOAD_THRESHOLD_N=.05
+
+
+def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def contacts(predictor):
+    model,data=predictor.model,predictor.data
+    rows=[]
+    loads={name:0. for name in SUPPORTS}
+    for i,contact in enumerate(data.contact):
+        if contact.efc_address<0 or predictor.floor_id not in contact.geom:continue
+        geom=int(contact.geom[1] if int(contact.geom[0])==predictor.floor_id else contact.geom[0])
+        name=mujoco.mj_id2name(model,mujoco.mjtObj.mjOBJ_GEOM,geom) or str(geom)
+        support=next((prefix for prefix in SUPPORTS if name.startswith(prefix)),name)
+        wrench=np.zeros(6)
+        mujoco.mj_contactForce(model,data,i,wrench)
+        normal=max(0.,float(wrench[0]))
+        loads.setdefault(support,0.);loads[support]+=normal
+        rows.append({'geom':name,'support':support,'normal_force_N':normal,
+                     'position_m':np.asarray(contact.pos).tolist()})
+    loaded=sorted(name for name,load in loads.items() if load>LOAD_THRESHOLD_N)
+    return {'active_contact_count':len(rows),'loaded_patch_names':loaded,
+            'normal_load_by_patch_N':loads,'contact_rows':rows}
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--protocol',type=Path,required=True)
+    args=parser.parse_args()
+    assert args.protocol.is_file(),args.protocol
+    if (HERE/'report.json').exists():raise FileExistsError('Preserve earlier telemetry; choose a new stage')
+    sources=[Path(__file__).resolve(),REPO_ROOT/'src/spherical_wheel/predictive_model.py',
+             REPO_ROOT/'src/spherical_wheel/contact_sensing.py',
+             REPO_ROOT/'src/spherical_wheel/offroad_control.py',
+             REPO_ROOT/'scripts/run-mpc-comparison.py',args.protocol.resolve()]
+    snapshot=HERE/'source_snapshot';snapshot.mkdir(exist_ok=True)
+    entries=[]
+    for source in sources:
+        target=snapshot/(source.name+'.txt')
+        if target.exists():raise FileExistsError(target)
+        target.write_bytes(source.read_bytes())
+        entries.append({'origin':str(source.relative_to(REPO_ROOT)),
+                        'snapshot':str(target.relative_to(HERE)),'sha256':sha(source)})
+    input_paths=[INPUT/'plans.json',INPUT/'precision.npz',INPUT/'rollout.npz']
+    (HERE/'provenance.json').write_text(json.dumps({
+        'captured_before_replay_utc':datetime.now(timezone.utc).isoformat(),
+        'source':entries,'inputs':{str(p.relative_to(REPO_ROOT)):sha(p) for p in input_paths},
+        'scope':'Two selected-plan private contact prediction replays. No new Gazebo run or controller change.',
+        'loaded_patch_threshold_N':LOAD_THRESHOLD_N},indent=2)+'\n')
+    plans=json.loads((INPUT/'plans.json').read_text())
+    with np.load(INPUT/'precision.npz') as z:exact={k:z[k] for k in z.files}
+    with np.load(INPUT/'rollout.npz') as z:log={k:z[k] for k in z.files}
+    mirror=StateMirror(model_dir=HERE/'private_model')
+    predictor=EstimatedPlanePredictor(mirror)
+    anchors=[];flat=[]
+    for wanted in (.4,2.):
+        plan=min(plans,key=lambda p:abs(p['time_s']-wanted))
+        assert abs(plan['time_s']-wanted)<1e-8
+        index=int(np.argmin(abs(exact['time_s']-plan['time_s'])))
+        q0,v0=np.asarray(plan['qpos']),np.asarray(plan['qvel'])
+        previous=exact['exact_applied'][index-1]
+        np.testing.assert_array_equal(q0,exact['exact_qpos'][index])
+        np.testing.assert_array_equal(v0,exact['exact_qvel'][index])
+        mirror.set_state(q0,v0,plan['time_s'],previous)
+        # Restore exact nominal double; stored rollout is float32. The frozen
+        # cases retain nominal friction, matching the original plan evaluator.
+        friction=float(mirror.nominal_friction)
+        assert np.float32(friction)==log['estimated_friction'][index]
+        calibration=predictor.update(q0,v0,plan['normal'],plan['point_m'],plan['load_N'],
+            friction=friction,command=previous)
+        assert abs(calibration['plane_offset_m']-plan['calibration']['plane_offset_m'])<=1e-12
+        plane=predictor._plane_point.copy();normal=predictor.normal.copy()
+        q,v=q0.copy(),v0.copy();stages=[];events=[];last_mode=None;states=[]
+        dt=.02;substeps=int(round(dt/predictor.model.opt.timestep))
+        assert substeps==20
+        for stage,u in enumerate(np.asarray(plan['inputs'])):
+            predictor._assign(q,v,u)
+            start=contacts(predictor)
+            seen={tuple(start['loaded_patch_names'])}
+            for step in range(substeps):
+                mujoco.mj_step(predictor.model,predictor.data)
+                sample=contacts(predictor)
+                mode=tuple(sample['loaded_patch_names']);seen.add(mode)
+                if last_mode is not None and mode!=last_mode:
+                    events.append({'prediction_time_s':float(stage*dt+(step+1)*predictor.model.opt.timestep),
+                                   'stage':stage,'previous':list(last_mode),'next':list(mode)})
+                last_mode=mode
+            q,v=predictor.data.qpos.copy(),predictor.data.qvel.copy()
+            state=predictor.tangent(q0,v0,q,v);states.append(state)
+            end=contacts(predictor)
+            row={'stage':stage,'prediction_end_time_s':float((stage+1)*dt),
+                 'start':start,'end':end,'patch_sets_seen_over_1ms':sorted([list(mode) for mode in seen]),
+                 'jacobian_knot':stage in (0,5,10,15,19)}
+            stages.append(row)
+            flat.append({'anchor_s':plan['time_s'],'stage':stage,'prediction_end_time_s':row['prediction_end_time_s'],
+                         'jacobian_knot':row['jacobian_knot'],'start_patches':'+'.join(start['loaded_patch_names']),
+                         'end_patches':'+'.join(end['loaded_patch_names']),
+                         'end_contact_count':end['active_contact_count'],
+                         'end_normal_load_N':sum(end['normal_load_by_patch_N'].values()),
+                         'patch_sets_seen':';'.join('+'.join(mode) for mode in row['patch_sets_seen_over_1ms'])})
+        np.testing.assert_allclose(np.asarray(states),np.asarray(plan['nonlinear_states']),rtol=1e-10,atol=1e-10)
+        assert np.array_equal(predictor._plane_point,plane) and np.array_equal(predictor.normal,normal)
+        anchors.append({'anchor_s':plan['time_s'],'calibration':calibration,'estimated_plane_point_m':plane.tolist(),
+            'estimated_normal':normal.tolist(),'future_contact_mode_events':events,'stages':stages,
+            'predicted_states_equal_saved':bool(np.array_equal(states,np.asarray(plan['nonlinear_states']))),
+            'unique_loaded_patch_sets':[list(mode) for mode in sorted({tuple(row['end']['loaded_patch_names']) for row in stages})],
+            'events_between_sparse_knots':sum(not event['stage'] in (0,5,10,15,19) for event in events)})
+        print(json.dumps({'anchor_s':plan['time_s'],'events':events,
+                          'unique_loaded_patch_sets':anchors[-1]['unique_loaded_patch_sets'],
+                          'saved_state_replay_exact':anchors[-1]['predicted_states_equal_saved']}),flush=True)
+    report={'scope':'Private predicted contact telemetry; two frozen selected input plans, not new Gazebo cases.',
+            'measurement_boundary':'Initial support plane/friction/load from observer+locator state; future contacts generated by private mechanical/contact model on that frozen plane.',
+            'timing':'Private contact forces/rows are solved at the latest1ms substep. Geometry forces are not live-Gazebo observations.',
+            'limitation':'Only one estimated plane/friction. No unknown terrain forecast, contact probabilities or general multi-plane posterior. Contact mode switches alone do not prove SQP interpolation caused drift.',
+            'loaded_patch_threshold_N':LOAD_THRESHOLD_N,'anchors':anchors}
+    (HERE/'report.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
+    with (HERE/'metrics.csv').open('w',newline='') as f:
+        w=csv.DictWriter(f,fieldnames=list(flat[0]));w.writeheader();w.writerows(flat)
+
+
+if __name__=='__main__':
+    try:main()
+    except Exception:
+        (HERE/'failure.txt').write_text(traceback.format_exc())
+        raise

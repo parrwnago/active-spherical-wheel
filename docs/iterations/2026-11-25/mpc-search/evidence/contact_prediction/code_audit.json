@@ -1,0 +1,64 @@
+{
+  "scope": "Read-only contact data-flow review plus two private selected-plan contact replays; no estimator/controller change.",
+  "chain": [
+    {
+      "stage": "state/input measurements",
+      "source": "src/spherical_wheel/offroad_control.py:539",
+      "details": "Exact simulated qpos/qvel and known previously applied input feed momentum observer in these research runs. No robot sensing/noise/delay qualification."
+    },
+    {
+      "stage": "momentum observer",
+      "source": "src/spherical_wheel/contact_sensing.py:330",
+      "details": "Dynamics/momentum balance infers filtered net external generalized wrench. wrench() returns ground force/moment about wheel center; observer itself does not uniquely identify arbitrary contacts."
+    },
+    {
+      "stage": "support locator",
+      "source": "src/spherical_wheel/contact_sensing.py:449",
+      "details": "Intrinsic spherical wrench geometry + current wheel pose infer equivalent support point, shell/belt/rim records and load shares. Specialized rim sharing is supported; no general multiple-surface posterior."
+    },
+    {
+      "stage": "filtered terrain/contact estimate",
+      "source": "src/spherical_wheel/offroad_control.py:555",
+      "details": "ContactEstimator filters intrinsic normal and estimates friction from inferred slip; current measurements/geometry, not unknown future terrain."
+    },
+    {
+      "stage": "MPC intake",
+      "source": "scripts/run-mpc-comparison.py:256",
+      "details": "Reads filtered normal/friction, locator-derived point and aggregate inferred normal load. It does not impose observed patch identity/load shares as future constraints or add native feedforward after successful MPC."
+    },
+    {
+      "stage": "private support plane",
+      "source": "src/spherical_wheel/predictive_model.py:120",
+      "details": "Plane orientation/point from estimates, bounded normal offset calibrated to aggregate inferred load at current measured state/applied input. No fictitious external support force; other wrench components not fitted."
+    },
+    {
+      "stage": "contact prediction",
+      "source": "src/spherical_wheel/predictive_model.py:184",
+      "details": "Private mechanical/contact model integrates1ms steps on frozen estimated plane; predicted wheel/fork contact geometry, unilateral reaction and friction can change under candidate commands."
+    }
+  ],
+  "what_is_already_predicted": [
+    "Future own-body/shell/belt/rim contact geometry with estimated local plane",
+    "Contact loss/recontact and multiple admitted private model contacts",
+    "Predicted frictional forces/sliding from mechanical model and assumed estimated coefficient",
+    "Nonwheel collisions (not rejected solely by current finite+bounded plan acceptance)"
+  ],
+  "not_currently_provided": [
+    "Unknown terrain ahead, step heights or a new remote ground normal",
+    "General simultaneous contacts on independent terrain surfaces",
+    "Contact-mode probability/confidence distribution or particle posterior",
+    "A guarantee predicted transitions match actual events under changed/replanned inputs",
+    "A generic feedforward guarantee from the raw observed contact point"
+  ],
+  "important_limits": [
+    "Selected-plan forecast is different from replaying actual later commands. Frequent replanning means its future contacts need not occur in Gazebo.",
+    "Private predicted contact forces are model outputs, never live Gazebo force inputs.",
+    "Single frozen plane/friction over.4s does not represent arbitrary off-road topology.",
+    "Sparse Jacobian interpolation can cross predicted mode changes, but this telemetry alone establishes no cause of drift."
+  ],
+  "code_review_current_source_hashes": {
+    "src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "src/spherical_wheel/offroad_control.py": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3",
+    "src/spherical_wheel/predictive_model.py": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473"
+  }
+}

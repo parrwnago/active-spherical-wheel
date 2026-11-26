@@ -1,0 +1,177 @@
+{
+  "passed": true,
+  "content_path": "results/presentation_preparation_20261126/authoring/guide_content.json",
+  "content_sha256": "8bc3812204331d09ee2157cf356747b4dbd6f4f704c4ebbceebd850c16f262b7",
+  "pdf_path": "docs/iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf",
+  "pdf_sha256": "5caf1fddbbcd97cd59d998a02a1250148cc862530d871804aaabd21ffe4755ad",
+  "selected_page_ids": [
+    "start",
+    "reading",
+    "loop",
+    "coordinates",
+    "dynamics",
+    "rolling",
+    "references_loop",
+    "lqr",
+    "constraints",
+    "composition",
+    "saturation",
+    "next",
+    "qa1",
+    "talk",
+    "credit",
+    "cost_appendix"
+  ],
+  "checks": [
+    {
+      "name": "All 33 pages present; 16 requested pages reviewed",
+      "passed": true,
+      "evidence": [
+        "start",
+        "reading",
+        "loop",
+        "coordinates",
+        "dynamics",
+        "rolling",
+        "references_loop",
+        "lqr",
+        "constraints",
+        "composition",
+        "saturation",
+        "next",
+        "qa1",
+        "talk",
+        "credit",
+        "cost_appendix"
+      ]
+    },
+    {
+      "name": "State scale vector exactly matches selected source",
+      "passed": true,
+      "evidence": [
+        0.15,
+        0.15,
+        0.005,
+        0.15,
+        0.15,
+        0.5,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.1,
+        1.0,
+        1.0,
+        1.0,
+        10.0,
+        10.0,
+        10.0
+      ]
+    },
+    {
+      "name": "Q vector exactly matches selected source",
+      "passed": true,
+      "evidence": [
+        2.0,
+        2.0,
+        1.0,
+        30.0,
+        30.0,
+        0.01,
+        0.001,
+        0.001,
+        0.001,
+        2.0,
+        2.0,
+        0.1,
+        4.0,
+        4.0,
+        0.05,
+        0.01,
+        0.01,
+        0.01
+      ]
+    },
+    {
+      "name": "R vector exactly matches selected source",
+      "passed": true,
+      "evidence": [
+        0.3,
+        0.3,
+        0.3,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "Selected full design distinguished from optional frozen-phase branch",
+      "passed": true,
+      "evidence": "The nominal18-component error layout is below. The design normalizes each group, applies the listed Q weights and transforms the result back to physical units. The running controller then deliberately modifies selected error entries as explained earlier.  The input normalization uses bounds[1.5,0.6,0.6,0.3,0.3]; R<sub>u</sub>=diag(0.3,0.3,0.3,1,1). Selected gains use the full18-coordinate nominal design followed by reachable-subspace reduction. An optional frozen_phase=True comparison branch omits selected yaw/material-angle coordinates; it is not active here. Runtime suppresses or changes selected errors separately, while logging all18 entries. Six definitions worth being able to say  Study test: explain why a cap on a rate reference does not guarantee a torque bound, why torque clipping does not guarantee tracking, and why a small point error does not guarantee the correct support label."
+    },
+    {
+      "name": "10 stored configuration values / 9 velocities / 18 tangent errors",
+      "passed": true,
+      "evidence": "Matches generated topology, mirror velocity convention and Plant.error; quaternion is not counted as four independent attitude degrees of freedom."
+    },
+    {
+      "name": "1.86 kg model mass and declared mixed input units",
+      "passed": true,
+      "evidence": "Saved provenance confirms 1.8599999999999999 kg. Three torque channels and two ideal surface-speed channels match configuration."
+    },
+    {
+      "name": "Full physical rolling explanation distinguished from native XY approximation",
+      "passed": true,
+      "evidence": "The guide explicitly states the actual allocation uses world-horizontal rows and that the full tangent projection is explanatory."
+    },
+    {
+      "name": "Lean factor and static holding formulas",
+      "passed": true,
+      "evidence": "Match the selected lean_gain=1 formula and weight/radius/cross-product support routing. No claim of a new full inverse-dynamics controller."
+    },
+    {
+      "name": "Actual gain schedule and deliberate runtime error modifications",
+      "passed": true,
+      "evidence": "Support/phase interpolation, ordinary shaft row, world-vertical phase flag, current-z target and disabled heading helper are all stated correctly."
+    },
+    {
+      "name": "Current mass/bias terms are not a new dynamics contribution",
+      "passed": true,
+      "evidence": "Correctly identifies standard generated multibody terms. M remains configuration-dependent and the observer recomputes terms at measured states; this is not a constant-M claim."
+    },
+    {
+      "name": "Effort penalty versus hard constraints",
+      "passed": true,
+      "evidence": "The guide says final numeric input clipping is already enforced, while the Riccati optimization lacks online inequality constraints. Reference caps and actual state bounds remain distinct."
+    },
+    {
+      "name": "Exact command order and saturation example",
+      "passed": true,
+      "evidence": "Equilibrium + rolling + holding - K e, then preparation, optional heading, unloaded torque fade and final clip. The 88.6% fraction refers to the signed LQR term at one sample, not all causes."
+    },
+    {
+      "name": "Proposed priorities and Q&A preserve lack of guarantee",
+      "passed": true,
+      "evidence": "Proposals are labeled unimplemented; constraints and balance priority do not promise feasible motion or global stability. A box-distance projection can reproduce clipping."
+    },
+    {
+      "name": "Presentation and contribution credit",
+      "passed": true,
+      "evidence": "The 270-second slide budget includes a short video; standard methods/library solvers and AI assistance are credited without inferring personal authorship."
+    },
+    {
+      "name": "Requested scope maintained",
+      "passed": true,
+      "evidence": "No hardware deployment section or camera-analysis section is introduced; the scope explicitly excludes those topics."
+    }
+  ],
+  "remaining_required_corrections": [],
+  "prior_corrections_verified": [
+    "Disabled heading helper",
+    "Simulated 200 Hz clock",
+    "Actual gain-bank citation",
+    "Current wheel-centre z target",
+    "Optional frozen_phase branch distinguished from selected full design"
+  ],
+  "scope": "Independent source/content review and PDF rendering only; no runtime edit, tests, physics or scientific rerun."
+}

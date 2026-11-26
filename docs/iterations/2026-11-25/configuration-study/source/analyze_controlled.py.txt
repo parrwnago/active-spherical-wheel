@@ -1,0 +1,312 @@
+"""Paired offline analysis of the forty recorded configuration cases.
+
+Freeze this script under source_snapshot before running it. No controller,
+estimator, or physics execution occurs here.
+"""
+from pathlib import Path
+import csv
+import hashlib
+import json
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+ROOT = Path(__file__).resolve().parents[4]
+OUT = Path(__file__).resolve().parent
+STUDY = OUT.parent
+SCALE = np.array([5., 5., 5., .3, .3])
+BOUNDS = np.array([20., 20., 20., .3, .3])
+ACCELERATION = np.array([100., 100., 100., 3., 3.])
+SUPPORTS = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+COLORS = {'baseline': '#2878b5', 'adaptive': '#df7e31'}
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def fingerprint(path):
+    return {'path': str(path.relative_to(ROOT)), 'bytes': path.stat().st_size,
+            'sha256': sha(path)}
+
+
+def write_csv(path, rows):
+    with path.open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def quat_angle_deg(first, second):
+    first, second = np.asarray(first, float), np.asarray(second, float)
+    dot = abs(first@second)/(np.linalg.norm(first)*np.linalg.norm(second))
+    return float(np.degrees(2*np.arccos(np.clip(dot, -1., 1.))))
+
+
+def rms(values):
+    return float(np.sqrt(np.mean(np.asarray(values)**2)))
+
+
+def patch_ids(loads):
+    loads = np.asarray(loads, float)
+    return np.where(loads.sum(axis=1) > 1e-9, np.argmax(loads, axis=1), -1)
+
+
+def analyze_row(row):
+    directory = Path(row['directory'])
+    with np.load(directory/'rollout.npz') as archive:
+        log = {key: value.copy() for key, value in archive.items()}
+    summary = json.loads((directory/'summary.json').read_text())
+    time = log['time_s'].astype(float)
+    dt = float((time[-1]-time[0])/(len(time)-1))
+    grid_error = float(np.max(abs(time-(time[0]+np.arange(len(time))*dt))))
+    error_mm = np.linalg.norm(log['qpos'][:, :2]-log['reference_xy'], axis=1)*1000
+    attitude = np.degrees(log['attitude_error_rad'])
+    cold = time <= .3+1e-7
+    movement = (time >= .5-1e-7) & (time <= 3.+1e-7)
+    tail = time >= 3.-1e-7
+    drive = (log['allocation_drive_reference'] if 'allocation_drive_reference' in log else
+             np.column_stack((log['reference_qvel'][:, 6:9], log['rolling_feedforward'][:, 3:5]))).astype(float)
+    speed_ratio = np.abs(drive)/BOUNDS
+    acceleration_ratio = np.abs(np.diff(drive, axis=0))/(ACCELERATION*dt)
+    # Saved references are float32. Compare absolute quantities with a small
+    # representation tolerance; report raw ratios independently.
+    speed_violations = np.any(np.abs(drive) > BOUNDS+1e-6, axis=1)
+    acceleration_violations = np.any(np.abs(np.diff(drive, axis=0)) > ACCELERATION*dt+1e-6, axis=1)
+    estimated = log['configuration_patch'].astype(int)
+    truth = patch_ids(log['support_loads_N'])
+    gain_steps = np.max(np.abs(np.diff(log['lqr_command'], axis=0))/log['input_bounds'][1:], axis=1)
+    requested_steps = np.max(np.abs(np.diff(log['command'], axis=0))/log['input_bounds'][1:], axis=1)
+    selected_j = log['configuration_matrix'].astype(float)*SCALE
+    j_steps = np.linalg.norm(np.diff(selected_j, axis=0), axis=(1, 2))
+    switches = estimated[1:] != estimated[:-1]
+    values = dict(row)
+    values.update(
+        samples=len(time), nominal_interval_s=dt, time_grid_max_error_s=grid_error,
+        initial_tracking_error_mm=float(error_mm[0]),
+        moving_rms_tracking_error_mm=rms(error_mm[movement]),
+        final_second_rms_tracking_error_mm=rms(error_mm[tail]),
+        initial_actual_tilt_deg=float(np.degrees(log['tilt_rad'][0])),
+        max_actual_tilt_deg=float(np.degrees(log['tilt_rad']).max()),
+        cold_rms_tracking_error_mm=rms(error_mm[cold]),
+        cold_max_actual_joint_speed_rad_s=float(np.abs(log['qvel'][cold, 6:9]).max()),
+        truth_patch_switches=int(np.count_nonzero(np.diff(truth))),
+        estimated_truth_identity_disagreement_samples=int(np.count_nonzero(estimated != truth)),
+        max_normalized_drive_reference=float(speed_ratio.max()),
+        max_normalized_drive_reference_acceleration=float(acceleration_ratio.max()),
+        reference_speed_violation_samples=int(speed_violations.sum()),
+        reference_acceleration_violation_steps=int(acceleration_violations.sum()),
+        reference_bound_audit_applies=row['variant'] == 'adaptive',
+        max_normalized_drive_reference_step=float(np.max(np.abs(np.diff(drive/SCALE, axis=0)))),
+        max_normalized_lqr_command_step=float(gain_steps.max()),
+        max_normalized_requested_command_step=float(requested_steps.max()),
+        max_normalized_jacobian_step_m_s=float(j_steps.max()),
+        median_normalized_jacobian_step_at_patch_switch_m_s=float(np.median(j_steps[switches])) if switches.any() else None,
+        initial_estimated_contact_point_error_mm=float(1000*np.linalg.norm(log['estimated_contact_point_m'][0]-log['contact_point_m'][0])),
+        placement_carrier_rotation_max_error=float(summary['configuration_case']['placement']['carrier_rotation_max_error']),
+        placement_shaft_axis_max_error=float(summary['configuration_case']['placement']['shaft_axis_max_error']),
+    )
+    return values, log, summary
+
+
+def paired_cases(runs, logs, summaries):
+    lookup = {(row['case_id'], row['variant']): row for row in runs}
+    pairs = []
+    metrics = ('rms_tracking_error_mm', 'moving_rms_tracking_error_mm', 'max_tracking_error_mm',
+               'final_tracking_error_mm', 'warm_max_reference_lean_error_deg', 'max_actual_tilt_deg',
+               'max_joint_reference_rad_s', 'max_actual_joint_speed_rad_s', 'estimated_patch_switches',
+               'truth_patch_switches', 'saturated_fraction', 'max_normalized_drive_reference_step',
+               'max_normalized_lqr_command_step', 'max_normalized_requested_command_step')
+    for case in sorted({row['case_id'] for row in runs if row['motion'] != 'hold'}):
+        baseline, adaptive = lookup[(case, 'baseline')], lookup[(case, 'adaptive')]
+        left, right = logs[(case, 'baseline')], logs[(case, 'adaptive')]
+        item = {key: baseline[key] for key in ('case_id', 'terrain', 'phase_rad', 'fork_pitch_offset_deg', 'motion')}
+        item.update(
+            both_completed=baseline['completed'] and adaptive['completed'],
+            initial_qpos_max_abs_difference=float(np.max(abs(left['qpos'][0]-right['qpos'][0]))),
+            initial_qvel_max_abs_difference=float(np.max(abs(left['qvel'][0]-right['qvel'][0]))),
+            initial_estimated_point_max_abs_difference_m=float(np.max(abs(left['estimated_contact_point_m'][0]-right['estimated_contact_point_m'][0]))),
+            initial_jacobian_max_abs_difference=float(np.max(abs(left['configuration_matrix'][0]-right['configuration_matrix'][0]))),
+            reference_xy_max_abs_difference_m=float(np.max(abs(left['reference_xy']-right['reference_xy']))),
+            time_grid_max_abs_difference_s=float(np.max(abs(left['time_s']-right['time_s']))),
+            initial_reference_quat_angle_difference_deg=quat_angle_deg(left['reference_quat'][0], right['reference_quat'][0]),
+            adaptive_reference_speed_violation_samples=adaptive['reference_speed_violation_samples'],
+            adaptive_reference_acceleration_violation_steps=adaptive['reference_acceleration_violation_steps'],
+        )
+        for metric in metrics:
+            item['baseline_'+metric] = baseline[metric]
+            item['adaptive_'+metric] = adaptive[metric]
+            item['adaptive_minus_baseline_'+metric] = adaptive[metric]-baseline[metric]
+        pairs.append(item)
+    return pairs
+
+
+def placement_audit(logs, summaries):
+    result = []
+    for terrain in ('flat', 'side_slope_10'):
+        for phase in ('phase_0.6000', 'phase_1.5708'):
+            zero = f'{terrain}/{phase}/pitch_0/hold'
+            three = f'{terrain}/{phase}/pitch_3/hold'
+            left, right = logs[(zero, 'baseline')], logs[(three, 'baseline')]
+            result.append({
+                'terrain': terrain, 'phase': phase,
+                'actual_fork_orientation_difference_deg': quat_angle_deg(left['qpos'][0, 3:7], right['qpos'][0, 3:7]),
+                'compensating_shaft_difference_rad': float(right['qpos'][0, 7]-left['qpos'][0, 7]),
+                'true_equivalent_contact_point_difference_m': float(np.linalg.norm(left['contact_point_m'][0]-right['contact_point_m'][0])),
+                'estimated_equivalent_contact_point_difference_m': float(np.linalg.norm(left['estimated_contact_point_m'][0]-right['estimated_contact_point_m'][0])),
+                'estimated_jacobian_max_entry_difference': float(np.max(abs(left['configuration_matrix'][0]-right['configuration_matrix'][0]))),
+                'initial_reference_orientation_difference_deg': quat_angle_deg(left['reference_quat'][0], right['reference_quat'][0]),
+                'initial_reference_lean_error_pitch0_deg': float(np.degrees(left['attitude_error_rad'][0])),
+                'initial_reference_lean_error_pitch3_deg': float(np.degrees(right['attitude_error_rad'][0])),
+            })
+    return result
+
+
+def plots(runs, pairs, logs):
+    fig, axes = plt.subplots(4, 2, figsize=(14, 15), constrained_layout=True)
+    for row, (terrain, phase) in enumerate((('flat', .6), ('flat', np.pi/2),
+                                           ('side_slope_10', .6), ('side_slope_10', np.pi/2))):
+        group = [item for item in pairs if item['terrain'] == terrain and item['phase_rad'] == phase]
+        group.sort(key=lambda item: (item['fork_pitch_offset_deg'], item['motion']))
+        labels = [f"{item['motion'][-1].upper()} / pitch {item['fork_pitch_offset_deg']:.0f}°" for item in group]
+        x = np.arange(len(group))
+        for column, metric, ylabel in ((0, 'rms_tracking_error_mm', 'Four-second RMS tracking error (mm)'),
+                                       (1, 'warm_max_reference_lean_error_deg', 'Max reference attitude error after .3 s (°)')):
+            axis = axes[row, column]
+            for variant, shift in (('baseline', -.18), ('adaptive', .18)):
+                values = [item[f'{variant}_{metric}'] for item in group]
+                bars = axis.bar(x+shift, values, width=.36, color=COLORS[variant], label=variant)
+                axis.bar_label(bars, fmt='%.1f', fontsize=7, padding=2)
+            axis.set(xticks=x, xticklabels=labels, ylabel=ylabel,
+                     title=f"{terrain.replace('_', ' ')}, initial carrier phase {phase:.4f} rad")
+            axis.grid(axis='y', alpha=.2)
+            axis.set_ylim(0, axis.get_ylim()[1]*1.15)
+            axis.legend(fontsize=8)
+    fig.suptitle('Controlled configuration study: existing LS versus adaptive bounded allocation', fontsize=14)
+    fig.text(.01, -.012, '40/40 short runs completed: eight common holds and 16 paired moving cases. '
+             'Nominal pitch offsets do not produce a 3° initial reference error: all initial errors are below 1.3×10⁻⁶°. '
+             'Single runs; no statistical or route-qualification claim.', fontsize=8)
+    for suffix in ('png', 'pdf'):
+        fig.savefig(OUT/f'paired_comparison.{suffix}', dpi=150, bbox_inches='tight')
+    plt.close(fig)
+
+    fig, axes = plt.subplots(4, 2, figsize=(14, 13), sharex=True, constrained_layout=True)
+    for column, motion in enumerate(('world_x', 'world_y')):
+        case = f'side_slope_10/phase_1.5708/pitch_0/{motion}'
+        for variant in ('baseline', 'adaptive'):
+            log = logs[(case, variant)]
+            time = log['time_s']
+            color = COLORS[variant]
+            error = np.linalg.norm(log['qpos'][:, :2]-log['reference_xy'], axis=1)*1000
+            axes[0, column].plot(time, error, label=variant, color=color)
+            axes[1, column].semilogy(time, np.maximum(log['configuration_authority_m_s'], 1e-8), color=color)
+            axes[2, column].step(time, log['configuration_patch'], where='post', color=color, alpha=.8)
+            axes[3, column].plot(time, np.degrees(log['attitude_error_rad']), color=color)
+        axes[0, column].set(title=f'10° side slope, phase π/2, {motion}', ylabel='Tracking error (mm)')
+        axes[1, column].set_ylabel('Weak planar authority (m/s)')
+        axes[2, column].set(yticks=range(4), yticklabels=SUPPORTS, ylabel='Estimated patch')
+        axes[3, column].set(ylabel='Reference attitude error (°)', xlabel='Time (s)')
+        for axis in axes[:, column]:
+            axis.axvspan(0, .3, color='#888888', alpha=.1)
+            axis.axvline(.5, color='#777777', linestyle=':', linewidth=1)
+            axis.axvline(3., color='#777777', linestyle=':', linewidth=1)
+            axis.grid(alpha=.2)
+        axes[0, column].legend()
+    fig.suptitle('Same initial pole configuration: strong X travel and weak Y travel', fontsize=14)
+    fig.text(.01, -.012, 'Shading: cold observer interval. Dotted lines: movement starts and ends. '
+             'Side-slope placement begins with ≈20.83 mm body-center/reference XY offset. No new weight law was tested.', fontsize=8)
+    for suffix in ('png', 'pdf'):
+        fig.savefig(OUT/f'side_slope_pole_direction.{suffix}', dpi=150, bbox_inches='tight')
+    plt.close(fig)
+
+
+def main():
+    freeze = json.loads((OUT/'source_snapshot/manifest.json').read_text())
+    frozen_script = OUT/'source_snapshot/analyze.py.txt'
+    if sha(Path(__file__)) != freeze['analysis_script_sha256'] or sha(frozen_script) != freeze['analysis_script_sha256']:
+        raise RuntimeError('Analysis source differs from its pre-execution snapshot')
+    source_rows = json.loads((STUDY/'summary.json').read_text())
+    runs, logs, summaries = [], {}, {}
+    for row in source_rows:
+        values, log, summary = analyze_row(row)
+        key = (row['case_id'], row['variant'])
+        if key in logs:
+            raise ValueError(f'Duplicate case {key}')
+        runs.append(values); logs[key] = log; summaries[key] = summary
+    runs.sort(key=lambda row: (row['terrain'], row['phase_rad'], row['fork_pitch_offset_deg'], row['motion'], row['variant']))
+    pairs = paired_cases(runs, logs, summaries)
+    placement = placement_audit(logs, summaries)
+    adaptive = [row for row in runs if row['variant'] == 'adaptive']
+    expected = json.loads((STUDY/'provenance.json').read_text())
+    initial_audit = {
+        'max_qpos_difference_within_allocator_pairs': max(row['initial_qpos_max_abs_difference'] for row in pairs),
+        'max_qvel_difference_within_allocator_pairs': max(row['initial_qvel_max_abs_difference'] for row in pairs),
+        'max_initial_estimated_jacobian_difference_within_allocator_pairs': max(row['initial_jacobian_max_abs_difference'] for row in pairs),
+        'max_reference_xy_difference_within_allocator_pairs_m': max(row['reference_xy_max_abs_difference_m'] for row in pairs),
+        'max_time_grid_difference_within_allocator_pairs_s': max(row['time_grid_max_abs_difference_s'] for row in pairs),
+        'max_recorded_placement_carrier_rotation_error': max(row['placement_carrier_rotation_max_error'] for row in runs),
+        'max_recorded_placement_shaft_axis_error': max(row['placement_shaft_axis_max_error'] for row in runs),
+        'maximum_initial_reference_lean_error_deg': max(row['initial_reference_lean_error_deg'] for row in runs),
+        'initial_reference_lean_errors_below_1_3e_6_deg': sum(row['initial_reference_lean_error_deg'] < 1.3e-6 for row in runs),
+        'maximum_initial_body_reference_xy_error_mm': max(row['initial_tracking_error_mm'] for row in runs),
+        'nominal_pitch_offset_audit': placement,
+    }
+    report = {
+        'scope': 'Offline paired analysis of forty four-second Gazebo mechanism tests of existing controller modes; no new policy or closed-loop runs.',
+        'counts': {'expected_jobs': len(expected['jobs']), 'saved_runs': len(runs),
+                   'completed': sum(bool(row['completed']) for row in runs),
+                   'holds_baseline_only': sum(row['motion'] == 'hold' for row in runs),
+                   'moving_allocator_pairs': len(pairs), 'adaptive_runs': len(adaptive),
+                   'guarded_controller_calls': sum(row['guarded_calls'] for row in runs)},
+        'initialization_audit': initial_audit,
+        'adaptive_reference_bounds_audit': {
+            'speed_limits': BOUNDS.tolist(), 'acceleration_limits': ACCELERATION.tolist(),
+            'units': 'Joint channels rad/s and rad/s²; belt channels m/s and m/s².',
+            'absolute_representation_tolerance': 1e-6,
+            'speed_violation_samples': sum(row['reference_speed_violation_samples'] for row in adaptive),
+            'acceleration_violation_steps': sum(row['reference_acceleration_violation_steps'] for row in adaptive),
+            'max_speed_ratio': max(row['max_normalized_drive_reference'] for row in adaptive),
+            'max_acceleration_ratio': max(row['max_normalized_drive_reference_acceleration'] for row in adaptive),
+            'max_actual_joint_speed_rad_s': max(row['max_actual_joint_speed_rad_s'] for row in adaptive),
+            'caveat': 'Reference bounds do not cap actual joint motion or the final balance command.'},
+        'interpretation': [
+            'All trials finish four seconds, including large-deviation cases. Completion is not route qualification.',
+            'At the side-slope pole with zero nominal pitch offset, X travel is much better than Y; the flat pole uses belt support and is not equivalently weak.',
+            'At side-slope phase .6 and zero nominal offset, X produces the difficult transient while Y remains modest. Difficulty depends on the evolving configuration and requested direction, not a universal world-axis label.',
+            'The nominal 3° compensated pitch changes the physical fork state while preserving initial carrier and true contact geometry. It also changes cold-start estimated contact geometry and the reference orientation, so it is not an isolated large-reference-error test.',
+            'Every initial logged reference lean error is numerically zero within 1.3e-6 degrees. This campaign does not test a large initial balance-error priority rule.',
+            'Side-slope placement starts the body center about 20.83 mm from the desired XY origin; that offset and observer startup contribute to short-run metrics and are shared within matched allocator pairs.',
+            'Existing adaptive bounds suppress extreme reference speeds without uniformly improving tracking. No new weight law, particle filter, or broad Mars-route result is established.'
+        ],
+        'video_recommendations': [
+            {'cases': ['side_slope_10/phase_1.5708/pitch_0/world_x', 'side_slope_10/phase_1.5708/pitch_0/world_y'],
+             'variants': ['baseline', 'adaptive'], 'reason': 'Strong X versus weak Y from the same initial carrier configuration; show both allocator modes and retain the poor Y outcome.'},
+            {'cases': ['side_slope_10/phase_1.5708/pitch_0/world_y', 'side_slope_10/phase_1.5708/pitch_3/world_y'],
+             'variants': ['baseline', 'adaptive'], 'reason': 'Initial-state sensitivity; caption as nominal compensated fork pitch, not a 3° initial reference-attitude error.'},
+            {'cases': ['side_slope_10/phase_0.6000/pitch_0/world_x', 'side_slope_10/phase_0.6000/pitch_0/world_y'],
+             'variants': ['baseline', 'adaptive'], 'reason': 'Optional direction reversal at another initial phase; avoid implying world Y is always difficult.'}],
+        'limitations': ['Single trial per setting; no statistical significance estimate.',
+                        'Four-second mechanism tests use ideal simulated state and belt drives, not physical sensor validation.',
+                        'Allocator variants change bounds, reference-change cost, and adaptive effort together; this comparison does not isolate the scalar schedule alone.',
+                        'Nominal pitch cases change initial physical balance, observer initialization, and reference orientation together.',
+                        'No new closed-loop policy is assessed; trajectory-suite acceptance gates are not claimed.'],
+        'analysis_provenance': {'pre_execution_snapshot': freeze,
+                                'input_files': [fingerprint(STUDY/'summary.json'), fingerprint(STUDY/'provenance.json')],
+                                'run_input_files': [fingerprint(Path(row['directory'])/name) for row in runs
+                                                    for name in ('summary.json', 'rollout.npz')]},
+        'paired_cases': pairs,
+        'run_metrics_file': 'runs.csv',
+    }
+    (OUT/'summary.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
+    write_csv(OUT/'runs.csv', runs)
+    write_csv(OUT/'paired_comparison.csv', pairs)
+    plots(runs, pairs, logs)
+    print(json.dumps({'counts': report['counts'], 'initialization': initial_audit,
+                      'adaptive_bounds': report['adaptive_reference_bounds_audit']}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

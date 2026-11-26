@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "runner_sha256": "d04d985b007fc53bcfc31b014a877fea4c893cee1229b8a85cc6e537dd938a41",
+  "scope": "Read-only source review; driver not executed.",
+  "findings": [
+    "One original command call occurs inside controllertruth guards; no extra feedback, observer, predictor or dynamics evaluation for handoff.",
+    "Native raw request, native box-clipped output and native clipping are preserved before purehelper.",
+    "Handoff helper gets current estimatedsupport loads, actualpreviousmirrorinput, physicaldt and explicitoperatingcap; first3torques assertedunchanged.",
+    "Final output is returned to run_gazebo/plant.step; nextcall actualpreviousinput equals priorfinal output.",
+    "No handoffhelper instantiation orcall in baseline/reference arms.",
+    "Common requested stays native raw and common clippingdelta becomes final\u2212nativeraw. Thus common clippingdelta is totalbox+continuity projection; separate nativeclipping/handoffdelta fields preserve exactorigin.",
+    "Native actuator_saturated flags continue to indicate operating-box saturation; continuitylimited flag is separate and must be used for the candidate."
+  ],
+  "source_references": {
+    "run_isolation_case.py": "264\u2013266,297\u2013318,326\u2013344,358",
+    "src/spherical_wheel/offroad_experiments.py": "252\u2013264,291,305"
+  },
+  "blocking_findings": []
+}

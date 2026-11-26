@@ -1,0 +1,164 @@
+"""Native policy seeds use isolated present state, never future measurements."""
+import copy
+from pathlib import Path
+
+import mujoco
+import numpy as np
+import pytest
+
+from spherical_wheel.model import REPO_ROOT
+from spherical_wheel.offroad_control import OffroadController, OffroadParams
+from spherical_wheel.offroad_experiments import Workspace
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+from spherical_wheel.predictive_seed import clone_native_controller, generate_native_rollout_seed
+
+
+@pytest.fixture(scope='module')
+def ready(tmp_path_factory):
+    workspace = Workspace(directory=tmp_path_factory.mktemp('native_seed'),
+        seed_cache=REPO_ROOT/'generated/offroad/flat/control_schedule.npz')
+    mirror = workspace.mirror()
+    controller = OffroadController(mirror, workspace.design,
+        OffroadParams(mode='hardware', rolling_allocation='least_squares', track_contact_point=False),
+        phase=.3, record_diagnostics=True)
+    equilibrium = controller.ordinary['equilibrium']
+    mirror.set_state(equilibrium['qpos'], np.zeros(9), 0., equilibrium['u'])
+    controller.reset(.3)
+    controller.nominal_joints = mirror.data.qpos[7:10].copy()
+    goal = mirror.data.qpos[:2].copy()
+    path = lambda t: (goal.copy(), np.zeros(2), np.zeros(2))
+    native, info = controller.command(*path(0.))
+    predictor = EstimatedPlanePredictor(mirror)
+    predictor.update(mirror.data.qpos, mirror.data.qvel, info['estimate']['normal'],
+        info['measurement']['point_m'], sum(info['measurement']['loads_N'].values()),
+        friction=info['estimate']['friction'], command=mirror.last_input)
+    return controller, predictor, path, native
+
+
+def frozen(controller):
+    plant = controller.plant
+    return {
+        'qpos': plant.data.qpos.copy(), 'qvel': plant.data.qvel.copy(),
+        'time': plant.data.time, 'ctrl': plant.data.ctrl.copy(),
+        'warmstart': plant.data.qacc_warmstart.copy(),
+        'surfacevel': plant.model.geom_surfacevel.copy(),
+        'last_input': plant.last_input.copy(), 'last_command': plant.last_command.copy(),
+        'observer_generalized': controller.observer.generalized.copy(),
+        'observer_mean': controller.observer.interval_mean.copy(),
+        'observer_previous': copy.deepcopy(controller.observer._previous),
+        'estimator': copy.deepcopy(controller.estimator.__dict__),
+        'nominal_joints': controller.nominal_joints.copy(),
+        'vref': controller._vref.copy(), 'sync': copy.deepcopy(controller._sync),
+        'held': copy.deepcopy(controller._held),
+        'synchronizer_qpos': controller.synchronizer._data.qpos.copy(),
+        'design_cache_keys': tuple(controller.design._local),
+    }
+
+
+def equal_nested(a, b):
+    if isinstance(a, dict):
+        assert a.keys() == b.keys()
+        for key in a: equal_nested(a[key], b[key])
+    elif isinstance(a, (list, tuple)):
+        assert len(a) == len(b)
+        for x, y in zip(a, b): equal_nested(x, y)
+    elif isinstance(a, np.ndarray):
+        np.testing.assert_array_equal(a, b)
+    else:
+        assert a == b
+
+
+def test_clone_keeps_all_mutable_control_state_private(ready):
+    controller, _, _, _ = ready
+    before = frozen(controller)
+    clone = clone_native_controller(controller)
+    assert clone.design is controller.design
+    assert clone.feedback.plant is clone.plant
+    assert clone.synchronizer.plant is clone.plant
+    assert clone.observer.model is clone.plant.model
+    assert clone.observer._data is not controller.observer._data
+    assert clone.synchronizer._data is not controller.synchronizer._data
+    assert clone.plant.data.ncon == 0
+    clone.plant.data.qpos[0] += .1
+    clone.plant.model.geom_surfacevel[:] += 1.
+    clone.observer.generalized[:] += 2.
+    clone.estimator.normal[:] += .1
+    clone.nominal_joints[:] += .2
+    clone._held['gain'][:] += .3
+    clone.synchronizer._data.qpos[:] += .4
+    equal_nested(before, frozen(controller))
+
+
+def test_seed_is_deterministic_bounded_and_does_not_mutate_live_history(ready):
+    controller, predictor, path, native = ready
+    before = frozen(controller)
+    plane, normal = predictor._plane_point.copy(), predictor.normal.copy()
+    first, detail = generate_native_rollout_seed(controller, predictor, path, 0., 3, .02,
+                                                current_command=native)
+    second, _ = generate_native_rollout_seed(controller, predictor, path, 0., 3, .02,
+                                            current_command=native)
+    assert first.shape == (3, 5)
+    np.testing.assert_array_equal(first, second)
+    assert np.all(abs(first) <= predictor.bounds)
+    fine = np.array(detail['fine_commands'])
+    np.testing.assert_array_equal(fine[0], native)
+    np.testing.assert_array_equal(first, fine.reshape(3, 4, 5).mean(axis=1))
+    assert detail['fine_steps'] == 12
+    assert detail['coarse_sequence_requires_independent_rescore']
+    np.testing.assert_array_equal(predictor._plane_point, plane)
+    np.testing.assert_array_equal(predictor.normal, normal)
+    equal_nested(before, frozen(controller))
+
+
+def test_current_command_avoids_duplicate_anchor_update_and_bypasses_wrapper(ready, monkeypatch):
+    controller, predictor, path, native = ready
+    original = OffroadController.command
+    times = []
+    def original_spy(clone, xy, velocity, acceleration):
+        assert clone is not controller
+        times.append(clone.plant.data.time)
+        return original(clone, xy, velocity, acceleration)
+    def wrapper(*args, **kwargs):
+        raise AssertionError('Seed entered live experiment command wrapper')
+    monkeypatch.setattr(OffroadController, 'command', wrapper)
+    generate_native_rollout_seed(controller, predictor, path, 0., 1, .02,
+        current_command=native, command_function=original_spy)
+    np.testing.assert_allclose(times, [.005, .010, .015], atol=1e-14)
+
+
+def test_future_feedback_never_reads_solved_contacts_or_live_ground(ready, monkeypatch):
+    controller, predictor, path, native = ready
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Seed read solved contacts')
+    monkeypatch.setattr(mujoco, 'mj_contactForce', forbidden)
+    monkeypatch.setattr('spherical_wheel.offroad_control.measure_contact', forbidden)
+    monkeypatch.setattr('spherical_wheel.offroad_control.records_from_mujoco', forbidden)
+    monkeypatch.setattr('spherical_wheel.offroad_control.rolling_feedforward', forbidden)
+    monkeypatch.setattr('spherical_wheel.synchronization.ContactSynchronizer._normal_loads', forbidden)
+    moving = lambda t: (path(t)[0], np.array([.001, 0.]), np.zeros(2))
+    sequence, _ = generate_native_rollout_seed(controller, predictor, moving, 0., 2, .02,
+                                              current_command=native)
+    assert np.isfinite(sequence).all()
+    assert controller.plant.ground is None and controller.plant.terrain is None
+
+
+@pytest.mark.parametrize('steps,period', [(0, .02), (True, .02), (1.5, .02), (1, .007), (1, 0.), (1, np.nan)])
+def test_invalid_horizon_or_cadence_is_rejected(ready, steps, period):
+    controller, predictor, path, native = ready
+    with pytest.raises(ValueError):
+        generate_native_rollout_seed(controller, predictor, path, 0., steps, period,
+                                     current_command=native)
+
+
+def test_already_updated_anchor_requires_its_current_command(ready):
+    controller, predictor, path, _ = ready
+    with pytest.raises(ValueError, match='current_command'):
+        generate_native_rollout_seed(controller, predictor, path, 0., 1, .02)
+
+
+def test_nonfinite_or_out_of_bounds_current_command_is_rejected(ready):
+    controller, predictor, path, _ = ready
+    for value in (np.full(5, np.nan), np.full(5, 100.), np.zeros(4)):
+        with pytest.raises(ValueError, match='bounded'):
+            generate_native_rollout_seed(controller, predictor, path, 0., 1, .02,
+                                         current_command=value)

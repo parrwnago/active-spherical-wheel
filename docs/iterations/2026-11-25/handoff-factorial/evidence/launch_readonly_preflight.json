@@ -1,0 +1,82 @@
+{
+  "preflight": "Protocol/jobs/baseline sources and raw input hashes verified; no physics.",
+  "protocol_sha256": "fb616686edbfbca9ac6f2b3fbfb8da152be52513279fd208d825d67480e0b86f",
+  "cases": [
+    "baseline",
+    "feedback_shares",
+    "sync_off",
+    "both"
+  ],
+  "source_references": 55,
+  "baseline_inputs": 5,
+  "commands": {
+    "baseline": [
+      "/home/parrwnago/active-spherical-wheel/build/tools/bin/micromamba",
+      "run",
+      "-p",
+      "/home/parrwnago/active-spherical-wheel/build/gazebo-env",
+      "env",
+      "MUJOCO_GL=egl",
+      "OPENBLAS_NUM_THREADS=1",
+      "OMP_NUM_THREADS=1",
+      "python",
+      "-u",
+      "/home/parrwnago/active-spherical-wheel/results/handoff_factorial_20261125/run_handoff_factorial.py",
+      "--output",
+      "/home/parrwnago/active-spherical-wheel/results/handoff_factorial_20261125",
+      "--arm",
+      "baseline"
+    ],
+    "feedback_shares": [
+      "/home/parrwnago/active-spherical-wheel/build/tools/bin/micromamba",
+      "run",
+      "-p",
+      "/home/parrwnago/active-spherical-wheel/build/gazebo-env",
+      "env",
+      "MUJOCO_GL=egl",
+      "OPENBLAS_NUM_THREADS=1",
+      "OMP_NUM_THREADS=1",
+      "python",
+      "-u",
+      "/home/parrwnago/active-spherical-wheel/results/handoff_factorial_20261125/run_handoff_factorial.py",
+      "--output",
+      "/home/parrwnago/active-spherical-wheel/results/handoff_factorial_20261125",
+      "--arm",
+      "feedback_shares"
+    ],
+    "sync_off": [
+      "/home/parrwnago/active-spherical-wheel/build/tools/bin/micromamba",
+      "run",
+      "-p",
+      "/home/parrwnago/active-spherical-wheel/build/gazebo-env",
+      "env",
+      "MUJOCO_GL=egl",
+      "OPENBLAS_NUM_THREADS=1",
+      "OMP_NUM_THREADS=1",
+      "python",
+      "-u",
+      "/home/parrwnago/active-spherical-wheel/results/handoff_factorial_20261125/run_handoff_factorial.py",
+      "--output",
+      "/home/parrwnago/active-spherical-wheel/results/handoff_factorial_20261125",
+      "--arm",
+      "sync_off"
+    ],
+    "both": [
+      "/home/parrwnago/active-spherical-wheel/build/tools/bin/micromamba",
+      "run",
+      "-p",
+      "/home/parrwnago/active-spherical-wheel/build/gazebo-env",
+      "env",
+      "MUJOCO_GL=egl",
+      "OPENBLAS_NUM_THREADS=1",
+      "OMP_NUM_THREADS=1",
+      "python",
+      "-u",
+      "/home/parrwnago/active-spherical-wheel/results/handoff_factorial_20261125/run_handoff_factorial.py",
+      "--output",
+      "/home/parrwnago/active-spherical-wheel/results/handoff_factorial_20261125",
+      "--arm",
+      "both"
+    ]
+  }
+}

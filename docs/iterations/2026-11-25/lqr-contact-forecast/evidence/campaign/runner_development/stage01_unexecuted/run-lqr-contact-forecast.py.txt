@@ -1,0 +1,445 @@
+"""I40 native-LQR Gazebo trajectories and independent fine-feedback forecasts.
+
+The live controller is unchanged. First collect exact measured state, applied
+inputs and evaluation-only contacts. Then reconstruct native controller history
+from past/current measurements and forecast privately at 5 ms. Forecasting never
+receives the actual future or a terrain object. Existing outputs are preserved.
+"""
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from contextlib import ExitStack
+from datetime import datetime, timezone
+from importlib.metadata import version
+from pathlib import Path
+from unittest.mock import patch
+import argparse
+import copy
+import hashlib
+import json
+import subprocess
+import traceback
+
+import mujoco
+import numpy as np
+
+from spherical_wheel.model import REPO_ROOT, load_config
+from spherical_wheel.offroad_control import OffroadController, OffroadParams
+from spherical_wheel.offroad_experiments import ReferencePath, Workspace, save_run
+from spherical_wheel.gazebo.experiments import GazeboWorkspace, run_gazebo
+from spherical_wheel.terrain import Terrain
+import spherical_wheel.offroad_experiments as experiments
+
+
+LABELS = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+GUARDS = ('spherical_wheel.offroad_control.measure_contact',
+          'spherical_wheel.offroad_control.records_from_mujoco',
+          'spherical_wheel.offroad_control.rolling_feedforward',
+          'spherical_wheel.synchronization.ContactSynchronizer._normal_loads',
+          'mujoco.mj_contactForce')
+PARAMETERS = dict(mode='hardware', rolling_allocation='least_squares', track_contact_point=False)
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def safe(value):
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, dict):
+        return {str(k): safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [safe(v) for v in value]
+    if isinstance(value, np.ndarray):
+        return safe(value.tolist())
+    if isinstance(value, np.generic):
+        return safe(value.item())
+    if isinstance(value, float) and not np.isfinite(value):
+        return None
+    return value
+
+
+def save_json(path, value):
+    Path(path).write_text(json.dumps(safe(value), indent=2, allow_nan=False) + '\n')
+
+
+class WaypointPath:
+    """C2 piecewise quintic references with zero endpoint velocity/acceleration."""
+    def __init__(self, waypoints, leg_duration_s, start_s=.8):
+        self.waypoints = np.asarray(waypoints, float)
+        self.leg_duration_s = float(leg_duration_s)
+        self.start_s = float(start_s)
+        self.duration_s = (len(self.waypoints)-1)*self.leg_duration_s
+        self.origin = np.zeros(2)
+        self.direction = np.array([1., 0.])
+
+    def __call__(self, t):
+        elapsed = float(np.clip(t-self.start_s, 0., self.duration_s))
+        index = min(int(elapsed/self.leg_duration_s), len(self.waypoints)-2)
+        u = (elapsed-index*self.leg_duration_s)/self.leg_duration_s
+        s, ds, dds = 10*u**3-15*u**4+6*u**5, 30*u**2-60*u**3+30*u**4, 60*u-180*u**2+120*u**3
+        delta = self.waypoints[index+1]-self.waypoints[index]
+        return (self.origin+self.waypoints[index]+s*delta,
+                ds*delta/self.leg_duration_s, dds*delta/self.leg_duration_s**2)
+
+    def spec(self):
+        return dict(kind='waypoint_quintic', waypoints=self.waypoints.tolist(),
+                    leg_duration_s=self.leg_duration_s, start_s=self.start_s,
+                    duration_s=self.duration_s, origin=self.origin.tolist())
+
+
+def make_path(job):
+    spec = job['path']
+    if spec['kind'] == 'straight':
+        return ReferencePath(**{k: v for k, v in spec.items() if k != 'kind'})
+    if spec['kind'] == 'waypoint_quintic':
+        return WaypointPath(spec['waypoints'], spec['leg_duration_s'], spec['start_s'])
+    if spec['kind'] == 'mars_route':
+        from spherical_wheel.gazebo.mars import build_route
+        path, yaw = build_route(spec['route'])
+        assert yaw == job['yaw_deg']
+        return path
+    raise ValueError(spec)
+
+
+def forbidden(*unused, **ignored):
+    raise AssertionError('Native control attempted a solved-contact or terrain read')
+
+
+def guards():
+    stack = ExitStack()
+    for target in GUARDS:
+        stack.enter_context(patch(target, forbidden))
+    return stack
+
+
+def versions():
+    return {name: version(name) for name in ('numpy', 'scipy', 'mujoco')}
+
+
+def snapshot(directory, stage, job, output):
+    paths = [Path(__file__).resolve(), REPO_ROOT/'pyproject.toml',
+             *sorted((REPO_ROOT/'src/spherical_wheel').rglob('*.py')),
+             *sorted((REPO_ROOT/'config').glob('*.yaml')),
+             output/'protocol.json', output/'campaign/jobs.json']
+    folder = directory/('source_snapshot' if stage == 'simulate' else 'forecast_source_snapshot')
+    sources = []
+    for source in paths:
+        rel = source.relative_to(REPO_ROOT)
+        target = folder/rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+        sources.append({'origin': str(rel), 'snapshot': str(target.relative_to(directory)),
+                        'sha256': sha(source)})
+    record = dict(iteration='I-40', stage=stage, captured_before_execution_utc=datetime.now(timezone.utc).isoformat(),
+                  git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+                  case=job, sources=sources, versions=versions(), parameters=OffroadParams(**PARAMETERS).as_dict(),
+                  measurement_boundary='Exact simulated qpos/qvel and known prior applied inputs; contacts from observer/locator only. Gazebo contact records are evaluation-only.',
+                  scope='One native LQR case; forecasting is a separate private-model diagnostic, never a control input.')
+    save_json(directory/('provenance.json' if stage == 'simulate' else 'forecast_provenance.json'), record)
+    return record
+
+
+def truth_contact_row(plant, measurement):
+    loads = np.zeros(4)
+    sums = np.zeros((4, 3))
+    counts = np.zeros(4, int)
+    for record in plant.contact_records():
+        name = record['name']
+        for k, label in enumerate(LABELS):
+            if name == label or name.startswith(label+'_'):
+                force = max(0., float(record['normal_force']))
+                loads[k] += force
+                sums[k] += force*np.asarray(record['pos'])
+                counts[k] += int(force > .05)
+                break
+    expected = np.array([measurement['loads_N'][name] for name in LABELS])
+    np.testing.assert_allclose(loads, expected, atol=1e-10, rtol=1e-10)
+    points = np.full((4, 3), np.nan)
+    mask = loads > 1e-12
+    points[mask] = sums[mask]/loads[mask, None]
+    return {'truth_time_s': float(plant.data.time), 'truth_patch_loads_N': loads,
+            'truth_patch_points_m': points, 'truth_patch_contact_counts': counts,
+            'truth_equivalent_point_m': np.asarray(measurement['point_m']).copy()}
+
+
+def simulate(job, output):
+    directory = output/'campaign/runs'/job['case_id']
+    if directory.exists():
+        raise FileExistsError(f'Preserve prior case: {directory}')
+    directory.mkdir(parents=True)
+    provenance = snapshot(directory, 'simulate', job, output)
+    if job['terrain'] == 'marsyard2021':
+        from spherical_wheel.gazebo.mars import _workspace
+        workspace, terrain = _workspace(output/'campaign/_workspaces'/job['case_id'], [job['path']['route']])
+    else:
+        workspace = GazeboWorkspace(load_config(), output/'campaign/_workspaces'/job['case_id'],
+            seed_cache=REPO_ROOT/'generated/offroad/flat/control_schedule.npz', heightmap_cell_m=.04,
+            plant_options={'visual_bounds': (-.7, .7, -.7, .7)})
+        terrain = Terrain(name=job['terrain'], features=[{'type': 'plane', 'slope':
+            [0., float(np.tan(np.deg2rad(10.))) if job['terrain'] == 'side_slope_10' else 0.]}])
+    path = make_path(job)
+    rows, truth = [], []
+    activation = {}
+    original = OffroadController.command
+    evaluate = experiments.measure_contact
+
+    def measured(plant):
+        measurement = evaluate(plant)
+        truth.append(truth_contact_row(plant, measurement))
+        return measurement
+
+    def command(controller, xy, velocity, acceleration):
+        mirror = controller.plant
+        assert mirror.ground is None and mirror.terrain is None and mirror.data.ncon == 0
+        now = float(mirror.data.time)
+        if job['reanchor_at_motion_start'] and not activation and now >= path.start_s-1e-9:
+            path.origin = mirror.data.qpos[:2].copy()
+            xy[:] = path(now)[0]
+            activation.update(time_s=now, origin=path.origin.copy(), source='measured state at motion start; no state/observer reset')
+        nominal = controller.nominal_joints.copy()
+        previous = mirror.last_input.copy()
+        with guards():
+            applied, info = original(controller, xy, velocity, acceleration)
+        rows.append(dict(time_s=now, exact_qpos=mirror.data.qpos.copy(), exact_qvel=mirror.data.qvel.copy(),
+            exact_applied=applied.copy(), exact_previous_applied=previous,
+            exact_native_requested=np.asarray(info['requested']).copy(),
+            exact_observer_wrench=np.r_[controller.observer.wrench()],
+            exact_estimated_normal=np.asarray(info['estimate']['normal']).copy(),
+            exact_nominal_joints_before=nominal, exact_reference_xy=np.asarray(xy).copy(),
+            exact_reference_velocity_m_s=np.asarray(velocity).copy(),
+            exact_reference_acceleration_m_s2=np.asarray(acceleration).copy()))
+        if len(rows) % 400 == 0:
+            print(json.dumps({'stage': 'simulate', 'case_id': job['case_id'], 'time_s': now}), flush=True)
+        return applied, info
+
+    try:
+        with patch.object(OffroadController, 'command', command), patch.object(experiments, 'measure_contact', measured):
+            log, summary = run_gazebo(workspace, terrain, path, OffroadParams(**PARAMETERS),
+                phase=job['phase_rad'], yaw_deg=job['yaw_deg'], duration_s=job['duration_s'], record_diagnostics=True)
+        assert len(rows) == len(truth) == len(log['time_s'])
+        extra = {k: np.asarray([row[k] for row in rows]) for k in rows[0]}
+        extra.update({k: np.asarray([row[k] for row in truth]) for k in truth[0]})
+        np.testing.assert_array_equal(extra['time_s'], extra['truth_time_s'])
+        summary['contact_forecast_case'] = dict(case=job, actual_path=path.spec(), activation=activation,
+            guarded_controller_calls=len(rows), forecast_affects_control=False,
+            cold_observer_window_s=[0., .3], truth_contact_logging='Evaluator alias after guarded control, never available to controller.')
+        if job['terrain'] == 'marsyard2021':
+            from spherical_wheel.gazebo.mars import evaluate_route, route_closed
+            summary = evaluate_route(log, summary, path, terrain, route_closed(job['path']['route']))
+        save_run(directory, log, summary, terrain)
+        np.savez_compressed(directory/'precision.npz', **extra)
+        plant = workspace.plant(terrain)
+        provenance.update(actual_path=path.spec(), activation=activation,
+            initial_nominal_joints=extra['exact_nominal_joints_before'][0],
+            model_mass_kg=plant.total_mass, weight_N=plant.total_mass*9.81,
+            input_bounds=plant.bounds.copy(), controller_dt_s=plant.dt, physics_step_s=.001,
+            gain_cache_sha256=sha(workspace.cache_path), engine=summary['engine'],
+            generated_sha256={name: sha(directory/name) for name in ('rollout.npz', 'precision.npz', 'summary.json', 'terrain.json')})
+        save_json(directory/'provenance.json', provenance)
+        result = dict(stage='simulate', case_id=job['case_id'], completed=summary['completed'], failure=summary['failure'],
+            duration_s=summary['completed_duration_s'], requested_duration_s=job['duration_s'],
+            rms_tracking_mm=1000*summary['tracking']['rms_error_while_moving_m'],
+            final_error_mm=1000*summary['tracking']['final_error_m'],
+            guarded_calls=len(rows), directory=str(directory.relative_to(output)))
+        print(json.dumps(safe(result)), flush=True)
+        return result
+    except Exception:
+        save_json(directory/'execution_failure.json', {'stage': 'simulate', 'traceback': traceback.format_exc(), 'rows': len(rows)})
+        if rows:
+            np.savez_compressed(directory/'partial_precision.npz', **{k: np.asarray([r[k] for r in rows]) for k in rows[0]})
+        raise
+    finally:
+        if workspace._current is not None:
+            workspace._current[1].close()
+
+
+def select_anchors(job, exact, weight):
+    t = exact['time_s']
+    dt = float(np.median(np.diff(t)))
+    earliest, latest = job['uniform_anchor_start_s'], float(t[-1]-.2)
+    selected = []
+    if latest >= earliest-1e-9:
+        indices = sorted(set(int(np.argmin(abs(t-x))) for x in np.linspace(earliest, latest, 12)))
+        selected.extend({'anchor_index': i, 'anchor_time_s': float(t[i]), 'selection_kind': 'uniform'} for i in indices)
+    loads = exact['truth_patch_loads_N']
+    threshold = max(.05, .05*weight)
+    family = np.where(loads.max(axis=1) >= threshold, np.where(loads.argmax(axis=1) < 2, 0, 1), -1)
+    cuts = np.r_[0, np.flatnonzero(np.diff(family))+1, len(t)]
+    stable, events = [], []
+    for start, end in zip(cuts[:-1], cuts[1:]):
+        if family[start] < 0 or t[end-1]-t[start] < .015-1e-9:
+            continue
+        stable.append({'start_index': int(start), 'end_index': int(end-1), 'family': int(family[start])})
+        if len(stable) >= 2 and stable[-2]['family'] != stable[-1]['family']:
+            events.append({'time_s': float(t[start]), 'index': int(start),
+                'from_family': ('shell', 'belt')[stable[-2]['family']],
+                'to_family': ('shell', 'belt')[stable[-1]['family']]})
+    events = [e for e in events if e['time_s'] >= .3-1e-9]
+    for event_index, event in enumerate(events[:4]):
+        for lead in (.1, .05):
+            target = event['time_s']-lead
+            if target < earliest-1e-9 or target > latest+1e-9:
+                continue
+            i = int(np.argmin(abs(t-target)))
+            selected.append({'anchor_index': i, 'anchor_time_s': float(t[i]),
+                'selection_kind': 'predeclared_event', 'event_index': event_index,
+                'event_time_s': event['time_s'], 'lead_s': lead})
+    candidate = events[0] if events else None
+    if candidate is not None:
+        candidate = dict(candidate, isolated_no_other_stable_family_event_within_100ms=
+            not any(abs(e['time_s']-candidate['time_s']) <= .1+1e-9 for e in events[1:]))
+    return selected, {'stable_load_threshold_N': threshold, 'dwell_s': .015, 'dwell_sample_convention': 'last-first >=15ms',
+        'stable_family_events': events, 'controlled_candidate_first_postcold_event': candidate,
+        'selection_scope': 'Truth-conditioned evaluation windows are a separate stratum; future truth is never passed to forecasting.'}
+
+
+def controller_fingerprint(controller):
+    p, o, e = controller.plant, controller.observer, controller.estimator
+    value = dict(qpos=p.data.qpos, qvel=p.data.qvel, time_s=p.data.time, last_input=p.last_input,
+                 ctrl=p.data.ctrl, surfacevel=p.model.geom_surfacevel, nominal=controller.nominal_joints,
+                 vref=controller._vref, observer_generalized=o.generalized, observer_previous=o._previous,
+                 observer_mean=o.interval_mean, estimator_normal=e.normal, estimator_friction=e.friction,
+                 sync=controller._sync, held=controller._held)
+    return hashlib.sha256(json.dumps(safe(value), sort_keys=True).encode()).hexdigest()
+
+
+def forecast(job, output):
+    # Import before guards: private contact logging binds its private-force API;
+    # native policy still cannot call the patched live-contact APIs.
+    from spherical_wheel.contact_prediction import forecast_native_contacts
+    from spherical_wheel.predictive_model import EstimatedPlanePredictor
+    directory = output/'campaign/runs'/job['case_id']
+    if (directory/'forecasts.json').exists() or (directory/'forecast_provenance.json').exists():
+        raise FileExistsError(f'Preserve prior forecast stage: {directory}')
+    actual = json.loads((directory/'provenance.json').read_text())
+    assert versions() == actual['versions'], 'Use the actual-run numerical environment for history replay'
+    for name, expected in actual['generated_sha256'].items():
+        assert sha(directory/name) == expected, name
+    provenance = snapshot(directory, 'forecast', job, output)
+    with np.load(directory/'precision.npz') as z:
+        exact = {k: z[k].copy() for k in z.files}
+    anchors, selection = select_anchors(job, exact, actual['weight_N'])
+    save_json(directory/'anchor_selection.json', {'anchors': anchors, **selection})
+    groups = {}
+    for anchor in anchors:
+        groups.setdefault(anchor['anchor_index'], []).append(anchor)
+    rows, failures = [], []
+    workspace = Workspace(load_config(), output/'campaign/_forecast_workspaces'/job['case_id'],
+        seed_cache=REPO_ROOT/'generated/offroad/flat/control_schedule.npz')
+    mirror = workspace.mirror()
+    mirror.set_state(exact['exact_qpos'][0], exact['exact_qvel'][0], exact['time_s'][0], exact['exact_previous_applied'][0])
+    controller = OffroadController(mirror, workspace.design, OffroadParams(**PARAMETERS),
+        phase=job['phase_rad'], record_diagnostics=True)
+    controller.nominal_joints = np.asarray(actual['initial_nominal_joints'], float).copy()
+    path = make_path(job)
+    original = OffroadController.command
+    activation_done = False
+    maximum = dict(applied=0., requested=0., observer_wrench=0., estimated_normal=0., nominal_joints=0., reference=0.)
+    try:
+        with guards():
+            for index in range(max(groups, default=-1)+1):
+                now = float(exact['time_s'][index])
+                mirror.set_state(exact['exact_qpos'][index], exact['exact_qvel'][index], now, exact['exact_previous_applied'][index])
+                if job['reanchor_at_motion_start'] and not activation_done and now >= path.start_s-1e-9:
+                    path.origin = exact['exact_reference_xy'][index].copy()
+                    activation_done = True
+                reference = path(now)
+                maximum['nominal_joints'] = max(maximum['nominal_joints'], float(np.max(abs(controller.nominal_joints-exact['exact_nominal_joints_before'][index]))))
+                command, info = original(controller, *reference)
+                pairs = {'applied': (command, exact['exact_applied'][index]),
+                    'requested': (info['requested'], exact['exact_native_requested'][index]),
+                    'observer_wrench': (np.r_[controller.observer.wrench()], exact['exact_observer_wrench'][index]),
+                    'estimated_normal': (info['estimate']['normal'], exact['exact_estimated_normal'][index]),
+                    'reference': (np.r_[*reference], np.r_[exact['exact_reference_xy'][index], exact['exact_reference_velocity_m_s'][index], exact['exact_reference_acceleration_m_s2'][index]])}
+                for key, (value, target) in pairs.items():
+                    maximum[key] = max(maximum[key], float(np.max(abs(np.asarray(value)-target))))
+                if max(maximum.values()) > 1e-7:
+                    raise RuntimeError(f'Native history reconstruction mismatch at {now}: {maximum}')
+                if index in groups:
+                    item = dict(anchor_time_s=now, anchor_index=index,
+                        history_audit=dict(samples=index+1, maximum_absolute_differences=maximum.copy(), tolerance=1e-7, passed=True),
+                        anchor_estimated_patch_loads_N=np.asarray(info['estimated_support_loads_N']).copy())
+                    before = controller_fingerprint(controller)
+                    try:
+                        predictor = EstimatedPlanePredictor(mirror, max_plane_offset_m=.003, calibration_iterations=20)
+                        calibration = predictor.update(mirror.data.qpos, mirror.data.qvel, info['estimate']['normal'],
+                            info['measurement']['point_m'], sum(info['measurement']['loads_N'].values()),
+                            friction=info['estimate']['friction'], command=mirror.last_input)
+                        predicted = forecast_native_contacts(controller, predictor, path, now, .2,
+                            current_command=command, command_function=original)
+                        assert controller_fingerprint(controller) == before, 'Forecast mutated reconstructed source state'
+                        item.update(calibration=calibration, forecast=predicted, source_state_unchanged=True, success=True)
+                    except Exception as error:
+                        assert controller_fingerprint(controller) == before, 'Failed forecast mutated reconstructed source state'
+                        item.update(success=False, failure=str(error), traceback=traceback.format_exc())
+                    for anchor in groups[index]:
+                        row = dict(item, **{k: v for k, v in anchor.items() if k not in ('anchor_time_s', 'anchor_index')})
+                        rows.append(row)
+                        if not row['success']:
+                            failures.append({k: row[k] for k in ('anchor_time_s', 'selection_kind', 'failure')})
+                    print(json.dumps({'stage': 'forecast', 'case_id': job['case_id'], 'anchor_time_s': now,
+                                      'success': item['success'], 'failure': item.get('failure')}), flush=True)
+                if index < max(groups, default=-1):
+                    controller.after_step()
+    except Exception as error:
+        failures.append({'stage': 'history_replay', 'failure': str(error), 'traceback': traceback.format_exc()})
+        completed = {(r['anchor_index'], r['selection_kind']) for r in rows}
+        for anchor in anchors:
+            if (anchor['anchor_index'], anchor['selection_kind']) not in completed:
+                rows.append(dict(anchor, success=False, failure='history_reconstruction_failed', history_audit=dict(passed=False, maximum_absolute_differences=maximum.copy())))
+    result = dict(iteration='I-40', case_id=job['case_id'], rows=rows, failures=failures,
+        planned_anchors=len(anchors), successful_rows=sum(r['success'] for r in rows), selection=selection,
+        measurement_boundary='Forecaster receives reconstructed current controller, observer-fitted private plane and known reference only. Future truth is used only to select labeled diagnostic windows and score results.',
+        timing='Fine5ms feedback and commands retained; frozen local plane; no20ms input averaging.')
+    save_json(directory/'forecasts.json', result)
+    provenance.update(actual_run_provenance_sha256=sha(directory/'provenance.json'),
+        precision_sha256=sha(directory/'precision.npz'), planned_anchors=len(anchors), successful_rows=result['successful_rows'],
+        generated_sha256={name: sha(directory/name) for name in ('forecasts.json', 'anchor_selection.json')})
+    save_json(directory/'forecast_provenance.json', provenance)
+    summary = dict(stage='forecast', case_id=job['case_id'], planned_anchors=len(anchors),
+        successful_rows=result['successful_rows'], failures=len(failures), directory=str(directory.relative_to(output)))
+    print(json.dumps(summary), flush=True)
+    return summary
+
+
+def execute(job, output, stage):
+    return simulate(job, output) if stage == 'simulate' else forecast(job, output)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--stage', choices=('simulate', 'forecast'), required=True)
+    parser.add_argument('--case', action='append')
+    parser.add_argument('--workers', type=int, default=3)
+    args = parser.parse_args()
+    output = args.output.resolve()
+    protocol = output/'protocol.json'
+    jobs_file = output/'campaign/jobs.json'
+    if not protocol.is_file() or not jobs_file.is_file():
+        parser.error('Declare protocol.json and campaign/jobs.json before execution')
+    jobs = json.loads(jobs_file.read_text())['cases']
+    selected = [j for j in jobs if args.case is None or j['case_id'] in args.case]
+    if not selected or args.workers < 1 or (args.case and set(args.case)-{j['case_id'] for j in jobs}):
+        parser.error('Select declared cases and a positive worker count')
+    results = []
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        pending = {pool.submit(execute, job, output, args.stage): job for job in selected}
+        for future in as_completed(pending):
+            job = pending[future]
+            try:
+                result = future.result()
+            except Exception:
+                result = dict(stage=args.stage, case_id=job['case_id'], execution_failure=traceback.format_exc())
+            results.append(result)
+            save_json(output/'campaign'/f'{args.stage}_summary.json', results)
+    manifest = dict(iteration='I-40', stage=args.stage, cases=jobs,
+        directories=[str(Path('campaign/runs')/job['case_id']) for job in jobs],
+        scope='Eight declared fresh nativeLQR cases; private forecasts and reused records are not additional Gazebo executions.')
+    save_json(output/'campaign/case_manifest.json', manifest)
+    if any('execution_failure' in row for row in results):
+        raise SystemExit('One or more stages failed; preserved failure records and partial outputs.')
+
+
+if __name__ == '__main__':
+    main()

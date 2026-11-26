@@ -1,0 +1,328 @@
+"""Bounded finite-horizon control of a supplied affine dynamic model.
+
+The model describes perturbations about the current measured state, with
+``x[0] = 0`` and ``x[k+1] = A[k]*x[k] + B[k]*(u[k]-anchor_u[k]) + f0[k]``.
+Matrices, affine drift and input anchors can be constant or stage-varying;
+all states and references must share one fixed tangent-coordinate chart.
+For the wheel, inputs are three torques and two ideal belt surface speeds.
+This module does not estimate contacts or construct a dynamics model.
+
+OSQP is imported only when solving. Input limits are hard constraints; state
+tracking and command changes are costs, not hard lean/slew guarantees. A
+successful QP is not a certificate of robot-level stability or model accuracy.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from time import perf_counter
+
+import numpy as np
+from scipy import sparse
+
+
+ROBOT_STATE_SCALES = (.05, .05, .005, .10, .10, .5, 1., 1., 1.,
+                      .10, .10, .1, 1., 1., 1., 10., 10., 10.)
+ROBOT_STATE_WEIGHTS = (2., 2., .1, 50., 50., 0., 0., 0., 0.,
+                       2., 2., .05, 5., 5., .01, .005, .005, .005)
+
+
+def _finite(value, name, shape=None):
+    if np.iscomplexobj(value):
+        raise ValueError(f'{name} must be real')
+    result = np.asarray(value, dtype=float)
+    if shape is not None and result.shape != shape:
+        raise ValueError(f'{name} must have shape {shape}, received {result.shape}')
+    if not np.isfinite(result).all():
+        raise ValueError(f'{name} must be finite')
+    return result
+
+
+def _diagonal(value, size, name):
+    array = _finite(value, name)
+    if array.ndim == 0:
+        array = np.full(size, float(array))
+    if array.shape != (size,) or np.any(array < 0):
+        raise ValueError(f'{name} must be nonnegative scalar or length {size}')
+    return array
+
+
+@dataclass(frozen=True)
+class AffineMPCSettings:
+    horizon_steps: int = 20
+    step_s: float = .02
+    state_scales: tuple[float, ...] = ROBOT_STATE_SCALES
+    state_weights: tuple[float, ...] = ROBOT_STATE_WEIGHTS
+    input_weight: float | tuple[float, ...] = .02
+    change_weight: float | tuple[float, ...] = .05
+    terminal_multiplier: float = 4.
+    eps_abs: float = 1e-6
+    eps_rel: float = 1e-6
+    max_iter: int = 4000
+    bound_tolerance: float = 1e-5
+    regularization: float = 1e-9
+    polishing: bool = True
+
+    def __post_init__(self):
+        if not isinstance(self.horizon_steps, int) or isinstance(self.horizon_steps, bool) or self.horizon_steps < 1:
+            raise ValueError('horizon_steps must be a positive integer')
+        if not isinstance(self.max_iter, int) or isinstance(self.max_iter, bool) or self.max_iter < 1:
+            raise ValueError('max_iter must be a positive integer')
+        for name in ('step_s', 'eps_abs', 'eps_rel', 'bound_tolerance'):
+            value = getattr(self, name)
+            if not np.isfinite(value) or value <= 0:
+                raise ValueError(f'{name} must be finite and positive')
+        for name in ('terminal_multiplier', 'regularization'):
+            value = getattr(self, name)
+            if not np.isfinite(value) or value < 0:
+                raise ValueError(f'{name} must be finite and nonnegative')
+        scales = _finite(self.state_scales, 'state_scales')
+        weights = _finite(self.state_weights, 'state_weights')
+        if scales.ndim != 1 or not scales.size or np.any(scales <= 0):
+            raise ValueError('state_scales must be a positive nonempty vector')
+        if weights.shape != scales.shape or np.any(weights < 0):
+            raise ValueError('state_weights must match scales and be nonnegative')
+        for name in ('input_weight', 'change_weight'):
+            array = _finite(getattr(self, name), name)
+            if array.ndim > 1 or not array.size or np.any(array < 0):
+                raise ValueError(f'{name} must be a nonnegative scalar or vector')
+
+
+@dataclass
+class MPCResult:
+    command: np.ndarray | None
+    success: bool
+    states: np.ndarray | None
+    inputs: np.ndarray | None
+    diagnostics: dict
+
+
+class AffineMPC:
+    """Solve a condensed convex QP, returning no command on solver failure.
+
+    ``states`` and ``inputs`` in a successful result have N rows: states are
+    x[1]..x[N], inputs are absolute physical u[0]..u[N-1]. Costs penalize
+    ``(x-target)/state_scales``, ``u/bounds`` and ``delta_u/bounds``. The final
+    state weight is multiplied by ``terminal_multiplier``. An explicit PSD
+    ``terminal_weight`` overrides that final weight in physical state units.
+    """
+
+    def __init__(self, settings=None):
+        self.settings = settings or AffineMPCSettings()
+        self._solver = None
+        self._solver_size = None
+        self._warm_inputs = None
+
+    @staticmethod
+    def _prediction(A, B_normalized, drift, horizon):
+        nx, nu = B_normalized.shape
+        mapping = np.zeros((horizon*nx, horizon*nu))
+        offset = np.zeros((horizon, nx))
+        impulse = B_normalized.copy()
+        for lag in range(horizon):
+            for start in range(horizon-lag):
+                row = start+lag
+                mapping[row*nx:(row+1)*nx, start*nu:(start+1)*nu] = impulse
+            impulse = A@impulse
+        running = np.zeros(nx)
+        for stage in range(horizon):
+            running = A@running+drift
+            offset[stage] = running
+        return mapping, offset.ravel()
+
+    @staticmethod
+    def _prediction_varying(A, B_normalized, drift):
+        horizon, nx, nu = B_normalized.shape
+        mapping = np.zeros((horizon*nx, horizon*nu))
+        offset = np.zeros((horizon, nx))
+        previous = np.zeros((nx, horizon*nu))
+        running = np.zeros(nx)
+        for stage in range(horizon):
+            current = A[stage]@previous
+            current[:, stage*nu:(stage+1)*nu] += B_normalized[stage]
+            mapping[stage*nx:(stage+1)*nx] = current
+            running = A[stage]@running+drift[stage]
+            offset[stage] = running
+            previous = current
+        return mapping, offset.ravel()
+
+    @staticmethod
+    def _failure(diagnostics, start, status):
+        diagnostics.update(status=status, total_time_s=perf_counter()-start)
+        return MPCResult(None, False, None, None, diagnostics)
+
+    def solve(self, A, B, f0, target_states, anchor_u, previous_u, bounds,
+              terminal_weight=None):
+        start = perf_counter()
+        settings, horizon = self.settings, self.settings.horizon_steps
+        A, B = _finite(A, 'A'), _finite(B, 'B')
+        if (A.ndim not in (2, 3) or A.shape[-2] != A.shape[-1]
+                or A.shape[-1] == 0 or (A.ndim == 3 and A.shape[0] != horizon)):
+            raise ValueError('A must be square, or N square stage matrices')
+        nx = A.shape[-1]
+        if (B.ndim not in (2, 3) or B.shape[-2] != nx or B.shape[-1] == 0
+                or (B.ndim == 3 and B.shape[0] != horizon)):
+            raise ValueError('B must have nx rows, or N stage matrices with nx rows')
+        nu = B.shape[-1]
+        f0 = _finite(f0, 'f0')
+        if f0.shape not in ((nx,), (horizon, nx)):
+            raise ValueError('f0 must have shape (nx,) or (N, nx)')
+        target = _finite(target_states, 'target_states', (horizon, nx))
+        anchor = _finite(anchor_u, 'anchor_u')
+        if anchor.shape not in ((nu,), (horizon, nu)):
+            raise ValueError('anchor_u must have shape (nu,) or (N, nu)')
+        varying = A.ndim == 3 or B.ndim == 3 or f0.ndim == 2 or anchor.ndim == 2
+        previous = _finite(previous_u, 'previous_u', (nu,))
+        bounds = _finite(bounds, 'bounds', (nu,))
+        if np.any(bounds <= 0):
+            raise ValueError('bounds must be strictly positive')
+        scales = _finite(settings.state_scales, 'state_scales', (nx,))
+        weights = _finite(settings.state_weights, 'state_weights', (nx,))
+        input_weights = _diagonal(settings.input_weight, nu, 'input_weight')
+        change_weights = _diagonal(settings.change_weight, nu, 'change_weight')
+        state_weight = np.diag(weights/scales**2)
+        if terminal_weight is None:
+            terminal = settings.terminal_multiplier*state_weight
+        else:
+            terminal = _finite(terminal_weight, 'terminal_weight', (nx, nx))
+            if not np.allclose(terminal, terminal.T, atol=1e-10, rtol=1e-10):
+                raise ValueError('terminal_weight must be symmetric')
+            terminal = .5*(terminal+terminal.T)
+            if np.linalg.eigvalsh(terminal).min() < -1e-10:
+                raise ValueError('terminal_weight must be positive semidefinite')
+
+        diagnostics = {'state_dim': nx, 'input_dim': nu, 'horizon_steps': horizon,
+                       'horizon_s': horizon*settings.step_s,
+                       'state_scales': scales.tolist(), 'state_weights': weights.tolist(),
+                       'hard_state_constraints': False, 'hard_slew_constraints': False,
+                       'model_kind': 'linear_time_varying' if varying else 'linear_time_invariant',
+                       'state_cost_definition': 'sum x[1]..x[N]-target with final-state terminal weight',
+                       'input_cost_definition': 'absolute physical inputs and changes normalized by input bounds',
+                       'fallback_used': False}
+        try:
+            import osqp
+        except ImportError as error:
+            raise RuntimeError('AffineMPC requires the optional osqp>=1.0 dependency') from error
+        diagnostics['osqp_version'] = osqp.__version__
+
+        # z contains normalized ABSOLUTE inputs. The supplied B multiplies
+        # deviations from anchor_u, so retain this offset in every stage.
+        with np.errstate(over='ignore', invalid='ignore'):
+            if varying:
+                stages_A = np.broadcast_to(A, (horizon, nx, nx))
+                stages_B = np.broadcast_to(B, (horizon, nx, nu))
+                stages_f0 = np.broadcast_to(f0, (horizon, nx))
+                stages_anchor = np.broadcast_to(anchor, (horizon, nu))
+                drift = stages_f0-np.einsum('kij,kj->ki', stages_B, stages_anchor)
+                mapping, offset = self._prediction_varying(stages_A, stages_B*bounds, drift)
+            else:
+                # Preserve the original constant-model arithmetic path.
+                mapping, offset = self._prediction(A, B*bounds, f0-B@anchor, horizon)
+            block_weight = sparse.block_diag([state_weight]*(horizon-1)+[terminal], format='csc')
+            residual = offset-target.ravel()
+            weighted_mapping = block_weight@mapping
+            hessian = mapping.T@weighted_mapping
+            linear = mapping.T@(block_weight@residual)
+            hessian += np.diag(np.tile(input_weights, horizon))
+            difference = np.eye(horizon*nu)
+            if horizon > 1:
+                difference[nu:, :-nu] -= np.eye((horizon-1)*nu)
+            desired_change = np.zeros(horizon*nu)
+            desired_change[:nu] = previous/bounds
+            change_diagonal = np.tile(change_weights, horizon)
+            hessian += difference.T@(change_diagonal[:, None]*difference)
+            linear -= difference.T@(change_diagonal*desired_change)
+            hessian += settings.regularization*np.eye(horizon*nu)
+            P = 2*.5*(hessian+hessian.T)
+            q = 2*linear
+        if not (np.isfinite(P).all() and np.isfinite(q).all() and np.isfinite(mapping).all()
+                and np.isfinite(offset).all()):
+            return self._failure(diagnostics, start, 'nonfinite_condensed_prediction')
+        diagonal = np.diag(P)
+        try:
+            eigenvalues = np.linalg.eigvalsh(P)
+        except np.linalg.LinAlgError as error:
+            eigenvalues = None
+            diagnostics['hessian_eigenvalue_diagnostic_error'] = str(error)
+        largest = float(np.max(np.abs(P)))
+        smallest_diagonal = float(diagonal.min())
+        diagnostics.update(hessian_max_abs=largest,
+                           hessian_inf_norm=float(np.linalg.norm(P, np.inf)),
+                           hessian_min_diagonal=smallest_diagonal,
+                           hessian_max_diagonal=float(diagonal.max()),
+                           hessian_min_eigenvalue=None if eigenvalues is None else float(eigenvalues[0]),
+                           hessian_max_eigenvalue=None if eigenvalues is None else float(eigenvalues[-1]),
+                           condensed_mapping_max_abs=float(np.max(np.abs(mapping))),
+                           affine_prediction_offset_max_abs=float(np.max(np.abs(offset))),
+                           linear_term_max_abs=float(np.max(np.abs(q))),
+                           suggested_uniform_objective_divisor=max(1., largest, float(np.max(np.abs(q)))),
+                           objective_rescaled=False, hessian_psd_projected=False)
+        diagnostics['assembly_time_s'] = perf_counter()-start
+        # Explicit full upper-triangle pattern permits model/weight updates
+        # with zero entries without changing OSQP's cached sparsity structure.
+        upper = np.triu_indices(horizon*nu)
+        sparse_P = sparse.csc_matrix((P[upper], upper), shape=P.shape)
+        sparse_P.sort_indices()
+        setup_start = perf_counter()
+        warm = self._warm_inputs is not None and self._warm_inputs.shape == (horizon, nu)
+        try:
+            if self._solver is None or self._solver_size != horizon*nu:
+                solver = osqp.OSQP()
+                solver.setup(P=sparse_P, q=q, A=sparse.eye(horizon*nu, format='csc'),
+                             l=-np.ones(horizon*nu), u=np.ones(horizon*nu),
+                             eps_abs=settings.eps_abs, eps_rel=settings.eps_rel,
+                             max_iter=settings.max_iter, polishing=settings.polishing,
+                             warm_starting=True, verbose=False)
+                self._solver, self._solver_size = solver, horizon*nu
+            else:
+                self._solver.update(Px=sparse_P.data, q=q)
+            if warm:
+                shifted = np.vstack((self._warm_inputs[1:], self._warm_inputs[-1:]))
+                self._solver.warm_start(x=np.clip(shifted/bounds, -1., 1.).ravel())
+            diagnostics.update(setup_update_time_s=perf_counter()-setup_start,
+                               warm_start_used=warm)
+            solve_start = perf_counter()
+            result = self._solver.solve(raise_error=False)
+            diagnostics.update(optimization_wall_time_s=perf_counter()-solve_start,
+                               status=str(result.info.status), status_val=int(result.info.status_val),
+                               iterations=int(result.info.iter),
+                               primal_residual=float(result.info.prim_res),
+                               dual_residual=float(result.info.dual_res),
+                               osqp_solve_time_s=float(result.info.solve_time),
+                               qp_objective=float(result.info.obj_val))
+        except Exception as error:
+            self._solver = None
+            diagnostics['exception'] = f'{type(error).__name__}: {error}'
+            return self._failure(diagnostics, start, 'solver_exception')
+        if result.info.status_val != 1:
+            return self._failure(diagnostics, start, str(result.info.status))
+        z_raw = np.asarray(result.x, float) if result.x is not None else np.empty(0)
+        if z_raw.shape != (horizon*nu,) or not np.isfinite(z_raw).all():
+            return self._failure(diagnostics, start, 'nonfinite_solver_solution')
+        violation = max(0., float(np.max(np.abs(z_raw)-1.)))
+        diagnostics['raw_bound_violation_normalized'] = violation
+        if violation > settings.bound_tolerance:
+            return self._failure(diagnostics, start, 'solution_outside_input_bounds')
+        # Project only accepted numerical roundoff, never an infeasible solve.
+        z = np.clip(z_raw, -1., 1.)
+        states = (mapping@z+offset).reshape(horizon, nx)
+        inputs = z.reshape(horizon, nu)*bounds
+        if not np.isfinite(states).all():
+            return self._failure(diagnostics, start, 'nonfinite_predicted_states')
+        gradient = P@z+q
+        box_kkt = gradient.copy()
+        box_kkt[z >= 1.-settings.bound_tolerance] = np.maximum(gradient[z >= 1.-settings.bound_tolerance], 0.)
+        box_kkt[z <= -1.+settings.bound_tolerance] = np.minimum(gradient[z <= -1.+settings.bound_tolerance], 0.)
+        actual_residual = states-target
+        state_cost = float(actual_residual.ravel()@(block_weight@actual_residual.ravel()))
+        input_cost = float(np.sum(np.tile(input_weights, horizon)*z**2))
+        changes = difference@z-desired_change
+        change_cost = float(np.sum(change_diagonal*changes**2))
+        diagnostics.update(box_kkt_residual=float(np.max(np.abs(box_kkt))),
+                           state_cost=state_cost, input_cost=input_cost, change_cost=change_cost,
+                           objective=state_cost+input_cost+change_cost+settings.regularization*float(z@z),
+                           input_bound_violation=max(0., float(np.max(np.abs(inputs)-bounds))),
+                           roundoff_projection_applied=bool(violation > 0),
+                           max_normalized_input_change=float(np.max(np.abs(changes))),
+                           total_time_s=perf_counter()-start)
+        self._warm_inputs = inputs.copy()
+        return MPCResult(inputs[0].copy(), True, states, inputs, diagnostics)

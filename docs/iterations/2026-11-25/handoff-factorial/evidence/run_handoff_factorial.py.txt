@@ -1,0 +1,397 @@
+"""I42 narrow load-share/synchronization factorial; one fresh process per arm.
+
+No library code is changed. Current Gazebo loads are an explicit diagnostic
+oracle for feedback shares only; native contacts/observer/kinematics remain.
+The --preflight mode reads hashes/configuration and never starts a simulator.
+"""
+from contextlib import ExitStack
+from datetime import datetime, timezone
+from pathlib import Path
+from unittest.mock import patch
+import argparse
+import copy
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import traceback
+import types
+
+import numpy as np
+
+ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
+ARMS = ('baseline', 'feedback_shares', 'sync_off', 'both')
+LABELS = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+FALLBACK_CODES = {0:'oracle_applied', 1:'arm_or_window_inactive', 2:'native_not_touching',
+                  3:'inferred_total_at_or_below_0.001N', 4:'truth_total_at_or_below_0.05N'}
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def safe(value):
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, dict):
+        return {str(k):safe(v) for k,v in value.items()}
+    if isinstance(value, (tuple,list)):
+        return [safe(v) for v in value]
+    if isinstance(value,np.ndarray):
+        return safe(value.tolist())
+    if isinstance(value,np.generic):
+        return safe(value.item())
+    if isinstance(value,float) and not np.isfinite(value):
+        return None
+    return value
+
+
+def save_json(path,value):
+    path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text(json.dumps(safe(value),indent=2,allow_nan=False)+'\n')
+
+
+def digest_json(value):
+    return hashlib.sha256(json.dumps(safe(value),sort_keys=True,allow_nan=False).encode()).hexdigest()
+
+
+def extended_fingerprint(controller,helper):
+    """Extend I40 fingerprint to cover omitted filters/planes/heading history."""
+    extra={name:getattr(controller,name) for name in
+           ('_plane','_slow_normal','_fall_end','_yaw_error','heading_reference')}
+    return digest_json({'I40_native_base_sha256':helper.controller_fingerprint(controller),
+        'entire_estimator_state':vars(controller.estimator),'controller_extra_history':extra,
+        'synchronizer_plane':controller.synchronizer._plane,
+        'synchronizer_private_state':{'qpos':controller.synchronizer._data.qpos,
+            'qvel':controller.synchronizer._data.qvel,'time_s':controller.synchronizer._data.time}})
+
+
+def feedback_scope(controller,qref,vref,feedforward,normal,measurement):
+    return {'observer':digest_json({'generalized':controller.observer.generalized,
+                'interval_mean':controller.observer.interval_mean,'previous':controller.observer._previous}),
+        'normal_filter':digest_json(vars(controller.estimator)),
+        'measured_state':digest_json({'qpos':controller.plant.data.qpos,'qvel':controller.plant.data.qvel}),
+        'contact_geometry_fields':digest_json({k:v for k,v in measurement.items() if k!='loads_N'}),
+        'rolling_reference_feedforward':digest_json({'qref':qref,'vref':vref,'feedforward':feedforward,'normal':normal}),
+        'original_measurement':digest_json(measurement)}
+
+
+def load_helper():
+    path=ROOT/'scripts/run-lqr-contact-forecast.py'
+    module=types.ModuleType('i42_unchanged_I40_runner');module.__file__=str(path)
+    exec(compile(path.read_text(),str(path),'exec'),module.__dict__)
+    return module
+
+
+def window_active(time_s,window):
+    """Native 5 ms command clock: tolerate accumulated float roundoff only."""
+    return bool(float(time_s)>=window[0]-1e-9 and float(time_s)<window[1]-1e-9)
+
+
+def feedback_loads(native,truth,touching,requested):
+    """Return a new loads dict; preserve inferred total and native dropout logic."""
+    inferred=np.array([native[name] for name in LABELS],float)
+    truth=np.asarray(truth,float)
+    if truth.shape!=(4,) or not np.isfinite(truth).all() or np.any(truth<0):
+        raise ValueError('Truth feedback loads must be four finite nonnegative values')
+    if not np.isfinite(inferred).all() or np.any(inferred<0):
+        raise ValueError('Native feedback loads must be finite and nonnegative')
+    code=(1 if not requested else 2 if not touching else
+          3 if inferred.sum()<=.001 else 4 if truth.sum()<=.05 else 0)
+    used=inferred.copy() if code else truth/truth.sum()*inferred.sum()
+    result=dict(native)
+    result.update(zip(LABELS,map(float,used)))
+    return result,code
+
+
+def mask_preview(native,active):
+    """Preserve native private preview; disable both command and reference blend."""
+    used=copy.deepcopy(native)
+    if active:
+        used['blend_weights']=[0.]*len(native['blend_weights'])
+        for target in used['targets']:
+            target['blend_weight']=0.
+    return used
+
+
+def nominal_increment(preview,dt=.005):
+    result=np.zeros(3)
+    for target in preview.get('targets',[]):
+        if 'target_joint_speed_rad_s' in target:
+            index=int(target['command_index'])
+            if not 0<=index<3:
+                raise ValueError('A joint synchronization target has an invalid index')
+            result[index]+=dt*target['blend_weight']*target['target_joint_speed_rad_s']
+    return result
+
+
+def target_summary(preview):
+    """Fixed patch-order arrays; absent/nonapplicable scalar targets are NaN."""
+    keys=('blend_weight','normal_load_N','normal_load_fraction','lookahead_s',
+          'target_joint_speed_rad_s','target_surface_speed_m_s','target_torque_Nm',
+          'current_patch_margin_m','predicted_patch_margin_m','predicted_support_gap_m')
+    targets={target['name']:target for target in preview.get('targets',[])}
+    return {key:np.array([targets.get(name,{}).get(key,np.nan) for name in LABELS]) for key in keys}
+
+
+class Interventions:
+    """Call-local hook state. No physical plant or terrain is held here."""
+    def __init__(self,arm,window):
+        if arm not in ARMS:
+            raise ValueError(arm)
+        self.arm,self.window=arm,tuple(window)
+        self.current=None
+
+    def begin(self,time_s,truth_loads):
+        active=window_active(time_s,self.window)
+        self.current={'time_s':float(time_s),'window_active':active,
+            'oracle_requested':active and self.arm in ('feedback_shares','both'),
+            'sync_mask_active':active and self.arm in ('sync_off','both'),
+            'truth_loads_N':np.asarray(truth_loads,float).copy(),
+            'feedback_calls':0,'preview_calls':0}
+
+    def feedback(self,original,controller,qref,vref,feedforward,normal,measurement,touching):
+        current=self.current
+        if current is None:
+            raise RuntimeError('Feedback hook outside an original command')
+        native=dict(measurement['loads_N'])
+        used,code=feedback_loads(native,current['truth_loads_N'],touching,current['oracle_requested'])
+        routed=measurement if code else dict(measurement,loads_N=used)
+        current.update(native_feedback_loads_N=np.array([native[k] for k in LABELS]),
+            used_feedback_loads_N=np.array([used[k] for k in LABELS]),oracle_fallback_code=code,
+            oracle_applied=code==0,native_touching=bool(touching))
+        current['feedback_calls']+=1
+        before=feedback_scope(controller,qref,vref,feedforward,normal,measurement)
+        assert digest_json({k:v for k,v in routed.items() if k!='loads_N'})==before['contact_geometry_fields']
+        before['routed_measurement']=digest_json(routed)
+        result=original(controller,qref,vref,feedforward,normal,routed,touching)
+        after=feedback_scope(controller,qref,vref,feedforward,normal,measurement)
+        after['routed_measurement']=digest_json(routed)
+        current['same_state_invariants']={name:before[name]==after[name] for name in before}
+        assert all(current['same_state_invariants'].values()),current['same_state_invariants']
+        current['feedback_error']=np.asarray(result[1]['error']).copy()
+        current['feedback_gain']=np.asarray(result[1]['K']).copy()
+        current['support_torque']=np.asarray(result[1]['support_torque']).copy()
+        return result
+
+    def preview(self,original,synchronizer,*args,**kwargs):
+        if self.current is None:
+            raise RuntimeError('Preview hook outside an original command')
+        native=original(synchronizer,*args,**kwargs)
+        used=mask_preview(native,self.current['sync_mask_active'])
+        self.current.update(native_preview=copy.deepcopy(native),used_preview=copy.deepcopy(used))
+        self.current['preview_calls']+=1
+        return used
+
+    def finish(self):
+        current=self.current
+        if current is None or current['feedback_calls']!=1 or current['preview_calls']!=1:
+            raise AssertionError('Exactly one native feedback and native preview are required per command')
+        self.current=None
+        return current
+
+
+def preflight(output):
+    """Read-only identity checks; importing helper starts no Gazebo server."""
+    from importlib.metadata import version
+    protocol=json.loads((output/'protocol.json').read_text())
+    jobs=json.loads((output/'jobs.json').read_text())['cases']
+    assert protocol['iteration']=='I-42' and [j['arm'] for j in jobs]==list(ARMS)
+    assert protocol['execution']['intervention_window_s']==[4.,10.]
+    assert protocol['execution']['duration_s']==44.
+    for path,expected in protocol['baseline_source_sha256'].items():
+        assert sha(ROOT/path)==expected,f'Baseline source changed: {path}'
+    baseline=ROOT/protocol['baseline']
+    for name,expected in protocol['baseline_input_sha256'].items():
+        assert sha(baseline/name)==expected,f'Baseline data changed: {name}'
+    original=json.loads((baseline/'provenance.json').read_text())
+    assert {k:version(k) for k in original['versions']}==original['versions']
+    assert sha(ROOT/'generated/offroad/flat/control_schedule.npz')==protocol['execution']['gain_cache_sha256']
+    helper=load_helper()
+    from spherical_wheel.offroad_control import OffroadParams
+    parameters=safe(OffroadParams(**helper.PARAMETERS).as_dict())
+    assert parameters==protocol['execution']['parameters']==original['parameters']
+    assert all({k:v for k,v in j.items() if k!='arm'}==protocol['execution']['path'] for j in jobs)
+    return protocol,jobs,helper,{'passed':True,'scope':'Read-only source/data/config/version checks; zero Gazebo server or integration.',
+        'protocol_sha256':sha(output/'protocol.json'),'jobs_sha256':sha(output/'jobs.json'),
+        'baseline_sources_verified':len(protocol['baseline_source_sha256']),
+        'baseline_data_verified':len(protocol['baseline_input_sha256']),
+        'parameters_exact':True,'versions':original['versions'],'gain_cache_sha256':protocol['execution']['gain_cache_sha256']}
+
+
+def snapshot(directory,output,job,protocol,helper):
+    paths={ROOT/path for path in protocol['baseline_source_sha256']}
+    paths.update([Path(__file__).resolve(),output/'tests/test_handoff_factorial.py',output/'protocol.json',output/'jobs.json'])
+    paths.update((ROOT/'gazebo/plugin').rglob('*.cc'))
+    paths.update((ROOT/'gazebo/plugin').rglob('*.cpp'))
+    paths.update((ROOT/'gazebo/plugin').rglob('CMakeLists.txt'))
+    sources=[]
+    for source in sorted(paths):
+        relative=source.relative_to(ROOT);target=directory/'source_snapshot'/relative
+        target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(source.read_bytes())
+        sources.append({'origin':str(relative),'snapshot':str(target.relative_to(directory)),'sha256':sha(source)})
+    from spherical_wheel.gazebo.bridge import plugin_path
+    record={'iteration':'I-42','arm':job['arm'],'captured_before_execution_utc':datetime.now(timezone.utc).isoformat(),
+        'git_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'argv':sys.argv,
+        'case':job,'sources':sources,'protocol_sha256':sha(output/'protocol.json'),'jobs_sha256':sha(output/'jobs.json'),
+        'versions':helper.versions(),'parameters':protocol['execution']['parameters'],
+        'intervention_window_s':protocol['execution']['intervention_window_s'],
+        'bridge_binary':{'path':str(plugin_path().relative_to(ROOT)),'sha256':sha(plugin_path())},
+        'process':{'pid':os.getpid(),'one_arm_per_process':True},
+        'measurement_boundary':protocol['execution']['measurement_boundary'],
+        'oracle_scope':protocol['feedback_share_oracle'],'sync_scope':protocol['sync_off'],
+        'oracle_fallback_codes':FALLBACK_CODES,'scope':'Four-arm diagnostic; this is one fresh Gazebo case, no forecast and no deployable oracle claim.'}
+    save_json(directory/'provenance.json',record)
+    return record
+
+
+def run_arm(output,arm):
+    protocol,jobs,helper,audit=preflight(output)
+    import spherical_wheel.offroad_experiments as experiments
+    import spherical_wheel.gazebo.mars as mars
+    from spherical_wheel.gazebo.experiments import run_gazebo
+    from spherical_wheel.offroad_control import OffroadController,OffroadParams
+    from spherical_wheel.synchronization import ContactSynchronizer
+    assert mars._WORKSPACE is None,'Each arm must start in a fresh process'
+    job=next(j for j in jobs if j['arm']==arm)
+    directory=output/'campaign/runs'/arm
+    if directory.exists():
+        raise FileExistsError(f'Preserve prior arm: {directory}')
+    directory.mkdir(parents=True)
+    provenance=snapshot(directory,output,job,protocol,helper)
+    rows,truth,hook_rows=[],[],[]
+    workspace=None
+    try:
+        workspace,terrain=mars._workspace(output/'campaign/_workspaces'/arm,[job['path']['route']])
+        assert sha(workspace.cache_path)==protocol['execution']['gain_cache_sha256']
+        physical=workspace.plant(terrain)
+        path=helper.make_path(job)
+        interventions=Interventions(arm,protocol['execution']['intervention_window_s'])
+        original_command=OffroadController.command
+        original_feedback=OffroadController._terrain_feedback
+        original_preview=ContactSynchronizer.preview
+        evaluate=experiments.measure_contact
+
+        def measured(plant):
+            measurement=evaluate(plant)
+            truth.append(helper.truth_contact_row(plant,measurement))
+            return measurement
+
+        def command(controller,xy,velocity,acceleration):
+            mirror=controller.plant
+            assert mirror.ground is None and mirror.terrain is None and mirror.data.ncon==0
+            assert controller.params.synchronize is True
+            now=float(mirror.data.time)
+            assert abs(now-float(physical.data.time))<1e-12
+            # This is the sole diagnostic truth acquisition before the guarded
+            # original command. No truth point/normal/force enters the hooks.
+            current_truth=evaluate(physical)
+            truth_loads=np.array([current_truth['loads_N'][name] for name in LABELS])
+            interventions.begin(now,truth_loads)
+            nominal=controller.nominal_joints.copy();previous=mirror.last_input.copy()
+            fingerprint_before=extended_fingerprint(controller,helper)
+            with ExitStack() as stack:
+                stack.enter_context(helper.guards())
+                stack.enter_context(patch.object(physical,'contact_records',helper.forbidden))
+                applied,info=original_command(controller,xy,velocity,acceleration)
+            hook=interventions.finish()
+            fingerprint_after=extended_fingerprint(controller,helper)
+            np.testing.assert_array_equal(np.array([info['measurement']['loads_N'][name] for name in LABELS]),hook['native_feedback_loads_N'])
+            np.testing.assert_array_equal(info['feedback_gain'],hook['feedback_gain'])
+            if hook['sync_mask_active']:
+                assert not np.any(info['sync_weights']) and not np.any(nominal_increment(hook['used_preview'],mirror.dt))
+            numeric=dict(time_s=now,exact_qpos=mirror.data.qpos.copy(),exact_qvel=mirror.data.qvel.copy(),
+                exact_applied=applied.copy(),exact_previous_applied=previous,
+                exact_native_requested=np.asarray(info['requested']).copy(),exact_observer_wrench=np.r_[controller.observer.wrench()],
+                exact_observer_generalized=controller.observer.generalized.copy(),exact_observer_interval_mean=controller.observer.interval_mean.copy(),
+                exact_estimated_normal=np.asarray(info['estimate']['normal']).copy(),exact_nominal_joints_before=nominal,
+                exact_reference_xy=np.asarray(xy).copy(),exact_reference_velocity_m_s=np.asarray(velocity).copy(),
+                exact_reference_acceleration_m_s2=np.asarray(acceleration).copy(),
+                exact_feedback_gain=hook['feedback_gain'],exact_feedback_error=hook['feedback_error'],exact_support_torque=hook['support_torque'],
+                native_feedback_loads_N=hook['native_feedback_loads_N'],used_feedback_loads_N=hook['used_feedback_loads_N'],truth_feedback_loads_N=truth_loads,
+                intervention_window_active=hook['window_active'],oracle_requested=hook['oracle_requested'],oracle_applied=hook['oracle_applied'],
+                oracle_fallback_code=hook['oracle_fallback_code'],sync_mask_active=hook['sync_mask_active'],
+                native_sync_weights=np.asarray(hook['native_preview']['blend_weights']),used_sync_weights=np.asarray(hook['used_preview']['blend_weights']),
+                native_sync_nominal_increment=nominal_increment(hook['native_preview'],mirror.dt),
+                used_sync_nominal_increment=nominal_increment(hook['used_preview'],mirror.dt),
+                controller_fingerprint_before=fingerprint_before,controller_fingerprint_after=fingerprint_after)
+            numeric.update({f'scope_{name}_unchanged':value for name,value in hook['same_state_invariants'].items()})
+            for name,preview in (('native',hook['native_preview']),('used',hook['used_preview'])):
+                numeric.update({f'{name}_sync_target_{key}':value for key,value in target_summary(preview).items()})
+            rows.append(numeric)
+            if hook['window_active']:
+                # All-row scalar/target summaries are in precision. Full native
+                # and used previews are bounded to the declared 6 s window.
+                hook_rows.append(hook)
+            if len(rows)%400==0:
+                print(json.dumps({'arm':arm,'time_s':now,'stage':'simulate'}),flush=True)
+            return applied,info
+
+        def feedback(controller,*args,**kwargs):
+            return interventions.feedback(original_feedback,controller,*args,**kwargs)
+
+        def preview(synchronizer,*args,**kwargs):
+            return interventions.preview(original_preview,synchronizer,*args,**kwargs)
+
+        with patch.object(OffroadController,'command',command),patch.object(OffroadController,'_terrain_feedback',feedback),\
+                patch.object(ContactSynchronizer,'preview',preview),patch.object(experiments,'measure_contact',measured):
+            log,summary=run_gazebo(workspace,terrain,path,OffroadParams(**helper.PARAMETERS),phase=job['phase_rad'],
+                yaw_deg=job['yaw_deg'],duration_s=job['duration_s'],record_diagnostics=True)
+        assert len(rows)==len(truth)==len(log['time_s'])
+        extra={k:np.asarray([r[k] for r in rows]) for k in rows[0]}
+        extra.update({k:np.asarray([r[k] for r in truth]) for k in truth[0]})
+        np.testing.assert_array_equal(extra['time_s'],extra['truth_time_s'])
+        np.testing.assert_array_equal(extra['truth_feedback_loads_N'],extra['truth_patch_loads_N'])
+        summary=mars.evaluate_route(log,summary,path,terrain,mars.route_closed(job['path']['route']))
+        summary['handoff_factorial']={'iteration':'I-42','arm':arm,'case':job,'intervention_window_s':interventions.window,
+            'actual_path':path.spec(),'guarded_controller_calls':len(rows),'forecast_affects_control':False,
+            'oracle_applied_count':int(np.sum(extra['oracle_applied'])),'sync_mask_count':int(np.sum(extra['sync_mask_active'])),
+            'fallback_counts':{FALLBACK_CODES[k]:int(np.sum(extra['oracle_fallback_code']==k)) for k in FALLBACK_CODES},
+            'diagnostic_truth_timing':'Latest completed 1 ms Gazebo contact solve at current command sample; not interval mean or observer-filtered.'}
+        summary['contact_forecast_case']={'case':job,'actual_path':path.spec(),'activation':{},
+            'guarded_controller_calls':len(rows),'forecast_affects_control':False}
+        experiments.save_run(directory,log,summary,terrain)
+        np.savez_compressed(directory/'precision.npz',**extra)
+        save_json(directory/'hook_rows.json',{'iteration':'I-42','arm':arm,'scope':'Full private previews only in declared [4,10) window; all-row weights/target summaries and scope assertions in precision.npz.','rows':hook_rows})
+        provenance.update(actual_path=path.spec(),model_mass_kg=physical.total_mass,weight_N=physical.total_mass*9.81,
+            input_bounds=physical.bounds.copy(),controller_dt_s=physical.dt,physics_step_s=.001,
+            initial_nominal_joints=extra['exact_nominal_joints_before'][0],gain_cache_sha256=sha(workspace.cache_path),
+            engine=summary['engine'],preflight=audit,
+            generated_sha256={name:sha(directory/name) for name in ('rollout.npz','precision.npz','summary.json','terrain.json','hook_rows.json')})
+        save_json(directory/'provenance.json',provenance)
+        result={'iteration':'I-42','arm':arm,'completed':summary['completed'],'failure':summary['failure'],
+            'duration_s':summary['completed_duration_s'],'guarded_calls':len(rows),'directory':str(directory.relative_to(output))}
+        save_json(directory/'execution_result.json',result)
+        print(json.dumps(result),flush=True)
+    except Exception:
+        save_json(directory/'execution_failure.json',{'iteration':'I-42','arm':arm,'traceback':traceback.format_exc(),'rows':len(rows)})
+        if rows:
+            np.savez_compressed(directory/'partial_precision.npz',**{k:np.asarray([r[k] for r in rows]) for k in rows[0]})
+        save_json(directory/'partial_hook_rows.json',hook_rows)
+        raise
+    finally:
+        if workspace is not None and workspace._current is not None:
+            workspace._current[1].close()
+        records=[{'path':str(p.relative_to(directory)),'bytes':p.stat().st_size,'sha256':sha(p)}
+                 for p in sorted(directory.rglob('*')) if p.is_file() and p.name!='artifact_manifest.json']
+        save_json(directory/'artifact_manifest.json',{'iteration':'I-42','arm':arm,'files':records})
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output',type=Path,default=HERE)
+    parser.add_argument('--arm',choices=ARMS)
+    parser.add_argument('--preflight',action='store_true')
+    args=parser.parse_args();output=args.output.resolve()
+    if args.preflight:
+        print(json.dumps(preflight(output)[3],indent=2))
+    elif args.arm is not None:
+        run_arm(output,args.arm)
+    else:
+        parser.error('Select --preflight or exactly one declared --arm in a fresh process')
+
+
+if __name__=='__main__':
+    main()

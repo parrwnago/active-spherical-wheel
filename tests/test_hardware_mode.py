@@ -180,3 +180,49 @@ def test_hardware_is_its_own_controller_mode():
         OffroadParams(mode='hardware', normal_source='solver')
     with pytest.raises(ValueError):
         OffroadParams(mode='hardware', support_min_load_fraction=0.)
+
+
+@pytest.mark.parametrize('allocation', ['least_squares', 'bounded'])
+def test_diagnostic_logging_preserves_commands_and_separates_contributions(workspace, allocation):
+    terrain = make_terrain('ramp', grade_deg=8.)
+    plant, mirror = workspace.plant(terrain), workspace.mirror()
+    params = OffroadParams(mode='hardware', rolling_allocation=allocation)
+    plain = OffroadController(mirror, workspace.design, params, .30)
+    traced = OffroadController(mirror, workspace.design, params, .30,
+                               record_diagnostics=True)
+    path = ReferencePath(.3, 0., 4., start_s=.1)
+    place_on_ground(plant, plain, path.origin, .30, True, 0.)
+    traced.reset(.30)
+    traced.nominal_joints = plain.nominal_joints.copy()
+    for _ in range(100):
+        measure_for(plain, plant)
+        applied, first = plain.command(*path(plant.data.time))
+        applied_traced, details = traced.command(*path(plant.data.time))
+        np.testing.assert_array_equal(applied, applied_traced)
+        np.testing.assert_array_equal(first['requested'], details['requested'])
+        components = sum(details[key] for key in (
+            'equilibrium_command', 'rolling_feedforward', 'support_command', 'lqr_command',
+            'transition_command_delta', 'heading_command', 'fade_command_delta'))
+        np.testing.assert_allclose(components, details['requested'], atol=1e-12)
+        np.testing.assert_allclose(components+details['clipping_command_delta'], applied, atol=1e-12)
+        np.testing.assert_array_equal(details['feedback_reference_qvel'][6:], details['reference_qvel'][6:])
+        normal = details['estimate']['normal']
+        assert details['feedback_reference_qvel'][2] == pytest.approx(
+            -float(normal[:2]@details['reference_qvel'][:2])/max(normal[2], .2))
+        plant.step(applied)
+        plain.after_step()
+        traced.after_step()
+
+
+def test_detailed_rollout_keeps_previous_interval_inputs_aligned(workspace):
+    from spherical_wheel.offroad_experiments import run_offroad
+    log, _ = run_offroad(workspace, make_terrain('slope', grade_deg=8.),
+                         ReferencePath(.2, 0., 2., start_s=.05, ramp_s=.3),
+                         OffroadParams(mode='hardware'), duration_s=.4,
+                         record_diagnostics=True)
+    np.testing.assert_array_equal(log['previous_applied_input'][1:], log['input'][:-1])
+    np.testing.assert_array_equal(log['previous_actuator_saturated'][1:], log['actuator_saturated'][:-1])
+    components = sum(log[key] for key in (
+        'equilibrium_command', 'rolling_feedforward', 'support_command', 'lqr_command',
+        'transition_command_delta', 'heading_command', 'fade_command_delta'))
+    np.testing.assert_allclose(components, log['command'], atol=1e-12)

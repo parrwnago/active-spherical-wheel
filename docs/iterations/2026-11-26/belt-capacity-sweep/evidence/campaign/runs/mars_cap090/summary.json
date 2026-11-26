@@ -1,0 +1,273 @@
+{
+  "sensing": {
+    "observer_force_error_median_N": 0.027152052409777732,
+    "observer_force_error_p95_N": 3.5376708552712253,
+    "observer_moment_error_median_Nm": 0.003890645091496386,
+    "observer_moment_error_p95_Nm": 0.24462459691316388
+  },
+  "terrain": "marsyard2021",
+  "controller": "hardware",
+  "parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "rolling_allocation": "least_squares",
+    "rolling_damping_m_s": 0.01,
+    "rolling_speed_limits": [
+      20.0,
+      20.0,
+      20.0,
+      0.3,
+      0.3
+    ],
+    "rolling_acceleration_limits": [
+      100.0,
+      100.0,
+      100.0,
+      3.0,
+      3.0
+    ],
+    "rolling_effort_m_s": 0.001,
+    "rolling_change_m_s": 0.001,
+    "rolling_adaptive_effort": false,
+    "rolling_weak_effort_m_s": 0.005,
+    "rolling_authority_m_s": 0.02,
+    "rolling_reference_catchup_gain_s_inv": 1.0,
+    "rolling_reference_catchup_speed_m_s": 0.06,
+    "rolling_reference_position_limit_m": 0.05,
+    "rolling_reference_balance_guard": false,
+    "rolling_reference_lean_scale_deg": 3.0,
+    "rolling_reference_rate_horizon_s": 0.1,
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "engine_version": "Gazebo Harmonic (gz-sim 8.10.0)",
+  "contact_mode": "analytic_clipped_floor",
+  "ground_model": "Gazebo collision with the marsyard2021_dem (grid 0.0942 m); contacts solved by DART. The MuJoCo mirror only evaluates kinematics.",
+  "path": {
+    "kind": "figure8",
+    "duration_s": 40.0,
+    "radius_m": 0.45,
+    "clockwise": false,
+    "start_s": 1.0,
+    "origin": [
+      -1.6,
+      9.6
+    ],
+    "sampled_peak_speed_m_s": 0.18743412395355608,
+    "sampled_peak_acceleration_m_s2": 0.07802436281520816
+  },
+  "completed": true,
+  "failure": null,
+  "completed_duration_s": 44.00000000000406,
+  "requested_duration_s": 44.0,
+  "tracking": {
+    "rms_error_m": 0.052081898070191986,
+    "max_error_m": 0.11000853655827966,
+    "final_error_m": 0.049231034550834066,
+    "rms_error_while_moving_m": 0.052520609300447024
+  },
+  "attitude": {
+    "max_tilt_deg": 13.373886198100946,
+    "max_error_from_reference_deg": 6.052574323272993,
+    "rms_error_from_reference_deg": 1.2743025626271953,
+    "final_error_from_reference_deg": 1.4895472347152894,
+    "heading_change_deg": -1431.0866195386207
+  },
+  "ground": {
+    "max_slope_under_wheel_deg": 13.592708058535734,
+    "height_range_m": [
+      1.1055890504988852,
+      1.1741892589192515
+    ],
+    "friction_range": [
+      0.7,
+      0.7
+    ]
+  },
+  "contact": {
+    "normal_load_fraction_min": 0.0,
+    "normal_load_fraction_max": 5.932981005940596,
+    "normal_load_fraction_std": 0.20288300996567832,
+    "unloaded_time_s": 0.065,
+    "utilization_mean": 0.20827217676271034,
+    "utilization_p95": 0.42094045951326453,
+    "utilization_max": 4.1046655669959655,
+    "time_above_90pct_cone_s": 0.195,
+    "max_slip_speed_m_s": 0.6837425254555677,
+    "slip_distance_m": 0.047404042105676905,
+    "sliding_time_s": 0.215,
+    "friction_loss_J": 0.5602968873291125,
+    "estimated_friction_min": 0.06071360703460865,
+    "normal_estimate_error_rms_deg": 3.7135486262546857,
+    "normal_estimate_error_max_deg": 16.019521666757324,
+    "normal_estimate_error_median_deg": 0.050983321441050375,
+    "normal_estimate_error_p95_deg": 9.470099045521888,
+    "support_time_share": {
+      "shell_A": 0.4613108784706418,
+      "shell_B": 0.4428766499772417,
+      "belt_A": 0.07840236686390532,
+      "belt_B": 0.017410104688211196
+    },
+    "support_handovers": 59,
+    "fork_ground_contact": false
+  },
+  "actuation": {
+    "max_input_fraction": [
+      0.9859229379988453,
+      1.0,
+      1.0,
+      0.9274909401415092,
+      0.5014521409542994
+    ],
+    "saturated_time_fraction": 0.008522727272727272,
+    "rms_torque_Nm": [
+      0.28848180405130586,
+      0.10876996641951694,
+      0.1310661891363033
+    ],
+    "max_joint_speed_rad_s": [
+      5.994253733994463,
+      18.75496071227867,
+      7.760870942754396
+    ],
+    "joint_work_J": 16.781271692452453,
+    "unloaded_fade_time_s": 0.0
+  },
+  "settled_at_end": false,
+  "engine": {
+    "simulator": "Gazebo Harmonic (gz-sim 8.10.0)",
+    "physics": "DART 6.19.5 via gz-physics 7.5.0",
+    "collision_detector": "ode",
+    "step_s": 0.001,
+    "ground": "marsyard2021_dem",
+    "world_info": {
+      "ground": "marsyard2021",
+      "collision_detector": "ode",
+      "dem_mesh": "/home/parrwnago/active-spherical-wheel/results/belt_capacity_sweep_20261126/campaign/_workspaces/mars_cap090/worker_366796/gazebo/world/marsyard2021_dem.obj",
+      "source": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain",
+      "cell_m": 0.09418837675350701,
+      "features": [
+        "lava",
+        "rocks_big",
+        "rocks_medium"
+      ]
+    }
+  },
+  "wall_time_s": 93.65025877952576,
+  "bridge_counters": {
+    "admitted": 52547,
+    "rejected": 155575,
+    "unmatched": 0
+  },
+  "mars": {
+    "gates": {
+      "completed": true,
+      "rms": false,
+      "p95": true,
+      "max": true,
+      "final": true,
+      "attitude": true,
+      "saturation": true,
+      "settled": false,
+      "closure": false
+    },
+    "passed": false,
+    "p95_moving_error_m": 0.08965365817084872,
+    "loop_closure_m": 0.061522091142490846,
+    "distance_travelled_m": 4.001331883767839,
+    "reference_length_m": 2.7437439760646853,
+    "elevation_change_m": 0.0024087456455037515,
+    "elevation_range_m": [
+      1.2256188756974018,
+      1.2934194107418149
+    ],
+    "max_heading_excursion_deg": 1431.0866195386207,
+    "time_on_rock_s": 0.0,
+    "max_contact_height_above_dem_m": 0.0011946125250537065
+  },
+  "contact_forecast_case": {
+    "case": {
+      "case_id": "mars_cap090",
+      "terrain": "marsyard2021",
+      "phase_rad": 0.9,
+      "path": {
+        "kind": "mars_route",
+        "route": "plain_figure8"
+      },
+      "duration_s": 44.0,
+      "yaw_deg": 45.0,
+      "reanchor_at_motion_start": false,
+      "uniform_anchor_start_s": 0.4,
+      "cap_m_s": 0.9
+    },
+    "actual_path": {
+      "kind": "figure8",
+      "duration_s": 40.0,
+      "radius_m": 0.45,
+      "clockwise": false,
+      "start_s": 1.0,
+      "origin": [
+        -1.6,
+        9.6
+      ],
+      "sampled_peak_speed_m_s": 0.18743412395355608,
+      "sampled_peak_acceleration_m_s2": 0.07802436281520816
+    },
+    "activation": {},
+    "guarded_controller_calls": 8801,
+    "forecast_affects_control": false
+  },
+  "belt_capacity_sweep": {
+    "iteration": "I-49",
+    "operating_belt_cap_m_s": 0.9,
+    "design_belt_cap_m_s": 0.3,
+    "fixed_design": {
+      "gain_bank_sha256": "4799fc67825651033a93ec989bc8f08c558ae8e2b92fef0cbd3a932dfa75a5bf",
+      "design_bounds": [
+        1.5,
+        0.6,
+        0.6,
+        0.3,
+        0.3
+      ],
+      "design_config_sha256": "ef5472907013f8bf97a5cae4d06382b4c4f3901579b79de9a3f8b57ed8505541",
+      "weights": "flat"
+    },
+    "ordinary_design_sha256": "49a6d5cc8fc29c7a46356a340c4fa6cce5a205cd73e33e4437c97324f57c0d0f",
+    "gain_cache_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+    "configuration_unchanged": true,
+    "synchronization_uses_operating_bounds": true,
+    "scope": "Ideal actuator capacity sensitivity; not a validated motor rating."
+  }
+}

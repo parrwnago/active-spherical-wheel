@@ -1,0 +1,149 @@
+"""Review tilt/configuration hypotheses from saved traces; no dynamics advanced."""
+from pathlib import Path
+import hashlib
+import json
+
+import mujoco
+import numpy as np
+
+from spherical_wheel.model import REPO_ROOT
+
+
+ROOT = REPO_ROOT
+OUTPUT = ROOT/'docs/iterations/2026-11-25/tilt-configuration-review'
+SCALE = np.array([5., 5., 5., .3, .3])
+SUPPORTS = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+BASE = ROOT/'results/contact_diagnostics_20261125/baseline'
+MODEL_PATH = next(BASE.glob('_workspaces/*/flat/model.xml'))
+MODEL = mujoco.MjModel.from_xml_path(str(MODEL_PATH.resolve()))
+DATA = mujoco.MjData(MODEL)
+
+
+def state(qpos):
+    DATA.qpos[:] = qpos
+    mujoco.mj_kinematics(MODEL, DATA)
+    mujoco.mj_comPos(MODEL, DATA)
+
+
+def row(name, point):
+    geom = mujoco.mj_name2id(MODEL, mujoco.mjtObj.mjOBJ_GEOM, name+'_smooth')
+    jac = np.zeros((3, MODEL.nv))
+    mujoco.mj_jac(MODEL, DATA, jac, None, point, int(MODEL.geom_bodyid[geom]))
+    result = np.zeros((2, 5))
+    result[:, :3] = jac[:2, 6:9]
+    if name.startswith('belt'):
+        result[:, 3+int(name.endswith('B'))] = DATA.geom_xmat[geom].reshape(3, 3)[:2, 1]
+    return result
+
+
+def reconstructed_authority(log, index):
+    state(log['qpos'][index].astype(float))
+    loads = log['estimated_support_loads_N'][index].astype(float)
+    points = log['estimated_contact_points_m'][index].astype(float)
+    matrix = np.zeros((2, 5))
+    for name, point, load in zip(SUPPORTS, points, loads):
+        if load > 0 and np.isfinite(point).all():
+            matrix += load*row(name, point)
+    if loads.sum() <= 0:
+        return None
+    return float(np.linalg.svd(matrix/loads.sum()*SCALE, compute_uv=False)[-1])
+
+
+def snapshot(log, moment):
+    index = int(np.argmin(abs(log['time_s']-moment)))
+    reference = log['reference_quat'][index].astype(float)
+    reference /= np.linalg.norm(reference)
+    ref_tilt = np.arccos(np.clip(1.-2.*np.sum(reference[1:3]**2), -1., 1.))
+    loads = log['estimated_support_loads_N'][index].astype(float)
+    result = {
+        'time_s': float(log['time_s'][index]),
+        'absolute_platform_tilt_deg': float(np.degrees(log['tilt_rad'][index])),
+        'reference_tilt_deg': float(np.degrees(ref_tilt)),
+        'reference_relative_lean_error_deg': float(np.degrees(log['attitude_error_rad'][index])),
+        'shaft_joint_rad': float(log['qpos'][index, 7]),
+        'effective_phase_rad': float(log['effective_phase_rad'][index]),
+        'stored_free_joint_angular_qvel_3_6_rad_s': log['qvel'][index, 3:6].tolist(),
+        'estimated_support_shares': (loads/max(loads.sum(), 1e-12)).tolist(),
+        'reference_joint_speeds_rad_s': log['reference_qvel'][index, 6:9].tolist(),
+        'reconstructed_weak_authority_m_s': reconstructed_authority(log, index),
+    }
+    for key in ('allocation_authority_m_s', 'allocation_residual_rms_m_s',
+                'allocation_effort_weight_m_s', 'allocation_active_bounds'):
+        if key in log:
+            result[key] = log[key][index].tolist()
+    return result
+
+
+def main():
+    files = {
+        'baseline': BASE/'plain_figure8/phase_+0.90/rollout.npz',
+        'adaptive': ROOT/'results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00/rollout.npz',
+    }
+    keys = ('time_s', 'qpos', 'qvel', 'tilt_rad', 'reference_quat', 'attitude_error_rad',
+            'reference_qvel', 'effective_phase_rad', 'estimated_support_loads_N',
+            'estimated_contact_points_m', 'allocation_authority_m_s',
+            'allocation_residual_rms_m_s', 'allocation_effort_weight_m_s', 'allocation_active_bounds')
+    saved = {}
+    for name, path in files.items():
+        with np.load(path) as archive:
+            saved[name] = {key: archive[key] for key in keys if key in archive}
+    cases = []
+    for phase in (-.60, -np.pi/2):
+        pose = MODEL.qpos0.copy()
+        pose[:3] = [0., 0., .12]
+        roll = np.deg2rad(-20.)
+        pose[3:7] = [np.cos(roll/2), np.sin(roll/2), 0., 0.]
+        pose[7:10] = [phase, 0., 0.]
+        state(pose)
+        point = np.zeros(3)
+        matrix = row('shell_B', point)
+        shaft, shell = matrix[:, 0], matrix[:, 2]
+        angle = np.degrees(np.arccos(np.clip(shaft@shell/np.linalg.norm(shaft)/np.linalg.norm(shell), -1., 1.)))
+        geom = mujoco.mj_name2id(MODEL, mujoco.mjtObj.mjOBJ_GEOM, 'shell_B_smooth')
+        body = int(MODEL.geom_bodyid[geom])
+        axis = DATA.xmat[body].reshape(3, 3)[:, 0]
+        coordinate = float(MODEL.geom_user[geom, 0]*(axis@(point-DATA.xpos[body])))
+        lower, upper = MODEL.geom_user[geom, 1:3]
+        assert lower < coordinate < upper
+        cases.append({'platform_roll_deg': -20., 'platform_pitch_deg': 0.,
+                      'shaft_phase_rad': phase, 'shaft_phase_deg': float(np.degrees(phase)),
+                      'support': 'shell_B', 'contact_point_world_m': point.tolist(),
+                      'shell_B_signed_axial_coordinate_m': coordinate,
+                      'shell_B_valid_interval_m': [float(lower), float(upper)],
+                      'rolling_direction_angle_deg': float(angle),
+                      'weak_authority_m_s': float(np.linalg.svd(matrix*SCALE, compute_uv=False)[-1])})
+    assert cases[0]['weak_authority_m_s'] > .4 and cases[1]['weak_authority_m_s'] < 1e-12
+    assert cases[0]['rolling_direction_angle_deg'] > 70 and cases[1]['rolling_direction_angle_deg'] < 1e-5
+    adaptive = saved['adaptive']
+    times = adaptive['time_s']
+    pre = (times >= 28.) & (times <= 29.)
+    error = np.degrees(adaptive['attitude_error_rad'])
+    thresholds = {str(deg): float(times[np.flatnonzero(pre & (error > deg))[0]]) for deg in (3, 5, 8)}
+    report = {
+        'iteration': 'I-11', 'date': '2026-11-25', 'status': 'Offline analysis completed; new controller policy and configuration sweep proposed, not run.',
+        'simulations_rerun': False,
+        'kinematic_example_scope': 'Admissible instantaneous poses in the existing model; platform held at the stated attitude. No static balance or dynamic feasibility claim.',
+        'same_platform_attitude_examples': cases,
+        'baseline_samples': [snapshot(saved['baseline'], t) for t in (30., 30.085, 31.645, 31.650)],
+        'adaptive_samples': [snapshot(adaptive, t) for t in (28.425, 28.585, 28.770, 28.895, 28.975, 29.295, 29.545, 29.975)],
+        'adaptive_first_error_threshold_crossings_in_28_to_29_s': thresholds,
+        'interpretation': [
+            'The same complete platform attitude can have strong or singular drive geometry when the shaft phase changes.',
+            'Absolute tilt and reference-relative lean error are different; a slope can require a deliberately leaned reference.',
+            'The earlier selected 28.975 s sample does not locate the first onset: weak geometry and a large allocation residual occur earlier at 28.425 s, before the substantial lean error.',
+            'Timing supports a controlled geometry/balance/contact-transition experiment; it does not prove a single causal chain.',
+            'The existing adaptive law changes one scalar penalty on all normalized drive rates. Direction-selective damping and tilt-error priority have not been tested here.',
+        ],
+        'reconstruction_limits': 'Baseline authority is reconstructed using float32 states and estimated contact points. Historical baseline allocation residual was not logged and is not claimed recovered.',
+        'inputs': [{'path': str(path.relative_to(ROOT)), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()} for path in files.values()],
+        'model_path': str(MODEL_PATH.relative_to(ROOT)),
+        'model_sha256': hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest(),
+        'background': {'title': 'Selectively Damped Least Squares for Inverse Kinematics', 'authors': 'Samuel R. Buss and Jin-Su Kim', 'url': 'https://mathweb.ucsd.edu/~sbuss/ResearchWeb/ikmethods/SdlsPaper.pdf', 'relevance': 'Direction-dependent filtering is a conceptual candidate; this paper does not validate rolling balance or our robot.'},
+    }
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    (OUTPUT/'review.json').write_text(json.dumps(report, indent=2)+'\n')
+    print(json.dumps({'poses': cases, 'baseline_transition': report['baseline_samples'][-2:], 'adaptive_early_and_later': [report['adaptive_samples'][0], report['adaptive_samples'][4]], 'thresholds': thresholds}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

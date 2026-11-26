@@ -1,0 +1,24 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________________ test_sloped_pole_roundoff_retains_belt_contact ________________
+
+    def test_sloped_pole_roundoff_retains_belt_contact():
+        # Axial coordinate rounds one ulp above radius on this valid upward plane.
+        # A zero-radius polar ring has a unique pole, requiring no radial direction.
+        q=np.array([.018911952494233754,.07627199300593433,.09069135094240548,
+            .5654683610430311,-.17047282124699234,.7458851709347084,-.3079608118821292,
+            -.14961868735132722,0.,0.])
+        normal=np.array([.15759960411861462,.6355999417161194,.755761257853379])
+        surface={'supported':True,'point_m':np.zeros(3),'normal':normal,'height_m':0.}
+        candidates=contact_candidates(surface,q,GEOMETRY)['candidates']
+>       assert {row['patch'] for row in candidates}=={'belt_A'}
+E       AssertionError: assert set() == {'belt_A'}
+E         
+E         Extra items in the right set:
+E         'belt_A'
+E         Use -v to get more diff
+
+tests/test_terrain_memory.py:168: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_terrain_memory.py::test_sloped_pole_roundoff_retains_belt_contact
+1 failed in 0.30s

@@ -1,0 +1,108 @@
+"""Offline exact-state load-fit and measured-response audit of the initial MPC.
+
+Uses recorded plan state/plane estimates and the preceding applied input. No
+policy or physics campaign is changed; future recorded inputs are replayed
+only for model assessment.
+"""
+from pathlib import Path
+import hashlib
+import json
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import mujoco
+import numpy as np
+
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+
+
+HERE = Path(__file__).resolve().parent
+OUTPUT = HERE/'calibration_audit'
+ROOT = HERE.parents[2]
+
+
+def main():
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    folder = HERE/'runs/world_x/mpc'
+    plans = json.loads((folder/'plans.json').read_text())
+    with np.load(folder/'precision.npz') as data:
+        exact = {key: data[key] for key in data}
+    with np.load(folder/'rollout.npz') as data:
+        log = {key: data[key] for key in data}
+    mirror = StateMirror(model_dir=OUTPUT/'mirror')
+    predictor = EstimatedPlanePredictor(mirror)
+    rows = []
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8), constrained_layout=True)
+    for at, axis in zip((1.66, 1.70, 2., 3.), axes.flat):
+        plan = min(plans, key=lambda row: abs(row['time_s']-at))
+        index = int(np.argmin(abs(exact['time_s']-plan['time_s'])))
+        q, v = np.asarray(plan['qpos']), np.asarray(plan['qvel'])
+        np.testing.assert_array_equal(q, exact['exact_qpos'][index])
+        np.testing.assert_array_equal(v, exact['exact_qvel'][index])
+        previous = exact['exact_applied'][max(0, index-1)]
+        mirror.set_state(q, v, plan['time_s'], previous)
+        friction = float(log['estimated_friction'][index])
+        result = predictor.update(q, v, plan['normal'], plan['point_m'], plan['load_N'],
+                                  friction=friction, command=previous)
+        selected = result['plane_offset_m']
+        offsets = np.linspace(selected-2e-6, selected+2e-6, 401)
+        forces = []
+        for offset in offsets:
+            predictor._assign(q, v, previous, predictor.point+offset*predictor.normal)
+            forces.append(float(predictor.normal@predictor.data.qfrc_constraint[:3]))
+        forces = np.asarray(forces)
+        repeated = []
+        for _ in range(4):
+            predictor._assign(q, v, previous, predictor.point+selected*predictor.normal)
+            repeated.append(float(predictor.normal@predictor.data.qfrc_constraint[:3]))
+        best = int(np.argmin(abs(forces-plan['load_N'])))
+        axis.plot((offsets-selected)*1e6, forces, label='Private solved normal load')
+        axis.axhline(plan['load_N'], color='black', linestyle='--', label='Observer load target')
+        axis.axvline(0, color='grey', linestyle=':')
+        axis.set_title(f't={plan["time_s"]:.3f}s | original {plan.get("failure", "solved")}')
+        axis.set_xlabel('Plane offset relative to selected fit, µm');axis.set_ylabel('Normal load, N')
+        axis.grid(alpha=.2)
+        # Restore the originally selected plane, not the best grid point.
+        predictor._plane_point = predictor.point+selected*predictor.normal
+        prediction_rows = []
+        for steps in (1, 4, 20):
+            commands = exact['exact_applied'][index:index+steps]
+            qq, vv = predictor.rollout(q, v, commands, .005)
+            actual_q = exact['exact_qpos'][index+steps]
+            actual_v = exact['exact_qvel'][index+steps]
+            difference = predictor.tangent(actual_q, actual_v, qq[-1], vv[-1])
+            prediction_rows.append({'horizon_s': steps*.005,
+                'xy_position_error_mm': float(1000*np.linalg.norm(difference[:2])),
+                'attitude_error_deg': float(np.degrees(np.linalg.norm(difference[3:6]))),
+                'body_velocity_error_m_s': float(np.linalg.norm(difference[9:12])),
+                'body_angular_rate_error_rad_s': float(np.linalg.norm(difference[12:15]))})
+        rows.append({'time_s': plan['time_s'], 'original_failure': plan.get('failure'),
+            'reconstructed_calibration': result, 'logged_load_residual_N': float(exact['mpc_load_residual_N'][index]),
+            'friction_from_float32_observation': friction,
+            'curve_offset_m': offsets.tolist(), 'curve_normal_load_N': forces.tolist(),
+            'repeated_selected_force_N': repeated,
+            'grid_best_residual_N': float(forces[best]-plan['load_N']),
+            'grid_best_offset_delta_m': float(offsets[best]-selected),
+            'nonmonotone_decreasing_steps': int(np.sum(np.diff(forces) < -1e-6)),
+            'largest_force_step_N': float(np.max(abs(np.diff(forces)))),
+            'nonlinear_prediction_against_measured_Gazebo': prediction_rows})
+    axes.flat[0].legend();fig.suptitle('Private normal-load fit around original selected offset — no policy change')
+    fig.savefig(OUTPUT/'load_fit_curves.png', dpi=170);fig.savefig(OUTPUT/'load_fit_curves.pdf');plt.close(fig)
+    report = {'scope': __doc__, 'rows': rows,
+              'limits': ['Friction comes from float32 saved observation; plan state/normal/point/load and actual input are double precision.',
+                         'Scanned offsets diagnose the fit; original selected offsets are used for response validation.',
+                         'Future recorded commands are an offline model-validation input, not data used online.'],
+              'input_sha256': {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
+                              for path in [folder/'plans.json', folder/'precision.npz', folder/'rollout.npz',
+                                           ROOT/'src/spherical_wheel/predictive_model.py', Path(__file__)]}}
+    (OUTPUT/'report.json').write_text(json.dumps(report, indent=2)+'\n')
+    for row in rows:
+        print(json.dumps({key: row[key] for key in ['time_s', 'original_failure', 'reconstructed_calibration',
+              'logged_load_residual_N', 'grid_best_residual_N', 'grid_best_offset_delta_m',
+              'nonmonotone_decreasing_steps', 'largest_force_step_N', 'nonlinear_prediction_against_measured_Gazebo']}))
+
+
+if __name__ == '__main__':
+    main()

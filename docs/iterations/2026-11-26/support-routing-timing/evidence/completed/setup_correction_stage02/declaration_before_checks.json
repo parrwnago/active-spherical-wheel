@@ -1,0 +1,66 @@
+{
+  "iteration": "I-46",
+  "scope": "Pre-control setup correction only; initial flat attempt failed before Gazebo/server/controller construction,0 samples. No outcome/parameter retry.",
+  "changes": [
+    "Use featureless Terrain so is_flat is true for the registered plane z0",
+    "Preserve failed original case; fresh corrected output suffix",
+    "Collector rejects every job except registered flat z0"
+  ],
+  "unchanged_top_level_definitions": [
+    "sha",
+    "safe",
+    "save_json",
+    "load_helper",
+    "source_snapshot",
+    "verify_registered_inputs",
+    "native_row",
+    "NativeFeedbackProbe",
+    "save_precision",
+    "finalize",
+    "replay_history",
+    "build_path",
+    "interval_truth_row",
+    "save_substeps",
+    "verify_bridge_equivalence",
+    "run_bridge_fixture",
+    "main"
+  ],
+  "changed_top_level_definitions": [
+    "build_native_workspace",
+    "collect_native"
+  ],
+  "sources_before_checks": [
+    {
+      "path": "scripts/audit-support-routing.py",
+      "sha256": "12b5cff3ca4773189ac75e18a087032fc9da820332a4ee44da5835e266579f6d"
+    },
+    {
+      "path": "results/support_routing_timing_20261126/setup_correction_stage02/audit-support-routing-flat.py",
+      "sha256": "d0b0ca07c2e5f4689e1c62197e3c64bc4f31c1742e7c8ff5f897fca7041b6600"
+    },
+    {
+      "path": "results/support_routing_timing_20261126/setup_correction_stage02/exact_correction.patch",
+      "sha256": "4d2941e1925737c671bc725c73a6b9b348ae151474658e86bfcc65f2b5beff76"
+    },
+    {
+      "path": "results/support_routing_timing_20261126/protocol.json",
+      "sha256": "a4e4cc0f138582d40eef4a8870f39c4c70b5aa69d29e292f52427b966d94bff3"
+    },
+    {
+      "path": "results/support_routing_timing_20261126/campaign/jobs.json",
+      "sha256": "1e3cccc962f0ed94f1d1066577695ef706ae447014ccd013e50b2b476ffdd74a"
+    },
+    {
+      "path": "results/support_routing_timing_20261126/review/bridge_equivalence_stage01/report.json",
+      "sha256": "6326126f309d8b58cb2cd3e3069db940863fc4c413c063ff90329ad60676fb45"
+    },
+    {
+      "path": "src/spherical_wheel/support_routing_audit.py",
+      "sha256": "c7436cab44467f51d0110041aa7c132889d74ba397c0b36c21d409408b2169ba"
+    }
+  ],
+  "original_driver_unchanged": true,
+  "commands_applied": "Unchanged native controller, same declared program/phase/yaw; no shadow routing actuated.",
+  "output": "campaign/runs/flat_compact_outback_setup_corrected",
+  "source_lineage": "New copy, not a replacement of original tests/Mars/stepping/historical source."
+}

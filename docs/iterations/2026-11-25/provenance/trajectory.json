@@ -1,0 +1,136 @@
+{
+  "git_commit": "9067a660cecf312fc87f477d1251e4148d8c6c0a",
+  "source_sha256": {
+    "offroad_control.py": "cf256d09f5c9bc6aa4f910cc4cb77be782df86ec1bbd0945fd7fecbb30e60b0b",
+    "contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "control.py": "e0c4107601e07cafe29b726341de4c32bb8151506a539e913b0d6eec2e0c8e6f",
+    "recovery_control.py": "b3a6bad0870c22ada4c926a7659befb756e31f8ed5defb5506786dc466f5b17d",
+    "synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+  },
+  "map_commit": "a8a134a339af32bc96d422b218809bb3a39832f4",
+  "jobs": [
+    [
+      "plain_traverse",
+      0.3
+    ],
+    [
+      "plain_traverse_shell",
+      0.3
+    ],
+    [
+      "plain_fast",
+      0.3
+    ],
+    [
+      "moderate_climb",
+      0.3
+    ],
+    [
+      "crater_rim_descent",
+      0.3
+    ],
+    [
+      "crater_rim_climb",
+      0.3
+    ],
+    [
+      "steep_descent",
+      0.3
+    ],
+    [
+      "lava_crossing",
+      0.3
+    ],
+    [
+      "plain_circle",
+      0.3
+    ],
+    [
+      "plain_figure8",
+      0.3
+    ],
+    [
+      "plain_patrol",
+      0.3
+    ],
+    [
+      "shape_circle",
+      0.3
+    ],
+    [
+      "shape_triangle",
+      0.3
+    ],
+    [
+      "shape_line_and_back",
+      0.3
+    ],
+    [
+      "shape_zigzag",
+      0.3
+    ],
+    [
+      "plain_figure8",
+      0.9
+    ],
+    [
+      "plain_figure8",
+      -1.0
+    ],
+    [
+      "shape_triangle",
+      0.9
+    ],
+    [
+      "shape_triangle",
+      -1.0
+    ],
+    [
+      "shape_line_and_back",
+      0.9
+    ],
+    [
+      "shape_line_and_back",
+      -1.0
+    ]
+  ],
+  "controller_parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "simulation_workers": 4,
+  "render_workers": 2
+}

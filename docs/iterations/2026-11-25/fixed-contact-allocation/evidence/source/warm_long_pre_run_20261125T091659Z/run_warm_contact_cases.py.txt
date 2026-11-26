@@ -1,0 +1,268 @@
+"""Matched Gazebo runs with a common warm observer and an in-place allocator switch.
+
+Only this result-local harness changes initialization/timing. Controller source
+is imported from the repository and copied to a provenance snapshot before runs.
+The candidate JSON contains OffroadParams overrides for an allocator-only change.
+No physical reset or observer reset is performed at the switch.
+"""
+from contextlib import ExitStack
+from dataclasses import asdict
+from datetime import datetime, timezone
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import shutil
+from unittest.mock import patch
+
+import mujoco
+import numpy as np
+
+from spherical_wheel.gazebo.experiments import GazeboWorkspace, run_gazebo
+from spherical_wheel.model import REPO_ROOT, load_config
+from spherical_wheel.offroad_control import OffroadController, OffroadParams
+from spherical_wheel.offroad_experiments import ReferencePath, save_run
+from spherical_wheel.terrain import Terrain
+
+
+OUTPUT = Path(__file__).resolve().parent
+SUPPORTS = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+SCALE = np.array([5., 5., 5., .3, .3])
+WARM_S, MOTION_S, RECOVERY_S = .8, .6, .6
+RAMP_S, PEAK_M_S = .2, .04
+PHASE = np.pi / 2
+
+
+def geometry(plant, points, loads):
+    matrix = np.zeros((2, 5))
+    total = float(np.sum(loads))
+    if total <= 0:
+        return matrix, np.nan, np.full(2, np.nan)
+    for side, point, load in zip(SUPPORTS, points, loads):
+        if load <= 0 or not np.isfinite(point).all():
+            continue
+        geom = mujoco.mj_name2id(plant.model, mujoco.mjtObj.mjOBJ_GEOM, side + '_smooth')
+        jac = np.zeros((3, plant.model.nv))
+        mujoco.mj_jac(plant.model, plant.data, jac, None, point, int(plant.model.geom_bodyid[geom]))
+        row = np.zeros((2, 5))
+        row[:, :3] = jac[:2, 6:9]
+        if side.startswith('belt'):
+            row[:, 3 + int(side.endswith('B'))] = plant.data.geom_xmat[geom].reshape(3, 3)[:2, 1]
+        matrix += load / total * row
+    left, singular, _ = np.linalg.svd(matrix * SCALE, full_matrices=False)
+    return matrix, float(singular[-1]), left[:, -1]
+
+
+def snapshot_sources(directory):
+    directory.mkdir(parents=True, exist_ok=True)
+    sources = [Path(__file__), *(REPO_ROOT / 'src/spherical_wheel' / name for name in (
+        'rolling_allocation.py', 'offroad_control.py', 'offroad_experiments.py',
+        'experiments.py', 'contact_sensing.py', 'synchronization.py', 'feasible_reference.py'))]
+    hashes = {}
+    for source in sources:
+        target = directory / source.name
+        shutil.copyfile(source, target)
+        hashes[str(source)] = hashlib.sha256(source.read_bytes()).hexdigest()
+    (directory / 'manifest.json').write_text(json.dumps(hashes, indent=2) + '\n')
+    return hashes
+
+
+def run_case(workspace, terrain, motion, variant, overrides, output):
+    directory = output / 'runs' / motion / variant
+    if (directory / 'summary.json').exists():
+        raise FileExistsError(f'Result already exists; retain it and choose a fresh --output: {directory}')
+    heading = 0. if motion == 'world_x' else 90.
+    path = ReferencePath(PEAK_M_S * (MOTION_S - RAMP_S), heading, MOTION_S,
+                         start_s=WARM_S, ramp_s=RAMP_S)
+    # Both runs start with the exact same LS controller. A new allocator can
+    # replace only params/rolling_allocator after the common warm-up.
+    parameters = OffroadParams(mode='hardware', rolling_allocation='least_squares', track_contact_point=False)
+    candidate_params = OffroadParams(**{**asdict(parameters), **overrides, 'track_contact_point': False})
+    records, activation = [], {}
+    original_command = OffroadController.command
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Controller attempted to read simulator contacts')
+
+    def command(controller, xy, velocity, acceleration):
+        plant = controller.plant
+        assert plant.ground is None and plant.terrain is None and plant.data.ncon == 0
+        now = float(plant.data.time)
+        if not activation and now >= WARM_S - 1e-9:
+            observer, estimator = controller.observer, controller.estimator
+            previous_time = float(observer._previous[0])
+            wrench_before = np.concatenate(observer.wrench())
+            qpos_before, qvel_before = plant.data.qpos.copy(), plant.data.qvel.copy()
+            input_before = plant.last_input.copy()
+            original_origin = path.origin.copy()
+            controller.params.track_contact_point = False
+            # The active request names the wheel centre. Keep both branches'
+            # prefix identical, then start the pulse from its measured centre.
+            path.origin = plant.data.qpos[:2].copy()
+            xy[:] = path(now)[0]
+            if variant != 'baseline':
+                # Constructor initializes private candidate state only; its
+                # observer/estimator are discarded. The live observer, gain
+                # history, nominal joint refs, synchronizer and robot remain.
+                template = OffroadController(plant, controller.design, candidate_params,
+                                             PHASE, record_diagnostics=True)
+                controller.params = candidate_params
+                controller.rolling_allocator = template.rolling_allocator
+                controller.motion_reference = template.motion_reference
+            assert controller.observer is observer and controller.estimator is estimator
+            assert float(observer._previous[0]) == previous_time
+            np.testing.assert_array_equal(np.concatenate(observer.wrench()), wrench_before)
+            np.testing.assert_array_equal(plant.data.qpos, qpos_before)
+            np.testing.assert_array_equal(plant.data.qvel, qvel_before)
+            np.testing.assert_array_equal(plant.last_input, input_before)
+            activation.update(time_s=now, observer_previous_time_s=previous_time,
+                              observer_object_preserved=True, estimator_object_preserved=True,
+                              state_not_reset=True, qpos=plant.data.qpos.tolist(),
+                              qvel=plant.data.qvel.tolist(), nominal_joints=controller.nominal_joints.tolist(),
+                              original_warm_reference_origin=original_origin.tolist(),
+                              active_center_goal_origin=path.origin.tolist())
+        raw_goal = np.asarray(xy).copy()
+        raw_velocity = np.asarray(velocity).copy()
+        raw_acceleration = np.asarray(acceleration).copy()
+        with ExitStack() as stack:
+            for name in ('spherical_wheel.offroad_control.measure_contact',
+                         'spherical_wheel.offroad_control.records_from_mujoco',
+                         'spherical_wheel.offroad_control.rolling_feedforward',
+                         'spherical_wheel.synchronization.ContactSynchronizer._normal_loads',
+                         'mujoco.mj_contactForce'):
+                stack.enter_context(patch(name, forbidden))
+            applied, info = original_command(controller, xy, velocity, acceleration)
+            loads = info['estimated_support_loads_N']
+            matrix, authority, weak = geometry(plant, info['estimated_contact_points_m'], loads)
+            records.append({'fixed_geometry_matrix': matrix,
+                            'fixed_authority_m_s': authority,
+                            'fixed_weak_direction': weak,
+                            'fixed_weak_requested_speed_m_s': abs(float(weak @ raw_velocity)),
+                            'fixed_estimated_patch': int(np.argmax(loads)) if np.sum(loads) > 0 else -1,
+                            'fixed_center_reference_xy': info['reference_qpos'][:2].copy(),
+                            'fixed_raw_goal_xy': raw_goal,
+                            'fixed_raw_velocity_m_s': raw_velocity,
+                            'fixed_raw_acceleration_m_s2': raw_acceleration,
+                            'fixed_observer_previous_time_s': float(controller.observer._previous[0]),
+                            'fixed_candidate_active': variant != 'baseline' and bool(activation)})
+        return applied, info
+
+    with patch.object(OffroadController, 'command', command):
+        log, summary = run_gazebo(workspace, terrain, path, parameters, phase=PHASE,
+                                  duration_s=WARM_S + MOTION_S + RECOVERY_S,
+                                  record_diagnostics=True)
+    assert len(records) == len(log['time_s'])
+    for key in records[0]:
+        log[key] = np.asarray([row[key] for row in records])
+    moving = (log['time_s'] >= WARM_S - 1e-9) & (log['time_s'] <= WARM_S + MOTION_S + 1e-9)
+    total_load = np.sum(log['support_loads_N'], axis=1)
+    shares = np.divide(log['support_loads_N'], total_load[:, None],
+                       out=np.zeros_like(log['support_loads_N']), where=total_load[:, None] > 0)
+    true_patch = np.where(total_load > .01, np.argmax(log['support_loads_N'], axis=1), -1)
+    # Evaluation only, after all controller calls have finished. For a single
+    # loaded body, its logged resultant contact point and load reconstruct the
+    # truth rolling Jacobian. Multi-patch rows remain NaN, not an equivalent
+    # single-contact assertion. This information is never fed to a controller.
+    truth_rows = []
+    mirror = workspace.mirror()
+    for i, support in enumerate(true_patch):
+        if support < 0 or np.count_nonzero(log['support_loads_N'][i] > .05) != 1:
+            truth_rows.append((np.full((2, 5), np.nan), np.nan, np.full(2, np.nan)))
+            continue
+        mirror.set_state(log['qpos'][i], log['qvel'][i], log['time_s'][i], log['input'][i])
+        points = np.full((4, 3), np.nan)
+        points[support] = log['contact_point_m'][i]
+        truth_rows.append(geometry(mirror, points, log['support_loads_N'][i]))
+    log['fixed_true_geometry_matrix'] = np.asarray([row[0] for row in truth_rows])
+    log['fixed_true_authority_m_s'] = np.asarray([row[1] for row in truth_rows])
+    log['fixed_true_weak_direction'] = np.asarray([row[2] for row in truth_rows])
+    log['fixed_true_weak_requested_speed_m_s'] = np.abs(np.sum(
+        log['fixed_true_weak_direction'] * log['fixed_raw_velocity_m_s'], axis=1))
+    i0 = int(np.flatnonzero(moving)[0])
+    support = int(true_patch[i0])
+    fixed_shell = support in (0, 1) and bool(np.all(shares[moving, support] > .95))
+    weight = workspace.plant(terrain).total_mass * 9.81
+    loaded = bool(np.all(total_load[moving] > .5 * weight))
+    weak_window = moving & (np.linalg.norm(log['fixed_raw_velocity_m_s'], axis=1) >= .02)
+    center_error = np.linalg.norm(log['qpos'][:, :2] - log['fixed_center_reference_xy'], axis=1)
+    raw_goal_error = np.linalg.norm(log['qpos'][:, :2] - log['fixed_raw_goal_xy'], axis=1)
+    im = int(np.flatnonzero(moving)[-1])
+    actual_displacement = log['qpos'][im, :2] - log['qpos'][i0, :2]
+    weak = log['fixed_weak_requested_speed_m_s']
+    checks = dict(single_same_actual_hemisphere_during_motion=fixed_shell,
+                  min_total_load_fraction_during_motion=float(np.min(total_load[moving] / weight)),
+                  sufficient_actual_load=loaded,
+                  actual_start_support=SUPPORTS[support] if support >= 0 else 'none',
+                  actual_patch_handovers_during_motion=int(np.count_nonzero(np.diff(true_patch[moving]))),
+                  minimum_start_shell_load_share=float(np.min(shares[moving, support])) if support >= 0 else 0.,
+                  authority_at_motion_start_m_s=float(log['fixed_authority_m_s'][i0]),
+                  authority_max_during_motion_m_s=float(np.nanmax(log['fixed_authority_m_s'][moving])),
+                  true_authority_at_motion_start_m_s=float(log['fixed_true_authority_m_s'][i0]),
+                  true_authority_max_during_motion_m_s=float(np.nanmax(log['fixed_true_authority_m_s'][moving])),
+                  true_weak_geometry_during_peak=bool(np.all(log['fixed_true_authority_m_s'][weak_window] < .02)) if weak_window.any() else False,
+                  weak_demand_mean_during_peak_m_s=float(np.nanmean(weak[weak_window])) if weak_window.any() else 0.,
+                  true_weak_demand_mean_during_peak_m_s=float(np.nanmean(log['fixed_true_weak_requested_speed_m_s'][weak_window])) if weak_window.any() else 0.,
+                  requested_speed_peak_m_s=float(np.max(np.linalg.norm(log['fixed_raw_velocity_m_s'], axis=1))),
+                  requested_displacement_mm=1000 * path.distance_m,
+                  actual_displacement_along_request_mm=float(1000 * (actual_displacement @ path.direction)),
+                  raw_goal_error_rms_during_motion_mm=float(1000 * np.sqrt(np.mean(raw_goal_error[moving]**2))),
+                  raw_goal_error_peak_during_motion_mm=float(1000 * raw_goal_error[moving].max()),
+                  raw_goal_error_at_motion_end_mm=float(1000 * raw_goal_error[im]),
+                  center_reference_error_rms_during_motion_mm=float(1000 * np.sqrt(np.mean(center_error[moving]**2))),
+                  center_reference_error_peak_during_motion_mm=float(1000 * center_error[moving].max()),
+                  maximum_joint_reference_rad_s=float(np.max(abs(log['reference_qvel'][moving, 6:9]))),
+                  maximum_measured_joint_rate_rad_s=float(np.max(abs(log['qvel'][moving, 6:9]))),
+                  guarded_command_calls=len(records))
+    summary['parameters'] = asdict(candidate_params if variant != 'baseline' else parameters)
+    summary['warm_fixed_contact_case'] = dict(motion=motion, variant=variant,
+        terrain=terrain.spec(), phase_rad=PHASE, warmup_s=WARM_S, motion_s=MOTION_S,
+        recovery_s=RECOVERY_S, peak_speed_m_s=PEAK_M_S, candidate_overrides=overrides,
+        activation=activation, checks=checks,
+        scope='Short allocator mechanism test, not trajectory qualification. Fixed-contact claim requires support and authority gates.')
+    save_run(directory, log, summary, terrain)
+    print(json.dumps(dict(motion=motion, variant=variant, **checks)), flush=True)
+    return log, summary
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--candidate-params', type=Path)
+    parser.add_argument('--variants', nargs='+', default=['baseline', 'candidate'])
+    parser.add_argument('--motion', nargs='+', default=['world_y', 'world_x'])
+    parser.add_argument('--output', type=Path, default=OUTPUT)
+    args = parser.parse_args()
+    if 'candidate' in args.variants and args.candidate_params is None:
+        parser.error('--candidate-params is required for a candidate run')
+    overrides = json.loads(args.candidate_params.read_text()) if args.candidate_params else {}
+    allowed = {key for key in asdict(OffroadParams()) if key.startswith('rolling_')}
+    if set(overrides) - allowed:
+        raise ValueError('This switch harness allows allocator-only rolling_* parameter overrides')
+    output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    campaign = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+    hashes = snapshot_sources(output / 'source_snapshot' / campaign)
+    workspace = GazeboWorkspace(load_config(), output / '_workspace',
+        seed_cache=REPO_ROOT / 'generated/offroad/flat/control_schedule.npz',
+        heightmap_cell_m=.04, plant_options={'visual_bounds': (-.6, .6, -.6, .6)})
+    terrain = Terrain(name='side_slope_10', features=[{'type': 'plane', 'slope': [0., np.tan(np.deg2rad(10.))]}])
+    reports = []
+    for motion in args.motion:
+        runs = {}
+        for variant in args.variants:
+            runs[variant] = run_case(workspace, terrain, motion, variant, overrides, output)
+            reports.append(runs[variant][1]['warm_fixed_contact_case'])
+        if 'baseline' in runs and 'candidate' in runs:
+            first, second = runs['baseline'][0], runs['candidate'][0]
+            prefix = first['time_s'] < WARM_S - 1e-9
+            differences = {key: float(np.max(abs(first[key][prefix] - second[key][prefix])))
+                           for key in ('qpos', 'qvel', 'input', 'reference_quat', 'observer_force_N', 'observer_moment_Nm')}
+            match = bool(all(value < 1e-8 for value in differences.values()))
+            pair = dict(motion=motion, warm_prefix_matches=match, maximum_absolute_prefix_differences=differences)
+            (output / f'pair_check_{motion}.json').write_text(json.dumps(pair, indent=2) + '\n')
+            assert match, f'Warm prefixes differ: {pair}'
+    (output / 'summary.json').write_text(json.dumps(dict(cases=reports, source_hashes=hashes), indent=2) + '\n')
+    workspace.plant(terrain).close()
+
+
+if __name__ == '__main__':
+    main()

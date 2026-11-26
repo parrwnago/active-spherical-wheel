@@ -1,0 +1,115 @@
+"""One frozen-anchor nonlinear cost comparison; no new Gazebo or controller run."""
+from pathlib import Path
+from datetime import datetime, timezone
+import csv
+import hashlib
+import importlib.util
+import json
+import traceback
+
+import numpy as np
+
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.model import REPO_ROOT
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+from spherical_wheel.predictive_control import AffineMPCSettings
+
+HERE=Path(__file__).resolve().parent
+FAMILY=HERE.parent
+MPC=FAMILY/'runs/slope/mpc'
+NATIVE=FAMILY/'runs/slope/native'
+
+
+def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    if (HERE/'report.json').exists():raise FileExistsError('Preserve completed cost check; choose another stage')
+    sources=[Path(__file__),REPO_ROOT/'scripts/run-mpc-comparison.py',
+             REPO_ROOT/'src/spherical_wheel/predictive_model.py',
+             REPO_ROOT/'src/spherical_wheel/predictive_control.py',
+             FAMILY/'candidate_cost_protocol.json']
+    snapshot=HERE/'source_snapshot';snapshot.mkdir(exist_ok=True)
+    entries=[]
+    for source in sources:
+        target=snapshot/source.name
+        if target.exists():raise FileExistsError('Preserve earlier source snapshot')
+        target.write_bytes(source.read_bytes())
+        entries.append({'origin':str(source.relative_to(REPO_ROOT)),'snapshot':str(target.relative_to(HERE)),'sha256':sha(source)})
+    inputs=[MPC/'plans.json',MPC/'precision.npz',MPC/'rollout.npz',MPC/'provenance.json',NATIVE/'precision.npz']
+    (HERE/'provenance.json').write_text(json.dumps({'captured_before_calculations_utc':datetime.now(timezone.utc).isoformat(),
+        'scope':'Offline frozen-anchor cost comparison of saved bounded command sequences; not a new deployable controller.',
+        'sources':entries,'inputs':{str(p.relative_to(REPO_ROOT)):sha(p) for p in inputs}},indent=2)+'\n')
+    spec=importlib.util.spec_from_file_location('mpc_comparison_cost',REPO_ROOT/'scripts/run-mpc-comparison.py')
+    harness=importlib.util.module_from_spec(spec);spec.loader.exec_module(harness)
+    plans=json.loads((MPC/'plans.json').read_text())
+    plan=min(plans,key=lambda row:abs(row['time_s']-.4));assert abs(plan['time_s']-.4)<1e-8
+    with np.load(MPC/'precision.npz') as data:exact={k:data[k] for k in data}
+    with np.load(MPC/'rollout.npz') as data:log={k:data[k] for k in data}
+    with np.load(NATIVE/'precision.npz') as data:native={k:data[k] for k in data}
+    i=int(np.argmin(abs(exact['time_s']-plan['time_s'])));j=int(np.argmin(abs(native['time_s']-plan['time_s'])))
+    q0,v0=np.array(plan['qpos']),np.array(plan['qvel'])
+    np.testing.assert_array_equal(q0,native['exact_qpos'][j]);np.testing.assert_array_equal(v0,native['exact_qvel'][j])
+    previous=exact['exact_applied'][i-1]
+    np.testing.assert_array_equal(previous,native['exact_applied'][j-1])
+    mirror=StateMirror(model_dir=HERE/'private_model');mirror.set_state(q0,v0,plan['time_s'],previous)
+    predictor=EstimatedPlanePredictor(mirror)
+    # Hardware estimator reports zero slip; its friction remains the exact
+    # nominal coefficient. Restore that double instead of float32 saved log.
+    friction=float(mirror.nominal_friction)
+    assert np.float32(friction)==log['estimated_friction'][i]
+    calibration=predictor.update(q0,v0,plan['normal'],plan['point_m'],plan['load_N'],friction=friction,command=previous)
+    assert abs(calibration['plane_offset_m']-plan['calibration']['plane_offset_m'])<=1e-12
+    evaluator=object.__new__(harness.TrajectoryPredictiveExperiment)
+    evaluator.predictor=predictor;evaluator.settings=AffineMPCSettings()
+    frozen_settings=json.loads((MPC/'provenance.json').read_text())['mpc_settings']
+    from dataclasses import asdict
+    assert json.loads(json.dumps(asdict(evaluator.settings)))==frozen_settings
+    transform=np.eye(18);transform[2,:3]=plan['normal'];transform[11,9:12]=plan['normal']
+    target=np.array(plan['target_states']);bounds=mirror.bounds.copy()
+    native_future=native['exact_applied'][j:j+80].reshape(20,4,5)
+    candidates=[('saved_selected_mpc',np.array(plan['inputs'])),
+                ('native_future_first_5ms_sample',native_future[:,0]),
+                ('native_future_mean_4x5ms_samples',native_future.mean(axis=1))]
+    rows=[];goal=exact['recovery_goal_xy'][i]
+    for label,commands in candidates:
+        assert commands.shape==(20,5)
+        assert np.all(abs(commands)<=bounds+1e-12)
+        states,cost,components=evaluator.evaluate(q0,v0,commands,target,transform,bounds,previous)
+        terminal_q,terminal_v=predictor.perturb(q0,v0,states[-1])
+        absolute_tilt=float(np.degrees(np.arccos(np.clip(1-2*np.sum(terminal_q[4:6]**2),-1,1))))
+        row={'candidate':label,'total_cost':cost,**components,
+            'goal_distance_initial_mm':float(1000*np.linalg.norm(q0[:2]-goal)),
+            'predicted_terminal_goal_error_mm':float(1000*np.linalg.norm(terminal_q[:2]-goal)),
+            'predicted_terminal_absolute_platform_tilt_deg':absolute_tilt,
+            'predicted_terminal_body_speed_mm_s':float(1000*np.linalg.norm(terminal_v[:3])),
+            'input_bound_fraction_max':float(np.max(abs(commands)/bounds)),
+            'commands':commands.tolist(),'nonlinear_states':states.tolist()}
+        if label=='saved_selected_mpc':
+            row['saved_nonlinear_cost']=plan['nonlinear_cost']
+            row['recomputed_minus_saved_cost']=cost-plan['nonlinear_cost']
+            np.testing.assert_allclose(cost,plan['nonlinear_cost'],rtol=1e-10,atol=1e-10)
+            np.testing.assert_allclose(states,np.array(plan['nonlinear_states']),rtol=1e-10,atol=1e-10)
+        rows.append(row)
+        print(json.dumps({k:v for k,v in row.items() if not isinstance(v,list)}),flush=True)
+    selected=rows[0]['total_cost']
+    for row in rows:
+        row['cost_ratio_to_selected']=row['total_cost']/selected
+        row['lower_cost_than_selected']=bool(row['total_cost']<selected)
+    report={'status':'completed','anchor_s':plan['time_s'],'settings':frozen_settings,'calibration':calibration,
+            'friction_used_exact_nominal':friction,'selected_cost_and_states_reproduced_within_rtol_1e10':True,
+            'scope':'Two bounded native-derived command sequences are offline candidate comparisons, not deployable future knowledge or new controller runs.',
+            'rows':rows,'lower_cost_native_candidate_found':any(row['lower_cost_than_selected'] for row in rows[1:]),
+            'limits':'A missed lower-cost feasible candidate at this one anchor does not prove a seed change will fix closed-loop behavior, global optimality, or sole causation.'}
+    (HERE/'report.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
+    with (HERE/'metrics.csv').open('w',newline='') as f:
+        small=[{k:v for k,v in row.items() if not isinstance(v,list)} for row in rows]
+        fields=sorted(set().union(*(row.keys() for row in small)))
+        writer=csv.DictWriter(f,fieldnames=fields);writer.writeheader();writer.writerows(small)
+
+
+if __name__=='__main__':
+    try:main()
+    except Exception:
+        (HERE/'failure.txt').write_text(traceback.format_exc())
+        raise

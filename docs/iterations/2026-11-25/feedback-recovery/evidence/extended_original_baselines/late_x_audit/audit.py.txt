@@ -1,0 +1,117 @@
+"""Read-only late-X event audit from the extended unchanged LQR baseline.
+
+No controller/estimator ablation or causal identification is performed.
+"""
+from pathlib import Path
+import hashlib
+import json
+import csv
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+HERE=Path(__file__).resolve().parent
+ROOT=HERE.parents[3]
+RUN=HERE.parent/'runs/world_x/baseline'
+NAMES=('shell_A','shell_B','belt_A','belt_B')
+INPUTS=('shaft_torque','shellA_torque','shellB_torque','beltA_speed','beltB_speed')
+
+def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def finite_max(value):
+    a=np.asarray(value,float);a=a[np.isfinite(a)]
+    return float(np.max(abs(a))) if len(a) else None
+
+def main():
+    with np.load(RUN/'precision.npz') as z:p={k:z[k] for k in z}
+    with np.load(RUN/'rollout.npz') as z:r={k:z[k].astype(float) if z[k].dtype.kind=='f' else z[k] for k in z}
+    t=p['time_s'];q=p['exact_qpos'];v=p['exact_qvel'];u=p['exact_applied']
+    goal=p['mpc_original_goal_xy'][-1];error=1000*np.linalg.norm(q[:,:2]-goal,axis=1)
+    speed=1000*np.linalg.norm(v[:,:2],axis=1);late=t>=5.4-1e-9
+    act=late.copy();act[-1]=False
+    bounds=r['input_bounds'][0];limit=abs(u)>=.99*bounds
+    loads=r['support_loads_N'];estimated=r['estimated_support_loads_N']
+    true_patch=np.where(loads.sum(axis=1)>.001,np.argmax(loads,axis=1),-1)
+    est_patch=np.where(estimated.sum(axis=1)>.001,np.argmax(estimated,axis=1),-1)
+    force_error=np.linalg.norm(r['observer_force_N']-r['contact_force_N'],axis=1)
+    moment_error=np.linalg.norm(r['observer_moment_Nm']-r['contact_moment_Nm'],axis=1)
+    point_error=1000*np.linalg.norm(r['estimated_contact_point_m']-r['contact_point_m'],axis=1)
+    normal_error=np.degrees(np.arccos(np.clip(np.sum(r['estimated_normal']*r['ground_normal'],axis=1),-1,1)))
+    yaw=np.degrees(np.unwrap(r['heading_rad']))
+    effective=np.degrees(r['effective_phase_rad']);shaft=np.degrees(q[:,7])
+    late_indices=np.flatnonzero(late);imin=late_indices[np.argmin(error[late])]
+
+    def event(index):
+        return {'time_s':float(t[index]),'original_goal_error_mm':float(error[index]),
+            'xy_speed_mm_s':float(speed[index]),'world_yaw_deg':float(yaw[index]),
+            'shaft_angle_deg':float(shaft[index]),'effective_contact_phase_deg':float(effective[index]),
+            'true_dominant_patch':NAMES[true_patch[index]] if true_patch[index]>=0 else None,
+            'estimated_dominant_patch':NAMES[est_patch[index]] if est_patch[index]>=0 else None,
+            'true_support_loads_N':loads[index].tolist(),'estimated_support_loads_N':estimated[index].tolist(),
+            'actual_inputs':u[index].tolist(),'native_requested_inputs':p['mpc_native_requested'][index].tolist(),
+            'inputs_above_99pct_bound':[name for name,flag in zip(INPUTS,limit[index]) if flag],
+            'reference_qvel_all9':r['reference_qvel'][index].tolist(),
+            'feedback_reference_qvel_all9':r['feedback_reference_qvel'][index].tolist(),
+            'allocation_drive_reference':r['allocation_drive_reference'][index].tolist(),
+            'rolling_feedforward':r['rolling_feedforward'][index].tolist(),
+            'lqr_command':r['lqr_command'][index].tolist(),
+            'support_command':r['support_command'][index].tolist(),
+            'transition_command_delta':r['transition_command_delta'][index].tolist(),
+            'heading_command':r['heading_command'][index].tolist(),
+            'fade_command_delta':r['fade_command_delta'][index].tolist(),
+            'sync_weights':r['sync_weights'][index].tolist(),
+            'observer_force_vs_instant_truth_error_N':float(force_error[index]),
+            'observer_moment_vs_instant_truth_error_Nm':float(moment_error[index]),
+            'estimated_contact_point_error_mm':float(point_error[index]) if np.isfinite(point_error[index]) else None,
+            'estimated_normal_error_deg':float(normal_error[index])}
+    thresholds={}
+    for threshold in (10.,25.,50.):
+        indices=np.flatnonzero(late&(error>threshold))
+        thresholds[str(threshold)]=event(indices[0]) if len(indices) else None
+    switches=[]
+    for i in np.flatnonzero(late):
+        if i and true_patch[i]!=true_patch[i-1]:switches.append(event(i))
+    limit_first={}
+    for j,name in enumerate(INPUTS):
+        i=np.flatnonzero(act&limit[:,j]);limit_first[name]=float(t[i[0]]) if len(i) else None
+    windows={}
+    for start,end in ((5.4,7.12),(7.12,8.5),(8.5,9.4)):
+        m=(t>=start-1e-9)&(t<=end+1e-9);ma=m.copy();ma[-1]=False
+        windows[f'{start:g}-{end:g}s']={'input_limit_occupancy_any_fraction':float(np.any(limit[ma],axis=1).mean()),
+            'per_input_limit_occupancy_fraction':np.mean(limit[ma],axis=0).tolist(),
+            'raw_reference_qvel_absmax':finite_max(r['reference_qvel'][m]),
+            'feedback_reference_qvel_absmax':finite_max(r['feedback_reference_qvel'][m]),
+            'allocation_drive_reference_absmax':finite_max(r['allocation_drive_reference'][m]),
+            'rolling_feedforward_absmax':finite_max(r['rolling_feedforward'][m]),
+            'observer_force_error_peak_N':finite_max(force_error[m]),
+            'observer_moment_error_peak_Nm':finite_max(moment_error[m]),
+            'contact_point_error_peak_mm':finite_max(point_error[m]),
+            'dominant_patch_disagreement_samples':int(np.sum(true_patch[m]!=est_patch[m]))}
+    report={'scope':'Read-only late-X diagnosis from one extended original LQR baseline. Correlation only; no controller, estimator, synchronization or configuration ablation.',
+        'measurement_timing_caveat':'Observer is interval-average/filtered; truth contact force/moment is last-physics-step instantaneous. Their difference is not pure observer error.',
+        'source_sha256':sha(Path(__file__)),'inputs_sha256':{str(x.relative_to(ROOT)):sha(x) for x in (RUN/'precision.npz',RUN/'rollout.npz',RUN/'summary.json',RUN/'provenance.json')},
+        'old_deadline':event(int(np.argmin(abs(t-5.4)))),'late_minimum':event(imin),
+        'first_error_above_mm_after_old_deadline':thresholds,'true_patch_switches_after_old_deadline':switches,
+        'first_99pct_bound_time_after_old_deadline':limit_first,'windows':windows,'final':event(len(t)-1),
+        'interpretation_limit':'A late support/geometry/command event does not by itself establish cause. Desired reference velocity and allocated references must be distinguished from applied commands.'}
+    (HERE/'report.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
+    indices=sorted(set([int(np.argmin(abs(t-s))) for s in (5.4,6.,7.,7.12,8.,8.5,9.,9.4)]+[int(np.argmin(abs(t-v['time_s']))) for v in thresholds.values() if v]))
+    with (HERE/'events.csv').open('w',newline='') as f:
+        keys=['time_s','original_goal_error_mm','xy_speed_mm_s','world_yaw_deg','shaft_angle_deg','effective_contact_phase_deg','true_dominant_patch','estimated_dominant_patch','observer_force_vs_instant_truth_error_N','estimated_contact_point_error_mm']
+        w=csv.DictWriter(f,fieldnames=keys);w.writeheader();w.writerows({k:event(i)[k] for k in keys} for i in indices)
+    fig,axes=plt.subplots(4,1,figsize=(11,10),sharex=True,constrained_layout=True)
+    axes[0].plot(t,error,label='Original goal error (mm)');axes[0].plot(t,speed,label='XY speed (mm/s)');axes[0].legend();axes[0].set_ylabel('mm; mm/s')
+    axes[1].plot(t,yaw,label='World yaw');axes[1].plot(t,shaft,label='Shaft joint');axes[1].plot(t,effective,label='Effective contact phase');axes[1].legend();axes[1].set_ylabel('deg')
+    for i,name in enumerate(NAMES):
+        axes[2].plot(t,loads[:,i],label='Truth '+name)
+        axes[2].plot(t,estimated[:,i],ls='--',alpha=.6,label='Estimated '+name)
+    axes[2].set_ylabel('Support N');axes[2].legend(ncol=4,fontsize=7)
+    for i,name in enumerate(INPUTS):axes[3].plot(t,u[:,i]/bounds[i],label=name)
+    axes[3].axhline(1.,ls='--',c='grey');axes[3].axhline(-1.,ls='--',c='grey');axes[3].legend(ncol=3,fontsize=8);axes[3].set_ylabel('Actual input / bound');axes[3].set_xlabel('Simulation time (s)')
+    for ax in axes:ax.set_xlim(5.4,9.4);ax.grid(alpha=.2);ax.axvline(t[imin],color='black',ls=':',alpha=.4)
+    fig.suptitle('I32 extended original X baseline: late return is not sustained settling\nUnchanged LQR/FF, 10deg slope; temporal associations do not identify cause',fontsize=12)
+    fig.savefig(HERE/'late_x.png',dpi=180);fig.savefig(HERE/'late_x.pdf')
+    print(json.dumps({'late_minimum':{'t':float(t[imin]),'error_mm':float(error[imin])},'threshold_times':{k:v['time_s'] if v else None for k,v in thresholds.items()},'first_limits':limit_first,'patch_switch_times':[v['time_s'] for v in switches],'windows':windows},indent=2))
+
+if __name__=='__main__':main()

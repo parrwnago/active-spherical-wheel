@@ -1,0 +1,73 @@
+{
+  "status": "rendered_and_decoded_verified",
+  "iteration": "I-38",
+  "video": {
+    "path": "results/mpc_extended_return_20261125/videos/seeded_mpc_extended_return.mp4",
+    "sha256": "b14dbabe8212079be8041e91c9946cbfc2e7461215370902a691679c5c284ed3",
+    "bytes": 4481913,
+    "dimensions": [
+      1280,
+      1000
+    ],
+    "fps": 20.0,
+    "frames": 657,
+    "duration_s": 32.85,
+    "observed_simulated_duration_s": 16.4,
+    "requested_simulated_duration_s": 16.4,
+    "playback_speed": 0.5,
+    "decoded_final_verified": true
+  },
+  "source_snapshot": "results/mpc_extended_return_20261125/videos/source_snapshot/render_extended_return_a396a8e6235d.py",
+  "shared_full_old_precision_prefix_verified": {
+    "time_s": true,
+    "exact_qpos": true,
+    "exact_qvel": true,
+    "exact_applied": true,
+    "exact_observer_wrench": true,
+    "exact_estimated_normal": true,
+    "recovery_native_requested": true,
+    "recovery_native_applied": true,
+    "recovery_goal_xy": true
+  },
+  "old_cutoff_time_s": 8.4,
+  "observed_complete": true,
+  "final_1s_gate": false,
+  "endpoint_matches_summary": true,
+  "endpoint": {
+    "goal_error_mm": 19.100148263583023,
+    "xy_speed_mm_s": 2.9973618187987174,
+    "absolute_tilt_deg": 9.754343230326269,
+    "reference_tilt_deg": 9.730921745300293,
+    "reference_error_deg": 0.026227569207549095
+  },
+  "source_artifact_sha256": {
+    "results/mpc_extended_return_20261125/videos/render_extended_return.py": "a396a8e6235db682d6d9d990d75172d1e877ca50d8020615158ba4192faf7097",
+    "results/mpc_extended_return_20261125/videos/source_snapshot/render_extended_return_a396a8e6235d.py": "a396a8e6235db682d6d9d990d75172d1e877ca50d8020615158ba4192faf7097",
+    "results/mpc_extended_return_20261125/runs/slope/mpc/source_snapshot/config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+    "results/mpc_extended_return_20261125/runs/slope/mpc/terrain.json": "e02e98f80862d757dcf0f6b08afc9ffca00b11bb6af718cf0507c811293e8a3c",
+    "results/mpc_search_20261125/runs/slope/mpc/provenance.json": "09cdca2584e3b52be9fe12c0d6c3f3d834c412cdef95d75dc29ea7598bcb2809",
+    "results/mpc_search_20261125/runs/slope/mpc/precision.npz": "b42fb372d188ac72be053f382440e3f42dafe6b35bc0aa0638116ef5b2477d04",
+    "src/spherical_wheel/offroad_view.py": "631370d0c5ee29417cb2e8531ced3139464f4ffa6bd8d6d33d12a4ae3b3c479f",
+    "src/spherical_wheel/offroad.py": "bb87ec5d188cc51acdc2591b8629dc94785b2c3aaff2e402947f911b993f5070",
+    "src/spherical_wheel/terrain.py": "43ff7b6bf2d53fd3cfccfaa9d02841195f78e0d7e6cc2181b01c0589176751eb",
+    "results/mpc_extended_return_20261125/runs/slope/mpc/precision.npz": "e89e9b70e655249a82abec4d812ea560a583d070b03550a41e3c9585486fb742",
+    "results/mpc_extended_return_20261125/runs/slope/mpc/rollout.npz": "0d0b07bd9408b444636df86d433e5051bba2e9ca5db345184c85665f6e14a8ad",
+    "results/mpc_extended_return_20261125/runs/slope/mpc/summary.json": "93b0fb94f8c1dd27035640ba1237a9e873bd05189c01c43db6bb479428652d86",
+    "results/mpc_extended_return_20261125/runs/slope/mpc/provenance.json": "6b2d70a09380ec989343183d6620af7f0b1e3821e044e639c68752ad85e58b71",
+    "results/mpc_extended_return_20261125/runs/slope/mpc/plans.json": "de36da7541e7f54bbe7ae14f4687a120719c470c8484ba6226e0c6ea91d122b0",
+    "results/mpc_extended_return_20261125/protocol.json": "0811abb83140f932942a29ab9c42e6d0ef6d255ca08e93b26cfd8afca7265b49",
+    "results/mpc_extended_return_20261125/analysis/report.json": "f0a2e7806d9da2c7bbd9cd3237e7ab5eafbf117ee2a09bfdd9cfa77bfa2d4072"
+  },
+  "stills": {
+    "extended_first.jpg": "42bef49c2ba9d00ff18163aa8f16aea61dd1d67275c58bd618642ae367a43993",
+    "extended_feedback_on.jpg": "5c506685a1de620b3c87567e842aa04d378253158ad1b8a346ac65332e80671e",
+    "extended_old_cutoff.jpg": "c1676182079338318288dd020ccf43c6514f464c4a461593fe6f864eea2a8a05",
+    "extended_final.jpg": "c767e85d573dead2a9409671d6c1e93ba6865ee51dbb50f680e33c67e11d2d5d",
+    "extended_decoded_final.jpg": "a54e41f12294058353aec090146435421506df2ab3cfea1adb4e96cf0f0e563d"
+  },
+  "scope": "One saved Gazebo/DART trace reconstructed in MuJoCo; rendering adds no physics. Original I34 prefix verified exactly.",
+  "terrain": "Uniform10deg side slope mesh; not Mars or unknown-terrain forecast.",
+  "timing": "0-.4s fixed input, then16s feedback requested; old cutoff8.4s marked. No state/observer/goal reset.",
+  "controller": "Unchanged I34 predicted-native-seeded MPC: .4s horizon, one refinement, stride5 Jacobians,20ms held inputs,5ms observer.",
+  "visualization": "3Dcamera tracks midpoint of robot and retained goal. Fixed-world XY inset keeps goal fixed on screen. Charts retain full-run time axes; gold dashed line marks old video end."
+}

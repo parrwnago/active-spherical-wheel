@@ -1,0 +1,329 @@
+"""I41 saved Mars/flat events and native command audit; no physics advance."""
+from __future__ import annotations
+
+import csv
+from datetime import datetime, timezone
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import shutil
+import sys
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import mujoco
+import numpy as np
+
+from spherical_wheel.contact_diagnostics import diagnostic_signals
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.model import REPO_ROOT, load_config
+
+HERE = Path(__file__).resolve().parent
+FAMILY = HERE.parent
+FIXED_SOURCE = HERE/'selection_stage02_source'
+sys.path.insert(0, str(FIXED_SOURCE))
+from select_events import path_from_provenance, read_npz, reduce_geometry, safe, save, turn_metrics
+from event_metrics import first_sustained
+
+PATCHES = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+COMPONENTS = ('equilibrium_command', 'rolling_feedforward', 'support_command', 'lqr_command',
+              'transition_command_delta', 'heading_command', 'fade_command_delta')
+SCALE = np.array([5., 5., 5., .3, .3])
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def angle(first, second):
+    first, second = np.asarray(first, float), np.asarray(second, float)
+    denominator = np.linalg.norm(first, axis=1)*np.linalg.norm(second, axis=1)
+    cosine = np.einsum('ij,ij->i', first, second)/np.maximum(denominator, 1e-15)
+    return np.degrees(np.arccos(np.clip(cosine, -1, 1)))
+
+
+def patch_labels(loads, threshold=.05):
+    loads = np.asarray(loads, float)
+    return np.where(loads.max(axis=1) >= threshold, loads.argmax(axis=1), 4)
+
+
+def label_events(times, labels):
+    changes = np.flatnonzero(labels[1:] != labels[:-1])+1
+    return [{'time_s': float(times[i]), 'from': PATCHES[labels[i-1]] if labels[i-1] < 4 else 'none',
+             'to': PATCHES[labels[i]] if labels[i] < 4 else 'none'} for i in changes]
+
+
+class Authority:
+    def __init__(self, directory):
+        self.mirror = StateMirror(load_config(), directory)
+        self.model, self.data = self.mirror.model, self.mirror.data
+        self.patches = []
+        for name in PATCHES:
+            geom = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, name+'_smooth')
+            if geom < 0: raise ValueError(name)
+            self.patches.append((name, geom, int(self.model.geom_bodyid[geom])))
+
+    def evaluate(self, qpos, points, loads):
+        self.data.qpos[:] = qpos
+        mujoco.mj_kinematics(self.model, self.data); mujoco.mj_comPos(self.model, self.data)
+        total = float(np.sum(loads)); matrix = np.zeros((2, 5))
+        if total <= 0: return np.nan, np.nan, np.full(2, np.nan)
+        for i, (name, geom, body) in enumerate(self.patches):
+            if loads[i] <= 0 or not np.isfinite(points[i]).all(): continue
+            jac = np.zeros((3, self.model.nv))
+            mujoco.mj_jac(self.model, self.data, jac, None, points[i], body)
+            row = np.zeros((2, 5)); row[:, :3] = jac[:2, 6:9]
+            if name.startswith('belt'):
+                row[:, 3+int(name.endswith('B'))] = self.data.geom_xmat[geom].reshape(3, 3)[:2, 1]
+            matrix += loads[i]/total*row
+        left, singular, _ = np.linalg.svd(matrix*SCALE, full_matrices=False)
+        return float(singular[-1]), float(singular[0]), left[:, -1]
+
+
+def summarize_window(time, selected, series):
+    result = {}
+    for key, value in series.items():
+        values = np.asarray(value)[selected]
+        if values.ndim != 1 or values.dtype.kind not in 'biuf': continue
+        finite = np.isfinite(values)
+        if not finite.any():
+            result[key] = {'min': None, 'max': None, 'median': None}; continue
+        result[key] = {'min': float(values[finite].min()), 'max': float(values[finite].max()),
+                       'median': float(np.median(values[finite]))}
+    return result
+
+
+def snapshot(time, instant, series, log, actual):
+    i = int(np.argmin(abs(time-instant)))
+    row = {'time_s': float(time[i]), 'actual_xy_m': actual['exact_qpos'][i, :2],
+           'reference_xy_m': actual['exact_reference_xy'][i],
+           'actual_xy_velocity_m_s': actual['exact_qvel'][i, :2],
+           'reference_velocity_m_s': actual['exact_reference_velocity_m_s'][i],
+           'reference_acceleration_m_s2': actual['exact_reference_acceleration_m_s2'][i],
+           'requested_input': actual['exact_native_requested'][i],
+           'applied_input': actual['exact_applied'][i],
+           'previous_applied_input': actual['exact_previous_applied'][i],
+           'true_patch_loads_N': actual['truth_patch_loads_N'][i],
+           'estimated_patch_loads_N': log['estimated_support_loads_N'][i],
+           'sync_weights': log['sync_weights'][i]}
+    for key in COMPONENTS+('clipping_command_delta',): row[key] = log[key][i]
+    for key, value in series.items(): row[key] = np.asarray(value)[i]
+    return row
+
+
+def analyze_case(name, folder, output, authority):
+    actual, log = read_npz(folder/'precision.npz'), read_npz(folder/'rollout.npz')
+    provenance = json.loads((folder/'provenance.json').read_text()); path = path_from_provenance(provenance)
+    summary = json.loads((folder/'summary.json').read_text())
+    time = actual['time_s']; bounds = np.asarray(provenance['input_bounds'], float)
+    if name == 'mars':
+        geometry = read_npz(HERE/'selection_stage02_corrected/reference_geometry.npz')
+        selection = json.loads((HERE/'selection_stage02_corrected/selection_report.json').read_text())
+        primary, turns, sensitivity = selection['primary_deviation'], selection['turn_events'], selection['sensitivity']
+    else:
+        geometry = reduce_geometry(actual, path)
+        primary = first_sustained(time, geometry['local_path_distance_m'], .02, .1, path.start_s)
+        turns = turn_metrics(actual, path, geometry)
+        sensitivity = {key: {str(mm): first_sustained(time, abs(geometry[key]), mm/1000, .1, path.start_s)
+                             for mm in (10, 20, 30)}
+                       for key in ('local_path_distance_m', 'time_aligned_error_m', 'time_aligned_signed_normal_m')}
+    events = ([] if primary is None else [{'event_id': 'first_path_departure_20mm',
+        'time_s': primary['start_s'], 'window_s': [primary['start_s']-1, primary['start_s']+2]}])+[
+        {'event_id': x['event_id'], 'time_s': x['time_s'], 'window_s': x['window_s']} for x in turns]
+    q = actual['exact_qpos']; v = actual['exact_qvel']
+    reference_speed = np.linalg.norm(actual['exact_reference_velocity_m_s'], axis=1)
+    gains = np.asarray(log['feedback_gain'], float)
+    gain_norm = np.linalg.norm(gains, axis=(1, 2))
+    gain_step = np.r_[0., np.linalg.norm(np.diff(gains, axis=0), axis=(1, 2))/np.maximum(gain_norm[:-1], 1e-15)]
+    reconstructed = sum((np.asarray(log[k], float) for k in COMPONENTS), start=np.zeros_like(actual['exact_applied']))
+    request_error = np.max(abs(reconstructed-actual['exact_native_requested'])/bounds, axis=1)
+    applied_error = np.max(abs(reconstructed+log['clipping_command_delta']-actual['exact_applied'])/bounds, axis=1)
+    true_patch = patch_labels(actual['truth_patch_loads_N']); estimated_patch = patch_labels(log['estimated_support_loads_N'])
+    true_changes = label_events(time, true_patch); estimated_changes = label_events(time, estimated_patch)
+    normal_error = angle(actual['exact_estimated_normal'], log['ground_normal'])
+    slope = np.degrees(np.arctan2(np.linalg.norm(log['ground_normal'][:, :2], axis=1), log['ground_normal'][:, 2]))
+    normal_step = np.r_[0., angle(actual['exact_estimated_normal'][1:], actual['exact_estimated_normal'][:-1])]
+    true_valid = actual['truth_patch_loads_N'].sum(axis=1) > .05
+    estimated_valid = log['estimated_support_loads_N'].sum(axis=1) > .05
+    point_gap = 1000*np.linalg.norm(log['estimated_contact_point_m']-actual['truth_equivalent_point_m'], axis=1)
+    point_gap[~(true_valid & estimated_valid)] = np.nan
+    current_request = actual['exact_native_requested']; applied = actual['exact_applied']
+    series = {'tracking_error_mm': 1000*geometry['time_aligned_error_m'],
+        'local_path_distance_mm': 1000*geometry['local_path_distance_m'],
+        'signed_normal_error_mm': 1000*geometry['time_aligned_signed_normal_m'],
+        'alongtrack_error_mm': 1000*geometry['time_aligned_alongtrack_m'],
+        'reference_phase_lag_s': geometry['reference_phase_lag_s'],
+        'projection_window_boundary': geometry['artificial_projection_window_boundary'],
+        'reference_speed_mm_s': reference_speed*1000,
+        'actual_speed_mm_s': np.linalg.norm(v[:, :2], axis=1)*1000,
+        'reference_acceleration_mm_s2': np.linalg.norm(actual['exact_reference_acceleration_m_s2'], axis=1)*1000,
+        'logged_DEM_tangent_slope_deg': slope, 'estimated_vs_logged_DEM_normal_error_deg': normal_error,
+        'estimated_normal_step_deg': normal_step, 'contact_equivalent_point_gap_mm': point_gap,
+        'true_dominant_patch_code': true_patch, 'estimated_dominant_patch_code': estimated_patch,
+        'dominant_patch_disagreement': true_patch != estimated_patch,
+        'gain_relative_frobenius_step': gain_step,
+        'maximum_sync_weight': np.max(log['sync_weights'], axis=1),
+        'sync_delta_max_normalized': np.max(abs(log['transition_command_delta'])/bounds, axis=1),
+        'LQR_max_normalized': np.max(abs(log['lqr_command'])/bounds, axis=1),
+        'requested_max_normalized': np.max(abs(current_request)/bounds, axis=1),
+        'applied_max_normalized': np.max(abs(applied)/bounds, axis=1),
+        'requested_outside_bound': np.any(abs(current_request) > bounds+1e-10, axis=1),
+        'applied_at_99percent_bound': np.any(abs(applied) >= .99*bounds, axis=1),
+        'reference_drive_speed_max_rad_s': np.max(abs(log['reference_qvel'][:, 6:9]), axis=1),
+        'actual_drive_speed_max_rad_s': np.max(abs(v[:, 6:9]), axis=1),
+        'reference_lean_error_deg': np.degrees(log['attitude_error_rad']),
+        'command_reconstruction_max_normalized_error': request_error,
+        'applied_reconstruction_max_normalized_error': applied_error,
+        'heading_rad': log['heading_rad']}
+    indices = set(range(0, len(time), 10)); indices.add(len(time)-1)
+    for event in events:
+        indices.update(np.flatnonzero((time >= event['window_s'][0]-1e-9) & (time <= event['window_s'][1]+1e-9)).tolist())
+    indices = sorted(indices)
+    sigma_min = np.full(len(time), np.nan); sigma_max = np.full(len(time), np.nan); weak = np.full((len(time), 2), np.nan)
+    for i in indices:
+        sigma_min[i], sigma_max[i], weak[i] = authority.evaluate(q[i], log['estimated_contact_points_m'][i],
+                                                               log['estimated_support_loads_N'][i])
+    series['estimated_horizontal_authority_m_s'] = sigma_min
+    series['estimated_strong_horizontal_authority_m_s'] = sigma_max
+    series['weak_direction_requested_speed_mm_s'] = 1000*abs(np.einsum('ij,ij->i', weak, actual['exact_reference_velocity_m_s']))
+    event_rows = []
+    for event in events:
+        at = event['time_s']; selected = (time >= event['window_s'][0]-1e-9) & (time <= event['window_s'][1]+1e-9)
+        snapshots = [snapshot(time, at+delta, series, log, actual) for delta in (-.2, -.1, 0., .1, .2)]
+        event_rows.append({**event, 'snapshot_at_event': snapshot(time, at, series, log, actual),
+            'snapshots': snapshots, 'window_statistics': summarize_window(time, selected, series),
+            'true_patch_changes_in_window': [x for x in true_changes if event['window_s'][0] <= x['time_s'] <= event['window_s'][1]],
+            'estimated_patch_changes_in_window': [x for x in estimated_changes if event['window_s'][0] <= x['time_s'] <= event['window_s'][1]],
+            'window_requested_saturation_fraction': float(np.mean(series['requested_outside_bound'][selected])),
+            'window_patch_disagreement_fraction': float(np.mean((true_patch != estimated_patch)[selected]))})
+    output.mkdir()
+    np.savez_compressed(output/'signals.npz', time_s=time, **series)
+    if name != 'mars': np.savez_compressed(output/'reference_geometry.npz', **geometry)
+    report = {'case': name, 'source_folder': str(folder.relative_to(REPO_ROOT)), 'completed': summary['completed'],
+        'failure': summary.get('failure'), 'primary_deviation': primary, 'sensitivity': sensitivity,
+        'turn_events': turns, 'event_audits': event_rows,
+        'command_reconstruction_max_normalized_error': float(np.max(request_error)),
+        'applied_reconstruction_max_normalized_error': float(np.max(applied_error)),
+        'authority_sample_count': len(indices), 'authority_rate_normalization': SCALE,
+        'initial': {'qpos': q[0], 'qvel': v[0], 'logged_ground_normal': log['ground_normal'][0],
+                    'estimated_normal': actual['exact_estimated_normal'][0]},
+        'tracking': summary['tracking'],
+        'source_sha256': {name: sha(folder/name) for name in ('precision.npz', 'rollout.npz', 'provenance.json', 'summary.json')},
+        'limits': ['Commandcomponents are saved float32 diagnostics; reconstruction residual is reported against exact saved requested/applied inputs.',
+            'Commands at t act over the next5ms; current motion reflects preceding commands.',
+            'Groundnormal is logged localDEM tangent, notDART forceweighted contactnormal. Estimatednormal comparison includesfilter timing.',
+            'Authority is an estimated-load-weighted horizontal kinematicdiagnostic with declared rate scales, not measured motor limits or a stability proof.',
+            'Dynamic forecast was unused; kinematic synchronizer delta was actuated. Co-occurrence doesnotestablish a causal contribution.']}
+    save(output/'report.json', report)
+    return report, actual, log, series
+
+
+def plots(name, output, report, actual, log, series):
+    time = actual['time_s']; primary = report['primary_deviation']
+    shown_events = ([{'event_id': 'first_departure', 'time_s': primary['start_s'], 'window_s': [primary['start_s']-1, primary['start_s']+2]}] if primary else [])
+    shown_events += report['turn_events'][:1]
+    for event in shown_events:
+        at = event['time_s']; selected = (time >= event['window_s'][0]) & (time <= event['window_s'][1])
+        fig, axes = plt.subplots(4, 2, figsize=(14, 11), sharex=True)
+        axes[0, 0].plot(time[selected], series['tracking_error_mm'][selected], label='Time-aligned error')
+        axes[0, 0].plot(time[selected], series['local_path_distance_mm'][selected], label='Local path distance')
+        axes[0, 1].plot(time[selected], series['logged_DEM_tangent_slope_deg'][selected], label='Logged DEM tangent slope')
+        axes[0, 1].plot(time[selected], series['estimated_vs_logged_DEM_normal_error_deg'][selected], label='Estimated-vs-DEM normal')
+        for j, label in enumerate(PATCHES):
+            axes[1, 0].plot(time[selected], actual['truth_patch_loads_N'][selected, j], label=label+' truth')
+            axes[1, 1].plot(time[selected], log['estimated_support_loads_N'][selected, j], label=label+' estimated')
+        for key in ('lqr_command', 'rolling_feedforward', 'support_command', 'transition_command_delta'):
+            bounds = np.asarray(log['input_bounds'], float)
+            normalized = np.max(abs(log[key])/bounds, axis=1)
+            axes[2, 0].plot(time[selected], normalized[selected], label=key)
+        axes[2, 1].plot(time[selected], series['requested_max_normalized'][selected], label='Largest request/bound')
+        axes[2, 1].plot(time[selected], series['applied_max_normalized'][selected], label='Largest applied/bound')
+        axes[2, 1].axhline(1, color='grey', ls=':')
+        axes[3, 0].plot(time[selected], series['maximum_sync_weight'][selected], label='Maximum sync weight')
+        axes[3, 0].plot(time[selected], series['gain_relative_frobenius_step'][selected], label='Relative gain matrix step')
+        axes[3, 1].plot(time[selected], series['estimated_horizontal_authority_m_s'][selected], label='Weak horizontal authority')
+        axes[3, 1].plot(time[selected], series['weak_direction_requested_speed_mm_s'][selected]/1000, label='Weak-direction reference speed')
+        for ax in axes.flat:
+            ax.axvline(at, color='crimson', alpha=.6); ax.grid(alpha=.2); ax.legend(fontsize=7); ax.set_xlabel('Simulation time (s)')
+        fig.suptitle(f'I41 {name}: {event["event_id"]} at{at:.3f}s; co-occurrence, not causal proof')
+        fig.tight_layout(); fig.savefig(output/(event['event_id']+'_audit.png'), dpi=140); plt.close(fig)
+        fig, axes = plt.subplots(5, 1, figsize=(12, 11), sharex=True)
+        bounds = np.asarray(log['input_bounds'], float)
+        for col, ax in enumerate(axes):
+            for key in COMPONENTS:
+                if np.max(abs(log[key][selected, col])) > 1e-8:
+                    ax.plot(time[selected], log[key][selected, col]/bounds[selected, col], label=key)
+            ax.plot(time[selected], actual['exact_native_requested'][selected, col]/bounds[selected, col], color='black', label='Requested')
+            ax.plot(time[selected], actual['exact_applied'][selected, col]/bounds[selected, col], '--', color='crimson', label='Applied')
+            ax.axvline(at, color='crimson', alpha=.6); ax.axhline(1, color='grey', ls=':'); ax.axhline(-1, color='grey', ls=':')
+            ax.set_ylabel(('shaft', 'shellA', 'shellB', 'beltA', 'beltB')[col]+'/bound'); ax.grid(alpha=.2); ax.legend(fontsize=7, ncol=3)
+        axes[-1].set_xlabel('Simulation time(s); command at t applies over next5ms')
+        fig.suptitle(f'I41 {name}: signed components around{event["event_id"]}')
+        fig.tight_layout(); fig.savefig(output/(event['event_id']+'_signed_commands.png'), dpi=140); plt.close(fig)
+
+
+def main():
+    destination = HERE/'full_audit'
+    if destination.exists(): raise FileExistsError('Preserve earlier full event audit')
+    destination.mkdir(); sources = destination/'source'; sources.mkdir()
+    protocol_path = FAMILY/'protocol.json'; protocol = json.loads(protocol_path.read_text())
+    paths = [Path(__file__).resolve(), FIXED_SOURCE/'event_metrics.py', FIXED_SOURCE/'select_events.py',
+             protocol_path, REPO_ROOT/'src/spherical_wheel/contact_diagnostics.py',
+             REPO_ROOT/'src/spherical_wheel/mirror.py', REPO_ROOT/'config/model.yaml']
+    source_rows = []
+    for index, path in enumerate(paths):
+        target = sources/f'{index}_{path.name}'; shutil.copyfile(path, target)
+        source_rows.append({'origin': str(path.relative_to(REPO_ROOT)), 'snapshot': str(target.relative_to(destination)), 'sha256': sha(path)})
+    authority = Authority(destination/'_geometry_workspace')
+    mars_folder = REPO_ROOT/protocol['baseline']
+    flat_folder = FAMILY/'terrain/flat_control/campaign/runs/flat_figure8'
+    mars, ma, ml, ms = analyze_case('mars', mars_folder, destination/'mars', authority)
+    flat, fa, fl, fs = analyze_case('flat', flat_folder, destination/'flat', authority)
+    assert np.array_equal(ma['time_s'], fa['time_s'])
+    assert np.array_equal(ma['exact_reference_xy'], fa['exact_reference_xy'])
+    assert np.array_equal(ma['exact_reference_velocity_m_s'], fa['exact_reference_velocity_m_s'])
+    plots('mars', destination/'mars', mars, ma, ml, ms); plots('flat', destination/'flat', flat, fa, fl, fs)
+    comparison = []
+    for a, b in zip(mars['turn_events'], flat['turn_events']):
+        assert a['event_id'] == b['event_id'] and abs(a['time_s']-b['time_s']) < 1e-10
+        comparison.append({'event_id': a['event_id'], 'time_s': a['time_s'],
+            'reference_speed_mm_s': 1000*a['reference_vector_speed_m_s'],
+            'mars_geometric_overshoot_mm': a['geometric_component_overshoot_mm'],
+            'flat_geometric_overshoot_mm': b['geometric_component_overshoot_mm'],
+            'mars_reversal_lag_s': a['actual_reversal_lag_s'], 'flat_reversal_lag_s': b['actual_reversal_lag_s'],
+            'mars_post_peak_local_error_mm': a['post_event_peak_local_path_error_mm'],
+            'flat_post_peak_local_error_mm': b['post_event_peak_local_path_error_mm']})
+    report = {'iteration': 'I-41', 'scope': 'Saved-data Mars+oneflatcase event/command audit; no new physics or forecast execution here.',
+        'sources': source_rows, 'mars': mars, 'flat': flat, 'turn_comparison': comparison,
+        'reference_time_position_velocity_bit_equal': True,
+        'initial_pose_difference_max_abs': float(np.max(abs(ma['exact_qpos'][0]-fa['exact_qpos'][0]))),
+        'limits': ['Flat removes all relief/rock/lava and uses terrain-appropriate different initialization; this is not an isolated small-slope intervention.',
+            'No hidden future model controls live trajectory; dynamic forecasts are shadows.',
+            'Curved-reference component reversals are not stops. Geometric overshoot and phase lag are distinct.']}
+    save(destination/'report.json', report)
+    with (destination/'turn_comparison.csv').open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(comparison[0])); writer.writeheader(); writer.writerows(comparison)
+    fig, axes = plt.subplots(3, 1, figsize=(12, 9), sharex=True)
+    for label, actual, signals in (('Mars', ma, ms), ('Flat', fa, fs)):
+        axes[0].plot(actual['time_s'], signals['tracking_error_mm'], label=label+' time-aligned')
+        axes[1].plot(actual['time_s'], signals['local_path_distance_mm'], label=label+' localpath')
+        axes[2].plot(actual['time_s'], signals['reference_phase_lag_s'], label=label+' phase lag')
+    axes[0].set_ylabel('Tracking error(mm)'); axes[1].set_ylabel('Localpath distance(mm)'); axes[2].set_ylabel('Reference lag(s)'); axes[2].set_xlabel('Simulation time(s)')
+    for ax in axes:
+        ax.legend(); ax.grid(alpha=.2)
+        if mars['primary_deviation']: ax.axvline(mars['primary_deviation']['start_s'], color='crimson', alpha=.5)
+        for turn in mars['turn_events']: ax.axvline(turn['time_s'], color='orange', alpha=.25)
+    fig.suptitle('I41 fixed-reference comparison: Mars relief versus flat terrain; initialization differs')
+    fig.tight_layout(); fig.savefig(destination/'mars_flat_comparison.png', dpi=150); plt.close(fig)
+    artifacts = []
+    for path in sorted(destination.rglob('*')):
+        if path.is_file() and '_geometry_workspace' not in path.parts:
+            artifacts.append({'path': str(path.relative_to(destination)), 'bytes': path.stat().st_size, 'sha256': sha(path)})
+    save(destination/'artifact_manifest.json', {'files': artifacts, 'completed_utc': datetime.now(timezone.utc).isoformat()})
+    print(json.dumps(safe({'mars_onset': mars['primary_deviation'], 'flat_onset': flat['primary_deviation'],
+        'turn_comparison': comparison, 'command_reconstruction_error': [mars['command_reconstruction_max_normalized_error'], flat['command_reconstruction_max_normalized_error']]}), indent=2))
+
+
+if __name__ == '__main__': main()

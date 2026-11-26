@@ -1,0 +1,85 @@
+"""Independent numerical mathematics audit; no robot model or solver is used."""
+from __future__ import annotations
+import importlib.util
+import json
+from pathlib import Path
+import sys
+import numpy as np
+from scipy.integrate import solve_ivp
+
+
+def rotation(vector):
+    vector=np.asarray(vector,float);angle=np.linalg.norm(vector);x,y,z=vector
+    skew=np.array([[0.,-z,y],[z,0.,-x],[-y,x,0.]])
+    a=1.-angle**2/6 if angle<1e-8 else np.sin(angle)/angle
+    b=.5-angle**2/24 if angle<1e-8 else (1.-np.cos(angle))/angle**2
+    return np.eye(3)+a*skew+b*(skew@skew)
+
+
+def main():
+    stage=Path(sys.argv[1]).resolve()
+    spec=importlib.util.spec_from_file_location('frozen_tilt_math',stage/'source/spherical_wheel/tilt_reference.py')
+    tilt=importlib.util.module_from_spec(spec);sys.modules[spec.name]=tilt;spec.loader.exec_module(tilt)
+    tau=.08;rate=np.radians(60.);limit=np.radians(28.)
+    rng=np.random.default_rng(43);errors=[];jac_errors=[];norm_ratios=[]
+    for _ in range(100):
+        angle=rng.uniform(-np.pi,np.pi);theta=limit*rng.uniform()*np.array([np.cos(angle),np.sin(angle)])
+        phi=np.r_[theta,0.];velocity=rng.normal(size=2);velocity*=rate/np.linalg.norm(velocity)*rng.uniform()
+        equilibrium=rotation(rng.uniform(-.4,.4,3));actual=rotation(rng.uniform(-2.,2.,3))
+        yaw=rotation([0.,0.,rng.uniform(-np.pi,np.pi)])
+        epsilon=1e-6
+        center=equilibrium@rotation(phi)@yaw
+        derivative=equilibrium@(rotation(phi+epsilon*np.r_[velocity,0.])-rotation(phi-epsilon*np.r_[velocity,0.]))@yaw/(2*epsilon)
+        skew=derivative@center.T
+        independent=np.array([skew[2,1]-skew[1,2],skew[0,2]-skew[2,0],skew[1,0]-skew[0,1]])/2
+        predicted=equilibrium@tilt.tilt_angular_velocity(theta,velocity)
+        errors.append(float(np.linalg.norm(predicted-independent)))
+        # Transport preserves world rate; this algebra does not call controller code.
+        body=actual.T@predicted
+        assert np.linalg.norm(actual@body-independent)<2e-9
+        norm_ratios.append(float(np.linalg.norm(predicted)/max(np.linalg.norm(velocity),1e-15)))
+        difference=rng.uniform(-limit,limit,2);step=1e-7
+        numeric=np.column_stack([(tilt.bounded_velocity(difference+step*np.eye(2)[axis],tau,rate)-
+            tilt.bounded_velocity(difference-step*np.eye(2)[axis],tau,rate))/(2*step) for axis in range(2)])
+        analytic=tilt.bounded_velocity_jacobian(difference,tau,rate)
+        jac_errors.append(float(np.linalg.norm(numeric-analytic,ord=2)))
+        eigen=np.linalg.eigvalsh(analytic)
+        assert eigen.min()>-1e-12 and eigen.max()<=1./tau+1e-12
+    assert max(errors)<2e-9 and max(jac_errors)<1e-7 and max(norm_ratios)<=1.+1e-13
+    generator=tilt.TiltReference(tilt.TiltReferenceSettings(time_constant_s=tau,max_rate_deg_s=60.,activation_time_s=4.),limit)
+    generator.update(np.zeros(2),4.);now=4.;ratios={'theta_disk':0.,'z_disk':0.,'rate':0.,'acceleration':0.,'substep':0.}
+    for i in range(400):
+        elapsed=(.001,.0052,.011)[i%3];now+=elapsed
+        raw=limit*np.array([np.cos(i*1.63),np.sin(i*1.63)])
+        row=generator.update(raw,now)
+        for key,value in {'theta_disk':np.linalg.norm(row['theta_rad'])/limit,
+            'z_disk':np.linalg.norm(row['z_rad'])/limit,'rate':np.linalg.norm(row['theta_dot_rad_s'])/rate,
+            'acceleration':np.linalg.norm(row['theta_ddot_rad_s2'])/(2*rate/tau),
+            'substep':elapsed/row['substeps']/min(.001,tau/4)}.items():ratios[key]=max(ratios[key],float(value))
+    assert max(ratios.values())<=1.+1e-11
+    generator.reset();generator.update(np.zeros(2),4.);target=np.array([.3,-.2]);generator.update(target,4.005)
+    def independent_flow(d):
+        size=np.linalg.norm(d)
+        return d/tau if size<1e-14 else rate*np.tanh(size/(rate*tau))*d/size
+    def ode(_,state):return np.r_[independent_flow(target-state[:2]),independent_flow(state[:2]-state[2:])]
+    times=[4.045,4.085,4.205,4.805]
+    exact=solve_ivp(ode,[4.005,times[-1]],np.zeros(4),t_eval=times,method='DOP853',rtol=1e-12,atol=1e-14)
+    ode_errors=[]
+    for i,now in enumerate(times):
+        row=generator.update(target,now)
+        ode_errors.append(float(np.max(abs(np.r_[row['z_rad'],row['theta_rad']]-exact.y[:,i]))))
+    assert max(ode_errors)<5e-6
+    final=generator.update(target,7.)
+    convergence=float(np.linalg.norm(final['theta_rad']-target))
+    assert convergence<1e-10
+    report={'iteration':'I-43','scope':'Pure independent Rodrigues finite differences, analytic-Jacobian check and high-accuracy ODE comparison. No robot physics.',
+        'analytic_cases':100,'max_world_angular_velocity_error_rad_s':max(errors),
+        'max_flow_jacobian_operator_error_s_inv':max(jac_errors),'max_SO3_rate_contraction_ratio':max(norm_ratios),
+        '400_variable_clock_updates_max_bound_ratios':ratios,'max_SSP_state_error_against_DOP853_rad':max(ode_errors),
+        'constant_target_final_error_rad':convergence,'passed':True,
+        'limits':'Body transport here verifies the mathematical formula; actual controller integration is covered by its separate tests and saved-data rate reconstruction.'}
+    (stage/'math_report.json').write_text(json.dumps(report,indent=2)+'\n')
+    print(json.dumps(report,indent=2))
+
+
+if __name__=='__main__':main()

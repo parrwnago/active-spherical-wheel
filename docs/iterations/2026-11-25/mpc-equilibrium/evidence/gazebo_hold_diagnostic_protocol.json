@@ -1,0 +1,22 @@
+{
+  "status": "Declared before separate open-loop Gazebo hold fixture; audit failures motivate simulator comparison, not a new performance candidate.",
+  "frozen_anchor": "I30 trajectory Y2s",
+  "cases": [
+    "original analytic reference with bounded fitted holding torque",
+    "independent nearby phase-adjusted fitted reference/input"
+  ],
+  "duration_s": 0.4,
+  "report_checkpoints_s": [
+    0.2,
+    0.4
+  ],
+  "plant": "same10degGazebo/DART mesh slope, .04m grid; measured/exact saved state reset into a SEPARATE fixture only",
+  "private_prediction": "same calibrated estimatedplane as savedanchor, same initialq andholdinginput",
+  "purpose": "Distinguish a privatecontactmodel low-speed hold limitation from reference/configuration effects present in Gazebo.",
+  "measurement_boundary": "No observer or trackingcontroller in this diagnostic: fixedinputs, truthcontacts evaluationonly. It is NOT another controllerperformance or hardware test.",
+  "confounds": [
+    "Private fittedplane can differ fromactualmesh; contactsolver/initial compression differ.",
+    "A matching/mismatchinghold doesnotestablish fullhorizonmodelvalidity."
+  ],
+  "source_requirement": "Save exactscriptandcorehashes beforefirstlaunch; preserve alltraces/setupfailures; neveroverwriteoldcomparisonpack."
+}

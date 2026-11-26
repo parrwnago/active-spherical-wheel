@@ -1,0 +1,17 @@
+{
+  "argv": [
+    ".venv/bin/python",
+    "scripts/run-mpc-comparison.py",
+    "--output",
+    "results/mpc_balance_20261125/invalid_cli_should_not_exist",
+    "--variant",
+    "mpc",
+    "--motion",
+    "world_x",
+    "--plan-step-s",
+    ".007"
+  ],
+  "returncode": 2,
+  "expected": "reject invalid7msplanperiodbeforecreatingrun",
+  "stderr": "usage: run-mpc-comparison.py [-h] --output OUTPUT --variant {baseline,mpc}\n                             --motion {world_x,world_y}\n                             [--recovery-s RECOVERY_S]\n                             [--plan-step-s PLAN_STEP_S]\n                             [--horizon-steps HORIZON_STEPS]\n                             [--load-residual-fraction LOAD_RESIDUAL_FRACTION]\n                             [--model-mode {affine,trajectory}]\n                             [--jacobian-stride JACOBIAN_STRIDE]\n                             [--seed-shaft-torque SEED_SHAFT_TORQUE]\nrun-mpc-comparison.py: error: Plan period must be an integer multiple of the .005 s sensing/control interval\n"
+}

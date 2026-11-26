@@ -1,0 +1,142 @@
+{
+  "scope": "Independent admission-band diagnostic on individual admitted loaded contacts. Prior saved state is pre-step proxy; no observer, controller or physics executed. Firstsubstepexcluded. Not an observer-error or trajectory-improvement metric.",
+  "inputs_sha256": {
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/truth_substeps.npz": "ba47afdb917c0b73bb6b72296bb644c6bbbbfed435de777df290c8cd258acb27",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/truth_substeps.npz": "8581ccd5f4cda595fc18f6ef57f7b37a986b97e913dcc7e825c00ad94d5170ff"
+  },
+  "source_sha256": "863357bd8615776ab499ff33165533049bb3cf713ffbda67193253b680964be2",
+  "cases": {
+    "Mars": {
+      "eligible_records": 17107,
+      "substeps": 16000,
+      "time_step_continuity": true,
+      "iteration_continuity": true,
+      "conditions": {
+        "post_raw": {
+          "violating_records": 4,
+          "minimum_margin_m": -2.520961931243293e-05,
+          "fraction_of_eligible_normal_load": 0.0002499764934409261
+        },
+        "post_normalized": {
+          "violating_records": 0,
+          "minimum_margin_m": 1.6610320768828402e-07,
+          "fraction_of_eligible_normal_load": 0.0
+        },
+        "prior_proxy_raw": {
+          "violating_records": 5,
+          "minimum_margin_m": -2.408169043408015e-05,
+          "fraction_of_eligible_normal_load": 0.00031734385528736837
+        },
+        "prior_proxy_normalized": {
+          "violating_records": 0,
+          "minimum_margin_m": 1.5894770413749093e-07,
+          "fraction_of_eligible_normal_load": 0.0
+        }
+      },
+      "worst_post_raw_examples": [
+        {
+          "substep_index": 3046,
+          "relative_time_s": 3.046999999999957,
+          "tag": 2,
+          "normal_load_N": 18.2554446093886,
+          "margins_m": {
+            "post_raw": -2.520961931243293e-05,
+            "post_normalized": 6.9414409928081344e-06,
+            "prior_proxy_raw": -2.408169043408015e-05,
+            "prior_proxy_normalized": 8.077167877498792e-06
+          }
+        },
+        {
+          "substep_index": 3047,
+          "relative_time_s": 3.0479999999999574,
+          "tag": 2,
+          "normal_load_N": 18.176913206549465,
+          "margins_m": {
+            "post_raw": -1.634626615439061e-05,
+            "post_normalized": 1.5807354698180176e-05,
+            "prior_proxy_raw": -1.5218313153028684e-05,
+            "prior_proxy_normalized": 1.6943108081909908e-05
+          }
+        },
+        {
+          "substep_index": 3048,
+          "relative_time_s": 3.0489999999999573,
+          "tag": 2,
+          "normal_load_N": 18.176871403219792,
+          "margins_m": {
+            "post_raw": -7.496792147010378e-06,
+            "post_normalized": 2.4659385438718928e-05,
+            "prior_proxy_raw": -6.368826320518606e-06,
+            "prior_proxy_normalized": 2.5795153568056173e-05
+          }
+        }
+      ]
+    },
+    "flat": {
+      "eligible_records": 15999,
+      "substeps": 16000,
+      "time_step_continuity": true,
+      "iteration_continuity": true,
+      "conditions": {
+        "post_raw": {
+          "violating_records": 10,
+          "minimum_margin_m": -2.689902933822319e-05,
+          "fraction_of_eligible_normal_load": 0.0006250390579153386
+        },
+        "post_normalized": {
+          "violating_records": 0,
+          "minimum_margin_m": 2.955625966194475e-09,
+          "fraction_of_eligible_normal_load": 0.0
+        },
+        "prior_proxy_raw": {
+          "violating_records": 10,
+          "minimum_margin_m": -2.690440649712189e-05,
+          "fraction_of_eligible_normal_load": 0.0006250390579153386
+        },
+        "prior_proxy_normalized": {
+          "violating_records": 0,
+          "minimum_margin_m": 2.9556248420936626e-09,
+          "fraction_of_eligible_normal_load": 0.0
+        }
+      },
+      "worst_post_raw_examples": [
+        {
+          "substep_index": 2885,
+          "relative_time_s": 2.8859999999999606,
+          "tag": 2,
+          "normal_load_N": 18.24660717979966,
+          "margins_m": {
+            "post_raw": -2.689902933822319e-05,
+            "post_normalized": 5.65215905964922e-06,
+            "prior_proxy_raw": -2.690440649712189e-05,
+            "prior_proxy_normalized": 5.652158127589235e-06
+          }
+        },
+        {
+          "substep_index": 11321,
+          "relative_time_s": 11.32200000000037,
+          "tag": 2,
+          "normal_load_N": 18.24660269457295,
+          "margins_m": {
+            "post_raw": -2.6265055222171596e-05,
+            "post_normalized": 7.081054267235598e-06,
+            "prior_proxy_raw": -2.6273589393902008e-05,
+            "prior_proxy_normalized": 7.0810542978777535e-06
+          }
+        },
+        {
+          "substep_index": 10180,
+          "relative_time_s": 10.181000000000191,
+          "tag": 2,
+          "normal_load_N": 18.246592399109705,
+          "margins_m": {
+            "post_raw": -1.9306857404643996e-05,
+            "post_normalized": 1.3926730868252246e-05,
+            "prior_proxy_raw": -1.9321994808446652e-05,
+            "prior_proxy_normalized": 1.3926729409127758e-05
+          }
+        }
+      ]
+    }
+  }
+}

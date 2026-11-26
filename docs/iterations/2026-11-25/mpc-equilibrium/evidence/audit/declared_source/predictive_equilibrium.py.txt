@@ -1,0 +1,221 @@
+"""Bounded rest-goal audits on a previously configured estimated-plane model.
+
+Only the predictor's private data are evaluated. The estimated plane is frozen;
+no live robot state, contact measurement, terrain or controller is reset here.
+Numerical optimizer success is not equilibrium verification.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+import mujoco
+import numpy as np
+from scipy.optimize import least_squares
+
+
+@dataclass(frozen=True)
+class EquilibriumSettings:
+    height_change_m: float = .003
+    tilt_change_rad: float = .08
+    phase_change_rad: float = .35
+    max_nfev: int = 80
+    hold_s: float = .2
+    hold_step_s: float = .02
+    max_xy_drift_m: float = .0002
+    max_rotation_drift_rad: float = np.deg2rad(.1)
+    max_body_speed_m_s: float = .002
+    max_body_rate_rad_s: float = .02
+    max_joint_rate_rad_s: float = .05
+    max_acceleration_residual: float = .001
+
+
+@dataclass
+class EquilibriumTarget:
+    qpos: np.ndarray
+    qvel: np.ndarray
+    inputs: np.ndarray
+    verified: bool
+    diagnostics: dict
+
+
+def _array(value, shape, name):
+    value = np.asarray(value, float)
+    if value.shape != shape or not np.isfinite(value).all():
+        raise ValueError(f'{name} must be finite with shape {shape}')
+    return value
+
+
+def _private_contact_diagnostics(predictor, qpos, qvel, command):
+    predictor._assign(qpos, qvel, command)
+    model, data = predictor.model, predictor.data
+    names, slips = [], []
+    forbidden_contact = False
+    for contact in data.contact:
+        if contact.efc_address < 0 or predictor.floor_id not in contact.geom:
+            continue
+        geom = int(contact.geom[1] if contact.geom[0] == predictor.floor_id else contact.geom[0])
+        name = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, geom) or str(geom)
+        names.append(name)
+        if not name.startswith(('shell_', 'belt_')):
+            forbidden_contact = True
+        jacobian = np.zeros((3, model.nv))
+        mujoco.mj_jac(model, data, jacobian, None, contact.pos, int(model.geom_bodyid[geom]))
+        velocity = jacobian@qvel+data.geom_xmat[geom].reshape(3, 3)@model.geom_surfacevel[geom, :3]
+        tangent = velocity-predictor.normal*(predictor.normal@velocity)
+        slips.append(float(np.linalg.norm(tangent)))
+    force = data.qfrc_constraint[:3].copy()
+    normal = float(predictor.normal@force)
+    tangent_force = float(np.linalg.norm(force-normal*predictor.normal))
+    friction = float(model.geom_friction[predictor.floor_id, 0])
+    return {'active_patch_names': sorted(set(names)), 'active_contact_count': len(names),
+            'nonwheel_ground_contact': forbidden_contact,
+            'normal_load_N': normal, 'aggregate_tangential_force_N': tangent_force,
+            'aggregate_friction_utilization': tangent_force/max(friction*normal, 1e-15),
+            'max_tangential_contact_speed_m_s': max(slips, default=0.)}
+
+
+def audit_rest_target(predictor, qpos, inputs, settings=None):
+    """Verify all accelerations and peak drift/speed over a private hold."""
+    settings = settings or EquilibriumSettings()
+    qpos = _array(qpos, (predictor.nq,), 'qpos')
+    inputs = _array(inputs, (5,), 'inputs')
+    zero = np.zeros(predictor.nv)
+    contacts = _private_contact_diagnostics(predictor, qpos, zero, inputs)
+    acceleration = predictor.data.qacc.copy()
+    # Inverse dynamics is only a diagnostic, never accepted as a forward hold.
+    predictor.data.qacc[:] = 0.
+    mujoco.mj_inverse(predictor.model, predictor.data)
+    inverse = predictor.data.qfrc_inverse.copy()
+    steps = int(round(settings.hold_s/settings.hold_step_s))
+    if steps < 1 or not np.isclose(steps*settings.hold_step_s, settings.hold_s):
+        raise ValueError('Hold duration must be a positive integer number of hold steps')
+    poses, velocities = predictor.rollout(qpos, zero, np.tile(inputs, (steps, 1)), settings.hold_step_s)
+    differences = np.array([predictor.tangent(qpos, zero, q, v) for q, v in zip(poses, velocities)])
+    contact_history = [_private_contact_diagnostics(predictor, q, v, inputs)
+                       for q, v in zip(poses, velocities)]
+    values = {'xy_drift_m': float(np.max(np.linalg.norm(differences[:, :2], axis=1))),
+              'rotation_drift_rad': float(np.max(np.linalg.norm(differences[:, 3:6], axis=1))),
+              'body_speed_m_s': float(np.max(np.linalg.norm(velocities[:, :3], axis=1))),
+              'body_rate_rad_s': float(np.max(np.linalg.norm(velocities[:, 3:6], axis=1))),
+              'joint_rate_rad_s': float(np.max(abs(velocities[:, 6:9])))}
+    gates = {'xy_drift': values['xy_drift_m'] <= settings.max_xy_drift_m,
+             'rotation_drift': values['rotation_drift_rad'] <= settings.max_rotation_drift_rad,
+             'body_speed': values['body_speed_m_s'] <= settings.max_body_speed_m_s,
+             'body_rate': values['body_rate_rad_s'] <= settings.max_body_rate_rad_s,
+             'joint_rate': values['joint_rate_rad_s'] <= settings.max_joint_rate_rad_s,
+             'bounded_input': bool(np.all(abs(inputs) <= predictor.bounds+1e-10)),
+             'valid_support': all(row['active_contact_count'] > 0 and row['normal_load_N'] > 0
+                                  and not row['nonwheel_ground_contact'] for row in contact_history)}
+    gates = {key: bool(value) for key, value in gates.items()}
+    steady = bool(np.max(abs(acceleration)) <= settings.max_acceleration_residual)
+    score = max(values['xy_drift_m']/settings.max_xy_drift_m,
+                values['rotation_drift_rad']/settings.max_rotation_drift_rad,
+                values['body_speed_m_s']/settings.max_body_speed_m_s,
+                values['body_rate_rad_s']/settings.max_body_rate_rad_s,
+                values['joint_rate_rad_s']/settings.max_joint_rate_rad_s)
+    return {'hold_gates': gates, 'hold_verified': all(gates.values()),
+            'stationary_acceleration_verified': steady,
+            'equilibrium_verified': bool(all(gates.values()) and steady),
+            'hold_peak_metrics': values, 'hold_normalized_violation_score': float(score),
+            'acceleration_residual_all9': acceleration.tolist(),
+            'unactuated_acceleration_residual_first6': acceleration[:6].tolist(),
+            'max_acceleration_residual': float(np.max(abs(acceleration))),
+            'inverse_required_generalized_force_all9': inverse.tolist(),
+            'inverse_required_unactuated_force_first6': inverse[:6].tolist(),
+            'initial_contact': contacts,
+            'hold_normal_load_range_N': [min(row['normal_load_N'] for row in contact_history),
+                                         max(row['normal_load_N'] for row in contact_history)],
+            'hold_patch_names': sorted(set(name for row in contact_history for name in row['active_patch_names'])),
+            'hold_contact_count_range': [min(row['active_contact_count'] for row in contact_history),
+                                          max(row['active_contact_count'] for row in contact_history)],
+            'hold_max_contact_slip_m_s': max(row['max_tangential_contact_speed_m_s'] for row in contact_history),
+            'input_margin': (predictor.bounds-abs(inputs)).tolist(),
+            'hold_qpos': poses.tolist(), 'hold_qvel': velocities.tolist()}
+
+
+def solve_goal_equilibrium(predictor, reference_qpos, bounds=None, input_seed=None,
+                           settings=None, allow_pose_adjustment=True):
+    """Return a bounded best-found candidate, with independent hold verification.
+
+    The original goal XY is fixed. First fit five holding inputs with the
+    analytic rest pose fixed. If unverified, make ONE bounded nearby pose/input
+    solve, allowing height, two body-tilt coordinates and common-shaft phase.
+    The objective is the raw nine-component acceleration residual; mixed units
+    and local nonsmooth minima are limitations, not a global feasibility proof.
+    """
+    settings = settings or EquilibriumSettings()
+    if not predictor._ready:
+        raise RuntimeError('Configure the estimated plane before finding a goal equilibrium')
+    reference = _array(reference_qpos, (predictor.nq,), 'reference_qpos').copy()
+    limits = predictor.bounds.copy() if bounds is None else _array(bounds, (5,), 'bounds')
+    if np.any(limits <= 0) or np.any(limits > predictor.bounds+1e-12):
+        raise ValueError('Holding-input bounds must be positive and within physical limits')
+    seed = np.zeros(5) if input_seed is None else _array(input_seed, (5,), 'input_seed')
+    seed = np.clip(seed/limits, -1., 1.)
+    plane = predictor._plane_point.copy()
+    normal = predictor.normal.copy()
+    zero = np.zeros(9)
+
+    def acceleration(q, command):
+        predictor._assign(q, zero, command)
+        return predictor.data.qacc.copy()
+
+    def jacobian(function, value, lower, upper, steps):
+        columns = []
+        for index, step in enumerate(steps):
+            plus, minus = value.copy(), value.copy()
+            plus[index] = min(upper[index], value[index]+step)
+            minus[index] = max(lower[index], value[index]-step)
+            columns.append((function(plus)-function(minus))/(plus[index]-minus[index]))
+        return np.column_stack(columns)
+
+    fixed_fun = lambda value: acceleration(reference, value*limits)
+    lower, upper = -np.ones(5), np.ones(5)
+    fixed = least_squares(fixed_fun, seed, jac=lambda z: jacobian(fixed_fun, z, lower, upper, np.full(5, 1e-4)),
+                          bounds=(lower, upper), max_nfev=settings.max_nfev,
+                          ftol=1e-11, xtol=1e-11, gtol=1e-11, x_scale='jac')
+    attempts = []
+
+    def record(label, q, inputs, optimizer):
+        audit = audit_rest_target(predictor, q, inputs, settings)
+        attempts.append({'label': label, 'qpos': q.tolist(), 'inputs': inputs.tolist(),
+                         'optimizer_success': bool(optimizer.success), 'optimizer_nfev': int(optimizer.nfev),
+                         'optimizer_message': str(optimizer.message), 'optimizer_cost': float(optimizer.cost),
+                         'audit': audit})
+        return audit
+
+    fixed_input = fixed.x*limits
+    fixed_audit = record('fixed_analytic_pose_best_found_input', reference, fixed_input, fixed)
+    if allow_pose_adjustment and not fixed_audit['equilibrium_verified']:
+        low = np.r_[-settings.height_change_m, -settings.tilt_change_rad, -settings.tilt_change_rad,
+                     -settings.phase_change_rad, -np.ones(5)]
+        high = -low
+        start = np.r_[np.zeros(4), fixed.x]
+        steps = np.r_[1e-7, np.full(3, 1e-5), np.full(5, 1e-4)]
+
+        def pose(value):
+            delta = np.zeros(18)
+            delta[2], delta[3:5], delta[6] = value[0], value[1:3], value[3]
+            return predictor.perturb(reference, zero, delta)[0]
+
+        function = lambda value: acceleration(pose(value), value[4:]*limits)
+        nearby = least_squares(function, start,
+            jac=lambda z: jacobian(function, z, low, high, steps), bounds=(low, high),
+            max_nfev=settings.max_nfev, ftol=1e-11, xtol=1e-11, gtol=1e-11,
+            x_scale=np.r_[.0001, .02, .02, .1, np.ones(5)])
+        record('nearby_pose_phase_best_found', pose(nearby.x), nearby.x[4:]*limits, nearby)
+    assert np.array_equal(predictor._plane_point, plane)
+    assert np.array_equal(predictor.normal, normal)
+    # Preserve the analytic target if it passes; otherwise select by the
+    # predeclared hold-gate violation, not optimizer success or a better plot.
+    chosen = min(attempts, key=lambda row: (not row['audit']['equilibrium_verified'],
+                                          row['audit']['hold_normalized_violation_score']))
+    qpos, inputs = np.array(chosen['qpos']), np.array(chosen['inputs'])
+    assert np.array_equal(qpos[:2], reference[:2])
+    diagnostics = {'attempts': attempts, 'selected_label': chosen['label'],
+        'selected_audit': chosen['audit'], 'goal_xy_fixed': True,
+        'pose_tangent_change': predictor.tangent(reference, zero, qpos, zero)[:9].tolist(),
+        'plane_frozen': True, 'plane_point_m': plane.tolist(), 'normal': normal.tolist(),
+        'scope': 'Bounded local best-found rest-goal audit on estimated private model; not global reachability or live controller validation.',
+        'terminal_value_status': 'Not derived unless a stationary forward-hold candidate is verified.'}
+    return EquilibriumTarget(qpos, zero, inputs, bool(chosen['audit']['equilibrium_verified']), diagnostics)

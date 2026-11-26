@@ -1,0 +1,97 @@
+{
+  "iteration": "I-53",
+  "passed": true,
+  "checks": {
+    "render_inputs_unchanged": true,
+    "original_overview_unchanged": true,
+    "exact_cue10s_is_recorded32s": true,
+    "fixed_context9_11_maps28_36": true,
+    "all4original_histories": true,
+    "full8s_slow_schedule": true,
+    "saved_state_clocks_match": true,
+    "exact_half_speed_clock": true,
+    "continuous_original4x_clock_qualified": true,
+    "no_video_pose_interpolation": true,
+    "evaluation_truth_only": true,
+    "no_new_physics_or_control": true,
+    "no_scientific_gate_rerun_or_unique_gain_claim": true,
+    "defaults_unchanged": true,
+    "bound_event_summary": true,
+    "bound_final_event_review": true,
+    "source_speed_caption": true,
+    "video_hash_matches": true,
+    "h264": true,
+    "resolution": true,
+    "fps": true,
+    "frames": true,
+    "duration": true,
+    "decoded_frames_nonblank": true
+  },
+  "video": {
+    "path": "results/teammate_handoff_20261126/video_audit/m100_slow_replay.mp4",
+    "sha256": "e3c1742f692739293fd51ece9bbd1d4681d0a57ce298e685a4a5a8030cad1970",
+    "bytes": 7655999,
+    "frames": 421,
+    "fps": 20,
+    "duration_s": 21.05
+  },
+  "stills": {
+    "decoded_0000.jpg": {
+      "sha256": "d2871fcdc49f760c4ce9d1a4e70feee80e13cc02e5173e036b00c7aa81521544",
+      "shape": [
+        1800,
+        1800,
+        3
+      ],
+      "pixel_std": 38.29321996423203
+    },
+    "decoded_0040.jpg": {
+      "sha256": "0af43009c060aaa72c137b7fd7cd8248261f0462dbb57495ce4e98d107b9c9ea",
+      "shape": [
+        1800,
+        1800,
+        3
+      ],
+      "pixel_std": 72.08761398191247
+    },
+    "decoded_0210.jpg": {
+      "sha256": "300d49594a4fd0a0274cddadf46416a34e468e49fcf13ad466ed11aabb4d27fb",
+      "shape": [
+        1800,
+        1800,
+        3
+      ],
+      "pixel_std": 72.1217868667693
+    },
+    "decoded_0420.jpg": {
+      "sha256": "8936b9e3ed9cd79b85936ce6f70df73b9f7534edcf654ef59f3eba4cc163a3f5",
+      "shape": [
+        1800,
+        1800,
+        3
+      ],
+      "pixel_std": 31.769114623686068
+    }
+  },
+  "event_review": {
+    "path": "results/teammate_handoff_20261126/event_audit/final_report.json",
+    "sha256": "2c1360f28b3dffa151a8099c1c041d32ee95b20401d7e0be59bd6fad88f785c3"
+  },
+  "visual_review": {
+    "inspected": [
+      "Preview recorded32.250s and resultcard",
+      "Final decoded trigger32.250s and resultcard"
+    ],
+    "findings": [
+      "Actual/native/used joint rates and requested/applied torque/belts clearly separated.",
+      "Observer support and saved truth endpoint separated; no solved-contact control input.",
+      "Reference bounds not conflated with actual acceleration limits.",
+      "Continuous original4x clock qualified; exact10s cue mapped by savedframe200."
+    ]
+  },
+  "limitations": [
+    "25ms visual poses cannot resolve every5ms contact pulse; trace strips retain full5ms data.",
+    "50ms acceleration is backward finite difference of saved worldXY velocity, not an actuator acceleration measurement.",
+    "Different policies have distinct prior histories; observed gain/support/command chronology is not a unique physical-cause proof."
+  ]
+}

@@ -1,0 +1,53 @@
+"""Package verified I35 evidence, without new physics, solves, or tests."""
+from pathlib import Path
+import hashlib
+import json
+import zipfile
+
+FAMILY = Path(__file__).resolve().parent
+ROOT = FAMILY.parents[1]
+DOCS = ROOT / 'docs/iterations/2026-11-25/mpc-horizon'
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+pack = FAMILY / 'presentation-pack.zip'
+if pack.exists():
+    raise FileExistsError('Preserve earlier package; choose a new packaging stage')
+evidence_manifest = json.loads((DOCS / 'evidence/manifest.json').read_text())
+for item in evidence_manifest['files']:
+    assert sha(DOCS / 'evidence' / item['snapshot']) == item['sha256'], item
+paths = [ROOT / 'ITERATION_LOG.md', ROOT / 'README.md', ROOT / 'OFFROAD.md',
+         DOCS.parent / 'README.md', DOCS / 'README.md']
+paths += [p for p in (DOCS / 'evidence').rglob('*') if p.is_file()]
+paths = sorted(set(paths))
+entries = [{'path': str(p.relative_to(ROOT)), 'bytes': p.stat().st_size,
+            'sha256': sha(p)} for p in paths]
+manifest = {
+    'iteration': 'I-35',
+    'scope': 'Completed negative frozen horizon experiment. Six private forecasts, zero new Gazebo trials; no new video or hardware data.',
+    'source_input_boundary': evidence_manifest['source_input_boundary'],
+    'payload_count': len(entries), 'payload_bytes': sum(e['bytes'] for e in entries),
+    'artifacts': entries}
+manifest_path = FAMILY / 'presentation_manifest.json'
+manifest_path.write_text(json.dumps(manifest, indent=2) + '\n')
+with zipfile.ZipFile(pack, 'x', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
+    for path in paths:
+        archive.write(path, path.relative_to(ROOT))
+    archive.write(manifest_path, manifest_path.relative_to(ROOT))
+with zipfile.ZipFile(pack) as archive:
+    assert archive.testzip() is None
+    assert len(archive.namelist()) == len(entries) + 1
+    for entry in entries:
+        assert hashlib.sha256(archive.read(entry['path'])).hexdigest() == entry['sha256'], entry
+verification = {'zip': str(pack.relative_to(ROOT)), 'zip_bytes': pack.stat().st_size,
+    'zip_sha256': sha(pack), 'file_count_including_manifest': len(entries) + 1,
+    'zip_crc_verified': True, 'all_payload_hashes_verified': True}
+verification_path = FAMILY / 'presentation_verification.json'
+verification_path.write_text(json.dumps(verification, indent=2) + '\n')
+pack.with_suffix('.zip.sha256').write_text(verification['zip_sha256'] + '  ' + pack.name + '\n')
+(DOCS / 'presentation_manifest.json').write_bytes(manifest_path.read_bytes())
+(DOCS / 'presentation_verification.json').write_bytes(verification_path.read_bytes())
+print(json.dumps(verification, indent=2))

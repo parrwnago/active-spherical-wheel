@@ -1,0 +1,105 @@
+{
+  "status": "completed_negative_prerequisite_audit",
+  "verified_count": 0,
+  "declared_anchor_count": 5,
+  "decision": "Do not derive/adopt a terminal equilibrium controller from these candidates. No new closed-loop MPC performance trial by this audit.",
+  "limitations": [
+    "Bounded local raw mixed-unit acceleration least-squares is not a proof that the physical goal is unreachable.",
+    "Estimated private soft-contact physics may differ in static friction from Gazebo; parent-owned matched-reset hold diagnostics are separate.",
+    "Peak hold gates are sampled every .02 s over .2 s; predictor internally integrates at .001 s.",
+    "The .001 raw acceleration threshold is separate from the predeclared hold gates, all of which already reject every candidate."
+  ],
+  "source_stages": {
+    "five_anchor_audit": "audit/declared_source/manifest.json",
+    "final_selected_106_tests": "tests/pre_final_integration_source/manifest.json",
+    "final_equilibrium_validation_source": "tests/final_validated_equilibrium_source/manifest.json",
+    "later_optional_dependency_test_guard": "tests/test_mpc_comparison_objective_after_optional_guard.py.txt"
+  },
+  "test_result": {
+    "selected_tests": 106,
+    "seconds": 50.27,
+    "scope": "61 solver + 16 predictor + 10 hardware-mode + 2 nonlinear-objective + 17 equilibrium; not full repository suite; includes earlier overlapping 89/61/17-test selections",
+    "log": "tests/final_integration.log",
+    "junit": "tests/final_integration.xml",
+    "later_test_only_guard": "Parent reran its 2 nonlinear-objective tests after optional osqp dependency guard; these overlap the 106."
+  },
+  "preserved_setup_errors": [
+    "audit/declared_source_failed_surfacevel/manifest.json",
+    "audit/audit_failed_surfacevel.log",
+    "audit/declared_source_failed_bool_serialization/manifest.json",
+    "audit/audit_failed_bool_serialization.log"
+  ],
+  "plot_correction": "Plot-only axes iterator corrected to re-entrant array before final images; initial plotting source retained as audit/plot_audit_initial_flatiter.py.txt. No physics rerun.",
+  "rows": [
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.3999999999999921,
+      "verified": false,
+      "selected_label": "fixed_analytic_pose_best_found_input",
+      "peak_xy_mm": 1.5127857969900935,
+      "peak_rotation_deg": 0.6080681776578338,
+      "peak_body_m_s": 0.01818058106263531,
+      "peak_angular_rad_s": 0.13415130677101064,
+      "peak_internal_rad_s": 0.4156989653717545,
+      "max_initial_qacc": 0.47759396350993405,
+      "hold_valid_support": true,
+      "input_bounded": true
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.9999999999999793,
+      "verified": false,
+      "selected_label": "fixed_analytic_pose_best_found_input",
+      "peak_xy_mm": 1.3940074460172014,
+      "peak_rotation_deg": 0.5522798859538584,
+      "peak_body_m_s": 0.016719249836678423,
+      "peak_angular_rad_s": 0.12155654478548544,
+      "peak_internal_rad_s": 0.28146324172121745,
+      "max_initial_qacc": 0.5747023974864146,
+      "hold_valid_support": true,
+      "input_bounded": true
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 2.9999999999999583,
+      "verified": false,
+      "selected_label": "fixed_analytic_pose_best_found_input",
+      "peak_xy_mm": 1.3839081988837063,
+      "peak_rotation_deg": 0.5605541836166806,
+      "peak_body_m_s": 0.016490248068569524,
+      "peak_angular_rad_s": 0.12275825960334018,
+      "peak_internal_rad_s": 0.23281245227769196,
+      "max_initial_qacc": 0.600023812259367,
+      "hold_valid_support": true,
+      "input_bounded": true
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 4.999999999999916,
+      "verified": false,
+      "selected_label": "fixed_analytic_pose_best_found_input",
+      "peak_xy_mm": 1.2235804753372146,
+      "peak_rotation_deg": 0.5009596587230807,
+      "peak_body_m_s": 0.014495591939307825,
+      "peak_angular_rad_s": 0.10926963692815118,
+      "peak_internal_rad_s": 0.2188318732664152,
+      "max_initial_qacc": 0.622575826451581,
+      "hold_valid_support": true,
+      "input_bounded": true
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 1.9999999999999793,
+      "verified": false,
+      "selected_label": "fixed_analytic_pose_best_found_input",
+      "peak_xy_mm": 0.9862506312104705,
+      "peak_rotation_deg": 0.4255366537431571,
+      "peak_body_m_s": 0.011990147439504193,
+      "peak_angular_rad_s": 0.09412324374284128,
+      "peak_internal_rad_s": 0.2983193464048479,
+      "max_initial_qacc": 0.64443437932749,
+      "hold_valid_support": true,
+      "input_bounded": true
+    }
+  ]
+}

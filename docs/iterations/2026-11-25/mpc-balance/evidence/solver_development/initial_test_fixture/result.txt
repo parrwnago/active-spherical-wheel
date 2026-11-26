@@ -1,0 +1,4 @@
+First focused solver-test run: 27 passed, 1 failed in 0.48s.
+Failure: test_updated_model_and_changed_input_bounds_reuse_solver_without_old_constraints expected second.command[0] < 0, but result was +0.1.
+The model-update fixture shrank input bounds from2 to0.1 while retaining a much larger previous applied input and change_weight0.05. This made the normalized first-change penalty favor positive bound. Correct test intent is cache/model/bounds equivalence with a fresh solve, so remove change cost in this fixture. No solver-math correction is implied by this failure.
+Original exact command: PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -m pytest -q tests/test_predictive_control.py

@@ -1,0 +1,51 @@
+"""Preserve I42 helper source before pure validation; no rollouts are read."""
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import sys
+
+HERE=Path(__file__).resolve().parent
+sys.path.insert(0,str(HERE/'dependencies'))
+from event_metrics import arithmetic_checks
+from factorial_metrics import pure_checks
+from analyze_handoff import common_reference_check,prefix_check,reduce_known_reference
+import numpy as np
+
+
+def main():
+    out=HERE/(sys.argv[1] if len(sys.argv)>1 else 'check_stage01')
+    out.mkdir(exist_ok=False)
+    sources={}
+    for path in (Path(__file__),HERE/'factorial_metrics.py',HERE/'analyze_handoff.py',HERE/'dependencies/event_metrics.py'):
+        shutil.copyfile(path,out/path.name)
+        sources[path.name]=hashlib.sha256(path.read_bytes()).hexdigest()
+    (out/'source_manifest.json').write_text(json.dumps(sources,indent=2)+'\n')
+    t=np.array([3.995,4.,4.005]);base={'time_s':t}
+    for key in ('exact_qpos','exact_qvel','exact_previous_applied','exact_observer_wrench','exact_estimated_normal',
+                'exact_nominal_joints_before','exact_native_requested','exact_applied','exact_reference_xy',
+                'exact_reference_velocity_m_s','exact_reference_acceleration_m_s2'):
+        base[key]=np.ones((3,2))
+    for key in ('controller_fingerprint_before','controller_fingerprint_after'):base[key]=np.array(['a','a','a'])
+    shorter={key:value[:2].copy() for key,value in base.items()}
+    assert prefix_check(base,shorter,4.)['all_fields_bit_equal']
+    assert common_reference_check(base,shorter)['all_common_reference_fields_bit_equal']
+    shortest={key:value[:1].copy() for key,value in base.items()}
+    assert not prefix_check(base,shortest,4.)['all_fields_bit_equal']
+    program={'time_s':np.array([0.,1.,2.,3.,40.,41.,42.]),
+        'exact_reference_xy':np.column_stack((np.array([0.,1.,2.,3.,40.,41.,42.]),np.zeros(7)))}
+    actual={'time_s':np.array([1.5]),'exact_qpos':np.array([[2.5,.3,0.,1.,0.,0.,0.,0.,0.,0.]]),
+        'exact_reference_xy':np.array([[1.5,0.]]),'exact_reference_velocity_m_s':np.array([[1.,0.]]),
+        'exact_reference_acceleration_m_s2':np.array([[0.,0.]])}
+    # Eight-nearest-vertex diagnostic requires at least eight route vertices.
+    program['time_s']=np.arange(0.,43.);program['exact_reference_xy']=np.column_stack((program['time_s'],np.zeros(43)))
+    geometry=reduce_known_reference(actual,program)
+    assert abs(geometry['local_path_distance_m'][0]-.3)<1e-12 and abs(geometry['closest_reference_time_s'][0]-2.5)<1e-12
+    result={'I42_factorial_arithmetic':pure_checks(),'early_termination_adapter_assertions_passed':4,
+            'copied_corrected_I41_geometry_checks':arithmetic_checks(),
+            'counts_limit':'The copied I41 helper assertions overlap earlier verification; this is not a repository suite or additive test count.'}
+    (out/'report.json').write_text(json.dumps(result,indent=2)+'\n')
+    print(json.dumps(result,indent=2))
+
+
+if __name__=='__main__':main()

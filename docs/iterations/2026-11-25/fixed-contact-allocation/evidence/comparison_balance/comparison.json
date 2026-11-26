@@ -1,0 +1,1542 @@
+{
+  "rows": [
+    {
+      "route": "plain_figure8",
+      "phase_rad": 0.3,
+      "variant": "baseline",
+      "completed": true,
+      "failure": null,
+      "duration_s": 44.00000000000406,
+      "requested_duration_s": 44.0,
+      "rms_moving_mm": 56.96276278790229,
+      "max_error_mm": 154.28047208758613,
+      "final_error_mm": 20.82132786489683,
+      "max_attitude_error_deg": 9.483546074520923,
+      "max_reference_joint_speed_rad_s": 104.86947631835938,
+      "max_measured_joint_speed_rad_s": 15.710262298583984,
+      "max_reference_speed_ratio": 5.243473815917969,
+      "max_reference_acceleration_ratio": 224.69530296325684,
+      "reference_speed_violation_samples": 15,
+      "reference_acceleration_violation_steps": 193,
+      "reference_speed_violation_fraction": 0.0017043517782070218,
+      "reference_acceleration_violation_fraction": 0.02193181818181818,
+      "max_requested_command_step_fraction": 15.863333707518033,
+      "max_requested_command_fraction": 13.419891459946177,
+      "max_requested_torque_fraction": 13.419891459946177,
+      "max_requested_belt_fraction": 5.590620216106565,
+      "p95_applied_command_step_fraction": 0.211846522019445,
+      "max_applied_command_step_fraction": 2.0,
+      "requested_torque_saturation_fraction": 0.020224974434723327,
+      "requested_belt_saturation_fraction": 0.005681172594023407,
+      "rolling_consistency_mismatch_p95_m_s": 0.041561816819012165,
+      "passed_all_gates": false,
+      "failed_gates": [
+        "rms",
+        "p95",
+        "attitude",
+        "settled"
+      ],
+      "contact_guarded_calls": 8801,
+      "allocation_active_bounds_fraction": 0.0,
+      "allocation_residual_rms_m_s_p95": null,
+      "allocation_velocity_error_m_s_p95": null,
+      "allocation_effort_weight_m_s_min": 0.0,
+      "allocation_effort_weight_m_s_p50": 0.0,
+      "allocation_effort_weight_m_s_p95": 0.0,
+      "allocation_effort_weight_m_s_max": 0.0,
+      "allocation_change_weight_m_s_min": 0.0,
+      "allocation_change_weight_m_s_p50": 0.0,
+      "allocation_change_weight_m_s_p95": 0.0,
+      "allocation_change_weight_m_s_max": 0.0,
+      "allocation_authority_m_s_min": null,
+      "allocation_authority_m_s_p50": null,
+      "allocation_authority_m_s_p95": null,
+      "allocation_authority_m_s_max": null,
+      "allocation_effort_blend_min": 0.0,
+      "allocation_effort_blend_p50": 0.0,
+      "allocation_effort_blend_p95": 0.0,
+      "allocation_effort_blend_max": 0.0,
+      "per_drive": {
+        "shaft": {
+          "reference_abs_max": 34.166175842285156,
+          "reference_abs_p95": 0.9249765872955322,
+          "reference_abs_p99": 1.5210883617401123,
+          "reference_step_abs_max": 38.688230991363525,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 1.708308792114258,
+          "reference_acceleration_max_ratio": 77.37646198272705,
+          "measured_abs_max_rad_s": 4.287426471710205,
+          "measured_abs_p99_rad_s": 2.3544342517852783
+        },
+        "shell_A": {
+          "reference_abs_max": 104.86947631835938,
+          "reference_abs_p95": 1.5843760967254639,
+          "reference_abs_p99": 3.916933059692383,
+          "reference_step_abs_max": 112.34765148162842,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 5.243473815917969,
+          "reference_acceleration_max_ratio": 224.69530296325684,
+          "measured_abs_max_rad_s": 12.909194946289062,
+          "measured_abs_p99_rad_s": 7.928223133087158
+        },
+        "shell_B": {
+          "reference_abs_max": 3.8619415760040283,
+          "reference_abs_p95": 0.8768719434738159,
+          "reference_abs_p99": 1.2610695362091064,
+          "reference_step_abs_max": 3.8619415760040283,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.1930970788002014,
+          "reference_acceleration_max_ratio": 7.723883152008057,
+          "measured_abs_max_rad_s": 15.710262298583984,
+          "measured_abs_p99_rad_s": 7.259408950805664
+        },
+        "belt_A": {
+          "reference_abs_max": 0.04779238626360893,
+          "reference_abs_p95": 0.0,
+          "reference_abs_p99": 0.009179885499179363,
+          "reference_step_abs_max": 0.04779238626360893,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.1593079478817007,
+          "reference_acceleration_max_ratio": 3.186159084240596
+        },
+        "belt_B": {
+          "reference_abs_max": 0.09621182829141617,
+          "reference_abs_p95": 0.0,
+          "reference_abs_p99": 0.09505878388881683,
+          "reference_step_abs_max": 0.09305288642644882,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.32070608156100583,
+          "reference_acceleration_max_ratio": 6.203525761763255
+        }
+      },
+      "control_interval_s": 0.005,
+      "control_interval_source": "saved workspace model configuration"
+    },
+    {
+      "route": "plain_figure8",
+      "phase_rad": 0.3,
+      "variant": "feasible_balance",
+      "completed": true,
+      "failure": null,
+      "duration_s": 44.00000000000406,
+      "requested_duration_s": 44.0,
+      "rms_moving_mm": 90.51307031226536,
+      "max_error_mm": 198.30185599938446,
+      "final_error_mm": 22.56116485093638,
+      "max_attitude_error_deg": 10.129200364467433,
+      "max_reference_joint_speed_rad_s": 2.2743570804595947,
+      "max_measured_joint_speed_rad_s": 18.233949661254883,
+      "max_reference_speed_ratio": 0.23205863010650357,
+      "max_reference_acceleration_ratio": 1.0000002880891166,
+      "reference_speed_violation_samples": 0,
+      "reference_acceleration_violation_steps": 0,
+      "reference_speed_violation_fraction": 0.0,
+      "reference_acceleration_violation_fraction": 0.0,
+      "max_requested_command_step_fraction": 5.469867568418679,
+      "max_requested_command_fraction": 5.598602469817699,
+      "max_requested_torque_fraction": 3.6473916511777382,
+      "max_requested_belt_fraction": 5.598602469817699,
+      "p95_applied_command_step_fraction": 1.3592244784037273,
+      "max_applied_command_step_fraction": 2.0,
+      "requested_torque_saturation_fraction": 0.0310192023633678,
+      "requested_belt_saturation_fraction": 0.005908419497784343,
+      "rolling_consistency_mismatch_p95_m_s": 0.03207466453313824,
+      "passed_all_gates": false,
+      "failed_gates": [
+        "rms",
+        "p95",
+        "attitude",
+        "settled"
+      ],
+      "contact_guarded_calls": 8801,
+      "allocation_active_bounds_fraction": 0.06317463924554027,
+      "allocation_residual_rms_m_s_p95": 0.005717376247048378,
+      "allocation_velocity_error_m_s_p95": 0.005717376247048378,
+      "allocation_effort_weight_m_s_min": 0.0010044722585007548,
+      "allocation_effort_weight_m_s_p50": 0.0010061870561912656,
+      "allocation_effort_weight_m_s_p95": 0.0010485092643648386,
+      "allocation_effort_weight_m_s_max": 0.004999998956918716,
+      "allocation_change_weight_m_s_min": 0.0010000000474974513,
+      "allocation_change_weight_m_s_p50": 0.0010000000474974513,
+      "allocation_change_weight_m_s_p95": 0.0010000000474974513,
+      "allocation_change_weight_m_s_max": 0.0010000000474974513,
+      "allocation_authority_m_s_min": 9.110954124480486e-06,
+      "allocation_authority_m_s_p50": 0.508139967918396,
+      "allocation_authority_m_s_p95": 0.5902345776557922,
+      "allocation_authority_m_s_max": 0.5977986454963684,
+      "allocation_effort_blend_min": 0.0011180578731000423,
+      "allocation_effort_blend_p50": 0.0015467533376067877,
+      "allocation_effort_blend_p95": 0.012127306312322617,
+      "allocation_effort_blend_max": 0.9999998211860657,
+      "per_drive": {
+        "shaft": {
+          "reference_abs_max": 1.8734828233718872,
+          "reference_abs_p95": 1.1379988193511963,
+          "reference_abs_p99": 1.4530175924301147,
+          "reference_step_abs_max": 0.5000000596046448,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.09367414116859436,
+          "reference_acceleration_max_ratio": 1.0000001192092896,
+          "measured_abs_max_rad_s": 4.715472221374512,
+          "measured_abs_p99_rad_s": 3.137056589126587
+        },
+        "shell_A": {
+          "reference_abs_max": 2.2743570804595947,
+          "reference_abs_p95": 0.6238008737564087,
+          "reference_abs_p99": 0.8573852181434631,
+          "reference_step_abs_max": 0.5000001192092896,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.11371785402297974,
+          "reference_acceleration_max_ratio": 1.000000238418579,
+          "measured_abs_max_rad_s": 11.87747573852539,
+          "measured_abs_p99_rad_s": 10.189896583557129
+        },
+        "shell_B": {
+          "reference_abs_max": 2.0069379806518555,
+          "reference_abs_p95": 0.9813185334205627,
+          "reference_abs_p99": 1.3180662393569946,
+          "reference_step_abs_max": 0.5000000596046448,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.10034689903259278,
+          "reference_acceleration_max_ratio": 1.0000001192092896,
+          "measured_abs_max_rad_s": 18.233949661254883,
+          "measured_abs_p99_rad_s": 11.460183143615723
+        },
+        "belt_A": {
+          "reference_abs_max": 0.03737644478678703,
+          "reference_abs_p95": 0.001226847292855382,
+          "reference_abs_p99": 0.012178168632090092,
+          "reference_step_abs_max": 0.015000000596046448,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.12458814433860205,
+          "reference_acceleration_max_ratio": 1.00000003973643
+        },
+        "belt_B": {
+          "reference_abs_max": 0.06961759179830551,
+          "reference_abs_p95": 0.0,
+          "reference_abs_p99": 0.03334999084472656,
+          "reference_step_abs_max": 0.015000004321336746,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.23205863010650357,
+          "reference_acceleration_max_ratio": 1.0000002880891166
+        }
+      },
+      "control_interval_s": 0.005,
+      "control_interval_source": "saved workspace model configuration"
+    },
+    {
+      "route": "plain_figure8",
+      "phase_rad": 0.9,
+      "variant": "baseline",
+      "completed": true,
+      "failure": null,
+      "duration_s": 44.00000000000406,
+      "requested_duration_s": 44.0,
+      "rms_moving_mm": 50.48647310171891,
+      "max_error_mm": 190.90118139250976,
+      "final_error_mm": 190.19148889848861,
+      "max_attitude_error_deg": 8.708537758069701,
+      "max_reference_joint_speed_rad_s": 1760.5250244140625,
+      "max_measured_joint_speed_rad_s": 15.762999534606934,
+      "max_reference_speed_ratio": 88.02625122070313,
+      "max_reference_acceleration_ratio": 3741.8528442382812,
+      "reference_speed_violation_samples": 90,
+      "reference_acceleration_violation_steps": 294,
+      "reference_speed_violation_fraction": 0.010226110669242132,
+      "reference_acceleration_violation_fraction": 0.03340909090909091,
+      "max_requested_command_step_fraction": 251.1496634821231,
+      "max_requested_command_fraction": 235.1122699136627,
+      "max_requested_torque_fraction": 235.1122699136627,
+      "max_requested_belt_fraction": 3.2963900448326253,
+      "p95_applied_command_step_fraction": 0.3561422824859619,
+      "max_applied_command_step_fraction": 2.0,
+      "requested_torque_saturation_fraction": 0.03863197363935916,
+      "requested_belt_saturation_fraction": 0.025110782865583457,
+      "rolling_consistency_mismatch_p95_m_s": 0.04982160031795502,
+      "passed_all_gates": false,
+      "failed_gates": [
+        "rms",
+        "final",
+        "attitude",
+        "settled",
+        "closure"
+      ],
+      "contact_guarded_calls": 8801,
+      "allocation_active_bounds_fraction": 0.0,
+      "allocation_residual_rms_m_s_p95": null,
+      "allocation_velocity_error_m_s_p95": null,
+      "allocation_effort_weight_m_s_min": 0.0,
+      "allocation_effort_weight_m_s_p50": 0.0,
+      "allocation_effort_weight_m_s_p95": 0.0,
+      "allocation_effort_weight_m_s_max": 0.0,
+      "allocation_change_weight_m_s_min": 0.0,
+      "allocation_change_weight_m_s_p50": 0.0,
+      "allocation_change_weight_m_s_p95": 0.0,
+      "allocation_change_weight_m_s_max": 0.0,
+      "allocation_authority_m_s_min": null,
+      "allocation_authority_m_s_p50": null,
+      "allocation_authority_m_s_p95": null,
+      "allocation_authority_m_s_max": null,
+      "allocation_effort_blend_min": 0.0,
+      "allocation_effort_blend_p50": 0.0,
+      "allocation_effort_blend_p95": 0.0,
+      "allocation_effort_blend_max": 0.0,
+      "per_drive": {
+        "shaft": {
+          "reference_abs_max": 488.60137939453125,
+          "reference_abs_p95": 1.4853752851486206,
+          "reference_abs_p99": 7.0867838859558105,
+          "reference_step_abs_max": 519.0146522521973,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 24.430068969726562,
+          "reference_acceleration_max_ratio": 1038.0293045043945,
+          "measured_abs_max_rad_s": 6.603884696960449,
+          "measured_abs_p99_rad_s": 2.8370649814605713
+        },
+        "shell_A": {
+          "reference_abs_max": 5.197358131408691,
+          "reference_abs_p95": 1.1872105598449707,
+          "reference_abs_p99": 1.7949025630950928,
+          "reference_step_abs_max": 5.197358131408691,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.25986790657043457,
+          "reference_acceleration_max_ratio": 10.394716262817383,
+          "measured_abs_max_rad_s": 15.422042846679688,
+          "measured_abs_p99_rad_s": 10.116572380065918
+        },
+        "shell_B": {
+          "reference_abs_max": 1760.5250244140625,
+          "reference_abs_p95": 0.9516266584396362,
+          "reference_abs_p99": 20.06358528137207,
+          "reference_step_abs_max": 1870.9264221191406,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 88.02625122070313,
+          "reference_acceleration_max_ratio": 3741.8528442382812,
+          "measured_abs_max_rad_s": 15.762999534606934,
+          "measured_abs_p99_rad_s": 9.095231056213379
+        },
+        "belt_A": {
+          "reference_abs_max": 0.0894242599606514,
+          "reference_abs_p95": 0.05998754873871803,
+          "reference_abs_p99": 0.07907827198505402,
+          "reference_step_abs_max": 0.08932103961706161,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.2980808546908357,
+          "reference_acceleration_max_ratio": 5.954735974470775
+        },
+        "belt_B": {
+          "reference_abs_max": 0.0630107894539833,
+          "reference_abs_p95": 0.0,
+          "reference_abs_p99": 0.0510275699198246,
+          "reference_step_abs_max": 0.0630107894539833,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.21003595650053197,
+          "reference_acceleration_max_ratio": 4.2007192969322205
+        }
+      },
+      "control_interval_s": 0.005,
+      "control_interval_source": "saved workspace model configuration"
+    },
+    {
+      "route": "plain_figure8",
+      "phase_rad": 0.9,
+      "variant": "feasible_balance",
+      "completed": true,
+      "failure": null,
+      "duration_s": 44.00000000000406,
+      "requested_duration_s": 44.0,
+      "rms_moving_mm": 144.0761145719325,
+      "max_error_mm": 299.9708454603795,
+      "final_error_mm": 20.686451132684883,
+      "max_attitude_error_deg": 5.768641883983076,
+      "max_reference_joint_speed_rad_s": 8.285812377929688,
+      "max_measured_joint_speed_rad_s": 22.02732276916504,
+      "max_reference_speed_ratio": 0.4142906188964844,
+      "max_reference_acceleration_ratio": 1.0000004768371582,
+      "reference_speed_violation_samples": 0,
+      "reference_acceleration_violation_steps": 0,
+      "reference_speed_violation_fraction": 0.0,
+      "reference_acceleration_violation_fraction": 0.0,
+      "max_requested_command_step_fraction": 3.8794702736747158,
+      "max_requested_command_fraction": 3.8800428756061045,
+      "max_requested_torque_fraction": 3.554624177828464,
+      "max_requested_belt_fraction": 3.8800428756061045,
+      "p95_applied_command_step_fraction": 1.435332457224528,
+      "max_applied_command_step_fraction": 2.0,
+      "requested_torque_saturation_fraction": 0.08180888535393706,
+      "requested_belt_saturation_fraction": 0.015225542551982729,
+      "rolling_consistency_mismatch_p95_m_s": 0.04424571413546797,
+      "passed_all_gates": false,
+      "failed_gates": [
+        "rms",
+        "p95",
+        "max",
+        "settled"
+      ],
+      "contact_guarded_calls": 8801,
+      "allocation_active_bounds_fraction": 0.11794114305192592,
+      "allocation_residual_rms_m_s_p95": 0.018592962995171547,
+      "allocation_velocity_error_m_s_p95": 0.018592961132526398,
+      "allocation_effort_weight_m_s_min": 0.0010044751688838005,
+      "allocation_effort_weight_m_s_p50": 0.0010126332053914666,
+      "allocation_effort_weight_m_s_p95": 0.00109380716457963,
+      "allocation_effort_weight_m_s_max": 0.004911733791232109,
+      "allocation_change_weight_m_s_min": 0.0010000000474974513,
+      "allocation_change_weight_m_s_p50": 0.0010000000474974513,
+      "allocation_change_weight_m_s_p95": 0.0010000000474974513,
+      "allocation_change_weight_m_s_max": 0.0010000000474974513,
+      "allocation_authority_m_s_min": 0.0030042934231460094,
+      "allocation_authority_m_s_p50": 0.3553168773651123,
+      "allocation_authority_m_s_p95": 0.5856894850730896,
+      "allocation_authority_m_s_max": 0.5976002812385559,
+      "allocation_effort_blend_min": 0.0011187995551154017,
+      "allocation_effort_blend_p50": 0.0031583080999553204,
+      "allocation_effort_blend_p95": 0.0234517939388752,
+      "allocation_effort_blend_max": 0.9779334664344788,
+      "per_drive": {
+        "shaft": {
+          "reference_abs_max": 3.9087836742401123,
+          "reference_abs_p95": 0.95586097240448,
+          "reference_abs_p99": 1.470633864402771,
+          "reference_step_abs_max": 0.5000000596046448,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.1954391837120056,
+          "reference_acceleration_max_ratio": 1.0000001192092896,
+          "measured_abs_max_rad_s": 3.958981513977051,
+          "measured_abs_p99_rad_s": 2.6612331867218018
+        },
+        "shell_A": {
+          "reference_abs_max": 8.285812377929688,
+          "reference_abs_p95": 1.3283741474151611,
+          "reference_abs_p99": 3.2791190147399902,
+          "reference_step_abs_max": 0.5000002384185791,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.4142906188964844,
+          "reference_acceleration_max_ratio": 1.0000004768371582,
+          "measured_abs_max_rad_s": 22.02732276916504,
+          "measured_abs_p99_rad_s": 15.940752029418945
+        },
+        "shell_B": {
+          "reference_abs_max": 3.8022141456604004,
+          "reference_abs_p95": 1.1978167295455933,
+          "reference_abs_p99": 1.8185908794403076,
+          "reference_step_abs_max": 0.5000001192092896,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.19011070728302001,
+          "reference_acceleration_max_ratio": 1.000000238418579,
+          "measured_abs_max_rad_s": 20.505962371826172,
+          "measured_abs_p99_rad_s": 15.727474212646484
+        },
+        "belt_A": {
+          "reference_abs_max": 0.08649905025959015,
+          "reference_abs_p95": 0.03480127453804016,
+          "reference_abs_p99": 0.08274930715560913,
+          "reference_step_abs_max": 0.015000004321336746,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.28833015607475615,
+          "reference_acceleration_max_ratio": 1.0000002880891166
+        },
+        "belt_B": {
+          "reference_abs_max": 0.09421143680810928,
+          "reference_abs_p95": 0.0,
+          "reference_abs_p99": 0.05999999865889549,
+          "reference_step_abs_max": 0.015000004321336746,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.31403811021494427,
+          "reference_acceleration_max_ratio": 1.0000002880891166
+        }
+      },
+      "control_interval_s": 0.005,
+      "control_interval_source": "saved workspace model configuration"
+    },
+    {
+      "route": "plain_figure8",
+      "phase_rad": -1.0,
+      "variant": "baseline",
+      "completed": true,
+      "failure": null,
+      "duration_s": 44.00000000000406,
+      "requested_duration_s": 44.0,
+      "rms_moving_mm": 56.05165242427734,
+      "max_error_mm": 227.2189573736524,
+      "final_error_mm": 32.359448390532215,
+      "max_attitude_error_deg": 12.49277005214805,
+      "max_reference_joint_speed_rad_s": 78.73149871826172,
+      "max_measured_joint_speed_rad_s": 35.28397750854492,
+      "max_reference_speed_ratio": 3.936574935913086,
+      "max_reference_acceleration_ratio": 211.1998176574707,
+      "reference_speed_violation_samples": 2,
+      "reference_acceleration_violation_steps": 27,
+      "reference_speed_violation_fraction": 0.00022724690376093625,
+      "reference_acceleration_violation_fraction": 0.003068181818181818,
+      "max_requested_command_step_fraction": 15.498141626590822,
+      "max_requested_command_fraction": 12.028254984686575,
+      "max_requested_torque_fraction": 12.028254984686575,
+      "max_requested_belt_fraction": 7.7706524622181075,
+      "p95_applied_command_step_fraction": 0.16022257010142008,
+      "max_applied_command_step_fraction": 2.0,
+      "requested_torque_saturation_fraction": 0.01704351778207022,
+      "requested_belt_saturation_fraction": 0.010794227928644472,
+      "rolling_consistency_mismatch_p95_m_s": 0.03383412640541789,
+      "passed_all_gates": false,
+      "failed_gates": [
+        "rms",
+        "max",
+        "attitude",
+        "settled"
+      ],
+      "contact_guarded_calls": 8801,
+      "allocation_active_bounds_fraction": 0.0,
+      "allocation_residual_rms_m_s_p95": null,
+      "allocation_velocity_error_m_s_p95": null,
+      "allocation_effort_weight_m_s_min": 0.0,
+      "allocation_effort_weight_m_s_p50": 0.0,
+      "allocation_effort_weight_m_s_p95": 0.0,
+      "allocation_effort_weight_m_s_max": 0.0,
+      "allocation_change_weight_m_s_min": 0.0,
+      "allocation_change_weight_m_s_p50": 0.0,
+      "allocation_change_weight_m_s_p95": 0.0,
+      "allocation_change_weight_m_s_max": 0.0,
+      "allocation_authority_m_s_min": null,
+      "allocation_authority_m_s_p50": null,
+      "allocation_authority_m_s_p95": null,
+      "allocation_authority_m_s_max": null,
+      "allocation_effort_blend_min": 0.0,
+      "allocation_effort_blend_p50": 0.0,
+      "allocation_effort_blend_p95": 0.0,
+      "allocation_effort_blend_max": 0.0,
+      "per_drive": {
+        "shaft": {
+          "reference_abs_max": 23.171953201293945,
+          "reference_abs_p95": 0.8968240022659302,
+          "reference_abs_p99": 0.9870162606239319,
+          "reference_step_abs_max": 31.170164108276367,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 1.1585976600646972,
+          "reference_acceleration_max_ratio": 62.340328216552734,
+          "measured_abs_max_rad_s": 5.956699848175049,
+          "measured_abs_p99_rad_s": 2.0773403644561768
+        },
+        "shell_A": {
+          "reference_abs_max": 4.624663352966309,
+          "reference_abs_p95": 1.8209856748580933,
+          "reference_abs_p99": 3.9423635005950928,
+          "reference_step_abs_max": 2.300069570541382,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.23123316764831542,
+          "reference_acceleration_max_ratio": 4.600139141082764,
+          "measured_abs_max_rad_s": 35.28397750854492,
+          "measured_abs_p99_rad_s": 13.486929893493652
+        },
+        "shell_B": {
+          "reference_abs_max": 78.73149871826172,
+          "reference_abs_p95": 1.4680904150009155,
+          "reference_abs_p99": 2.1410725116729736,
+          "reference_step_abs_max": 105.59990882873535,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 3.936574935913086,
+          "reference_acceleration_max_ratio": 211.1998176574707,
+          "measured_abs_max_rad_s": 31.607585906982422,
+          "measured_abs_p99_rad_s": 13.39416217803955
+        },
+        "belt_A": {
+          "reference_abs_max": 0.07471706718206406,
+          "reference_abs_p95": 0.049713537096977234,
+          "reference_abs_p99": 0.07152902334928513,
+          "reference_step_abs_max": 0.07427273690700531,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.24905688071024892,
+          "reference_acceleration_max_ratio": 4.951515793800354
+        },
+        "belt_B": {
+          "reference_abs_max": 0.09942439198493958,
+          "reference_abs_p95": 0.0,
+          "reference_abs_p99": 0.09403276443481445,
+          "reference_step_abs_max": 0.09939678758382797,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.3314146267805645,
+          "reference_acceleration_max_ratio": 6.6264525055885315
+        }
+      },
+      "control_interval_s": 0.005,
+      "control_interval_source": "saved workspace model configuration"
+    },
+    {
+      "route": "plain_figure8",
+      "phase_rad": -1.0,
+      "variant": "feasible_balance",
+      "completed": true,
+      "failure": null,
+      "duration_s": 44.00000000000406,
+      "requested_duration_s": 44.0,
+      "rms_moving_mm": 101.02122865025284,
+      "max_error_mm": 326.8446765106363,
+      "final_error_mm": 6.181740349437375,
+      "max_attitude_error_deg": 8.984731614453807,
+      "max_reference_joint_speed_rad_s": 4.781988620758057,
+      "max_measured_joint_speed_rad_s": 16.68141746520996,
+      "max_reference_speed_ratio": 0.45201746813386806,
+      "max_reference_acceleration_ratio": 1.0000004768371582,
+      "reference_speed_violation_samples": 0,
+      "reference_acceleration_violation_steps": 0,
+      "reference_speed_violation_fraction": 0.0,
+      "reference_acceleration_violation_fraction": 0.0,
+      "max_requested_command_step_fraction": 6.021884440506123,
+      "max_requested_command_fraction": 6.323201007715821,
+      "max_requested_torque_fraction": 3.1654680504215538,
+      "max_requested_belt_fraction": 6.323201007715821,
+      "p95_applied_command_step_fraction": 1.0406522750854492,
+      "max_applied_command_step_fraction": 2.0,
+      "requested_torque_saturation_fraction": 0.04283604135893648,
+      "requested_belt_saturation_fraction": 0.012044085899329622,
+      "rolling_consistency_mismatch_p95_m_s": 0.0065785855753347205,
+      "passed_all_gates": false,
+      "failed_gates": [
+        "rms",
+        "p95",
+        "max",
+        "attitude",
+        "settled"
+      ],
+      "contact_guarded_calls": 8801,
+      "allocation_active_bounds_fraction": 0.05533462106578798,
+      "allocation_residual_rms_m_s_p95": 0.0010914632584899664,
+      "allocation_velocity_error_m_s_p95": 0.0009895851835608482,
+      "allocation_effort_weight_m_s_min": 0.001004474121145904,
+      "allocation_effort_weight_m_s_p50": 0.0010096641490235925,
+      "allocation_effort_weight_m_s_p95": 0.0010421548504382372,
+      "allocation_effort_weight_m_s_max": 0.001181874773465097,
+      "allocation_change_weight_m_s_min": 0.0010000000474974513,
+      "allocation_change_weight_m_s_p50": 0.0010000000474974513,
+      "allocation_change_weight_m_s_p95": 0.0010000000474974513,
+      "allocation_change_weight_m_s_max": 0.0010000000474974513,
+      "allocation_authority_m_s_min": 0.09163658320903778,
+      "allocation_authority_m_s_p50": 0.40639999508857727,
+      "allocation_authority_m_s_p95": 0.5859513878822327,
+      "allocation_authority_m_s_max": 0.5976688265800476,
+      "allocation_effort_blend_min": 0.0011185432085767388,
+      "allocation_effort_blend_p50": 0.002416028641164303,
+      "allocation_effort_blend_p95": 0.010538710281252861,
+      "allocation_effort_blend_max": 0.04546868056058884,
+      "per_drive": {
+        "shaft": {
+          "reference_abs_max": 1.4380769729614258,
+          "reference_abs_p95": 0.8308042287826538,
+          "reference_abs_p99": 1.0528371334075928,
+          "reference_step_abs_max": 0.5000000298023224,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.07190384864807128,
+          "reference_acceleration_max_ratio": 1.0000000596046448,
+          "measured_abs_max_rad_s": 4.790956497192383,
+          "measured_abs_p99_rad_s": 2.9322805404663086
+        },
+        "shell_A": {
+          "reference_abs_max": 1.119653582572937,
+          "reference_abs_p95": 0.21217186748981476,
+          "reference_abs_p99": 0.8827511668205261,
+          "reference_step_abs_max": 0.5000000298023224,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.05598267912864685,
+          "reference_acceleration_max_ratio": 1.0000000596046448,
+          "measured_abs_max_rad_s": 16.62729263305664,
+          "measured_abs_p99_rad_s": 13.541462898254395
+        },
+        "shell_B": {
+          "reference_abs_max": 4.781988620758057,
+          "reference_abs_p95": 1.775190830230713,
+          "reference_abs_p99": 2.5865988731384277,
+          "reference_step_abs_max": 0.5000002384185791,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.23909943103790282,
+          "reference_acceleration_max_ratio": 1.0000004768371582,
+          "measured_abs_max_rad_s": 16.68141746520996,
+          "measured_abs_p99_rad_s": 8.276832580566406
+        },
+        "belt_A": {
+          "reference_abs_max": 0.0,
+          "reference_abs_p95": 0.0,
+          "reference_abs_p99": 0.0,
+          "reference_step_abs_max": 0.0,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.0,
+          "reference_acceleration_max_ratio": 0.0
+        },
+        "belt_B": {
+          "reference_abs_max": 0.13560524582862854,
+          "reference_abs_p95": 0.03599950671195984,
+          "reference_abs_p99": 0.07527724653482437,
+          "reference_step_abs_max": 0.015000000596046448,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.45201746813386806,
+          "reference_acceleration_max_ratio": 1.00000003973643
+        }
+      },
+      "control_interval_s": 0.005,
+      "control_interval_source": "saved workspace model configuration"
+    },
+    {
+      "route": "shape_triangle",
+      "phase_rad": 0.3,
+      "variant": "baseline",
+      "completed": true,
+      "failure": null,
+      "duration_s": 68.50000000001019,
+      "requested_duration_s": 68.5,
+      "rms_moving_mm": 24.35326476838279,
+      "max_error_mm": 68.8470134906999,
+      "final_error_mm": 25.221748992687576,
+      "max_attitude_error_deg": 3.631185768813294,
+      "max_reference_joint_speed_rad_s": 3.0011205673217773,
+      "max_measured_joint_speed_rad_s": 10.682060241699219,
+      "max_reference_speed_ratio": 0.3350996341268367,
+      "max_reference_acceleration_ratio": 6.409511466821035,
+      "reference_speed_violation_samples": 0,
+      "reference_acceleration_violation_steps": 28,
+      "reference_speed_violation_fraction": 0.0,
+      "reference_acceleration_violation_fraction": 0.0020437956204379564,
+      "max_requested_command_step_fraction": 1.472207746020645,
+      "max_requested_command_fraction": 1.7129058951971572,
+      "max_requested_torque_fraction": 1.5657002105037288,
+      "max_requested_belt_fraction": 1.7129058951971572,
+      "p95_applied_command_step_fraction": 0.10358454868854886,
+      "max_applied_command_step_fraction": 0.9065075355169163,
+      "requested_torque_saturation_fraction": 0.0037953434055908327,
+      "requested_belt_saturation_fraction": 0.002481570688270929,
+      "rolling_consistency_mismatch_p95_m_s": 0.005619816831313018,
+      "passed_all_gates": false,
+      "failed_gates": [
+        "settled"
+      ],
+      "contact_guarded_calls": 13701,
+      "allocation_active_bounds_fraction": 0.0,
+      "allocation_residual_rms_m_s_p95": null,
+      "allocation_velocity_error_m_s_p95": null,
+      "allocation_effort_weight_m_s_min": 0.0,
+      "allocation_effort_weight_m_s_p50": 0.0,
+      "allocation_effort_weight_m_s_p95": 0.0,
+      "allocation_effort_weight_m_s_max": 0.0,
+      "allocation_change_weight_m_s_min": 0.0,
+      "allocation_change_weight_m_s_p50": 0.0,
+      "allocation_change_weight_m_s_p95": 0.0,
+      "allocation_change_weight_m_s_max": 0.0,
+      "allocation_authority_m_s_min": null,
+      "allocation_authority_m_s_p50": null,
+      "allocation_authority_m_s_p95": null,
+      "allocation_authority_m_s_max": null,
+      "allocation_effort_blend_min": 0.0,
+      "allocation_effort_blend_p50": 0.0,
+      "allocation_effort_blend_p95": 0.0,
+      "allocation_effort_blend_max": 0.0,
+      "per_drive": {
+        "shaft": {
+          "reference_abs_max": 0.8963062167167664,
+          "reference_abs_p95": 0.841027021408081,
+          "reference_abs_p99": 0.86285799741745,
+          "reference_step_abs_max": 0.12562629580497742,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.04481531083583832,
+          "reference_acceleration_max_ratio": 0.25125259160995483,
+          "measured_abs_max_rad_s": 3.2377121448516846,
+          "measured_abs_p99_rad_s": 1.82506263256073
+        },
+        "shell_A": {
+          "reference_abs_max": 3.0011205673217773,
+          "reference_abs_p95": 1.0245651006698608,
+          "reference_abs_p99": 2.08066987991333,
+          "reference_step_abs_max": 3.0011205673217773,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.15005602836608886,
+          "reference_acceleration_max_ratio": 6.002241134643555,
+          "measured_abs_max_rad_s": 8.130911827087402,
+          "measured_abs_p99_rad_s": 5.421130657196045
+        },
+        "shell_B": {
+          "reference_abs_max": 2.708526134490967,
+          "reference_abs_p95": 1.0354901552200317,
+          "reference_abs_p99": 1.995356559753418,
+          "reference_step_abs_max": 2.708526134490967,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.13542630672454833,
+          "reference_acceleration_max_ratio": 5.417052268981934,
+          "measured_abs_max_rad_s": 10.682060241699219,
+          "measured_abs_p99_rad_s": 6.409643173217773
+        },
+        "belt_A": {
+          "reference_abs_max": 0.10052989423274994,
+          "reference_abs_p95": 0.0984700545668602,
+          "reference_abs_p99": 0.10027510672807693,
+          "reference_step_abs_max": 0.09614267200231552,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.3350996341268367,
+          "reference_acceleration_max_ratio": 6.409511466821035
+        },
+        "belt_B": {
+          "reference_abs_max": 0.08562009781599045,
+          "reference_abs_p95": 0.007425388321280479,
+          "reference_abs_p99": 0.08150515705347061,
+          "reference_step_abs_max": 0.08562009781599045,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.2854003147125119,
+          "reference_acceleration_max_ratio": 5.7080065210660305
+        }
+      },
+      "control_interval_s": 0.005,
+      "control_interval_source": "saved workspace model configuration"
+    },
+    {
+      "route": "shape_triangle",
+      "phase_rad": 0.3,
+      "variant": "feasible_balance",
+      "completed": true,
+      "failure": null,
+      "duration_s": 68.50000000001019,
+      "requested_duration_s": 68.5,
+      "rms_moving_mm": 27.322679798871,
+      "max_error_mm": 91.67446713721834,
+      "final_error_mm": 1.7042275967597318,
+      "max_attitude_error_deg": 4.037312769310116,
+      "max_reference_joint_speed_rad_s": 3.3658664226531982,
+      "max_measured_joint_speed_rad_s": 13.452863693237305,
+      "max_reference_speed_ratio": 0.3383714074543553,
+      "max_reference_acceleration_ratio": 1.0000002880891166,
+      "reference_speed_violation_samples": 0,
+      "reference_acceleration_violation_steps": 0,
+      "reference_speed_violation_fraction": 0.0,
+      "reference_acceleration_violation_fraction": 0.0,
+      "max_requested_command_step_fraction": 1.7999757607787545,
+      "max_requested_command_fraction": 1.8030777850517516,
+      "max_requested_torque_fraction": 1.8030777850517516,
+      "max_requested_belt_fraction": 1.0006633003289183,
+      "p95_applied_command_step_fraction": 0.22200822830200195,
+      "max_applied_command_step_fraction": 1.3292892773946126,
+      "requested_torque_saturation_fraction": 0.00029194949273775636,
+      "requested_belt_saturation_fraction": 7.298737318443909e-05,
+      "rolling_consistency_mismatch_p95_m_s": 0.015876412484794846,
+      "passed_all_gates": true,
+      "failed_gates": [],
+      "contact_guarded_calls": 13701,
+      "allocation_active_bounds_fraction": 0.012115903948616889,
+      "allocation_residual_rms_m_s_p95": 8.515316585544497e-05,
+      "allocation_velocity_error_m_s_p95": 4.835062554775504e-06,
+      "allocation_effort_weight_m_s_min": 0.001004470861516893,
+      "allocation_effort_weight_m_s_p50": 0.0010070494608953595,
+      "allocation_effort_weight_m_s_p95": 0.0010328561766073108,
+      "allocation_effort_weight_m_s_max": 0.0010856195585802197,
+      "allocation_change_weight_m_s_min": 0.0010000000474974513,
+      "allocation_change_weight_m_s_p50": 0.0010000000474974513,
+      "allocation_change_weight_m_s_p95": 0.0010000000474974513,
+      "allocation_change_weight_m_s_max": 0.0010000000474974513,
+      "allocation_authority_m_s_min": 0.13523057103157043,
+      "allocation_authority_m_s_p50": 0.4759909510612488,
+      "allocation_authority_m_s_p95": 0.5950648784637451,
+      "allocation_authority_m_s_max": 0.5978907942771912,
+      "allocation_effort_blend_min": 0.0011177136329934,
+      "allocation_effort_blend_p50": 0.0017623677849769592,
+      "allocation_effort_blend_p95": 0.008214050903916359,
+      "allocation_effort_blend_max": 0.021404903382062912,
+      "per_drive": {
+        "shaft": {
+          "reference_abs_max": 1.3238414525985718,
+          "reference_abs_p95": 1.017389178276062,
+          "reference_abs_p99": 1.1693456172943115,
+          "reference_step_abs_max": 0.5000000596046448,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.06619207262992859,
+          "reference_acceleration_max_ratio": 1.0000001192092896,
+          "measured_abs_max_rad_s": 3.813467502593994,
+          "measured_abs_p99_rad_s": 2.3923585414886475
+        },
+        "shell_A": {
+          "reference_abs_max": 3.3658664226531982,
+          "reference_abs_p95": 1.2066243886947632,
+          "reference_abs_p99": 2.0489370822906494,
+          "reference_step_abs_max": 0.5000001192092896,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.1682933211326599,
+          "reference_acceleration_max_ratio": 1.000000238418579,
+          "measured_abs_max_rad_s": 13.452863693237305,
+          "measured_abs_p99_rad_s": 7.953573226928711
+        },
+        "shell_B": {
+          "reference_abs_max": 3.010563373565674,
+          "reference_abs_p95": 1.242082118988037,
+          "reference_abs_p99": 2.2480685710906982,
+          "reference_step_abs_max": 0.5000000596046448,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.1505281686782837,
+          "reference_acceleration_max_ratio": 1.0000001192092896,
+          "measured_abs_max_rad_s": 8.90554428100586,
+          "measured_abs_p99_rad_s": 6.64750337600708
+        },
+        "belt_A": {
+          "reference_abs_max": 0.10151142627000809,
+          "reference_abs_p95": 0.022637488320469856,
+          "reference_abs_p99": 0.0979740172624588,
+          "reference_step_abs_max": 0.015000004321336746,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.3383714074543553,
+          "reference_acceleration_max_ratio": 1.0000002880891166
+        },
+        "belt_B": {
+          "reference_abs_max": 0.09763510525226593,
+          "reference_abs_p95": 0.0,
+          "reference_abs_p99": 0.062496617436409,
+          "reference_step_abs_max": 0.015000004321336746,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.3254503379086519,
+          "reference_acceleration_max_ratio": 1.0000002880891166
+        }
+      },
+      "control_interval_s": 0.005,
+      "control_interval_source": "saved workspace model configuration"
+    },
+    {
+      "route": "shape_line_and_back",
+      "phase_rad": 0.3,
+      "variant": "baseline",
+      "completed": true,
+      "failure": null,
+      "duration_s": 67.00000000001155,
+      "requested_duration_s": 66.99999999999999,
+      "rms_moving_mm": 35.568741459856945,
+      "max_error_mm": 99.98235190542023,
+      "final_error_mm": 15.936945680360592,
+      "max_attitude_error_deg": 4.291232632224866,
+      "max_reference_joint_speed_rad_s": 3.0219056606292725,
+      "max_measured_joint_speed_rad_s": 10.709547996520996,
+      "max_reference_speed_ratio": 0.3333507097422795,
+      "max_reference_acceleration_ratio": 6.258126596609752,
+      "reference_speed_violation_samples": 0,
+      "reference_acceleration_violation_steps": 18,
+      "reference_speed_violation_fraction": 0.0,
+      "reference_acceleration_violation_fraction": 0.0013432835820895521,
+      "max_requested_command_step_fraction": 1.1602261201450776,
+      "max_requested_command_fraction": 2.570070124861792,
+      "max_requested_torque_fraction": 2.570070124861792,
+      "max_requested_belt_fraction": 1.4221704434486053,
+      "p95_applied_command_step_fraction": 0.05768288939464532,
+      "max_applied_command_step_fraction": 1.1602261201450776,
+      "requested_torque_saturation_fraction": 0.0008208342660995448,
+      "requested_belt_saturation_fraction": 0.0014924259383628088,
+      "rolling_consistency_mismatch_p95_m_s": 0.0031630629673599997,
+      "passed_all_gates": false,
+      "failed_gates": [
+        "settled"
+      ],
+      "contact_guarded_calls": 13401,
+      "allocation_active_bounds_fraction": 0.0,
+      "allocation_residual_rms_m_s_p95": null,
+      "allocation_velocity_error_m_s_p95": null,
+      "allocation_effort_weight_m_s_min": 0.0,
+      "allocation_effort_weight_m_s_p50": 0.0,
+      "allocation_effort_weight_m_s_p95": 0.0,
+      "allocation_effort_weight_m_s_max": 0.0,
+      "allocation_change_weight_m_s_min": 0.0,
+      "allocation_change_weight_m_s_p50": 0.0,
+      "allocation_change_weight_m_s_p95": 0.0,
+      "allocation_change_weight_m_s_max": 0.0,
+      "allocation_authority_m_s_min": null,
+      "allocation_authority_m_s_p50": null,
+      "allocation_authority_m_s_p95": null,
+      "allocation_authority_m_s_max": null,
+      "allocation_effort_blend_min": 0.0,
+      "allocation_effort_blend_p50": 0.0,
+      "allocation_effort_blend_p95": 0.0,
+      "allocation_effort_blend_max": 0.0,
+      "per_drive": {
+        "shaft": {
+          "reference_abs_max": 0.9942434430122375,
+          "reference_abs_p95": 0.8410384058952332,
+          "reference_abs_p99": 0.9168154001235962,
+          "reference_step_abs_max": 0.3755120784044266,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.049712172150611876,
+          "reference_acceleration_max_ratio": 0.7510241568088531,
+          "measured_abs_max_rad_s": 3.7162842750549316,
+          "measured_abs_p99_rad_s": 2.0313003063201904
+        },
+        "shell_A": {
+          "reference_abs_max": 3.0219056606292725,
+          "reference_abs_p95": 1.2618331909179688,
+          "reference_abs_p99": 2.0519278049468994,
+          "reference_step_abs_max": 3.0219056606292725,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.15109528303146363,
+          "reference_acceleration_max_ratio": 6.043811321258545,
+          "measured_abs_max_rad_s": 10.709547996520996,
+          "measured_abs_p99_rad_s": 7.104959011077881
+        },
+        "shell_B": {
+          "reference_abs_max": 2.7822179794311523,
+          "reference_abs_p95": 0.996151864528656,
+          "reference_abs_p99": 1.8619884252548218,
+          "reference_step_abs_max": 2.7822179794311523,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.13911089897155762,
+          "reference_acceleration_max_ratio": 5.564435958862305,
+          "measured_abs_max_rad_s": 9.250443458557129,
+          "measured_abs_p99_rad_s": 6.241307735443115
+        },
+        "belt_A": {
+          "reference_abs_max": 0.10000521689653397,
+          "reference_abs_p95": 0.021261468529701233,
+          "reference_abs_p99": 0.09957214444875717,
+          "reference_step_abs_max": 0.09387189894914627,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.3333507097422795,
+          "reference_acceleration_max_ratio": 6.258126596609752
+        },
+        "belt_B": {
+          "reference_abs_max": 0.0837060734629631,
+          "reference_abs_p95": 0.010977144353091717,
+          "reference_abs_p99": 0.07923778891563416,
+          "reference_step_abs_max": 0.07729368656873703,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.2790202337892757,
+          "reference_acceleration_max_ratio": 5.152912437915802
+        }
+      },
+      "control_interval_s": 0.005,
+      "control_interval_source": "saved workspace model configuration"
+    },
+    {
+      "route": "shape_line_and_back",
+      "phase_rad": 0.3,
+      "variant": "feasible_balance",
+      "completed": true,
+      "failure": null,
+      "duration_s": 67.00000000001155,
+      "requested_duration_s": 66.99999999999999,
+      "rms_moving_mm": 46.64500260595939,
+      "max_error_mm": 196.9107753378503,
+      "final_error_mm": 7.737735433828045,
+      "max_attitude_error_deg": 5.914043110215703,
+      "max_reference_joint_speed_rad_s": 3.615281581878662,
+      "max_measured_joint_speed_rad_s": 11.49979019165039,
+      "max_reference_speed_ratio": 0.35954476457656365,
+      "max_reference_acceleration_ratio": 1.0000002880891166,
+      "reference_speed_violation_samples": 0,
+      "reference_acceleration_violation_steps": 0,
+      "reference_speed_violation_fraction": 0.0,
+      "reference_acceleration_violation_fraction": 0.0,
+      "max_requested_command_step_fraction": 4.04082520640591,
+      "max_requested_command_fraction": 4.3819481380006415,
+      "max_requested_torque_fraction": 1.2614554564158122,
+      "max_requested_belt_fraction": 4.3819481380006415,
+      "p95_applied_command_step_fraction": 0.32657243808110553,
+      "max_applied_command_step_fraction": 1.9901048342386882,
+      "requested_torque_saturation_fraction": 0.004402656518170286,
+      "requested_belt_saturation_fraction": 0.019028430714125813,
+      "rolling_consistency_mismatch_p95_m_s": 0.0019522933405824005,
+      "passed_all_gates": false,
+      "failed_gates": [
+        "p95",
+        "settled"
+      ],
+      "contact_guarded_calls": 13401,
+      "allocation_active_bounds_fraction": 0.029699276173419893,
+      "allocation_residual_rms_m_s_p95": 4.689421984949149e-06,
+      "allocation_velocity_error_m_s_p95": 3.4347278869972797e-06,
+      "allocation_effort_weight_m_s_min": 0.0010044724913313985,
+      "allocation_effort_weight_m_s_p50": 0.0010135266929864883,
+      "allocation_effort_weight_m_s_p95": 0.0010524357203394175,
+      "allocation_effort_weight_m_s_max": 0.004999660421162844,
+      "allocation_change_weight_m_s_min": 0.0010000000474974513,
+      "allocation_change_weight_m_s_p50": 0.0010000000474974513,
+      "allocation_change_weight_m_s_p95": 0.0010000000474974513,
+      "allocation_change_weight_m_s_max": 0.0010000000474974513,
+      "allocation_authority_m_s_min": 0.00018428219482302666,
+      "allocation_authority_m_s_p50": 0.343343049287796,
+      "allocation_authority_m_s_p95": 0.5893354415893555,
+      "allocation_authority_m_s_max": 0.5977822542190552,
+      "allocation_effort_blend_min": 0.0011181191075593233,
+      "allocation_effort_blend_p50": 0.0033816786017268896,
+      "allocation_effort_blend_p95": 0.013108929619193077,
+      "allocation_effort_blend_max": 0.9999151229858398,
+      "per_drive": {
+        "shaft": {
+          "reference_abs_max": 1.5138057470321655,
+          "reference_abs_p95": 1.0524966716766357,
+          "reference_abs_p99": 1.2180771827697754,
+          "reference_step_abs_max": 0.5000000596046448,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.07569028735160828,
+          "reference_acceleration_max_ratio": 1.0000001192092896,
+          "measured_abs_max_rad_s": 4.577480792999268,
+          "measured_abs_p99_rad_s": 3.019702196121216
+        },
+        "shell_A": {
+          "reference_abs_max": 3.05861234664917,
+          "reference_abs_p95": 1.1167062520980835,
+          "reference_abs_p99": 2.0,
+          "reference_step_abs_max": 0.5000000596046448,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.1529306173324585,
+          "reference_acceleration_max_ratio": 1.0000001192092896,
+          "measured_abs_max_rad_s": 11.49979019165039,
+          "measured_abs_p99_rad_s": 6.6740241050720215
+        },
+        "shell_B": {
+          "reference_abs_max": 3.615281581878662,
+          "reference_abs_p95": 1.9971163272857666,
+          "reference_abs_p99": 2.76774263381958,
+          "reference_step_abs_max": 0.5000000596046448,
+          "speed_limit": 20.0,
+          "acceleration_limit": 100.0,
+          "reference_speed_max_ratio": 0.1807640790939331,
+          "reference_acceleration_max_ratio": 1.0000001192092896,
+          "measured_abs_max_rad_s": 10.303929328918457,
+          "measured_abs_p99_rad_s": 5.535197734832764
+        },
+        "belt_A": {
+          "reference_abs_max": 0.09693125635385513,
+          "reference_abs_p95": 0.01420299056917429,
+          "reference_abs_p99": 0.08292298018932343,
+          "reference_step_abs_max": 0.015000002458691597,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.3231041750071774,
+          "reference_acceleration_max_ratio": 1.0000001639127731
+        },
+        "belt_B": {
+          "reference_abs_max": 0.10786343365907669,
+          "reference_abs_p95": 0.06743299961090088,
+          "reference_abs_p99": 0.10420223325490952,
+          "reference_step_abs_max": 0.015000004321336746,
+          "speed_limit": 0.30000001192092896,
+          "acceleration_limit": 3.0,
+          "reference_speed_max_ratio": 0.35954476457656365,
+          "reference_acceleration_max_ratio": 1.0000002880891166
+        }
+      },
+      "control_interval_s": 0.005,
+      "control_interval_source": "saved workspace model configuration"
+    }
+  ],
+  "aggregate": {
+    "baseline": {
+      "cases": 5,
+      "completed": 5,
+      "passed_all_gates": 0,
+      "reference_speed_violation_samples": 107,
+      "reference_acceleration_violation_steps": 560,
+      "max_reference_joint_speed_rad_s": 1760.5250244140625,
+      "max_measured_joint_speed_rad_s": 35.28397750854492,
+      "max_requested_command_fraction": 235.1122699136627,
+      "max_requested_command_step_fraction": 251.1496634821231,
+      "contact_guarded_calls": 53505
+    },
+    "feasible_balance": {
+      "cases": 5,
+      "completed": 5,
+      "passed_all_gates": 1,
+      "reference_speed_violation_samples": 0,
+      "reference_acceleration_violation_steps": 0,
+      "max_reference_joint_speed_rad_s": 8.285812377929688,
+      "max_measured_joint_speed_rad_s": 22.02732276916504,
+      "max_requested_command_fraction": 6.323201007715821,
+      "max_requested_command_step_fraction": 6.021884440506123,
+      "contact_guarded_calls": 53505
+    }
+  },
+  "path_and_start_audit": [
+    {
+      "route": "plain_figure8",
+      "phase_rad": 0.3,
+      "route_path_metadata_equal": true,
+      "requested_duration_equal": true,
+      "saved_start_qpos_max_difference": 0.0,
+      "saved_start_qvel_max_difference": 0.0,
+      "overlap_reference_xy_max_difference_m": 0.0,
+      "original_timed_path_preserved": true,
+      "changed_controller_parameters": {
+        "rolling_allocation": {
+          "baseline": "least_squares",
+          "candidate": "feasible"
+        },
+        "rolling_reference_balance_guard": {
+          "baseline": null,
+          "candidate": true
+        },
+        "rolling_reference_lean_scale_deg": {
+          "baseline": null,
+          "candidate": 3.0
+        },
+        "rolling_reference_position_limit_m": {
+          "baseline": 0.05,
+          "candidate": 1.0
+        },
+        "rolling_reference_rate_horizon_s": {
+          "baseline": null,
+          "candidate": 0.1
+        }
+      },
+      "engine_settings_equal": true,
+      "dem_mesh_sha256_equal": true
+    },
+    {
+      "route": "plain_figure8",
+      "phase_rad": 0.9,
+      "route_path_metadata_equal": true,
+      "requested_duration_equal": true,
+      "saved_start_qpos_max_difference": 0.0,
+      "saved_start_qvel_max_difference": 0.0,
+      "overlap_reference_xy_max_difference_m": 0.0,
+      "original_timed_path_preserved": true,
+      "changed_controller_parameters": {
+        "rolling_allocation": {
+          "baseline": "least_squares",
+          "candidate": "feasible"
+        },
+        "rolling_reference_balance_guard": {
+          "baseline": null,
+          "candidate": true
+        },
+        "rolling_reference_lean_scale_deg": {
+          "baseline": null,
+          "candidate": 3.0
+        },
+        "rolling_reference_position_limit_m": {
+          "baseline": 0.05,
+          "candidate": 1.0
+        },
+        "rolling_reference_rate_horizon_s": {
+          "baseline": null,
+          "candidate": 0.1
+        }
+      },
+      "engine_settings_equal": true,
+      "dem_mesh_sha256_equal": true
+    },
+    {
+      "route": "plain_figure8",
+      "phase_rad": -1.0,
+      "route_path_metadata_equal": true,
+      "requested_duration_equal": true,
+      "saved_start_qpos_max_difference": 0.0,
+      "saved_start_qvel_max_difference": 0.0,
+      "overlap_reference_xy_max_difference_m": 0.0,
+      "original_timed_path_preserved": true,
+      "changed_controller_parameters": {
+        "rolling_allocation": {
+          "baseline": "least_squares",
+          "candidate": "feasible"
+        },
+        "rolling_reference_balance_guard": {
+          "baseline": null,
+          "candidate": true
+        },
+        "rolling_reference_lean_scale_deg": {
+          "baseline": null,
+          "candidate": 3.0
+        },
+        "rolling_reference_position_limit_m": {
+          "baseline": 0.05,
+          "candidate": 1.0
+        },
+        "rolling_reference_rate_horizon_s": {
+          "baseline": null,
+          "candidate": 0.1
+        }
+      },
+      "engine_settings_equal": true,
+      "dem_mesh_sha256_equal": true
+    },
+    {
+      "route": "shape_triangle",
+      "phase_rad": 0.3,
+      "route_path_metadata_equal": true,
+      "requested_duration_equal": true,
+      "saved_start_qpos_max_difference": 0.0,
+      "saved_start_qvel_max_difference": 0.0,
+      "overlap_reference_xy_max_difference_m": 0.0,
+      "original_timed_path_preserved": true,
+      "changed_controller_parameters": {
+        "rolling_allocation": {
+          "baseline": "least_squares",
+          "candidate": "feasible"
+        },
+        "rolling_reference_balance_guard": {
+          "baseline": null,
+          "candidate": true
+        },
+        "rolling_reference_lean_scale_deg": {
+          "baseline": null,
+          "candidate": 3.0
+        },
+        "rolling_reference_position_limit_m": {
+          "baseline": 0.05,
+          "candidate": 1.0
+        },
+        "rolling_reference_rate_horizon_s": {
+          "baseline": null,
+          "candidate": 0.1
+        }
+      },
+      "engine_settings_equal": true,
+      "dem_mesh_sha256_equal": true
+    },
+    {
+      "route": "shape_line_and_back",
+      "phase_rad": 0.3,
+      "route_path_metadata_equal": true,
+      "requested_duration_equal": true,
+      "saved_start_qpos_max_difference": 0.0,
+      "saved_start_qvel_max_difference": 0.0,
+      "overlap_reference_xy_max_difference_m": 0.0,
+      "original_timed_path_preserved": true,
+      "changed_controller_parameters": {
+        "rolling_allocation": {
+          "baseline": "least_squares",
+          "candidate": "feasible"
+        },
+        "rolling_reference_balance_guard": {
+          "baseline": null,
+          "candidate": true
+        },
+        "rolling_reference_lean_scale_deg": {
+          "baseline": null,
+          "candidate": 3.0
+        },
+        "rolling_reference_position_limit_m": {
+          "baseline": 0.05,
+          "candidate": 1.0
+        },
+        "rolling_reference_rate_horizon_s": {
+          "baseline": null,
+          "candidate": 0.1
+        }
+      },
+      "engine_settings_equal": true,
+      "dem_mesh_sha256_equal": true
+    }
+  ],
+  "provenance": {
+    "baseline": {
+      "git_commit": "9067a660cecf312fc87f477d1251e4148d8c6c0a",
+      "runner_sha256": "935f397dbfdb56b451121d33b5754472581058bb36fc24138ba4cf9707c0b0e4",
+      "variant": "baseline",
+      "jobs": [
+        {
+          "route": "plain_figure8",
+          "phase": 0.3,
+          "variant": "baseline",
+          "output": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/baseline",
+          "parameters": {},
+          "workspace_routes": [
+            "plain_figure8",
+            "shape_triangle",
+            "shape_line_and_back"
+          ]
+        },
+        {
+          "route": "plain_figure8",
+          "phase": 0.9,
+          "variant": "baseline",
+          "output": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/baseline",
+          "parameters": {},
+          "workspace_routes": [
+            "plain_figure8",
+            "shape_triangle",
+            "shape_line_and_back"
+          ]
+        },
+        {
+          "route": "plain_figure8",
+          "phase": -1.0,
+          "variant": "baseline",
+          "output": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/baseline",
+          "parameters": {},
+          "workspace_routes": [
+            "plain_figure8",
+            "shape_triangle",
+            "shape_line_and_back"
+          ]
+        },
+        {
+          "route": "shape_triangle",
+          "phase": 0.3,
+          "variant": "baseline",
+          "output": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/baseline",
+          "parameters": {},
+          "workspace_routes": [
+            "plain_figure8",
+            "shape_triangle",
+            "shape_line_and_back"
+          ]
+        },
+        {
+          "route": "shape_line_and_back",
+          "phase": 0.3,
+          "variant": "baseline",
+          "output": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/baseline",
+          "parameters": {},
+          "workspace_routes": [
+            "plain_figure8",
+            "shape_triangle",
+            "shape_line_and_back"
+          ]
+        }
+      ],
+      "source_sha256": {
+        "offroad_control.py": "5a1c45c06a52a7c5fa4b72b4caff8d73ee462afd784ebf574bbb253370e9a569",
+        "offroad_experiments.py": "85acdb46c48375833ac327b41a9c7bbd8907b6a2031befd052d5100fea39f17a",
+        "contact_kinematics.py": "678eff4f9792e86dd3b9dece83edaaf2517b8416df3b736352cb0a0142b98351",
+        "contact_diagnostics.py": "f0a927e4c230b4f181f4d72cf5216f38d34de26573dcd511027047ff5a36cbcb",
+        "experiments.py": "d2bab0ab6347f2743bca9467158c117d6481ad4bacdeb53537013aa790855289",
+        "synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+        "rolling_allocation.py": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092",
+        "feasible_reference.py": "3d7341c644181160d0483a951bac4a11af8180bc836cc8dadd38113c8fe4c621"
+      }
+    },
+    "candidate": {
+      "git_commit": "9067a660cecf312fc87f477d1251e4148d8c6c0a",
+      "runner_sha256": "7b3ab8edb98d001fb37b045c0f94cdecdb8e57c2d610bc51e45d7f7fa6f6852c",
+      "variant": "feasible",
+      "jobs": [
+        {
+          "route": "plain_figure8",
+          "phase": 0.3,
+          "variant": "feasible",
+          "output": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/feasible_balance",
+          "parameters": {
+            "rolling_reference_position_limit_m": 1.0,
+            "rolling_reference_balance_guard": true
+          },
+          "workspace_routes": [
+            "plain_figure8",
+            "shape_triangle",
+            "shape_line_and_back"
+          ]
+        },
+        {
+          "route": "plain_figure8",
+          "phase": 0.9,
+          "variant": "feasible",
+          "output": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/feasible_balance",
+          "parameters": {
+            "rolling_reference_position_limit_m": 1.0,
+            "rolling_reference_balance_guard": true
+          },
+          "workspace_routes": [
+            "plain_figure8",
+            "shape_triangle",
+            "shape_line_and_back"
+          ]
+        },
+        {
+          "route": "plain_figure8",
+          "phase": -1.0,
+          "variant": "feasible",
+          "output": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/feasible_balance",
+          "parameters": {
+            "rolling_reference_position_limit_m": 1.0,
+            "rolling_reference_balance_guard": true
+          },
+          "workspace_routes": [
+            "plain_figure8",
+            "shape_triangle",
+            "shape_line_and_back"
+          ]
+        },
+        {
+          "route": "shape_triangle",
+          "phase": 0.3,
+          "variant": "feasible",
+          "output": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/feasible_balance",
+          "parameters": {
+            "rolling_reference_position_limit_m": 1.0,
+            "rolling_reference_balance_guard": true
+          },
+          "workspace_routes": [
+            "plain_figure8",
+            "shape_triangle",
+            "shape_line_and_back"
+          ]
+        },
+        {
+          "route": "shape_line_and_back",
+          "phase": 0.3,
+          "variant": "feasible",
+          "output": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/feasible_balance",
+          "parameters": {
+            "rolling_reference_position_limit_m": 1.0,
+            "rolling_reference_balance_guard": true
+          },
+          "workspace_routes": [
+            "plain_figure8",
+            "shape_triangle",
+            "shape_line_and_back"
+          ]
+        }
+      ],
+      "source_sha256": {
+        "offroad_control.py": "385eec32a8ca4b2d4df2a3b768e9e1bf15c4045cfc0bc29983869743704838aa",
+        "offroad_experiments.py": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b",
+        "contact_kinematics.py": "678eff4f9792e86dd3b9dece83edaaf2517b8416df3b736352cb0a0142b98351",
+        "contact_diagnostics.py": "f0a927e4c230b4f181f4d72cf5216f38d34de26573dcd511027047ff5a36cbcb",
+        "experiments.py": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638",
+        "synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+        "rolling_allocation.py": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092",
+        "feasible_reference.py": "c044a48fdd00efa35d1ed1094183806c10d6329748eae5eedac713b0710438aa"
+      }
+    }
+  },
+  "source_files_with_different_recorded_hashes": [
+    "experiments.py",
+    "feasible_reference.py",
+    "offroad_control.py",
+    "offroad_experiments.py"
+  ],
+  "baseline_directory": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/baseline",
+  "candidate_directory": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/feasible_balance",
+  "model_configurations_equal": true,
+  "interpretation": "One recorded run per setting; numerical Gazebo reruns can diverge. Reference speed/acceleration constraints do not guarantee actual motor speed/acceleration. Baseline violations are retrospective comparisons against the candidate reference assumptions. Requested motor-command saturation is distinct from reference-bound activation."
+}

@@ -1,0 +1,19 @@
+{
+  "iteration": "I-43",
+  "status": "Implementation ownership note before source edits/tests; experiment protocol unchanged.",
+  "new_files": [
+    "src/spherical_wheel/tilt_reference.py",
+    "tests/test_tilt_reference.py",
+    "tests/test_tilt_reference_controller.py"
+  ],
+  "ownership": {
+    "core": "generator/controller and test_tilt_reference_controller.py",
+    "analysis": "independent pure tests in test_tilt_reference.py plus saved-data analysis/audit",
+    "campaign": "new experiment runner/launcher/video under results family",
+    "root": "protocol, iteration narrative, source review and packaging"
+  },
+  "allowed_existing_source_changes": [
+    "src/spherical_wheel/offroad_control.py"
+  ],
+  "limits": "Other existing source/tests remain preserved and unchanged unless a necessary additional integration change is explicitly recorded before it is made. No simulator/control parameter change beyond declared opt-in tilt generator."
+}

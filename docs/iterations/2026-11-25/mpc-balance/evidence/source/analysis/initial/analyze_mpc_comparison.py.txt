@@ -1,0 +1,260 @@
+"""Analyze the declared warm-start MPC experiment without changing any policy."""
+from __future__ import annotations
+
+from collections import Counter
+import csv
+import hashlib
+import json
+from pathlib import Path
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+import yaml
+
+
+HERE = Path(__file__).resolve().parent
+OUTPUT = HERE/'analysis'
+ROOT = HERE.parents[2]
+WARM, MOTION_END, PERIOD = .8, 1.4, .005
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def stats(values):
+    values = np.asarray(values, float)
+    values = values[np.isfinite(values)]
+    return ({'count': int(len(values)), 'median': float(np.median(values)),
+             'p95': float(np.percentile(values, 95)), 'max': float(np.max(values))}
+            if len(values) else {'count': 0, 'median': None, 'p95': None, 'max': None})
+
+
+def load_run(direction, variant):
+    folder = HERE/'runs'/direction/variant
+    with np.load(folder/'rollout.npz') as data:
+        log = {key: data[key] for key in data}
+    with np.load(folder/'precision.npz') as data:
+        precise = {key: data[key] for key in data}
+    summary = json.loads((folder/'summary.json').read_text())
+    plans = json.loads((folder/'plans.json').read_text())
+    config = yaml.safe_load((folder/'source_snapshot/config/model.yaml').read_text())
+    bounds = np.r_[config['actuation']['torque_limits_Nm'],
+                   [config['actuation']['belt_speed_limit_m_s']]*2]
+    time = precise['time_s']
+    active = time >= WARM-1e-9
+    actuated = np.ones(len(time), bool)
+    actuated[-1] = False
+    active_actuated = active & actuated
+    path_error = np.linalg.norm(precise['exact_qpos'][:, :2]-precise['mpc_original_goal_xy'], axis=1)
+    goal = precise['mpc_original_goal_xy'][-1]
+    goal_error = np.linalg.norm(precise['exact_qpos'][:, :2]-goal, axis=1)
+    lean = np.degrees(log['attitude_error_rad'].astype(float))
+    origin = np.array(summary['mpc_experiment']['activation']['original_goal_origin'])
+    request = goal-origin
+    unit = request/np.linalg.norm(request)
+    progress = (precise['exact_qpos'][:, :2]-origin)@unit
+    motion_end = int(np.argmin(abs(time-MOTION_END)))
+    contact_load = log['support_loads_N'].astype(float)
+    total_load = contact_load.sum(axis=1)
+    truth_patch = np.where(total_load > .001, np.argmax(contact_load, axis=1), -1)
+    labels = np.flatnonzero(active)
+    switches = int(np.sum(truth_patch[labels][1:] != truth_patch[labels][:-1]))
+    occupancy = np.any(abs(precise['exact_applied']) >= .99*bounds, axis=1)
+    bound_violation = np.maximum(abs(precise['exact_applied'])-bounds, 0.)
+    fallback = precise['mpc_fallback'].astype(bool)
+    updated = precise['mpc_updated'].astype(bool)
+    success = precise['mpc_success'].astype(bool)
+    component_names = ['equilibrium_command', 'lqr_command', 'rolling_feedforward',
+                       'support_command', 'transition_command_delta', 'heading_command', 'fade_command_delta']
+    native_sum = sum((log[key].astype(float) for key in component_names), start=np.zeros_like(precise['exact_applied']))
+    final_sum = native_sum+precise['mpc_command_delta']
+    reconstruction = np.max(abs(final_sum-precise['exact_applied'])/bounds)
+    assert reconstruction < .001, (direction, variant, reconstruction)
+    plan_indices = [int(np.argmin(abs(time-plan['time_s']))) for plan in plans]
+    actuated_plans = [plan for plan, index in zip(plans, plan_indices) if actuated[index]]
+    planned_success = [plan for plan in actuated_plans if plan.get('success', False)]
+    failures = Counter(plan.get('failure', 'unknown') for plan in actuated_plans if not plan.get('success', False))
+    horizons = {}
+    prediction_rows = []
+    for plan in planned_success:
+        affine = np.asarray(plan['affine_states'], float)
+        nonlinear = np.asarray(plan['nonlinear_states'], float)
+        difference = nonlinear-affine
+        for horizon, index in [(.02, 0), (.1, 4), (.4, 19)]:
+            if index >= len(difference):
+                continue
+            row = {'direction': direction, 'variant': variant, 'plan_time_s': plan['time_s'],
+                   'horizon_s': horizon,
+                   'xy_error_mm': float(1000*np.linalg.norm(difference[index, :2])),
+                   'rotation_tangent_error_deg': float(np.degrees(np.linalg.norm(difference[index, 3:6]))),
+                   'linear_velocity_error_m_s': float(np.linalg.norm(difference[index, 9:12])),
+                   'joint_velocity_error_rad_s': float(np.linalg.norm(difference[index, 15:18]))}
+            prediction_rows.append(row)
+    for horizon in (.02, .1, .4):
+        selected = [row for row in prediction_rows if row['horizon_s'] == horizon]
+        if selected:
+            horizons[str(horizon)] = {key: stats([row[key] for row in selected])
+                                     for key in ('xy_error_mm', 'rotation_tangent_error_deg',
+                                                 'linear_velocity_error_m_s', 'joint_velocity_error_rad_s')}
+            if horizon in (.02, .1):
+                xy_limit, angle_limit = ((.5, .2) if horizon == .02 else (2., 1.))
+                horizons[str(horizon)]['diagnostic_screen_passes'] = sum(
+                    row['xy_error_mm'] <= xy_limit and row['rotation_tangent_error_deg'] <= angle_limit for row in selected)
+                horizons[str(horizon)]['diagnostic_screen_scope'] = 'Affine versus same private nonlinear model, not measured Gazebo truth.'
+    row = {
+        'direction': direction, 'variant': variant, 'completed': bool(summary['completed']),
+        'physical_failure': summary.get('failure'), 'elapsed_s': float(time[-1]-time[0]),
+        'active_elapsed_s': float(time[-1]-WARM), 'active_actuated_samples': int(active_actuated.sum()),
+        'active_held_command_s': float(PERIOD*active_actuated.sum()),
+        'original_clock_path_rms_mm': float(1000*np.sqrt(np.mean(path_error[active]**2))),
+        'original_clock_path_peak_mm': float(1000*np.max(path_error[active])),
+        'original_goal_final_error_mm': float(1000*goal_error[-1]),
+        'requested_displacement_mm': float(1000*np.linalg.norm(request)),
+        'motion_end_progress_mm': float(1000*progress[motion_end]),
+        'motion_end_goal_error_mm': float(1000*goal_error[motion_end]),
+        'final_progress_mm': float(1000*progress[-1]),
+        'final_progress_fraction': float(progress[-1]/np.linalg.norm(request)),
+        'peak_reference_lean_deg': float(np.max(lean[active])),
+        'lean_error_integral_deg_s': float(np.trapz(lean[active], time[active])),
+        'lean_error_rms_deg': float(np.sqrt(np.mean(lean[active]**2))),
+        'actual_input_limit_occupancy_fraction': float(np.mean(occupancy[active_actuated])),
+        'hard_input_bound_violation_max': float(np.max(bound_violation[active_actuated])),
+        'actual_joint_speed_max_rad_s': np.max(abs(precise['exact_qvel'][active, 6:9]), axis=0).tolist(),
+        'shaft_phase_range_rad': [float(np.min(precise['exact_qpos'][active, 7])),
+                                  float(np.max(precise['exact_qpos'][active, 7]))],
+        'actual_dominant_support_switches_active': switches,
+        'fallback_actuated_samples': int(fallback[active_actuated].sum()),
+        'fallback_fraction': float(fallback[active_actuated].mean()),
+        'plans_including_terminal': len(plans), 'actuated_update_plans': len(actuated_plans),
+        'actuated_qp_solved_plans': len(planned_success), 'actuated_plan_failures': dict(failures),
+        'all_update_runtime_s': stats(precise['mpc_total_wall_s'][updated & actuated]),
+        'solved_update_runtime_s': stats(precise['mpc_total_wall_s'][updated & success & actuated]),
+        'solved_qp_runtime_s': stats(precise['mpc_qp_wall_s'][updated & success & actuated]),
+        'solved_linearization_runtime_s': stats(precise['mpc_linearization_wall_s'][updated & success & actuated]),
+        'component_reconstruction_max_bound_fraction': float(reconstruction),
+        'fallback_occupancy_scope': 'Fractions count only commands held after activation; terminal observation/plan excluded.',
+        'prediction_model_disagreement': horizons,
+    }
+    assert row['hard_input_bound_violation_max'] <= 1e-8
+    for field, expected in [('original_clock_path_rms_mm', 'active_path_error_rms_mm'),
+                            ('original_goal_final_error_mm', 'original_goal_error_final_mm')]:
+        assert abs(row[field]-summary['mpc_experiment'][expected]) < 1e-6
+    return {'folder': folder, 'log': log, 'precise': precise, 'summary': summary,
+            'row': row, 'prediction_rows': prediction_rows, 'path_error': path_error,
+            'goal_error': goal_error, 'lean': lean, 'bounds': bounds, 'occupancy': occupancy}
+
+
+def main():
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    runs = {(direction, variant): load_run(direction, variant)
+            for direction in ('world_x', 'world_y') for variant in ('baseline', 'mpc')}
+    prefix, gates = {}, {}
+    for direction in ('world_x', 'world_y'):
+        baseline, candidate = runs[direction, 'baseline'], runs[direction, 'mpc']
+        bp, cp = baseline['precise'], candidate['precise']
+        before = bp['time_s'] < WARM-1e-9
+        common = ['exact_qpos', 'exact_qvel', 'exact_observer_wrench', 'exact_applied',
+                  'mpc_native_requested', 'mpc_native_applied', 'mpc_command_delta',
+                  'mpc_original_goal_xy', 'mpc_actual_input_at_limit']
+        fields = {key: bool(np.array_equal(bp[key][before], cp[key][before], equal_nan=True)) for key in common}
+        assert all(fields.values()), (direction, fields)
+        ba = baseline['summary']['mpc_experiment']['activation']
+        ca = candidate['summary']['mpc_experiment']['activation']
+        activation_equal = all(np.array_equal(ba[key], ca[key]) for key in ('qpos', 'qvel', 'original_goal_origin'))
+        assert activation_equal
+        prefix[direction] = {'samples': int(before.sum()), 'fields_bit_equal': fields,
+                             'all_fields_bit_equal': all(fields.values()), 'activation_state_and_goal_equal': activation_equal}
+        b, c = baseline['row'], candidate['row']
+        checks = {'completed_without_physical_failure': c['completed'] and not c['physical_failure'],
+                  'hard_input_bounds': c['hard_input_bound_violation_max'] <= 1e-8,
+                  'final_goal_within_5mm': c['original_goal_final_error_mm'] <= 5.,
+                  'no_worse_peak_reference_lean': c['peak_reference_lean_deg'] <= b['peak_reference_lean_deg']+1e-6,
+                  'fallback_at_most_5pct': c['fallback_fraction'] <= .05}
+        if direction == 'world_y':
+            checks.update(lower_lean_integral=c['lean_error_integral_deg_s'] < b['lean_error_integral_deg_s'],
+                          lower_original_clock_path_rms=c['original_clock_path_rms_mm'] < b['original_clock_path_rms_mm'])
+        else:
+            checks['path_rms_regression_at_most_10pct'] = c['original_clock_path_rms_mm'] <= 1.1*b['original_clock_path_rms_mm']
+        gates[direction] = {'checks': checks, 'passed_all': all(checks.values()),
+                            'failed_checks': [key for key, value in checks.items() if not value]}
+    report = {
+        'status': 'accepted_small_case_candidate' if all(value['passed_all'] for value in gates.values()) else 'initial_candidate_not_accepted',
+        'scope': 'Four fresh paired Gazebo runs on declared simple-terrain warm-start fixtures. No policy changes or new simulation in this analysis.',
+        'protocol': json.loads((HERE/'protocol.json').read_text()),
+        'metrics': [runs[key]['row'] for key in runs], 'paired_prefix_audit': prefix,
+        'acceptance': gates,
+        'definitions': {
+            'state_metrics': 'Use exact double-precision qpos and goals; reference-relative lean comes from the saved float32 observation field. Active interval includes terminal state for goal/state metrics.',
+            'actuation_metrics': 'Use double-precision inputs and validated5ms held intervals. Exclude final observation/plan because it is never actuated.',
+            'path_rms': 'Sample RMS of original-clock XY errors after activation, including the terminal observation; matches predeclared harness summaries.',
+            'goal_progress': 'Signed projection on original16mm request; negative progress means displacement opposite the requested direction.',
+            'model_checks': 'Optimized affine versus private nonlinear plan predictions; these are not observed Gazebo errors and do not establish horizon-model validity.'},
+        'limitations': [
+            'Single fixed candidate setting in each direction, not a robustness qualification.',
+            'Existing warm fixtures evolve configuration; no claim of sustained singularity or autonomous escape follows from the starting pose.',
+            'QP success means a bounded finite plan and finite replay, not accurate prediction, hard tilt safety, or robot-level stability.',
+            'In MPC mode native LQR/feedforward/synchronizer component fields are shadows. Their sum plus mpc_command_delta reconstructs the actual applied input.',
+            'All-update median runtime can be dominated by quick fallback. Successful-plan runtime is reported separately.',
+            'Private estimated-plane and frozen affine model may disagree with optimized nonlinear trajectories, especially beyond the locally audited100ms horizon.'],
+        'inputs': []}
+    for run in runs.values():
+        for filename in ('rollout.npz', 'precision.npz', 'summary.json', 'plans.json', 'provenance.json'):
+            path = run['folder']/filename
+            report['inputs'].append({'path': str(path.relative_to(ROOT)), 'sha256': digest(path)})
+    report['analysis_source_sha256'] = digest(Path(__file__))
+    (OUTPUT/'report.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
+    rows = [run['row'] for run in runs.values()]
+    scalar_keys = [key for key in rows[0] if not isinstance(rows[0][key], (dict, list))]
+    with (OUTPUT/'metrics.csv').open('w', newline='') as handle:
+        writer = csv.DictWriter(handle, fieldnames=scalar_keys);writer.writeheader()
+        writer.writerows({key: row[key] for key in scalar_keys} for row in rows)
+    prediction_rows = sum((run['prediction_rows'] for run in runs.values()), [])
+    if prediction_rows:
+        with (OUTPUT/'prediction_disagreement.csv').open('w', newline='') as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(prediction_rows[0]));writer.writeheader();writer.writerows(prediction_rows)
+    fig, axes = plt.subplots(4, 2, figsize=(13, 12), sharex='col', constrained_layout=True)
+    for column, direction in enumerate(('world_x', 'world_y')):
+        for variant, color in [('baseline', '#2878b5'), ('mpc', '#df7e31')]:
+            run = runs[direction, variant];p = run['precise'];time = p['time_s']
+            axes[0, column].plot(time, run['path_error']*1000, color=color, label=variant)
+            axes[1, column].plot(time, run['lean'], color=color)
+            axes[2, column].plot(time, np.max(abs(p['exact_applied'])/run['bounds'], axis=1), color=color)
+            if variant == 'mpc':
+                axes[3, column].step(time, p['mpc_fallback'].astype(int), where='post', color=color, label='LQR fallback')
+        axes[0, column].set_title(direction.replace('_', ' ')+' | original16mm goal')
+        axes[0, column].legend();axes[3, column].set_xlabel('Simulation time, s')
+        axes[3, column].set_ylim(-.05, 1.05)
+        for axis in axes[:, column]:
+            axis.axvline(WARM, color='grey', linestyle='--', linewidth=.8)
+            axis.axvline(MOTION_END, color='grey', linestyle=':', linewidth=.8)
+            axis.grid(alpha=.2)
+    for axis, label in zip(axes[:, 0], ('Original-clock XY error, mm', 'Reference-relative lean error, deg',
+                                      'Largest actual input / bound', 'Fallback active')):
+        axis.set_ylabel(label)
+    fig.suptitle('Initial constrained MPC comparison — balance, goal progress and fallback all count')
+    fig.savefig(OUTPUT/'comparison.png', dpi=170);fig.savefig(OUTPUT/'comparison.pdf');plt.close(fig)
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.5), constrained_layout=True)
+    for direction, color in [('world_x', '#2878b5'), ('world_y', '#df7e31')]:
+        rows = runs[direction, 'mpc']['prediction_rows']
+        for axis, key in zip(axes, ('xy_error_mm', 'rotation_tangent_error_deg')):
+            for percentile, style in [(50, '-'), (95, '--')]:
+                y = [np.percentile([row[key] for row in rows if row['horizon_s'] == horizon], percentile)
+                     for horizon in (.02, .1, .4)]
+                axis.plot([.02, .1, .4], y, style, color=color,
+                          label=direction+' p'+str(percentile), marker='o')
+            axis.set_yscale('log');axis.set_xlabel('Prediction horizon, s');axis.grid(alpha=.2);axis.legend()
+    axes[0].set_ylabel('Affine vs private nonlinear XY difference, mm')
+    axes[1].set_ylabel('Rotation-tangent difference, deg')
+    fig.suptitle('Optimized-plan disagreement is a diagnostic, not QP success')
+    fig.savefig(OUTPUT/'prediction_disagreement.png', dpi=170);fig.savefig(OUTPUT/'prediction_disagreement.pdf');plt.close(fig)
+    print(json.dumps({'status': report['status'], 'acceptance': gates,
+                      'rows': [{key: row[key] for key in ('direction', 'variant', 'original_clock_path_rms_mm',
+                                'original_goal_final_error_mm', 'final_progress_mm', 'peak_reference_lean_deg', 'fallback_fraction')}
+                               for row in report['metrics']]}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

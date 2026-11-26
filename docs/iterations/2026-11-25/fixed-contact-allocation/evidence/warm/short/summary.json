@@ -1,0 +1,434 @@
+{
+  "cases": [
+    {
+      "motion": "world_y",
+      "variant": "baseline",
+      "terrain": {
+        "name": "side_slope_10",
+        "description": "",
+        "yaw_deg": 0.0,
+        "origin": [
+          0.0,
+          0.0
+        ],
+        "base_friction": null,
+        "features": [
+          {
+            "type": "plane",
+            "slope": [
+              0.0,
+              0.17632698070846498
+            ]
+          }
+        ],
+        "friction_patches": []
+      },
+      "phase_rad": 1.5707963267948966,
+      "warmup_s": 0.8,
+      "motion_s": 0.16,
+      "recovery_s": 0.4,
+      "peak_speed_m_s": 0.04,
+      "candidate_overrides": {
+        "rolling_allocation": "feasible",
+        "rolling_adaptive_effort": false
+      },
+      "ramp_s": 0.05,
+      "activation": {
+        "time_s": 0.8000000000000006,
+        "observer_previous_time_s": 0.7950000000000006,
+        "observer_object_preserved": true,
+        "estimator_object_preserved": true,
+        "state_not_reset": true,
+        "qpos": [
+          -1.1690362005545123e-05,
+          -0.020756870016445286,
+          0.11816582981754487,
+          0.9963690145247048,
+          -0.08513973318012588,
+          1.751028293096126e-05,
+          -0.00011145616009128502,
+          1.572013301305727,
+          0.0036110177315199516,
+          -0.004654148953402597
+        ],
+        "qvel": [
+          7.660264340170469e-05,
+          0.000346100778245253,
+          6.092080991331252e-05,
+          -0.0029255423011177797,
+          -0.00037539013401160484,
+          -0.000645960933659438,
+          0.0026141880732475213,
+          0.0036976024769256573,
+          -0.0028258440855612565
+        ],
+        "nominal_joints": [
+          1.5707963267948963,
+          0.0,
+          0.0
+        ],
+        "original_warm_reference_origin": [
+          0.0,
+          0.0
+        ],
+        "active_center_goal_origin": [
+          -1.1690362005545123e-05,
+          -0.020756870016445286
+        ]
+      },
+      "checks": {
+        "single_same_actual_hemisphere_during_motion": true,
+        "min_total_load_fraction_during_motion": 0.9039230890474044,
+        "sufficient_actual_load": true,
+        "actual_start_support": "shell_A",
+        "actual_patch_handovers_during_motion": 0,
+        "minimum_start_shell_load_share": 1.0,
+        "authority_at_motion_start_m_s": 0.0006738570528002259,
+        "authority_max_during_motion_m_s": 0.08924230975286164,
+        "true_authority_at_motion_start_m_s": 0.0006699284320807555,
+        "true_authority_max_during_motion_m_s": 0.08925847419987086,
+        "true_weak_geometry_during_peak": false,
+        "weak_demand_mean_during_peak_m_s": 0.03654417447551258,
+        "true_weak_demand_mean_during_peak_m_s": 0.036544168762136904,
+        "requested_speed_peak_m_s": 0.04,
+        "requested_displacement_mm": 4.4,
+        "actual_displacement_along_request_mm": 3.055208491842057,
+        "fractional_goal_completion_at_motion_end": 0.6943655663277402,
+        "raw_goal_error_rms_during_motion_mm": 1.9045483876960283,
+        "raw_goal_error_peak_during_motion_mm": 2.936827224203018,
+        "raw_goal_error_at_motion_end_mm": 2.8826926067129297,
+        "center_reference_error_rms_during_motion_mm": 1.9045483876960283,
+        "center_reference_error_peak_during_motion_mm": 2.936827224203018,
+        "maximum_joint_reference_rad_s": 8.379423030936934,
+        "maximum_measured_joint_rate_rad_s": 7.547142683272435,
+        "guarded_command_calls": 273
+      },
+      "scope": "Short allocator mechanism test, not trajectory qualification. Fixed-contact claim requires support and authority gates."
+    },
+    {
+      "motion": "world_y",
+      "variant": "candidate",
+      "terrain": {
+        "name": "side_slope_10",
+        "description": "",
+        "yaw_deg": 0.0,
+        "origin": [
+          0.0,
+          0.0
+        ],
+        "base_friction": null,
+        "features": [
+          {
+            "type": "plane",
+            "slope": [
+              0.0,
+              0.17632698070846498
+            ]
+          }
+        ],
+        "friction_patches": []
+      },
+      "phase_rad": 1.5707963267948966,
+      "warmup_s": 0.8,
+      "motion_s": 0.16,
+      "recovery_s": 0.4,
+      "peak_speed_m_s": 0.04,
+      "candidate_overrides": {
+        "rolling_allocation": "feasible",
+        "rolling_adaptive_effort": false
+      },
+      "ramp_s": 0.05,
+      "activation": {
+        "time_s": 0.8000000000000006,
+        "observer_previous_time_s": 0.7950000000000006,
+        "observer_object_preserved": true,
+        "estimator_object_preserved": true,
+        "state_not_reset": true,
+        "qpos": [
+          -1.1690362005537558e-05,
+          -0.020756870016445286,
+          0.11816582981754487,
+          0.9963690145247048,
+          -0.08513973318012588,
+          1.7510282930949746e-05,
+          -0.00011145616009127083,
+          1.5720133013057274,
+          0.0036110177315193497,
+          -0.004654148953402933
+        ],
+        "qvel": [
+          7.660264340151098e-05,
+          0.00034610077824523834,
+          6.0920809913303856e-05,
+          -0.002925542301117679,
+          -0.000375390134010401,
+          -0.0006459609336593713,
+          0.0026141880732436164,
+          0.0036976024769229824,
+          -0.0028258440855630893
+        ],
+        "nominal_joints": [
+          1.5707963267948963,
+          0.0,
+          0.0
+        ],
+        "original_warm_reference_origin": [
+          0.0,
+          0.0
+        ],
+        "active_center_goal_origin": [
+          -1.1690362005537558e-05,
+          -0.020756870016445286
+        ]
+      },
+      "checks": {
+        "single_same_actual_hemisphere_during_motion": true,
+        "min_total_load_fraction_during_motion": 0.9090815958803139,
+        "sufficient_actual_load": true,
+        "actual_start_support": "shell_A",
+        "actual_patch_handovers_during_motion": 0,
+        "minimum_start_shell_load_share": 1.0,
+        "authority_at_motion_start_m_s": 0.0006738570528004416,
+        "authority_max_during_motion_m_s": 0.08627674295198053,
+        "true_authority_at_motion_start_m_s": 0.0006699284320791389,
+        "true_authority_max_during_motion_m_s": 0.0863042749480349,
+        "true_weak_geometry_during_peak": false,
+        "weak_demand_mean_during_peak_m_s": 0.03654531638026384,
+        "true_weak_demand_mean_during_peak_m_s": 0.036545314696767424,
+        "requested_speed_peak_m_s": 0.04,
+        "requested_displacement_mm": 4.4,
+        "actual_displacement_along_request_mm": 2.8020113462106573,
+        "fractional_goal_completion_at_motion_end": 0.6368207605024221,
+        "raw_goal_error_rms_during_motion_mm": 2.055100103748001,
+        "raw_goal_error_peak_during_motion_mm": 3.08129186296225,
+        "raw_goal_error_at_motion_end_mm": 2.835749821739895,
+        "center_reference_error_rms_during_motion_mm": 2.035750332846788,
+        "center_reference_error_peak_during_motion_mm": 3.078387655658734,
+        "maximum_joint_reference_rad_s": 7.483934683741711,
+        "maximum_measured_joint_rate_rad_s": 7.4481471756116555,
+        "guarded_command_calls": 273
+      },
+      "scope": "Short allocator mechanism test, not trajectory qualification. Fixed-contact claim requires support and authority gates."
+    },
+    {
+      "motion": "world_x",
+      "variant": "baseline",
+      "terrain": {
+        "name": "side_slope_10",
+        "description": "",
+        "yaw_deg": 0.0,
+        "origin": [
+          0.0,
+          0.0
+        ],
+        "base_friction": null,
+        "features": [
+          {
+            "type": "plane",
+            "slope": [
+              0.0,
+              0.17632698070846498
+            ]
+          }
+        ],
+        "friction_patches": []
+      },
+      "phase_rad": 1.5707963267948966,
+      "warmup_s": 0.8,
+      "motion_s": 0.16,
+      "recovery_s": 0.4,
+      "peak_speed_m_s": 0.04,
+      "candidate_overrides": {
+        "rolling_allocation": "feasible",
+        "rolling_adaptive_effort": false
+      },
+      "ramp_s": 0.05,
+      "activation": {
+        "time_s": 0.8000000000000006,
+        "observer_previous_time_s": 0.7950000000000006,
+        "observer_object_preserved": true,
+        "estimator_object_preserved": true,
+        "state_not_reset": true,
+        "qpos": [
+          -1.1690362005545123e-05,
+          -0.020756870016445286,
+          0.11816582981754487,
+          0.9963690145247048,
+          -0.08513973318012588,
+          1.751028293096126e-05,
+          -0.00011145616009128502,
+          1.572013301305727,
+          0.0036110177315199516,
+          -0.004654148953402597
+        ],
+        "qvel": [
+          7.660264340170469e-05,
+          0.000346100778245253,
+          6.092080991331252e-05,
+          -0.0029255423011177797,
+          -0.00037539013401160484,
+          -0.000645960933659438,
+          0.0026141880732475213,
+          0.0036976024769256573,
+          -0.0028258440855612565
+        ],
+        "nominal_joints": [
+          1.5707963267948963,
+          0.0,
+          0.0
+        ],
+        "original_warm_reference_origin": [
+          0.0,
+          0.0
+        ],
+        "active_center_goal_origin": [
+          -1.1690362005545123e-05,
+          -0.020756870016445286
+        ]
+      },
+      "checks": {
+        "single_same_actual_hemisphere_during_motion": true,
+        "min_total_load_fraction_during_motion": 0.9260341992016237,
+        "sufficient_actual_load": true,
+        "actual_start_support": "shell_A",
+        "actual_patch_handovers_during_motion": 0,
+        "minimum_start_shell_load_share": 1.0,
+        "authority_at_motion_start_m_s": 0.0006738570528002259,
+        "authority_max_during_motion_m_s": 0.048983715242587066,
+        "true_authority_at_motion_start_m_s": 0.0006699284320807555,
+        "true_authority_max_during_motion_m_s": 0.04893204756558923,
+        "true_weak_geometry_during_peak": false,
+        "weak_demand_mean_during_peak_m_s": 0.0007612450996230903,
+        "true_weak_demand_mean_during_peak_m_s": 0.0007545003735003815,
+        "requested_speed_peak_m_s": 0.04,
+        "requested_displacement_mm": 4.4,
+        "actual_displacement_along_request_mm": 7.946043715887949,
+        "fractional_goal_completion_at_motion_end": 1.8059190263381701,
+        "raw_goal_error_rms_during_motion_mm": 6.232680797225986,
+        "raw_goal_error_peak_during_motion_mm": 9.79245237779589,
+        "raw_goal_error_at_motion_end_mm": 3.546446637739266,
+        "center_reference_error_rms_during_motion_mm": 6.232680797225986,
+        "center_reference_error_peak_during_motion_mm": 9.79245237779589,
+        "maximum_joint_reference_rad_s": 0.4069411638390949,
+        "maximum_measured_joint_rate_rad_s": 5.788603946320942,
+        "guarded_command_calls": 273
+      },
+      "scope": "Short allocator mechanism test, not trajectory qualification. Fixed-contact claim requires support and authority gates."
+    },
+    {
+      "motion": "world_x",
+      "variant": "candidate",
+      "terrain": {
+        "name": "side_slope_10",
+        "description": "",
+        "yaw_deg": 0.0,
+        "origin": [
+          0.0,
+          0.0
+        ],
+        "base_friction": null,
+        "features": [
+          {
+            "type": "plane",
+            "slope": [
+              0.0,
+              0.17632698070846498
+            ]
+          }
+        ],
+        "friction_patches": []
+      },
+      "phase_rad": 1.5707963267948966,
+      "warmup_s": 0.8,
+      "motion_s": 0.16,
+      "recovery_s": 0.4,
+      "peak_speed_m_s": 0.04,
+      "candidate_overrides": {
+        "rolling_allocation": "feasible",
+        "rolling_adaptive_effort": false
+      },
+      "ramp_s": 0.05,
+      "activation": {
+        "time_s": 0.8000000000000006,
+        "observer_previous_time_s": 0.7950000000000006,
+        "observer_object_preserved": true,
+        "estimator_object_preserved": true,
+        "state_not_reset": true,
+        "qpos": [
+          -1.1690362005545123e-05,
+          -0.020756870016445286,
+          0.11816582981754487,
+          0.9963690145247048,
+          -0.08513973318012588,
+          1.751028293096126e-05,
+          -0.00011145616009128502,
+          1.572013301305727,
+          0.0036110177315199516,
+          -0.004654148953402597
+        ],
+        "qvel": [
+          7.660264340170469e-05,
+          0.000346100778245253,
+          6.092080991331252e-05,
+          -0.0029255423011177797,
+          -0.00037539013401160484,
+          -0.000645960933659438,
+          0.0026141880732475213,
+          0.0036976024769256573,
+          -0.0028258440855612565
+        ],
+        "nominal_joints": [
+          1.5707963267948963,
+          0.0,
+          0.0
+        ],
+        "original_warm_reference_origin": [
+          0.0,
+          0.0
+        ],
+        "active_center_goal_origin": [
+          -1.1690362005545123e-05,
+          -0.020756870016445286
+        ]
+      },
+      "checks": {
+        "single_same_actual_hemisphere_during_motion": true,
+        "min_total_load_fraction_during_motion": 0.9285622958871241,
+        "sufficient_actual_load": true,
+        "actual_start_support": "shell_A",
+        "actual_patch_handovers_during_motion": 0,
+        "minimum_start_shell_load_share": 1.0,
+        "authority_at_motion_start_m_s": 0.0006738570528002259,
+        "authority_max_during_motion_m_s": 0.04963175079873346,
+        "true_authority_at_motion_start_m_s": 0.0006699284320807555,
+        "true_authority_max_during_motion_m_s": 0.049561357282826214,
+        "true_weak_geometry_during_peak": false,
+        "weak_demand_mean_during_peak_m_s": 0.0007914086733110388,
+        "true_weak_demand_mean_during_peak_m_s": 0.0007863119568672695,
+        "requested_speed_peak_m_s": 0.04,
+        "requested_displacement_mm": 4.4,
+        "actual_displacement_along_request_mm": 7.874602536638742,
+        "fractional_goal_completion_at_motion_end": 1.789682394690623,
+        "raw_goal_error_rms_during_motion_mm": 6.387473536769257,
+        "raw_goal_error_peak_during_motion_mm": 9.930312756406867,
+        "raw_goal_error_at_motion_end_mm": 3.4748484797052512,
+        "center_reference_error_rms_during_motion_mm": 6.387419606551888,
+        "center_reference_error_peak_during_motion_mm": 9.930234123196831,
+        "maximum_joint_reference_rad_s": 0.45366688834921887,
+        "maximum_measured_joint_rate_rad_s": 5.846813350912097,
+        "guarded_command_calls": 273
+      },
+      "scope": "Short allocator mechanism test, not trajectory qualification. Fixed-contact claim requires support and authority gates."
+    }
+  ],
+  "source_hashes": {
+    "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/run_warm_contact_cases.py": "8a8927bc0d95b7feed08340b927202b8cd8bbd23d1c43b55d3385d350ba25b3a",
+    "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/rolling_allocation.py": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092",
+    "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py": "5a1c45c06a52a7c5fa4b72b4caff8d73ee462afd784ebf574bbb253370e9a569",
+    "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_experiments.py": "85acdb46c48375833ac327b41a9c7bbd8907b6a2031befd052d5100fea39f17a",
+    "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/experiments.py": "d2bab0ab6347f2743bca9467158c117d6481ad4bacdeb53537013aa790855289",
+    "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+    "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/feasible_reference.py": "3d7341c644181160d0483a951bac4a11af8180bc836cc8dadd38113c8fe4c621"
+  }
+}

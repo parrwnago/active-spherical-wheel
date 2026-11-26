@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "helper_api": "BeltHandoffContinuity.apply(native_applied,previous_applied,estimated_loads,dt,cap,time)->(final_applied,diagnostic); reset(); copied state_dict().",
+  "settings": {
+    "acceleration_assumption_m_s2": 3.0,
+    "estimated_belt_load_share_boundary": 0.05,
+    "time_activation_gate": null,
+    "minimum_hold_or_dwell": null,
+    "first_call": "Initialize prior loadstate; no synthetictransition."
+  },
+  "source_sha256": {
+    "handoff_continuity.py": "92d9fc2c126efcc581232bd8ea85036ef64c7276ce630326964386fd44dab12f",
+    "test_handoff_continuity.py": "99b47e2959348a5360eeeaa95270b6260f8cd5b1723c228ff957fcd32da9bffe",
+    "check_saved_arrays.py": "cfa627ad2ad4144f29b2b5fbfaac7891ec537a7447d1f8618f1533f92aa360b2"
+  },
+  "checks": {
+    "pure_pytest_report": "checks/stage02/report.json",
+    "unique_pytest_cases": 8,
+    "saved_array_local_projections": "saved_array_checks/stage01/report.json",
+    "independent_local_saved_samples": 3,
+    "runner_source_review": "runner_review_stage01/report.json"
+  },
+  "limitations": [
+    "3m/s\u00b2 is an assumed transfer envelope, not measured motor dynamics.",
+    "Observerloaddropout maytrigger when nativefeedback holds priorloads; no estimator/held-statechange is made.",
+    "Episode can remain active if native target keeps changing too fast; no hard timeout/release jump is added. Once caught, stable-mode commands pass native exactly.",
+    "One-step saved-array projections are not a modifiedclosedloop performance result.",
+    "Allruntime/default sources and oldrawdata are untouched. No native physics/controller was run by this candidate owner."
+  ]
+}

@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/scripts/diagnose-mpc-search.py", line 271, in <module>
+    try:main()
+  File "/home/parrwnago/active-spherical-wheel/scripts/diagnose-mpc-search.py", line 249, in main
+    np.testing.assert_allclose(first['cost'],plan['nonlinear_cost'],rtol=1e-8,atol=1e-8)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/testing/_private/utils.py", line 1504, in assert_allclose
+    assert_array_compare(compare, actual, desired, err_msg=str(err_msg),
+  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
+    return func(*args, **kwds)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/testing/_private/utils.py", line 797, in assert_array_compare
+    raise AssertionError(msg)
+AssertionError: 
+Not equal to tolerance rtol=1e-08, atol=1e-08
+
+Mismatched elements: 1 / 1 (100%)
+Max absolute difference: 4.960822e-05
+Max relative difference: 8.50347451e-07
+ x: array(58.338715)
+ y: array(58.338765)

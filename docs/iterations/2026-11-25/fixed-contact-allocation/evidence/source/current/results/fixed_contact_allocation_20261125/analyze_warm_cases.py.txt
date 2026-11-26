@@ -1,0 +1,74 @@
+"""Reduce the saved warm-start cases without changing any run artifacts."""
+from pathlib import Path
+import csv
+import json
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+ROOT = Path(__file__).resolve().parent
+
+
+def main():
+    rows = []
+    fig, axes = plt.subplots(2, 3, figsize=(13, 7), constrained_layout=True)
+    for row, (family, directory) in enumerate((('0.60 s pulse', ROOT), ('0.16 s pulse', ROOT/'short_pulse'))):
+        for motion in ('world_y', 'world_x'):
+            pair = json.loads((directory/f'pair_check_{motion}.json').read_text())
+            for variant in ('baseline', 'candidate'):
+                case_dir = directory/'runs'/motion/variant
+                summary = json.loads((case_dir/'summary.json').read_text())
+                case = summary['warm_fixed_contact_case']
+                checks = dict(case['checks'])
+                checks['fractional_goal_completion_at_motion_end'] = (
+                    checks['actual_displacement_along_request_mm']/checks['requested_displacement_mm'])
+                with np.load(case_dir/'rollout.npz') as saved:
+                    d = {key: np.asarray(value) for key, value in saved.items()}
+                moving = (d['time_s'] >= case['warmup_s']-1e-6) & (d['time_s'] <= case['warmup_s']+case['motion_s']+1e-6)
+                peak = moving & (np.linalg.norm(d['fixed_raw_velocity_m_s'],axis=1) >= .02)
+                authority = d['fixed_true_authority_m_s']
+                checks['peak_window_fraction_with_true_sigma_below_0p02'] = float(np.mean(authority[peak] < .02))
+                checks['max_true_authority_during_peak_m_s'] = float(np.max(authority[peak]))
+                weak_rows = np.flatnonzero(peak & (authority >= .02))
+                checks['first_peak_weak_gate_violation_s_after_motion_start'] = (
+                    float(d['time_s'][weak_rows[0]]-case['warmup_s']) if len(weak_rows) else None)
+                checks['warm_prefix_matches'] = pair['warm_prefix_matches']
+                rows.append(dict(family=family,motion=motion,variant=variant,**checks))
+                if motion == 'world_y':
+                    t = d['time_s']-case['warmup_s']
+                    label = 'Existing LS' if variant == 'baseline' else 'Experimental feasible'
+                    axes[row,0].plot(t,authority,label=label)
+                    axes[row,1].plot(t,d['reference_qvel'][:,1],label=label)
+                    error = 1000*np.linalg.norm(d['qpos'][:,:2]-d['fixed_raw_goal_xy'],axis=1)
+                    axes[row,2].plot(t,error,label=label)
+                    if variant == 'baseline':
+                        axes[row,1].plot(t,d['fixed_raw_velocity_m_s'][:,1],'k--',label='Original request')
+        for ax in axes[row]:
+            ax.axvspan(0,case['motion_s'],alpha=.08,color='grey')
+            ax.set_xlim(-.1,case['motion_s']+.15)
+            ax.grid(alpha=.25)
+            ax.set_xlabel('Time after motion starts (s)')
+        axes[row,0].axhline(.02,color='k',linestyle='--',linewidth=1,label='Weak-geometry gate')
+        axes[row,0].set(title=f'{family}: actual weak authority',ylabel='sigma2 (m/s)')
+        axes[row,1].set(title='World-Y body velocity reference',ylabel='m/s')
+        axes[row,2].set(title='Error to original centre goal',ylabel='mm')
+        axes[row,2].axvline(0,color='grey',linewidth=.8)
+        axes[row,2].text(.015,.96,'Original goal reanchored at motion start',
+                         transform=axes[row,2].transAxes,fontsize=8,va='top')
+        for ax in axes[row]:ax.legend(fontsize=8)
+    fig.suptitle('Actual Gazebo candidate comparisons: same hemisphere, but weak-geometry duration gates fail')
+    fig.savefig(ROOT/'warm_case_comparison.png',dpi=160)
+    (ROOT/'warm_case_comparison.json').write_text(json.dumps(dict(
+        rows=rows,
+        conclusion='All eight runs preserve actual shell A during motion and matched warm prefixes. Neither pulse family maintains sigma2 below 0.02 m/s throughout peak demand. These transient comparisons do not validate sustained weak-geometry behavior.',
+        goal_semantics='Raw original centre goal stays logged and evaluated; projected feedback-reference error is a separate metric.',
+        setup_failure='First launch used .venv, which lacks gz bindings; it stopped before Gazebo simulation. Corrected by using the existing micromamba Gazebo environment. Traceback retained in setup_failed_missing_gz.log.'),indent=2)+'\n')
+    keys=list(rows[0])
+    with (ROOT/'warm_case_comparison.csv').open('w',newline='') as stream:
+        writer=csv.DictWriter(stream,keys);writer.writeheader();writer.writerows(rows)
+    print(json.dumps(rows,indent=2))
+
+
+if __name__=='__main__':main()

@@ -1,0 +1,48 @@
+"""Compare the extended solver's constant path with its archived v1 source."""
+from pathlib import Path
+import hashlib
+import importlib.machinery
+import importlib.util
+import json
+import sys
+
+import numpy as np
+
+from spherical_wheel.predictive_control import AffineMPC, AffineMPCSettings
+
+
+oldpath = Path('results/mpc_optimizer_development_20261125/before_ltv/predictive_control.py.txt')
+loader = importlib.machinery.SourceFileLoader('mpc_v1_validation', str(oldpath))
+spec = importlib.util.spec_from_loader(loader.name, loader)
+old = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = old
+loader.exec_module(old)
+rows, random = [], np.random.default_rng(72)
+for nx, nu, horizon in [(1, 1, 7), (2, 2, 9), (18, 5, 20)]:
+    settings = AffineMPCSettings(horizon_steps=horizon, state_scales=(1.,)*nx,
+                                 state_weights=(1.,)*nx)
+    before, after = old.AffineMPC(settings), AffineMPC(settings)
+    for update in range(2):
+        A = .97*np.eye(nx)+.01*random.normal(size=(nx, nx))
+        B, f0 = .1*random.normal(size=(nx, nu)), .03*random.normal(size=nx)
+        target, anchor = .2*random.normal(size=(horizon, nx)), .1*random.normal(size=nu)
+        previous, bounds = .05*random.normal(size=nu), np.linspace(.3, 1.5, nu)
+        a = before.solve(A, B, f0, target, anchor, previous, bounds)
+        b = after.solve(A, B, f0, target, anchor, previous, bounds)
+        assert a.success and b.success
+        same = all(np.array_equal(getattr(a, k), getattr(b, k))
+                   for k in ('command', 'states', 'inputs'))
+        rows.append({'nx': nx, 'nu': nu, 'horizon': horizon, 'cached_update': bool(update),
+                     'all_plan_fields_bit_identical': same,
+                     'max_command_difference': float(np.max(abs(a.command-b.command))),
+                     'max_state_difference': float(np.max(abs(a.states-b.states))),
+                     'new_external_kkt_passed': b.diagnostics['external_box_kkt_passed']})
+        assert same, rows[-1]
+out = Path('results/mpc_optimizer_development_20261125/kkt_tests/lti_regression.json')
+out.write_text(json.dumps({'scope': 'Six seeded fresh/cached LTI solves against archived v1 in the current environment. No robot simulation. Outputs must remain bit-identical.',
+                          'old_source': str(oldpath),
+                          'old_sha256': hashlib.sha256(oldpath.read_bytes()).hexdigest(),
+                          'new_sha256': hashlib.sha256(Path('src/spherical_wheel/predictive_control.py').read_bytes()).hexdigest(),
+                          'script_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                          'results': rows}, indent=2)+'\n')
+print('Six fresh/cached LTI plans are bit-identical to archived v1 and pass the new gate.')

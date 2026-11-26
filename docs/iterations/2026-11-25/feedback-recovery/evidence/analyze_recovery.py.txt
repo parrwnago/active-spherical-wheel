@@ -1,0 +1,99 @@
+"""Compare saved feedback recovery traces; never integrate physics or tune."""
+from pathlib import Path
+import csv
+import hashlib
+import json
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+ROOT=Path(__file__).resolve().parent
+OUT=ROOT/'analysis'
+OUT.mkdir(exist_ok=True)
+SWITCH=.4
+
+def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def load(variant):
+    folder=ROOT/'runs/slope'/variant
+    with np.load(folder/'rollout.npz') as z:log={k:z[k] for k in z.files}
+    with np.load(folder/'precision.npz') as z:precise={k:z[k] for k in z.files}
+    q=precise['exact_qpos'];v=precise['exact_qvel'];t=precise['time_s']
+    goal=precise['recovery_goal_xy'][0]
+    assert np.array_equal(precise['recovery_goal_xy'],np.tile(goal,(len(t),1)))
+    error=np.linalg.norm(q[:,:2]-goal,axis=1)*1000
+    speed=np.linalg.norm(v[:,:2],axis=1)*1000
+    tilt=np.degrees(np.arccos(np.clip(1-2*np.sum(q[:,4:6]**2,axis=1),-1,1)))
+    quat=log['reference_quat'].astype(float)
+    reference=np.degrees(np.arccos(np.clip(1-2*np.sum(quat[:,1:3]**2,axis=1)/np.sum(quat**2,axis=1),-1,1)))
+    relative=np.degrees(log['attitude_error_rad'].astype(float))
+    summary=json.loads((folder/'summary.json').read_text())
+    active=t>=SWITCH-1e-9;last=t>=t[-1]-1-1e-9
+    at=int(np.argmin(abs(t-SWITCH)));hits=np.flatnonzero(active&(error<=5))
+    stable=(error<=5)&(speed<=5)&(relative<=2)
+    first_window=None
+    for i in np.flatnonzero(active&stable):
+        j=int(np.searchsorted(t,t[i]+1-1e-9))
+        if j<len(t) and stable[i:j+1].all():first_window=float(t[i]);break
+    complete=bool(t[-1]>=8.4-1e-8 and not summary.get('failure'))
+    bounded=np.max(abs(precise['exact_applied'])-np.array([1.5,.6,.6,.3,.3]))<=1e-10
+    actuated=active.copy();actuated[-1]=False
+    row={'variant':variant,'completed':complete,'failure':summary.get('failure'),
+         'end_time_s':float(t[-1]),'goal_xy_m':goal.tolist(),
+         'activation_goal_error_mm':float(error[at]),'min_goal_error_after_switch_mm':float(error[active].min()),
+         'peak_goal_error_after_switch_mm':float(error[active].max()),'final_goal_error_mm':float(error[-1]),
+         'first_radius_entry_s':float(t[hits[0]]) if len(hits) else None,
+         'first_full_1s_settled_window_start_s':first_window,
+         'final_1s_goal_error_max_mm':float(error[last].max()),'final_1s_xy_speed_max_mm_s':float(speed[last].max()),
+         'final_1s_xy_speed_rms_mm_s':float(np.sqrt(np.mean(speed[last]**2))),
+         'final_1s_reference_attitude_error_max_deg':float(relative[last].max()),
+         'initial_absolute_platform_tilt_deg':float(tilt[0]),'activation_absolute_platform_tilt_deg':float(tilt[at]),
+         'final_absolute_platform_tilt_deg':float(tilt[-1]),'final_reference_tilt_deg':float(reference[-1]),
+         'peak_absolute_platform_tilt_deg':float(tilt[active].max()),'actual_inputs_bounded':bool(bounded)}
+    if 'mpc_fallback' in precise:row['fallback_actuated_fraction']=float(np.mean(precise['mpc_fallback'][actuated])) if actuated.any() else None
+    row['settled_return_passed']=bool(complete and bounded and stable[last].all())
+    return dict(folder=folder,log=log,precise=precise,t=t,q=q,v=v,goal=goal,error=error,speed=speed,tilt=tilt,reference=reference,relative=relative,row=row)
+
+runs={v:load(v) for v in ('native','mpc')}
+a,b=runs['native'],runs['mpc']
+end=min(len(a['t']),len(b['t']))
+mask=(a['t'][:end]<SWITCH-1e-9)
+prefix={k:bool(np.array_equal(a['precise'][k][:end][mask],b['precise'][k][:end][mask],equal_nan=True))
+        for k in ('time_s','exact_qpos','exact_qvel','exact_applied','exact_observer_wrench',
+                  'exact_estimated_normal','recovery_native_requested','recovery_native_applied','recovery_goal_xy')}
+assert all(prefix.values()),prefix
+ia=int(np.argmin(abs(a['t']-SWITCH)));ib=int(np.argmin(abs(b['t']-SWITCH)))
+switch={k:bool(np.array_equal(a['precise'][k][ia],b['precise'][k][ib],equal_nan=True))
+        for k in ('exact_qpos','exact_qvel','exact_observer_wrench','exact_estimated_normal','recovery_native_requested')}
+assert all(switch.values()),switch
+inputs=[{'path':str(path.relative_to(ROOT)),'sha256':sha(path)} for run in runs.values() for path in
+        (run['folder']/'rollout.npz',run['folder']/'precision.npz',run['folder']/'summary.json',run['folder']/'plans.json',run['folder']/'provenance.json')]
+report={'scope':'Two unchanged-controller Gazebo feedback-recovery fixtures, uniform10deg side-slope; analysis only.',
+        'protocol':json.loads((ROOT/'protocol.json').read_text()),'rows':[r['row'] for r in runs.values()],
+        'shared_fixed_drift_prefix':prefix,'identical_state_at_feedback_switch':switch,'inputs':inputs,
+        'source_sha256':sha(Path(__file__)),
+        'interpretation':'Settledreturn includesfinal1s position/speed/reference-attitude gates. Absoluteplatformlevel is displayed but not currentcontrollerobjective. These cases alone do not identifycause or ruleouttuning.'}
+(OUT/'report.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
+keys=list(report['rows'][0])
+with (OUT/'metrics.csv').open('w',newline='') as f:
+    w=csv.DictWriter(f,fieldnames=keys);w.writeheader();w.writerows(report['rows'])
+fig,axes=plt.subplots(2,2,figsize=(13,8),constrained_layout=True)
+colors={'native':'#246fb3','mpc':'#d36b2e'}
+for label,run in runs.items():
+    c=colors[label];t=run['t']
+    for ax,key in zip((axes[0,0],axes[0,1],axes[1,0]),('error','tilt','speed')):ax.plot(t,run[key],color=c,label=label)
+    axes[0,1].plot(t,run['reference'],color=c,ls=':',alpha=.8,label=label+' reference')
+    xy=(run['q'][:,:2]-run['goal'])*1000
+    axes[1,1].plot(xy[:,0],xy[:,1],color=c,label=label)
+    axes[1,1].plot(xy[-1,0],xy[-1,1],'s',color=c)
+for ax in (axes[0,0],axes[0,1],axes[1,0]):
+    ax.axvspan(0,SWITCH,color='gray',alpha=.15);ax.axvline(SWITCH,color='black',ls='--',lw=.8);ax.set_xlabel('Simulation time (s)');ax.grid(alpha=.2);ax.legend(fontsize=8)
+axes[0,0].axhline(5,color='gray',ls=':');axes[0,0].set_ylabel('Distance from retained goal (mm)')
+axes[0,1].set_ylabel('Platform normal from gravity vertical (deg)')
+axes[1,0].axhline(5,color='gray',ls=':');axes[1,0].set_ylabel('XY speed (mm/s)')
+axes[1,1].add_patch(plt.Circle((0,0),5,fill=False,color='gray',ls=':'))
+axes[1,1].plot(0,0,'*',color='green',markersize=12,label='retained goal');axes[1,1].set(xlabel='World X from goal (mm)',ylabel='World Y from goal (mm)');axes[1,1].axis('equal');axes[1,1].grid(alpha=.2);axes[1,1].legend(fontsize=8)
+fig.suptitle('I-32: feedback recovery after matched fixed-input drift\nFeedback ON at0.4s; uniform10deg slope; unchanged settings',fontsize=13)
+fig.savefig(OUT/'comparison.png',dpi=180);fig.savefig(OUT/'comparison.pdf')
+print(json.dumps(report['rows'],indent=2))

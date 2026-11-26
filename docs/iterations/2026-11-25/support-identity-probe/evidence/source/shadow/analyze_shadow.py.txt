@@ -1,0 +1,337 @@
+"""Saved-state feedback-load routing ablation; no physics or controller rollout.
+
+Execute the campaign's archived feedback methods on its logged states and
+references. Only normalized support shares change. Reconstruct the original
+commands first; suppress counterfactual output if that audit fails.
+"""
+from __future__ import annotations
+
+import ast
+import csv
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import sys
+from types import SimpleNamespace
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import mujoco
+import numpy as np
+
+from spherical_wheel.recovery_control import ScheduledBalanceFeedback
+from spherical_wheel.sim import Plant
+
+ROOT = Path(__file__).resolve().parents[3]
+OUT = Path(__file__).resolve().parent
+CAMPAIGN = ROOT/'results/weighted_allocation_20261125/bounded_adaptive'
+CASE = CAMPAIGN/'plain_figure8/phase_-1.00'
+MODEL = CAMPAIGN/'_workspaces/worker_94098/flat/model.xml'
+CACHE = MODEL.with_name('control_schedule.npz')
+ARCHIVED = ROOT/'docs/iterations/2026-11-25/source/src/spherical_wheel/offroad_control.py.txt'
+SUPPORTS = ('shell_A', 'shell_B', 'belt_A', 'belt_B')
+CHANNELS = ('shaft', 'shell_A', 'shell_B', 'belt_A', 'belt_B')
+GROUPS = {'position': slice(0, 3), 'attitude': slice(3, 6), 'joint_position': slice(6, 9),
+          'body_linear_velocity': slice(9, 12), 'body_angular_velocity': slice(12, 15),
+          'joint_velocity': slice(15, 18)}
+WINDOW = (28.8, 29.5)
+EVENT = 28.975
+
+
+def digest(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def encode(value):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, Path):
+        return str(value.relative_to(ROOT)) if value.is_relative_to(ROOT) else str(value)
+    raise TypeError(type(value).__name__)
+
+
+def save_json(name, value):
+    (OUT/name).write_text(json.dumps(value, indent=2, default=encode, allow_nan=False)+'\n')
+
+
+def archived_feedback_class():
+    """Compile unchanged historical method bodies, without running __init__."""
+    parsed = ast.parse(ARCHIVED.read_text(), filename=str(ARCHIVED))
+    source_class = next(node for node in parsed.body if isinstance(node, ast.ClassDef)
+                        and node.name == 'OffroadController')
+    methods = [node for node in source_class.body if isinstance(node, ast.FunctionDef)
+               and node.name in ('_terrain_feedback', 'support_torque')]
+    assert len(methods) == 2
+    holder = ast.ClassDef(name='HistoricalFeedback', bases=[], keywords=[], body=methods,
+                         decorator_list=[])
+    module = ast.fix_missing_locations(ast.Module(body=[holder], type_ignores=[]))
+    namespace = {'np': np, 'mujoco': mujoco}
+    exec(compile(module, str(ARCHIVED), 'exec'), namespace)
+    return namespace['HistoricalFeedback']
+
+
+def make_context(log, config, parameters):
+    model = mujoco.MjModel.from_xml_path(str(MODEL))
+    model.opt.disableflags |= int(mujoco.mjtDisableBit.mjDSBL_CONTACT)
+    data = mujoco.MjData(model)
+    plant = SimpleNamespace(model=model, data=data, config=config,
+                            fork_id=mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, 'fork'))
+    plant.error = lambda qref, vref: Plant.error(plant, qref, vref)
+    with np.load(CACHE) as cache:
+        points = [{'phase': float(cache['phase_rad'][i]), 'K': cache['K'][i].copy(),
+                   'regime': 'belt' if cache['regime_code'][i] else 'shell',
+                   'side': 'B' if cache['side_code'][i] else 'A'} for i in range(len(cache['phase_rad']))]
+        metadata = json.loads(str(cache['metadata_json']))
+    context = archived_feedback_class()()
+    context.plant = plant
+    context.params = SimpleNamespace(**parameters)
+    context.carrier_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, 'carrier')
+    context.radius = float(config['geometry']['sphere_radius_m'])
+    context.weight = float(model.body_subtreemass[plant.fork_id])*abs(config['simulation']['gravity_m_s2'][2])
+    context.feedback = ScheduledBalanceFeedback(plant, points)
+    context._held = None
+    context._yaw_error = None
+    context.ordinary = {'equilibrium': {'u': log['equilibrium_command'][0].astype(float)},
+                        'design': {'K': log['feedback_gain'][0].astype(float)}}
+    return context, metadata
+
+
+def pre_feedback(log, index):
+    return sum(log[key][index].astype(float) for key in
+               ('equilibrium_command', 'rolling_feedforward', 'support_command', 'lqr_command'))
+
+
+def main():
+    OUT.mkdir(parents=True, exist_ok=True)
+    with np.load(CASE/'rollout.npz') as saved:
+        log = {key: np.array(value) for key, value in saved.items()}
+    summary = json.loads((CASE/'summary.json').read_text())
+    provenance = json.loads((CAMPAIGN/'provenance.json').read_text())
+    config = json.loads(MODEL.with_name('model_config.json').read_text())
+    assert digest(ARCHIVED) == provenance['source_sha256']['offroad_control.py']
+    context, metadata = make_context(log, config, summary['parameters'])
+    parameters = summary['parameters']
+    assert parameters['shaft_error'] == 'rolling' and not parameters['track_contact_point']
+    assert parameters['heading_gain'] == 0. and parameters['heading_reference'] == 'none'
+    sources = [Path(__file__), ARCHIVED, ROOT/'src/spherical_wheel/recovery_control.py',
+               ROOT/'src/spherical_wheel/sim.py', ROOT/'src/spherical_wheel/synchronization.py']
+    snapshots = OUT/'source_snapshot'
+    snapshots.mkdir(exist_ok=True)
+    for source in sources:
+        shutil.copy2(source, snapshots/(source.name if source.suffix == '.txt' else source.name+'.txt'))
+    helper_hash_checks = {name: digest(ROOT/'src/spherical_wheel'/name) == expected
+                          for name, expected in metadata['provenance']['source_sha256'].items()}
+    assert all(helper_hash_checks.values()), helper_hash_checks
+    inputs = [CASE/'rollout.npz', CASE/'summary.json', CAMPAIGN/'provenance.json', MODEL, CACHE,
+              MODEL.with_name('model_config.json')]
+    save_json('provenance.json', {
+        'scope': 'Offline saved-state feedback-only routing ablation. No physics or new rollout.',
+        'reproduction_command': 'PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python '+str(Path(__file__).relative_to(ROOT)),
+        'python': sys.version, 'numpy': np.__version__, 'mujoco': mujoco.__version__,
+        'sources': [{'path': p, 'sha256': digest(p)} for p in sources],
+        'inputs': [{'path': p, 'sha256': digest(p)} for p in inputs],
+        'archived_offroad_control_matches_campaign_hash': True,
+        'gain_cache_source_fingerprint_matches_current_helpers': helper_hash_checks,
+        'frozen_inputs': ['qpos', 'qvel', 'reference_xy', 'reference_quat', 'reference_qvel',
+                          'estimated_normal', 'rolling_feedforward', 'equilibrium_command',
+                          'ordinary shaft gain row', 'sync weights/targets', 'heading/fade terms'],
+        'ordinary_shaft_gain': 'Restored from the logged invariant ordinary-design row, not independently redesigned.',
+        'unneeded_unavailable_source': 'Historical allocator file missing; allocator is never run: recorded references are frozen.',
+        'truth_timing': 'Saved shares describe the final completed 1 ms Gazebo substep at each 5 ms controller sample.',
+        'window_requested_s': WINDOW, 'marked_event_requested_s': EVENT,
+    })
+    times = log['time_s'].astype(float)
+    indices = np.flatnonzero((times >= WINDOW[0]-1e-6) & (times <= WINDOW[1]+1e-6))
+    assert len(indices) and np.all(log['estimated_support_loads_N'][indices].sum(axis=1) > .001)
+    assert np.all(log['drive_fade'][indices] == 1.)
+    assert np.max(abs(log['heading_command'][indices])) == 0.
+    assert np.max(abs(log['fade_command_delta'][indices])) == 0.
+    assert np.all(log['feedback_gain'][indices, 0] == log['feedback_gain'][indices[0], 0])
+    rows, details, native = [], [], []
+    validation = {'gain_max_abs': 0., 'lqr_max_abs': 0., 'lqr_max_bound_fraction': 0.,
+                  'support_max_abs': 0., 'pre_sync_max_abs': 0., 'reference_qvel_max_abs': 0.,
+                  'logged_command_reconstruction_max_abs': 0., 'phase_max_abs': 0.,
+                  'same_error_counterfactual_max_abs': 0., 'same_total_load_max_abs_N': 0.}
+    gain_pass = True
+    for index in indices:
+        plant = context.plant
+        plant.data.qpos[:] = log['qpos'][index]
+        plant.data.qvel[:] = log['qvel'][index]
+        plant.data.time = times[index]
+        mujoco.mj_kinematics(plant.model, plant.data)
+        # Material joint setpoints are eliminated by this campaign's rolling
+        # shaft error and zero shell-position errors; their values do not enter
+        # the final error vector. Height is set to measured height in feedback.
+        qref = plant.data.qpos.copy()
+        qref[:2] = log['reference_xy'][index]
+        qref[3:7] = log['reference_quat'][index]
+        vref = log['reference_qvel'][index].astype(float)
+        feedforward = log['rolling_feedforward'][index].astype(float)
+        normal = log['estimated_normal'][index].astype(float)
+        estimated = log['estimated_support_loads_N'][index].astype(float)
+        truth = np.maximum(log['support_loads_N'][index].astype(float), 0.)
+        bounds = log['input_bounds'][index].astype(float)
+        total = float(estimated.sum())
+        has_truth = bool(truth.sum() > .001)
+        mapped = total*truth/truth.sum() if has_truth else estimated.copy()
+        context.ordinary['equilibrium']['u'] = log['equilibrium_command'][index].astype(float)
+        measurement = {'loads_N': dict(zip(SUPPORTS, estimated))}
+        native_command, original = context._terrain_feedback(qref, vref, feedforward, normal, measurement, True)
+        corrected_command, corrected = context._terrain_feedback(
+            qref, vref, feedforward, normal, {'loads_N': dict(zip(SUPPORTS, mapped))}, True)
+        base_lqr, counter_lqr = -original['K']@original['error'], -corrected['K']@corrected['error']
+        saved_pre = pre_feedback(log, index)
+        command_reconstruction = saved_pre+sum(log[key][index].astype(float) for key in
+            ('transition_command_delta', 'heading_command', 'fade_command_delta'))
+        differences = {
+            'gain_max_abs': np.max(abs(original['K']-log['feedback_gain'][index])),
+            'lqr_max_abs': np.max(abs(base_lqr-log['lqr_command'][index])),
+            'lqr_max_bound_fraction': np.max(abs(base_lqr-log['lqr_command'][index])/bounds),
+            'support_max_abs': np.max(abs(original['support_torque']-log['support_command'][index])),
+            'pre_sync_max_abs': np.max(abs(native_command-saved_pre)),
+            'reference_qvel_max_abs': np.max(abs(original['reference_qvel']-log['feedback_reference_qvel'][index])),
+            'logged_command_reconstruction_max_abs': np.max(abs(command_reconstruction-log['command'][index])),
+            'phase_max_abs': abs(original['effective_phase_rad']-float(log['effective_phase_rad'][index])),
+            'same_error_counterfactual_max_abs': np.max(abs(original['error']-corrected['error'])),
+            'same_total_load_max_abs_N': abs(mapped.sum()-total),
+        }
+        for key, value in differences.items():
+            validation[key] = max(validation[key], float(value))
+        gain_pass = gain_pass and np.allclose(original['K'], log['feedback_gain'][index], atol=3e-5, rtol=3e-5)
+        delta = corrected_command-native_command
+        # Preview targets and weights use unchanged pose/velocity/records.
+        # The only dependence on primary command is multiplied by (1-weight).
+        # This campaign has no heading torque or load fade in this window.
+        transmitted_delta = (1.-log['sync_weights'][index].astype(float))*delta
+        corrected_requested = log['command'][index].astype(float)+transmitted_delta
+        corrected_applied = np.clip(corrected_requested, -bounds, bounds)
+        baseline_requested = log['command'][index].astype(float)
+        baseline_applied = log['input'][index].astype(float)
+        shares_differ = has_truth and not np.allclose(estimated/total, truth/truth.sum(), atol=1e-8)
+        row = {'index': int(index), 'time_s': times[index], 'has_loaded_truth': has_truth,
+               'shares_differ': shares_differ,
+               'estimated_support': SUPPORTS[int(np.argmax(estimated))],
+               'truth_support': SUPPORTS[int(np.argmax(truth))] if has_truth else 'none',
+               'estimated_total_load_N': total, 'truth_total_load_N': float(truth.sum()),
+               'native_peak_requested_bound_fraction': float(np.max(abs(baseline_requested)/bounds)),
+               'counterfactual_peak_requested_bound_fraction': float(np.max(abs(corrected_requested)/bounds)),
+               'native_any_saturated': bool(np.any(abs(baseline_requested) > bounds+1e-7)),
+               'counterfactual_any_saturated': bool(np.any(abs(corrected_requested) > bounds+1e-7)),
+               'max_applied_delta_bound_fraction': float(np.max(abs(corrected_applied-baseline_applied)/bounds)),
+               'max_gain_delta': float(np.max(abs(corrected['K']-original['K'])))}
+        for c, name in enumerate(CHANNELS):
+            for key, vector in [('native_lqr', base_lqr), ('counterfactual_lqr', counter_lqr),
+                                ('native_support', original['support_torque']), ('counterfactual_support', corrected['support_torque']),
+                                ('pre_sync_delta', delta), ('transmitted_delta', transmitted_delta),
+                                ('sync_weight', log['sync_weights'][index]),
+                                ('native_requested', baseline_requested), ('counterfactual_requested', corrected_requested),
+                                ('native_applied', baseline_applied), ('counterfactual_applied', corrected_applied)]:
+                row[f'{key}_{name}'] = float(vector[c])
+        for c, name in enumerate(SUPPORTS):
+            row[f'estimated_share_{name}'] = float(estimated[c]/total)
+            row[f'truth_share_{name}'] = float(truth[c]/truth.sum()) if has_truth else None
+            row[f'feedback_load_{name}_N'] = float(mapped[c])
+        details.append({'index': int(index), 'time_s': times[index], 'reconstruction_errors': differences,
+                        'native_gain': original['K'], 'counterfactual_gain': corrected['K'],
+                        'feedback_error': original['error'], 'same_feedback_error': np.array_equal(original['error'], corrected['error']),
+                        'native_lqr_groups': {k: -original['K'][:, part]@original['error'][part] for k, part in GROUPS.items()},
+                        'counterfactual_lqr_groups': {k: -corrected['K'][:, part]@corrected['error'][part] for k, part in GROUPS.items()},
+                        'original_equivalent_point_m': log['estimated_contact_point_m'][index],
+                        'evaluation_only_true_point_m': log['contact_point_m'][index]})
+        rows.append(row)
+        native.append(original['K'])
+    checks = {
+        'cached_gain_reconstruction_allclose_atol_rtol_3e_5': bool(gain_pass),
+        'lqr_reconstruction_within_2e_4_actuator_bounds': validation['lqr_max_bound_fraction'] < 2e-4,
+        'support_reconstruction_abs_below_2e_6': validation['support_max_abs'] < 2e-6,
+        'pre_sync_reconstruction_abs_below_1e_4': validation['pre_sync_max_abs'] < 1e-4,
+        'feedback_reference_qvel_abs_below_1e_6': validation['reference_qvel_max_abs'] < 1e-6,
+        'saved_final_command_components_abs_below_1e_5': validation['logged_command_reconstruction_max_abs'] < 1e-5,
+        'counterfactual_preserves_error_and_total_load': validation['same_error_counterfactual_max_abs'] == 0.
+                                                    and validation['same_total_load_max_abs_N'] < 1e-10,
+    }
+    save_json('reconstruction_validation.json', {'window_s': WINDOW, 'samples': len(rows),
+              'metrics': validation, 'checks': checks, 'all_passed': all(checks.values())})
+    if not all(checks.values()):
+        raise RuntimeError('Native feedback reconstruction failed; counterfactual results not released.')
+    with (OUT/'shadow_samples.csv').open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    marked = int(np.argmin([abs(row['time_s']-EVENT) for row in rows]))
+    masks = {'all_saved_states': np.ones(len(rows), bool),
+             'loaded_truth_and_different_shares': np.array([row['shares_differ'] for row in rows], bool)}
+    aggregates = {}
+    for label, mask in masks.items():
+        subset = [r for r, select in zip(rows, mask) if select]
+        aggregates[label] = {
+            'samples': len(subset),
+            'native_any_saturated_samples': sum(r['native_any_saturated'] for r in subset),
+            'counterfactual_any_saturated_samples': sum(r['counterfactual_any_saturated'] for r in subset),
+            'native_requested_peak_bound_fraction': max(r['native_peak_requested_bound_fraction'] for r in subset),
+            'counterfactual_requested_peak_bound_fraction': max(r['counterfactual_peak_requested_bound_fraction'] for r in subset),
+            'max_applied_delta_bound_fraction': max(r['max_applied_delta_bound_fraction'] for r in subset),
+        }
+    save_json('shadow_report.json', {
+        'status': 'validated_fixed_state_counterfactual_only', 'case': str(CASE.relative_to(ROOT)),
+        'actual_saved_window_s': [rows[0]['time_s'], rows[-1]['time_s']], 'samples': len(rows),
+        'validation': {'all_passed': True, 'metrics': validation},
+        'correction': 'Replace only feedback load shares with final-substep truth shares, preserving estimated total load.',
+        'unloaded_truth_samples_skipped': sum(not row['has_loaded_truth'] for row in rows),
+        'aggregate': aggregates, 'marked_event': {'commands': rows[marked], 'details': details[marked]},
+        'limitations': [
+            'Saved states/references are float32; this is numerical reconstruction of the archived law, not double-precision state recovery.',
+            'Ordinary shaft gain row and equilibrium command are frozen recorded inputs; scheduled nonshaft rows are independently rebuilt from the historical cache.',
+            'Original point, normal, wrench, allocator references, synchronization geometry and targets are unchanged. This is a deliberately hybrid feedback-routing ablation, not corrected contact geometry.',
+            'Gazebo truth shares come from the final completed 1 ms substep; they are not interval-integrated or observer-filtered load shares.',
+            'True-unloaded samples retain estimated feedback loads because there is no truth share to normalize.',
+            'Each time sample is evaluated independently on the ORIGINAL trajectory. Corrected commands are never integrated; no attitude recovery, tracking improvement or causal recovery outcome is established.',
+            'The gain/support correction changes stored feedback state in a live controller; no dropout occurs in the inspected estimated-contact window, so no such history is carried between shadow samples.',
+            'Fixed-state downstream transmission uses unchanged logged sync weights and preview targets. Heading gain is zero and fade is one throughout this window, verified before computing clipped counterfactual commands.',
+        ]})
+    save_json('shadow_details.json', details)
+    plot(rows)
+    print(json.dumps({'validation': validation, 'all_checks_passed': True,
+                      'aggregate': aggregates, 'marked_event': rows[marked]}, indent=2, default=encode))
+
+
+def plot(rows):
+    time = np.array([r['time_s'] for r in rows])
+    figure, axes = plt.subplots(5, 1, figsize=(12, 12), sharex=True, constrained_layout=True)
+    axes[0].plot(time, [r['estimated_share_shell_A'] for r in rows], label='Original inferred shell A', color='#e38b2c')
+    axes[0].plot(time, [r['truth_share_shell_A'] for r in rows], label='Last-substep shell A share', color='#1c9fbd', linestyle='--')
+    axes[0].set(ylabel='Shell A share', ylim=(-.05, 1.05))
+    for axis, channel, unit in ((axes[1], 'belt_A', 'm/s'), (axes[2], 'shell_A', 'N m')):
+        axis.plot(time, [r[f'native_requested_{channel}'] for r in rows], color='#e38b2c', label='Original request')
+        axis.plot(time, [r[f'counterfactual_requested_{channel}'] for r in rows], color='#1c9fbd', label='Corrected-routing request')
+        axis.plot(time, [r[f'native_applied_{channel}'] for r in rows], color='#9f4d00', alpha=.65, linestyle=':', label='Original clipped')
+        axis.plot(time, [r[f'counterfactual_applied_{channel}'] for r in rows], color='#005e78', alpha=.65, linestyle='--', label='Corrected-routing clipped')
+        bound = .3 if channel == 'belt_A' else .6
+        axis.axhline(bound, color='#888888', linewidth=.7)
+        axis.axhline(-bound, color='#888888', linewidth=.7)
+        axis.set(ylabel=f'{channel.replace("_", " ")} ({unit})')
+    axes[3].plot(time, [r['sync_weight_belt_A'] for r in rows], label='Belt A preview blend', color='#1c9fbd')
+    axes[3].plot(time, [r['sync_weight_shell_A'] for r in rows], label='Shell A preview blend', color='#935ab5')
+    axes[3].set(ylabel='Sync blend', ylim=(-.05, 1.05))
+    axes[4].plot(time, [r['native_peak_requested_bound_fraction'] for r in rows], color='#e38b2c', label='Original peak demand / bound')
+    axes[4].plot(time, [r['counterfactual_peak_requested_bound_fraction'] for r in rows], color='#1c9fbd', label='Corrected-routing peak / bound')
+    axes[4].axhline(1., color='#888888', linewidth=.7)
+    axes[4].set(ylabel='Max channel ratio', xlabel='Saved time (s)')
+    for axis in axes:
+        axis.axvline(EVENT, color='#bd3333', linestyle=':', linewidth=1)
+        axis.grid(alpha=.2)
+        axis.legend(loc='best', fontsize=8, ncols=2)
+        axis.set_xlim(time[0], time[-1])
+    figure.suptitle('Historical feedback-routing shadow — figure-eight, phase −1.00\n'
+                    'Same saved state and references; no physical evolution or recovery claim', fontsize=13)
+    figure.savefig(OUT/'shadow_feedback_routing.png', dpi=160)
+    figure.savefig(OUT/'shadow_feedback_routing.pdf')
+    plt.close(figure)
+
+
+if __name__ == '__main__':
+    main()

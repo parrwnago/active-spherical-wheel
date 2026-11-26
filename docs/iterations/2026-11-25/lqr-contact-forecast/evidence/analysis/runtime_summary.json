@@ -1,0 +1,1010 @@
+{
+  "scope": "Saved wall-clock metadata reduction only.",
+  "context": "Forecast campaign used three concurrent workers; these are not isolated CPU benchmarks.20ms is a hypothetical slower-planner budget, not the live LQR5ms cadence.",
+  "cost_boundary": "Sum includes private forecast generation and plane calibration. It excludes controller-history reconstruction, predictor construction and file serialization, so it is not a full online implementation timing.",
+  "all": {
+    "n": 113,
+    "forecast_wall_s": {
+      "n": 113,
+      "median": 0.26182449299813015,
+      "p95": 0.34962544199806866,
+      "max": 0.4047953549961676,
+      "mean": 0.26625029799116073
+    },
+    "calibration_wall_s": {
+      "n": 113,
+      "median": 0.007387576995824929,
+      "p95": 0.013871396196191198,
+      "max": 0.018751537005300634,
+      "mean": 0.007689786805326749
+    },
+    "forecast_plus_calibration_wall_s": {
+      "n": 113,
+      "median": 0.26983946699328953,
+      "p95": 0.3640144492004764,
+      "max": 0.41628542898979504,
+      "mean": 0.27394008479648746
+    },
+    "combined_to_20ms_budget_ratio": {
+      "n": 113,
+      "median": 13.491973349664477,
+      "p95": 18.20072246002382,
+      "max": 20.814271449489752,
+      "mean": 13.697004239824373
+    },
+    "combined_at_or_below_20ms_count": 0
+  },
+  "by_selection_kind": {
+    "uniform": {
+      "n": 96,
+      "forecast_wall_s": {
+        "n": 96,
+        "median": 0.2541747205032152,
+        "p95": 0.34186824424796214,
+        "max": 0.39697383800375974,
+        "mean": 0.2606343523020769
+      },
+      "calibration_wall_s": {
+        "n": 96,
+        "median": 0.005490291998285102,
+        "p95": 0.013569704502515378,
+        "max": 0.018751537005300634,
+        "mean": 0.007118539593723956
+      },
+      "forecast_plus_calibration_wall_s": {
+        "n": 96,
+        "median": 0.2612475905007159,
+        "p95": 0.35444510350134806,
+        "max": 0.4132328309933655,
+        "mean": 0.2677528918958008
+      },
+      "combined_to_20ms_budget_ratio": {
+        "n": 96,
+        "median": 13.062379525035794,
+        "p95": 17.722255175067403,
+        "max": 20.661641549668275,
+        "mean": 13.387644594790041
+      },
+      "combined_at_or_below_20ms_count": 0
+    },
+    "predeclared_event": {
+      "n": 17,
+      "forecast_wall_s": {
+        "n": 17,
+        "median": 0.2957719449987053,
+        "p95": 0.37145300860429414,
+        "max": 0.4047953549961676,
+        "mean": 0.29796387364716365
+      },
+      "calibration_wall_s": {
+        "n": 17,
+        "median": 0.009968212005333044,
+        "p95": 0.016152964199136477,
+        "max": 0.016552773005969357,
+        "mean": 0.010915653412024873
+      },
+      "forecast_plus_calibration_wall_s": {
+        "n": 17,
+        "median": 0.3047059070013347,
+        "p95": 0.3869932418077951,
+        "max": 0.41628542898979504,
+        "mean": 0.30887952705918853
+      },
+      "combined_to_20ms_budget_ratio": {
+        "n": 17,
+        "median": 15.235295350066735,
+        "p95": 19.349662090389756,
+        "max": 20.814271449489752,
+        "mean": 15.443976352959426
+      },
+      "combined_at_or_below_20ms_count": 0
+    }
+  },
+  "per_anchor": [
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 0.40000000000000024,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.24611671800084878,
+      "calibration_wall_s": 0.003825877000053879,
+      "combined_wall_s": 0.24994259500090266
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 0.7100000000000005,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2775052119977772,
+      "calibration_wall_s": 0.007602778998261783,
+      "combined_wall_s": 0.285107990996039
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 1.0200000000000002,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.23197853000601754,
+      "calibration_wall_s": 0.004608212999301031,
+      "combined_wall_s": 0.23658674300531857
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 1.3249999999999937,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.21391875100380275,
+      "calibration_wall_s": 0.0046307570009958,
+      "combined_wall_s": 0.21854950800479855
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 1.6349999999999871,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.27169914200203493,
+      "calibration_wall_s": 0.004955712000082713,
+      "combined_wall_s": 0.27665485400211764
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 1.9449999999999805,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.21194636499421904,
+      "calibration_wall_s": 0.0045283180006663315,
+      "combined_wall_s": 0.21647468299488537
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 2.254999999999974,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2060824500003946,
+      "calibration_wall_s": 0.0043714959974749945,
+      "combined_wall_s": 0.2104539459978696
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 2.5649999999999675,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.22355202500330051,
+      "calibration_wall_s": 0.004838271001062822,
+      "combined_wall_s": 0.22839029600436334
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 2.874999999999961,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.21596485099871643,
+      "calibration_wall_s": 0.004591188000631519,
+      "combined_wall_s": 0.22055603899934795
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 3.1799999999999544,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.27093258000240894,
+      "calibration_wall_s": 0.004829110002901871,
+      "combined_wall_s": 0.2757616900053108
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 3.489999999999948,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.32991585800482426,
+      "calibration_wall_s": 0.004892412995104678,
+      "combined_wall_s": 0.33480827099992894
+    },
+    {
+      "case_id": "flat_hold",
+      "anchor_time_s": 3.799999999999941,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2556096799962688,
+      "calibration_wall_s": 0.0050559960000100546,
+      "combined_wall_s": 0.2606656759962789
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 0.40000000000000024,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2715019800016307,
+      "calibration_wall_s": 0.0028535240053315647,
+      "combined_wall_s": 0.2743555040069623
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 1.0549999999999995,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.29705414100317284,
+      "calibration_wall_s": 0.004906903996015899,
+      "combined_wall_s": 0.30196104499918874
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 1.7099999999999855,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2704033059999347,
+      "calibration_wall_s": 0.0033946440016734414,
+      "combined_wall_s": 0.2737979500016081
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 2.364999999999972,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.293516517005628,
+      "calibration_wall_s": 0.008246813995356206,
+      "combined_wall_s": 0.3017633310009842
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 3.019999999999958,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.37190905299939914,
+      "calibration_wall_s": 0.011616890005825553,
+      "combined_wall_s": 0.3835259430052247
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 3.674999999999944,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.27030815499892924,
+      "calibration_wall_s": 0.007918882998637855,
+      "combined_wall_s": 0.2782270379975671
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 4.32499999999993,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.22306450900214259,
+      "calibration_wall_s": 0.004393621005874593,
+      "combined_wall_s": 0.22745813000801718
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 4.979999999999916,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.20633324699883815,
+      "calibration_wall_s": 0.0032195810053963214,
+      "combined_wall_s": 0.20955282800423447
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 5.634999999999902,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2311109449947253,
+      "calibration_wall_s": 0.0042303709997213446,
+      "combined_wall_s": 0.23534131599444663
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 6.289999999999888,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2471945439974661,
+      "calibration_wall_s": 0.003649221995146945,
+      "combined_wall_s": 0.25084376599261304
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 6.944999999999874,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.21072187700337963,
+      "calibration_wall_s": 0.0035647039985633455,
+      "combined_wall_s": 0.21428658100194298
+    },
+    {
+      "case_id": "flat_outback",
+      "anchor_time_s": 7.59999999999986,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.18656866699893726,
+      "calibration_wall_s": 0.004401760998007376,
+      "combined_wall_s": 0.19097042799694464
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 0.40000000000000024,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.21351315900392365,
+      "calibration_wall_s": 0.005060221003077459,
+      "combined_wall_s": 0.2185733800070011
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 1.2349999999999957,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.21446547900268342,
+      "calibration_wall_s": 0.005444456997793168,
+      "combined_wall_s": 0.2199099360004766
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 2.074999999999978,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.21423125099681783,
+      "calibration_wall_s": 0.004181453005003277,
+      "combined_wall_s": 0.2184127040018211
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 2.90999999999996,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.18733569100004388,
+      "calibration_wall_s": 0.002709134998440277,
+      "combined_wall_s": 0.19004482599848416
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 3.7449999999999424,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.19889366999996128,
+      "calibration_wall_s": 0.002723624995269347,
+      "combined_wall_s": 0.20161729499523062
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 4.579999999999925,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.20540876599989133,
+      "calibration_wall_s": 0.003941554998164065,
+      "combined_wall_s": 0.2093503209980554
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 5.419999999999907,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.20410943599563325,
+      "calibration_wall_s": 0.004441520999534987,
+      "combined_wall_s": 0.20855095699516824
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 6.254999999999889,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.22211396299826447,
+      "calibration_wall_s": 0.005402947994298302,
+      "combined_wall_s": 0.22751691099256277
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 7.089999999999871,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.20924817099876236,
+      "calibration_wall_s": 0.0054920100010349415,
+      "combined_wall_s": 0.2147401809997973
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 7.924999999999853,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.21134268199966755,
+      "calibration_wall_s": 0.005486975998792332,
+      "combined_wall_s": 0.21682965799845988
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 8.76499999999997,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2067117069964297,
+      "calibration_wall_s": 0.005172810000658501,
+      "combined_wall_s": 0.2118845169970882
+    },
+    {
+      "case_id": "flat_triangle",
+      "anchor_time_s": 9.600000000000101,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.21060179899359355,
+      "calibration_wall_s": 0.005488573995535262,
+      "combined_wall_s": 0.2160903729891288
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 0.40000000000000024,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.30643621800118126,
+      "calibration_wall_s": 0.004320994004956447,
+      "combined_wall_s": 0.3107572120061377
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 0.8750000000000007,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.28104799399443436,
+      "calibration_wall_s": 0.004355852004664484,
+      "combined_wall_s": 0.28540384599909885
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 1.3449999999999933,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.23458514300000388,
+      "calibration_wall_s": 0.005001946003176272,
+      "combined_wall_s": 0.23958708900318015
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 1.8199999999999832,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.21982706299604615,
+      "calibration_wall_s": 0.004580355998768937,
+      "combined_wall_s": 0.2244074189948151
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 2.2899999999999734,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2114544689975446,
+      "calibration_wall_s": 0.0026985390068148263,
+      "combined_wall_s": 0.21415300800435944
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 2.7649999999999633,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.25269275000027847,
+      "calibration_wall_s": 0.004857951993471943,
+      "combined_wall_s": 0.2575507019937504
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 3.2349999999999532,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.27975277599762194,
+      "calibration_wall_s": 0.005436631996417418,
+      "combined_wall_s": 0.28518940799403936
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 3.709999999999943,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.22767777500121156,
+      "calibration_wall_s": 0.00524719399982132,
+      "combined_wall_s": 0.23292496900103288
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 4.179999999999933,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.23078326800168725,
+      "calibration_wall_s": 0.005269278997729998,
+      "combined_wall_s": 0.23605254699941725
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 4.654999999999923,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.23434733800240792,
+      "calibration_wall_s": 0.00555405600607628,
+      "combined_wall_s": 0.2399013940084842
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 5.124999999999913,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.22950787800073158,
+      "calibration_wall_s": 0.00482126499991864,
+      "combined_wall_s": 0.23432914300065022
+    },
+    {
+      "case_id": "flat_x",
+      "anchor_time_s": 5.599999999999903,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2371236519975355,
+      "calibration_wall_s": 0.004937557998346165,
+      "combined_wall_s": 0.24206120999588165
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 0.40000000000000024,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.39663333499629516,
+      "calibration_wall_s": 0.016599495997070335,
+      "combined_wall_s": 0.4132328309933655
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 0.7100000000000005,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.3545746829986456,
+      "calibration_wall_s": 0.018751537005300634,
+      "combined_wall_s": 0.3733262200039462
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 1.0200000000000002,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.3463259479976841,
+      "calibration_wall_s": 0.011480654000479262,
+      "combined_wall_s": 0.3578066019981634
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 1.3249999999999937,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.3303594129974954,
+      "calibration_wall_s": 0.011528866001754068,
+      "combined_wall_s": 0.34188827899924945
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 1.6349999999999871,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.31258077299571596,
+      "calibration_wall_s": 0.012989610993827228,
+      "combined_wall_s": 0.3255703839895432
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 1.9449999999999805,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.3403823429980548,
+      "calibration_wall_s": 0.012942261004354805,
+      "combined_wall_s": 0.3533246040024096
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 2.254999999999974,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.315971307005384,
+      "calibration_wall_s": 0.012951922006323002,
+      "combined_wall_s": 0.328923229011707
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 2.5649999999999675,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.31049870800052304,
+      "calibration_wall_s": 0.012859783004387282,
+      "combined_wall_s": 0.3233584910049103
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 2.874999999999961,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.30873351000627736,
+      "calibration_wall_s": 0.014500844001304358,
+      "combined_wall_s": 0.3232343540075817
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 3.1799999999999544,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.29496271499374416,
+      "calibration_wall_s": 0.01389232299698051,
+      "combined_wall_s": 0.30885503799072467
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 3.489999999999948,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.32535107799776597,
+      "calibration_wall_s": 0.012430674003553577,
+      "combined_wall_s": 0.33778175200131955
+    },
+    {
+      "case_id": "flat_y_transfer",
+      "anchor_time_s": 3.799999999999941,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.3183358909955132,
+      "calibration_wall_s": 0.011206082999706268,
+      "combined_wall_s": 0.32954197399521945
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 0.40000000000000024,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.28622532300505554,
+      "calibration_wall_s": 0.009421707000001334,
+      "combined_wall_s": 0.2956470300050569
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 4.34499999999993,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.26652087699767435,
+      "calibration_wall_s": 0.007356242997047957,
+      "combined_wall_s": 0.2738771199947223
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 6.724999999999879,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.28832305000105407,
+      "calibration_wall_s": 0.009719319998112042,
+      "combined_wall_s": 0.2980423699991661
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 6.774999999999878,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.27740864399675047,
+      "calibration_wall_s": 0.008869944998878054,
+      "combined_wall_s": 0.2862785889956285
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 6.904999999999875,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.27245102900633356,
+      "calibration_wall_s": 0.009734753999509849,
+      "combined_wall_s": 0.2821857830058434
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 6.924999999999875,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.25228470799629577,
+      "calibration_wall_s": 0.011118586000520736,
+      "combined_wall_s": 0.2634032939968165
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 6.954999999999874,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.26182449299813015,
+      "calibration_wall_s": 0.013194343002396636,
+      "combined_wall_s": 0.2750188360005268
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 6.9749999999998735,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.25496790499892086,
+      "calibration_wall_s": 0.011849960996187292,
+      "combined_wall_s": 0.26681786599510815
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 7.079999999999871,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.30361725900002057,
+      "calibration_wall_s": 0.009108130994718522,
+      "combined_wall_s": 0.3127253899947391
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 7.12999999999987,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.2509925869962899,
+      "calibration_wall_s": 0.007667299003514927,
+      "combined_wall_s": 0.25865988599980483
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 8.289999999999896,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2580586100011715,
+      "calibration_wall_s": 0.006652094998571556,
+      "combined_wall_s": 0.26471070499974303
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 12.235000000000513,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.24484716399456374,
+      "calibration_wall_s": 0.007001553000009153,
+      "combined_wall_s": 0.2518487169945729
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 16.180000000001066,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.20824304800044047,
+      "calibration_wall_s": 0.0041764870038605295,
+      "combined_wall_s": 0.212419535004301
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 20.12500000000028,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.22217598799761618,
+      "calibration_wall_s": 0.007387576995824929,
+      "combined_wall_s": 0.2295635649934411
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 24.074999999999495,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2180218560024514,
+      "calibration_wall_s": 0.00459677600156283,
+      "combined_wall_s": 0.22261863200401422
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 28.01999999999871,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.22700554599578027,
+      "calibration_wall_s": 0.005047538004873786,
+      "combined_wall_s": 0.23205308400065405
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 31.964999999997925,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.23788434299785877,
+      "calibration_wall_s": 0.008007734999409877,
+      "combined_wall_s": 0.24589207799726864
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 35.90999999999992,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.1945060080033727,
+      "calibration_wall_s": 0.0028152239974588156,
+      "combined_wall_s": 0.19732123200083151
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 39.85500000000194,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.23246398100309307,
+      "calibration_wall_s": 0.006735358998412266,
+      "combined_wall_s": 0.23919934000150533
+    },
+    {
+      "case_id": "mars_figure8_p090",
+      "anchor_time_s": 43.800000000003955,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.22746121299860533,
+      "calibration_wall_s": 0.008543023999664001,
+      "combined_wall_s": 0.23600423699826933
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 0.9000000000000007,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.3329792020012974,
+      "calibration_wall_s": 0.013857444995664991,
+      "combined_wall_s": 0.34683664699696237
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 1.6549999999999867,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2740338020012132,
+      "calibration_wall_s": 0.01347379100479884,
+      "combined_wall_s": 0.28750759300601203
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 2.409999999999971,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2586456650024047,
+      "calibration_wall_s": 0.006992832000833005,
+      "combined_wall_s": 0.2656384970032377
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 3.1649999999999547,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2547295530021074,
+      "calibration_wall_s": 0.007099952003045473,
+      "combined_wall_s": 0.2618295050051529
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 3.9199999999999386,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.28484241499972995,
+      "calibration_wall_s": 0.007472434001101647,
+      "combined_wall_s": 0.2923148490008316
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 4.6749999999999226,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2630801550039905,
+      "calibration_wall_s": 0.007431129000906367,
+      "combined_wall_s": 0.2705112840048969
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 5.424999999999907,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2705871330035734,
+      "calibration_wall_s": 0.008253483996668365,
+      "combined_wall_s": 0.27884061700024176
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 6.1799999999998905,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.253619888004323,
+      "calibration_wall_s": 0.008778750998317264,
+      "combined_wall_s": 0.26239863900264027
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 6.934999999999874,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.26201172399305506,
+      "calibration_wall_s": 0.007827743000234477,
+      "combined_wall_s": 0.26983946699328953
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 7.689999999999858,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.26666690099955304,
+      "calibration_wall_s": 0.00826002900430467,
+      "combined_wall_s": 0.2749269300038577
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 8.44499999999992,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2720868539981893,
+      "calibration_wall_s": 0.009249695998732932,
+      "combined_wall_s": 0.28133654999692226
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 9.160000000000032,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.3631174220063258,
+      "calibration_wall_s": 0.016552773005969357,
+      "combined_wall_s": 0.37967019501229515
+    },
+    {
+      "case_id": "slope_x_late",
+      "anchor_time_s": 9.200000000000038,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.33916877900628606,
+      "calibration_wall_s": 0.011554947996046394,
+      "combined_wall_s": 0.35072372700233245
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 0.9000000000000007,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.3163263669994194,
+      "calibration_wall_s": 0.0089332959978492,
+      "combined_wall_s": 0.3252596629972686
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 1.6549999999999867,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.39697383800375974,
+      "calibration_wall_s": 0.010311410995200276,
+      "combined_wall_s": 0.40728524899896
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 2.2249999999999748,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.2957719449987053,
+      "calibration_wall_s": 0.008933962002629414,
+      "combined_wall_s": 0.3047059070013347
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 2.2749999999999737,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.30831110900180647,
+      "calibration_wall_s": 0.009968212005333044,
+      "combined_wall_s": 0.3182793210071395
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 2.409999999999971,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.33849047900002915,
+      "calibration_wall_s": 0.009572212002240121,
+      "combined_wall_s": 0.3480626910022693
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 2.774999999999963,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.4047953549961676,
+      "calibration_wall_s": 0.011490073993627448,
+      "combined_wall_s": 0.41628542898979504
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 2.824999999999962,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.33370448899950134,
+      "calibration_wall_s": 0.016053011997428257,
+      "combined_wall_s": 0.3497575009969296
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 3.1649999999999547,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.30060059900279157,
+      "calibration_wall_s": 0.009020271994813811,
+      "combined_wall_s": 0.3096208709976054
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 3.899999999999939,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.30542504099867074,
+      "calibration_wall_s": 0.009153304003120866,
+      "combined_wall_s": 0.3145783450017916
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 3.9199999999999386,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.3031897340042633,
+      "calibration_wall_s": 0.0079341780001414,
+      "combined_wall_s": 0.3111239120044047
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 3.949999999999938,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.3174464340045233,
+      "calibration_wall_s": 0.007889742999395821,
+      "combined_wall_s": 0.32533617700391915
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 4.2099999999999325,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.3177690180018544,
+      "calibration_wall_s": 0.012626479001482949,
+      "combined_wall_s": 0.33039549700333737
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 4.259999999999931,
+      "selection_kind": "predeclared_event",
+      "forecast_wall_s": 0.2571753640004317,
+      "calibration_wall_s": 0.011636210001597647,
+      "combined_wall_s": 0.2688115740020294
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 4.6749999999999226,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.20927285100333393,
+      "calibration_wall_s": 0.0030999990049167536,
+      "combined_wall_s": 0.21237285000825068
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 5.424999999999907,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2174368600026355,
+      "calibration_wall_s": 0.0025905180009431206,
+      "combined_wall_s": 0.22002737800357863
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 6.1799999999998905,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.3187028239990468,
+      "calibration_wall_s": 0.009522773994831368,
+      "combined_wall_s": 0.3282255979938782
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 6.934999999999874,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2888762590009719,
+      "calibration_wall_s": 0.010980088998621795,
+      "combined_wall_s": 0.2998563479995937
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 7.689999999999858,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.263261975000205,
+      "calibration_wall_s": 0.00823161500011338,
+      "combined_wall_s": 0.27149359000031836
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 8.44499999999992,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.2353922159963986,
+      "calibration_wall_s": 0.008111891998851206,
+      "combined_wall_s": 0.2435041079952498
+    },
+    {
+      "case_id": "slope_y",
+      "anchor_time_s": 9.200000000000038,
+      "selection_kind": "uniform",
+      "forecast_wall_s": 0.24367688599886606,
+      "calibration_wall_s": 0.011189981996722054,
+      "combined_wall_s": 0.2548668679955881
+    }
+  ],
+  "realtime_claim": false
+}

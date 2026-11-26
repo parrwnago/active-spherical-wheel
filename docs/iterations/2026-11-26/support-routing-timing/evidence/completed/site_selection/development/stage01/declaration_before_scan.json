@@ -1,0 +1,63 @@
+{
+  "declared_utc": "2026-11-26T07:04:59.309233+00:00",
+  "settings": {
+    "scan_bounds_xy_m": [
+      -3.0,
+      1.0,
+      6.0,
+      11.0
+    ],
+    "grid_step_m": 0.1,
+    "old_site_xy_m": [
+      -1.6,
+      9.6
+    ],
+    "heading_deg": 45.0,
+    "length_m": 0.18,
+    "protected_capsule_radius_m": 0.22,
+    "capsule_circle_sides": 32,
+    "fitted_slope_deg_min": 2.0,
+    "fitted_slope_deg_max": 6.0,
+    "plane_rmse_m_max": 0.001,
+    "plane_max_abs_m_max": 0.003,
+    "feature_yaw_rad": 1.5707963268,
+    "ranking": [
+      "squared_distance_to_old_site",
+      "plane_rmse_m",
+      "center_x",
+      "center_y"
+    ],
+    "planarity": "Exact area moments over DEM triangles clipped to conservative circumscribed32-gon capsule; max residual at clipped vertices.",
+    "feature_rejection": "Exact2D route-segment to transformed raw feature triangle projection distance<=.22m; degenerate projected edges retained.",
+    "nonqualification": "No threshold changes or physics if zero sites qualify."
+  },
+  "sources": [
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/support_routing_timing_20261126/site_selection/select_site.py",
+      "sha256": "68b4f206cbd4afc645206e1f4181759f358a42301d84002a2f0281d8bc100d4c"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/gazebo/mars.py",
+      "sha256": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63"
+    }
+  ],
+  "assets": [
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/dem/marsyard_terrain_hm.tif",
+      "sha256": "d9c143fa8af44c8719770e53499dcab7c23054cc1e4c333f4ccbe7ff8d942eba"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/lava.obj",
+      "sha256": "7c5db43cb0b1d2aa509c793d662f02d13c41f34cf43c2a8232acc1be57a5f2a9"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_big.obj",
+      "sha256": "7a8e0be5a3f1c7bbc7ffe8c5a511be14b25485c713a8caf6cf42dd20e9fdb49f"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_medium.obj",
+      "sha256": "ccf20567f10256c2617879d73a1d842d4275cf36c9d6a2f93f4162584614d342"
+    }
+  ],
+  "scope": "Geometry-only selection before control outcomes; no controller, physics, observer or saved tracking data read."
+}

@@ -1,0 +1,45 @@
+{
+  "iteration": "I-44",
+  "scope": "I44 saved robot motion, ideal depth and causal map/prediction presentation.\n\nNo depth is rendered, map recomputed, controller called or dynamics integrated.\nOnly the actual saved robot state is re-rendered for visual context. Map and\ndepth displays use completed, past-only anchor snapshots from the campaign.\n",
+  "chapters": [
+    {
+      "id": "early_bump",
+      "start_s": 6.4,
+      "stop_s": 10.0,
+      "speed": 0.5
+    },
+    {
+      "id": "late_revisit",
+      "start_s": 30.0,
+      "stop_s": 36.0,
+      "speed": 1.0
+    }
+  ],
+  "fps": 20,
+  "dimensions": [
+    1600,
+    1200
+  ],
+  "knowledge_display": "Map/prediction/depth held at latest stored anchor<=displaytime; depth is latest delivered batch at that anchor. Robot moves continuously through actual saved states.",
+  "map_boundary": "Observed cell means only; no true terrain heatmap, future cells or future actual contact marker is inserted.",
+  "input_sha256": {
+    "results/terrain_memory_20261126/videos/render_terrain_memory.py": "eeba2aa0031bcb4f65f0790c5007404fae575f1d85762aefaae15ff0d802001b",
+    "results/lqr_contact_forecast_20261125/videos/render_contact_forecasts.py": "95d7f4ac9271916d6e33b403bde369737fdbbd470f7d71c8d6b0ce997a6ec3aa",
+    "results/terrain_memory_20261126/protocol.json": "ce2612430792e759bd92b6e7a822633f317fca06e18734f3da6d5a4079c5e1db",
+    "results/terrain_memory_20261126/protocol_clarifications.json": "be85fecbcfe205554eaca8851b83ecb9e515bc4048efc2418a0715f6eeb218ce",
+    "results/terrain_memory_20261126/campaign/analyze_stage01/artifact_manifest.json": "99108b67852d2c55f06ea56bda839458cd42637e31a9e6bd40c08d853b80e5f4",
+    "results/terrain_memory_20261126/campaign/analyze_stage01/report.json": "68e015e1ae4a964e629d6fa38b1fa400ec938b8f2653708d7b5214fb1ac28103",
+    "results/terrain_memory_20261126/campaign/analyze_stage01/predictions.json": "bd4408d94eac898b4738c880000aea3da6e4715dc587da6d378edb04feaadb44",
+    "results/terrain_memory_20261126/campaign/analyze_stage01/anchor_records.json": "80310cf37fb1c8c5791dc8eeb78f4358e752c88f252bb86d137a37a9ffcf8dda",
+    "results/terrain_memory_20261126/campaign/analyze_stage01/memory_snapshots.npz": "dd9eb19a2d0e70658b2bf554803c5c7cd7c109bb0ce9bb7be69bd371dfb3399f",
+    "results/terrain_memory_20261126/campaign/depth_stage01/depth_batches.npz": "a5d906ebba9dc8c32b66af528f9dbf68e0ae20c8cb0cd91e5faa565df727535c",
+    "results/terrain_memory_20261126/campaign/depth_stage01/report.json": "4c731c476129ba09eebb915f0a5d1a46f583c4e44d57bbaaa004cc19d4b8ce95",
+    "results/terrain_memory_20261126/campaign/depth_stage01/scene_metadata.json": "4ae1659eabd56517c0c9f51bb7712a9d94fcc48c3e4522200510ecbc2f0ddce1",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/precision.npz": "f6982688dcc4fed3ee89c4341389fcecaa8a12ed8687ec6809f3f4c2cd9b31c6",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/rollout.npz": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/summary.json": "0fcd9de44e03e54ff7f4cec8361cc9f637b1c18be330696bb655ae4599d60899",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/provenance.json": "4ca53165a2d2e3f712dfb97d69ba716590bbd6c343397ac1b18de3db5053d371",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/terrain.json": "b11e232f3f491c276f98ddbf639efef735accbb8806084f7260398155fad6a8c",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/source_snapshot/config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e"
+  }
+}

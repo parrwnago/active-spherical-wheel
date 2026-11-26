@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "checks": [
+    "Identity and signed-zero bit preservation when native target is inside speed/slew box",
+    "Variable-step persistent speed/slew bounds under extreme targets and reversals",
+    "Clock/idempotence/rejection/reset/deepcopy and returned-state isolation",
+    "Feedback hook mutates only joint refs; covers zero-motion deceleration, reset and read-only rejection",
+    "All8801 saved ORIGINAL native referenceinputs yield finite speed/slew-bounded filter output",
+    "Saved31.650 singular case bounded with explicit increased rolling residual; wellconditioned feasible local case unchanged",
+    "Same-state feedback reference delta computed algebraically; no controller execution or feasibility claim"
+  ],
+  "contract_group_count": 7,
+  "source_hashes_unchanged_after": true,
+  "sources": [
+    {
+      "origin": "results/allocation_handoff_isolation_20261126/reference_candidate/verify_reference_guard.py",
+      "snapshot": "source_snapshot/results/allocation_handoff_isolation_20261126/reference_candidate/verify_reference_guard.py",
+      "sha256": "8e28902716f4db702116c5f231148b742e5b6928702fae59a772de1c50680fa2"
+    },
+    {
+      "origin": "results/allocation_handoff_isolation_20261126/reference_candidate/joint_reference_guard.py",
+      "snapshot": "source_snapshot/results/allocation_handoff_isolation_20261126/reference_candidate/joint_reference_guard.py",
+      "sha256": "80c01ce649ce507dde6e96950fbfeb8b9b7de269a5d51c8980529d5970d5a2a4"
+    },
+    {
+      "origin": "src/spherical_wheel/rolling_allocation.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/rolling_allocation.py",
+      "sha256": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092"
+    },
+    {
+      "origin": "src/spherical_wheel/synchronization.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/synchronization.py",
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_control.py",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766"
+    },
+    {
+      "origin": "ITERATION_LOG.md",
+      "snapshot": "source_snapshot/ITERATION_LOG.md",
+      "sha256": "1473d2c4f24dd9522fa194d1b0c546bac48ac9752aecb78d6783af66fd64d0f7"
+    }
+  ],
+  "input_sha256": {
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap030/precision.npz": "dff68cf48f5752d12ee2f377784f96953963f28ee14b4f87a5b19bbdd3ac1b94",
+    "results/belt_handoff_event_20261126/sync_audit/stage05_rolling_geometry/report.json": "20d548b28a70ae717426894ef3fa90d51ea170e284925d9fefeb4fd224ffbae7"
+  },
+  "pure_bound_check": {
+    "max_speed_rad_s": 20.0,
+    "max_acceleration_rad_s2": 100.0000000000003
+  },
+  "saved_native_input_filter": {
+    "samples": 8801,
+    "modified_samples": 419,
+    "first_modified_time_s": 6.699999999999879,
+    "max_native_reference_rad_s": 1760.5250547052035,
+    "max_guarded_reference_rad_s": 10.01956821887831,
+    "max_guarded_reference_acceleration_rad_s2": 100.00000000000009
+  },
+  "scope": "Seven distinct pure/saved-input contractgroups, not repo pytest counts or robottrials. No candidateclosedloopoutcome or integration validation claimed."
+}

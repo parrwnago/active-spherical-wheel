@@ -1,0 +1,45 @@
+{
+  "scope": "DiagnosticAPIimplementationvalidation only; no Gazebo campaign execution. Existingcontroller/model/seed sources untouched.",
+  "test_runs": [
+    {
+      "environment": ".venv",
+      "checks": 45,
+      "xml_attributes": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "45",
+        "time": "9.305",
+        "timestamp": "2026-11-25T21:22:45.211984-05:00",
+        "hostname": "PARRA-Legion"
+      },
+      "command": "pytest -q tests/test_contact_prediction.py tests/test_predictive_seed.py tests/test_predictive_model.py",
+      "overlap": "same45selectedchecks;do_not_add_counts"
+    },
+    {
+      "environment": "Gazebo",
+      "checks": 45,
+      "xml_attributes": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "45",
+        "time": "9.229",
+        "timestamp": "2026-11-25T21:23:26.105534-05:00",
+        "hostname": "PARRA-Legion"
+      },
+      "command": "pytest -q tests/test_contact_prediction.py tests/test_predictive_seed.py tests/test_predictive_model.py",
+      "overlap": "same45selectedchecks;do_not_add_counts"
+    }
+  ],
+  "unique_selected_checks": 45,
+  "new_forecast_checks": 14,
+  "existing_seed_checks": 15,
+  "existing_model_checks": 16,
+  "exact_tested_source_snapshot": "source_snapshot",
+  "source_hashes_verified": 8,
+  "git_diff_check_passed": true,
+  "measurement_boundary_tests": "Nativefeedback cannot readsolvedcontacts/liveground; onlyprivatepredictorforcefunctionallowed. Same5msfinecommands andterminalstates asnativehelper. Sourcehistoryisolationandfaultpathcovered."
+}

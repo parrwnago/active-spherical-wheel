@@ -1,0 +1,71 @@
+"""Freeze I32/I33 compact evidence after completed runs/media; no physics or tests."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+
+FAMILY=Path(__file__).resolve().parent
+REPO=FAMILY.parents[1]
+DEST=REPO/'docs/iterations/2026-11-25/feedback-recovery/evidence'
+
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+
+expected=[FAMILY/'runs/slope'/v for v in ('native','mpc')]
+expected += [FAMILY/'extended_original_baselines/runs'/v/'baseline' for v in ('world_x','world_y')]
+for folder in expected:
+    for name in ('summary.json','precision.npz','rollout.npz','plans.json','provenance.json'):
+        assert (folder/name).is_file(),folder/name
+assert (FAMILY/'analysis/report.json').is_file()
+assert (FAMILY/'videos/video_metadata.json').is_file()
+if DEST.exists():raise FileExistsError('Preserve prior compact pack; choose a fresh archive stage')
+DEST.mkdir(parents=True)
+artifacts=[]
+
+def copy(source,relative,stage):
+    target=DEST/relative
+    target.parent.mkdir(parents=True,exist_ok=True)
+    shutil.copyfile(source,target)
+    assert sha(target)==sha(source)
+    artifacts.append({'snapshot':str(relative),'origin':str(source.relative_to(REPO)),
+        'bytes':source.stat().st_size,'sha256':sha(source),'stage':stage})
+
+inventory=[]
+allowed={'.json','.log','.xml','.csv','.png','.jpg','.jpeg','.pdf','.yaml','.yml','.md','.txt','.py','.toml','.sdf'}
+for path in sorted(FAMILY.rglob('*')):
+    if not path.is_file():continue
+    rel=path.relative_to(FAMILY)
+    if '__pycache__' in rel.parts or path.suffix=='.pyc':continue
+    inventory.append({'path':str(path.relative_to(REPO)),'bytes':path.stat().st_size,'sha256':sha(path)})
+    generated=any(part in {'_workspaces','meshes','_render_scene'} for part in rel.parts)
+    if generated or path.name=='plans.json' or path.suffix not in allowed or path.stat().st_size>4*1024*1024:continue
+    target=rel.with_suffix(rel.suffix+'.txt') if path.suffix=='.py' else rel
+    stage='exact_per_run_source_snapshot' if 'source_snapshot' in rel.parts else 'recorded_I32_artifact__see_provenance_for_stage'
+    copy(path,target,stage)
+launch=[]
+for folder in expected:
+    prov=json.loads((folder/'provenance.json').read_text())
+    for rel,digest in prov['source_sha256'].items():
+        path=folder/'source_snapshot'/rel
+        assert sha(path)==digest,path
+        launch.append({'run':str(folder.relative_to(REPO)),'path':rel,'sha256':digest})
+current=['scripts/run-feedback-recovery.py','scripts/run-mpc-comparison.py',
+         'src/spherical_wheel/offroad_control.py','src/spherical_wheel/predictive_control.py',
+         'src/spherical_wheel/predictive_model.py','tests/test_feedback_recovery_metrics.py']
+for rel in current:copy(REPO/rel,Path('source/current_after_runs')/(rel+'.txt'),'current_source_after_runs__launch_snapshots_remain_separate')
+copy(REPO/'results/mpc_equilibrium_20261125/independent_search/report.json',
+     Path('inputs/independent_nearby_case.json'),'exact_prior_I31_input_case__not_a_new_execution')
+for name,report in [('raw_inventory.json',inventory),('verified_launch_references.json',launch)]:
+    p=DEST/name;p.write_text(json.dumps(report,indent=2)+'\n')
+    artifacts.append({'snapshot':name,'origin':'generated_by_archive_evidence.py','bytes':p.stat().st_size,'sha256':sha(p),'stage':'archival_inventory_no_new_experiment'})
+protocol=json.loads((FAMILY/'protocol.json').read_text())
+for rel,digest in protocol['older_pack_hashes'].items():assert sha(REPO/rel)==digest,rel
+manifest={'scope':'Compact I32/I33 evidence copy/hash verification only; no tests or physics during collection.',
+    'files':artifacts,'artifact_count_excluding_manifest':len(artifacts),
+    'artifact_bytes_excluding_manifest':sum(r['bytes'] for r in artifacts),
+    'new_physics':'2 matched held-drift recovery controller cases plus2 extended original LQR trajectory cases; older raw baselines reused explicitly.',
+    'test_counts':'3 focused recovery metric tests; prior106 selected integration tests are earlier overlapping work, not rerun or added.',
+    'media':'Saved Gazebo state reconstructions only, no new physics during rendering.',
+    'raw_inventory_count':len(inventory),'verified_launch_source_references':len(launch),
+    'old_pack_hashes_verified_unchanged':protocol['older_pack_hashes']}
+(DEST/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+print(json.dumps({k:v for k,v in manifest.items() if k!='files'},indent=2))

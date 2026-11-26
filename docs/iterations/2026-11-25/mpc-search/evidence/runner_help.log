@@ -1,0 +1,22 @@
+usage: run-feedback-recovery.py [-h] --output OUTPUT --variant {native,mpc}
+                                [--terrain {slope,flat}] [--drift-s DRIFT_S]
+                                [--recovery-s RECOVERY_S]
+                                [--native-hold-s NATIVE_HOLD_S]
+                                [--refinement-steps REFINEMENT_STEPS]
+                                [--native-rollout-seed]
+
+Fixed-input drift followed by unchanged feedback recovery in Gazebo. The first
+.4s reproduces the nearby-pose I31 hold fixture. The native observer runs as a
+shadow throughout; feedback starts without resetting state or the observer.
+Constant goal XY is retained from the beginning of the run.
+
+options:
+  -h, --help            show this help message and exit
+  --output OUTPUT
+  --variant {native,mpc}
+  --terrain {slope,flat}
+  --drift-s DRIFT_S
+  --recovery-s RECOVERY_S
+  --native-hold-s NATIVE_HOLD_S
+  --refinement-steps REFINEMENT_STEPS
+  --native-rollout-seed

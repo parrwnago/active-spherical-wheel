@@ -1,0 +1,86 @@
+"""Read saved I32/I34 traces to distinguish approaching from settled; no physics."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+FAMILY = Path(__file__).resolve().parent
+ROOT = FAMILY.parents[1]
+DEST = ROOT / 'docs/iterations/2026-11-25/mpc-return-review/evidence'
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+assert not (FAMILY / 'report.json').exists(), 'Preserve previous audit stage'
+assert not DEST.exists(), 'Preserve previous durable evidence stage'
+source_sha = sha(Path(__file__))
+old_packs = json.loads((ROOT / 'results/mpc_horizon_20261125/protocol.json').read_text())['old_pack_hashes']
+for path, expected in old_packs.items():
+    assert sha(ROOT / path) == expected
+reference = json.loads((ROOT / 'results/mpc_search_20261125/analysis/report.json').read_text())
+expected_inputs = {item['path']: item['sha256'] for item in reference['inputs']}
+rows = []
+fig, ax = plt.subplots(figsize=(9, 4.8))
+for label, rel in (
+    ('Original MPC', 'results/feedback_recovery_20261125/runs/slope/mpc/precision.npz'),
+    ('Predicted-native-seeded MPC', 'results/mpc_search_20261125/runs/slope/mpc/precision.npz')):
+    path = ROOT / rel
+    assert sha(path) == expected_inputs[rel]
+    with np.load(path) as data:
+        t = data['time_s']
+        error = data['exact_qpos'][:, :2] - data['recovery_goal_xy']
+        velocity = data['exact_qvel'][:, :2]
+    distance = np.linalg.norm(error, axis=1) * 1000
+    radial = np.einsum('ij,ij->i', error, velocity) / np.linalg.norm(error, axis=1) * 1000
+    feedback = np.flatnonzero(t >= .4 - 1e-9)
+    peak = feedback[np.argmax(distance[feedback])]
+    tail = t >= t[-1] - 1 - 1e-9
+    rows.append({'case': label, 'source': rel, 'source_sha256': sha(path),
+        'peak_goal_error_mm': float(distance[peak]), 'peak_time_s': float(t[peak]),
+        'distance_monotonically_decreases_after_peak': bool(np.all(np.diff(distance[peak:]) < 0)),
+        'final_time_s': float(t[-1]), 'feedback_duration_s': float(t[-1] - .4),
+        'final1s_start_time_s': float(t[tail][0]), 'final1s_samples': int(tail.sum()),
+        'final1s_start_error_mm': float(distance[tail][0]),
+        'final_goal_error_mm': float(distance[-1]),
+        'final1s_error_slope_mm_s': float(np.polyfit(t[tail], distance[tail], 1)[0]),
+        'final1s_all_radial_samples_inward': bool(np.all(radial[tail] < 0)),
+        'final_radial_velocity_mm_s': float(radial[-1]),
+        'final_xy_speed_mm_s': float(np.linalg.norm(velocity[-1]) * 1000),
+        'settled_return_gate_within_recorded_window': False})
+    ax.plot(t, distance, label=label, lw=2)
+    ax.scatter([t[peak], t[-1]], [distance[peak], distance[-1]], s=22)
+ax.axhline(5, color='grey', ls='--', lw=1, label='5 mm goal-radius criterion')
+ax.axvline(.4, color='grey', ls=':', lw=1)
+ax.set(xlabel='Gazebo simulation time (s)', ylabel='Distance to retained goal (mm)',
+       title='Both recorded MPC runs are returning when the video ends\n8 s of feedback observed; eventual settling remains untested',
+       xlim=(0, 8.4), ylim=(0, 100))
+ax.legend(loc='upper left', fontsize=9)
+ax.grid(alpha=.2)
+fig.tight_layout()
+fig.savefig(FAMILY / 'recorded_return.png', dpi=150)
+plt.close(fig)
+report = {'iteration': 'I-37', 'scope': 'Saved-data reduction only; zero new Gazebo executions or controller changes.',
+    'video': 'results/mpc_search_20261125/videos/mpc_original_vs_predicted_native_seed.mp4',
+    'rows': rows, 'audit_source_sha256': source_sha,
+    'interpretation': 'Both live traces show sustained inward return, not settled recovery within the observed window. No proof of eventual settling or failure.',
+    'proposal': 'Extend the unchanged matched live runs before rejecting recovery on the basis of the 8 s observation window; no extension has been launched.',
+    'old_pack_hashes_verified_unchanged': old_packs}
+(FAMILY / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
+DEST.mkdir(parents=True)
+files = []
+for name in ('report.json', 'recorded_return.png', 'audit_saved_return.py'):
+    source = FAMILY / name
+    target = DEST / (name + '.txt' if source.suffix == '.py' else name)
+    shutil.copyfile(source, target)
+    assert sha(source) == sha(target)
+    files.append({'snapshot': target.name, 'origin': str(source.relative_to(ROOT)),
+                  'sha256': sha(source), 'bytes': source.stat().st_size})
+(DEST / 'manifest.json').write_text(json.dumps({'scope': report['scope'], 'files': files}, indent=2) + '\n')
+print(json.dumps(report, indent=2))

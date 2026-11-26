@@ -1,0 +1,63 @@
+"""Reproduction helper saved after the equivalent inline reduced-state audit.
+
+This is an offline diagnostic only, not an adopted controller/model change.
+Dropping normal compression coordinates did not remove derivative sensitivity.
+"""
+from pathlib import Path
+import hashlib
+import json
+
+import numpy as np
+
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+from spherical_wheel.predictive_control import ROBOT_STATE_SCALES
+
+
+HERE = Path(__file__).resolve().parent
+
+
+def main():
+    folder = HERE/'runs/world_x/mpc'
+    plans = json.loads((folder/'plans.json').read_text())
+    with np.load(folder/'precision.npz') as data:
+        exact = {key: data[key] for key in data}
+    with np.load(folder/'rollout.npz') as data:
+        log = {key: data[key] for key in data}
+    mirror = StateMirror(model_dir=HERE/'calibration_audit/reduced_mirror')
+    predictor = EstimatedPlanePredictor(mirror)
+    keep = np.array([index for index in range(18) if index not in (2, 11)])
+    scales = np.array(ROBOT_STATE_SCALES)[keep]
+    rows = []
+    for at in (1.66, 1.7, 2., 3.):
+        plan = min(plans, key=lambda row: abs(row['time_s']-at))
+        index = int(np.argmin(abs(exact['time_s']-plan['time_s'])))
+        q, v, command = np.array(plan['qpos']), np.array(plan['qvel']), exact['exact_applied'][index-1]
+        mirror.set_state(q, v, plan['time_s'], command)
+        predictor.update(q, v, plan['normal'], plan['point_m'], plan['load_N'],
+                         friction=float(log['estimated_friction'][index]), command=command)
+        transform = np.eye(18)
+        transform[2, :3], transform[11, 9:12] = plan['normal'], plan['normal']
+        inverse = np.linalg.inv(transform)
+        entries, first = [], None
+        for epsilon in (1e-5, 5e-6, 1e-6):
+            A, _, _ = predictor.linearize(q, v, command, .02, epsilon)
+            transformed = transform@A@inverse
+            reduced = transformed[np.ix_(keep, keep)]
+            normalized = reduced*scales[None, :]/scales[:, None]
+            if first is None:
+                first = normalized.copy()
+            entries.append({'epsilon': epsilon,
+                'reduced_spectral_radius': float(np.max(abs(np.linalg.eigvals(reduced)))),
+                'reduced_A_relative_change': float(np.linalg.norm(normalized-first)/np.linalg.norm(first)),
+                'log10_max_abs_reduced_A_power20': float(np.log10(np.max(abs(np.linalg.matrix_power(normalized, 20)))))})
+        rows.append({'time_s': plan['time_s'], 'entries': entries})
+    model_source = HERE.parents[2]/'src/spherical_wheel/predictive_model.py'
+    report = {'scope': 'Read-only diagnostic of dropping fast normal-compression and normal-velocity coordinates after estimated-normal transform. Not a controller or validated model replacement.',
+              'rows': rows, 'model_sha256': hashlib.sha256(model_source.read_bytes()).hexdigest()}
+    (HERE/'calibration_audit/reduced_derivatives.json').write_text(json.dumps(report, indent=2)+'\n')
+    print(json.dumps(report, indent=2))
+
+
+if __name__ == '__main__':
+    main()

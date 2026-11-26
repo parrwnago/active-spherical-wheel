@@ -1,0 +1,32 @@
+"""Reproduce the quick diagnostic; run from repository root. Writes a NEW report."""
+import json
+from pathlib import Path
+import numpy as np
+from scipy.optimize import least_squares
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+folder = Path('results/mpc_balance_20261125/trajectory/runs/world_y/mpc')
+out = Path('results/mpc_equilibrium_20261125/quick_fixed_goal')
+p = min(json.loads((folder/'plans.json').read_text()), key=lambda d:abs(d['time_s']-2.))
+q,v = np.array(p['qpos']),np.array(p['qvel'])
+pr,rr = np.load(folder/'precision.npz'),np.load(folder/'rollout.npz')
+i = np.argmin(abs(pr['time_s']-p['time_s'])); u=pr['exact_applied'][i-1]
+mirror=StateMirror(model_dir=out/'reproduction_model');mirror.set_state(q,v,p['time_s'],u)
+pred=EstimatedPlanePredictor(mirror)
+pred.update(q,v,p['normal'],p['point_m'],p['load_N'],friction=float(rr['estimated_friction'][i]),command=u)
+qr,vr=pred.perturb(q,v,p['target_states'][-1]);vr[:]=0
+
+def residual(z):
+    pred._assign(qr,vr,z*mirror.bounds)
+    return pred.data.qacc.copy()
+
+fit=least_squares(residual,np.zeros(5),bounds=(-1,1),max_nfev=100,ftol=1e-10,xtol=1e-10,gtol=1e-10)
+u_fit=fit.x*mirror.bounds
+qh,vh=pred.transition(qr,vr,u_fit,.2)
+dx=pred.tangent(qr,vr,qh,vh)
+report={'holding_input':u_fit.tolist(),'acceleration':residual(fit.x).tolist(),
+        'xy_drift_mm':float(np.linalg.norm(dx[:2])*1e3),
+        'attitude_drift_deg':float(np.linalg.norm(dx[3:6])*180/np.pi),
+        'source_note':'Helper saved after original equivalent inline diagnostic; not original launch source.'}
+(out/'reproduced_report.json').write_text(json.dumps(report,indent=2)+'\n')
+print(json.dumps(report,indent=2))

@@ -1,0 +1,88 @@
+{
+  "iteration": "I-34",
+  "status": "Declared before new seed/search/contact calculations and closed-loop runs. User authorized MPC drift investigation; no weight/estimator tuning.",
+  "declared_utc": "2026-11-25T23:57:54.045982+00:00",
+  "frozen_source": "results/feedback_recovery_20261125/runs/slope/mpc",
+  "anchors_s": [
+    0.4,
+    2.0
+  ],
+  "fixed": {
+    "horizon_steps": 20,
+    "step_s": 0.02,
+    "weights": "exact existing AffineMPCSettings",
+    "bounds": [
+      1.5,
+      0.6,
+      0.6,
+      0.3,
+      0.3
+    ],
+    "model": "sameestimatedplanepredictor/currentobserver; no liveGazebocontacts",
+    "jacobian_stride": 5,
+    "load_gate_fraction": 0.1,
+    "reference": "same fixedXY andnative slopelean",
+    "current_case": "I32same.4sfixedtorquedriftthen8sfeedback,slope10degmesh.04m,designpi/2"
+  },
+  "frozen_matrix": {
+    "seed_banks": [
+      "originalheld/shiftedplusinitialshaftpulsebank",
+      "samebankpluspracticalestimated-state-native-rolloutseed"
+    ],
+    "refinements": [
+      1,
+      2,
+      5
+    ],
+    "nonlinear_scoring": "Sameexactcost,line-search1/.5/.25, retainbestboundedfinitecandidate; saveall trials andpredictedvsactualcostchanges."
+  },
+  "practical_seed": "Clonecurrentcontact-freecontroller/mirror/history; runprivatepredictednativefeedbackat5mswithfuturemeasurementspredictedfrommodel, average4commandsfor20mscoarseseed thenrescorecoarse. No actualfuturedata/terrain/contacttruth. Passcurrentnativecommandafteritsoneobserverupdate toavoidduplicatetime.",
+  "contact_audit": "Traceobserverwrench->locatorpoint/patch/load->filterednormal/friction->estimatedprivateplane. Recordfuturepredictedpatch/count/load/contactloss fororiginalselectedplans at.4,2; distinguishpredictiononlocalplane fromunknownfutureterrain/multiplaneposterior. Privatecontactsneverbecomeactualobservations.",
+  "conditional_derivative_check": "If refinement has poor actualNLcostreduction, check directional derivatives and fullstride1 versusstride5 before weights. Preservefailed trials.",
+  "live_plan": {
+    "control": "20msheldnative withsamecontinuous5msobserver/sync tocheckcadence; original5msnative/oldMPCtracesexplicitlyreused.",
+    "primary_candidate": "native-rolloutseed+ONErefinement, isolatingseedchange; launchonlyaftertests andfrozeninitialcost improvement.",
+    "optional_candidate": "If primaryfailssettling and2refinements improvefrozencost>=10% versus1atBOTHanchors, runnative-seed+2 asoneadditionalcontrolledcase. Five-refinement comparison is initiallyofflineonly.",
+    "fixed": "same8.4sfixture/goals/state/estimator/history, existing8srecoverygatesfinal1s5mm/5mmps/2deg,no defaults changed"
+  },
+  "limits": [
+    "No promisedMPCsuperiority.",
+    "A bettermodeledcandidate doesnotguaranteeactualrecovery.",
+    "Searchaccuracy/contactnonsmoothness/cadence remainseparatehypotheses.",
+    "No particlefilter, newterrainpreview, newcontactestimatorornewphysicalparameters."
+  ],
+  "pre_change_sources": [
+    {
+      "path": "scripts/run-mpc-comparison.py",
+      "sha256": "2aba2e3fc3dcb901fa6414e06123e65a9065d4a8ff491c2b9f6cb5f256a4a896"
+    },
+    {
+      "path": "scripts/run-feedback-recovery.py",
+      "sha256": "26479b3baf434e8f04e6378b9902624f23aee1296f3d896f44cb648313559d1d"
+    },
+    {
+      "path": "src/spherical_wheel/predictive_control.py",
+      "sha256": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f"
+    },
+    {
+      "path": "src/spherical_wheel/predictive_model.py",
+      "sha256": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473"
+    },
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "sha256": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3"
+    },
+    {
+      "path": "src/spherical_wheel/contact_sensing.py",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833"
+    },
+    {
+      "path": "config/model.yaml",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e"
+    }
+  ],
+  "old_pack_hashes": {
+    "results/feedback_recovery_20261125/presentation-pack.zip": "ff161337e3dc5c4f5650d6f403d45c4eba62f3ba659e71ebaa875a140c3f8934",
+    "results/mpc_equilibrium_20261125/presentation-pack.zip": "b00f43031618189bd4cfe80d88378c6582bb7daf59ed3624a56389d6ce8e0a19"
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "iteration": "I-44",
+  "date": "2026-11-26",
+  "status": "registered_before_sensor_or_mapping_campaign",
+  "question": "Does causal memory of four depth views improve available terrain geometry over the same latest four-camera batch while native LQR remains unchanged?",
+  "scope": "Offline ideal visibility-limited range sensing and geometry preview on one reused44s Gazebo/DART Mars figure-eight. No new physics runs, controller changes, SLAM or hardware claims.",
+  "input_run": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090",
+  "precision": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/precision.npz",
+  "rollout": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/rollout.npz",
+  "provenance": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/provenance.json",
+  "inputs_sha256": {
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/precision.npz": "f6982688dcc4fed3ee89c4341389fcecaa8a12ed8687ec6809f3f4c2cd9b31c6",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/rollout.npz": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+    "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/provenance.json": "4ca53165a2d2e3f712dfb97d69ba716590bbd6c343397ac1b18de3db5053d371"
+  },
+  "body_state": "Exact simulated pose and velocity at acquisition/anchor; not implemented state estimation.",
+  "cameras": {
+    "count": 4,
+    "azimuths_deg": [
+      0,
+      90,
+      180,
+      270
+    ],
+    "origins_body_m": [
+      [
+        0.105,
+        0,
+        0.235
+      ],
+      [
+        0,
+        0.135,
+        0.235
+      ],
+      [
+        -0.105,
+        0,
+        0.235
+      ],
+      [
+        0,
+        -0.135,
+        0.235
+      ]
+    ],
+    "outward_down_pitch_deg": 45.0,
+    "width": 64,
+    "height": 48,
+    "horizontal_fov_deg": 100.0,
+    "square_pixels": true,
+    "principal_point_px": [
+      31.5,
+      23.5
+    ],
+    "euclidean_range_m": [
+      0.08,
+      2.0
+    ],
+    "depth_convention": "Axial opticalZ; opticalxright,ydown,zforward",
+    "capture_hz": 20.0,
+    "latency_s": 0.05,
+    "noise": "None; ideal range, exact calibration and exact pose",
+    "self_occlusion": "First robot hit is masked invalid; never see through robot. Visible CAD/fork/belt geometry included and documented by adapter."
+  },
+  "scene_boundary": "Only private adapter and evaluator may access exact collisionDEM triangles and lava/rock feature meshes. Mapper receives depth/calibration/poses/timestamps only. Static crop includes every triangle AABB intersecting trace footprint expanded by range+mount margin. Fulltrace footprint only allocates simulator assets, never supplies map observations.",
+  "scene_backend": "Native MuJoCo triangle raycasts, contingent on pre-campaign concave-mesh first-hit fixture; no dynamics integrated. Preserve fixture failures and exact assets.",
+  "map": {
+    "cell_size_m": 0.01,
+    "normal_radius_m": 0.04,
+    "min_support_cells": 6,
+    "max_plane_rms_m": 0.003,
+    "min_xy_spread_m": 0.003,
+    "max_slope_deg": 60.0,
+    "max_cell_height_spread_m": 0.02,
+    "max_age_s": null,
+    "unknown_rule": "Query cell must be observed and query inside local support convex hull; otherwise abstain. No unknown flat fill.",
+    "static_world_assumption": true
+  },
+  "anchors": {
+    "uniform_start_s": 0.4,
+    "uniform_stop_s": 43.6,
+    "uniform_step_s": 0.4,
+    "dense_start_s": 6.7,
+    "dense_stop_s": 6.9,
+    "dense_step_s": 0.02,
+    "snap": "Nearest saved5ms index; deduplicate index and retain all strata",
+    "expected_unique": 119
+  },
+  "horizons_s": [
+    0.05,
+    0.1,
+    0.2
+  ],
+  "motion": "Same anchor-pose/worldtranslation/bodyangularvelocity/jointrate constant-velocity integration for all arms; future executed motion never passed to preview.",
+  "arms": [
+    "observer_plane",
+    "latest_four",
+    "memory_four"
+  ],
+  "contact_geometry": {
+    "band_tolerance_m": 0.001,
+    "max_geometric_gap_m": 0.005,
+    "geometry": "Known radius, cap opening and equatorial gap from model config. Geometry candidates only; retain ties and ideal rim candidates. Not force/loadshare prediction or exact segmented rim collision."
+  },
+  "evaluation": {
+    "primary_queries": "At same CV-predicted centreXY for every arm, score surface availability; conditional verticalheight and geometric-face normal error against exact scene downwardray. Candidate contact points have a separate evaluation.",
+    "actual_future_contacts": "Saved future loaded-patch set and equivalent point used only by evaluator; nearest predictedcandidate distance and patchsetrecall also include motion-model error.",
+    "load_threshold": "max(.05N,.05*modelweight)",
+    "normal_warning": "Exact collisionface geometricnormal proxy, not forceweighted normal. Invalid/multifacet edge cases flagged or excluded with counts.",
+    "timing": "First observed relevant surface cell and available observation lead; geometric incomingpatch warnings are proxies, not force-transfer prediction.",
+    "strata": "Report uniform and dense separately; overlap is not an additional independent anchor."
+  },
+  "predeclared_gates": {
+    "integrity": "No future frames, capture-time transforms, no terrain/contacts supplied to mapper, sameCV acrossarms, input/source hashes unchanged, visibility fixtures and meaningful tests pass.",
+    "memory_utility_uniform": {
+      "coverage_min": 0.7,
+      "coverage_gain_vs_latest_min": 0.1,
+      "covered_height_rmse_m_max": 0.003,
+      "covered_normal_p90_deg_max": 10.0
+    },
+    "interpretation": "All utility criteria required to support further sensorfrontend work. Failure remains an informative retained result. Passing does not authorize or establish live control improvement. No outcome-based parameter retuning."
+  },
+  "further_cases": "Controlled planar-depth/occluding-object/robot-selfmask/cellunknown/multisurface fixtures; no broad closed-loop trajectorycampaign this iteration.",
+  "runtime": "Measure render/map/query walltimes as offline runtime only; no realtimeclaim."
+}

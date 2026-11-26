@@ -1,0 +1,162 @@
+{
+  "file": "/home/parrwnago/active-spherical-wheel/results/mpc_balance_20261125/trajectory/videos/world_y_lqr_vs_trajectory_mpc.mp4",
+  "sha256": "407204d8a92127399784573300b7842355163a66c9c64ea2f58d5cc4e2242de8",
+  "size_bytes": 1765492,
+  "fps": 20.0,
+  "frames": 193,
+  "dimensions": [
+    1920,
+    720
+  ],
+  "video_duration_s": 9.65,
+  "sim_interval_s": [
+    0.6,
+    5.4
+  ],
+  "playback_speed": 0.5,
+  "final_frame_decoded": true,
+  "renderer_sha256": "54d8a62ef1196d3aa5144174cb0831d5db3b95ab5a6c06fb1eafdd5d0979634d",
+  "renderer_source_snapshot": "/home/parrwnago/active-spherical-wheel/results/mpc_balance_20261125/trajectory/videos/source_snapshot/render_mpc_comparison_54d8a62ef119.py",
+  "cases": [
+    {
+      "variant": "baseline",
+      "directory": "/home/parrwnago/active-spherical-wheel/results/mpc_balance_20261125/initial/runs/world_y/baseline",
+      "baseline_reused": true,
+      "artifact_sha256": {
+        "rollout.npz": "64bad91bc89e175084b0f8dc4bffd82667de57931198f15ffb9401f95b74791a",
+        "plans.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "summary.json": "46dba4e2c7654d39ab0c9e8c3e03fa22b91a7338756e1680fab923199c5b10b9",
+        "provenance.json": "d29c293b89b9f1b5f6b402abf46874dfea0c2516c860f941e0d436b7242b40a5"
+      },
+      "completed": true,
+      "failure": null,
+      "last_actual_state_s": 5.400000095367432,
+      "experiment": {
+        "variant": "baseline",
+        "motion": "world_y",
+        "activation": {
+          "time_s": 0.8000000000000006,
+          "original_goal_origin": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286
+          ],
+          "qpos": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286,
+            0.11816582981754487,
+            0.9963690145247048,
+            -0.08513973318012588,
+            1.751028293096126e-05,
+            -0.00011145616009128502,
+            1.572013301305727,
+            0.0036110177315199516,
+            -0.004654148953402597
+          ],
+          "qvel": [
+            7.660264340170469e-05,
+            0.000346100778245253,
+            6.092080991331252e-05,
+            -0.0029255423011177797,
+            -0.00037539013401160484,
+            -0.000645960933659438,
+            0.0026141880732475213,
+            0.0036976024769256573,
+            -0.0028258440855612565
+          ],
+          "physical_state_not_reset": true,
+          "live_estimator_preserved": true
+        },
+        "plans": 0,
+        "successful_plans": 0,
+        "fallback_active_samples": 0,
+        "guarded_controller_calls": 1081,
+        "original_goal_error_final_mm": 98.82571930310188,
+        "original_goal_progress_final_mm": -74.46692210339017,
+        "active_path_error_rms_mm": 235.6309365968619,
+        "active_peak_reference_lean_deg": 9.362855753562268,
+        "active_lean_error_integral_deg_s": 13.574734160812277,
+        "active_input_limit_occupancy_fraction": 0.17155266015200868,
+        "mpc_update_time_median_s": null,
+        "scope": "Local affine constrained MPC with estimated private-plane dynamics. Not nonlinear configuration planning, hard-tilt safety, or real-time qualification.",
+        "diagnostic_components": "Native LQR/FF/sync fields are shadows in MPC mode; mpc_command_delta added to their native requested sum yields actual final input."
+      }
+    },
+    {
+      "variant": "mpc",
+      "directory": "/home/parrwnago/active-spherical-wheel/results/mpc_balance_20261125/trajectory/runs/world_y/mpc",
+      "baseline_reused": false,
+      "artifact_sha256": {
+        "rollout.npz": "ddb6cbdab35c211324a55e9542201358343ab56c34ae75f863e48dc41f13806c",
+        "plans.json": "81b3a19026f30eb6ae86e08a20dcd738733fd0598a2254dec748c56706f16e8f",
+        "summary.json": "4719cd5abd14f14c758af8c7bad7419b931d5407a381b90459d761aecd95fcbc",
+        "provenance.json": "b70abfb0730753d7ad2b71b1e86e4d99e702809e18b589839d46141545123ff4"
+      },
+      "completed": true,
+      "failure": null,
+      "last_actual_state_s": 5.400000095367432,
+      "experiment": {
+        "variant": "mpc",
+        "motion": "world_y",
+        "activation": {
+          "time_s": 0.8000000000000006,
+          "original_goal_origin": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286
+          ],
+          "qpos": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286,
+            0.11816582981754487,
+            0.9963690145247048,
+            -0.08513973318012588,
+            1.751028293096126e-05,
+            -0.00011145616009128502,
+            1.572013301305727,
+            0.0036110177315199516,
+            -0.004654148953402597
+          ],
+          "qvel": [
+            7.660264340170469e-05,
+            0.000346100778245253,
+            6.092080991331252e-05,
+            -0.0029255423011177797,
+            -0.00037539013401160484,
+            -0.000645960933659438,
+            0.0026141880732475213,
+            0.0036976024769256573,
+            -0.0028258440855612565
+          ],
+          "physical_state_not_reset": true,
+          "live_estimator_preserved": true
+        },
+        "plans_generated_including_terminal": 231,
+        "accepted_plans": 231,
+        "qp_success_definition": "Affine: solved QP and finite replay. Trajectory: best bounded finite nonlinear sequence among warm/seed/SQP line-search plans; QP counts separately in trials.",
+        "fallback_actuated_active_samples": 0,
+        "guarded_controller_calls": 1081,
+        "original_goal_error_final_mm": 24.973062368519663,
+        "original_goal_progress_final_mm": -8.786919012327504,
+        "active_path_error_rms_mm": 19.63395175511738,
+        "active_peak_reference_lean_deg": 1.7188415796309562,
+        "active_lean_error_integral_deg_s": 0.6000682210659453,
+        "active_input_limit_occupancy_fraction": 0.0,
+        "mpc_update_time_median_s": 1.634273731000576,
+        "scope": "Successive trajectory linearization with nonlinear candidate screening, estimated private-plane dynamics, and sparse Jacobian knots; no hard-tilt or real-time qualification.",
+        "diagnostic_components": "Native LQR/FF/sync fields are shadows in MPC mode; mpc_command_delta added to their native requested sum yields actual final input."
+      },
+      "accepted_nonlinear_plans": 231,
+      "qp_calls": 233,
+      "qp_failed": 0,
+      "selected_source_actuated_samples": {
+        "0": 0,
+        "1": 20,
+        "2": 0,
+        "3": 900
+      }
+    }
+  ],
+  "semantics": "Baseline data are reused initial LQR runs, not new executions. Actual selected source codes:0=LQR fallback,1=accepted warm sequence,2=accepted first seed sequence,3=SQP-refined sequence; held rows retain source, fallback flag is authoritative. Native LQR/FF/sync fields remain shadows outside fallback. Original goal/clock retained.",
+  "count_semantics": "Accepted plan means a bounded finite sequence accepted by nonlinear private-model screening, not a solved QP. QP calls/failures come from plans.trials.solver; generated plans include terminal sample. Selected-source/fallback/occupancy counts exclude the unactuated terminal sample. Occupancy means at least99% of an input bound.",
+  "limits": "Only torque and ideal belt speed commands have hard bounds; no hard lean, rotor-speed or input-slew guarantee. No nonlinear configuration-recovery or real-time qualification.",
+  "rendering": "Saved Gazebo/DART states shown with MuJoCo terrain renderer; no new physics, controller execution or prediction rollout during rendering."
+}

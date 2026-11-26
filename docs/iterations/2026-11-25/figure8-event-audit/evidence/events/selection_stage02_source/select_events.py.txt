@@ -1,0 +1,226 @@
+"""Predeclared I41 saved Mars event/anchor selection; no physics or control."""
+from __future__ import annotations
+
+from datetime import datetime, timezone
+import csv
+import hashlib
+import json
+from pathlib import Path
+import shutil
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.spatial import cKDTree
+
+from spherical_wheel.mobility import MobilityPath
+from spherical_wheel.model import REPO_ROOT
+from event_metrics import (actual_reversal_candidates, arithmetic_checks,
+    component_reversals, first_sustained, local_projection)
+
+SOURCE_DIR = Path(__file__).resolve().parent
+HERE = SOURCE_DIR.parent/'selection_stage02_corrected'
+FAMILY = SOURCE_DIR.parents[1]
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def safe(value):
+    if isinstance(value, np.ndarray): return safe(value.tolist())
+    if isinstance(value, np.generic): return safe(value.item())
+    if isinstance(value, dict): return {str(k): safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)): return [safe(v) for v in value]
+    if isinstance(value, float) and not np.isfinite(value): return None
+    return value
+
+
+def save(path, value):
+    path.write_text(json.dumps(safe(value), indent=2, allow_nan=False)+'\n')
+
+
+def read_npz(path):
+    with np.load(path) as z: return {k: z[k].copy() for k in z.files}
+
+
+def path_from_provenance(provenance):
+    spec = provenance['actual_path']
+    keys = ('kind', 'duration_s', 'radius_m', 'clockwise', 'start_s', 'origin')
+    return MobilityPath(**{k: spec[k] for k in keys})
+
+
+def reduce_geometry(actual, path):
+    t = actual['time_s']; xy = actual['exact_qpos'][:, :2]
+    ref = actual['exact_reference_xy']; velocity = actual['exact_reference_velocity_m_s']
+    acceleration = actual['exact_reference_acceleration_m_s2']
+    speed = np.linalg.norm(velocity, axis=1)
+    valid = speed >= .001
+    tangent = np.full_like(velocity, np.nan); tangent[valid] = velocity[valid]/speed[valid, None]
+    normal = np.column_stack((-tangent[:, 1], tangent[:, 0]))
+    error = xy-ref
+    along = np.einsum('ij,ij->i', error, tangent)
+    lateral = np.einsum('ij,ij->i', error, normal)
+    active_reference = (t >= path.start_s-1e-9) & (t <= path.start_s+path.duration_s+1e-9)
+    rt, rxy = t[active_reference], ref[active_reference]
+    projected_time, projected_point, distance, boundary, endpoint = [], [], [], [], []
+    for now, position in zip(t, xy):
+        p = local_projection(rt, rxy, position, float(now), 2.)
+        projected_time.append(p['closest_time_s']); projected_point.append(p['closest_point_m'])
+        distance.append(p['distance_m']); boundary.append(p['artificial_time_window_boundary']); endpoint.append(p['at_route_endpoint'])
+    projected_time = np.asarray(projected_time); distance = np.asarray(distance)
+    # A sampled alternative branch can be closer geometrically. This flag is
+    # descriptive; it never changes the predeclared local projection.
+    global_distance, global_indices = cKDTree(rxy).query(xy, k=8)
+    nominal = np.clip(t, rt[0], rt[-1])
+    ambiguity = np.any((abs(rt[global_indices]-nominal[:, None]) > 2.+1e-8) &
+                       (global_distance <= distance[:, None]+.001), axis=1)
+    curvature = np.full(len(t), np.nan)
+    moving = speed >= .005
+    curvature[moving] = (velocity[moving, 0]*acceleration[moving, 1]-
+                         velocity[moving, 1]*acceleration[moving, 0])/speed[moving]**3
+    heading = np.full(len(t), np.nan)
+    heading[valid] = np.unwrap(np.arctan2(velocity[valid, 1], velocity[valid, 0]))
+    return {'time_s': t, 'reference_speed_m_s': speed,
+        'time_aligned_error_m': np.linalg.norm(error, axis=1),
+        'time_aligned_alongtrack_m': along, 'time_aligned_signed_normal_m': lateral,
+        'local_path_distance_m': distance, 'closest_reference_time_s': projected_time,
+        'closest_reference_xy_m': np.asarray(projected_point),
+        'reference_phase_lag_s': nominal-projected_time,
+        'artificial_projection_window_boundary': np.asarray(boundary),
+        'closest_at_route_endpoint': np.asarray(endpoint),
+        'competing_global_vertex_branch_flag': ambiguity,
+        'curvature_per_m': curvature, 'reference_tangent_heading_rad': heading}
+
+
+def turn_metrics(actual, path, geometry):
+    t, xy, v = actual['time_s'], actual['exact_qpos'][:, :2], actual['exact_qvel'][:, :2]
+    candidates = component_reversals(t, actual['exact_reference_velocity_m_s'], .005)
+    rows = []
+    for number, event in enumerate(candidates, 1):
+        at, axis, incoming, outgoing = event['time_s'], event['axis_index'], event['incoming_sign'], event['outgoing_sign']
+        lo, hi = at-1., at+2.; selected = (t >= lo-1e-9) & (t <= hi+1e-9)
+        before, after = selected & (t < at), selected & (t >= at)
+        target = float(path(at)[0][axis])
+        signed = incoming*(xy[:, axis]-target)
+        extrema_index = int(np.flatnonzero(selected)[np.argmax(signed[selected])])
+        reversal = actual_reversal_candidates(t, v[:, axis], incoming, outgoing, lo, hi, .1)
+        first = reversal[0] if reversal else None
+        index = int(np.argmin(abs(t-at)))
+        rows.append({**event, 'event_id': f'turn_{number:02d}_{event["axis"]}',
+            'window_s': [lo, hi], 'reference_component_extremum_m': target,
+            'geometric_component_overshoot_mm': max(0., float(1000*signed[extrema_index])),
+            'geometric_component_overshoot_peak_s': float(t[extrema_index]),
+            'post_event_geometric_overshoot_mm': max(0., float(1000*np.max(signed[after]))),
+            'actual_reversal_candidates': reversal,
+            'first_actual_sustained_reversal': first,
+            'actual_reversal_lag_s': first['interpolated_zero_time_s']-at if first else None,
+            'actual_reversal_missing_in_window': first is None,
+            'actual_reversal_multiple_in_window': len(reversal) > 1,
+            'local_path_error_at_event_mm': float(1000*geometry['local_path_distance_m'][index]),
+            'time_aligned_error_at_event_mm': float(1000*geometry['time_aligned_error_m'][index]),
+            'signed_normal_at_event_mm': float(1000*geometry['time_aligned_signed_normal_m'][index]),
+            'alongtrack_at_event_mm': float(1000*geometry['time_aligned_alongtrack_m'][index]),
+            'phase_lag_at_event_s': float(geometry['reference_phase_lag_s'][index]),
+            'pre_event_peak_local_path_error_mm': float(1000*np.max(geometry['local_path_distance_m'][before])),
+            'post_event_peak_local_path_error_mm': float(1000*np.max(geometry['local_path_distance_m'][after])),
+            'window_projection_boundary_samples': int(np.sum(geometry['artificial_projection_window_boundary'][selected])),
+            'reference_component_reversal_is_full_stop': event['reference_vector_speed_m_s'] < .005})
+    return rows
+
+
+def main():
+    if (HERE/'selection_report.json').exists() or (HERE/'selection_source').exists():
+        raise FileExistsError('Preserve prior event selection stage')
+    HERE.mkdir(parents=True, exist_ok=True)
+    protocol_path = FAMILY/'protocol.json'
+    protocol = json.loads(protocol_path.read_text())
+    baseline = REPO_ROOT/protocol['baseline']
+    for name, expected in protocol['baseline_input_sha256'].items():
+        assert sha(baseline/name) == expected, name
+    for name, expected in protocol['source_sha256'].items():
+        assert sha(REPO_ROOT/name) == expected, name
+    snapshot = HERE/'selection_source'; snapshot.mkdir()
+    source_records = []
+    for path in (Path(__file__).resolve(), SOURCE_DIR/'event_metrics.py', protocol_path,
+                 REPO_ROOT/'src/spherical_wheel/mobility.py'):
+        target = snapshot/path.name; shutil.copyfile(path, target)
+        source_records.append({'origin': str(path.relative_to(REPO_ROOT)), 'snapshot': str(target.relative_to(HERE)), 'sha256': sha(path)})
+    checks = arithmetic_checks()
+    actual, log = read_npz(baseline/'precision.npz'), read_npz(baseline/'rollout.npz')
+    provenance = json.loads((baseline/'provenance.json').read_text()); path = path_from_provenance(provenance)
+    generated = [path(float(t)) for t in actual['time_s']]
+    ref_gap = max(float(np.max(abs(np.asarray([x[j] for x in generated])-actual[key])))
+                  for j, key in enumerate(('exact_reference_xy', 'exact_reference_velocity_m_s', 'exact_reference_acceleration_m_s2')))
+    assert ref_gap <= 1e-7, ref_gap
+    geometry = reduce_geometry(actual, path)
+    onsets = {}
+    for metric in ('local_path_distance_m', 'time_aligned_error_m', 'time_aligned_signed_normal_m'):
+        value = abs(geometry[metric])
+        onsets[metric] = {str(mm): first_sustained(actual['time_s'], value, mm/1000, .1, path.start_s)
+                          for mm in (10, 20, 30)}
+    primary = onsets['local_path_distance_m']['20']
+    turns = turn_metrics(actual, path, geometry)
+    selected_events = ([] if primary is None else [{'event_id': 'first_path_departure_20mm',
+        'time_s': primary['start_s'], 'type': 'primary_departure'}])+[
+        {'event_id': x['event_id'], 'time_s': x['time_s'], 'type': 'reference_component_reversal'} for x in turns[:6]]
+    anchor_map = {}
+    t = actual['time_s']
+    for event in selected_events:
+        for offset in (-.2, -.1, 0., .1, .2):
+            requested = event['time_s']+offset
+            index = int(np.argmin(abs(t-requested)))
+            if t[index] < .4-1e-9 or t[index]+.2 > t[-1]+1e-9:
+                continue
+            row = anchor_map.setdefault(index, {'anchor_time_s': float(t[index]), 'anchor_index': index,
+                'selection_kind': 'I41_predeclared_event', 'event_labels': []})
+            row['event_labels'].append({**event, 'offset_s': offset, 'requested_anchor_time_s': requested})
+    anchors = sorted(anchor_map.values(), key=lambda x: x['anchor_time_s'])
+    for row in anchors: row['event_id'] = ','.join(x['event_id'] for x in row['event_labels'])
+    assert len(anchors) <= 35
+    report = {'iteration': 'I-41', 'scope': 'Saved Mars trace event reduction; no physics, forecasts or control changes.',
+        'protocol_sha256': sha(protocol_path), 'source_records': source_records,
+        'arithmetic_checks': checks, 'reference_program_max_absolute_replay_gap': ref_gap,
+        'primary_deviation': primary, 'sensitivity': onsets, 'turn_events': turns,
+        'anchor_count': len(anchors),
+        'projection': {'reference_polyline_step_s': .005, 'local_time_half_window_s': 2.,
+            'competing_branch_flag': 'Any among8nearest reference vertices morethan2saway andnotfartherthanlocalpathdistance+1mm. Diagnostic only; doesnotalterlocalprojection.',
+            'window_boundary_samples': int(np.sum(geometry['artificial_projection_window_boundary'])),
+            'competing_global_branch_samples': int(np.sum(geometry['competing_global_vertex_branch_flag']))},
+        'limits': ['Cross-track wording requires projection boundary/branch flags; supplementary Frenet errors and phase lag separate timing from geometry.',
+            'Component reversals retain nonzero vector speed and are not stops.',
+            'First actual reversal with>=100ms new-sign dwell inside[-1,+2] is reported; missing/multiple candidates remain explicit.',
+            'Raw contact/force chatter and active kinematic synchronization are separate from unused shadow dynamic forecasts.']}
+    save(HERE/'selection_report.json', report)
+    save(HERE/'onsets.json', {'primary': primary, 'sensitivity': onsets})
+    save(HERE/'turn_events.json', {'rows': turns})
+    save(HERE/'anchors.json', {'case_id': 'mars_figure8_p090', 'anchors': anchors,
+        'protocol_sha256': sha(protocol_path), 'selection_events': selected_events})
+    np.savez_compressed(HERE/'reference_geometry.npz', **geometry)
+    fig, axes = plt.subplots(3, 1, figsize=(12, 9), sharex=True)
+    axes[0].plot(t, 1000*geometry['time_aligned_error_m'], label='Time-aligned position error')
+    axes[0].plot(t, 1000*geometry['local_path_distance_m'], label='Branch-aware local path distance')
+    axes[0].axhline(20, color='grey', ls=':'); axes[0].set(ylabel='Error (mm)'); axes[0].legend()
+    axes[1].plot(t, 1000*geometry['time_aligned_signed_normal_m'], label='Signed normal error')
+    axes[1].plot(t, 1000*geometry['time_aligned_alongtrack_m'], label='Along-track error')
+    axes[1].set(ylabel='Error (mm)'); axes[1].legend()
+    axes[2].plot(t, geometry['reference_phase_lag_s'], label='Closest-reference phase lag')
+    axes[2].plot(t, 1000*geometry['reference_speed_m_s'], label='Reference speed (mm/s)')
+    axes[2].set(xlabel='Simulation time (s)', ylabel='Lag (s) / speed (mm/s)'); axes[2].legend()
+    for ax in axes:
+        ax.grid(alpha=.2)
+        if primary: ax.axvline(primary['start_s'], color='crimson', label='First sustained20mm local distance')
+        for turn in turns: ax.axvline(turn['time_s'], color='orange', alpha=.3)
+    fig.suptitle('I41 saved Mars reference geometry: branch-aware departure and component turns')
+    fig.tight_layout(); fig.savefig(HERE/'reference_events.png', dpi=150); plt.close(fig)
+    files = [HERE/name for name in ('selection_report.json', 'onsets.json', 'turn_events.json',
+        'anchors.json', 'reference_geometry.npz', 'reference_events.png')]+list(snapshot.iterdir())
+    save(HERE/'selection_manifest.json', {'files': [{'path': str(p.relative_to(HERE)),
+        'bytes': p.stat().st_size, 'sha256': sha(p)} for p in files]})
+    print(json.dumps(safe({'primary': primary, 'turns': [{k:x[k] for k in ('event_id', 'time_s',
+        'reference_vector_speed_m_s', 'geometric_component_overshoot_mm', 'actual_reversal_lag_s')} for x in turns],
+        'anchors': len(anchors)}), indent=2))
+
+
+if __name__ == '__main__': main()

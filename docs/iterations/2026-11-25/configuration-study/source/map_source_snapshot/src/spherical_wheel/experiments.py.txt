@@ -1,0 +1,231 @@
+"""Reproducible nonlinear balance, disturbance and slow tracking experiments."""
+from __future__ import annotations
+
+import copy
+import json
+from pathlib import Path
+import numpy as np
+import yaml
+import mujoco
+from .model import generate_model, load_config
+from .sim import Plant
+from .control import find_equilibrium, design_lqr, jsonable
+
+
+def reference(t, duration, mode):
+    if mode != 'track':
+        return np.zeros(2),np.zeros(2),np.zeros(2)
+    # A 4 cm forward curve, with a 2 cm lateral excursion, at rest at both ends.
+    r=np.clip(t/duration,0.,1.)
+    s=10*r**3-15*r**4+6*r**5
+    ds=(30*r**2-60*r**3+30*r**4)/duration
+    dds=(60*r-180*r**2+120*r**3)/duration**2
+    position=np.array([.04*s,.02*np.sin(np.pi*s)])
+    derivative=np.array([.04,.02*np.pi*np.cos(np.pi*s)])
+    second=np.array([0.,-.02*np.pi**2*np.sin(np.pi*s)])
+    return position,derivative*ds,second*ds**2+derivative*dds
+
+
+def _rolling_allocation(rows, rhs, regularization_m_s=0.):
+    """Scaled rolling least squares, optionally damped near a vanishing lever.
+
+    The scales are the existing allocation preferences, not motor speed limits.
+    A positive regularization penalizes large normalized drive rates even if
+    an almost singular contact Jacobian can algebraically match the velocity.
+    """
+    if not np.isfinite(regularization_m_s) or regularization_m_s < 0:
+        raise ValueError('Rolling regularization must be finite and nonnegative')
+    scale=np.array([5.,5.,5.,.3,.3])
+    matrix=np.asarray(rows)*scale
+    target=np.asarray(rhs)
+    if regularization_m_s > 0:
+        matrix=np.vstack((matrix, regularization_m_s*np.eye(5)))
+        target=np.r_[target, np.zeros(5)]
+    return scale*np.linalg.lstsq(matrix,target,rcond=1e-7)[0]
+
+
+def rolling_feedforward(plant, velocity, regularization_m_s=0.):
+    """Minimum normalized contact-speed allocation; no extra forces are applied."""
+    records=getattr(plant,'contact_records',None)
+    if records is not None:
+        return rolling_feedforward_records(plant,records(),velocity,regularization_m_s)
+    rows=[]; rhs=[]
+    for c in plant.data.contact:
+        if c.efc_address < 0:
+            continue
+        ids=[int(g) for g in c.geom]
+        names=[mujoco.mj_id2name(plant.model,mujoco.mjtObj.mjOBJ_GEOM,g) or '' for g in ids]
+        if 'floor' not in names:
+            continue
+        idx=0 if names[1]=='floor' else 1
+        geom=ids[idx]; name=names[idx]
+        if not name.startswith(('shell_','belt_')):
+            continue
+        jac=np.zeros((3,plant.model.nv))
+        mujoco.mj_jac(plant.model,plant.data,jac,None,c.pos,int(plant.model.geom_bodyid[geom]))
+        row=np.zeros((2,5));row[:,:3]=jac[:2,6:9]
+        if name.startswith('belt_'):
+            side=0 if name.startswith('belt_A') else 1
+            row[:,3+side]=plant.data.geom_xmat[geom].reshape(3,3)[:2,1]
+        rows.extend(row);rhs.extend(-velocity)
+    if not rows:
+        return np.zeros(9),np.zeros(5)
+    allocated=_rolling_allocation(rows,rhs,regularization_m_s)
+    qvel=np.r_[velocity,0.,0.,0.,0.,allocated[:3]]
+    u=np.r_[np.zeros(3),allocated[3:]]
+    return qvel,u
+
+
+def rolling_feedforward_records(plant, records, velocity, regularization_m_s=0., allocator=None):
+    """``rolling_feedforward`` from contact records (see contact_sensing.records_from_mujoco)."""
+    rows=[]; rhs=[]; loads=[]
+    for record in records:
+        name=record['name']
+        if not name.startswith(('shell_','belt_')):
+            continue
+        jac=np.zeros((3,plant.model.nv))
+        mujoco.mj_jac(plant.model,plant.data,jac,None,record['pos'],int(record['body']))
+        row=np.zeros((2,5));row[:,:3]=jac[:2,6:9]
+        if name.startswith('belt_'):
+            side=0 if name.startswith('belt_A') else 1
+            row[:,3+side]=plant.data.geom_xmat[int(record['geom'])].reshape(3,3)[:2,1]
+        rows.extend(row);rhs.extend(-velocity)
+        loads.append(max(float(record.get('normal_force', 0.)), 0.))
+    if allocator is not None:
+        # Normalize load shares so adding duplicate contact records does not
+        # change the relative tracking/effort costs. No solver loads are read.
+        shares = np.asarray(loads, float)
+        if len(shares):
+            shares = shares/shares.sum() if shares.sum() > 0 else np.ones(len(shares))/len(shares)
+        weights = np.repeat(np.sqrt(shares), 2)
+        matrix = np.asarray(rows, float).reshape(-1, 5)
+        target = np.asarray(rhs, float)
+        authority = (shares[:, None, None]*matrix.reshape(-1, 2, 5)).sum(axis=0)
+        allocated = allocator.solve(matrix*weights[:, None], target*weights, plant.dt,
+                                    authority_matrix=authority)
+        residual = (matrix@allocated-target).reshape(-1, 2)
+        allocator.diagnostics['allocation_velocity_error_m_s'] = (
+            -(shares[:, None]*residual).sum(axis=0) if len(shares) else np.full(2, np.nan))
+        return np.r_[velocity, 0., 0., 0., 0., allocated[:3]], np.r_[np.zeros(3), allocated[3:]]
+    if not rows:
+        return np.zeros(9),np.zeros(5)
+    allocated=_rolling_allocation(rows,rhs,regularization_m_s)
+    qvel=np.r_[velocity,0.,0.,0.,0.,allocated[:3]]
+    u=np.r_[np.zeros(3),allocated[3:]]
+    return qvel,u
+
+
+def run_experiment(mode='balance',output='results/balance',duration=5.,initial_tilt_deg=(2.,2.),
+                   config=None,phase=None,method='full_state_lqr',disturbance_force_N=0.):
+    if duration <= 0 or not np.isfinite(duration):
+        raise ValueError('Duration must be finite and positive')
+    out=Path(output).resolve();out.mkdir(parents=True,exist_ok=True)
+    cfg=copy.deepcopy(config if isinstance(config,dict) else load_config(config))
+    if duration < cfg['simulation']['control_interval_s']:
+        raise ValueError('Duration must cover at least one controller interval')
+    model_path=generate_model(cfg,out/'model')
+    plant=Plant(cfg,model_path)
+    eq=find_equilibrium(plant,phase)
+    phase=eq['phase']
+    design=design_lqr(plant,eq,frozen_phase=method=='frozen_phase_feedback') if mode!='zero' else None
+    (out/'configuration.yaml').write_text(yaml.safe_dump(cfg,sort_keys=False))
+    if design is not None:
+        np.savez(out/'controller.npz',qpos=eq['qpos'],qvel=eq['qvel'],u=eq['u'],K=design['K'])
+    (out/'analysis.json').write_text(json.dumps(jsonable({'engine_version':mujoco.__version__,'equilibrium':eq,'design':design}),indent=2))
+    # Targets are recorded before this run; they are project targets for the
+    # provisional plant, not physical requirements supplied by the user.
+    targets={'no_fork_or_platform_floor_contact':True,'max_reference_relative_tilt_deg':8.,
+             'final_reference_relative_tilt_deg':1.,'tracking_rms_error_m':.03}
+    (out/'targets.json').write_text(json.dumps(targets,indent=2))
+    plant.reset(qpos=eq['qpos'],qvel=eq['qvel'])
+    perturbation=np.zeros(18);perturbation[3:5]=np.deg2rad(initial_tilt_deg)
+    plant.perturb(perturbation)
+    logs={key:[] for key in ['time_s','qpos','qvel','command','input','disturbance','reference_xy','reference_qpos','tilt_rad','relative_tilt_rad','contact_mask','slip_speed_m_s']}
+    contact_forces=[]
+    nominal_joint_positions=eq['qpos'][7:10].copy()
+    failed=False
+    for index in range(int(round(duration/plant.dt))+1):
+        t=index*plant.dt
+        xy,velocity,acceleration=reference(t,duration,mode)
+        qref=eq['qpos'].copy();qref[:2]+=xy
+        # Quasi-static gravity lean approximation for this gentle reference.
+        gravity=abs(float(cfg['simulation']['gravity_m_s2'][2]))
+        lean=np.array([0.,-np.arctan2(acceleration[1],gravity),np.arctan2(acceleration[0],gravity),0.])
+        delta=np.zeros(9);delta[3:5]=lean[1:3]
+        mujoco.mj_integratePos(plant.model,qref,delta,1.)
+        vref,uff=rolling_feedforward(plant,velocity) if mode=='track' else (np.zeros(9),np.zeros(5))
+        if mode=='track':
+            qref[7:10]=nominal_joint_positions
+        error=plant.error(qref,vref)
+        command=np.zeros(5) if mode=='zero' else eq['u']+uff-design['K']@error
+        force=np.zeros(6)
+        if 1.0 <= t < 1.1:
+            force[0]=disturbance_force_N
+        snapshot=plant.snapshot()
+        contacts=plant.contact_summary()
+        mask=np.zeros(5,dtype=int);normal=np.zeros(5)
+        max_slip=0.
+        for contact in contacts:
+            for name in contact['geoms']:
+                category=next((j for j,prefix in enumerate(['shell_A','shell_B','belt_A','belt_B','fork']) if name.startswith(prefix)),None)
+                if name=='platform':category=4
+                if category is not None:
+                    mask[category]=1;normal[category]+=contact['normal_force_N']
+        for c in plant.data.contact:
+            if c.efc_address>=0:
+                address=c.efc_address
+                max_slip=max(max_slip,float(np.linalg.norm(plant.data.efc_vel[address+1:address+min(c.dim,3)])))
+        for key,value in [('time_s',t),('qpos',plant.data.qpos.copy()),('qvel',plant.data.qvel.copy()),
+                          ('command',command.copy()),('input',np.clip(command,-plant.bounds,plant.bounds)),('disturbance',force.copy()),
+                          ('reference_xy',qref[:2].copy()),('reference_qpos',qref.copy()),('tilt_rad',snapshot['tilt_rad']),
+                          ('relative_tilt_rad',float(np.linalg.norm(error[3:5]))),('contact_mask',mask),('slip_speed_m_s',max_slip)]:
+            logs[key].append(value)
+        contact_forces.append(normal)
+        failed=failed or plant.balance_failed
+        if failed or snapshot['tilt_rad']>np.deg2rad(75) or index==int(round(duration/plant.dt)):
+            break
+        plant.step(command,force)
+        nominal_joint_positions+=plant.dt*vref[6:9]
+    data={key:np.asarray(value) for key,value in logs.items()}
+    data['normal_forces_N']=np.asarray(contact_forces)
+    data['model_path']=np.array('model/model.xml')
+    data['input_alignment']=np.array('Command at t is held until t+dt; final row has no subsequent integration.')
+    np.savez_compressed(out/'rollout.npz',**data)
+    errors=np.linalg.norm(data['qpos'][:,:2]-data['reference_xy'],axis=1)
+    relative=np.rad2deg(data['relative_tilt_rad'])
+    summary={'mode':mode,'controller_method':method if design else 'zero_commands',
+             'contact_mode':cfg['contact'].get('mode','faceted_mesh'),'engine_version':mujoco.__version__,
+             'requested_duration_s':duration,'completed_duration_s':float(data['time_s'][-1]),
+             'initial_tilt_offset_deg':list(initial_tilt_deg),'phase_rad':phase,
+             'fork_or_platform_floor_contact':failed,'max_absolute_tilt_deg':float(np.rad2deg(data['tilt_rad']).max()),
+             'max_reference_relative_tilt_deg':float(relative.max()),'final_reference_relative_tilt_deg':float(relative[-1]),
+             'rms_position_error_m':float(np.sqrt(np.mean(errors**2))),'final_position_error_m':float(errors[-1]),
+             'max_input_fraction':np.max(abs(data['input'][:-1])/plant.bounds,axis=0).tolist(),
+             'saturated_command_fraction':float(np.mean(np.any(abs(data['command'][:-1])>plant.bounds,axis=1))),
+             'disturbance_force_N':disturbance_force_N,'disturbance_interval_s':[1.0,1.1],
+             'max_joint_speeds_rad_s':np.max(abs(data['qvel'][:,6:9]),axis=0).tolist(),
+             'final_joint_speeds_rad_s':data['qvel'][-1,6:9].tolist(),
+             'max_slip_speed_m_s':float(data['slip_speed_m_s'].max()),'targets':targets,
+             'passed':bool(not failed and data['time_s'][-1]>=duration-plant.dt/2 and relative.max()<8 and relative[-1]<1 and (mode!='track' or np.sqrt(np.mean(errors**2))<.03))}
+    (out/'summary.json').write_text(json.dumps(summary,indent=2))
+    plot_rollout(data,out/'plots.png')
+    return summary
+
+
+def plot_rollout(data,path):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    fig,axes=plt.subplots(2,3,figsize=(13,7),constrained_layout=True)
+    t=data['time_s'];axes[0,0].plot(data['qpos'][:,0],data['qpos'][:,1],label='actual')
+    axes[0,0].plot(data['reference_xy'][:,0],data['reference_xy'][:,1],'--',label='reference');axes[0,0].axis('equal');axes[0,0].legend();axes[0,0].set(xlabel='x (m)',ylabel='y (m)',title='Planar path')
+    axes[0,1].plot(t,np.rad2deg(data['tilt_rad']),label='absolute');axes[0,1].plot(t,np.rad2deg(data['relative_tilt_rad']),label='relative to nominal');axes[0,1].legend();axes[0,1].set(title='Platform tilt',ylabel='degrees')
+    axes[0,2].plot(t,data['input'][:,:3]);axes[0,2].set(title='Applied output torques',ylabel='N m');axes[0,2].legend(['shaft','shell A','shell B'])
+    axes[1,0].plot(t,data['input'][:,3:]);axes[1,0].set(title='Ideal belt speed commands',ylabel='m/s');axes[1,0].legend(['A','B'])
+    axes[1,1].plot(t,data['normal_forces_N'][:,:4]);axes[1,1].set(title='Ground normal forces',ylabel='N');axes[1,1].legend(['shell A','shell B','belt A','belt B'])
+    axes[1,2].plot(t,data['qvel'][:,6:9]);axes[1,2].set(title='Relative drive speeds',ylabel='rad/s');axes[1,2].legend(['shaft','shell A','shell B'])
+    for ax in axes.flat:
+        ax.grid(alpha=.25)
+        if ax is not axes[0,0]:ax.set_xlabel('time (s)')
+    fig.suptitle('Provisional model: assumed masses and ideal belt velocity servos')
+    fig.savefig(path,dpi=150);plt.close(fig)

@@ -1,0 +1,34 @@
+{
+  "stage": "Captured before five-anchor equilibrium audit",
+  "settings": {
+    "height_change_m": 0.003,
+    "tilt_change_rad": 0.08,
+    "phase_change_rad": 0.35,
+    "max_nfev": 80,
+    "hold_s": 0.2,
+    "hold_step_s": 0.02,
+    "max_xy_drift_m": 0.0002,
+    "max_rotation_drift_rad": 0.0017453292519943296,
+    "max_body_speed_m_s": 0.002,
+    "max_body_rate_rad_s": 0.02,
+    "max_joint_rate_rad_s": 0.05,
+    "max_acceleration_residual": 0.001
+  },
+  "files": [
+    {
+      "path": "scripts/audit-mpc-equilibrium.py",
+      "snapshot": "audit-mpc-equilibrium.py.txt",
+      "sha256": "4a479fee5c1a404c4dea455aa099a9529fbc0f42950b9cd7bc03c6ead8701b60"
+    },
+    {
+      "path": "src/spherical_wheel/predictive_equilibrium.py",
+      "snapshot": "predictive_equilibrium.py.txt",
+      "sha256": "cc49f8af47b578511dc6ae918957e1713469475cbd58404b09f5802813e6b628"
+    },
+    {
+      "path": "src/spherical_wheel/predictive_model.py",
+      "snapshot": "predictive_model.py.txt",
+      "sha256": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473"
+    }
+  ]
+}

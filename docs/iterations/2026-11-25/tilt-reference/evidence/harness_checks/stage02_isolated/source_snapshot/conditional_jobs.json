@@ -1,0 +1,163 @@
+{
+  "iteration": "I-43",
+  "declared_before_main_runs_utc": "2026-11-26T04:28:04.560842+00:00",
+  "status": "Preplanned only; execute only after consistent_rate passes every main-screen condition.",
+  "protocol_sha256": "ea3fc0ecb988b5388ebbe8d2b1b84c30b2f1cf8397eedc5596e9966e4908f3f3",
+  "arms": [
+    "baseline",
+    "consistent_rate"
+  ],
+  "cases": [
+    {
+      "case_id": "figure8_p030",
+      "terrain": "marsyard2021",
+      "phase_rad": 0.3,
+      "path": {
+        "kind": "mars_route",
+        "route": "plain_figure8"
+      },
+      "duration_s": 44.0,
+      "yaw_deg": 45.0,
+      "reanchor_at_motion_start": false,
+      "uniform_anchor_start_s": 0.4,
+      "planned_path_spec": {
+        "kind": "figure8",
+        "duration_s": 40.0,
+        "radius_m": 0.45,
+        "clockwise": false,
+        "start_s": 1.0,
+        "origin": [
+          -1.6,
+          9.6
+        ],
+        "sampled_peak_speed_m_s": 0.18743412395355608,
+        "sampled_peak_acceleration_m_s2": 0.07802436281520816
+      }
+    },
+    {
+      "case_id": "figure8_m100",
+      "terrain": "marsyard2021",
+      "phase_rad": -1.0,
+      "path": {
+        "kind": "mars_route",
+        "route": "plain_figure8"
+      },
+      "duration_s": 44.0,
+      "yaw_deg": 45.0,
+      "reanchor_at_motion_start": false,
+      "uniform_anchor_start_s": 0.4,
+      "planned_path_spec": {
+        "kind": "figure8",
+        "duration_s": 40.0,
+        "radius_m": 0.45,
+        "clockwise": false,
+        "start_s": 1.0,
+        "origin": [
+          -1.6,
+          9.6
+        ],
+        "sampled_peak_speed_m_s": 0.18743412395355608,
+        "sampled_peak_acceleration_m_s2": 0.07802436281520816
+      }
+    },
+    {
+      "case_id": "triangle_p030",
+      "terrain": "marsyard2021",
+      "phase_rad": 0.3,
+      "path": {
+        "kind": "mars_route",
+        "route": "shape_triangle"
+      },
+      "duration_s": 68.5,
+      "yaw_deg": 30.000000000000004,
+      "reanchor_at_motion_start": false,
+      "uniform_anchor_start_s": 0.4,
+      "planned_path_spec": {
+        "kind": "polyline",
+        "waypoints": [
+          [
+            2.6,
+            17.4
+          ],
+          [
+            4.332050807568877,
+            18.4
+          ],
+          [
+            2.6,
+            19.4
+          ],
+          [
+            2.5999999999999996,
+            17.4
+          ]
+        ],
+        "leg_lengths_m": [
+          1.9999999999999998,
+          1.9999999999999998,
+          2.0
+        ],
+        "length_m": 6.0,
+        "speed_m_s": 0.1,
+        "start_s": 1.0,
+        "ramp_s": 1.5,
+        "duration_s": 64.5,
+        "origin": [
+          2.6,
+          17.4
+        ],
+        "initial_heading_deg": 30.000000000000004
+      }
+    },
+    {
+      "case_id": "outback_p030",
+      "terrain": "marsyard2021",
+      "phase_rad": 0.3,
+      "path": {
+        "kind": "mars_route",
+        "route": "shape_line_and_back"
+      },
+      "duration_s": 66.99999999999999,
+      "yaw_deg": -75.00000000000006,
+      "reanchor_at_motion_start": false,
+      "uniform_anchor_start_s": 0.4,
+      "planned_path_spec": {
+        "kind": "polyline",
+        "waypoints": [
+          [
+            -19.2,
+            3.2
+          ],
+          [
+            -18.42354286469244,
+            0.30222252113279513
+          ],
+          [
+            -19.2,
+            3.2
+          ]
+        ],
+        "leg_lengths_m": [
+          2.9999999999999996,
+          2.9999999999999996
+        ],
+        "length_m": 5.999999999999999,
+        "speed_m_s": 0.1,
+        "start_s": 1.0,
+        "ramp_s": 1.5,
+        "duration_s": 62.999999999999986,
+        "origin": [
+          -19.2,
+          3.2
+        ],
+        "initial_heading_deg": -75.00000000000006
+      }
+    }
+  ],
+  "main_pair_reused": "plain_figure8 phase+.9 baseline/consistent_rate main pair, no rerun",
+  "additional_fresh_case_count": 8,
+  "source_sha256": {
+    "src/spherical_wheel/gazebo/mars.py": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63"
+  },
+  "construction": "Native build_route yaw/path, duration=start+pathduration+3s, same single-route Mars workspace per fresh process."
+}

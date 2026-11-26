@@ -1,0 +1,103 @@
+"""Pure I43 campaign/evaluation contracts; never launch a simulator."""
+from pathlib import Path
+from types import SimpleNamespace
+import importlib.util
+import json
+import numpy as np
+import pytest
+
+PATH = Path(__file__).resolve().parents[1]/'run_tilt_reference.py'
+spec = importlib.util.spec_from_file_location('i43_campaign_contract_target',PATH)
+runner = importlib.util.module_from_spec(spec);spec.loader.exec_module(runner)
+
+
+def test_raw_reference_reduction_does_not_change_saved_actual_log():
+    actual = {'reference_quat':np.array([[1.,0.,0.,0.]]),'attitude_error_rad':np.array([.4]),
+              'qpos':np.arange(10.)[None,:]}
+    original = {k:v.copy()for k,v in actual.items()}
+    raw_q = np.array([[.8,.6,0.,0.]])
+    result = runner.raw_reference_log(actual,raw_q,np.array([.7]))
+    for key in actual:np.testing.assert_array_equal(actual[key],original[key])
+    assert result['qpos'] is actual['qpos']
+    result['reference_quat'][0,0] = -4.
+    assert raw_q[0,0] == .8 and actual['reference_quat'][0,0] == 1.
+    assert result['attitude_error_rad'][0] == .7
+
+
+def test_raw_reference_reduction_rejects_unaligned_reference_shapes():
+    actual = {'reference_quat':np.ones((2,4)),'attitude_error_rad':np.ones(2)}
+    with pytest.raises(AssertionError):runner.raw_reference_log(actual,np.ones((1,4)),np.ones(2))
+
+
+def test_raw_summary_retains_actual_gazebo_engine_and_copies_nested_metadata():
+    native = {'engine':{'simulator':'Gazebo','physics':'DART'},'engine_version':'Gazebo8',
+              'ground_model':'real Gazebo mesh','wall_time_s':3.,'bridge_counters':{'steps':7}}
+    raw = {'engine_version':'MuJoCo','ground_model':'analytic tangent','attitude':{'rms':.2}}
+    result = runner.restore_gazebo_metadata(raw,native)
+    assert result['engine_version'] == 'Gazebo8' and result['ground_model'] == 'real Gazebo mesh'
+    result['engine']['physics'] = 'mutated'
+    assert native['engine']['physics'] == 'DART' and result['attitude']['rms'] == .2
+    assert result['evaluation_reference'] == 'native_raw_tilt_formula_from_this_arm_current_observer'
+
+
+def test_uninitialized_generator_has_canonical_none_state_and_numeric_mask():
+    assert runner.state_of(SimpleNamespace(_tilt_reference=None)) is None
+    assert runner.state_of(SimpleNamespace(_tilt_reference=SimpleNamespace(state_dict=lambda:None))) is None
+    values = runner.numeric_state(None,'before')
+    assert values['before_initialized'] is False
+    assert np.isnan(values['before_time_s']) and np.isnan(values['before_theta_rad']).all()
+
+
+def test_captured_generator_state_is_independent_of_live_arrays():
+    live = {'time_s':4.,'theta_rad':np.array([.1,.2]),'z_rad':np.array([.2,.3]),'held_raw_theta_rad':np.array([.3,.4])}
+    captured = runner.state_of(SimpleNamespace(_tilt_reference=SimpleNamespace(state_dict=lambda:live)))
+    numeric = runner.numeric_state(live,'before')
+    live['theta_rad'][:] = 99.
+    np.testing.assert_array_equal(captured['theta_rad'],[.1,.2])
+    np.testing.assert_array_equal(numeric['before_theta_rad'],[.1,.2])
+
+
+def test_baseline_diagnostic_preserves_native_quaternion_and_zero_rate():
+    quat = np.array([1.,0.,0.,0.])
+    controller = SimpleNamespace(plant=SimpleNamespace(data=SimpleNamespace(time=3.)),
+                                 lean_vector=lambda n,a:np.array([.1,.2]))
+    info = {'estimate':{'normal':np.array([0.,0.,1.])},'reference_quat':quat}
+    diag = runner.tilt_diagnostic(controller,info,np.zeros(2))
+    assert not diag['active'] and not diag['initialized_now'] and not diag['advanced']
+    np.testing.assert_array_equal(diag['raw_reference_quat'],quat)
+    np.testing.assert_array_equal(diag['used_angular_velocity_body_rad_s'],np.zeros(3))
+    diag['raw_reference_quat'][0] = 9.
+    assert quat[0] == 1.
+
+
+def test_raw_up_convention_is_body_z_and_mujoco_wxyz():
+    angle = np.pi/3
+    q = [np.cos(angle/2),np.sin(angle/2),0.,0.]
+    np.testing.assert_allclose(runner.up_from_quat(q),[0.,-np.sin(angle),np.cos(angle)],atol=1e-15)
+
+
+def test_regression_never_starts_without_a_passing_clearance(tmp_path):
+    job,stage = runner.select_job(tmp_path,{},[{'arm':'baseline','case_id':'main'}],'baseline')
+    assert stage == 'main' and job['case_id'] == 'main'
+    with pytest.raises(FileNotFoundError):runner.select_job(tmp_path,{},[],'consistent_rate','figure8_p030')
+    with pytest.raises(AssertionError):runner.select_job(tmp_path,{},[],'angle_only','figure8_p030')
+
+
+def test_check_snapshot_excludes_generated_models_payloads_and_historical_copies(tmp_path):
+    permitted = ['checks.py','report.json','provenance.json','manifest.json','run.log','readme.md']
+    excluded = ['rollout.npz','geometry/triangle.obj','_workspaces/cache.py','model.so',
+                'meshes/facet.obj','source_snapshot/old.py','__pycache__/thing.pyc','precision.json']
+    for relative in permitted+excluded:
+        path = tmp_path/relative;path.parent.mkdir(parents=True,exist_ok=True);path.write_text('x')
+        assert runner.bounded_check_source(path,tmp_path) == (relative in permitted),relative
+
+
+@pytest.mark.parametrize('passes,candidate,prerequisites',[(False,'consistent_rate',True),(True,'angle_only',True),(True,'consistent_rate',False)])
+def test_clearance_cannot_override_failed_sealed_screen_candidate_or_prerequisites(tmp_path,passes,candidate,prerequisites):
+    report = tmp_path/'analysis.json'
+    report.write_text(json.dumps({'main_screen':{'passes_all_conditions':passes,'chosen_candidate':candidate},
+                                 'prerequisite_checks':{'passes_all_conditions':prerequisites}}))
+    clearance = {'protocol_sha256':runner.PROTOCOL_SHA,'passes_all_main_screen_conditions':True,
+                 'chosen_candidate':'consistent_rate','analysis_report':str(report),'analysis_report_sha256':runner.sha(report)}
+    (tmp_path/'regression_clearance.json').write_text(json.dumps(clearance))
+    with pytest.raises(AssertionError):runner.select_job(tmp_path,{},[],'consistent_rate','future')

@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "scope": "Independent encoded-array/quaternion/source-triangle audit; no adapter or simulator execution.",
+  "archive_sha256": "a5d906ebba9dc8c32b66af528f9dbf68e0ae20c8cb0cd91e5faa565df727535c",
+  "shape": [
+    881,
+    4,
+    48,
+    64
+  ],
+  "capture_delivery_calibration_verified": true,
+  "capture_pose_maximum_matrix_difference": 1.7763568394002505e-15,
+  "source_snapshots_verified": 60,
+  "depth_producing_sources_still_match_current": true,
+  "explicit_later_mapping_source_differences": [
+    {
+      "path": "src/spherical_wheel/terrain_memory.py",
+      "depth_stage_sha256": "176aaee209f1652dc776ea00686987d07ba9688897c1860c69dcb4446b4b3bbd",
+      "current_sha256": "938752c4a3c4e402191cbf75c464860ae5082f1750368c8342c65635552a7388",
+      "role": "Later mapping/test refinement; not executed by depth rendering. Exact depth-stage source remains preserved."
+    },
+    {
+      "path": "tests/test_terrain_memory.py",
+      "depth_stage_sha256": "75830c23cc2eacff3d7932f0f631fde5ad54548468d9c782d532f451b94cfd75",
+      "current_sha256": "6bb29771a00e5d7ccb3d4da68eb207a22e96dfafa4453db7e33fa432ef2a71db",
+      "role": "Later mapping/test refinement; not executed by depth rendering. Exact depth-stage source remains preserved."
+    },
+    {
+      "path": "tests/test_terrain_preview_campaign.py",
+      "depth_stage_sha256": "5b952021d434831071757a340797672f20cf6c63d770c73886c1ca6711e01f07",
+      "current_sha256": "dca3e14d65bc9ee2985aa6f94db94b3009e3a17f1835b74d96fd24b004b2aa0e",
+      "role": "Later mapping/test refinement; not executed by depth rendering. Exact depth-stage source remains preserved."
+    }
+  ],
+  "all_valid_ranges_respect_euclidean_limits_with_float32_encoding_budget": true,
+  "camera_validity": {
+    "camera_000": {
+      "valid_pixels": 2462332,
+      "invalid_pixels": 244100,
+      "valid_ratio": 0.9098074512864169,
+      "invalid_ratio": 0.09019254871358307,
+      "minimum_valid_euclidean_range_m": 0.29315574824506646,
+      "maximum_valid_euclidean_range_m": 1.9999990356690969
+    },
+    "camera_090": {
+      "valid_pixels": 2296480,
+      "invalid_pixels": 409952,
+      "valid_ratio": 0.8485267688233068,
+      "invalid_ratio": 0.1514732311766932,
+      "minimum_valid_euclidean_range_m": 0.2985406517345137,
+      "maximum_valid_euclidean_range_m": 1.9999900127142791
+    },
+    "camera_180": {
+      "valid_pixels": 2508313,
+      "invalid_pixels": 198119,
+      "valid_ratio": 0.9267969784572455,
+      "invalid_ratio": 0.07320302154275449,
+      "minimum_valid_euclidean_range_m": 0.3026553835832104,
+      "maximum_valid_euclidean_range_m": 1.9999959618236336
+    },
+    "camera_270": {
+      "valid_pixels": 2128437,
+      "invalid_pixels": 577995,
+      "valid_ratio": 0.7864365334137344,
+      "invalid_ratio": 0.21356346658626557,
+      "minimum_valid_euclidean_range_m": 0.31750295800034545,
+      "maximum_valid_euclidean_range_m": 1.9999890382440375
+    }
+  },
+  "raw_source_crop_face_checks": [
+    {
+      "asset": "dem",
+      "triangles": 6608,
+      "maximum_source_vertex_difference_m": 0.0
+    },
+    {
+      "asset": "lava",
+      "triangles": 39,
+      "maximum_source_vertex_difference_m": 0.0
+    },
+    {
+      "asset": "rocks_big",
+      "triangles": 120,
+      "maximum_source_vertex_difference_m": 0.0
+    },
+    {
+      "asset": "rocks_medium",
+      "triangles": 28,
+      "maximum_source_vertex_difference_m": 0.0
+    }
+  ],
+  "sampled_valid_rays": 64,
+  "maximum_sampled_range_error_m": 9.974067716189694e-08,
+  "maximum_sampled_axial_error_m": 9.730797334572827e-08,
+  "independent_triangle_samples": "ray_samples.json",
+  "limitations": [
+    "Samples validate finite environment first hits; they do not independently retrace every masked robot pixel.",
+    "Robot selfmask and first-hit no-see-through are separately covered by the preserved adapter visibility fixtures.",
+    "Float32 depth encoding and compiled mesh arithmetic are retained; ideal sensing is not infinite numerical precision.",
+    "No map utility, localization accuracy or controller benefit is established by this integrity audit."
+  ]
+}

@@ -1,0 +1,679 @@
+{
+  "completed": true,
+  "scope": "Secondary saved-data decomposition. Does not change main factorial report, event selection or screen.",
+  "reconstruction_checks": {
+    "baseline": {
+      "context_rows": 111,
+      "group_sum_max_normalized_difference": 5.551115123125783e-16,
+      "logged_LQR_max_normalized_float32_difference": 9.350477133314902e-08,
+      "logged_LQR_exact_after_float32_cast_fraction": 1.0,
+      "components_vs_requested_max_normalized_difference": 2.2992857895420826e-08,
+      "reference_generalized_angular_velocity_target_max_abs_rad_s": 0.0
+    },
+    "feedback_shares": {
+      "context_rows": 111,
+      "group_sum_max_normalized_difference": 1.1102230246251565e-15,
+      "logged_LQR_max_normalized_float32_difference": 9.044757387499658e-08,
+      "logged_LQR_exact_after_float32_cast_fraction": 1.0,
+      "components_vs_requested_max_normalized_difference": 5.192014619163447e-09,
+      "reference_generalized_angular_velocity_target_max_abs_rad_s": 0.0
+    },
+    "sync_off": {
+      "context_rows": 111,
+      "group_sum_max_normalized_difference": 1.1102230246251565e-15,
+      "logged_LQR_max_normalized_float32_difference": 8.212162431557128e-08,
+      "logged_LQR_exact_after_float32_cast_fraction": 1.0,
+      "components_vs_requested_max_normalized_difference": 3.0579209534901492e-09,
+      "reference_generalized_angular_velocity_target_max_abs_rad_s": 0.0
+    },
+    "both": {
+      "context_rows": 111,
+      "group_sum_max_normalized_difference": 1.1102230246251565e-15,
+      "logged_LQR_max_normalized_float32_difference": 9.793007367993786e-08,
+      "logged_LQR_exact_after_float32_cast_fraction": 1.0,
+      "components_vs_requested_max_normalized_difference": 3.0633891257014767e-09,
+      "reference_generalized_angular_velocity_target_max_abs_rad_s": 0.0
+    }
+  },
+  "baseline_selected_summary": [
+    {
+      "time_s": 6.65999999999988,
+      "actual_tilt_deg": 6.832942209173751,
+      "reference_tilt_deg": 9.149687685723526,
+      "up_error_deg": 2.3537212708471156,
+      "reference_up_change_deg_s": 20.451421708447317,
+      "actual_body_rates_rad_s": [
+        0.15950293474726707,
+        -0.17143147136091583,
+        -0.07671062690146127
+      ],
+      "feedback_joint_rate_reference_rad_s": [
+        -0.014261002141983892,
+        -1.3527448942117994,
+        0.0
+      ],
+      "truth_patch": "shell_A",
+      "native_patch": "shell_A",
+      "belt_A": {
+        "units": "m/s",
+        "bound": 0.3,
+        "feedback_groups": {
+          "position": 0.0,
+          "attitude": 0.0,
+          "joint_position": 0.0,
+          "linear_velocity": 0.0,
+          "angular_velocity": 0.0,
+          "joint_velocity": 0.0
+        },
+        "largest_absolute_feedback_group": "position",
+        "components": {
+          "equilibrium": 0.0,
+          "rolling_feedforward": 0.0,
+          "holding": 0.0,
+          "LQR": 0.0,
+          "synchronization": -0.003857705509290099,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": -0.003857705400238256,
+        "applied": -0.003857705400238256,
+        "requested_over_bound": -0.012859018000794187,
+        "clipped": false
+      },
+      "shell_A": {
+        "units": "N m",
+        "bound": 0.6,
+        "feedback_groups": {
+          "position": -0.00023260350198134176,
+          "attitude": -0.007988975446610909,
+          "joint_position": 1.3965092148905809e-13,
+          "linear_velocity": -0.0010619726966575487,
+          "angular_velocity": 0.026801141945312985,
+          "joint_velocity": -0.04471298618427647
+        },
+        "largest_absolute_feedback_group": "joint_velocity",
+        "components": {
+          "equilibrium": 2.6192760873533126e-27,
+          "rolling_feedforward": 0.0,
+          "holding": 0.011448372380034199,
+          "LQR": -0.02719539588407364,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": -0.01574702350403944,
+        "applied": -0.01574702350403944,
+        "requested_over_bound": -0.02624503917339907,
+        "clipped": false
+      }
+    },
+    {
+      "time_s": 6.699999999999879,
+      "actual_tilt_deg": 6.571688940540061,
+      "reference_tilt_deg": 9.280874709513327,
+      "up_error_deg": 2.758667194110609,
+      "reference_up_change_deg_s": 30.099165084142562,
+      "actual_body_rates_rad_s": [
+        0.18883131149931012,
+        -0.3309471504598594,
+        -0.16188612356092125
+      ],
+      "feedback_joint_rate_reference_rad_s": [
+        0.37424232455847806,
+        0.0,
+        0.0
+      ],
+      "truth_patch": "belt_A",
+      "native_patch": "belt_A",
+      "belt_A": {
+        "units": "m/s",
+        "bound": 0.3,
+        "feedback_groups": {
+          "position": 0.012675907274692973,
+          "attitude": 0.2537100695256441,
+          "joint_position": 1.690710907951821e-14,
+          "linear_velocity": 0.06699635712317012,
+          "angular_velocity": 0.10508958478136228,
+          "joint_velocity": 0.00018210661403903104
+        },
+        "largest_absolute_feedback_group": "attitude",
+        "components": {
+          "equilibrium": 0.0,
+          "rolling_feedforward": -0.00614157086238265,
+          "holding": 0.0,
+          "LQR": 0.4386540253189254,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.43251245458010884,
+        "applied": 0.3,
+        "requested_over_bound": 1.441708181933696,
+        "clipped": true
+      },
+      "shell_A": {
+        "units": "N m",
+        "bound": 0.6,
+        "feedback_groups": {
+          "position": -0.0017957421109548793,
+          "attitude": -0.006069115895068838,
+          "joint_position": -4.7914117571371333e-14,
+          "linear_velocity": -0.002782801807672717,
+          "angular_velocity": 0.014787151206698382,
+          "joint_velocity": 0.018220745314904488
+        },
+        "largest_absolute_feedback_group": "joint_velocity",
+        "components": {
+          "equilibrium": 2.6192760873533126e-27,
+          "rolling_feedforward": 0.0,
+          "holding": 0.0,
+          "LQR": 0.02236023670785852,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.02236023670785852,
+        "applied": 0.02236023670785852,
+        "requested_over_bound": 0.0372670611797642,
+        "clipped": false
+      }
+    },
+    {
+      "time_s": 6.724999999999879,
+      "actual_tilt_deg": 6.9275689032392105,
+      "reference_tilt_deg": 9.380680490410166,
+      "up_error_deg": 2.471739265048879,
+      "reference_up_change_deg_s": 13.47676385904668,
+      "actual_body_rates_rad_s": [
+        0.19523361186449598,
+        -0.44021284709352,
+        -0.3338251717092413
+      ],
+      "feedback_joint_rate_reference_rad_s": [
+        0.37684916611283814,
+        0.0,
+        0.0
+      ],
+      "truth_patch": "shell_A",
+      "native_patch": "belt_A",
+      "belt_A": {
+        "units": "m/s",
+        "bound": 0.3,
+        "feedback_groups": {
+          "position": 0.015449867895943183,
+          "attitude": 0.22715117380362726,
+          "joint_position": -2.4968352899191316e-14,
+          "linear_velocity": 0.07493976386573808,
+          "angular_velocity": 0.10883107476161957,
+          "joint_velocity": 0.0005584645675825322
+        },
+        "largest_absolute_feedback_group": "attitude",
+        "components": {
+          "equilibrium": 0.0,
+          "rolling_feedforward": -0.0063974871300160885,
+          "holding": 0.0,
+          "LQR": 0.42693034489448567,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.4205328576948129,
+        "applied": 0.3,
+        "requested_over_bound": 1.401776192316043,
+        "clipped": true
+      },
+      "shell_A": {
+        "units": "N m",
+        "bound": 0.6,
+        "feedback_groups": {
+          "position": -0.0034584146900880222,
+          "attitude": -0.008575002591498682,
+          "joint_position": -2.8178933301028462e-14,
+          "linear_velocity": -0.004914181683199848,
+          "angular_velocity": 0.03210497850161683,
+          "joint_velocity": 0.030912214882735586
+        },
+        "largest_absolute_feedback_group": "angular_velocity",
+        "components": {
+          "equilibrium": 2.6192760873533126e-27,
+          "rolling_feedforward": 0.0,
+          "holding": 0.0,
+          "LQR": 0.04606959441953769,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.04606959441953769,
+        "applied": 0.04606959441953769,
+        "requested_over_bound": 0.07678265736589615,
+        "clipped": false
+      }
+    },
+    {
+      "time_s": 6.759999999999878,
+      "actual_tilt_deg": 6.913954330401954,
+      "reference_tilt_deg": 10.124935826134088,
+      "up_error_deg": 3.2344423436516747,
+      "reference_up_change_deg_s": 40.665318121748385,
+      "actual_body_rates_rad_s": [
+        0.24382234160292376,
+        -0.5093427621281483,
+        -0.48445742773794975
+      ],
+      "feedback_joint_rate_reference_rad_s": [
+        -0.04608991557494946,
+        -1.5105665301837043,
+        0.0
+      ],
+      "truth_patch": "shell_A",
+      "native_patch": "shell_A",
+      "belt_A": {
+        "units": "m/s",
+        "bound": 0.3,
+        "feedback_groups": {
+          "position": 0.0,
+          "attitude": 0.0,
+          "joint_position": 0.0,
+          "linear_velocity": 0.0,
+          "angular_velocity": 0.0,
+          "joint_velocity": 0.0
+        },
+        "largest_absolute_feedback_group": "position",
+        "components": {
+          "equilibrium": 0.0,
+          "rolling_feedforward": 0.0,
+          "holding": 0.0,
+          "LQR": 0.0,
+          "synchronization": -0.0235404372215271,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": -0.023540437850258625,
+        "applied": -0.023540437850258625,
+        "requested_over_bound": -0.07846812616752875,
+        "clipped": false
+      },
+      "shell_A": {
+        "units": "N m",
+        "bound": 0.6,
+        "feedback_groups": {
+          "position": -0.005949412482488421,
+          "attitude": -0.25168979587414586,
+          "joint_position": 1.0084487001974339e-13,
+          "linear_velocity": -0.04730048635135232,
+          "angular_velocity": 0.08173246857201955,
+          "joint_velocity": 0.17413548277911012
+        },
+        "largest_absolute_feedback_group": "attitude",
+        "components": {
+          "equilibrium": 2.6192760873533126e-27,
+          "rolling_feedforward": 0.0,
+          "holding": 0.039431364253630224,
+          "LQR": -0.04907174335675618,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": -0.009640379103125957,
+        "applied": -0.009640379103125957,
+        "requested_over_bound": -0.01606729850520993,
+        "clipped": false
+      }
+    },
+    {
+      "time_s": 6.824999999999877,
+      "actual_tilt_deg": 7.640527377092266,
+      "reference_tilt_deg": 12.031341451661678,
+      "up_error_deg": 5.293886118660529,
+      "reference_up_change_deg_s": 11.582909180285373,
+      "actual_body_rates_rad_s": [
+        0.3616788463754461,
+        -0.4844259283945549,
+        -0.7771168310638843
+      ],
+      "feedback_joint_rate_reference_rad_s": [
+        0.38500658156581,
+        0.0,
+        0.0
+      ],
+      "truth_patch": "belt_A",
+      "native_patch": "belt_A",
+      "belt_A": {
+        "units": "m/s",
+        "bound": 0.3,
+        "feedback_groups": {
+          "position": 0.0191797201010285,
+          "attitude": 0.5455496839680146,
+          "joint_position": -1.0802882866623604e-15,
+          "linear_velocity": 0.07473805783588108,
+          "angular_velocity": 0.20209684040954345,
+          "joint_velocity": 0.0022399553360555992
+        },
+        "largest_absolute_feedback_group": "attitude",
+        "components": {
+          "equilibrium": 0.0,
+          "rolling_feedforward": -0.00906241126358509,
+          "holding": 0.0,
+          "LQR": 0.8438042576505222,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.8347418461273584,
+        "applied": 0.3,
+        "requested_over_bound": 2.782472820424528,
+        "clipped": true
+      },
+      "shell_A": {
+        "units": "N m",
+        "bound": 0.6,
+        "feedback_groups": {
+          "position": -0.0069767419592886605,
+          "attitude": -0.033410632034758955,
+          "joint_position": -1.405227274651509e-16,
+          "linear_velocity": -0.007953242683827782,
+          "angular_velocity": 0.07031477014346313,
+          "joint_velocity": 0.08439002753726323
+        },
+        "largest_absolute_feedback_group": "joint_velocity",
+        "components": {
+          "equilibrium": 2.6192760873533126e-27,
+          "rolling_feedforward": 0.0,
+          "holding": 0.0,
+          "LQR": 0.10636418100285082,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.10636418100285082,
+        "applied": 0.10636418100285082,
+        "requested_over_bound": 0.17727363500475138,
+        "clipped": false
+      }
+    },
+    {
+      "time_s": 6.854999999999876,
+      "actual_tilt_deg": 8.46209388087823,
+      "reference_tilt_deg": 12.172804198367599,
+      "up_error_deg": 4.838192410546464,
+      "reference_up_change_deg_s": 2.759655286279758,
+      "actual_body_rates_rad_s": [
+        -0.18864891130617692,
+        -0.3229958999123948,
+        -0.6285830126084515
+      ],
+      "feedback_joint_rate_reference_rad_s": [
+        0.3872627780511426,
+        0.0,
+        0.0
+      ],
+      "truth_patch": "belt_A",
+      "native_patch": "belt_A",
+      "belt_A": {
+        "units": "m/s",
+        "bound": 0.3,
+        "feedback_groups": {
+          "position": 0.025031532183607312,
+          "attitude": 0.5020259160074986,
+          "joint_position": 1.8213497401673594e-14,
+          "linear_velocity": 0.3973188395429685,
+          "angular_velocity": -0.10327016109473673,
+          "joint_velocity": 0.0030850697661877003
+        },
+        "largest_absolute_feedback_group": "attitude",
+        "components": {
+          "equilibrium": 0.0,
+          "rolling_feedforward": -0.009926214814186096,
+          "holding": 0.0,
+          "LQR": 0.8241911964055435,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.8142649814544745,
+        "applied": 0.3,
+        "requested_over_bound": 2.7142166048482483,
+        "clipped": true
+      },
+      "shell_A": {
+        "units": "N m",
+        "bound": 0.6,
+        "feedback_groups": {
+          "position": -0.01228354663285323,
+          "attitude": -0.04142513667336826,
+          "joint_position": -4.309875371780291e-15,
+          "linear_velocity": -0.0569144030989202,
+          "angular_velocity": 0.08515057240585402,
+          "joint_velocity": 0.0766352274389407
+        },
+        "largest_absolute_feedback_group": "angular_velocity",
+        "components": {
+          "equilibrium": 2.6192760873533126e-27,
+          "rolling_feedforward": 0.0,
+          "holding": 0.0,
+          "LQR": 0.05116271343964874,
+          "synchronization": 0.010286254808306694,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.0614489679648577,
+        "applied": 0.0614489679648577,
+        "requested_over_bound": 0.10241494660809618,
+        "clipped": false
+      }
+    },
+    {
+      "time_s": 6.859999999999876,
+      "actual_tilt_deg": 8.59474870632361,
+      "reference_tilt_deg": 12.189974043468494,
+      "up_error_deg": 4.704900879550398,
+      "reference_up_change_deg_s": 3.6120897973708965,
+      "actual_body_rates_rad_s": [
+        -0.6692252479840207,
+        -0.174865096047369,
+        -0.43553397111634345
+      ],
+      "feedback_joint_rate_reference_rad_s": [
+        -0.4210589506972573,
+        -2.921496311005081,
+        0.0
+      ],
+      "truth_patch": "belt_A",
+      "native_patch": "shell_A",
+      "belt_A": {
+        "units": "m/s",
+        "bound": 0.3,
+        "feedback_groups": {
+          "position": 0.0,
+          "attitude": 0.0,
+          "joint_position": 0.0,
+          "linear_velocity": 0.0,
+          "angular_velocity": 0.0,
+          "joint_velocity": 0.0
+        },
+        "largest_absolute_feedback_group": "position",
+        "components": {
+          "equilibrium": 0.0,
+          "rolling_feedforward": 0.0,
+          "holding": 0.0,
+          "LQR": 0.0,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.0,
+        "applied": 0.0,
+        "requested_over_bound": 0.0,
+        "clipped": false
+      },
+      "shell_A": {
+        "units": "N m",
+        "bound": 0.6,
+        "feedback_groups": {
+          "position": -0.017291596371828245,
+          "attitude": -0.7260378375000673,
+          "joint_position": -4.615735526279361e-14,
+          "linear_velocity": -0.8124436095740543,
+          "angular_velocity": 0.7241726894760797,
+          "joint_velocity": 0.19752369300927497
+        },
+        "largest_absolute_feedback_group": "linear_velocity",
+        "components": {
+          "equilibrium": 2.6192760873533126e-27,
+          "rolling_feedforward": 0.0,
+          "holding": 0.06543926718001579,
+          "LQR": -0.6340766609606413,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": -0.5686373937806255,
+        "applied": -0.5686373937806255,
+        "requested_over_bound": -0.9477289896343759,
+        "clipped": false
+      }
+    },
+    {
+      "time_s": 6.899999999999875,
+      "actual_tilt_deg": 9.52202373820916,
+      "reference_tilt_deg": 11.744021393673494,
+      "up_error_deg": 2.631851783600509,
+      "reference_up_change_deg_s": 165.46202374957178,
+      "actual_body_rates_rad_s": [
+        -0.7766561749613106,
+        -0.28591149014817413,
+        -0.8426576345668945
+      ],
+      "feedback_joint_rate_reference_rad_s": [
+        0.38480332026328634,
+        0.0,
+        0.0
+      ],
+      "truth_patch": "belt_A",
+      "native_patch": "belt_A",
+      "belt_A": {
+        "units": "m/s",
+        "bound": 0.3,
+        "feedback_groups": {
+          "position": 0.035414339111169924,
+          "attitude": 0.26385483314437524,
+          "joint_position": 1.7454413497947794e-15,
+          "linear_velocity": 0.7235902277418631,
+          "angular_velocity": -0.4274762441908075,
+          "joint_velocity": 0.006806437902490352
+        },
+        "largest_absolute_feedback_group": "linear_velocity",
+        "components": {
+          "equilibrium": 0.0,
+          "rolling_feedforward": -0.01220527570694685,
+          "holding": 0.0,
+          "LQR": 0.6021895937090929,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.589984318417701,
+        "applied": 0.3,
+        "requested_over_bound": 1.9666143947256702,
+        "clipped": true
+      },
+      "shell_A": {
+        "units": "N m",
+        "bound": 0.6,
+        "feedback_groups": {
+          "position": -0.023559359989947414,
+          "attitude": -0.029402612078936276,
+          "joint_position": -1.8248109982360247e-14,
+          "linear_velocity": -0.14003195870096677,
+          "angular_velocity": 0.16943670600976465,
+          "joint_velocity": 0.11853613368872137
+        },
+        "largest_absolute_feedback_group": "angular_velocity",
+        "components": {
+          "equilibrium": 2.6192760873533126e-27,
+          "rolling_feedforward": 0.0,
+          "holding": 0.0,
+          "LQR": 0.09497890892861735,
+          "synchronization": 0.03508361056447029,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.13006251860181803,
+        "applied": 0.13006251860181803,
+        "requested_over_bound": 0.2167708643363634,
+        "clipped": false
+      }
+    },
+    {
+      "time_s": 7.099999999999871,
+      "actual_tilt_deg": 13.233027849296304,
+      "reference_tilt_deg": 11.602869836046327,
+      "up_error_deg": 2.889915722822105,
+      "reference_up_change_deg_s": 12.104934358321538,
+      "actual_body_rates_rad_s": [
+        0.3033929324385788,
+        -0.14869534668936904,
+        -0.4463517920114439
+      ],
+      "feedback_joint_rate_reference_rad_s": [
+        0.3870671471503414,
+        0.0,
+        0.0
+      ],
+      "truth_patch": "belt_A",
+      "native_patch": "belt_A",
+      "belt_A": {
+        "units": "m/s",
+        "bound": 0.3,
+        "feedback_groups": {
+          "position": 0.052778432818503,
+          "attitude": -0.2842769070015294,
+          "joint_position": -4.725080137371859e-15,
+          "linear_velocity": 0.001973337264760187,
+          "angular_velocity": 0.16868360926140918,
+          "joint_velocity": 0.0036178237892975917
+        },
+        "largest_absolute_feedback_group": "attitude",
+        "components": {
+          "equilibrium": 0.0,
+          "rolling_feedforward": -0.017772123217582703,
+          "holding": 0.0,
+          "LQR": -0.0572237038675642,
+          "synchronization": 0.0,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": -0.07499582715219688,
+        "applied": -0.07499582715219688,
+        "requested_over_bound": -0.24998609050732296,
+        "clipped": false
+      },
+      "shell_A": {
+        "units": "N m",
+        "bound": 0.6,
+        "feedback_groups": {
+          "position": -0.06128985231701902,
+          "attitude": 0.054947553299419624,
+          "joint_position": -2.090868443936755e-13,
+          "linear_velocity": -0.0006562148284819071,
+          "angular_velocity": 0.0006619218873837844,
+          "joint_velocity": 0.022889620614901556
+        },
+        "largest_absolute_feedback_group": "position",
+        "components": {
+          "equilibrium": 2.6192760873533126e-27,
+          "rolling_feedforward": 0.0,
+          "holding": 0.0,
+          "LQR": 0.01655302865599495,
+          "synchronization": 0.03152761980891228,
+          "heading": 0.0,
+          "fade": 0.0
+        },
+        "requested": 0.04808064906908185,
+        "applied": 0.04808064906908185,
+        "requested_over_bound": 0.08013441511513641,
+        "clipped": false
+      }
+    }
+  ]
+}

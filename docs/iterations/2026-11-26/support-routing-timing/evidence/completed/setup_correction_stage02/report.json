@@ -1,0 +1,95 @@
+{
+  "passed": true,
+  "flat_featureless": true,
+  "flat_is_flat": true,
+  "zero_height_up_normal": true,
+  "gazebo_workspace_created": false,
+  "mock_workspace_only": true,
+  "original_strict_bridge_QA": {
+    "path": "results/support_routing_timing_20261126/review/bridge_equivalence_stage01/report.json",
+    "sha256": "6326126f309d8b58cb2cd3e3069db940863fc4c413c063ff90329ad60676fb45",
+    "passed": true,
+    "required_fixture_inputs": 4,
+    "inputs_sha256": {
+      "results/support_routing_timing_20261126/protocol.json": "a4e4cc0f138582d40eef4a8870f39c4c70b5aa69d29e292f52427b966d94bff3",
+      "results/support_routing_timing_20261126/protocol_clarifications.json": "08aafc261040bcae37cbaa9457229d67e97c9eacac7049b8efc7058eb62cccc6",
+      "results/support_routing_timing_20261126/review/bridge_fixture_stage01_batch/artifact_manifest.json": "abf8b41d2ed10b140f3834d2171b3e1243f84513d6d07fc2332a99c8feb0f0aa",
+      "results/support_routing_timing_20261126/review/bridge_fixture_stage01_batch/provenance.json": "c1609f0acf9a02d2591a44ed46f922af04ae5c9f6b28d1ed06e6f97be2188819",
+      "results/support_routing_timing_20261126/review/bridge_fixture_stage01_batch/report.json": "85c47da5a5df5bb97df25690d6c9bcffbc1b7ee6456c98c10e87fdfb1f403cf8",
+      "results/support_routing_timing_20261126/review/bridge_fixture_stage01_batch/bridge_fixture.npz": "ffbda71d413bd4ec8df9a4da137623cd1ba5e8e0be48cc28f00cd65f9b42184f",
+      "results/support_routing_timing_20261126/review/bridge_fixture_stage01_single/artifact_manifest.json": "e516c2c86f360dab244d2293726a957600a5ed703da580f5f474f57eefc36ec4",
+      "results/support_routing_timing_20261126/review/bridge_fixture_stage01_single/provenance.json": "aad178de94ac1ab7bb287afd7cb2caba47b52e47e7541e3564ca65582e24ad01",
+      "results/support_routing_timing_20261126/review/bridge_fixture_stage01_single/report.json": "e4f36150b7a03b348d175ad13311387169daea8031f43a8808718d0920db0a8a",
+      "results/support_routing_timing_20261126/review/bridge_fixture_stage01_single/bridge_fixture.npz": "ffbda71d413bd4ec8df9a4da137623cd1ba5e8e0be48cc28f00cd65f9b42184f"
+    }
+  },
+  "nonflat_collector_rejected_before_stage_or_server": true,
+  "fresh_output_path": "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected",
+  "source_contract": {
+    "iteration": "I-46",
+    "scope": "Pre-control setup correction only; initial flat attempt failed before Gazebo/server/controller construction,0 samples. No outcome/parameter retry.",
+    "changes": [
+      "Use featureless Terrain so is_flat is true for the registered plane z0",
+      "Preserve failed original case; fresh corrected output suffix",
+      "Collector rejects every job except registered flat z0"
+    ],
+    "unchanged_top_level_definitions": [
+      "sha",
+      "safe",
+      "save_json",
+      "load_helper",
+      "source_snapshot",
+      "verify_registered_inputs",
+      "native_row",
+      "NativeFeedbackProbe",
+      "save_precision",
+      "finalize",
+      "replay_history",
+      "build_path",
+      "interval_truth_row",
+      "save_substeps",
+      "verify_bridge_equivalence",
+      "run_bridge_fixture",
+      "main"
+    ],
+    "changed_top_level_definitions": [
+      "build_native_workspace",
+      "collect_native"
+    ],
+    "sources_before_checks": [
+      {
+        "path": "scripts/audit-support-routing.py",
+        "sha256": "12b5cff3ca4773189ac75e18a087032fc9da820332a4ee44da5835e266579f6d"
+      },
+      {
+        "path": "results/support_routing_timing_20261126/setup_correction_stage02/audit-support-routing-flat.py",
+        "sha256": "d0b0ca07c2e5f4689e1c62197e3c64bc4f31c1742e7c8ff5f897fca7041b6600"
+      },
+      {
+        "path": "results/support_routing_timing_20261126/setup_correction_stage02/exact_correction.patch",
+        "sha256": "4d2941e1925737c671bc725c73a6b9b348ae151474658e86bfcc65f2b5beff76"
+      },
+      {
+        "path": "results/support_routing_timing_20261126/protocol.json",
+        "sha256": "a4e4cc0f138582d40eef4a8870f39c4c70b5aa69d29e292f52427b966d94bff3"
+      },
+      {
+        "path": "results/support_routing_timing_20261126/campaign/jobs.json",
+        "sha256": "1e3cccc962f0ed94f1d1066577695ef706ae447014ccd013e50b2b476ffdd74a"
+      },
+      {
+        "path": "results/support_routing_timing_20261126/review/bridge_equivalence_stage01/report.json",
+        "sha256": "6326126f309d8b58cb2cd3e3069db940863fc4c413c063ff90329ad60676fb45"
+      },
+      {
+        "path": "src/spherical_wheel/support_routing_audit.py",
+        "sha256": "c7436cab44467f51d0110041aa7c132889d74ba397c0b36c21d409408b2169ba"
+      }
+    ],
+    "original_driver_unchanged": true,
+    "commands_applied": "Unchanged native controller, same declared program/phase/yaw; no shadow routing actuated.",
+    "output": "campaign/runs/flat_compact_outback_setup_corrected",
+    "source_lineage": "New copy, not a replacement of original tests/Mars/stepping/historical source."
+  },
+  "scope": "No Gazebo server/controller/dynamics or route execution."
+}

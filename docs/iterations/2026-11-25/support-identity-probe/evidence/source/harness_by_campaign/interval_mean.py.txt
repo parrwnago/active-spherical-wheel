@@ -1,0 +1,266 @@
+"""Targeted support-share feedback ablation on the Mars figure-eight.
+
+The intended controller still sees estimated records. Only _terrain_feedback
+receives diagnostic true support shares during a declared time window, scaled
+to the controller's original inferred total load. Ground-truth loads are read
+outside command(), never from StateMirror. No source controller is modified.
+"""
+from contextlib import ExitStack
+from dataclasses import asdict
+from datetime import datetime, timezone
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+from unittest.mock import patch
+
+import mujoco
+import numpy as np
+
+from spherical_wheel.contact_sensing import SUPPORTS
+from spherical_wheel.gazebo.bridge import GazeboSim
+from spherical_wheel.gazebo.experiments import run_gazebo
+from spherical_wheel.gazebo.mars import _workspace, build_route, evaluate_route, route_closed, route_item
+from spherical_wheel.model import REPO_ROOT
+from spherical_wheel.offroad_control import OffroadController, OffroadParams
+from spherical_wheel.offroad_experiments import save_run
+
+
+WINDOW = (28.90, 29.385)
+HIGH_RATE_WINDOW = (28.80, 29.50)
+VARIANTS = ('baseline', 'last_substep', 'interval_mean')
+CONTEXT = REPO_ROOT/'results/weighted_allocation_20261125/bounded_adaptive'
+ROUTES = ['plain_figure8', 'shape_triangle', 'shape_line_and_back']
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def loads_from_rows(rows):
+    """Same admission/active/compressive convention as GazeboPlant + measure_records."""
+    loads = np.zeros(4)
+    for row in rows:
+        if row[12] < .5:
+            continue
+        pressure = float(row[4:7]@row[7:10])
+        if row[10] <= 0 and pressure <= 0:
+            continue
+        index = {0: 0, 1: 1, 2: 2, 3: 3, 4: 0, 5: 1}.get(int(row[0]))
+        if index is not None:
+            loads[index] += max(0., pressure)
+    return loads
+
+
+def scaled_shares(loads, total):
+    loads = np.maximum(np.asarray(loads, float), 0.)
+    return loads/loads.sum()*total if loads.sum() > 1e-9 and total > 0 else None
+
+
+def source_snapshot(directory, parameters, variant):
+    files = [Path(__file__).resolve(), *sorted((REPO_ROOT/'src/spherical_wheel').rglob('*.py')),
+             *sorted((REPO_ROOT/'config').glob('*.yaml'))]
+    hashes = {}
+    for source in files:
+        relative = source.relative_to(REPO_ROOT)
+        target = directory/'source_snapshot'/relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+        hashes[str(relative)] = digest(source.read_bytes())
+    historical = json.loads((CONTEXT/'provenance.json').read_text())
+    mismatch = {}
+    for name, expected in historical['source_sha256'].items():
+        now = hashes['src/spherical_wheel/'+name]
+        if now != expected:
+            mismatch[name] = {'historical': expected, 'current': now}
+    provenance = {
+        'captured_before_simulation_utc': datetime.now(timezone.utc).isoformat(),
+        'argv': sys.argv, 'git_head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+        'source_stage': 'Current source, fresh matched experiment. Not an exact historical-source reproduction.',
+        'source_sha256': hashes, 'historical_source_differences': mismatch,
+        'variant': variant, 'parameters': asdict(parameters), 'intervention_window_s': WINDOW,
+        'high_rate_truth_window_s': HIGH_RATE_WINDOW,
+        'truth_timing': 'last_substep: latest completed 1 ms; interval_mean: mean of all five preceding 1 ms substep loads. Neither is observer-filtered.',
+        'intervention_scope': 'Only feedback load shares, normalized to the original inferred total. Locator records, normal/force estimates, rolling allocation and synchronization records stay native. Feedback-held load/gain history may carry effects onward.',
+        'contact_boundary': 'Same estimated point remains attached to its original record; no retagging onto an incompatible patch.',
+    }
+    (directory/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
+    return provenance
+
+
+def run_case(output, variant):
+    directory = output/'runs'/variant
+    if directory.exists():
+        raise FileExistsError(f'Preserve previous evidence; choose a new output: {directory}')
+    directory.mkdir(parents=True)
+    params = OffroadParams(mode='hardware', rolling_allocation='bounded', rolling_adaptive_effort=True)
+    provenance = source_snapshot(directory, params, variant)
+    workspace, yard = _workspace(output/'_workspaces'/variant, ROUTES)
+    # Build and reset the physical plant before installing the narrow run hook.
+    physical = workspace.plant(yard)
+    path, yaw = build_route('plain_figure8')
+    original_command = OffroadController.command
+    original_feedback = OffroadController._terrain_feedback
+    original_run = GazeboSim.run
+    probe_rows, substep_rows = [], []
+    current, mean_by_time = {}, {}
+    calls = 0
+    object_ids = None
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Controller attempted to read simulator contacts')
+
+    def high_rate_run(sim, iterations):
+        now = float(physical.data.time)
+        if sim is physical.sim and int(iterations) == physical.substeps and HIGH_RATE_WINDOW[0]-1e-9 <= now < HIGH_RATE_WINDOW[1]-1e-9:
+            loads = []
+            for index in range(int(iterations)):
+                original_run(sim, 1)
+                value = loads_from_rows(sim.contacts())
+                loads.append(value)
+                substep_rows.append(np.r_[now+(index+1)*physical.dt/int(iterations), value])
+            mean_by_time[round(now+physical.dt, 9)] = np.mean(loads, axis=0)
+        else:
+            original_run(sim, iterations)
+
+    def feedback(controller, qref, vref, feedforward, normal, measurement, touching):
+        inferred = np.array([measurement['loads_N'][name] for name in SUPPORTS])
+        total = float(inferred.sum())
+        instant = scaled_shares(current['truth_last'], total)
+        interval = scaled_shares(current['truth_mean'], total) if current['mean_valid'] else None
+        in_window = WINDOW[0]-1e-9 <= current['time_s'] <= WINDOW[1]+1e-9
+        used = inferred.copy()
+        selected = instant if variant == 'last_substep' else interval
+        inject = bool(variant != 'baseline' and in_window and touching and selected is not None)
+        effective = measurement
+        if inject:
+            used = selected.copy()
+            effective = {**measurement, 'loads_N': dict(zip(SUPPORTS, used))}
+        before_normal = controller.estimator.normal.copy()
+        before_wrench = np.r_[controller.observer.wrench()]
+        before_drive = controller.rolling_allocator.previous.copy()
+        before_point = np.asarray(measurement['point_m']).copy()
+        command, info = original_feedback(controller, qref, vref, feedforward, normal, effective, touching)
+        np.testing.assert_array_equal(controller.estimator.normal, before_normal)
+        np.testing.assert_array_equal(np.r_[controller.observer.wrench()], before_wrench)
+        np.testing.assert_array_equal(controller.rolling_allocator.previous, before_drive)
+        np.testing.assert_array_equal(measurement['point_m'], before_point)
+        np.testing.assert_array_equal([measurement['loads_N'][name] for name in SUPPORTS], inferred)
+        assert abs(used.sum()-total) < 1e-10
+        current.update(probe_in_window=in_window, probe_injected=inject,
+                       probe_native_loads_N=inferred, probe_feedback_loads_N=used,
+                       probe_truth_last_loads_N=current['truth_last'],
+                       probe_truth_interval_mean_loads_N=current['truth_mean'],
+                       probe_interval_mean_valid=current['mean_valid'],
+                       probe_total_load_preservation_error_N=used.sum()-total,
+                       probe_pre_sync_used_command=command.copy(),
+                       probe_estimator_normal_invariance_error=0.,
+                       probe_observer_wrench_invariance_error=0.,
+                       probe_rolling_reference_invariance_error=0.)
+        # Pure same-state command contrasts. No second controller update or
+        # second feedback call, so no change to held state or observer history.
+        for label, candidate in [('native', inferred), ('last_substep', instant), ('interval_mean', interval)]:
+            valid = bool(touching and candidate is not None and total > 0)
+            value = np.full(5, np.nan)
+            gain = np.full((5, 18), np.nan)
+            support = np.full(5, np.nan)
+            if valid:
+                loads = dict(zip(SUPPORTS, candidate))
+                gain = controller.feedback._gain(info['effective_phase_rad'], loads)
+                gain[0] = controller.ordinary['design']['K'][0]
+                support = controller.params.support_feedforward*controller.support_torque(normal, loads)
+                value = np.asarray(controller.ordinary['equilibrium']['u'])+feedforward+support-gain@info['error']
+            current['probe_shadow_'+label+'_command'] = value
+            current['probe_shadow_'+label+'_gain'] = gain
+            current['probe_shadow_'+label+'_support_command'] = support
+            current['probe_shadow_'+label+'_valid'] = valid
+        return command, info
+
+    def command(controller, *args):
+        nonlocal calls, object_ids
+        mirror = controller.plant
+        assert mirror.ground is None and mirror.terrain is None and mirror.data.ncon == 0
+        ids = (id(controller), id(controller.observer), id(controller.estimator), id(controller.rolling_allocator), id(controller.synchronizer))
+        if object_ids is None:
+            object_ids = ids
+        assert ids == object_ids, 'Controller components were reset/replaced'
+        now = float(mirror.data.time)
+        # Deliberate diagnostic truth acquisition is OUTSIDE original command.
+        # No physical measurements, terrain or contacts are attached to mirror.
+        last_loads = loads_from_rows(physical.gazebo_contacts)
+        mean = mean_by_time.get(round(now, 9))
+        current.clear()
+        current.update(time_s=now, truth_last=last_loads, mean_valid=mean is not None,
+                       truth_mean=np.full(4, np.nan) if mean is None else mean)
+        with ExitStack() as stack:
+            for target in ('spherical_wheel.offroad_control.measure_contact',
+                           'spherical_wheel.offroad_control.rolling_feedforward',
+                           'spherical_wheel.offroad_control.records_from_mujoco',
+                           'spherical_wheel.synchronization.ContactSynchronizer._normal_loads',
+                           'mujoco.mj_contactForce'):
+                stack.enter_context(patch(target, forbidden))
+            applied, info = original_command(controller, *args)
+        row = {key: value for key, value in current.items() if key.startswith('probe_')}
+        row.update(time_s=now, exact_qpos=mirror.data.qpos.copy(), exact_qvel=mirror.data.qvel.copy(),
+                   exact_requested=info['requested'].copy(), exact_applied=applied.copy(),
+                   exact_observer_wrench=np.r_[controller.observer.wrench()],
+                   exact_estimated_normal=controller.estimator.normal.copy(),
+                   exact_drive_reference=info['allocation_drive_reference'].copy(),
+                   exact_rolling_feedforward=info['rolling_feedforward'].copy(),
+                   exact_feedback_gain=info['feedback_gain'].copy(),
+                   exact_feedback_error=info['error'].copy())
+        probe_rows.append(row)
+        calls += 1
+        if calls % 2000 == 0:
+            print(json.dumps({'variant': variant, 'time_s': now, 'calls': calls}), flush=True)
+        return applied, info
+
+    try:
+        with patch.object(GazeboSim, 'run', high_rate_run), patch.object(OffroadController, 'command', command), patch.object(OffroadController, '_terrain_feedback', feedback):
+            log, summary = run_gazebo(workspace, yard, path, params, phase=-1., yaw_deg=yaw, record_diagnostics=True)
+        summary = evaluate_route(log, summary, path, yard, route_closed('plain_figure8'))
+        probe = {key: np.asarray([row[key] for row in probe_rows]) for key in probe_rows[0]}
+        summary.update(route={'name': 'plain_figure8', 'about': route_item('plain_figure8')['about'],
+                              'start_phase_rad': -1., 'initial_yaw_deg': yaw, 'path': path.spec()},
+                       support_identity_probe={'variant': variant, 'feedback_load_share_only': True,
+                           'intervention_window_s': WINDOW, 'intervened_calls': int(probe['probe_injected'].sum()),
+                           'guarded_controller_calls': calls, 'outside_window_injections': int(np.sum(probe['probe_injected'] & ~probe['probe_in_window'])),
+                           'total_load_preservation_max_error_N': float(np.abs(probe['probe_total_load_preservation_error_N']).max()),
+                           'controller_component_identities_preserved': True,
+                           'truth_timing': provenance['truth_timing'], 'scope': provenance['intervention_scope']})
+        save_run(directory, log, summary, yard)
+        np.savez_compressed(directory/'probe.npz', **probe)
+        np.savez_compressed(directory/'truth_substeps.npz', time_and_loads=np.asarray(substep_rows))
+        artifacts = [directory/'rollout.npz', directory/'probe.npz', directory/'truth_substeps.npz',
+                     workspace.cache_path, Path(physical.world_path)]
+        provenance['generated_artifacts_sha256'] = {str(p.relative_to(REPO_ROOT)): digest(p.read_bytes()) for p in artifacts}
+        provenance['engine'] = summary['engine']
+        (directory/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
+        result = {'variant': variant, 'completed': summary['completed'], 'failure': summary['failure'],
+                  'rms_moving_mm': 1000*summary['tracking']['rms_error_while_moving_m'],
+                  'max_error_mm': 1000*summary['tracking']['max_error_m'],
+                  'final_error_mm': 1000*summary['tracking']['final_error_m'],
+                  'max_attitude_error_deg': summary['attitude']['max_error_from_reference_deg'],
+                  'passed_all_gates': summary['mars']['passed'], 'guarded_calls': calls,
+                  'intervened_calls': summary['support_identity_probe']['intervened_calls']}
+        print(json.dumps(result), flush=True)
+        return result
+    finally:
+        physical.close()
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--variant', choices=VARIANTS, required=True)
+    args = parser.parse_args()
+    output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    run_case(output, args.variant)
+
+
+if __name__ == '__main__':
+    main()

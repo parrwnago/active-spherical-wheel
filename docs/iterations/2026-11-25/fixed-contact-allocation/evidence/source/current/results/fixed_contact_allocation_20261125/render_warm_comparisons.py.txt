@@ -1,0 +1,166 @@
+"""Replay the warm fixed-contact cases; no simulator integration is performed.
+
+MUJOCO_GL=egl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -u results/fixed_contact_allocation_20261125/render_warm_comparisons.py
+"""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+from PIL import Image, ImageDraw
+
+from spherical_wheel.offroad import TerrainPlant
+from spherical_wheel.offroad_view import _camera, _caption, _draw, _font
+from spherical_wheel.terrain import Terrain
+
+ROOT = Path(__file__).resolve().parent
+OUTPUT = ROOT / 'videos'
+WIDTH, HEIGHT, FPS, SPEED = 960, 720, 20, .25
+START_S = 0.
+SUPPORTS = ('shell A', 'shell B', 'belt A', 'belt B')
+
+
+def load(motion, variant):
+    directory = ROOT / 'runs' / motion / variant
+    summary = json.loads((directory / 'summary.json').read_text())
+    with np.load(directory / 'rollout.npz') as saved:
+        log = {key: value.astype(float) if value.dtype.kind == 'f' else value for key, value in saved.items()}
+    log['planned_xy'] = log['fixed_raw_goal_xy'][log['time_s'] >= .8 - 1e-6][::4]
+    return dict(directory=directory, summary=summary, log=log, variant=variant, motion=motion)
+
+
+def nearest(times, moment):
+    i = min(int(np.searchsorted(times, moment)), len(times)-1)
+    return i-1 if i and abs(times[i-1]-moment) <= abs(times[i]-moment) else i
+
+
+def vec(values, digits=2):
+    return '[' + ','.join(f'{v:+.{digits}f}' for v in values) + ']'
+
+
+def loads(values):
+    return '+'.join(f'{name} {v:.1f}N' for name, v in zip(SUPPORTS, values) if v > .05) or 'unloaded'
+
+
+def annotations(run, i):
+    d = run['log']
+    q = d['reference_quat'][i]
+    desired = np.rad2deg(np.arccos(np.clip(1-2*np.sum(q[1:3]**2)/np.dot(q, q), -1, 1)))
+    raw_error = np.linalg.norm(d['qpos'][i, :2]-d['fixed_raw_goal_xy'][i])*1000
+    feedback_error = np.linalg.norm(d['qpos'][i, :2]-d['fixed_center_reference_xy'][i])*1000
+    refs = d['allocation_drive_reference'][i]
+    clipping = ','.join(name for name, active in zip(('shaft','A','B','beltA','beltB'), d['actuator_saturated'][i]) if active) or 'none'
+    candidate = bool(d['fixed_candidate_active'][i])
+    lines = [
+        f"t {d['time_s'][i]:.3f}s | original goal error {raw_error:.1f}mm | feedback-reference error {feedback_error:.1f}mm",
+        f"10 deg side slope | initial phase pi/2 | common LS warm-up 0.8s | {'candidate active' if candidate else 'existing LS active'}",
+        'Nominal / body-reference / measured velocity XY m/s: ' + vec(d['fixed_raw_velocity_m_s'][i]) + ' / ' + vec(d['reference_qvel'][i, :2]) + ' / ' + vec(d['qvel'][i, :2]),
+        f"Body lean actual/reference {np.rad2deg(d['tilt_rad'][i]):.1f}/{desired:.1f}deg | attitude error {np.rad2deg(d['attitude_error_rad'][i]):.1f}deg",
+        'Actual support: ' + loads(d['support_loads_N'][i]) + ' | estimated: ' + loads(d['estimated_support_loads_N'][i]),
+        f"Actual-geometry sigma2 {d['fixed_true_authority_m_s'][i]:.5f}m/s | nominal demand on weak axis {d['fixed_true_weak_requested_speed_m_s'][i]:.3f}m/s",
+        'Joint references / actual rates [shaft,A,B] rad/s: ' + vec(refs[:3],1) + ' / ' + vec(d['qvel'][i,6:9],1),
+        'Belt references / final commands [A,B] m/s: ' + vec(refs[3:]) + ' / ' + vec(d['input'][i,3:]),
+        'Torque request / final [shaft,A,B] N m: ' + vec(d['command'][i,:3]) + ' / ' + vec(d['input'][i,:3]),
+        'Final command limits: torque +/-[1.5,0.6,0.6] N m; belts +/-0.30m/s | clipping: ' + clipping,
+    ]
+    if candidate:
+        lines += ['Candidate: modal allocation + feasible feedback references; LQR gains unchanged.',
+                  'Reference-only limits: joints +/-20rad/s, belts +/-0.3m/s; acceleration 100rad/s2, 3m/s2.']
+    else:
+        lines += ['Existing least-squares allocation and original feedback references; LQR gains unchanged.',
+                  'No explicit drive-reference speed/acceleration limits. Actual joint speeds are separate.']
+    return lines
+
+
+def inset(frame, d, i, half_range):
+    image = Image.fromarray(frame)
+    draw = ImageDraw.Draw(image, 'RGBA')
+    left, top, width, height = 16, 462, 240, 220
+    draw.rounded_rectangle((left,top,left+width,top+height),radius=5,fill=(10,18,27,225),outline=(120,145,160,180))
+    draw.text((left+8,top+6),'XY relative to warm-start centre',font=_font(12),fill=(230,240,245))
+    draw.text((left+8,top+23),'Orange goal | green feedback | cyan actual',font=_font(10),fill=(225,230,235))
+    origin = np.asarray(d['qpos'][nearest(d['time_s'], .8),:2])
+    x0,y0,side = left+27,top+45,163
+    def point(xy):
+        x,y=np.asarray(xy)-origin
+        return (x0+side*(x/half_range+1)/2,y0+side*(1-y/half_range)/2)
+    for level in (-1.,-.5,0.,.5,1.):
+        draw.line([(x0+side*(level+1)/2,y0),(x0+side*(level+1)/2,y0+side)],fill=(160,180,195,70))
+        draw.line([(x0,y0+side*(level+1)/2),(x0+side,y0+side*(level+1)/2)],fill=(160,180,195,70))
+    draw.text((x0+side+4,y0+side/2),'X',font=_font(10),fill=(230,240,245))
+    draw.text((x0+side/2+3,y0-3),'Y',font=_font(10),fill=(230,240,245))
+    draw.text((left+8,top+height-15),f'Full width {2*half_range*1000:.0f}mm; common scale',font=_font(10),fill=(225,230,235))
+    for points,color in [(d['planned_xy'],(255,160,50,255)),(d['qpos'][:i+1,:2],(30,220,240,255))]:
+        if len(points)>1:draw.line([point(xy) for xy in points],fill=color,width=2)
+    for xy,color,radius in [(d['fixed_raw_goal_xy'][i],(255,160,50,255),4),
+                            (d['fixed_center_reference_xy'][i],(80,230,125,255),3),
+                            (d['qpos'][i,:2],(30,220,240,255),2)]:
+        x,y=point(xy);draw.ellipse((x-radius,y-radius,x+radius,y+radius),fill=color)
+    return np.asarray(image)
+
+
+def render(plant, motion, runs, half_range):
+    target = OUTPUT / f'warm_{motion}_baseline_vs_feasible.mp4'
+    end = max(float(run['log']['time_s'][-1]) for run in runs)
+    option=mujoco.MjvOption();option.geomgroup[3:]=0
+    saved=plant.capture()
+    footer=f'Saved Gazebo/DART states | Exact state; estimated contact | {SPEED:g}x | Orange original goal remains evaluated'
+    def frame_at(renderer, moment):
+        panels=[]
+        for run in runs:
+            d=run['log'];i=nearest(d['time_s'],moment)
+            camera=_camera(np.array([0.,-.02,.22]),112.,-25.,1.2)
+            frame=_draw(plant,renderer,d,i,camera,option,False)
+            heading=('Existing least squares' if run['variant']=='baseline' else 'Experimental feasible allocation/reference')+' | '+motion.replace('_','-')
+            panels.append(inset(_caption(frame,heading,annotations(run,i),footer),d,i,half_range))
+        return np.concatenate(panels,axis=1)
+    try:
+        with mujoco.Renderer(plant.model,height=HEIGHT,width=WIDTH) as renderer:
+            writer=imageio.get_writer(target,fps=FPS,codec='libx264',quality=8,macro_block_size=2,ffmpeg_log_level='error')
+            try:
+                for moment in np.arange(START_S,end+1e-8,SPEED/FPS):writer.append_data(frame_at(renderer,moment))
+            finally:writer.close()
+            case=runs[0]['summary']['warm_fixed_contact_case']
+            preview=case['warmup_s']+.5*case['motion_s']
+            imageio.imwrite(OUTPUT/f'{target.stem}_during_motion.jpg',frame_at(renderer,preview),quality=90)
+            imageio.imwrite(OUTPUT/f'{target.stem}_final.jpg',frame_at(renderer,end),quality=90)
+    finally:plant.restore(saved)
+    with imageio.get_reader(target) as reader:
+        metadata=reader.get_meta_data();count=reader.count_frames();last=reader.get_data(count-1)
+        imageio.imwrite(OUTPUT/f'{target.stem}_decoded_final.jpg',last,quality=90)
+    return dict(file=str(target),sha256=hashlib.sha256(target.read_bytes()).hexdigest(),
+                size_bytes=target.stat().st_size,fps=metadata['fps'],frames=count,
+                video_duration_s=metadata['duration'],dimensions=list(metadata['size']),
+                sim_interval_s=[START_S,end],playback_speed=SPEED,final_frame_decoded=True,
+                cases=[dict(directory=str(run['directory']),checks=run['summary']['warm_fixed_contact_case']['checks']) for run in runs])
+
+
+def main():
+    global ROOT, OUTPUT, SPEED, START_S
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--family',type=Path,default=ROOT)
+    parser.add_argument('--speed',type=float,default=SPEED)
+    parser.add_argument('--start-s',type=float,default=START_S)
+    args=parser.parse_args()
+    ROOT=args.family.resolve();OUTPUT=ROOT/'videos';SPEED=args.speed;START_S=args.start_s
+    OUTPUT.mkdir(parents=True,exist_ok=True)
+    loaded={motion:[load(motion,variant) for variant in ('baseline','candidate')] for motion in ('world_y','world_x')}
+    displacements=[]
+    for runs in loaded.values():
+        for run in runs:
+            d=run['log'];origin=d['qpos'][nearest(d['time_s'],.8),:2]
+            displacements += [abs(d['qpos'][:,:2]-origin).max(),abs(d['fixed_raw_goal_xy']-origin).max()]
+    half_range=max(.03,np.ceil(max(displacements)*1.2/.01)*.01)
+    config=json.loads((ROOT/'_workspace/flat/model_config.json').read_text())
+    terrain=Terrain.from_spec(json.loads((loaded['world_y'][0]['directory']/'terrain.json').read_text()))
+    plant=TerrainPlant(config,terrain,OUTPUT/'_replay_scene',visual_bounds=(-.8,.8,-.8,.8))
+    reports=[render(plant,motion,runs,half_range) for motion,runs in loaded.items()]
+    (OUTPUT/'video_metadata.json').write_text(json.dumps(dict(videos=reports,
+        scope='Saved-state replay only; candidate changes allocation and feedback references. Nominal goal is retained and evaluated.'),indent=2)+'\n')
+    print(json.dumps(reports,indent=2),flush=True)
+
+
+if __name__=='__main__':main()

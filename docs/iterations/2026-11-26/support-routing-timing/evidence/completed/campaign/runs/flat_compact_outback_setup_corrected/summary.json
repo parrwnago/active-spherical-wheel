@@ -1,0 +1,339 @@
+{
+  "sensing": {
+    "observer_force_error_median_N": 0.000220543537178218,
+    "observer_force_error_p95_N": 0.0004571395562089009,
+    "observer_moment_error_median_Nm": 0.00033831101869747314,
+    "observer_moment_error_p95_Nm": 0.001151284346722886
+  },
+  "terrain": "I46_flat_control",
+  "controller": "hardware",
+  "parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "rolling_allocation": "least_squares",
+    "rolling_damping_m_s": 0.01,
+    "rolling_speed_limits": [
+      20.0,
+      20.0,
+      20.0,
+      0.3,
+      0.3
+    ],
+    "rolling_acceleration_limits": [
+      100.0,
+      100.0,
+      100.0,
+      3.0,
+      3.0
+    ],
+    "rolling_effort_m_s": 0.001,
+    "rolling_change_m_s": 0.001,
+    "rolling_adaptive_effort": false,
+    "rolling_weak_effort_m_s": 0.005,
+    "rolling_authority_m_s": 0.02,
+    "rolling_reference_catchup_gain_s_inv": 1.0,
+    "rolling_reference_catchup_speed_m_s": 0.06,
+    "rolling_reference_position_limit_m": 0.05,
+    "rolling_reference_balance_guard": false,
+    "rolling_reference_lean_scale_deg": 3.0,
+    "rolling_reference_rate_horizon_s": 0.1,
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "engine_version": "Gazebo Harmonic (gz-sim 8.10.0)",
+  "contact_mode": "analytic_clipped_floor",
+  "ground_model": "Gazebo collision with the plane; contacts solved by DART. The MuJoCo mirror only evaluates kinematics.",
+  "path": {
+    "kind": "waypoint_quintic",
+    "waypoints": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.12727922061357855,
+        0.12727922061357855
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ],
+    "leg_duration_s": 6.0,
+    "start_s": 1.0,
+    "duration_s": 12.0,
+    "origin": [
+      -2.363639610306789,
+      8.336360389693212
+    ]
+  },
+  "completed": true,
+  "failure": null,
+  "completed_duration_s": 16.0000000000011,
+  "requested_duration_s": 16.0,
+  "distance_along_path_m": -8.262858415172803e-05,
+  "final_cross_track_m": 3.2121893578200555e-11,
+  "tracking": {
+    "rms_error_m": 0.007473698419756567,
+    "max_error_m": 0.011519352185504681,
+    "final_error_m": 8.262858415173428e-05,
+    "rms_error_while_moving_m": 0.00812672327112639
+  },
+  "attitude": {
+    "max_tilt_deg": 0.402326380792842,
+    "max_error_from_reference_deg": 0.24478595032256667,
+    "rms_error_from_reference_deg": 0.14118370748752332,
+    "final_error_from_reference_deg": 0.01996713785127312,
+    "heading_change_deg": 6.857441282078778e-09
+  },
+  "ground": {
+    "max_slope_under_wheel_deg": 0.0,
+    "height_range_m": [
+      0.0,
+      0.0
+    ],
+    "friction_range": [
+      0.7,
+      0.7
+    ]
+  },
+  "contact": {
+    "normal_load_fraction_min": 0.9999900000999989,
+    "normal_load_fraction_max": 1.0000006795048335,
+    "normal_load_fraction_std": 4.996611451013758e-07,
+    "unloaded_time_s": 0.0,
+    "utilization_mean": 0.0022871700352351935,
+    "utilization_p95": 0.004618657633527328,
+    "utilization_max": 0.004716341712892326,
+    "time_above_90pct_cone_s": 0.0,
+    "max_slip_speed_m_s": 4.292262775540663e-09,
+    "slip_distance_m": 2.5507192444667634e-08,
+    "sliding_time_s": 0.0,
+    "friction_loss_J": 1.130649074819393e-09,
+    "estimated_friction_min": 0.7,
+    "normal_estimate_error_rms_deg": 0.00011552083363720513,
+    "normal_estimate_error_max_deg": 0.0002846883867283866,
+    "normal_estimate_error_median_deg": 8.22640924826283e-05,
+    "normal_estimate_error_p95_deg": 0.00019852945297369075,
+    "support_time_share": {
+      "shell_A": 0.8503592627303967,
+      "shell_B": 0.0,
+      "belt_A": 0.14964073726960325,
+      "belt_B": 0.0
+    },
+    "support_handovers": 4,
+    "fork_ground_contact": false
+  },
+  "actuation": {
+    "max_input_fraction": [
+      0.005656248908263568,
+      2.0019700877825856e-10,
+      6.670143599034043e-11,
+      1.6130489471282591e-10,
+      0.0
+    ],
+    "saturated_time_fraction": 0.0,
+    "rms_torque_Nm": [
+      0.005053557113901676,
+      4.027142617021201e-12,
+      2.1429320909935945e-12
+    ],
+    "max_joint_speed_rad_s": [
+      0.5194336762122953,
+      1.1069625668111217e-09,
+      2.257013600961902e-09
+    ],
+    "joint_work_J": 0.016165834180433263,
+    "unloaded_fade_time_s": 0.0
+  },
+  "settled_at_end": true,
+  "engine": {
+    "simulator": "Gazebo Harmonic (gz-sim 8.10.0)",
+    "physics": "DART 6.19.5 via gz-physics 7.5.0",
+    "collision_detector": "ode",
+    "step_s": 0.001,
+    "ground": "plane",
+    "world_info": {
+      "ground": "plane",
+      "collision_detector": "ode"
+    }
+  },
+  "wall_time_s": 35.723721504211426,
+  "bridge_counters": {
+    "admitted": 16017,
+    "rejected": 48051,
+    "unmatched": 0
+  },
+  "support_routing_audit": {
+    "iteration": "I-46",
+    "case": {
+      "origin_xy_m": [
+        -2.363639610306789,
+        8.336360389693212
+      ],
+      "leg_distance_m": 0.18,
+      "heading_deg": 45.0,
+      "leg_duration_s": 6.0,
+      "start_s": 1.0,
+      "duration_s": 16.0,
+      "phase_rad": 1.1,
+      "yaw_deg": 45.0,
+      "visual_bounds": [
+        -3.0,
+        -1.5999999999999999,
+        7.7,
+        9.1
+      ],
+      "ground_check_points": [
+        [
+          -2.363639610306789,
+          8.336360389693212
+        ],
+        [
+          -2.3,
+          8.4
+        ],
+        [
+          -2.2363603896932105,
+          8.463639610306789
+        ],
+        [
+          -2.4060660171779817,
+          8.506066017177982
+        ],
+        [
+          -2.193933982822018,
+          8.293933982822018
+        ],
+        [
+          -2.4202081528017128,
+          8.392928932188136
+        ],
+        [
+          -2.179791847198287,
+          8.407071067811865
+        ]
+      ],
+      "case_id": "flat_compact_outback",
+      "terrain": "flat",
+      "flat_height_m": 0.0
+    },
+    "native_commands_unchanged": true,
+    "shadow_actuated": false,
+    "observer_updates_per_command": 1,
+    "interval_truth": "Five1ms completed solver records; moments averaged about each matching moving centre.",
+    "stepping": "One held command; five run(1) calls verified separately against one run(5)."
+  },
+  "contact_forecast_case": {
+    "case": {
+      "origin_xy_m": [
+        -2.363639610306789,
+        8.336360389693212
+      ],
+      "leg_distance_m": 0.18,
+      "heading_deg": 45.0,
+      "leg_duration_s": 6.0,
+      "start_s": 1.0,
+      "duration_s": 16.0,
+      "phase_rad": 1.1,
+      "yaw_deg": 45.0,
+      "visual_bounds": [
+        -3.0,
+        -1.5999999999999999,
+        7.7,
+        9.1
+      ],
+      "ground_check_points": [
+        [
+          -2.363639610306789,
+          8.336360389693212
+        ],
+        [
+          -2.3,
+          8.4
+        ],
+        [
+          -2.2363603896932105,
+          8.463639610306789
+        ],
+        [
+          -2.4060660171779817,
+          8.506066017177982
+        ],
+        [
+          -2.193933982822018,
+          8.293933982822018
+        ],
+        [
+          -2.4202081528017128,
+          8.392928932188136
+        ],
+        [
+          -2.179791847198287,
+          8.407071067811865
+        ]
+      ],
+      "case_id": "flat_compact_outback",
+      "terrain": "flat",
+      "flat_height_m": 0.0
+    },
+    "actual_path": {
+      "kind": "waypoint_quintic",
+      "waypoints": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.12727922061357855,
+          0.12727922061357855
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ],
+      "leg_duration_s": 6.0,
+      "start_s": 1.0,
+      "duration_s": 12.0,
+      "origin": [
+        -2.363639610306789,
+        8.336360389693212
+      ]
+    },
+    "activation": {},
+    "guarded_controller_calls": 3201,
+    "forecast_affects_control": false
+  }
+}

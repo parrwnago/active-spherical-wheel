@@ -1,0 +1,183 @@
+"""Four actual saved I42 arm replays with common camera, XY bounds and program time.
+
+No physics integration, controller call or forecast. Oracle arms are explicitly
+diagnostic; they use true simulator load shares in feedback routing only.
+"""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+import types
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+from PIL import Image, ImageDraw
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+VIEWER = ROOT/'results/lqr_contact_forecast_20261125/videos/render_contact_forecasts.py'
+ARMS = ('baseline', 'feedback_shares', 'sync_off', 'both')
+LABELS = ('BASELINE: native observer + preparation', 'TRUE-SHARE ORACLE: feedback routing only',
+          'SYNC OFF: native observer, preparation masked', 'BOTH: true-share oracle + preparation masked')
+WIDTH, HEIGHT, FPS, SPEED = 800, 600, 20, .5
+START, END = 6.4, 10.
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def read(path):
+    return json.loads(Path(path).read_text())
+
+
+def card(runs, font):
+    analysis = read(HERE/'analysis/stage01/report.json')
+    image = Image.new('RGB', (WIDTH*2, HEIGHT*2), (12, 22, 33))
+    draw = ImageDraw.Draw(image)
+    draw.text((40, 40), 'I42: four fresh diagnostic Mars executions', font=font(37), fill=(236, 244, 251))
+    draw.text((40, 100), 'One execution per arm. No default change or statistical robustness claim.', font=font(24), fill=(210, 228, 241))
+    draw.text((40, 145), 'Feedback-share oracle is simulator truth: diagnostic, unavailable to a robot.', font=font(24), fill=(247, 196, 96))
+    draw.text((40, 190), 'Sync-off masks preparation commands AND nominal-reference increments only at4<=t<10s.', font=font(21), fill=(212, 228, 241))
+    y = 290
+    for label, run in zip(LABELS, runs):
+        summary = run['summary']; tracking = summary['tracking']
+        draw.text((40, y), label, font=font(27), fill=(240, 246, 251)); y += 43
+        status = 'completed' if summary['completed'] else 'ended early'
+        draw.text((60, y), f'{status} {summary["completed_duration_s"]:.3f}s | moving RMS {1000*tracking["rms_error_while_moving_m"]:.2f}mm | peak {1000*tracking["max_error_m"]:.2f}mm | final {1000*tracking["final_error_m"]:.2f}mm',
+                  font=font(22), fill=(191, 218, 236))
+        gates = analysis['runs'][run['case']]['passes_all_existing_route_gates']
+        draw.text((60,y+35),f'Existing route gates: {"PASS" if gates else "FAIL"} | completion and gate success are separate',
+                  font=font(20),fill=(193, 218, 235)); y += 95
+    draw.text((40, y+40), 'Display window6.4–10s is identical for every arm; full-route metrics retain later consequences.', font=font(23), fill=(214, 231, 242))
+    draw.text((40, y+85), 'Cyan: recorded body path. Orange: planned reference. 3D geometry replay only; no new physics.', font=font(23), fill=(214, 231, 242))
+    passed = analysis['sync_off_provisional_screen']['passes_all_conditions']
+    draw.text((40, y+130), f'Sync-off early-departure screening conditions: {"PASS" if passed else "FAIL"}. Existing route gates are a separate result.',
+              font=font(24),fill=(247,196,96))
+    draw.text((40, y+175), 'Live LQR defaults remain unchanged. This is diagnostic evidence, not an adopted controller fix.',
+              font=font(23),fill=(214,231,242))
+    return np.asarray(image)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--preview', action='store_true')
+    args = parser.parse_args()
+    output = HERE/'videos'
+    output.mkdir(exist_ok=True)
+    prefix = 'preview' if args.preview else 'video'
+    metadata = output/f'{prefix}_metadata.json'
+    if metadata.exists():
+        raise FileExistsError('Preserve earlier render metadata; use a fresh stage')
+    target = output/'handoff_factorial_comparison.mp4'
+    if target.exists():
+        raise FileExistsError('Preserve completed render')
+    snapshot = output/'source_snapshot'; snapshot.mkdir(exist_ok=True)
+    for source in [Path(__file__), VIEWER]:
+        saved = snapshot/f'{source.stem}_{sha(source)[:12]}.py'
+        if not saved.exists():
+            saved.write_bytes(source.read_bytes())
+        assert sha(saved) == sha(source)
+    viewer = types.ModuleType('i42_saved_state_viewer'); viewer.__file__ = str(VIEWER)
+    exec(compile(VIEWER.read_text(), str(VIEWER), 'exec'), viewer.__dict__)
+    old = ROOT/'results/lqr_contact_forecast_20261125/videos/overview_video_metadata.json'
+    assert sha(VIEWER) == read(old)['render_source_sha256']
+    viewer.HERE = output
+    viewer.RUNS = HERE/'campaign/runs'
+    runs = [viewer.load_case(arm) for arm in ARMS]
+    for run in runs[1:]:
+        prefix_length = min(len(runs[0]['exact']['time_s']),len(run['exact']['time_s']))
+        for key in ['time_s', 'exact_reference_xy', 'exact_reference_velocity_m_s', 'exact_reference_acceleration_m_s2']:
+            np.testing.assert_array_equal(runs[0]['exact'][key][:prefix_length], run['exact'][key][:prefix_length])
+    time = runs[0]['log']['time_s']
+    start = viewer.nearest(time, START); stop = viewer.nearest(time, END)+1
+    windows = [(viewer.nearest(r['log']['time_s'],START),viewer.nearest(r['log']['time_s'],END)+1) for r in runs]
+    coords = np.vstack([np.vstack([r['log']['qpos'][a:b, :3], np.c_[r['log']['reference_xy'][a:b],r['log']['ground_height_m'][a:b]+.12]]) for r,(a,b) in zip(runs,windows)])
+    xy_bounds = [float(coords[:, 0].min()-.03), float(coords[:, 0].max()+.03),
+                 float(coords[:, 1].min()-.03), float(coords[:, 1].max()+.03)]
+    camera_center = .5*(coords.min(axis=0)+coords.max(axis=0))
+    camera_distance = max(1.25,1.9*float(np.max(coords.max(axis=0)-coords.min(axis=0))))
+    paths = [Path(__file__), VIEWER, HERE/'protocol.json', HERE/'jobs.json',HERE/'analysis/stage01/report.json']
+    assert paths[-1].is_file(), 'Wait for sealed raw cases and final saved-data analysis before rendering'
+    for run in runs:
+        paths += [run['folder']/file for file in ['precision.npz','rollout.npz','summary.json','provenance.json','terrain.json','source_snapshot/config/model.yaml']]
+    provenance = {'iteration': 'I-42', 'scope': __doc__, 'preview': args.preview,
+                  'window_s': [START, END], 'arms': list(ARMS), 'fps': FPS, 'playback_speed': SPEED,
+                  'camera_shared_across_all_arms_and_frames': True, 'single_shared_display_geometry': True,
+                  'camera_center_xyz_m':camera_center.tolist(),
+                  'camera_distance_m':camera_distance,'xy_bounds_shared_m':xy_bounds,
+                  'frame_dimensions': [WIDTH*2, HEIGHT*2], 'reference_arrays_exact': True,
+                  'input_sha256': {str(p.relative_to(ROOT)): sha(p) for p in paths},
+                  'limits': 'True feedback shares are a diagnostic oracle. Window4<=t<10 changes commands and nominal reference; later histories differ. One execution per arm; no standalone adoption claim.'}
+    (output/f'{prefix}_provenance.json').write_text(json.dumps(provenance,indent=2)+'\n')
+    # All arms share one display geometry and one renderer; only recorded state
+    # is assigned in turn. This prevents arm-dependent terrain crop/resampling.
+    config_paths = [run['folder']/'source_snapshot/config/model.yaml' for run in runs]
+    assert len({sha(path) for path in config_paths}) == 1
+    bounds = [xy_bounds[0]-.6,xy_bounds[1]+.6,xy_bounds[2]-.6,xy_bounds[3]+.6]
+    config = viewer.yaml.safe_load(config_paths[0].read_text())
+    plant = viewer.replay_plant(config,viewer.MarsYard(),bounds,output/'_render_scenes/common')
+    saved_state = plant.capture()
+    renderer = mujoco.Renderer(plant.model,height=HEIGHT,width=WIDTH)
+    option = mujoco.MjvOption(); option.geomgroup[3:] = 0
+    writer = None if args.preview else imageio.get_writer(target,fps=FPS,codec='libx264',quality=8,macro_block_size=2,ffmpeg_log_level='error')
+    frames = 0
+    moments = [START, 6.86, END] if args.preview else START+viewer.frame_times(END-START,SPEED)
+    try:
+        for moment in moments:
+            panels = []
+            for arm, label, run,(a,b) in zip(ARMS,LABELS,runs,windows):
+                log = run['log']; index = viewer.nearest(log['time_s'],moment)
+                camera = viewer._camera(camera_center,112.,-25.,camera_distance)
+                frame = viewer._draw(plant,renderer,log,index,camera,option,False)
+                ratios = np.abs(run['exact']['exact_applied'][index])/np.asarray(run['provenance']['input_bounds'])
+                shares = run['exact']['truth_patch_loads_N'][index]
+                support = viewer.support_text(shares)
+                held = moment > log['time_s'][-1]+.0025
+                state_label = f'TRACE ENDED: last recorded state {log["time_s"][index]:.3f}s held' if held else f'ACTUAL state t{log["time_s"][index]:.3f}s'
+                lines = [f'{state_label} | program time{moment:.3f}s | {SPEED:g}x | same camera/worldXY',
+                         f'Time-aligned error {log["goal_error_mm"][index]:.2f}mm | actual tilt {log["absolute_tilt_deg"][index]:.2f}deg | ref {log["reference_tilt_deg"][index]:.2f}deg',
+                         f'Latest physical support: {support}',
+                         f'Max applied input / assumed bound {ratios.max():.3f} | intervention active4<=t<10s',
+                         'Oracle feedback-share branch: diagnostic only' if arm in ('feedback_shares','both') else 'Observer feedback shares; no contact truth in controller']
+                frame = viewer._caption(frame,label,lines,'Same timed reference,gains,bounds. Cyan: body path. Orange: reference. Retain all outcomes.')
+                inset = {'qpos':log['qpos'][a:b], 'reference_xy':log['reference_xy'][a:b]}
+                frame = viewer.xy_inset(frame,inset,index-a,xy_bounds)
+                # The reusable viewer's long footer clips at this panel width.
+                # Retain the same world scale and replace only its caption.
+                picture = Image.fromarray(frame); draw = ImageDraw.Draw(picture,'RGBA')
+                left,top,size = WIDTH-220-15,HEIGHT-220-44,220
+                draw.rectangle((left+3,top+size-25,left+size-3,top+size-3),fill=(8,17,26,255))
+                span = max(xy_bounds[1]-xy_bounds[0],xy_bounds[3]-xy_bounds[2],.04)
+                draw.text((left+8,top+size-20),f'XY width{span*1000:.0f}mm | gold ref / cyan body',font=viewer._font(9),fill=(202,220,231))
+                frame = np.asarray(picture)
+                panels.append(frame)
+            combined = np.concatenate([np.concatenate(panels[:2],axis=1),np.concatenate(panels[2:],axis=1)],axis=0)
+            if writer is not None:
+                writer.append_data(combined)
+            frames += 1
+            if args.preview or abs(moment-moments[-1])<1e-8:
+                imageio.imwrite(output/f'{prefix}_{moment:.3f}s.jpg',combined,quality=92)
+        if writer is not None:
+            final_card = card(runs,viewer._font)
+            for _ in range(2*FPS):writer.append_data(final_card);frames+=1
+            imageio.imwrite(output/'video_metrics_endcard.jpg',final_card,quality=92)
+    finally:
+        if writer is not None:writer.close()
+        renderer.close()
+        plant.restore(saved_state)
+    result = dict(provenance,rendered_frames=frames)
+    if not args.preview:
+        with imageio.get_reader(target)as reader:
+            info = reader.get_meta_data(); count = reader.count_frames(); last = reader.get_data(count-1)
+        assert count == frames and tuple(info['size']) == (WIDTH*2,HEIGHT*2) and info['fps'] == FPS
+        imageio.imwrite(output/'video_decoded_last.jpg',last,quality=92)
+        result['video'] = {'path':str(target.relative_to(ROOT)),'sha256':sha(target),'bytes':target.stat().st_size,
+                           'frames':count,'fps':FPS,'dimensions':list(info['size']),'duration_s':info['duration'],'decoded_last_verified':True}
+    result['stills'] = {p.name:sha(p)for p in output.glob(prefix+'*.jpg')}
+    metadata.write_text(json.dumps(result,indent=2)+'\n')
+    print(json.dumps({k:v for k,v in result.items()if k not in ('input_sha256','stills')},indent=2))
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,45 @@
+{
+  "scope": "Diagnostic API implementation validation only; no Gazebo campaign execution. Existing controller/model/seed sources untouched.",
+  "test_runs": [
+    {
+      "environment": ".venv",
+      "checks": 45,
+      "xml_attributes": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "45",
+        "time": "8.808",
+        "timestamp": "2026-11-25T21:25:43.725685-05:00",
+        "hostname": "PARRA-Legion"
+      },
+      "command": "pytest -q tests/test_contact_prediction.py tests/test_predictive_seed.py tests/test_predictive_model.py",
+      "overlap": "Same 45 selected checks as stage 01 and the other environment; do not add counts."
+    },
+    {
+      "environment": "Gazebo",
+      "checks": 45,
+      "xml_attributes": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "45",
+        "time": "9.007",
+        "timestamp": "2026-11-25T21:25:59.947176-05:00",
+        "hostname": "PARRA-Legion"
+      },
+      "command": "pytest -q tests/test_contact_prediction.py tests/test_predictive_seed.py tests/test_predictive_model.py",
+      "overlap": "Same 45 selected checks as stage 01 and the other environment; do not add counts."
+    }
+  ],
+  "unique_selected_checks": 45,
+  "new_forecast_checks": 14,
+  "existing_seed_checks": 15,
+  "existing_model_checks": 16,
+  "exact_tested_source_snapshot": "source_snapshot",
+  "source_hashes_verified": 8,
+  "review_correction": "Before-command branch now captures anchor synchronizer preview after computing its anchor command. Regression checks exact anchor time. Stage 01 retained. No failed test execution or campaign rerun caused this correction.",
+  "source_sha256": "cb9deeee1e254ea2b1eb9b88511a68eb07b1b55233fc6ac3de808b849e978f3f"
+}

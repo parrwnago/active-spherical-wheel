@@ -1,0 +1,37 @@
+"""Plot the frozen five-anchor audit; no dynamics or parameter changes."""
+import csv
+import json
+from pathlib import Path
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+ROOT=Path(__file__).resolve().parent
+report=json.loads((ROOT/'audit/report.json').read_text())
+rows=[]
+for row in report['rows']:
+    diag=row['diagnostics'];a=diag['selected_audit'];m=a['hold_peak_metrics']
+    normal=np.array(diag['normal']);force=np.array(a['inverse_required_generalized_force_all9'][:3])
+    rows.append({'direction':row['direction'],'anchor_time_s':row['anchor_time_s'],
+        'selected':diag['selected_label'],'verified':row['verified'],
+        'xy_drift_mm':m['xy_drift_m']*1000,'rotation_drift_deg':np.rad2deg(m['rotation_drift_rad']),
+        'body_speed_mm_s':m['body_speed_m_s']*1000,'body_rate_rad_s':m['body_rate_rad_s'],
+        'joint_rate_rad_s':m['joint_rate_rad_s'],'inverse_tangential_unactuated_force_N':np.linalg.norm(force-normal*(normal@force)),
+        'normal_load_min_N':a['hold_normal_load_range_N'][0],
+        'max_accel_residual_mixed_units':a['max_acceleration_residual'],
+        'failed_hold_gates':','.join(k for k,v in a['hold_gates'].items() if not v)})
+with (ROOT/'audit/metrics.csv').open('w',newline='') as f:
+    w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
+labels=[f"{r['direction'][-1].upper()} @ {r['anchor_time_s']:.1f}s" for r in rows]
+fig,axes=plt.subplots(1,2,figsize=(10,4),constrained_layout=True)
+for ax,key,ylabel,limit in zip(axes,['xy_drift_mm','rotation_drift_deg'],['Peak XY drift (mm)','Peak attitude change (deg)'],[.2,.1]):
+    vals=[r[key] for r in rows]
+    ax.bar(labels,vals,color=['#388783']*4+['#4875a1'])
+    ax.axhline(limit,ls='--',color='#b52d3c',label=f'Declared hold limit {limit:g}')
+    ax.set_ylabel(ylabel);ax.set_ylim(0,max(vals)*1.25)
+    for i,v in enumerate(vals):ax.text(i,v+max(vals)*.03,f'{v:.3f}',ha='center',fontsize=9)
+    ax.legend(fontsize=8);ax.grid(axis='y',alpha=.15)
+fig.suptitle('I-31: best-found bounded holds fail in all five saved configurations\n0.2 s private estimated-plane checks; original XY goal retained',fontsize=11)
+fig.savefig(ROOT/'audit/goal_holds.png',dpi=180);fig.savefig(ROOT/'audit/goal_holds.pdf')
+print(json.dumps(rows,indent=2))

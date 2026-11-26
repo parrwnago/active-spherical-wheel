@@ -1,0 +1,57 @@
+{
+  "selected_longer_horizon_s": null,
+  "qp_solved": 42,
+  "gate_failures": [
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 0.4,
+      "failed": []
+    },
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 0.8,
+      "failed": [
+        "peak_goal_le_40mm"
+      ]
+    },
+    {
+      "anchor_s": 0.4,
+      "horizon_s": 1.2,
+      "failed": [
+        "nonwheel_geom_load_max_le_005N",
+        "wheel_normal_min_ge_005_weight",
+        "world_up_tilt_max_le_20deg",
+        "peak_goal_le_40mm"
+      ]
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 0.4,
+      "failed": [
+        "terminal_goal_le_090_initial",
+        "final200ms_toward_goal_slope_and_change",
+        "first_control_changed_ge_1e3_normalized"
+      ]
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 0.8,
+      "failed": [
+        "terminal_goal_le_090_initial",
+        "final200ms_toward_goal_slope_and_change"
+      ]
+    },
+    {
+      "anchor_s": 2.0,
+      "horizon_s": 1.2,
+      "failed": [
+        "nonwheel_geom_load_max_le_005N",
+        "wheel_normal_min_ge_005_weight",
+        "world_up_tilt_max_le_20deg",
+        "terminal_goal_le_090_initial",
+        "final200ms_toward_goal_slope_and_change",
+        "peak_goal_le_75mm"
+      ]
+    }
+  ]
+}

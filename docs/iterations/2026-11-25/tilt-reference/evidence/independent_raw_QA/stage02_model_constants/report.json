@@ -1,0 +1,64 @@
+{
+  "iteration": "I-43",
+  "passed": true,
+  "scope": "Saved data and pure generator integration only. No controller, robot/dynamics model or Gazebo execution.",
+  "arms": {
+    "baseline": {
+      "rows": 8801,
+      "pure_generator_input_replay_calls": 0,
+      "generator_initializations": 0,
+      "generator_advances": 0,
+      "all_numeric_state_snapshots_and_hashes_replayed": true,
+      "maximum_independent_frame_error_rad_s": 0.0,
+      "prior_state_snapshots_unchanged_during_replay": true,
+      "inner_substeps_at_most_1ms": true,
+      "maximum_chart_rate_deg_s": 0.0,
+      "maximum_chart_acceleration_deg_s2": 0.0,
+      "raw_and_shaped_error_logging_verified": true,
+      "first_activation_raw_quaternion_and_positive_zero_rate_exact": true,
+      "source_snapshots_verified": 132
+    },
+    "angle_only": {
+      "rows": 8801,
+      "pure_generator_input_replay_calls": 8801,
+      "generator_initializations": 1,
+      "generator_advances": 8000,
+      "all_numeric_state_snapshots_and_hashes_replayed": true,
+      "maximum_independent_frame_error_rad_s": 3.3306690738754696e-16,
+      "prior_state_snapshots_unchanged_during_replay": true,
+      "inner_substeps_at_most_1ms": true,
+      "maximum_chart_rate_deg_s": 36.249466458105026,
+      "maximum_chart_acceleration_deg_s2": 823.8891092218681,
+      "raw_and_shaped_error_logging_verified": true,
+      "first_activation_raw_quaternion_and_positive_zero_rate_exact": true,
+      "source_snapshots_verified": 132,
+      "native_and_comparable_dynamic_prefix_through4s_exact": true,
+      "full_prefix_fingerprint_differs_due_only_to_explicit_auxiliary_clock": true
+    },
+    "consistent_rate": {
+      "rows": 8801,
+      "pure_generator_input_replay_calls": 8801,
+      "generator_initializations": 1,
+      "generator_advances": 8000,
+      "all_numeric_state_snapshots_and_hashes_replayed": true,
+      "maximum_independent_frame_error_rad_s": 3.3306690738754696e-16,
+      "prior_state_snapshots_unchanged_during_replay": true,
+      "inner_substeps_at_most_1ms": true,
+      "maximum_chart_rate_deg_s": 45.117463584571134,
+      "maximum_chart_acceleration_deg_s2": 813.4166374462384,
+      "raw_and_shaped_error_logging_verified": true,
+      "first_activation_raw_quaternion_and_positive_zero_rate_exact": true,
+      "source_snapshots_verified": 132,
+      "native_and_comparable_dynamic_prefix_through4s_exact": true,
+      "full_prefix_fingerprint_differs_due_only_to_explicit_auxiliary_clock": true
+    }
+  },
+  "verified_raw_manifest_references": 405,
+  "all17_historical_baseline_precision_fields_byte_identical": true,
+  "auxiliary_clock_note": "Enabled generators record last-seen command time before activation, while baseline has no generator. Full fingerprints therefore differ from the0.005s pre-command sample onward; native and comparable dynamic histories are exact through4s. Initialized theta/z/held state is canonicallyNone until4s.",
+  "limits": [
+    "Pure generator replay verifies saved input/history and cadence; independent pre-campaign ODE/rotation tests validate its equations separately.",
+    "Reference speed/coordinate acceleration caps are declared design assumptions, not physical actuator guarantees.",
+    "Error comparisons allow5e-8rad arccos/quaternion roundoff nearzero; no trajectory metric/screens are recomputed here."
+  ]
+}

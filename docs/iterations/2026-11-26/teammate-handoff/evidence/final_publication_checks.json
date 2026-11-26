@@ -1,0 +1,163 @@
+{
+  "utc": "2026-11-26T11:40:25.157140+00:00",
+  "scope": "Read-only publication verification; no new trajectory campaign",
+  "preservation": {
+    "source_origins": 168,
+    "intentional_document_changes": [
+      "ITERATION_LOG.md",
+      "README.md",
+      "docs/iterations/2026-11-26/README.md"
+    ],
+    "old_archives_unchanged": 21
+  },
+  "hash_verification": {
+    "selected_media_and_evidence_files": 24,
+    "overlay_entries": 29,
+    "required_live_sources": 90
+  },
+  "event_subset": {
+    "arrays_exactly_equal_to_sources": 140,
+    "rows_per_case": 1601,
+    "resampled": false
+  },
+  "live_document_links": {
+    "files": 8,
+    "relative_links_checked": 86,
+    "missing": [],
+    "scope": "Current live guide/index links; sealed historic snapshots may refer to ignored raw datasets"
+  },
+  "secret_pattern_scan": {
+    "candidate_files": 6748,
+    "text_files": 6385,
+    "patterns": [
+      "github_token",
+      "private_key",
+      "aws_access_key",
+      "openai_token"
+    ],
+    "findings": [],
+    "limitation": "Pattern scan, not a proof that arbitrary secrets cannot exist"
+  },
+  "candidate_inventory": {
+    "files": 6748,
+    "bytes": 341847981,
+    "largest": [
+      {
+        "path": "docs/handoff/media/i52-overview.mp4",
+        "bytes": 12658126
+      },
+      {
+        "path": "research/frozen_workspace/files/results/allocation_handoff_isolation_20261126/campaign/runs/base030/precision.npz",
+        "bytes": 11778947
+      },
+      {
+        "path": "research/frozen_workspace/files/results/allocation_handoff_isolation_20261126/campaign/runs/reference030/precision.npz",
+        "bytes": 11673645
+      },
+      {
+        "path": "research/frozen_workspace/files/results/belt_capacity_sweep_20261126/campaign/runs/mars_cap030/precision.npz",
+        "bytes": 11299887
+      },
+      {
+        "path": "research/frozen_workspace/files/results/belt_capacity_sweep_20261126/campaign/runs/mars_cap060/precision.npz",
+        "bytes": 11204367
+      },
+      {
+        "path": "docs/iterations/2026-11-25/figure8-event-audit/evidence/prediction/dense_run_01/forecasts.json",
+        "bytes": 9207031
+      },
+      {
+        "path": "docs/handoff/media/i53-acceleration-event.mp4",
+        "bytes": 7655999
+      },
+      {
+        "path": "docs/iterations/2026-11-25/figure8-event-audit/evidence/terrain/terrain_series.csv",
+        "bytes": 6767023
+      }
+    ]
+  },
+  "native_preflight": {
+    "passed": true,
+    "scope": "Read-only registrations, hashes and cache arrays. No model construction, equilibrium calculation or integration.",
+    "protocol_sha256": "fd33439c9db9a6bc31183409df9f00d13e82c3393581d4c66bab7878d59767bf",
+    "gain_cache_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+    "parameters": {
+      "mode": "hardware",
+      "synchronize": true,
+      "normal_source": "intrinsic",
+      "observer_cutoff_rad_s": 100.0,
+      "support_min_load_fraction": 0.05,
+      "normal_time_constant_s": 0.02,
+      "rim_aware": true,
+      "rim_time_constant_s": 0.2,
+      "rim_hold_speed_m_s": 0.02,
+      "gap_margin_m": 0.002,
+      "lean_gain": 1.0,
+      "support_feedforward": 1.0,
+      "schedule_on_ground_normal": false,
+      "shaft_error": "rolling",
+      "rolling_allocation": "least_squares",
+      "rolling_damping_m_s": 0.01,
+      "rolling_speed_limits": [
+        20.0,
+        20.0,
+        20.0,
+        0.3,
+        0.3
+      ],
+      "rolling_acceleration_limits": [
+        100.0,
+        100.0,
+        100.0,
+        3.0,
+        3.0
+      ],
+      "rolling_effort_m_s": 0.001,
+      "rolling_change_m_s": 0.001,
+      "rolling_adaptive_effort": false,
+      "rolling_weak_effort_m_s": 0.005,
+      "rolling_authority_m_s": 0.02,
+      "rolling_reference_catchup_gain_s_inv": 1.0,
+      "rolling_reference_catchup_speed_m_s": 0.06,
+      "rolling_reference_position_limit_m": 0.05,
+      "rolling_reference_balance_guard": false,
+      "rolling_reference_lean_scale_deg": 3.0,
+      "rolling_reference_rate_horizon_s": 0.1,
+      "track_contact_point": false,
+      "slip_threshold_m_s": 0.02,
+      "friction_recovery_s": 1.5,
+      "heading_gain": 0.0,
+      "heading_damping": 0.06,
+      "heading_torque_limit_Nm": 0.15,
+      "heading_min_lever": 0.12,
+      "unload_fraction": 0.3,
+      "airborne_damping_Nms": 0.01,
+      "max_lean_deg": 28.0,
+      "lqr_weights": "flat",
+      "heading_reference": "none",
+      "heading_actuation": "shells",
+      "heading_roll_budget_Nm": 0.0,
+      "fall_line_slope_deg": [
+        6.0,
+        12.0
+      ],
+      "heading_normal_time_constant_s": 0.5,
+      "heading_error_limit_rad": 0.5,
+      "fall_line_hysteresis_deg": 20.0
+    },
+    "verified_source_count": 58,
+    "verified_baseline_inputs": 17
+  },
+  "fresh_preparation": {
+    "prepared": true,
+    "output": "results/teammate_handoff_20261126/review/fresh_campaign_smoke",
+    "case_count": 12,
+    "native_executions": 0,
+    "protocol_sha256": "fd33439c9db9a6bc31183409df9f00d13e82c3393581d4c66bab7878d59767bf",
+    "jobs_sha256": "ff199967690a8fc5a9998012894d5c0df508f22513a7c7f8577945d7e0aef19f",
+    "resolver": "campaign/resolved_case_paths.json",
+    "registration": "reproduction_registration.json"
+  },
+  "parent_helper_tests": "21 passed in 0.16s",
+  "passed": true
+}

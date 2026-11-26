@@ -1,0 +1,103 @@
+{
+  "scope": "Read-only repeatability comparison; no simulation or forecast rerun.",
+  "old": "results/feedback_recovery_20261125/extended_original_baselines/runs/world_x/baseline",
+  "new": "results/lqr_contact_forecast_20261125/campaign/runs/slope_x_late",
+  "old_world_info": {
+    "ground": "mesh",
+    "collision_detector": "ode",
+    "mesh": "/home/parrwnago/active-spherical-wheel/results/feedback_recovery_20261125/extended_original_baselines/_workspaces/world_x/baseline/gazebo/world/terrain_mesh_96a05c5b410e.obj",
+    "bounds": [
+      -0.8999999999999999,
+      0.8999999999999999,
+      -0.8999999999999999,
+      0.8999999999999999
+    ],
+    "vertices": [
+      46,
+      46
+    ],
+    "cell_m": 0.039999999999999994,
+    "low_m": -0.15869428263761845,
+    "high_m": 0.15869428263761845,
+    "terrain": {
+      "name": "side_slope_10",
+      "description": "",
+      "yaw_deg": 0.0,
+      "origin": [
+        0.0,
+        0.0
+      ],
+      "base_friction": null,
+      "features": [
+        {
+          "type": "plane",
+          "slope": [
+            0.0,
+            0.17632698070846498
+          ]
+        }
+      ],
+      "friction_patches": []
+    }
+  },
+  "new_world_info": {
+    "ground": "mesh",
+    "collision_detector": "ode",
+    "mesh": "/home/parrwnago/active-spherical-wheel/results/lqr_contact_forecast_20261125/campaign/_workspaces/slope_x_late/gazebo/world/terrain_mesh_7c0a72882a72.obj",
+    "bounds": [
+      -1.0,
+      1.0,
+      -1.0,
+      1.0
+    ],
+    "vertices": [
+      51,
+      51
+    ],
+    "cell_m": 0.04,
+    "low_m": -0.17632698070846498,
+    "high_m": 0.17632698070846498,
+    "terrain": {
+      "name": "side_slope_10",
+      "description": "",
+      "yaw_deg": 0.0,
+      "origin": [
+        0.0,
+        0.0
+      ],
+      "base_friction": null,
+      "features": [
+        {
+          "type": "plane",
+          "slope": [
+            0.0,
+            0.17632698070846498
+          ]
+        }
+      ],
+      "friction_patches": []
+    }
+  },
+  "field_comparison": {
+    "exact_qpos": {
+      "initial_max_abs_difference": 2.220446049250313e-16,
+      "max_abs_difference": 0.07171200270239997,
+      "first_different_index": 0,
+      "first_different_time_s": 0.0
+    },
+    "exact_qvel": {
+      "initial_max_abs_difference": 1.3038388130141138e-10,
+      "max_abs_difference": 0.9386000360102834,
+      "first_different_index": 0,
+      "first_different_time_s": 0.0
+    },
+    "exact_applied": {
+      "initial_max_abs_difference": 6.585530899692077e-11,
+      "max_abs_difference": 0.30238284272867955,
+      "first_different_index": 0,
+      "first_different_time_s": 0.0
+    }
+  },
+  "source_controller_hash_match": true,
+  "interpretation": "Same nominal slope/motion/control, but generatedmesh extent/tessellation differs. This is not a bitwise reproduction. Each forecast is scored against its own freshactualtrajectory. Meshdifference is a setupdistinction, not solecausationproof."
+}

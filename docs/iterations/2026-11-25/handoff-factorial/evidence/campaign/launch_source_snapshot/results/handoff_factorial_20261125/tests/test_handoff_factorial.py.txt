@@ -1,0 +1,217 @@
+"""I42 intervention-scope contracts. No dynamics or Gazebo server is executed."""
+from pathlib import Path
+from types import SimpleNamespace,ModuleType
+import copy
+import unittest
+import numpy as np
+
+SOURCE=Path(__file__).resolve().parents[1]/'run_handoff_factorial.py'
+runner=ModuleType('i42_scope_runner');runner.__file__=str(SOURCE)
+exec(compile(SOURCE.read_text(),str(SOURCE),'exec'),runner.__dict__)
+
+
+def preview():
+    return {'commands':[.1,.2,.3,.25,-.1],'blend_weights':[0.,.35,0.,.7,0.],
+        'targets':[{'name':'shell_A','command_index':1,'blend_weight':.35,
+                    'target_joint_speed_rad_s':4.,'target_torque_Nm':.1},
+                   {'name':'belt_A','command_index':3,'blend_weight':.7,
+                    'target_surface_speed_m_s':.25}],
+        'outgoing_tangential_velocity_m_s':[.02,.03,0.], 'lookahead_s':.12}
+
+
+def controller():
+    return SimpleNamespace(plant=SimpleNamespace(data=SimpleNamespace(qpos=np.arange(10.),qvel=np.arange(9.))),
+        observer=SimpleNamespace(generalized=np.arange(6.),interval_mean=np.arange(6.)+.1,_previous=(3.995,np.eye(9))),
+        estimator=SimpleNamespace(normal=np.array([0.,0.,1.]),load_fraction=1.,loaded=True,friction=.7),
+        synchronizer=SimpleNamespace(_plane=None,_data=SimpleNamespace(qpos=np.arange(10.),qvel=np.arange(9.),time=4.)),
+        _plane=(np.zeros(3),np.array([0.,0.,1.])),_slow_normal=np.array([0.,0.,1.]),
+        _fall_end=None,_yaw_error=None,heading_reference=.2,_held=None)
+
+
+def feedback_inputs():
+    measurement={'loads_N':dict(zip(runner.LABELS,[15.,0.,0.,0.])),
+        'point_m':np.array([.1,.2,.3]),'force_N':np.array([1.,2.,15.]),
+        'slip_speed_m_s':.01}
+    return np.arange(10.),np.arange(9.),np.arange(5.),np.array([0.,0.,1.]),measurement,True
+
+
+def original_feedback(ctrl,qref,vref,ff,normal,measurement,touching):
+    ctrl._held={'loads':dict(measurement['loads_N'])}
+    return np.zeros(5),{'K':np.zeros((5,18)),'error':np.zeros(18),'support_torque':np.ones(5)}
+
+
+class WindowContracts(unittest.TestCase):
+    def test_half_open_native_clock_and_roundoff(self):
+        window=(4.,10.)
+        for time in [4.,4.-2e-13,9.995]:
+            self.assertTrue(runner.window_active(time,window))
+        for time in [3.995,10.,10.-2e-13,10.005]:
+            self.assertFalse(runner.window_active(time,window))
+
+    def test_accumulated_5ms_clock_has_1200_active_holds(self):
+        time=0.;active=[]
+        for _ in range(8801):
+            active.append(runner.window_active(time,(4.,10.)));time+=.005
+        self.assertEqual(sum(active),1200)
+        self.assertTrue(active[800]);self.assertFalse(active[2000])
+
+
+class ShareContracts(unittest.TestCase):
+    def test_only_share_distribution_changes_and_total_is_inferred(self):
+        native=dict(zip(runner.LABELS,[15.,0.,0.,0.]))
+        before=copy.deepcopy(native)
+        used,code=runner.feedback_loads(native,[0.,0.,10.,30.],True,True)
+        self.assertEqual(code,0);self.assertEqual(native,before)
+        np.testing.assert_array_equal(list(used.values()),[0.,0.,3.75,11.25])
+        self.assertEqual(sum(used.values()),15.)
+
+    def test_native_arm_or_outside_window_does_not_route_truth(self):
+        native=dict(zip(runner.LABELS,[15.,0.,0.,0.]))
+        used,code=runner.feedback_loads(native,[0.,0.,15.,0.],True,False)
+        self.assertEqual(code,1);self.assertEqual(used,native);self.assertIsNot(used,native)
+
+    def test_native_not_touching_is_preserved(self):
+        native=dict(zip(runner.LABELS,[15.,0.,0.,0.]))
+        used,code=runner.feedback_loads(native,[0.,0.,15.,0.],False,True)
+        self.assertEqual(code,2);self.assertEqual(used,native)
+
+    def test_low_inferred_load_has_explicit_native_fallback(self):
+        native=dict(zip(runner.LABELS,[.001,0.,0.,0.]))
+        used,code=runner.feedback_loads(native,[0.,0.,15.,0.],True,True)
+        self.assertEqual(code,3);self.assertEqual(used,native)
+
+    def test_low_truth_load_has_explicit_native_fallback(self):
+        native=dict(zip(runner.LABELS,[15.,0.,0.,0.]))
+        used,code=runner.feedback_loads(native,[0.,0.,.05,0.],True,True)
+        self.assertEqual(code,4);self.assertEqual(used,native)
+
+    def test_invalid_truth_cannot_silently_enter_control(self):
+        native=dict(zip(runner.LABELS,[15.,0.,0.,0.]))
+        for truth in ([1.,2.,3.],[1.,2.,-1.,0.],[1.,np.nan,0.,0.]):
+            with self.subTest(truth=truth),self.assertRaises(ValueError):
+                runner.feedback_loads(native,truth,True,True)
+
+
+class PreviewContracts(unittest.TestCase):
+    def test_mask_removes_both_blends_preserves_targets_and_source(self):
+        native=preview();before=copy.deepcopy(native);used=runner.mask_preview(native,True)
+        self.assertEqual(native,before)
+        self.assertEqual(used['blend_weights'],[0.]*5)
+        self.assertTrue(all(t['blend_weight']==0 for t in used['targets']))
+        self.assertEqual(used['commands'],native['commands'])
+        self.assertEqual(used['targets'][0]['target_joint_speed_rad_s'],4.)
+        self.assertEqual(used['targets'][1]['target_surface_speed_m_s'],.25)
+
+    def test_inactive_mask_is_deep_copy_and_native_behavior(self):
+        native=preview();used=runner.mask_preview(native,False)
+        self.assertEqual(used,native)
+        used['targets'][0]['blend_weight']=0.
+        self.assertEqual(native['targets'][0]['blend_weight'],.35)
+
+    def test_native_preview_still_computes_and_updates_private_plane(self):
+        hook=runner.Interventions('sync_off',(4.,10.));hook.begin(4.5,[1.,0.,0.,0.])
+        synchronizer=SimpleNamespace(_plane=None,calls=0)
+        def original(sync,primary,records=None,ground=None):
+            sync.calls+=1;sync._plane=ground
+            return preview()
+        plane=(np.zeros(3),np.array([0.,0.,1.]))
+        used=hook.preview(original,synchronizer,np.zeros(5),records=['native'],ground=plane)
+        self.assertEqual(synchronizer.calls,1);self.assertIs(synchronizer._plane,plane)
+        self.assertEqual(used['blend_weights'],[0.]*5)
+        self.assertEqual(hook.current['native_preview']['blend_weights'],preview()['blend_weights'])
+
+    def test_real_after_step_removes_prep_but_keeps_base_reference_update(self):
+        from spherical_wheel.offroad_control import OffroadController
+        base=np.array([.1,.2,.3]);vref=np.r_[np.zeros(6),[1.,2.,3.]]
+        native=SimpleNamespace(plant=SimpleNamespace(dt=.005),nominal_joints=base.copy(),_vref=vref,_sync=preview())
+        masked=SimpleNamespace(plant=SimpleNamespace(dt=.005),nominal_joints=base.copy(),_vref=vref,_sync=runner.mask_preview(preview(),True))
+        OffroadController.after_step(native);OffroadController.after_step(masked)
+        np.testing.assert_allclose(masked.nominal_joints,base+.005*vref[6:9])
+        np.testing.assert_allclose(native.nominal_joints-masked.nominal_joints,[0.,.005*.35*4.,0.])
+
+    def test_all_row_target_summary_has_fixed_patch_order(self):
+        result=runner.target_summary(preview())
+        self.assertEqual(result['blend_weight'].shape,(4,))
+        self.assertEqual(result['blend_weight'][0],.35);self.assertEqual(result['blend_weight'][2],.7)
+        self.assertTrue(np.isnan(result['blend_weight'][1]))
+
+
+class FeedbackScopeContracts(unittest.TestCase):
+    def test_oracle_preserves_every_input_except_feedback_load_shares(self):
+        ctrl=controller();args=feedback_inputs();snapshot=runner.digest_json(args)
+        hook=runner.Interventions('feedback_shares',(4.,10.));hook.begin(4.5,[0.,0.,20.,0.])
+        calls=[]
+        def original(c,q,v,ff,n,m,t):
+            calls.append(m)
+            self.assertIs(m['point_m'],args[4]['point_m']);self.assertIs(q,args[0]);self.assertIs(v,args[1]);self.assertIs(ff,args[2]);self.assertIs(n,args[3])
+            self.assertEqual(m['loads_N']['belt_A'],15.)
+            return original_feedback(c,q,v,ff,n,m,t)
+        hook.feedback(original,ctrl,*args)
+        self.assertEqual(len(calls),1);self.assertEqual(runner.digest_json(args),snapshot)
+        self.assertTrue(all(hook.current['same_state_invariants'].values()))
+        self.assertTrue(hook.current['oracle_applied']);self.assertEqual(ctrl._held['loads']['belt_A'],15.)
+
+    def test_baseline_keeps_native_measurement_identity(self):
+        ctrl=controller();args=feedback_inputs();hook=runner.Interventions('baseline',(4.,10.));hook.begin(4.5,[0.,0.,20.,0.])
+        def original(c,q,v,ff,n,m,t):
+            self.assertIs(m,args[4]);return original_feedback(c,q,v,ff,n,m,t)
+        hook.feedback(original,ctrl,*args)
+        self.assertFalse(hook.current['oracle_applied'])
+
+    def test_observer_mutation_is_detected(self):
+        ctrl=controller();hook=runner.Interventions('both',(4.,10.));hook.begin(4.5,[0.,0.,20.,0.])
+        def bad(c,*args):
+            c.observer.generalized[0]+=1
+            return original_feedback(c,*args)
+        with self.assertRaises(AssertionError):hook.feedback(bad,ctrl,*feedback_inputs())
+
+    def test_reference_mutation_is_detected(self):
+        ctrl=controller();hook=runner.Interventions('both',(4.,10.));hook.begin(4.5,[0.,0.,20.,0.])
+        def bad(c,q,*args):
+            q[0]+=1;return original_feedback(c,q,*args)
+        with self.assertRaises(AssertionError):hook.feedback(bad,ctrl,*feedback_inputs())
+
+    def test_routed_measurement_mutation_is_detected(self):
+        ctrl=controller();hook=runner.Interventions('both',(4.,10.));hook.begin(4.5,[0.,0.,20.,0.])
+        def bad(c,q,v,ff,n,m,t):
+            m['loads_N']['belt_A']+=1;return original_feedback(c,q,v,ff,n,m,t)
+        with self.assertRaises(AssertionError):hook.feedback(bad,ctrl,*feedback_inputs())
+
+    def test_exactly_one_feedback_and_preview_per_command(self):
+        ctrl=controller();hook=runner.Interventions('both',(4.,10.));hook.begin(4.5,[0.,0.,20.,0.])
+        hook.feedback(original_feedback,ctrl,*feedback_inputs())
+        hook.preview(lambda *a,**k:preview(),None)
+        row=hook.finish();self.assertEqual(row['feedback_calls'],1);self.assertEqual(row['preview_calls'],1)
+        self.assertIsNone(hook.current)
+        with self.assertRaises(RuntimeError):hook.feedback(original_feedback,ctrl,*feedback_inputs())
+
+
+class FingerprintAndGuardContracts(unittest.TestCase):
+    def test_extended_fingerprint_detects_filter_plane_and_heading_history(self):
+        ctrl=controller();helper=SimpleNamespace(controller_fingerprint=lambda c:'unchanged_native_base')
+        initial=runner.extended_fingerprint(ctrl,helper)
+        for change in ('load_fraction','controller_plane','slow_normal','heading_reference','synchronizer_plane'):
+            c=copy.deepcopy(ctrl)
+            if change=='load_fraction':c.estimator.load_fraction=.9
+            elif change=='controller_plane':c._plane=(np.ones(3),np.array([0.,0.,1.]))
+            elif change=='slow_normal':c._slow_normal[0]=.01
+            elif change=='heading_reference':c.heading_reference=.3
+            else:c.synchronizer._plane=(np.ones(3),np.array([0.,0.,1.]))
+            with self.subTest(change=change):self.assertNotEqual(runner.extended_fingerprint(c,helper),initial)
+        self.assertEqual(runner.extended_fingerprint(ctrl,helper),initial)
+
+    def test_original_controller_contact_guard_paths_raise(self):
+        helper=runner.load_helper()
+        import mujoco
+        import spherical_wheel.offroad_control as control
+        from spherical_wheel.synchronization import ContactSynchronizer
+        with helper.guards():
+            for call in (lambda:control.measure_contact(None),lambda:control.records_from_mujoco(None),
+                         lambda:control.rolling_feedforward(None,None),lambda:ContactSynchronizer._normal_loads(None),
+                         lambda:mujoco.mj_contactForce(None,None,0,None)):
+                with self.subTest(call=call),self.assertRaisesRegex(AssertionError,'solved-contact or terrain read'):
+                    call()
+
+
+if __name__=='__main__':
+    unittest.main(verbosity=2)

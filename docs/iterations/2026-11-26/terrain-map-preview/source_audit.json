@@ -1,0 +1,154 @@
+{
+  "iteration": "I-44",
+  "date": "2026-11-26",
+  "timezone": "America/New_York",
+  "status": "proposed_architecture_audited_no_execution",
+  "git_head": "9067a660cecf312fc87f477d1251e4148d8c6c0a",
+  "scope": "Read-only source audit and documentation; current files are uncommitted and hashes alone do not preserve source. Prior I-43 presentation archive preserves that experiment.",
+  "runtime_sources_changed_this_iteration": false,
+  "tests_or_new_rollouts_executed": false,
+  "selected_native_baseline": {
+    "mode": "hardware",
+    "rolling_allocation": "least_squares",
+    "synchronize": true,
+    "tilt_reference": null
+  },
+  "generic_params_mode_default": "terrain_aware",
+  "inspected_sources": [
+    {
+      "path": "scripts/run-lqr-contact-forecast.py",
+      "sha256": "4e4d590037801f178bb05e779ddb49fb093f5cae830212b9f90d57ddce1790cf",
+      "bytes": 25707
+    },
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "bytes": 55288
+    },
+    {
+      "path": "src/spherical_wheel/mirror.py",
+      "sha256": "8e6325a9c44f79516c32c2af079718c3355f447d0d2751c44a684b6b8cf7b038",
+      "bytes": 3043
+    },
+    {
+      "path": "src/spherical_wheel/contact_sensing.py",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+      "bytes": 29184
+    },
+    {
+      "path": "src/spherical_wheel/experiments.py",
+      "sha256": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638",
+      "bytes": 14234
+    },
+    {
+      "path": "src/spherical_wheel/synchronization.py",
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+      "bytes": 16037
+    },
+    {
+      "path": "src/spherical_wheel/contact_prediction.py",
+      "sha256": "cb9deeee1e254ea2b1eb9b88511a68eb07b1b55233fc6ac3de808b849e978f3f",
+      "bytes": 11851
+    },
+    {
+      "path": "src/spherical_wheel/model.py",
+      "sha256": "d41d35b283ef4732cd2b7c321539491054a8070c86a2109a577d470a8c406e72",
+      "bytes": 23507
+    },
+    {
+      "path": "src/spherical_wheel/gazebo/mars.py",
+      "sha256": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63",
+      "bytes": 46539
+    },
+    {
+      "path": "src/spherical_wheel/gazebo/bridge.py",
+      "sha256": "6b1f7e2ec860e6d21a6a025d1581952836aef3515da66f60a2314d15776c18a4",
+      "bytes": 6160
+    },
+    {
+      "path": "src/spherical_wheel/tilt_reference.py",
+      "sha256": "598fe7e5f4a20d2933daf00f95526949fe0e73fb1eebc56b73b712de35dffa7d",
+      "bytes": 8186
+    },
+    {
+      "path": "config/model.yaml",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+      "bytes": 2127
+    }
+  ],
+  "prior_evidence_checks": [
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "expected_I43_sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "actual_sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "unchanged": true
+    },
+    {
+      "path": "results/tilt_reference_20261125/presentation-pack.zip",
+      "expected_I43_sha256": "978fa6f43141365ee223db5a923f9f79faf5a5017982d8faa5ce026c57144bc9",
+      "actual_sha256": "978fa6f43141365ee223db5a923f9f79faf5a5017982d8faa5ce026c57144bc9",
+      "unchanged": true
+    },
+    {
+      "path": "src/spherical_wheel/tilt_reference.py",
+      "expected_I43_sha256": "598fe7e5f4a20d2933daf00f95526949fe0e73fb1eebc56b73b712de35dffa7d",
+      "actual_sha256": "598fe7e5f4a20d2933daf00f95526949fe0e73fb1eebc56b73b712de35dffa7d",
+      "unchanged": true
+    }
+  ],
+  "source_anchors": {
+    "baseline_mode": "scripts/run-lqr-contact-forecast.py:38",
+    "exact_state_and_prior_inputs": "src/spherical_wheel/mirror.py:45",
+    "momentum_observer": "src/spherical_wheel/contact_sensing.py:227",
+    "support_locator": "src/spherical_wheel/contact_sensing.py:379",
+    "support_filter": "src/spherical_wheel/contact_sensing.py:464",
+    "current_estimated_support_path": "src/spherical_wheel/offroad_control.py:548",
+    "incoming_drive_preview": "src/spherical_wheel/synchronization.py:154",
+    "shadow_dynamic_preview": "src/spherical_wheel/contact_prediction.py:77",
+    "render_only_camera_declarations": "src/spherical_wheel/model.py:301",
+    "mars_collision_and_visual_geometry": "src/spherical_wheel/gazebo/mars.py:245"
+  },
+  "primary_sources": [
+    {
+      "title": "Probabilistic Terrain Mapping for Mobile Robots with Uncertain Localization",
+      "authors": "Fankhauser, Bloesch, Hutter",
+      "year": 2018,
+      "url": "https://doi.org/10.3929/ethz-b-000272110",
+      "checked_date": "2026-11-26",
+      "access": "ETH indexed abstract and indexed author manuscript; landing page direct fetch returned 403"
+    },
+    {
+      "title": "LVI-SAM: Tightly-coupled Lidar-Visual-Inertial Odometry via Smoothing and Mapping",
+      "authors": "Shan, Englot, Ratti, Rus",
+      "year": 2021,
+      "url": "https://arxiv.org/abs/2104.10831",
+      "checked_date": "2026-11-26",
+      "access": "arXiv abstract"
+    }
+  ],
+  "documentation_verification": {
+    "local_links_checked": 10,
+    "audited_source_hashes_checked": 12,
+    "prior_I43_hashes_checked": 3,
+    "all_passed": true,
+    "runtime_tests_required_for_documentation_change": false,
+    "user_clarification_revision_verified": true
+  },
+  "proposal_clarification": {
+    "date": "2026-11-26",
+    "source": "User clarification after initial I-44 proposal",
+    "virtual_depth_camera_count": 4,
+    "proposed_body_frame_azimuths_deg": [
+      0,
+      90,
+      180,
+      270
+    ],
+    "rationale": "Platform yaw varies and one camera need not face travel direction",
+    "coverage_guaranteed": false,
+    "body_state": "Exact simulated body pose and velocity; acquisition-time pose for registration",
+    "body_state_estimator_and_SLAM": "Deferred; not prerequisites for initial simulation stage",
+    "comparison": "Latest available four-camera batch versus memory accumulated from the same four cameras",
+    "implementation_or_new_simulation_this_revision": false
+  }
+}

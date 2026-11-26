@@ -1,0 +1,43 @@
+{
+  "scope": "Analysis only of completed fixed-input hold traces. No controller or estimator validation; no new simulation.",
+  "gazebo_completed_hold_executions_total": 4,
+  "gazebo_distinct_target_input_cases": 2,
+  "duration_per_hold_s": 0.4,
+  "failed_startup_attempts": 2,
+  "repeated_hold_reason": "First completed pair used exact-name instead of prefix-name aggregation, making Gazebo aggregate loads incorrectly zero; both holds repeated only to correct force/support logging. First-stage kinematics retained.",
+  "startup_failure_reason": "First assert assumed exact requested qpos; second assumed zero returned qvel. Source bridge.py documents1us reset motion. Final fixtures match both engines to actual returned qpos/qvel and record offsets.",
+  "cases": {
+    "analytic_pose_best_holding": {
+      "gazebo_dart_repeat_kinematics_bit_equal": true,
+      "private_mujoco_repeat_kinematics_bit_equal": true,
+      "cross_engine_initial_qpos_bit_equal": true,
+      "cross_engine_initial_qvel_bit_equal": true,
+      "fixed_input_bit_equal": true,
+      "raw_force_vs_aggregate_max_abs_N": 0.0,
+      "gazebo_contact_names": [
+        "shell_A_smooth"
+      ],
+      "positive_gazebo_load_all_observations": true,
+      "engine_xy_difference_mm": {
+        "0.2": 0.02298059435898592,
+        "0.4": 3.1233332749902805
+      }
+    },
+    "nearby_pose_independent_fit": {
+      "gazebo_dart_repeat_kinematics_bit_equal": true,
+      "private_mujoco_repeat_kinematics_bit_equal": true,
+      "cross_engine_initial_qpos_bit_equal": true,
+      "cross_engine_initial_qvel_bit_equal": true,
+      "fixed_input_bit_equal": true,
+      "raw_force_vs_aggregate_max_abs_N": 0.0,
+      "gazebo_contact_names": [
+        "shell_A_smooth"
+      ],
+      "positive_gazebo_load_all_observations": true,
+      "engine_xy_difference_mm": {
+        "0.2": 0.025950364671256807,
+        "0.4": 0.12850140310278774
+      }
+    }
+  }
+}

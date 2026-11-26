@@ -1,0 +1,121 @@
+"""Compare a later fixed MPC candidate against explicitly reused initial runs."""
+from pathlib import Path
+import argparse
+import csv
+import hashlib
+import importlib.util
+import json
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+FAMILY = Path(__file__).resolve().parent
+ROOT = FAMILY.parents[1]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--candidate', type=Path, required=True)
+    parser.add_argument('--label', required=True)
+    args = parser.parse_args()
+    stage = args.candidate.resolve()
+    output = stage/'analysis_against_initial'
+    output.mkdir(parents=True, exist_ok=True)
+    source = FAMILY/'analysis_support.py'
+    spec = importlib.util.spec_from_file_location('initial_mpc_analysis', source)
+    analyzer = importlib.util.module_from_spec(spec);spec.loader.exec_module(analyzer)
+    records, rows, gates, prefixes = [], [], {}, {}
+    selected = {}
+    for direction in ('world_x', 'world_y'):
+        if not (stage/'runs'/direction/'mpc/summary.json').exists():
+            continue
+        analyzer.HERE = FAMILY/'initial'
+        baseline = analyzer.load_run(direction, 'baseline')
+        initial = analyzer.load_run(direction, 'mpc')
+        analyzer.HERE = stage
+        candidate = analyzer.load_run(direction, 'mpc')
+        selected[direction] = [('baseline_reused', baseline), ('initial_mpc_reused', initial), (args.label, candidate)]
+        if direction == 'world_x' and stage.name != 'calibration_gate':
+            calibration = FAMILY/'calibration_gate'
+            if (calibration/'runs/world_x/mpc/summary.json').exists():
+                analyzer.HERE = calibration
+                selected[direction].insert(2, ('calibration_gate_reused', analyzer.load_run(direction, 'mpc')))
+        bp, cp = baseline['precise'], candidate['precise']
+        before = bp['time_s'] < .8-1e-9
+        keys = ['exact_qpos', 'exact_qvel', 'exact_observer_wrench', 'exact_applied',
+                'mpc_native_requested', 'mpc_native_applied', 'mpc_command_delta',
+                'mpc_original_goal_xy', 'mpc_actual_input_at_limit']
+        equality = {key: bool(np.array_equal(bp[key][before], cp[key][before], equal_nan=True)) for key in keys}
+        assert all(equality.values()), equality
+        ba = baseline['summary']['mpc_experiment']['activation']
+        ca = candidate['summary']['mpc_experiment']['activation']
+        activation = all(np.array_equal(ba[key], ca[key]) for key in ('qpos', 'qvel', 'original_goal_origin'))
+        assert activation
+        prefixes[direction] = {'samples': int(before.sum()), 'fields': equality, 'activation_state_and_goal_equal': activation}
+        b, c = baseline['row'], candidate['row']
+        checks = {'completed_without_physical_failure': c['completed'] and not c['physical_failure'],
+                  'hard_input_bounds': c['hard_input_bound_violation_max'] <= 1e-8,
+                  'final_goal_within_5mm': c['original_goal_final_error_mm'] <= 5.,
+                  'no_worse_peak_reference_lean': c['peak_reference_lean_deg'] <= b['peak_reference_lean_deg']+1e-6,
+                  'fallback_at_most_5pct': c['fallback_fraction'] <= .05}
+        if direction == 'world_y':
+            checks.update(lower_lean_integral=c['lean_error_integral_deg_s'] < b['lean_error_integral_deg_s'],
+                          lower_original_clock_path_rms=c['original_clock_path_rms_mm'] < b['original_clock_path_rms_mm'])
+        else:
+            checks['path_rms_regression_at_most_10pct'] = c['original_clock_path_rms_mm'] <= 1.1*b['original_clock_path_rms_mm']
+        gates[direction] = {'checks': checks, 'passed_all': all(checks.values()),
+                            'failed_checks': [key for key, value in checks.items() if not value]}
+        for label, run in selected[direction]:
+            row = dict(run['row'], stage_label=label, origin=str(run['folder'].relative_to(ROOT)))
+            rows.append(row)
+            for name in ('summary.json', 'precision.npz', 'rollout.npz', 'plans.json', 'provenance.json'):
+                path = run['folder']/name
+                records.append({'path': str(path.relative_to(ROOT)), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+                                'reuse': label.endswith('_reused')})
+    report = {'status': 'later_candidate_not_accepted' if any(not gate['passed_all'] for gate in gates.values()) else
+                       'passed_available_cases_not_broadly_qualified',
+              'scope': 'Later fixed-setting candidate comparison with explicitly reused original baselines/earlier candidates. This analysis performs no simulations.',
+              'candidate_label': args.label, 'candidate_folder': str(stage.relative_to(ROOT)),
+              'new_candidate_executions': len(gates), 'reused_initial_inputs_are_not_new_runs': True,
+              'initial_protocol': json.loads((FAMILY/'initial/protocol.json').read_text()),
+              'stage_protocol': json.loads((stage/'protocol.json').read_text()) if (stage/'protocol.json').exists() else None,
+              'rows': rows, 'acceptance_against_original_protocol': gates, 'warm_prefix_audit': prefixes,
+              'metric_definitions': 'Same exact-state/goal and terminal-actuation conventions as initial/analysis/report.json. Native controller component fields are shadows under MPC.',
+              'inputs': records,
+              'source_sha256': {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest() for path in (Path(__file__), source)}}
+    (output/'report.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
+    scalar_keys = [key for key, value in rows[0].items() if not isinstance(value, (dict, list))]
+    with (output/'metrics.csv').open('w', newline='') as handle:
+        writer = csv.DictWriter(handle, fieldnames=scalar_keys);writer.writeheader()
+        writer.writerows({key: row[key] for key in scalar_keys} for row in rows)
+    fig, axes = plt.subplots(2, 2, figsize=(13, 8), sharex=True, constrained_layout=True)
+    colors = ['#2878b5', '#df7e31', '#a36bb0', '#269c83']
+    for column, direction in enumerate(('world_x', 'world_y')):
+        for (label, run), color in zip(selected.get(direction, []), colors):
+            time = run['precise']['time_s']
+            axes[0, column].plot(time, 1000*run['path_error'], color=color, label=label)
+            axes[1, column].plot(time, run['lean'], color=color)
+        axes[0, column].set_title(direction.replace('_', ' '))
+        if selected.get(direction):
+            axes[0, column].legend(fontsize=8)
+        else:
+            axes[0, column].text(.5, .5, 'Not run in this stage', ha='center', transform=axes[0, column].transAxes)
+        for axis in axes[:, column]:
+            axis.axvline(.8, color='grey', linestyle='--', linewidth=.8)
+            axis.axvline(1.4, color='grey', linestyle=':', linewidth=.8);axis.grid(alpha=.2)
+        axes[1, column].set_xlabel('Simulation time, s')
+    axes[0, 0].set_ylabel('Original-clock XY error, mm')
+    axes[1, 0].set_ylabel('Reference-relative lean error, deg')
+    fig.suptitle(args.label+' — original goals and matched baseline retained')
+    fig.savefig(output/'comparison.png', dpi=170);fig.savefig(output/'comparison.pdf');plt.close(fig)
+    print(json.dumps({'status': report['status'], 'acceptance': gates,
+                      'candidate_rows': [{key: row[key] for key in ('direction', 'stage_label', 'original_clock_path_rms_mm',
+                         'original_goal_final_error_mm', 'peak_reference_lean_deg', 'fallback_fraction')}
+                                         for row in rows if not row['stage_label'].endswith('_reused')]}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

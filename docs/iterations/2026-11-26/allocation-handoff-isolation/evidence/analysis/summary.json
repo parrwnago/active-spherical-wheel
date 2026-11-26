@@ -1,0 +1,1235 @@
+{
+  "iteration": "I-51",
+  "status": "Five declared native runs completed; all evidence retained; no default adoption.",
+  "sources": {
+    "primary_report_sha256": "206d3ae42297800f16a56ab93c4eb28a00b73735835a7113d609c18a1fbbdbe0",
+    "phase_report_sha256": "ff53e68d701ddbf4e7b7f0677ea747174cbcc46aacaaa870aaf60f516925447e"
+  },
+  "primary": {
+    "cases": {
+      "base030": {
+        "completed": true,
+        "cap_m_s": 0.3,
+        "moving_rms_mm": 50.48647310171891,
+        "peak_mm": 190.90118139250976,
+        "final_mm": 190.19148889848861,
+        "peak_reference_lean_deg": 8.708537758069829,
+        "peak_absolute_lean_deg": 13.784268251668951,
+        "settled": false,
+        "old_route_gates_passed": false,
+        "first20mm_time_s": 6.859999999999876,
+        "max_actual_joint_speeds_rad_s": [
+          6.603884479041703,
+          15.42204313570308,
+          15.762999155361422
+        ]
+      },
+      "reference030": {
+        "completed": true,
+        "cap_m_s": 0.3,
+        "moving_rms_mm": 44.212661179552235,
+        "peak_mm": 97.18625587636122,
+        "final_mm": 32.686850479787786,
+        "peak_reference_lean_deg": 6.346060436014727,
+        "peak_absolute_lean_deg": 13.317092346798505,
+        "settled": false,
+        "old_route_gates_passed": false,
+        "first20mm_time_s": 6.859999999999876,
+        "max_actual_joint_speeds_rad_s": [
+          6.034275541101587,
+          13.273456503020633,
+          8.708720125655592
+        ]
+      },
+      "base060": {
+        "completed": true,
+        "cap_m_s": 0.6,
+        "moving_rms_mm": 52.52060930044703,
+        "peak_mm": 110.00853655827966,
+        "final_mm": 49.23103455083407,
+        "peak_reference_lean_deg": 6.052574323272872,
+        "peak_absolute_lean_deg": 13.373886198100973,
+        "settled": false,
+        "old_route_gates_passed": false,
+        "first20mm_time_s": 6.849999999999876,
+        "max_actual_joint_speeds_rad_s": [
+          5.994253733994463,
+          18.75496071227867,
+          7.760870942754396
+        ]
+      },
+      "handoff060": {
+        "completed": true,
+        "cap_m_s": 0.6,
+        "moving_rms_mm": 42.05604518404056,
+        "peak_mm": 92.65098166785057,
+        "final_mm": 15.574520287634048,
+        "peak_reference_lean_deg": 11.682890768146772,
+        "peak_absolute_lean_deg": 14.755774090984696,
+        "settled": false,
+        "old_route_gates_passed": false,
+        "first20mm_time_s": 6.8799999999998755,
+        "max_actual_joint_speeds_rad_s": [
+          5.358705455120164,
+          13.716354855133789,
+          26.2253621494083
+        ]
+      }
+    },
+    "paired_comparisons": {
+      "reference030": {
+        "baseline_id": "base030",
+        "moving_RMS_reduction_percent": 12.426718557912238,
+        "passes_all_conditions": false,
+        "failed_checks": [
+          "original_settled",
+          "original_route_gates",
+          "every_turn_overshoot",
+          "every_turn_lag"
+        ],
+        "turn_changes": [
+          {
+            "event_id": "turn_01_y",
+            "coverage": true,
+            "overshoot_difference_m": 0.004961310040950906,
+            "reversal_lag_difference_s": -0.31249723911606075,
+            "overshoot_pass": true,
+            "lag_pass": true,
+            "baseline_signed_lag_s": 1.100938360308028,
+            "candidate_signed_lag_s": 0.7884411211919673,
+            "absolute_lag_error_change_s": -0.31249723911606075
+          },
+          {
+            "event_id": "turn_02_x",
+            "coverage": true,
+            "overshoot_difference_m": 0.0,
+            "reversal_lag_difference_s": -0.12247544546754163,
+            "overshoot_pass": true,
+            "lag_pass": true,
+            "baseline_signed_lag_s": 0.018064769964869498,
+            "candidate_signed_lag_s": -0.10441067550267213,
+            "absolute_lag_error_change_s": 0.08634590553780264
+          },
+          {
+            "event_id": "turn_03_y",
+            "coverage": true,
+            "overshoot_difference_m": 0.0,
+            "reversal_lag_difference_s": 0.28628188110106834,
+            "overshoot_pass": true,
+            "lag_pass": false,
+            "baseline_signed_lag_s": -0.46915226135824284,
+            "candidate_signed_lag_s": -0.1828703802571745,
+            "absolute_lag_error_change_s": -0.28628188110106834
+          },
+          {
+            "event_id": "turn_04_y",
+            "coverage": true,
+            "overshoot_difference_m": 0.01146776170869579,
+            "reversal_lag_difference_s": 0.8186061956099593,
+            "overshoot_pass": false,
+            "lag_pass": false,
+            "baseline_signed_lag_s": -0.44434883374383105,
+            "candidate_signed_lag_s": 0.37425736186612824,
+            "absolute_lag_error_change_s": -0.07009147187770282
+          },
+          {
+            "event_id": "turn_05_x",
+            "coverage": true,
+            "overshoot_difference_m": -0.02036259452835143,
+            "reversal_lag_difference_s": -0.05186654890464126,
+            "overshoot_pass": true,
+            "lag_pass": true,
+            "baseline_signed_lag_s": -0.5180118656368222,
+            "candidate_signed_lag_s": -0.5698784145414635,
+            "absolute_lag_error_change_s": 0.05186654890464126
+          },
+          {
+            "event_id": "turn_06_y",
+            "coverage": true,
+            "overshoot_difference_m": -0.021804164799693382,
+            "reversal_lag_difference_s": 0.33402104591069914,
+            "overshoot_pass": true,
+            "lag_pass": false,
+            "baseline_signed_lag_s": 0.5689890958972583,
+            "candidate_signed_lag_s": 0.9030101418079575,
+            "absolute_lag_error_change_s": 0.33402104591069914
+          }
+        ]
+      },
+      "handoff060": {
+        "baseline_id": "base060",
+        "moving_RMS_reduction_percent": 19.92468148368834,
+        "passes_all_conditions": false,
+        "failed_checks": [
+          "peak_relative_lean_no_regression",
+          "original_settled",
+          "original_route_gates",
+          "every_turn_overshoot",
+          "every_turn_lag"
+        ],
+        "turn_changes": [
+          {
+            "event_id": "turn_01_y",
+            "coverage": true,
+            "overshoot_difference_m": 0.017618181695688406,
+            "reversal_lag_difference_s": 0.12965908730245523,
+            "overshoot_pass": false,
+            "lag_pass": false,
+            "baseline_signed_lag_s": 1.1066092961625333,
+            "candidate_signed_lag_s": 1.2362683834649886,
+            "absolute_lag_error_change_s": 0.12965908730245523
+          },
+          {
+            "event_id": "turn_02_x",
+            "coverage": true,
+            "overshoot_difference_m": 0.0,
+            "reversal_lag_difference_s": -0.08812430360028856,
+            "overshoot_pass": true,
+            "lag_pass": true,
+            "baseline_signed_lag_s": 0.0027624991146950606,
+            "candidate_signed_lag_s": -0.0853618044855935,
+            "absolute_lag_error_change_s": 0.08259930537089843
+          },
+          {
+            "event_id": "turn_03_y",
+            "coverage": true,
+            "overshoot_difference_m": 0.018722761432821144,
+            "reversal_lag_difference_s": -0.3374658089746525,
+            "overshoot_pass": false,
+            "lag_pass": true,
+            "baseline_signed_lag_s": 0.6727377907544714,
+            "candidate_signed_lag_s": 0.3352719817798189,
+            "absolute_lag_error_change_s": -0.3374658089746525
+          },
+          {
+            "event_id": "turn_04_y",
+            "coverage": true,
+            "overshoot_difference_m": 0.005133247220925341,
+            "reversal_lag_difference_s": 0.4014423313143638,
+            "overshoot_pass": false,
+            "lag_pass": false,
+            "baseline_signed_lag_s": 0.07418438144815198,
+            "candidate_signed_lag_s": 0.4756267127625158,
+            "absolute_lag_error_change_s": 0.4014423313143638
+          },
+          {
+            "event_id": "turn_05_x",
+            "coverage": true,
+            "overshoot_difference_m": -0.005968195658013098,
+            "reversal_lag_difference_s": 0.0325767076656831,
+            "overshoot_pass": true,
+            "lag_pass": true,
+            "baseline_signed_lag_s": -0.6600414030680213,
+            "candidate_signed_lag_s": -0.6274646954023382,
+            "absolute_lag_error_change_s": -0.0325767076656831
+          },
+          {
+            "event_id": "turn_06_y",
+            "coverage": true,
+            "overshoot_difference_m": 0.011304157105184842,
+            "reversal_lag_difference_s": -0.8321373272505816,
+            "overshoot_pass": false,
+            "lag_pass": true,
+            "baseline_signed_lag_s": 0.28532956714857605,
+            "candidate_signed_lag_s": -0.5468077601020056,
+            "absolute_lag_error_change_s": 0.26147819295342956
+          }
+        ]
+      }
+    },
+    "reference_mechanism": {
+      "passed": true,
+      "reference": {
+        "modified_held_samples": 53,
+        "modified_held_duration_s": 0.265,
+        "first_modified_time_s": 6.699999999999879,
+        "max_native_joint_reference_rad_s": 5.380230752682479,
+        "max_guarded_joint_reference_rad_s": 3.119094735522441,
+        "max_guarded_joint_reference_acceleration_rad_s2": 100.00000000000001
+      },
+      "handoff": {
+        "modified_held_samples": 0,
+        "modified_held_duration_s": 0.0,
+        "first_modified_time_s": null,
+        "max_handoff_delta_bychannel": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "native_box_clipped_held_fraction": 0.005227272727272727,
+        "total_projection_held_fraction": 0.005227272727272727,
+        "interpretation": "Native box clipping and extra handoff projection are separate; common clipping delta is their total raw-to-actual difference."
+      },
+      "rolling_reference_residual": {
+        "scope": "Current estimated contact kinematics only; not actual tracking/slip/force feasibility. Native LS rows unweighted; belt FF unchanged.",
+        "point_quality_codes": {
+          "0": "no usable current estimated records",
+          "1": "exact single-patch global point",
+          "2": "plural per-patch points encodedfloat32"
+        },
+        "available_rows": 8801,
+        "exact_single_patch_rows": 8083,
+        "plural_float32_rows": 718,
+        "modified_rows_with_geometry": 53,
+        "modified_rows_without_geometry": 0,
+        "max_native_residual_on_modified_m_s": 0.002882549568073998,
+        "max_guarded_residual_on_modified_m_s": 0.09004996274801615,
+        "rms_guarded_residual_on_modified_m_s": 0.029657286098716464
+      }
+    },
+    "handoff_mechanism": {
+      "passed": true,
+      "reference": {
+        "modified_held_samples": 0,
+        "modified_held_duration_s": 0.0,
+        "first_modified_time_s": null,
+        "max_native_joint_reference_rad_s": 143.91411095337367,
+        "max_guarded_joint_reference_rad_s": 143.91411095337367,
+        "max_guarded_joint_reference_acceleration_rad_s2": 37446.42228273787
+      },
+      "handoff": {
+        "modified_held_samples": 496,
+        "modified_held_duration_s": 2.48,
+        "first_modified_time_s": 6.699999999999879,
+        "max_handoff_delta_bychannel": [
+          0.0,
+          0.0,
+          0.0,
+          0.7045187462828392,
+          0.12250760295431197
+        ],
+        "active_episode_held_samples_bybelt": [
+          512,
+          17
+        ],
+        "triggered_held_samples_bybelt": [
+          103,
+          6
+        ],
+        "max_abs_active_episode_slew_m_s2": 3.0000000000000027,
+        "active_episode_contract_passed": true,
+        "native_box_clipped_held_fraction": 0.039886363636363636,
+        "total_projection_held_fraction": 0.08181818181818182,
+        "interpretation": "Native box clipping and extra handoff projection are separate; common clipping delta is their total raw-to-actual difference."
+      }
+    }
+  },
+  "phase_addendum": {
+    "prefix_fields": 47,
+    "prefix_samples": 7600,
+    "first_gain_difference_s": 38.00000000000099,
+    "cases": {
+      "base030": {
+        "completed": true,
+        "failure": null,
+        "timed_tracking": {
+          "moving_rms_m": 0.05048647310171891,
+          "moving_p95_m": 0.08783446214121796,
+          "moving_samples": 8000,
+          "full_peak_m": 0.19090118139250975,
+          "final_m": 0.1901914888984886,
+          "full_rms_m": 0.05651941507255893,
+          "moving_window_complete": true
+        },
+        "attitude": {
+          "peak_absolute_deg": 13.784268251668951,
+          "peak_reference_error_deg": 8.708537758069829
+        },
+        "original_settling": {
+          "passed": false,
+          "checks": {
+            "completed": true,
+            "relative_lean_below1deg": false,
+            "planar_speed_below030": false,
+            "angular_rate_below080": false
+          },
+          "tail_s": [
+            43.00500000000355,
+            44.00000000000406
+          ],
+          "max_relative_lean_deg": 8.708537758069829,
+          "max_planar_speed_m_s": 0.2767143217808734,
+          "max_angular_rate_rad_s": 1.994164157666359
+        },
+        "original_route_gates": {
+          "gates": {
+            "completed": true,
+            "rms": false,
+            "p95": true,
+            "max": true,
+            "final": false,
+            "attitude": false,
+            "saturation": true,
+            "settled": false,
+            "closure": false
+          },
+          "passed": false
+        },
+        "commands": {
+          "requested": {
+            "max_common030_normalized": 235.11228491456754,
+            "max_own_cap_normalized": 235.11228491456754,
+            "max_step_common030_normalized": 251.14967699941786,
+            "max_step_own_cap_normalized": 251.14967699941786
+          },
+          "applied": {
+            "max_common030_normalized": 1.0,
+            "max_own_cap_normalized": 1.0,
+            "max_step_common030_normalized": 2.0,
+            "max_step_own_cap_normalized": 2.0
+          },
+          "joint_torque_outside_held_duration_s": [
+            0.54,
+            0.105,
+            1.6
+          ],
+          "original_any_request_strict_saturated_fraction": 0.06295454545454546
+        },
+        "turns": [
+          {
+            "event_id": "turn_01_y",
+            "reference_time_s": 11.775142746922178,
+            "axis": "y",
+            "window_s": [
+              10.775142746922178,
+              13.775142746922178
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.0,
+            "post_event_geometric_overshoot_m": 0.0,
+            "actual_reversal_lag_s": 1.100938360308028,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": false,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 2576,
+                "end_index": 2845,
+                "start_s": 12.880000000000614,
+                "end_s": 14.225000000000824,
+                "duration_s": 1.3450000000002102,
+                "samples": 270,
+                "interpolated_zero_time_s": 12.876081107230206,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          },
+          {
+            "event_id": "turn_02_x",
+            "reference_time_s": 15.377446019513739,
+            "axis": "x",
+            "window_s": [
+              14.377446019513739,
+              17.37744601951374
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.0,
+            "post_event_geometric_overshoot_m": 0.0,
+            "actual_reversal_lag_s": 0.018064769964869498,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": true,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 3080,
+                "end_index": 3192,
+                "start_s": 15.400000000001008,
+                "end_s": 15.960000000001095,
+                "duration_s": 0.5600000000000875,
+                "samples": 113,
+                "interpolated_zero_time_s": 15.395510789478609,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 3249,
+                "end_index": 3467,
+                "start_s": 16.245000000001053,
+                "end_s": 17.335000000000836,
+                "duration_s": 1.0899999999997831,
+                "samples": 219,
+                "interpolated_zero_time_s": 16.241281163210164,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          },
+          {
+            "event_id": "turn_03_y",
+            "reference_time_s": 18.30073407696684,
+            "axis": "y",
+            "window_s": [
+              17.30073407696684,
+              20.30073407696684
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.0,
+            "post_event_geometric_overshoot_m": 0.0,
+            "actual_reversal_lag_s": -0.46915226135824284,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": true,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 3567,
+                "end_index": 3595,
+                "start_s": 17.835000000000736,
+                "end_s": 17.97500000000071,
+                "duration_s": 0.13999999999997215,
+                "samples": 29,
+                "interpolated_zero_time_s": 17.831581815608597,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 3725,
+                "end_index": 3788,
+                "start_s": 18.62500000000058,
+                "end_s": 18.940000000000516,
+                "duration_s": 0.31499999999993733,
+                "samples": 64,
+                "interpolated_zero_time_s": 18.6208507784497,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 3820,
+                "end_index": 4040,
+                "start_s": 19.100000000000485,
+                "end_s": 20.200000000000266,
+                "duration_s": 1.0999999999997812,
+                "samples": 221,
+                "interpolated_zero_time_s": 19.097450525665472,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          },
+          {
+            "event_id": "turn_04_y",
+            "reference_time_s": 23.69926592303316,
+            "axis": "y",
+            "window_s": [
+              22.69926592303316,
+              25.69926592303316
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.009836278500703344,
+            "post_event_geometric_overshoot_m": 0.0032064783879892644,
+            "actual_reversal_lag_s": -0.44434883374383105,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": true,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 4651,
+                "end_index": 4685,
+                "start_s": 23.254999999999658,
+                "end_s": 23.424999999999624,
+                "duration_s": 0.16999999999996618,
+                "samples": 35,
+                "interpolated_zero_time_s": 23.25491708928933,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 4715,
+                "end_index": 4736,
+                "start_s": 23.574999999999594,
+                "end_s": 23.679999999999573,
+                "duration_s": 0.10499999999997911,
+                "samples": 22,
+                "interpolated_zero_time_s": 23.572988179826993,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 4742,
+                "end_index": 4771,
+                "start_s": 23.709999999999567,
+                "end_s": 23.85499999999954,
+                "duration_s": 0.14499999999997115,
+                "samples": 30,
+                "interpolated_zero_time_s": 23.705057386302105,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 4991,
+                "end_index": 5309,
+                "start_s": 24.95499999999932,
+                "end_s": 26.544999999999003,
+                "duration_s": 1.5899999999996837,
+                "samples": 319,
+                "interpolated_zero_time_s": 24.95352791386228,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          },
+          {
+            "event_id": "turn_05_x",
+            "reference_time_s": 26.622553980486252,
+            "axis": "x",
+            "window_s": [
+              25.622553980486252,
+              28.622553980486252
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.028022318702334736,
+            "post_event_geometric_overshoot_m": 0.011654898191987062,
+            "actual_reversal_lag_s": -0.5180118656368222,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": false,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 5221,
+                "end_index": 5983,
+                "start_s": 26.10499999999909,
+                "end_s": 29.914999999998333,
+                "duration_s": 3.809999999999242,
+                "samples": 763,
+                "interpolated_zero_time_s": 26.10454211484943,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          },
+          {
+            "event_id": "turn_06_y",
+            "reference_time_s": 30.224857253077822,
+            "axis": "y",
+            "window_s": [
+              29.224857253077822,
+              32.22485725307782
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.06020396490699831,
+            "post_event_geometric_overshoot_m": 0.06020396490699831,
+            "actual_reversal_lag_s": 0.5689890958972583,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": true,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 6159,
+                "end_index": 6195,
+                "start_s": 30.794999999998158,
+                "end_s": 30.974999999998122,
+                "duration_s": 0.1799999999999642,
+                "samples": 37,
+                "interpolated_zero_time_s": 30.79384634897508,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 6203,
+                "end_index": 6332,
+                "start_s": 31.014999999998114,
+                "end_s": 31.659999999997986,
+                "duration_s": 0.6449999999998717,
+                "samples": 130,
+                "interpolated_zero_time_s": 31.01016981718974,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 6340,
+                "end_index": 6360,
+                "start_s": 31.699999999997978,
+                "end_s": 31.799999999997958,
+                "duration_s": 0.0999999999999801,
+                "samples": 21,
+                "interpolated_zero_time_s": 31.697082423191763,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 6365,
+                "end_index": 6398,
+                "start_s": 31.824999999997953,
+                "end_s": 31.98999999999792,
+                "duration_s": 0.16499999999996717,
+                "samples": 34,
+                "interpolated_zero_time_s": 31.821272778041113,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 6410,
+                "end_index": 6499,
+                "start_s": 32.049999999997944,
+                "end_s": 32.49499999999817,
+                "duration_s": 0.44500000000022766,
+                "samples": 90,
+                "interpolated_zero_time_s": 32.04637195675565,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          }
+        ],
+        "late": {
+          "primary38_42": {
+            "window_s": [
+              38.0,
+              42.0
+            ],
+            "available": true,
+            "samples": 801,
+            "window_complete": true,
+            "timed_rms_m": 0.057856612124376934,
+            "timed_peak_m": 0.09858380374733697,
+            "timed_final_m": 0.0983961767788039,
+            "local_path_rms_m": 0.057679224454588174,
+            "local_path_peak_m": 0.09858380374733697,
+            "peak_absolute_lean_deg": 10.477056414628168,
+            "peak_reference_relative_lean_deg": 1.9642208555554128,
+            "rms_reference_relative_lean_deg": 0.6750267388183518,
+            "yaw_change_from_window_start_deg": -100.94373879454959,
+            "maximum_yaw_change_from_window_start_deg": 100.94373879454959,
+            "yaw_at_window_start_deg": -475.59128519596914,
+            "joint_rate_tracking_rms_rad_s": [
+              0.28843956950637223,
+              0.8558410122453577,
+              1.102188878943354
+            ],
+            "joint_rate_tracking_max_abs_rad_s": [
+              1.3384815115136905,
+              2.0426127426753125,
+              3.356503891376176
+            ],
+            "max_abs_joint_reference_rad_s": [
+              0.1351890696881569,
+              0.0,
+              0.11899675903616368
+            ],
+            "max_abs_actual_joint_rate_rad_s": [
+              1.3502361212522442,
+              2.0426127426753125,
+              3.3582229964515258
+            ]
+          },
+          "secondary38_44": {
+            "window_s": [
+              38.0,
+              44.0
+            ],
+            "available": true,
+            "samples": 1201,
+            "window_complete": true,
+            "timed_rms_m": 0.0846516410150383,
+            "timed_peak_m": 0.19090118139250975,
+            "timed_final_m": 0.1901914888984886,
+            "local_path_rms_m": 0.08457086702744412,
+            "local_path_peak_m": 0.19090118139250975,
+            "peak_absolute_lean_deg": 13.784268251668951,
+            "peak_reference_relative_lean_deg": 8.708537758069829,
+            "rms_reference_relative_lean_deg": 1.227211068450235,
+            "yaw_change_from_window_start_deg": -109.75461498994395,
+            "maximum_yaw_change_from_window_start_deg": 134.1953690195006,
+            "yaw_at_window_start_deg": -475.59128519596914,
+            "joint_rate_tracking_rms_rad_s": [
+              0.3753788174843233,
+              2.1040812607426496,
+              2.457773276823337
+            ],
+            "joint_rate_tracking_max_abs_rad_s": [
+              3.1883312139857014,
+              8.938822744419195,
+              12.098652462712696
+            ],
+            "max_abs_joint_reference_rad_s": [
+              0.1351890696881569,
+              0.0,
+              0.11899675903616368
+            ],
+            "max_abs_actual_joint_rate_rad_s": [
+              3.1883312139857014,
+              8.938822744419195,
+              12.098652462712696
+            ]
+          }
+        }
+      },
+      "phase_late030": {
+        "completed": true,
+        "failure": null,
+        "timed_tracking": {
+          "moving_rms_m": 0.05049468705390741,
+          "moving_p95_m": 0.08783446214121796,
+          "moving_samples": 8000,
+          "full_peak_m": 0.096309421489549,
+          "final_m": 0.05399290117596281,
+          "full_rms_m": 0.05153042782891889,
+          "moving_window_complete": true
+        },
+        "attitude": {
+          "peak_absolute_deg": 13.782441654396477,
+          "peak_reference_error_deg": 6.089169815686773
+        },
+        "original_settling": {
+          "passed": false,
+          "checks": {
+            "completed": true,
+            "relative_lean_below1deg": false,
+            "planar_speed_below030": false,
+            "angular_rate_below080": false
+          },
+          "tail_s": [
+            43.00500000000355,
+            44.00000000000406
+          ],
+          "max_relative_lean_deg": 1.5652084724719868,
+          "max_planar_speed_m_s": 0.0520428249653924,
+          "max_angular_rate_rad_s": 0.5600860407186141
+        },
+        "original_route_gates": {
+          "gates": {
+            "completed": true,
+            "rms": false,
+            "p95": true,
+            "max": true,
+            "final": false,
+            "attitude": true,
+            "saturation": true,
+            "settled": false,
+            "closure": false
+          },
+          "passed": false
+        },
+        "commands": {
+          "requested": {
+            "max_common030_normalized": 235.11228491456754,
+            "max_own_cap_normalized": 235.11228491456754,
+            "max_step_common030_normalized": 251.14967699941786,
+            "max_step_own_cap_normalized": 251.14967699941786
+          },
+          "applied": {
+            "max_common030_normalized": 1.0,
+            "max_own_cap_normalized": 1.0,
+            "max_step_common030_normalized": 2.0,
+            "max_step_own_cap_normalized": 2.0
+          },
+          "joint_torque_outside_held_duration_s": [
+            0.54,
+            0.105,
+            1.585
+          ],
+          "original_any_request_strict_saturated_fraction": 0.048863636363636366
+        },
+        "turns": [
+          {
+            "event_id": "turn_01_y",
+            "reference_time_s": 11.775142746922178,
+            "axis": "y",
+            "window_s": [
+              10.775142746922178,
+              13.775142746922178
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.0,
+            "post_event_geometric_overshoot_m": 0.0,
+            "actual_reversal_lag_s": 1.100938360308028,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": false,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 2576,
+                "end_index": 2845,
+                "start_s": 12.880000000000614,
+                "end_s": 14.225000000000824,
+                "duration_s": 1.3450000000002102,
+                "samples": 270,
+                "interpolated_zero_time_s": 12.876081107230206,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          },
+          {
+            "event_id": "turn_02_x",
+            "reference_time_s": 15.377446019513739,
+            "axis": "x",
+            "window_s": [
+              14.377446019513739,
+              17.37744601951374
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.0,
+            "post_event_geometric_overshoot_m": 0.0,
+            "actual_reversal_lag_s": 0.018064769964869498,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": true,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 3080,
+                "end_index": 3192,
+                "start_s": 15.400000000001008,
+                "end_s": 15.960000000001095,
+                "duration_s": 0.5600000000000875,
+                "samples": 113,
+                "interpolated_zero_time_s": 15.395510789478609,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 3249,
+                "end_index": 3467,
+                "start_s": 16.245000000001053,
+                "end_s": 17.335000000000836,
+                "duration_s": 1.0899999999997831,
+                "samples": 219,
+                "interpolated_zero_time_s": 16.241281163210164,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          },
+          {
+            "event_id": "turn_03_y",
+            "reference_time_s": 18.30073407696684,
+            "axis": "y",
+            "window_s": [
+              17.30073407696684,
+              20.30073407696684
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.0,
+            "post_event_geometric_overshoot_m": 0.0,
+            "actual_reversal_lag_s": -0.46915226135824284,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": true,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 3567,
+                "end_index": 3595,
+                "start_s": 17.835000000000736,
+                "end_s": 17.97500000000071,
+                "duration_s": 0.13999999999997215,
+                "samples": 29,
+                "interpolated_zero_time_s": 17.831581815608597,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 3725,
+                "end_index": 3788,
+                "start_s": 18.62500000000058,
+                "end_s": 18.940000000000516,
+                "duration_s": 0.31499999999993733,
+                "samples": 64,
+                "interpolated_zero_time_s": 18.6208507784497,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 3820,
+                "end_index": 4040,
+                "start_s": 19.100000000000485,
+                "end_s": 20.200000000000266,
+                "duration_s": 1.0999999999997812,
+                "samples": 221,
+                "interpolated_zero_time_s": 19.097450525665472,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          },
+          {
+            "event_id": "turn_04_y",
+            "reference_time_s": 23.69926592303316,
+            "axis": "y",
+            "window_s": [
+              22.69926592303316,
+              25.69926592303316
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.009836278500703344,
+            "post_event_geometric_overshoot_m": 0.0032064783879892644,
+            "actual_reversal_lag_s": -0.44434883374383105,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": true,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 4651,
+                "end_index": 4685,
+                "start_s": 23.254999999999658,
+                "end_s": 23.424999999999624,
+                "duration_s": 0.16999999999996618,
+                "samples": 35,
+                "interpolated_zero_time_s": 23.25491708928933,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 4715,
+                "end_index": 4736,
+                "start_s": 23.574999999999594,
+                "end_s": 23.679999999999573,
+                "duration_s": 0.10499999999997911,
+                "samples": 22,
+                "interpolated_zero_time_s": 23.572988179826993,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 4742,
+                "end_index": 4771,
+                "start_s": 23.709999999999567,
+                "end_s": 23.85499999999954,
+                "duration_s": 0.14499999999997115,
+                "samples": 30,
+                "interpolated_zero_time_s": 23.705057386302105,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 4991,
+                "end_index": 5309,
+                "start_s": 24.95499999999932,
+                "end_s": 26.544999999999003,
+                "duration_s": 1.5899999999996837,
+                "samples": 319,
+                "interpolated_zero_time_s": 24.95352791386228,
+                "incoming_sign": 1,
+                "outgoing_sign": -1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          },
+          {
+            "event_id": "turn_05_x",
+            "reference_time_s": 26.622553980486252,
+            "axis": "x",
+            "window_s": [
+              25.622553980486252,
+              28.622553980486252
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.028022318702334736,
+            "post_event_geometric_overshoot_m": 0.011654898191987062,
+            "actual_reversal_lag_s": -0.5180118656368222,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": false,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 5221,
+                "end_index": 5983,
+                "start_s": 26.10499999999909,
+                "end_s": 29.914999999998333,
+                "duration_s": 3.809999999999242,
+                "samples": 763,
+                "interpolated_zero_time_s": 26.10454211484943,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          },
+          {
+            "event_id": "turn_06_y",
+            "reference_time_s": 30.224857253077822,
+            "axis": "y",
+            "window_s": [
+              29.224857253077822,
+              32.22485725307782
+            ],
+            "window_complete": true,
+            "geometric_component_overshoot_m": 0.06020396490699831,
+            "post_event_geometric_overshoot_m": 0.06020396490699831,
+            "actual_reversal_lag_s": 0.5689890958972583,
+            "actual_reversal_missing_in_window": false,
+            "actual_reversal_multiple_in_window": true,
+            "actual_reversal_candidates": [
+              {
+                "start_index": 6159,
+                "end_index": 6195,
+                "start_s": 30.794999999998158,
+                "end_s": 30.974999999998122,
+                "duration_s": 0.1799999999999642,
+                "samples": 37,
+                "interpolated_zero_time_s": 30.79384634897508,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 6203,
+                "end_index": 6332,
+                "start_s": 31.014999999998114,
+                "end_s": 31.659999999997986,
+                "duration_s": 0.6449999999998717,
+                "samples": 130,
+                "interpolated_zero_time_s": 31.01016981718974,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 6340,
+                "end_index": 6360,
+                "start_s": 31.699999999997978,
+                "end_s": 31.799999999997958,
+                "duration_s": 0.0999999999999801,
+                "samples": 21,
+                "interpolated_zero_time_s": 31.697082423191763,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 6365,
+                "end_index": 6398,
+                "start_s": 31.824999999997953,
+                "end_s": 31.98999999999792,
+                "duration_s": 0.16499999999996717,
+                "samples": 34,
+                "interpolated_zero_time_s": 31.821272778041113,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              },
+              {
+                "start_index": 6410,
+                "end_index": 6499,
+                "start_s": 32.049999999997944,
+                "end_s": 32.49499999999817,
+                "duration_s": 0.44500000000022766,
+                "samples": 90,
+                "interpolated_zero_time_s": 32.04637195675565,
+                "incoming_sign": -1,
+                "outgoing_sign": 1,
+                "zero_velocity_plateau_s": null
+              }
+            ],
+            "projection_boundary_samples": 0
+          }
+        ],
+        "late": {
+          "primary38_42": {
+            "window_s": [
+              38.0,
+              42.0
+            ],
+            "available": true,
+            "samples": 801,
+            "window_complete": true,
+            "timed_rms_m": 0.04832251172051845,
+            "timed_peak_m": 0.07294792983754074,
+            "timed_final_m": 0.07294792983754074,
+            "local_path_rms_m": 0.048103562859016596,
+            "local_path_peak_m": 0.07294792983754074,
+            "peak_absolute_lean_deg": 9.57565374903249,
+            "peak_reference_relative_lean_deg": 1.7449677853458785,
+            "rms_reference_relative_lean_deg": 0.39654243960302554,
+            "yaw_change_from_window_start_deg": -95.3194715222574,
+            "maximum_yaw_change_from_window_start_deg": 95.3194715222574,
+            "yaw_at_window_start_deg": -475.59128519596914,
+            "joint_rate_tracking_rms_rad_s": [
+              0.24620200397242184,
+              0.934634357591381,
+              0.8433877225956462
+            ],
+            "joint_rate_tracking_max_abs_rad_s": [
+              1.3334200993834642,
+              2.143442052400548,
+              2.981324749610582
+            ],
+            "max_abs_joint_reference_rad_s": [
+              0.1351890696881569,
+              0.0,
+              0.11899675903616368
+            ],
+            "max_abs_actual_joint_rate_rad_s": [
+              1.3444804449769234,
+              2.143442052400548,
+              3.0008127129235236
+            ]
+          },
+          "secondary38_44": {
+            "window_s": [
+              38.0,
+              44.0
+            ],
+            "available": true,
+            "samples": 1201,
+            "window_complete": true,
+            "timed_rms_m": 0.056706627020898424,
+            "timed_peak_m": 0.07588724235785181,
+            "timed_final_m": 0.05399290117596281,
+            "local_path_rms_m": 0.05658233619179838,
+            "local_path_peak_m": 0.07588724235785181,
+            "peak_absolute_lean_deg": 9.57565374903249,
+            "peak_reference_relative_lean_deg": 1.7449677853458785,
+            "rms_reference_relative_lean_deg": 0.4117677294931307,
+            "yaw_change_from_window_start_deg": -142.2687659205074,
+            "maximum_yaw_change_from_window_start_deg": 142.2687659205074,
+            "yaw_at_window_start_deg": -475.59128519596914,
+            "joint_rate_tracking_rms_rad_s": [
+              0.23116281767794783,
+              0.8927378516830091,
+              0.799937429790496
+            ],
+            "joint_rate_tracking_max_abs_rad_s": [
+              1.3334200993834642,
+              2.143442052400548,
+              2.981324749610582
+            ],
+            "max_abs_joint_reference_rad_s": [
+              0.1351890696881569,
+              0.0,
+              0.11899675903616368
+            ],
+            "max_abs_actual_joint_rate_rad_s": [
+              1.3444804449769234,
+              2.143442052400548,
+              3.0008127129235236
+            ]
+          }
+        }
+      }
+    }
+  },
+  "conclusions": [
+    "Original leastsquares doesnot intentionallyrelax position orretime thepath. Referenceguard preserves thosegoals butacceptsnominalrollingmismatch.",
+    "Referencecandidate improvesmovingRMS/peak/final/lean butfails turns/settling. Itsnativejointreferences remainbelow20, so thishistory onlybinds thereferenceaccelerationguard.",
+    "Handoffcandidate improvesRMS/peak/final butworsenspeakrelativelean andseveralturns. Episodebelt slew isbounded; nativejointreference singularities arenotgloballyfixed.",
+    "Latephase scheduling changesafteranexact38shistory reduce late/finalerror butnotwholemovingRMS orsettling. Freeheadingyawchange canworsen.",
+    "No combination, outcome-basedretuning orbroadertrajectorycampaign wasperformed; defaults remainnative."
+  ]
+}

@@ -1,0 +1,313 @@
+"""Preserve I31 compact evidence without running physics, analysis or tests.
+
+Default invocation only inspects raw artifacts. --collect solver copies the
+already immutable optimizer development stages. --collect final requires the
+explicit --final-ready flag; invoke it only after all audit outputs are frozen.
+Existing evidence bytes are never replaced by differing bytes.
+"""
+from __future__ import annotations
+
+import argparse
+from collections import Counter
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
+
+REPO = Path(__file__).resolve().parents[2]
+FAMILY = Path(__file__).resolve().parent
+DEFAULT_DEST = REPO/'docs/iterations/2026-11-25/mpc-equilibrium/evidence'
+COMPACT_SUFFIXES = {'.py', '.txt', '.json', '.xml', '.csv', '.log', '.md',
+                    '.png', '.jpg', '.jpeg', '.pdf', '.yaml', '.yml', '.toml',
+                    '.urdf', '.patch', '.sha256'}
+MAX_COMPACT_BYTES = 4*1024*1024
+CURRENT_SOURCES = ('scripts/run-mpc-comparison.py', 'scripts/audit-mpc-equilibrium.py',
+                   'src/spherical_wheel/predictive_control.py',
+                   'src/spherical_wheel/predictive_model.py',
+                   'src/spherical_wheel/predictive_equilibrium.py',
+                   'tests/test_predictive_control.py', 'tests/test_predictive_model.py',
+                   'tests/test_predictive_equilibrium.py', 'tests/test_mpc_comparison_objective.py')
+
+
+def sha256(path):
+    digest = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda: stream.read(1024*1024), b''):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def repo_path(path):
+    return str(Path(path).resolve().relative_to(REPO))
+
+
+def stage_of(relative):
+    parts = relative.parts
+    if parts[:2] == ('pre_change', 'root'):
+        return 'root_pre_I31_objective_hooks__harness_hash_matches_declared_protocol'
+    if parts[:2] == ('pre_change', 'solver'):
+        return 'restored_exact_pre_I31_solver__before_input_target_extension'
+    if parts and parts[0] == 'pre_change':
+        return 'predictor_prechange_snapshot__harness_after_root_objective_hooks'
+    if parts and parts[0] == 'solver_development':
+        return 'recorded_solver_development_'+parts[1]
+    if 'source_snapshot' in parts:
+        return 'recorded_source_snapshot__exactness_requires_its_provenance_hashes'
+    if relative.name == 'first_y2.json':
+        return 'first_equivalent_inline_audit__before_reusable_equilibrium_module'
+    if parts and parts[0] == 'quick_fixed_goal':
+        return 'early_fixed_goal_inline_audit__helper_if_present_is_later_reproduction'
+    if parts and parts[0] == 'tests':
+        return 'selected_test_record__counts_overlap_other_environments_and_stages'
+    if 'meshes' in parts or relative.suffix == '.obj':
+        return 'private_model_mesh_payload__inventory_only'
+    return 'I31_recorded_artifact__inspect_report_scope_for_execution_and_source_stage'
+
+
+def omission_reason(path):
+    relative = path.relative_to(FAMILY)
+    if '__pycache__' in relative.parts or path.suffix == '.pyc':
+        return 'runtime_cache'
+    if 'meshes' in relative.parts or path.suffix in {'.obj', '.stl', '.dae', '.msh'}:
+        return 'private_model_mesh_payload_inventory_only'
+    if path.suffix in {'.npz', '.npy', '.mp4', '.zip', '.bag', '.db3'}:
+        return 'large_raw_trace_or_media_payload_inventory_only'
+    if path.name == 'plans.json':
+        return 'full_plan_payload_inventory_only'
+    if path.stat().st_size > MAX_COMPACT_BYTES:
+        return 'above_compact_artifact_size_limit'
+    if path.suffix not in COMPACT_SUFFIXES:
+        return 'unsupported_compact_suffix_inventory_only'
+    return None
+
+
+def raw_files():
+    return [p for p in sorted(FAMILY.rglob('*')) if p.is_file()
+            and '__pycache__' not in p.relative_to(FAMILY).parts]
+
+
+def census(files):
+    suffixes = Counter(p.suffix for p in files)
+    return {'raw_files': len(files), 'raw_bytes': sum(p.stat().st_size for p in files),
+            'suffix_counts': dict(sorted(suffixes.items())),
+            'mesh_files': sum('meshes' in p.relative_to(FAMILY).parts or p.suffix == '.obj' for p in files),
+            'mesh_bytes': sum(p.stat().st_size for p in files
+                              if 'meshes' in p.relative_to(FAMILY).parts or p.suffix == '.obj'),
+            'scope': 'Filesystem inventory only; these file counts are not simulation or test counts.'}
+
+
+class Archive:
+    def __init__(self, destination):
+        self.destination = Path(destination)
+        self.entries = {}
+
+    def write(self, relative, data, **metadata):
+        path = self.destination/relative
+        if path.exists() and path.read_bytes() != data:
+            raise RuntimeError(f'Refusing to replace differing existing evidence: {path}')
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if not path.exists():
+            path.write_bytes(data)
+        key = str(relative)
+        self.entries[key] = {'snapshot': key, 'bytes': len(data),
+                             'sha256': hashlib.sha256(data).hexdigest(), **metadata}
+        return key
+
+    def copy(self, source, relative, stage=None):
+        return self.write(relative, source.read_bytes(), origin=repo_path(source),
+                          source_stage=stage or stage_of(source.relative_to(FAMILY)))
+
+    def generated(self, relative, value, stage, origins):
+        return self.write(relative, (json.dumps(value, indent=2, allow_nan=False)+'\n').encode(),
+                          source_stage=stage, derived_from=origins)
+
+
+def compact_relative(path):
+    relative = path.relative_to(FAMILY)
+    return Path(str(relative)+'.txt') if path.suffix == '.py' else relative
+
+
+def verify_stage_manifests(files):
+    verified, unresolved = [], []
+    for manifest in files:
+        if manifest.name != 'manifest.json':
+            continue
+        document = json.loads(manifest.read_text())
+        records = document.get('files', [])
+        if not isinstance(records, list):
+            continue
+        for item in records:
+            if not isinstance(item, dict) or not item.get('sha256'):
+                continue
+            snapshot = item.get('snapshot', item.get('path'))
+            candidate = manifest.parent/snapshot if snapshot else None
+            if candidate is None or not candidate.is_file():
+                unresolved.append({'manifest': repo_path(manifest), 'record': item,
+                                   'reason': 'No local stage-relative artifact; current source is not substituted for historical bytes.'})
+                continue
+            observed = sha256(candidate)
+            if observed != item['sha256']:
+                raise RuntimeError(f'Stage manifest hash mismatch: {candidate}')
+            verified.append({'manifest': repo_path(manifest), 'stage_file': repo_path(candidate),
+                             'sha256': observed})
+    return {'verified_stage_references': verified, 'unresolved_stage_references': unresolved}
+
+
+def test_records(entries, destination):
+    grouped = {}
+    for item in entries:
+        if not item['snapshot'].endswith('.xml'):
+            continue
+        path = destination/item['snapshot']
+        try:
+            root = ET.parse(path).getroot()
+        except ET.ParseError:
+            continue
+        if root.tag not in ('testsuite', 'testsuites'):
+            continue
+        suites = [root] if root.tag == 'testsuite' else list(root)
+        key = item['sha256']
+        record = grouped.setdefault(key, {'sha256': key, 'artifacts': [],
+                                          'suites': [suite.attrib for suite in suites]})
+        record['artifacts'].append(item['snapshot'])
+    return {'records_grouped_by_equal_xml_hash': list(grouped.values()),
+            'count_warning': 'Separate stages and Python environments overlap. No sum is a unique-test or full-repository count.'}
+
+
+def launch_sources(files, archive):
+    cases = []
+    for path in files:
+        if path.name != 'provenance.json':
+            continue
+        provenance = json.loads(path.read_text())
+        hashes = provenance.get('source_sha256')
+        if not isinstance(hashes, dict):
+            continue
+        references = []
+        for original, expected in sorted(hashes.items()):
+            candidate = path.parent/'source_snapshot'/original
+            if not candidate.is_file() or sha256(candidate) != expected:
+                raise RuntimeError(f'Cannot verify recorded launch-source reference: {candidate}')
+            archived = compact_relative(candidate)
+            if str(archived) not in archive.entries:
+                raise RuntimeError(f'Verified launch source not copied: {candidate}')
+            references.append({'original_path': original, 'sha256': expected,
+                               'archived_source': str(archived)})
+        cases.append({'provenance': repo_path(path), 'files': references})
+    return {'cases': cases,
+            'meaning': 'Only listed provenance/source_snapshot pairs are verified as exact recorded launch references. Later current sources do not substitute for missing historical code.'}
+
+
+def reused_reference_payloads():
+    frozen = REPO/'docs/iterations/2026-11-25/mpc-balance/evidence/raw_inventory.json'
+    if not frozen.is_file():
+        return {'status': 'Prior compact raw inventory unavailable; no substitute source claimed.'}
+    entries = json.loads(frozen.read_text()).get('omitted_run_payloads', [])
+    retained = []
+    for record in entries:
+        if record.get('stage') != 'trajectory' or record.get('policy') != 'mpc':
+            continue
+        path = REPO/record['path']
+        if not path.is_file() or path.stat().st_size != record['bytes'] or sha256(path) != record['sha256']:
+            raise RuntimeError(f'Reused reference-campaign payload changed: {path}')
+        retained.append({**record, 'verified_against_prior_frozen_inventory': True,
+                         'copied_into_I31_evidence': False})
+    return {'reference_campaign': 'results/mpc_balance_20261125/trajectory',
+            'prior_frozen_inventory': repo_path(frozen), 'prior_frozen_inventory_sha256': sha256(frozen),
+            'payloads': retained,
+            'scope': 'Reused I30 reference-campaign payloads, not new I31 physics runs. Individual audit reports determine which rows/inputs they actually read; listing a payload is not a claim that every audit used it.'}
+
+
+def collect(mode, destination):
+    target = Path('collection_manifests/solver_stage.json') if mode == 'solver' else Path('manifest.json')
+    if (Path(destination)/target).exists():
+        raise RuntimeError(f'Collection manifest already exists; inspect frozen archive instead: {Path(destination)/target}')
+    archive = Archive(destination)
+    # A final collection includes the earlier immutable solver-only index and
+    # its manifest as artifacts, so its manifest accounts for every file.
+    if mode == 'final' and archive.destination.exists():
+        earlier_metadata = {}
+        earlier = archive.destination/'collection_manifests/solver_stage.json'
+        if earlier.is_file():
+            earlier_metadata = {item['snapshot']: item for item in json.loads(earlier.read_text())['files']}
+        for existing in sorted(archive.destination.rglob('*')):
+            if existing.is_file():
+                relative = existing.relative_to(archive.destination)
+                metadata = earlier_metadata.get(str(relative), {})
+                metadata = {key: value for key, value in metadata.items()
+                            if key not in ('snapshot', 'bytes', 'sha256')}
+                metadata.setdefault('source_stage', 'earlier_immutable_solver_only_collection')
+                archive.write(relative, existing.read_bytes(), **metadata)
+    all_files = raw_files()
+    selected = ([p for p in all_files if p.relative_to(FAMILY).parts[0] == 'solver_development'
+                 or p.relative_to(FAMILY).parts[:2] == ('pre_change', 'solver')]
+                if mode == 'solver' else all_files)
+    inventory = []
+    for source in selected:
+        reason = omission_reason(source)
+        copied = None if reason else archive.copy(source, compact_relative(source))
+        inventory.append({'path': repo_path(source), 'bytes': source.stat().st_size,
+                          'sha256': sha256(source), 'source_stage': stage_of(source.relative_to(FAMILY)),
+                          'copied_to': copied, 'omission_reason': reason})
+    archive.generated(f'indexes/{mode}_source_manifest_checks.json', verify_stage_manifests(selected),
+                      'verified_local_stage_manifest_references', [repo_path(p) for p in selected if p.name == 'manifest.json'])
+    if mode == 'final':
+        for original in CURRENT_SOURCES:
+            source = REPO/original
+            if source.is_file():
+                archive.copy(source, Path('source/current_after_audits')/(original+'.txt'),
+                             'later_current_source__not_asserted_as_exact_prelaunch_or_pretest')
+        archive.generated('source/launch_index.json', launch_sources(all_files, archive),
+                          'verified_recorded_launch_source_references',
+                          [repo_path(p) for p in all_files if p.name == 'provenance.json'])
+        archive.generated('source/reused_reference_payloads.json', reused_reference_payloads(),
+                          'reused_prior_campaign_inventory__no_new_physics_or_payload_copy',
+                          ['docs/iterations/2026-11-25/mpc-balance/evidence/raw_inventory.json'])
+    archive.generated(f'indexes/{mode}_raw_inventory.json', {'census': census(selected), 'files': inventory},
+                      'raw_artifact_hash_inventory__payloads_remain_local', [repo_path(p) for p in selected])
+    archive.generated(f'indexes/{mode}_test_records.json', test_records(list(archive.entries.values()), archive.destination),
+                      'selected_test_records_grouped_not_summed',
+                      [item['origin'] for item in archive.entries.values() if item.get('origin', '').endswith('.xml')])
+    manifest = {'created_utc': datetime.now(timezone.utc).isoformat(), 'collection_stage': mode,
+                'scope': 'Evidence copy/hash validation only. No new tests, physics, numerical audits or controller runs.',
+                'files': sorted(archive.entries.values(), key=lambda item: item['snapshot']),
+                'artifact_count_excluding_this_manifest': len(archive.entries),
+                'artifact_bytes_excluding_this_manifest': sum(item['bytes'] for item in archive.entries.values()),
+                'stage_distinctions': [
+                    'pre_change/root harness is the root before-objective-hooks source matching protocol SHA9282df; predictor pre_change harness SHA2aba2e is a later concurrent snapshot after those hooks.',
+                    'Solver development snapshots retain failed, intermediate and final stages; their manifests describe the test/source relationship.',
+                    'first_y2 is an equivalent inline audit before the reusable module; quick_fixed_goal helper, if present, is later reproduction of inline work.',
+                    'source/launch_index verifies only actual provenance/source_snapshot pairs; current_after_audits is explicitly later current source.',
+                    'Private-model calculations do not count as new Gazebo closed-loop cases or hardware evidence.',
+                    'Mesh/NPZ/full-plan/MP4 payloads remain local with hashes; test records and reused baselines are not added into unique totals.']}
+    # Manifest itself contains the collection timestamp and may therefore not
+    # be silently regenerated over an existing frozen collection.
+    path = archive.destination/target
+    if path.exists():
+        raise RuntimeError(f'Collection manifest already exists; inspect frozen archive instead: {path}')
+    archive.generated(target, manifest, 'collection_manifest', [])
+    for item in manifest['files']:
+        copied = archive.destination/item['snapshot']
+        if copied.stat().st_size != item['bytes'] or sha256(copied) != item['sha256']:
+            raise RuntimeError(f'Archived artifact verification failed: {copied}')
+    return {'destination': str(archive.destination), 'mode': mode,
+            'artifacts_excluding_manifest': len(manifest['files']),
+            'bytes_excluding_manifest': manifest['artifact_bytes_excluding_this_manifest']}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--collect', choices=('solver', 'final'))
+    parser.add_argument('--final-ready', action='store_true')
+    parser.add_argument('--destination', type=Path, default=DEFAULT_DEST)
+    args = parser.parse_args()
+    if args.collect == 'final' and not args.final_ready:
+        parser.error('--collect final requires --final-ready after the root confirms frozen outputs')
+    result = collect(args.collect, args.destination) if args.collect else census(raw_files())
+    print(json.dumps(result, indent=2, allow_nan=False))
+
+
+if __name__ == '__main__':
+    main()

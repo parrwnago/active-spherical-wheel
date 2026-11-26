@@ -1,0 +1,167 @@
+"""Replay three actual I43 arms and recorded tilt/rate diagnostics; no physics."""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+import types
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+from PIL import Image,ImageDraw
+
+HERE=Path(__file__).resolve().parent
+FAMILY=HERE.parent
+ROOT=FAMILY.parents[1]
+VIEWER=ROOT/'results/lqr_contact_forecast_20261125/videos/render_contact_forecasts.py'
+ARMS=('baseline','angle_only','consistent_rate')
+LABELS=('BASELINE: native raw tilt, zero tilt-rate target','ANGLE ONLY: shaped tilt, zero tilt-rate target',
+        'ANGLE + RATE: shaped tilt, consistent tilt-rate target')
+WIDTH,HEIGHT,FPS,SPEED=800,600,20,.5
+TURN=11.775142746922178
+CHAPTERS=({'id':'early_departure','window_s':[6.4,10.],'event_s':6.86},
+          {'id':'first_turn','window_s':[TURN-1.,TURN+2.],'event_s':TURN})
+
+
+def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def read(path):return json.loads(Path(path).read_text())
+
+
+def chart(runs,moment,chapter,font):
+    image=Image.new('RGB',(WIDTH,HEIGHT),(10,20,30));draw=ImageDraw.Draw(image,'RGBA')
+    draw.text((20,12),'Recorded reference and motion: consistent-rate arm',font=font(19),fill=(236,244,250))
+    draw.text((20,43),'Causal observer-derived target; design caps are not motor limits.',font=font(14),fill=(195,218,234))
+    run=runs[2];z=run['exact'];time=z['time_s'];window=chapter['window_s']
+    mask=(time>=window[0]-1e-9)&(time<=window[1]+1e-9)
+    if not mask.any():
+        draw.text((25,150),f'Consistent-rate trace ended at{time[-1]:.3f}s.',font=font(23),fill=(241,190,116))
+        draw.text((25,205),'No recorded data in this fixed display window.',font=font(21),fill=(210,229,242))
+        draw.text((25,260),'Other panels retain their own recorded outcomes.',font=font(19),fill=(210,229,242))
+        return np.asarray(image)
+    actual=np.degrees(z['exact_absolute_tilt_rad'])
+    raw=run['raw_tilt_deg'];shaped=run['log']['reference_tilt_deg']
+    target_rate=np.degrees(np.linalg.norm(z['tilt_used_angular_velocity_body_rad_s'],axis=1))
+    gyro_rate=np.degrees(np.linalg.norm(z['exact_qvel'][:,3:6],axis=1))
+    panels=[('Platform and reference tilt (degrees)',[(actual,'actual',(61,207,216)),(raw,'raw target',(241,163,62)),(shaped,'shaped target',(189,140,240))]),
+            ('Angular speed magnitude (degrees/s)',[(gyro_rate,'actual gyro',(61,207,216)),(target_rate,'rate target',(189,140,240))])]
+    for row,(title,series)in enumerate(panels):
+        left,top,w,h=48,103+row*225,720,150
+        maximum=max(5.,max(float(np.max(values[mask]))for values,_,_ in series)*1.15)
+        def point(t,v):return left+w*(float(t)-window[0])/(window[1]-window[0]),top+h-h*float(v)/maximum
+        draw.text((20,top-30),title,font=font(16),fill=(229,241,250))
+        for fraction in (0.,.5,1.):
+            value=maximum*fraction;draw.line([point(window[0],value),point(window[1],value)],fill=(150,180,200,45))
+            draw.text((8,point(window[0],value)[1]-6),f'{value:.0f}',font=font(11),fill=(180,206,225))
+        for values,label,color in series:
+            draw.line([point(t,v)for t,v in zip(time[mask],values[mask])],fill=color+(65,),width=1)
+            selected=mask&(time<=moment+1e-8)
+            points=[point(t,v)for t,v in zip(time[selected],values[selected])]
+            if len(points)>1:draw.line(points,fill=color+(255,),width=2)
+        draw.line([point(chapter['event_s'],0),point(chapter['event_s'],maximum)],fill=(242,106,97,220),width=2)
+        draw.line([point(moment,0),point(moment,maximum)],fill=(239,246,251,180))
+        draw.text((left,top+h+10),' | '.join(label for _,label,_ in series),font=font(12),fill=(198,220,236))
+    draw.text((20,553),'Faint: full saved window | bright: motion so far | red: fixed event',font=font(13),fill=(197,220,235))
+    draw.text((20,576),'Tilt-rate target excludes carried-yaw differentiation.',font=font(13),fill=(233,194,118))
+    return np.asarray(image)
+
+
+def endcard(runs,analysis,font):
+    image=Image.new('RGB',(WIDTH*2,HEIGHT*2),(12,22,33));draw=ImageDraw.Draw(image)
+    draw.text((35,35),'I43: three actual observer-only tilt-reference experiments',font=font(34),fill=(236,245,251))
+    draw.text((35,93),'One execution per arm. All use the same LQR gain bank, nominal path, observer and limits.',font=font(22),fill=(203,225,240))
+    draw.text((35,135),'Shape activation4s; theta/rate caps are numerical design assumptions, not measured motor bounds.',font=font(22),fill=(243,196,108))
+    y=235
+    for label,run in zip(LABELS,runs):
+        raw=run['raw_summary'];standard=run['summary'];tracking=raw['tracking'];status='completed'if raw['completed']else'ended early'
+        draw.text((35,y),label,font=font(27),fill=(237,245,251));y+=43
+        draw.text((55,y),f'{status} {raw["completed_duration_s"]:.3f}s | moving RMS {1000*tracking["rms_error_while_moving_m"]:.2f}mm | peak {1000*tracking["max_error_m"]:.2f}mm | final {1000*tracking["final_error_m"]:.2f}mm',font=font(21),fill=(192,220,237));y+=37
+        draw.text((55,y),f'Peak lean vs raw native target {raw["attitude"]["max_error_from_reference_deg"]:.2f}deg | vs used target {standard["attitude"]["max_error_from_reference_deg"]:.2f}deg',font=font(21),fill=(192,220,237));y+=35
+        draw.text((55,y),f'Raw-reference route gates: {"PASS"if raw["mars"]["passed"]else"FAIL"} | used-reference gates: {"PASS"if standard["mars"]["passed"]else"FAIL"}',font=font(20),fill=(192,220,237));y+=85
+    screen=analysis['main_screen']['passes_all_conditions']
+    draw.text((35,y),f'Predeclared consistent-rate main screen: {"PASS"if screen else"FAIL"}. Angle-only is a mechanism ablation.',font=font(25),fill=(244,196,105));y+=55
+    draw.text((35,y),'A smaller error against a changed target alone is not acceptance. Raw-reference balance is retained.',font=font(22),fill=(207,229,242));y+=45
+    draw.text((35,y),'Live defaults unchanged. Three runs are not a robustness or hardware demonstration.',font=font(24),fill=(207,229,242))
+    return np.asarray(image)
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--preview',action='store_true');args=parser.parse_args()
+    prefix='preview'if args.preview else'video';metadata=HERE/f'{prefix}_metadata.json';target=HERE/'tilt_reference_comparison.mp4'
+    if metadata.exists()or target.exists():raise FileExistsError('Preserve earlier rendering stage')
+    report=FAMILY/'analysis/stage01/report.json';assert report.is_file(),'Wait for sealed raw cases and analysis'
+    snapshot=HERE/'source_snapshot';snapshot.mkdir(exist_ok=True)
+    for path in [Path(__file__),VIEWER]:
+        copy=snapshot/f'{path.stem}_{sha(path)[:12]}.py'
+        if not copy.exists():copy.write_bytes(path.read_bytes())
+        assert sha(copy)==sha(path)
+    viewer=types.ModuleType('i43_saved_state_viewer');viewer.__file__=str(VIEWER)
+    exec(compile(VIEWER.read_text(),str(VIEWER),'exec'),viewer.__dict__)
+    assert sha(VIEWER)==read(ROOT/'results/lqr_contact_forecast_20261125/videos/overview_video_metadata.json')['render_source_sha256']
+    viewer.HERE=HERE;viewer.RUNS=FAMILY/'campaign/runs'
+    runs=[viewer.load_case(arm)for arm in ARMS]
+    for run in runs:
+        run['raw_summary']=read(run['folder']/'raw_reference_summary.json')
+        run['raw_tilt_deg']=viewer.tilt(run['exact']['tilt_raw_reference_quat'])
+    for run in runs[1:]:
+        n=min(len(run['exact']['time_s']),len(runs[0]['exact']['time_s']))
+        for key in ('time_s','exact_reference_xy','exact_reference_velocity_m_s','exact_reference_acceleration_m_s2'):
+            np.testing.assert_array_equal(runs[0]['exact'][key][:n],run['exact'][key][:n])
+    inputs=[Path(__file__),VIEWER,report,FAMILY/'protocol.json']
+    for run in runs:inputs += [run['folder']/name for name in ['precision.npz','rollout.npz','summary.json','raw_reference_summary.json','provenance.json','terrain.json','source_snapshot/config/model.yaml']]
+    provenance={'iteration':'I-43','scope':__doc__,'window_selection':'Preplanned primary and first fixed component-reversal windows, regardless of outcomes.','chapters':list(CHAPTERS),'arms':list(ARMS),'fps':FPS,'playback_speed':SPEED,'fixed_common_camera_and_XY_per_chapter':True,'single_shared_display_geometry':True,'input_sha256':{str(p.relative_to(ROOT)):sha(p)for p in inputs}}
+    (HERE/f'{prefix}_provenance.json').write_text(json.dumps(provenance,indent=2)+'\n')
+    allxy=np.vstack([np.vstack([r['log']['qpos'][:,:2],r['log']['reference_xy']])for r in runs])
+    bounds=[allxy[:,0].min()-.5,allxy[:,0].max()+.5,allxy[:,1].min()-.5,allxy[:,1].max()+.5]
+    config=viewer.yaml.safe_load((runs[0]['folder']/'source_snapshot/config/model.yaml').read_text())
+    plant=viewer.replay_plant(config,viewer.MarsYard(),bounds,HERE/'_render_scenes/common');saved=plant.capture()
+    renderer=mujoco.Renderer(plant.model,height=HEIGHT,width=WIDTH);option=mujoco.MjvOption();option.geomgroup[3:]=0
+    writer=None if args.preview else imageio.get_writer(target,fps=FPS,codec='libx264',quality=8,macro_block_size=2,ffmpeg_log_level='error')
+    frames=0;chapter_views=[]
+    try:
+        for chapter in CHAPTERS:
+            window=chapter['window_s'];indices=[(viewer.nearest(r['log']['time_s'],window[0]),viewer.nearest(r['log']['time_s'],window[1])+1)for r in runs]
+            xyz=np.vstack([r['log']['qpos'][a:b,:3]for r,(a,b)in zip(runs,indices)])
+            xy=np.vstack([np.vstack([r['log']['qpos'][a:b,:2],r['log']['reference_xy'][a:b]])for r,(a,b)in zip(runs,indices)])
+            xy_bounds=[float(xy[:,0].min()-.03),float(xy[:,0].max()+.03),float(xy[:,1].min()-.03),float(xy[:,1].max()+.03)]
+            center=.5*(xyz.min(axis=0)+xyz.max(axis=0));distance=max(1.25,1.9*float(np.max(xyz.max(axis=0)-xyz.min(axis=0))))
+            chapter_views.append({'id':chapter['id'],'center_xyz_m':center.tolist(),'camera_distance_m':distance,'xy_bounds_m':xy_bounds})
+            moments=[chapter['event_s'],window[1]]if args.preview else window[0]+viewer.frame_times(window[1]-window[0],SPEED)
+            for moment in moments:
+                panels=[]
+                for label,run,(a,b)in zip(LABELS,runs,indices):
+                    log=run['log'];z=run['exact'];i=viewer.nearest(log['time_s'],moment)
+                    frame=viewer._draw(plant,renderer,log,i,viewer._camera(center,112.,-25.,distance),option,False)
+                    held=moment>log['time_s'][-1]+.0025
+                    lines=[f'{"TRACE ENDED: held state"if held else"ACTUAL recorded state"} t{log["time_s"][i]:.3f}s | program{moment:.3f}s | {SPEED:g}x',
+                        f'Timed error {log["goal_error_mm"][i]:.2f}mm | absolute tilt {np.degrees(z["exact_absolute_tilt_rad"][i]):.2f}deg',
+                        f'Lean vs raw {np.degrees(z["exact_raw_reference_up_error_rad"][i]):.2f}deg | vs used target {np.degrees(z["exact_shaped_reference_up_error_rad"][i]):.2f}deg',
+                        f'Used angular target {np.degrees(np.linalg.norm(z["tilt_used_angular_velocity_body_rad_s"][i])):.2f}deg/s | observer contacts only',
+                        'Same generator/settings in two opt-in arms; closed-loop angle histories may diverge']
+                    frame=viewer._caption(frame,label,lines,'Cyan: actual body path | orange: nominal reference | recorded Gazebo/DART states, no new physics')
+                    frame=viewer.xy_inset(frame,{'qpos':log['qpos'][a:b],'reference_xy':log['reference_xy'][a:b]},i-a,xy_bounds)
+                    pic=Image.fromarray(frame);draw=ImageDraw.Draw(pic,'RGBA');left,top=WIDTH-235,HEIGHT-264
+                    draw.rectangle((left+3,top+195,WIDTH-1,top+218),fill=(8,17,26,255))
+                    span=max(xy_bounds[1]-xy_bounds[0],xy_bounds[3]-xy_bounds[2],.04)
+                    draw.text((left+8,top+200),f'XY width{span*1000:.0f}mm | gold ref / cyan body',font=viewer._font(9),fill=(202,220,231))
+                    panels.append(np.asarray(pic))
+                panels.append(chart(runs,moment,chapter,viewer._font))
+                combined=np.concatenate([np.concatenate(panels[:2],axis=1),np.concatenate(panels[2:],axis=1)],axis=0)
+                if writer is not None:writer.append_data(combined)
+                frames+=1
+                if args.preview or abs(moment-moments[-1])<1e-8:imageio.imwrite(HERE/f'{prefix}_{chapter["id"]}_{moment:.3f}s.jpg',combined,quality=92)
+        if writer is not None:
+            ending=endcard(runs,read(report),viewer._font)
+            for _ in range(3*FPS):writer.append_data(ending);frames+=1
+            imageio.imwrite(HERE/'video_metrics_endcard.jpg',ending,quality=92)
+    finally:
+        if writer is not None:writer.close()
+        renderer.close();plant.restore(saved)
+    result=dict(provenance,chapter_views=chapter_views,frames=frames)
+    if not args.preview:
+        with imageio.get_reader(target)as reader:info=reader.get_meta_data();count=reader.count_frames();last=reader.get_data(count-1)
+        assert count==frames and tuple(info['size'])==(1600,1200)and info['fps']==FPS
+        imageio.imwrite(HERE/'video_decoded_last.jpg',last,quality=92)
+        result['video']={'path':str(target.relative_to(ROOT)),'sha256':sha(target),'bytes':target.stat().st_size,'frames':count,'fps':FPS,'dimensions':list(info['size']),'duration_s':info['duration'],'last_frame_decoded':True}
+    metadata.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({k:v for k,v in result.items()if k!='input_sha256'},indent=2))
+
+
+if __name__=='__main__':main()

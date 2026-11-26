@@ -1,0 +1,156 @@
+"""Secondary I41 exact-polyline ambiguity audit, using saved arrays only."""
+from __future__ import annotations
+
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+OUT = HERE/'branch_ambiguity_stage'
+TOLERANCE_M = .001
+MERGE_TEMPORAL_GAP_S = .25
+MIN_SEPARATION_S = .5
+
+
+def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def read_npz(path):
+    with np.load(path) as z: return {k:z[k].copy() for k in z.files}
+def save(path, value): path.write_text(json.dumps(value, indent=2, allow_nan=False)+'\n')
+
+
+def segment_candidates(rt, ref, position, lo=None, hi=None):
+    """Clipped exact segment projections; endpoints outside bounds cannot enter."""
+    first = 0 if lo is None else max(0, np.searchsorted(rt, lo, side='right')-1)
+    stop = len(rt)-1 if hi is None else min(len(rt)-1, np.searchsorted(rt, hi, side='left'))
+    idx = np.arange(first, stop)
+    edges = ref[idx+1]-ref[idx]
+    length2 = np.einsum('ij,ij->i', edges, edges)
+    ratio = np.zeros(len(idx))
+    valid = length2 > 1e-24
+    ratio[valid] = np.einsum('ij,ij->i', np.asarray(position)-ref[idx[valid]], edges[valid])/length2[valid]
+    lower = 0. if lo is None else np.clip((lo-rt[idx])/(rt[idx+1]-rt[idx]), 0., 1.)
+    upper = 1. if hi is None else np.clip((hi-rt[idx])/(rt[idx+1]-rt[idx]), 0., 1.)
+    ratio = np.minimum(np.maximum(ratio, lower), upper)
+    points = ref[idx]+ratio[:,None]*edges
+    dist = np.linalg.norm(points-np.asarray(position), axis=1)
+    at = rt[idx]+ratio*(rt[idx+1]-rt[idx])
+    return idx, at, dist
+
+
+def closed_join(ref):
+    if np.linalg.norm(ref[0]-ref[-1]) > 1e-9: return False
+    edges = np.diff(ref, axis=0)
+    nonzero = np.flatnonzero(np.linalg.norm(edges,axis=1)>1e-12)
+    if not len(nonzero): return True
+    first, last = edges[nonzero[0]], edges[nonzero[-1]]
+    return float(first@last/(np.linalg.norm(first)*np.linalg.norm(last))) > .99
+
+
+def ambiguity(rt, ref, position, nominal, reference_time, distance_m, half_window_s=2.):
+    """Groups are temporal components, not arbitrary collections of nearest vertices."""
+    nominal = float(np.clip(nominal,rt[0],rt[-1]))
+    lo, hi = max(rt[0],nominal-half_window_s), min(rt[-1],nominal+half_window_s)
+    result = {}
+    for label, limits in [('local',(lo,hi)),('global',(None,None))]:
+        idx, at, distance = segment_candidates(rt,ref,position,*limits)
+        selected = np.flatnonzero(distance <= distance_m+TOLERANCE_M+1e-12)
+        if not len(selected): raise AssertionError('Exactprimaryprojection not within1mmcandidateband')
+        starts = np.r_[0, np.flatnonzero(rt[idx[selected[1:]]]-rt[idx[selected[:-1]]+1] > MERGE_TEMPORAL_GAP_S+1e-10)+1]
+        groups = [selected[a:b] for a,b in zip(starts,np.r_[starts[1:],len(selected)])]
+        # A closed route's aligned start/end pieces are the same continuous branch.
+        if label=='global' and len(groups)>1 and closed_join(ref) and idx[groups[0][0]]==0 and idx[groups[-1][-1]]==len(rt)-2:
+            groups = [np.r_[groups[-1],groups[0]]]+groups[1:-1]
+        containing = []
+        descriptions = []
+        for group in groups:
+            nearest = int(group[np.argmin(distance[group])])
+            separation = float(np.min(abs(at[group]-reference_time)))
+            contains_primary = bool(separation < MIN_SEPARATION_S)
+            # The group containing the current branch is not a competing branch,
+            # even when another point in that continuous group is temporally far.
+            containing.append(contains_primary)
+            descriptions.append({'closest_time_s':float(at[nearest]),'distance_mm':float(1000*distance[nearest]),
+                'minimum_time_separation_from_primary_s':separation,'contains_primary_neighborhood':contains_primary,
+                'group_start_segment_index':int(np.min(idx[group])), 'group_end_segment_index':int(np.max(idx[group])),
+                'group_has_candidate_outside_local_window':bool(np.any((at[group]<lo-1e-9)|(at[group]>hi+1e-9)))})
+        competitors = [x for x in descriptions if not x['contains_primary_neighborhood']]
+        if label=='global': competitors = [x for x in competitors if x['group_has_candidate_outside_local_window']]
+        result[label+'_ambiguity'] = bool(competitors)
+        result[label+'_competing_groups'] = competitors
+        result[label+'_near_optimal_group_count'] = len(groups)
+    return result
+
+
+def checks():
+    rt=np.arange(7,dtype=float); ref=np.array([[-1,0],[0,0],[1,0],[1,1],[0,0],[-1,-1],[-2,-2]],float)
+    crossed=ambiguity(rt,ref,[0,0],4.,4.,0.,.7)
+    assert crossed['global_ambiguity'] and not crossed['local_ambiguity']
+    # Many adjacent near-optimal samples, including >.5s in time, are one branch.
+    rt=np.arange(0,4.001,.005); line=np.column_stack((rt*.0001,np.zeros(len(rt))))
+    straight=ambiguity(rt,line,[.0002,0],2.,2.,0.,2.)
+    assert not straight['local_ambiguity'] and not straight['global_ambiguity']
+    # A smooth closed circle joins its first and last reference segments.
+    theta=np.linspace(0,2*np.pi,1001); rt=np.linspace(0,40,1001); circle=np.column_stack((np.cos(theta),np.sin(theta)))
+    closure=ambiguity(rt,circle,[1,0],0.,0.,0.,2.)
+    assert not closure['global_ambiguity'] and closure['global_near_optimal_group_count']==1
+    idx,at,distance=segment_candidates(np.arange(5.),np.column_stack((np.arange(5.),np.zeros(5))),[2,0],.3,1.7)
+    assert np.max(at)<=1.7+1e-12 and abs(distance.min()-.3)<1e-12
+    return {'assertions_passed':4,'scenarios':['remote_crossing','continuous_nearby_branch','closed_route_junction','clipped_window'],'no_physics':True}
+
+
+def summarize(mask, selected):
+    return {'samples':int(np.count_nonzero(selected)),'ambiguous_samples':int(np.count_nonzero(mask&selected))}
+
+
+def main():
+    if OUT.exists(): raise FileExistsError('Preservepriorambiguityaudit')
+    OUT.mkdir(); shutil.copyfile(Path(__file__),OUT/Path(__file__).name)
+    declaration={'declared_utc':datetime.now(timezone.utc).isoformat(), 'status':'Newlydeclaredsecondarysaved-arrayauditbeforeitscalculation; neveralterseventsoranchors.',
+        'distance_tolerance_m':TOLERANCE_M,'continuous_group_merge_gap_s':MERGE_TEMPORAL_GAP_S,'minimum_distinct_time_separation_s':MIN_SEPARATION_S,
+        'closed_route_junction':'Mergefirst/lastnear-optimalgroupsonlyifexactlyclosedXYandfirst/lastnonzeroedgecosine>.99.',
+        'scope':'FullsavedMarsandflat44straces;exactsegmentdistance. Localambiguitywithinprimary±2swindowseparatefromtemporallyremotecompetingbranch.',
+        'limitations':'1mmandtemporalgroupthresholdsarediagnosticassumptions,newlydeclaredafterprimaryaudit; near-oppositeoroverlappingsegmentcandatesdonotestablishwrongbranchselection. Noeventselectionchanges.'}
+    save(OUT/'protocol.json',declaration)
+    save(OUT/'checks.json',checks())
+    full_report=HERE/'full_audit/report.json'; report=json.loads(full_report.read_text())
+    all_reports={}
+    source_records={'full_audit/report.json':sha(full_report)}
+    for label in ('mars','flat'):
+        folder=Path('/home/parrwnago/active-spherical-wheel')/report[label]['source_folder']
+        actual=read_npz(folder/'precision.npz')
+        geometry_path=HERE/('selection_stage02_corrected/reference_geometry.npz' if label=='mars' else 'full_audit/flat/reference_geometry.npz')
+        geometry=read_npz(geometry_path)
+        source_records[str(geometry_path.relative_to(HERE))]=sha(geometry_path)
+        source_records[str((folder/'precision.npz').relative_to(HERE.parents[2]))]=sha(folder/'precision.npz')
+        time=actual['time_s']; active=(time>=1-1e-9)&(time<=41+1e-9)
+        rt,ref=time[active],actual['exact_reference_xy'][active]
+        flags={'local_ambiguity':np.zeros(len(time),bool),'global_ambiguity':np.zeros(len(time),bool)}
+        groups={'local_near_optimal_group_count':np.zeros(len(time),int),'global_near_optimal_group_count':np.zeros(len(time),int)}
+        samples=[]
+        for i,now in enumerate(time):
+            result=ambiguity(rt,ref,actual['exact_qpos'][i,:2],now,float(geometry['closest_reference_time_s'][i]),float(geometry['local_path_distance_m'][i]))
+            for key in flags: flags[key][i]=result[key]
+            for key in groups: groups[key][i]=result[key]
+            if any(result[key] for key in flags): samples.append({'time_s':float(now),**result})
+        np.savez_compressed(OUT/(label+'_ambiguity.npz'),time_s=time,**flags,**groups,existing_8nearest_vertex_flag=geometry['competing_global_vertex_branch_flag'])
+        event_rows=[]
+        for event in report[label]['event_audits']:
+            i=int(np.argmin(abs(time-event['time_s'])))
+            selected=(time>=event['window_s'][0]-1e-9)&(time<=event['window_s'][1]+1e-9)
+            event_rows.append({'event_id':event['event_id'],'time_s':event['time_s'],'window_s':event['window_s'],
+                'at_event':{k:bool(v[i]) for k,v in flags.items()},
+                'window':{k:summarize(v,selected) for k,v in flags.items()}})
+        all_reports[label]={'full_trace':{k:summarize(v,np.ones(len(time),bool)) for k,v in flags.items()},
+            'existing_vertex_flag_samples':int(geometry['competing_global_vertex_branch_flag'].sum()),
+            'event_windows':event_rows,'ambiguous_rows':samples}
+    save(OUT/'report.json',{'iteration':'I-41','secondary_declaration':declaration,'sources_sha256':source_records,'checks':checks(),
+        'cases':all_reports,'onsets_and_anchors_modified':False,'source_sha256':sha(Path(__file__))})
+    files=sorted(p for p in OUT.iterdir() if p.is_file())
+    save(OUT/'artifact_manifest.json',{'files':[{'path':p.name,'bytes':p.stat().st_size,'sha256':sha(p)} for p in files]})
+    print(json.dumps({k:{'full_trace':v['full_trace'],'event_windows':v['event_windows']} for k,v in all_reports.items()},indent=2))
+
+
+if __name__=='__main__':main()

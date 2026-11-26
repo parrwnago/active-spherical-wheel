@@ -1,0 +1,4 @@
+env -u PYTHONPATH -u LD_LIBRARY_PATH -u AMENT_PREFIX_PATH -u CMAKE_PREFIX_PATH -u COLCON_PREFIX_PATH MAMBA_ROOT_PREFIX=/home/parrwnago/active-spherical-wheel/build/mamba build/tools/bin/micromamba run -p /home/parrwnago/active-spherical-wheel/build/gazebo-env env MUJOCO_GL=egl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -u scripts/run-feedback-recovery.py --output results/mpc_extended_return_20261125 --variant mpc --terrain slope --drift-s .4 --recovery-s 16 --refinement-steps 1 --native-rollout-seed
+
+Original stdout/stderr: results/mpc_extended_return_20261125/launch.log
+Choose a fresh --output path for reproduction; the runner rejects overwriting.

@@ -1,0 +1,339 @@
+"""Saved I40 Mars terrain/reference geometry audit; no dynamics integration."""
+from pathlib import Path
+from datetime import datetime, timezone
+import argparse
+import csv
+import hashlib
+import json
+import shutil
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+import yaml
+
+from spherical_wheel.model import REPO_ROOT
+from spherical_wheel.gazebo.mars import MarsYard
+
+
+HERE = Path(__file__).resolve().parent
+FAMILY = HERE.parent
+OLD = REPO_ROOT/'results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090'
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def safe(value):
+    if isinstance(value, dict):
+        return {str(k): safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [safe(v) for v in value]
+    if isinstance(value, np.ndarray):
+        return safe(value.tolist())
+    if isinstance(value, np.generic):
+        return safe(value.item())
+    if isinstance(value, float) and not np.isfinite(value):
+        return None
+    return value
+
+
+def normalized(x):
+    return x/np.linalg.norm(x, axis=-1, keepdims=True)
+
+
+def angles(a, b):
+    return np.degrees(np.arccos(np.clip(np.sum(normalized(a)*normalized(b), axis=-1), -1, 1)))
+
+
+def qmul(a, b):
+    w = a[:, :1]*b[:, :1]-np.sum(a[:, 1:]*b[:, 1:], axis=1, keepdims=True)
+    xyz = a[:, :1]*b[:, 1:]+b[:, :1]*a[:, 1:]+np.cross(a[:, 1:], b[:, 1:])
+    return normalized(np.c_[w, xyz])
+
+
+def up(q):
+    q = normalized(q)
+    w, x, y, z = q.T
+    return np.c_[2*(x*z+w*y), 2*(y*z-w*x), 1-2*(x*x+y*y)]
+
+
+def lean_correction(normal, acceleration, factor, gain, gravity, limit_deg):
+    lean = acceleration/gravity-gain*factor*normal[:, :2]
+    size = np.linalg.norm(lean, axis=1)
+    cap = np.sin(np.deg2rad(limit_deg))
+    lean *= np.minimum(1., cap/np.maximum(size, 1e-30))[:, None]
+    size = np.linalg.norm(lean, axis=1)
+    angle = np.arcsin(np.clip(size, 0., 1.))
+    axis = np.c_[-lean[:, 1], lean[:, 0], np.zeros(len(lean))]/np.maximum(size[:, None], 1e-30)
+    return normalized(np.c_[np.cos(angle/2), np.sin(angle[:, None]/2)*axis])
+
+
+def stats(values):
+    values = np.asarray(values, float)
+    values = values[np.isfinite(values)]
+    return {'n': len(values), 'min': float(values.min()), 'median': float(np.median(values)),
+            'max': float(values.max()), 'p95': float(np.percentile(values, 95))} if len(values) else {'n': 0}
+
+
+def mesh_facets(mesh_path, coordinates, count):
+    """Projected-XY facets of actual rounded OBJ geometry, not collision normals."""
+    vertices = []
+    with mesh_path.open() as stream:
+        for line in stream:
+            if line.startswith('v '):
+                vertices.append([float(x) for x in line.split()[1:4]])
+            elif line.startswith('vn '):
+                break
+    vertices = np.asarray(vertices).reshape(count, count, 3)
+    xs, ys_desc = vertices[0, :, 0], vertices[:, 0, 1]
+    xy = np.asarray(coordinates)
+    c = np.clip(np.searchsorted(xs, xy[:, 0], side='right')-1, 0, count-2)
+    r = np.clip(np.searchsorted(-ys_desc, -xy[:, 1], side='right')-1, 0, count-2)
+    u = (xy[:, 0]-xs[c])/(xs[c+1]-xs[c])
+    v = (ys_desc[r]-xy[:, 1])/(ys_desc[r]-ys_desc[r+1])
+    a, b, cc, d = vertices[r, c], vertices[r, c+1], vertices[r+1, c+1], vertices[r+1, c]
+    upper = u >= v
+    p1 = np.where(upper[:, None], cc, d)
+    p2 = np.where(upper[:, None], b, cc)
+    normal = normalized(np.cross(p1-a, p2-a))
+    height = a[:, 2]-(normal[:, 0]*(xy[:, 0]-a[:, 0])+normal[:, 1]*(xy[:, 1]-a[:, 1]))/normal[:, 2]
+    facet_id = (r*(count-1)+c)*2+(~upper).astype(int)
+    return normal, height, np.c_[r, c], facet_id
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--event-report', type=Path)
+    args = parser.parse_args()
+    protocol_path = FAMILY/'protocol.json'
+    assert protocol_path.is_file(), 'Declare protocol before geometry evaluations'
+    if (HERE/'report.json').exists() or (HERE/'provenance.json').exists():
+        raise FileExistsError('Preserve completed geometry stage; choose a fresh output stage')
+    protocol = json.loads(protocol_path.read_text())
+    actual_provenance = json.loads((OLD/'provenance.json').read_text())
+    for name, digest in protocol['baseline_input_sha256'].items():
+        assert sha(OLD/name) == digest, name
+    for rel in ('src/spherical_wheel/gazebo/mars.py', 'src/spherical_wheel/mobility.py',
+                'src/spherical_wheel/offroad_control.py'):
+        expected = next(x['sha256'] for x in actual_provenance['sources'] if x['origin'] == rel)
+        assert sha(REPO_ROOT/rel) == expected
+    terrain_spec = json.loads((OLD/'terrain.json').read_text())
+    config_path = OLD/'source_snapshot/config/model.yaml'
+    config = yaml.safe_load(config_path.read_text())
+    mass_path = Path(actual_provenance['engine']['world_info']['dem_mesh']).parents[2]/'flat/mass_properties.json'
+    # The exact model mass record sits beside this worker's flat gain model.
+    if not mass_path.exists():
+        candidates = list((REPO_ROOT/'results/lqr_contact_forecast_20261125/campaign/_workspaces/mars_figure8_p090').glob('worker_*/flat/mass_properties.json'))
+        assert len(candidates) == 1
+        mass_path = candidates[0]
+    masses = json.loads(mass_path.read_text())
+    inputs = [Path(__file__), protocol_path, config_path, mass_path, OLD/'precision.npz', OLD/'rollout.npz',
+              OLD/'terrain.json', OLD/'provenance.json', Path(terrain_spec['source']),
+              Path(actual_provenance['engine']['world_info']['dem_mesh']),
+              REPO_ROOT/'src/spherical_wheel/gazebo/mars.py', REPO_ROOT/'src/spherical_wheel/offroad_control.py']
+    if args.event_report:
+        inputs.append(args.event_report.resolve())
+        turn_path = args.event_report.with_name('turn_events.json')
+        inputs.append(turn_path.resolve())
+        event_report = json.loads(args.event_report.read_text())
+        turn_rows = json.loads(turn_path.read_text())['rows']
+        onset = event_report['primary_deviation']['start_s']
+        events = [{'event_id': 'primary_departure', 'time_s': onset, 'window_s': [onset-1, onset+2],
+                   'kind': 'first sustained branch-aware path departure'}]+turn_rows
+    else:
+        events = []
+    snapshot = HERE/'source_snapshot'
+    snapshot.mkdir(exist_ok=False)
+    for path in (Path(__file__), protocol_path, config_path, mass_path,
+                 REPO_ROOT/'src/spherical_wheel/gazebo/mars.py', REPO_ROOT/'src/spherical_wheel/offroad_control.py'):
+        target = snapshot/path.relative_to(REPO_ROOT)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(path, target)
+    provenance = {'iteration': 'I-41', 'captured_before_geometry_evaluation_utc': datetime.now(timezone.utc).isoformat(),
+        'scope': 'Saved-state/reference evaluation against Mars DEM and controller reference formula; no dynamics/forecast/Gazebo execution.',
+        'inputs': {str(p.relative_to(REPO_ROOT)): sha(p) for p in inputs},
+        'terrain_boundary': 'DEM only. Rocks/lava are not included by MarsYard.normal_at; logged ground_normal is a DEM closest-point tangent, not a DART force-weighted contact normal.'}
+    (HERE/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
+    with np.load(OLD/'precision.npz') as z:
+        exact = {k: z[k].copy() for k in z.files}
+    with np.load(OLD/'rollout.npz') as z:
+        log = {k: z[k].copy() for k in z.files}
+    t = exact['time_s']
+    body, desired = exact['exact_qpos'][:, :2], exact['exact_reference_xy']
+    contact = exact['truth_equivalent_point_m']
+    yard = MarsYard(Path(terrain_spec['source']), size_m=terrain_spec['size_m'])
+    coordinates = {'body_xy': body, 'reference_xy': desired, 'equivalent_contact_xy': contact[:, :2]}
+    values = {'time_s': t, 'actual_xy_m': body, 'reference_xy_m': desired,
+              'actual_qpos': exact['exact_qpos'], 'actual_qvel': exact['exact_qvel']}
+    for label, xy in coordinates.items():
+        values[f'dem_height_at_{label}_m'] = np.asarray([yard.height(*p) for p in xy])
+        normals = np.asarray([yard.normal_at(*p) for p in xy])
+        values[f'dem_normal_at_{label}'] = normals
+        values[f'dem_slope_at_{label}_deg'] = np.degrees(np.arccos(np.clip(normals[:, 2], -1, 1)))
+    mesh_path = Path(actual_provenance['engine']['world_info']['dem_mesh'])
+    for label, xy in coordinates.items():
+        normal, height, cells, facets = mesh_facets(mesh_path, xy, yard.count)
+        values[f'obj_facet_normal_at_{label}'] = normal
+        values[f'obj_facet_height_at_{label}_m'] = height
+        values[f'obj_facet_cell_at_{label}'] = cells
+        values[f'obj_facet_id_at_{label}'] = facets
+        values[f'obj_facet_crossing_at_{label}'] = np.r_[False, facets[1:] != facets[:-1]]
+        values[f'obj_facet_normal_step_at_{label}_deg'] = np.r_[0., angles(normal[1:], normal[:-1])]
+        values[f'obj_facet_slope_at_{label}_deg'] = np.degrees(np.arccos(np.clip(normal[:, 2], -1, 1)))
+        values[f'obj_vs_unrounded_dem_normal_at_{label}_error_deg'] = angles(normal, values[f'dem_normal_at_{label}'])
+    logged = normalized(np.asarray(log['ground_normal'], float))
+    estimated = normalized(exact['exact_estimated_normal'])
+    values['logged_dem_closest_normal'] = logged
+    values['estimated_normal'] = estimated
+    values['logged_dem_closest_slope_deg'] = np.degrees(np.arccos(np.clip(logged[:, 2], -1, 1)))
+    values['estimated_slope_deg'] = np.degrees(np.arccos(np.clip(estimated[:, 2], -1, 1)))
+    values['estimated_vs_logged_dem_normal_error_deg'] = angles(estimated, logged)
+    values['logged_closest_vs_body_xy_dem_normal_error_deg'] = angles(logged, values['dem_normal_at_body_xy'])
+    values['logged_dem_normal_step_deg'] = np.r_[0., angles(logged[1:], logged[:-1])]
+    values['estimated_normal_step_deg'] = np.r_[0., angles(estimated[1:], estimated[:-1])]
+    values['estimated_vs_contact_projected_obj_facet_normal_error_deg'] = angles(estimated, values['obj_facet_normal_at_equivalent_contact_xy'])
+    values['logged_vs_contact_projected_obj_facet_normal_error_deg'] = angles(logged, values['obj_facet_normal_at_equivalent_contact_xy'])
+    loaded = exact['truth_patch_loads_N'].sum(axis=1) >= .05*actual_provenance['weight_N']
+    gap = contact[:, 2]-values['dem_height_at_equivalent_contact_xy_m']
+    values['loaded_contact_equivalent_point_vertical_gap_to_dem_mm'] = np.where(loaded, gap*1000, np.nan)
+    vref, aref = exact['exact_reference_velocity_m_s'], exact['exact_reference_acceleration_m_s2']
+    for label, velocity, normal in (
+        ('actual', exact['exact_qvel'][:, :2], values['dem_normal_at_body_xy']),
+        ('reference', vref, values['dem_normal_at_reference_xy'])):
+        speed = np.linalg.norm(velocity, axis=1)
+        unit = velocity/np.maximum(speed[:, None], 1e-30)
+        gradient = -normal[:, :2]/normal[:, 2:]
+        along = np.degrees(np.arctan(np.sum(gradient*unit, axis=1)))
+        across = np.degrees(np.arctan(np.sum(gradient*np.c_[-unit[:, 1], unit[:, 0]], axis=1)))
+        values[f'dem_grade_along_{label}_motion_deg'] = np.where(speed >= .001, along, np.nan)
+        values[f'dem_grade_across_{label}_motion_deg'] = np.where(speed >= .001, across, np.nan)
+    ref_speed = np.linalg.norm(vref, axis=1)
+    values['reference_speed_mm_s'] = ref_speed*1000
+    values['reference_acceleration_m_s2'] = aref
+    curvature = abs(vref[:, 0]*aref[:, 1]-vref[:, 1]*aref[:, 0])/np.maximum(ref_speed, 1e-30)**3
+    values['reference_curvature_1_m'] = np.where(ref_speed >= .005, curvature, np.nan)
+    values['time_aligned_position_error_mm'] = np.linalg.norm(body-desired, axis=1)*1000
+    gravity = abs(config['simulation']['gravity_m_s2'][2])
+    factor = masses['total_mass_kg']*config['geometry']['sphere_radius_m']/(masses['fork']['mass_kg']*masses['fork']['com_m'][2])
+    parameters = actual_provenance['parameters']
+    correction_est = lean_correction(estimated, aref, factor, parameters['lean_gain'], gravity, parameters['max_lean_deg'])
+    conjugate = correction_est.copy(); conjugate[:, 1:] *= -1
+    recorded_ref = normalized(np.asarray(log['reference_quat'], float))
+    ordinary = qmul(recorded_ref, conjugate)
+    counter_ref = qmul(ordinary, lean_correction(logged, aref, factor, parameters['lean_gain'], gravity, parameters['max_lean_deg']))
+    static_ref = qmul(ordinary, lean_correction(logged, np.zeros_like(aref), factor, parameters['lean_gain'], gravity, parameters['max_lean_deg']))
+    actual_up, recorded_up, counter_up, static_up = up(exact['exact_qpos'][:, 3:7]), up(recorded_ref), up(counter_ref), up(static_ref)
+    values['actual_platform_tilt_deg'] = np.degrees(np.arccos(np.clip(actual_up[:, 2], -1, 1)))
+    values['logged_reference_tilt_deg'] = np.degrees(np.arccos(np.clip(recorded_up[:, 2], -1, 1)))
+    values['truth_normal_substituted_reference_tilt_deg'] = np.degrees(np.arccos(np.clip(counter_up[:, 2], -1, 1)))
+    values['static_dem_formula_reference_tilt_deg'] = np.degrees(np.arccos(np.clip(static_up[:, 2], -1, 1)))
+    values['reference_change_from_normal_substitution_deg'] = angles(recorded_up, counter_up)
+    values['actual_vs_logged_reference_up_error_deg'] = angles(actual_up, recorded_up)
+    values['actual_vs_truth_normal_substituted_ref_up_error_deg'] = angles(actual_up, counter_up)
+    values['ordinary_reference_inferred_up_deviation_deg'] = angles(up(ordinary), np.broadcast_to(up(ordinary)[0], (len(t), 3)))
+    values['equivalent_contact_xyz_m'] = contact
+    event_keys = ['actual_xy_m', 'reference_xy_m', 'equivalent_contact_xyz_m',
+        'dem_height_at_body_xy_m', 'dem_height_at_reference_xy_m', 'dem_slope_at_body_xy_deg',
+        'dem_slope_at_reference_xy_deg', 'logged_dem_closest_slope_deg', 'estimated_slope_deg',
+        'estimated_vs_logged_dem_normal_error_deg', 'reference_change_from_normal_substitution_deg',
+        'reference_speed_mm_s', 'reference_curvature_1_m', 'logged_reference_tilt_deg',
+        'actual_platform_tilt_deg', 'actual_vs_logged_reference_up_error_deg',
+        'obj_facet_id_at_equivalent_contact_xy', 'obj_facet_slope_at_equivalent_contact_xy_deg',
+        'obj_facet_normal_step_at_equivalent_contact_xy_deg',
+        'estimated_vs_contact_projected_obj_facet_normal_error_deg',
+        'logged_vs_contact_projected_obj_facet_normal_error_deg',
+        'dem_grade_along_actual_motion_deg', 'dem_grade_along_reference_motion_deg']
+    event_context = []
+    for event in events:
+        te = event['time_s']
+        points = []
+        for offset in [-.2, -.1, 0., .1, .2]:
+            index = int(np.argmin(abs(t-(te+offset))))
+            points.append({'requested_offset_s': offset, 'time_s': t[index], 'index': index,
+                           **{key: values[key][index] for key in event_keys}})
+        windows = {}
+        for name, bounds in [('broad', event['window_s']), ('narrow', [te-.5, te+.5]), ('before', [te-.5, te]), ('after', [te, te+.5])]:
+            mask = (t >= bounds[0]-1e-10) & (t <= bounds[1]+1e-10)
+            indices = np.flatnonzero(mask)
+            metrics = {key: stats(values[key][mask]) for key in event_keys if np.asarray(values[key]).ndim == 1 and 'facet_id' not in key}
+            for key in ['logged_dem_normal_step_deg', 'estimated_normal_step_deg', 'obj_facet_normal_step_at_equivalent_contact_xy_deg']:
+                index = indices[int(np.argmax(values[key][mask]))]
+                metrics[key] = {'max': values[key][index], 'time_s': t[index]}
+            metrics['contact_projected_obj_facet_crossings'] = int(values['obj_facet_crossing_at_equivalent_contact_xy'][mask].sum())
+            windows[name] = {'bounds_s': bounds, 'metrics': metrics}
+        event_context.append({'event_id': event['event_id'], 'time_s': te, 'kind': event['kind'], 'samples': points, 'windows': windows})
+    (HERE/'event_terrain_context.json').write_text(json.dumps(safe({'events': event_context,
+        'limits': 'Projected exact OBJ facet is geometry at the equivalent contact XY, not a measured force-weighted physical collision normal; DEM omits rocks/lava. Events use corrected external definitions, not reselection.'}), indent=2, allow_nan=False)+'\n')
+    np.savez_compressed(HERE/'terrain_series.npz', **values)
+    scalar_keys = [k for k, v in values.items() if np.asarray(v).ndim == 1]
+    with (HERE/'terrain_series.csv').open('w', newline='') as stream:
+        writer = csv.writer(stream); writer.writerow(scalar_keys)
+        writer.writerows(zip(*(values[k] for k in scalar_keys)))
+    low = np.minimum(body.min(axis=0), desired.min(axis=0))-.12
+    high = np.maximum(body.max(axis=0), desired.max(axis=0))+.12
+    xs, ys = np.linspace(low[0], high[0], 180), np.linspace(low[1], high[1], 180)
+    xx, yy = np.meshgrid(xs, ys)
+    heights = yard.heights_at(xx, yy)
+    normals = np.asarray([yard.normal_at(x, y) for x, y in zip(xx.ravel(), yy.ravel())])
+    slopes = np.degrees(np.arccos(np.clip(normals[:, 2], -1, 1))).reshape(xx.shape)
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5), constrained_layout=True)
+    for ax, grid, title, unit in zip(axes, (1000*(heights-yard.height(*desired[0])), slopes),
+        ('DEM height relative to initial reference point', 'DEM slope magnitude'), ('mm', 'degrees')):
+        mesh = ax.pcolormesh(xx, yy, grid, shading='auto', cmap='terrain' if unit == 'mm' else 'viridis')
+        fig.colorbar(mesh, ax=ax, label=unit)
+        ax.plot(desired[:, 0], desired[:, 1], '--', color='black', lw=1.5, label='desired')
+        ax.plot(body[:, 0], body[:, 1], color='#e44e30', lw=1.4, label='actual')
+        ax.scatter(*body[0], marker='o', color='white', edgecolor='black', s=35)
+        if events:
+            index = int(np.argmin(abs(t-events[0]['time_s'])))
+            ax.scatter(*body[index], marker='*', color='red', edgecolor='white', s=140, label='first path departure actual')
+            ax.scatter(*desired[index], marker='x', color='blue', s=60, label='same-time desired')
+        ax.set(xlabel='world x (m)', ylabel='world y (m)', title=title, aspect='equal')
+        ax.legend()
+    fig.suptitle('I41 saved Mars figure-eight: evaluation-only DEM geometry (rocks/lava excluded)')
+    fig.savefig(HERE/'terrain_paths.png', dpi=150); plt.close(fig)
+    fig, axes = plt.subplots(4, 1, figsize=(12, 11), sharex=True, constrained_layout=True)
+    axes[0].plot(t, values['time_aligned_position_error_mm'], label='time-aligned tracking error')
+    axes[0].set(ylabel='error (mm)'); axes[0].legend()
+    for key, label in [('logged_dem_closest_slope_deg', 'logged DEM closest tangent'), ('dem_slope_at_reference_xy_deg', 'DEM at desired XY'), ('estimated_slope_deg', 'estimated')]:
+        axes[1].plot(t, values[key], label=label)
+    axes[1].set(ylabel='slope (degrees)'); axes[1].legend()
+    axes[2].plot(t, values['estimated_vs_logged_dem_normal_error_deg'], label='estimated vs logged DEM normal')
+    axes[2].plot(t, values['reference_change_from_normal_substitution_deg'], label='reference-up change substituting DEM normal')
+    axes[2].set(ylabel='angle (degrees)'); axes[2].legend()
+    for key, label in [('actual_platform_tilt_deg', 'actual'), ('logged_reference_tilt_deg', 'recorded reference'), ('truth_normal_substituted_reference_tilt_deg', 'DEM-normal-substituted reference')]:
+        axes[3].plot(t, values[key], label=label)
+    axes[3].set(xlabel='Gazebo simulation time (s)', ylabel='up tilt (degrees)'); axes[3].legend()
+    for ax in axes:
+        ax.grid(alpha=.2)
+        for number, event in enumerate(events):
+            ax.axvline(event['time_s'], color='red' if number == 0 else 'gray', lw=1, alpha=.65, ls=':' if number else '--')
+    fig.suptitle('I41 terrain and attitude-reference association; no causal conclusion from this trace')
+    fig.savefig(HERE/'terrain_timeline.png', dpi=150); plt.close(fig)
+    report = {'iteration': 'I-41', 'scope': provenance['scope'], 'sample_count': len(t),
+        'terrain_source': terrain_spec, 'lean_factor': factor, 'gravity_m_s2': gravity,
+        'normal_and_slope_metrics': {key: stats(value) for key, value in values.items() if np.asarray(value).ndim == 1 and key != 'time_s'},
+        'counterfactual_reference_definition': 'Same controller lean formula and planned acceleration, replacing estimated normal by recorded evaluator DEM closest tangent. Recorded ordinary-reference factor is recovered by quaternion composition. This is not a physical minimum/balance proof, command or new trial.',
+        'normal_sources': {'logged': 'DEM closest-point tangent near wheel center, from recorded evaluator', 'body_xy': 'DEM triangle directly under body XY', 'reference_xy': 'DEM triangle under desired XY', 'contact_xy': 'DEM triangle at recorded equivalent physical contact XY; excludes rocks/lava'},
+        'limits': ['DEM normal omits rock/lava geometry; vertical contact-to-DEM gap can also reflect facet/mean-point conventions.',
+                   'Piecewise planar DEM normal changes at triangle boundaries; derivative spikes are not measured terrain dynamics.',
+                   'Along/across grades are evaluated along world-XY motion direction and undefined below1mm/s.',
+                   'Reference-normal substitution is an evaluator calculation; no true normal was fed to the observer or controller.',
+                   'Slope/reference/command timing associations in one coupled trace do not establish causality.'],
+        'obj_facet_diagnostic': 'Exploratory evaluation of actual 6-decimal OBJ vertices and writer triangle diagonal at projected equivalent-contact XY. Logged normal is also piecewise planar, not smooth; OBJ vn entries are rendering normals. No collision-engine force normal is reconstructed. Facet crossings alone do not prove physical contact-facet switches.',
+        'event_context_file': 'event_terrain_context.json',
+        'events_argument': str(args.event_report) if args.event_report else None}
+    (HERE/'report.json').write_text(json.dumps(safe(report), indent=2, allow_nan=False)+'\n')
+    manifest = [{'path': str(p.relative_to(HERE)), 'bytes': p.stat().st_size, 'sha256': sha(p)}
+                for p in sorted(HERE.rglob('*')) if p.is_file() and 'flat_control' not in p.relative_to(HERE).parts and '__pycache__' not in p.parts]
+    (HERE/'artifact_manifest.json').write_text(json.dumps({'files': manifest}, indent=2)+'\n')
+    print(json.dumps({'scope': report['scope'], 'samples': len(t), 'lean_factor': factor,
+        'normal_error_deg': report['normal_and_slope_metrics']['estimated_vs_logged_dem_normal_error_deg'],
+        'dem_slope_deg': report['normal_and_slope_metrics']['logged_dem_closest_slope_deg']}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,270 @@
+{
+  "sensing": {
+    "observer_force_error_median_N": 0.012943199858906034,
+    "observer_force_error_p95_N": 9.968362770699182,
+    "observer_moment_error_median_Nm": 0.0037844442355540074,
+    "observer_moment_error_p95_Nm": 1.0813439433994827
+  },
+  "terrain": "side_slope_10",
+  "controller": "hardware",
+  "parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "rolling_allocation": "least_squares",
+    "rolling_damping_m_s": 0.01,
+    "rolling_speed_limits": [
+      20.0,
+      20.0,
+      20.0,
+      0.3,
+      0.3
+    ],
+    "rolling_acceleration_limits": [
+      100.0,
+      100.0,
+      100.0,
+      3.0,
+      3.0
+    ],
+    "rolling_effort_m_s": 0.001,
+    "rolling_change_m_s": 0.001,
+    "rolling_adaptive_effort": false,
+    "rolling_weak_effort_m_s": 0.005,
+    "rolling_authority_m_s": 0.02,
+    "rolling_reference_catchup_gain_s_inv": 1.0,
+    "rolling_reference_catchup_speed_m_s": 0.06,
+    "rolling_reference_position_limit_m": 0.05,
+    "rolling_reference_balance_guard": false,
+    "rolling_reference_lean_scale_deg": 3.0,
+    "rolling_reference_rate_horizon_s": 0.1,
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "engine_version": "Gazebo Harmonic (gz-sim 8.10.0)",
+  "contact_mode": "analytic_clipped_floor",
+  "ground_model": "Gazebo collision with the mesh (grid 0.0400 m); contacts solved by DART. The MuJoCo mirror only evaluates kinematics.",
+  "path": {
+    "distance_m": 0.016,
+    "heading_deg": 90.0,
+    "duration_s": 0.6,
+    "start_s": 0.8,
+    "profile": "cruise",
+    "ramp_s": 0.2,
+    "origin": [
+      -1.1690362005545123e-05,
+      -0.020756870016445286
+    ],
+    "cruise_speed_m_s": 0.04
+  },
+  "completed": true,
+  "failure": null,
+  "completed_duration_s": 5.399999999999907,
+  "requested_duration_s": 5.4,
+  "distance_along_path_m": -0.07446692210339018,
+  "final_cross_track_m": 0.039777616833020765,
+  "tracking": {
+    "rms_error_m": 0.21764238218270016,
+    "max_error_m": 0.4023357170781665,
+    "final_error_m": 0.09882571930310188,
+    "rms_error_while_moving_m": 0.008850960500942088
+  },
+  "attitude": {
+    "max_tilt_deg": 19.068484950909042,
+    "max_error_from_reference_deg": 9.362855753562268,
+    "rms_error_from_reference_deg": 3.5607132968252353,
+    "final_error_from_reference_deg": 1.0662879417041047,
+    "heading_change_deg": -110.07960302798949
+  },
+  "ground": {
+    "max_slope_under_wheel_deg": 9.999999999999975,
+    "height_range_m": [
+      -0.06625914990452986,
+      0.00035867936722537976
+    ],
+    "friction_range": [
+      0.7,
+      0.7
+    ]
+  },
+  "contact": {
+    "normal_load_fraction_min": 0.0,
+    "normal_load_fraction_max": 1.9999864343770963,
+    "normal_load_fraction_std": 0.09899136061096997,
+    "unloaded_time_s": 0.01,
+    "utilization_mean": 0.3955698021448287,
+    "utilization_p95": 0.8395153428603362,
+    "utilization_max": 24.30123479476704,
+    "time_above_90pct_cone_s": 0.27,
+    "max_slip_speed_m_s": 0.4663239646800845,
+    "slip_distance_m": 0.06551900843083026,
+    "sliding_time_s": 0.44,
+    "friction_loss_J": 0.8286466225698595,
+    "estimated_friction_min": 0.23100338835871104,
+    "normal_estimate_error_rms_deg": 0.21722975913572432,
+    "normal_estimate_error_max_deg": 0.9617290288860825,
+    "normal_estimate_error_median_deg": 0.004075450471604913,
+    "normal_estimate_error_p95_deg": 0.6033988637657317,
+    "support_time_share": {
+      "shell_A": 0.732159406858202,
+      "shell_B": 0.08155699721964782,
+      "belt_A": 0.18628359592215013,
+      "belt_B": 0.0
+    },
+    "support_handovers": 75,
+    "fork_ground_contact": false
+  },
+  "actuation": {
+    "max_input_fraction": [
+      0.5227615776461213,
+      1.0,
+      0.5473820460262221,
+      1.0,
+      0.0
+    ],
+    "saturated_time_fraction": 0.14074074074074075,
+    "rms_torque_Nm": [
+      0.3040479254676687,
+      0.0772226615588598,
+      0.04824400654306645
+    ],
+    "max_joint_speed_rad_s": [
+      2.930359528128228,
+      25.891972237591794,
+      23.240404843790696
+    ],
+    "joint_work_J": 3.2103208515685164,
+    "unloaded_fade_time_s": 0.0
+  },
+  "settled_at_end": false,
+  "engine": {
+    "simulator": "Gazebo Harmonic (gz-sim 8.10.0)",
+    "physics": "DART 6.19.5 via gz-physics 7.5.0",
+    "collision_detector": "ode",
+    "step_s": 0.001,
+    "ground": "mesh",
+    "world_info": {
+      "ground": "mesh",
+      "collision_detector": "ode",
+      "mesh": "/home/parrwnago/active-spherical-wheel/results/mpc_balance_20261125/initial/_workspaces/world_y/baseline/gazebo/world/terrain_mesh_96a05c5b410e.obj",
+      "bounds": [
+        -0.8999999999999999,
+        0.8999999999999999,
+        -0.8999999999999999,
+        0.8999999999999999
+      ],
+      "vertices": [
+        46,
+        46
+      ],
+      "cell_m": 0.039999999999999994,
+      "low_m": -0.15869428263761845,
+      "high_m": 0.15869428263761845,
+      "terrain": {
+        "name": "side_slope_10",
+        "description": "",
+        "yaw_deg": 0.0,
+        "origin": [
+          0.0,
+          0.0
+        ],
+        "base_friction": null,
+        "features": [
+          {
+            "type": "plane",
+            "slope": [
+              0.0,
+              0.17632698070846498
+            ]
+          }
+        ],
+        "friction_patches": []
+      }
+    }
+  },
+  "wall_time_s": 10.721157312393188,
+  "bridge_counters": {
+    "admitted": 7525,
+    "rejected": 23553,
+    "unmatched": 0
+  },
+  "mpc_experiment": {
+    "variant": "baseline",
+    "motion": "world_y",
+    "activation": {
+      "time_s": 0.8000000000000006,
+      "original_goal_origin": [
+        -1.1690362005545123e-05,
+        -0.020756870016445286
+      ],
+      "qpos": [
+        -1.1690362005545123e-05,
+        -0.020756870016445286,
+        0.11816582981754487,
+        0.9963690145247048,
+        -0.08513973318012588,
+        1.751028293096126e-05,
+        -0.00011145616009128502,
+        1.572013301305727,
+        0.0036110177315199516,
+        -0.004654148953402597
+      ],
+      "qvel": [
+        7.660264340170469e-05,
+        0.000346100778245253,
+        6.092080991331252e-05,
+        -0.0029255423011177797,
+        -0.00037539013401160484,
+        -0.000645960933659438,
+        0.0026141880732475213,
+        0.0036976024769256573,
+        -0.0028258440855612565
+      ],
+      "physical_state_not_reset": true,
+      "live_estimator_preserved": true
+    },
+    "plans": 0,
+    "successful_plans": 0,
+    "fallback_active_samples": 0,
+    "guarded_controller_calls": 1081,
+    "original_goal_error_final_mm": 98.82571930310188,
+    "original_goal_progress_final_mm": -74.46692210339017,
+    "active_path_error_rms_mm": 235.6309365968619,
+    "active_peak_reference_lean_deg": 9.362855753562268,
+    "active_lean_error_integral_deg_s": 13.574734160812277,
+    "active_input_limit_occupancy_fraction": 0.17155266015200868,
+    "mpc_update_time_median_s": null,
+    "scope": "Local affine constrained MPC with estimated private-plane dynamics. Not nonlinear configuration planning, hard-tilt safety, or real-time qualification.",
+    "diagnostic_components": "Native LQR/FF/sync fields are shadows in MPC mode; mpc_command_delta added to their native requested sum yields actual final input."
+  }
+}

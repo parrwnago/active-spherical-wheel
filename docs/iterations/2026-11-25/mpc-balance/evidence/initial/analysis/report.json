@@ -1,0 +1,647 @@
+{
+  "status": "initial_candidate_not_accepted",
+  "scope": "Four fresh paired Gazebo runs on declared simple-terrain warm-start fixtures. No policy changes or new simulation in this analysis.",
+  "protocol": {
+    "status": "Declared before initial closed-loop campaign; predictor replay audit already available separately.",
+    "case": {
+      "warm_s": 0.8,
+      "motion_s": 0.6,
+      "recovery_s": 4.0,
+      "nominal_distance_m": 0.016,
+      "peak_speed_m_s": 0.04,
+      "slope_degrees": [
+        0,
+        10
+      ],
+      "shaft_phase_rad": 1.5707963267948966
+    },
+    "mpc": {
+      "kind": "frozen local affine MPC; no guaranteed nonlinear configuration planning",
+      "horizon_steps": 20,
+      "step_s": 0.02,
+      "horizon_s": 0.4,
+      "replan_s": 0.02,
+      "sensing_s": 0.005,
+      "direct_physical_inputs": [
+        "shaft torque Nm",
+        "shellA torque Nm",
+        "shellB torque Nm",
+        "beltA speed m/s",
+        "beltB speed m/s"
+      ]
+    },
+    "acceptance": {
+      "all": "no physical failure; hard applied-input bounds respected; useful original-goal recovery; fallback active samples <=5 percent",
+      "weak_y": "final original-goal error <=5mm, no worse peak reference-relative lean and lower lean-error integral plus lower original-clock path RMS than matched baseline",
+      "strong_x": "no greater than10 percent path-RMS regression and no worse peak lean; final original-goal error <=5mm",
+      "not_accepted": "Frozen/stalled travel, mostly LQR fallback, success inferred only from QP bound compliance",
+      "runtime": "offline wall-time measured, no real-time claim; no runtime gate for physics proof-of-concept"
+    },
+    "prediction_screen_reference": {
+      "20ms_xy_m": 0.0005,
+      "20ms_angle_degrees": 0.2,
+      "100ms_xy_m": 0.002,
+      "100ms_angle_degrees": 1.0,
+      "scope": "Proposed diagnostic tolerances; prior recorded-input audit passed. Optimized400msplans must be checked separately; a frozen model may omit phase\u00d7drive benefits."
+    }
+  },
+  "metrics": [
+    {
+      "direction": "world_x",
+      "variant": "baseline",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 10.366450957688176,
+      "original_clock_path_peak_mm": 14.362576466532486,
+      "original_goal_final_error_mm": 5.300235765395867,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 13.668826475855097,
+      "motion_end_goal_error_mm": 3.5004785953752866,
+      "final_progress_mm": 15.519110780197632,
+      "final_progress_fraction": 0.969944423762352,
+      "peak_reference_lean_deg": 1.3909749613839726,
+      "lean_error_integral_deg_s": 0.8075508164084676,
+      "lean_error_rms_deg": 0.3190507921783967,
+      "actual_input_limit_occupancy_fraction": 0.0,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        1.2193176903921217,
+        0.986821245828527,
+        0.20210230463711384
+      ],
+      "shaft_phase_range_rad": [
+        1.4955515789700926,
+        1.9144059366564548
+      ],
+      "actual_dominant_support_switches_active": 0,
+      "fallback_actuated_samples": 0,
+      "fallback_fraction": 0.0,
+      "plans_including_terminal": 0,
+      "actuated_update_plans": 0,
+      "actuated_qp_solved_plans": 0,
+      "actuated_plan_failures": {},
+      "all_update_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_update_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_qp_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_linearization_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "component_reconstruction_max_bound_fraction": 1.2415219824424284e-08,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {}
+    },
+    {
+      "direction": "world_x",
+      "variant": "mpc",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 13.57912090988503,
+      "original_clock_path_peak_mm": 21.736684080191353,
+      "original_goal_final_error_mm": 1.7941750013339828,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 7.014390153730791,
+      "motion_end_goal_error_mm": 9.119263349293153,
+      "final_progress_mm": 15.2726764464549,
+      "final_progress_fraction": 0.9545422779034313,
+      "peak_reference_lean_deg": 0.9242801949497546,
+      "lean_error_integral_deg_s": 1.0193894011012836,
+      "lean_error_rms_deg": 0.3068345852323566,
+      "actual_input_limit_occupancy_fraction": 0.008695652173913044,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        3.658027834263264,
+        11.546975282131786,
+        29.40968687832587
+      ],
+      "shaft_phase_range_rad": [
+        1.4430349125717556,
+        1.7819688216445027
+      ],
+      "actual_dominant_support_switches_active": 2,
+      "fallback_actuated_samples": 628,
+      "fallback_fraction": 0.6826086956521739,
+      "plans_including_terminal": 231,
+      "actuated_update_plans": 230,
+      "actuated_qp_solved_plans": 73,
+      "actuated_plan_failures": {
+        "estimated_plane_load_fit_failed": 155,
+        "qp_problem non convex": 2
+      },
+      "all_update_runtime_s": {
+        "count": 230,
+        "median": 0.00910663050126459,
+        "p95": 0.49127587605107687,
+        "max": 0.537866729999223
+      },
+      "solved_update_runtime_s": {
+        "count": 73,
+        "median": 0.4341778800007887,
+        "p95": 0.5174272969998128,
+        "max": 0.537866729999223
+      },
+      "solved_qp_runtime_s": {
+        "count": 73,
+        "median": 0.003297769999335287,
+        "p95": 0.004171618599502835,
+        "max": 0.02966873499826761
+      },
+      "solved_linearization_runtime_s": {
+        "count": 73,
+        "median": 0.29337667700019665,
+        "p95": 0.34334039959940127,
+        "max": 0.35334044200135395
+      },
+      "component_reconstruction_max_bound_fraction": 5.134601429220472e-08,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {
+        "0.02": {
+          "xy_error_mm": {
+            "count": 73,
+            "median": 0.011142946604557767,
+            "p95": 0.16075489260547232,
+            "max": 0.2645674351845547
+          },
+          "rotation_tangent_error_deg": {
+            "count": 73,
+            "median": 0.005750417223496117,
+            "p95": 0.07202410691860382,
+            "max": 0.1518847525325741
+          },
+          "linear_velocity_error_m_s": {
+            "count": 73,
+            "median": 0.002504017133662643,
+            "p95": 0.030263706772513985,
+            "max": 0.04927546797736803
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 73,
+            "median": 0.015076449860872648,
+            "p95": 0.3346948243073424,
+            "max": 0.94037437780732
+          },
+          "diagnostic_screen_passes": 73,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.1": {
+          "xy_error_mm": {
+            "count": 73,
+            "median": 0.4855018720897564,
+            "p95": 2.184204483042539,
+            "max": 8.450959083114624
+          },
+          "rotation_tangent_error_deg": {
+            "count": 73,
+            "median": 0.3714139447871086,
+            "p95": 1.5976904752074128,
+            "max": 2.661455410545052
+          },
+          "linear_velocity_error_m_s": {
+            "count": 73,
+            "median": 0.006561773221935324,
+            "p95": 0.042281914998974296,
+            "max": 0.0723635121493655
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 73,
+            "median": 0.10156427591884483,
+            "p95": 3.5923702567498093,
+            "max": 4.354673847260744
+          },
+          "diagnostic_screen_passes": 62,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.4": {
+          "xy_error_mm": {
+            "count": 73,
+            "median": 6.893303113676081,
+            "p95": 33.98687048567538,
+            "max": 111.61267669772039
+          },
+          "rotation_tangent_error_deg": {
+            "count": 73,
+            "median": 3.045686286493917,
+            "p95": 18.79043049052177,
+            "max": 96.48417175224398
+          },
+          "linear_velocity_error_m_s": {
+            "count": 73,
+            "median": 0.06317991123611802,
+            "p95": 0.3172888074518123,
+            "max": 1.2526931664710559
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 73,
+            "median": 1.5950184825680616,
+            "p95": 12.361765847525986,
+            "max": 63.66446683394655
+          }
+        }
+      }
+    },
+    {
+      "direction": "world_y",
+      "variant": "baseline",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 235.6309365968619,
+      "original_clock_path_peak_mm": 402.3357170781665,
+      "original_goal_final_error_mm": 98.82571930310188,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 1.3642602263984545,
+      "motion_end_goal_error_mm": 15.03284383487177,
+      "final_progress_mm": -74.46692210339017,
+      "final_progress_fraction": -4.654182631461886,
+      "peak_reference_lean_deg": 9.362855757652037,
+      "lean_error_integral_deg_s": 13.574734152901202,
+      "lean_error_rms_deg": 3.8576190775060635,
+      "actual_input_limit_occupancy_fraction": 0.17173913043478262,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        2.930359528128228,
+        25.891972237591794,
+        23.240404843790696
+      ],
+      "shaft_phase_range_rad": [
+        -0.24317953902414788,
+        2.519947460879088
+      ],
+      "actual_dominant_support_switches_active": 79,
+      "fallback_actuated_samples": 0,
+      "fallback_fraction": 0.0,
+      "plans_including_terminal": 0,
+      "actuated_update_plans": 0,
+      "actuated_qp_solved_plans": 0,
+      "actuated_plan_failures": {},
+      "all_update_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_update_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_qp_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "solved_linearization_runtime_s": {
+        "count": 0,
+        "median": null,
+        "p95": null,
+        "max": null
+      },
+      "component_reconstruction_max_bound_fraction": 1.9691288174102559e-07,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {}
+    },
+    {
+      "direction": "world_y",
+      "variant": "mpc",
+      "completed": true,
+      "physical_failure": null,
+      "elapsed_s": 5.399999999999907,
+      "active_elapsed_s": 4.599999999999907,
+      "active_actuated_samples": 920,
+      "active_held_command_s": 4.6000000000000005,
+      "original_clock_path_rms_mm": 20.07124066238992,
+      "original_clock_path_peak_mm": 25.734631447813474,
+      "original_goal_final_error_mm": 25.081235430644366,
+      "requested_displacement_mm": 16.0,
+      "motion_end_progress_mm": 4.000410813842965,
+      "motion_end_goal_error_mm": 12.1434879279257,
+      "final_progress_mm": -8.753198551085285,
+      "final_progress_fraction": -0.5470749094428303,
+      "peak_reference_lean_deg": 1.768385921874607,
+      "lean_error_integral_deg_s": 0.6152126788473574,
+      "lean_error_rms_deg": 0.28615588967228345,
+      "actual_input_limit_occupancy_fraction": 0.04782608695652174,
+      "hard_input_bound_violation_max": 0.0,
+      "actual_joint_speed_max_rad_s": [
+        2.1604068382410935,
+        8.187830065524027,
+        29.677321838169494
+      ],
+      "shaft_phase_range_rad": [
+        0.7460504270146144,
+        1.6063785697042186
+      ],
+      "actual_dominant_support_switches_active": 0,
+      "fallback_actuated_samples": 0,
+      "fallback_fraction": 0.0,
+      "plans_including_terminal": 231,
+      "actuated_update_plans": 230,
+      "actuated_qp_solved_plans": 230,
+      "actuated_plan_failures": {},
+      "all_update_runtime_s": {
+        "count": 230,
+        "median": 0.3635326844996598,
+        "p95": 0.4050103889503589,
+        "max": 0.46711048200086225
+      },
+      "solved_update_runtime_s": {
+        "count": 230,
+        "median": 0.3635326844996598,
+        "p95": 0.4050103889503589,
+        "max": 0.46711048200086225
+      },
+      "solved_qp_runtime_s": {
+        "count": 230,
+        "median": 0.003202349000275717,
+        "p95": 0.004583147049379476,
+        "max": 0.03327728600197588
+      },
+      "solved_linearization_runtime_s": {
+        "count": 230,
+        "median": 0.24842086950047815,
+        "p95": 0.27694166605106146,
+        "max": 0.3306226400018204
+      },
+      "component_reconstruction_max_bound_fraction": 1.640679245356232e-06,
+      "fallback_occupancy_scope": "Fractions count only commands held after activation; terminal observation/plan excluded.",
+      "prediction_model_disagreement": {
+        "0.02": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 1.1739102599090542e-07,
+            "p95": 0.0007937361545979544,
+            "max": 0.348079851641835
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 5.608329083514527e-08,
+            "p95": 0.0002594925311194285,
+            "max": 0.12099312788343884
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 2.2266507152376663e-08,
+            "p95": 0.00015145710174024622,
+            "max": 0.06559094987533917
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 4.960904190362179e-07,
+            "p95": 0.0013009809110296289,
+            "max": 0.33428189357777327
+          },
+          "diagnostic_screen_passes": 230,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.1": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 0.0025131667813943956,
+            "p95": 0.3219779925780883,
+            "max": 1.343983458095521
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 0.0007837442959001014,
+            "p95": 0.16570026344621924,
+            "max": 0.9816514815346601
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 8.129030286068334e-05,
+            "p95": 0.01087969958764275,
+            "max": 0.0494017722205605
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 0.0010978379828633093,
+            "p95": 0.13413309625833333,
+            "max": 0.5180460871602696
+          },
+          "diagnostic_screen_passes": 230,
+          "diagnostic_screen_scope": "Affine versus same private nonlinear model, not measured Gazebo truth."
+        },
+        "0.4": {
+          "xy_error_mm": {
+            "count": 230,
+            "median": 0.30348188987976155,
+            "p95": 13.853422796495051,
+            "max": 33.475867676518526
+          },
+          "rotation_tangent_error_deg": {
+            "count": 230,
+            "median": 0.08936211270457517,
+            "p95": 6.690791916732163,
+            "max": 15.544284726822744
+          },
+          "linear_velocity_error_m_s": {
+            "count": 230,
+            "median": 0.0027448046869344373,
+            "p95": 0.13971415895416595,
+            "max": 0.38457206008630396
+          },
+          "joint_velocity_error_rad_s": {
+            "count": 230,
+            "median": 0.05527200372153562,
+            "p95": 2.6141370154545274,
+            "max": 10.797378979474011
+          }
+        }
+      }
+    }
+  ],
+  "paired_prefix_audit": {
+    "world_x": {
+      "samples": 160,
+      "fields_bit_equal": {
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_observer_wrench": true,
+        "exact_applied": true,
+        "mpc_native_requested": true,
+        "mpc_native_applied": true,
+        "mpc_command_delta": true,
+        "mpc_original_goal_xy": true,
+        "mpc_actual_input_at_limit": true
+      },
+      "all_fields_bit_equal": true,
+      "activation_state_and_goal_equal": true
+    },
+    "world_y": {
+      "samples": 160,
+      "fields_bit_equal": {
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_observer_wrench": true,
+        "exact_applied": true,
+        "mpc_native_requested": true,
+        "mpc_native_applied": true,
+        "mpc_command_delta": true,
+        "mpc_original_goal_xy": true,
+        "mpc_actual_input_at_limit": true
+      },
+      "all_fields_bit_equal": true,
+      "activation_state_and_goal_equal": true
+    }
+  },
+  "acceptance": {
+    "world_x": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": true,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": false,
+        "path_rms_regression_at_most_10pct": false
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "fallback_at_most_5pct",
+        "path_rms_regression_at_most_10pct"
+      ]
+    },
+    "world_y": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": false,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": true,
+        "lower_lean_integral": true,
+        "lower_original_clock_path_rms": true
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "final_goal_within_5mm"
+      ]
+    }
+  },
+  "definitions": {
+    "state_metrics": "Use exact double-precision qpos and goals; reference-relative lean comes from the saved float32 observation field. Active interval includes terminal state for goal/state metrics.",
+    "actuation_metrics": "Use double-precision inputs and validated5ms held intervals. Exclude final observation/plan because it is never actuated.",
+    "path_rms": "Sample RMS of original-clock XY errors after activation, including the terminal observation; matches predeclared harness summaries.",
+    "goal_progress": "Signed projection on original16mm request; negative progress means displacement opposite the requested direction.",
+    "model_checks": "Optimized affine versus private nonlinear plan predictions; these are not observed Gazebo errors and do not establish horizon-model validity."
+  },
+  "limitations": [
+    "Single fixed candidate setting in each direction, not a robustness qualification.",
+    "Existing warm fixtures evolve configuration; no claim of sustained singularity or autonomous escape follows from the starting pose.",
+    "QP success means a bounded finite plan and finite replay, not accurate prediction, hard tilt safety, or robot-level stability.",
+    "In MPC mode native LQR/feedforward/synchronizer component fields are shadows. Their sum plus mpc_command_delta reconstructs the actual applied input.",
+    "All-update median runtime can be dominated by quick fallback. Successful-plan runtime is reported separately.",
+    "Private estimated-plane and frozen affine model may disagree with optimized nonlinear trajectories, especially beyond the locally audited100ms horizon."
+  ],
+  "inputs": [
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/baseline/rollout.npz",
+      "sha256": "defa4b9d97bac744bc691de41b67d102f5be7e09a70afd748167c6f4b3327bdc"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/baseline/precision.npz",
+      "sha256": "5970a55f6eab1761e89a2c8f3d144fcbda45aa61e48607dca0fe47c2123ec4aa"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/baseline/summary.json",
+      "sha256": "d620a323da912f1b86833333d9ae16289cdbb197213bbf11e4eada234b5d9c54"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/baseline/plans.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/baseline/provenance.json",
+      "sha256": "3a41b7e6af288aaf75ab310f04e882a8d8916aa7664c407f85f0ef69b8c1d9c0"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/mpc/rollout.npz",
+      "sha256": "13807c4d51523aa5525c560a395a3fc7cf02fb63c48ca362047dc7776c98cd09"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/mpc/precision.npz",
+      "sha256": "efab7f1d68be2ae2f10c8719373a47087877b98a8d6478c089e6c40b5fdde557"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/mpc/summary.json",
+      "sha256": "47764c7f1764d84ff777945ceeee14272a5865d8b1c1b3b9a5b1c03b965434f6"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/mpc/plans.json",
+      "sha256": "423349765655749617c6b8d5a40757b78aa1ddfcde74525278d121a1b424b410"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_x/mpc/provenance.json",
+      "sha256": "85e890b854523207de10feaf4d91402486e57a2c4102afc78da886ba29fba623"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/baseline/rollout.npz",
+      "sha256": "64bad91bc89e175084b0f8dc4bffd82667de57931198f15ffb9401f95b74791a"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/baseline/precision.npz",
+      "sha256": "7ddd4ac26147a7ff4dc090093e9ce8f4b29edfe834fe804f9e668d58356a351d"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/baseline/summary.json",
+      "sha256": "46dba4e2c7654d39ab0c9e8c3e03fa22b91a7338756e1680fab923199c5b10b9"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/baseline/plans.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/baseline/provenance.json",
+      "sha256": "d29c293b89b9f1b5f6b402abf46874dfea0c2516c860f941e0d436b7242b40a5"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/mpc/rollout.npz",
+      "sha256": "dabb6e4d2fef5bcb27917df34f4837f27002dcfe55397e799f386255f9345d2a"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/mpc/precision.npz",
+      "sha256": "070e87acd339a5c94f2990be85bcd4d263a20b55b7a50877107522582653c7f6"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/mpc/summary.json",
+      "sha256": "8588e299dbab7def45792a30378d2d925ddb14a2c2a965ed4e289555170332ec"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/mpc/plans.json",
+      "sha256": "a5cc6aa6b5aa319a099706f0e1521afb98ef21dffe850064a140da1116d87303"
+    },
+    {
+      "path": "results/mpc_balance_20261125/initial/runs/world_y/mpc/provenance.json",
+      "sha256": "9223213514ced6547f2d2467deadf529b3b1122f059ce85e695fe1a0ee5f2218"
+    }
+  ],
+  "analysis_source_sha256": "ef4e27c7dd64fb78a4ac51f2061f4641962a94e6b73f1e8f1bb4bba39990cc43"
+}

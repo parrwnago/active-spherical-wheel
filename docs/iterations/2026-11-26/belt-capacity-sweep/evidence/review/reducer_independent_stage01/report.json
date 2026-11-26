@@ -1,0 +1,122 @@
+{
+  "passed": true,
+  "review_type": "Independent read-only source/protocol review; no scientific reduction or tests executed by reviewer",
+  "captured_utc": "2026-11-26T09:05:36.457034+00:00",
+  "reviewed_source_sha256": "cbaf7ae18989e1a07e9dfaf4167dd2eaa75fd59d064c4259a7b75f79d05c3a6d",
+  "checks": [
+    {
+      "subject": "Operating bound and fixed design integrity",
+      "assessment": "clear",
+      "source_lines": [
+        256,
+        285
+      ],
+      "detail": "Checks exact_input_bounds perarm, applied capacity, unchanged .30 design bank/config/bounds/ordinary/seed, matched initial measured/controller state, and original historical17-field byte parity before interpretation."
+    },
+    {
+      "subject": "Capacity versus normalization",
+      "assessment": "clear",
+      "source_lines": [
+        100,
+        135
+      ],
+      "detail": "Reports each belt absolute requested/applied magnitudes and held durations against old .30 and own cap; command/step metrics use common old bounds alongside own bounds. No denominator-only improvement claim."
+    },
+    {
+      "subject": "Held command timing",
+      "assessment": "clear",
+      "source_lines": [
+        100,
+        135
+      ],
+      "detail": "Excludes terminal row from held durations, maxima and command steps. DT=.005; threshold-tolerant diagnostics distinguished from original strict saturation gate."
+    },
+    {
+      "subject": "Reference path and departure",
+      "assessment": "clear",
+      "source_lines": [
+        137,
+        159
+      ],
+      "detail": "Uses immutable known timed reference and corrected I41 local projection. Global first20mm/100ms departure retained with earlier/inside/later and left-censor labels."
+    },
+    {
+      "subject": "Six component turns",
+      "assessment": "clear",
+      "source_lines": [
+        162,
+        179
+      ],
+      "detail": "All six registered immutable corrected I41 events/windows evaluated; 100ms new-sign dwell unchanged. Missing/partial reversal coverage explicit and fails screen."
+    },
+    {
+      "subject": "Acceptance screen",
+      "assessment": "clear",
+      "source_lines": [
+        191,
+        212
+      ],
+      "detail": "Completion and full moving-window coverage required; RMS, peak/final, raw reference-relative lean, settling/original route gates and all-turn limits evaluated conjunctively. No automatic adoption."
+    },
+    {
+      "subject": "Source and raw boundary",
+      "assessment": "clear",
+      "source_lines": [
+        49,
+        63,
+        236,
+        254,
+        333,
+        337
+      ],
+      "detail": "Snapshots exact reducer/protocol/corrected helper/TARGETS source before calculations; verifies registered input/runtime source hashes and perrun manifests. No controller/physics rerun."
+    },
+    {
+      "subject": "Scope caveat",
+      "assessment": "nonblocking limitation",
+      "detail": "Own-cap strict saturation can improve mechanically with a larger denominator and is accompanied by common .30 and absolute metrics. This is one deterministic ideal-velocity-servo route, not motor sizing evidence. Zero-held slip reducer has empty-array limitation, irrelevant to the3confirmed44s cases; no scientific source edit requested for unused scenario."
+    }
+  ],
+  "early_draft_corrections": [
+    "Use exact_input_bounds schema",
+    "Use execution_failure.json",
+    "Expand sparse parameter configs before full serialization compare in runner",
+    "Preserve unavailable moving-window metrics and incomplete outcomes",
+    "Bind mobility TARGETS source",
+    "Check fixed design/ordinary/cache and same initial state across arms"
+  ],
+  "early_draft_corrections_status": "Author applied before first reducer freeze and scientific outcomes",
+  "sources": [
+    {
+      "origin": "results/belt_capacity_sweep_20261126/analyze_capacity.py",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/analyze_capacity.py",
+      "sha256": "cbaf7ae18989e1a07e9dfaf4167dd2eaa75fd59d064c4259a7b75f79d05c3a6d"
+    },
+    {
+      "origin": "results/belt_capacity_sweep_20261126/protocol.json",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/protocol.json",
+      "sha256": "577e7c7a04d1cccf77550a5c7aa46e3a152dbb7392704c95ba1fddfde02557a3"
+    },
+    {
+      "origin": "results/belt_capacity_sweep_20261126/analysis/checks_stage01/pure_checks.json",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/analysis/checks_stage01/pure_checks.json",
+      "sha256": "b4a35a68f961dcab6da9660cf07ca3af0db1524f48a358f7bf160b330a5d7d03"
+    },
+    {
+      "origin": "results/figure8_event_audit_20261125/events/selection_stage02_corrected/selection_source/event_metrics.py",
+      "snapshot": "source_snapshot/results/figure8_event_audit_20261125/events/selection_stage02_corrected/selection_source/event_metrics.py",
+      "sha256": "144068d7b6d9d1ad1734308df564011e0d5f9799b88ac5a3de8f68d091970283"
+    },
+    {
+      "origin": "results/figure8_event_audit_20261125/events/selection_stage02_corrected/turn_events.json",
+      "snapshot": "source_snapshot/results/figure8_event_audit_20261125/events/selection_stage02_corrected/turn_events.json",
+      "sha256": "9a5a5293f93c8e8e630796793ceb6fac16362f5759e7562c95b1141171a0789b"
+    },
+    {
+      "origin": "src/spherical_wheel/mobility.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/mobility.py",
+      "sha256": "92c08f5fe4001065128f8b9fe7b6821c8a63d9d4b7622da961778d1fd3adbab8"
+    }
+  ],
+  "scope": "Clearance for declared three completed44s cases. Zero new repo test count, physics calls or scientific outcome calculations. Existing author pure checks are reviewed, not added as new counts."
+}

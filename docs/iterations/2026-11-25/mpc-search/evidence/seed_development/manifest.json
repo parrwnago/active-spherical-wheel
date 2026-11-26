@@ -1,0 +1,76 @@
+{
+  "scope": "Native-rollout seed implementation and focused checks only; no Gazebo execution. First12checks and final15checks overlap; same15passbothenvironments, not30.",
+  "current_sources": {
+    "src/spherical_wheel/predictive_seed.py": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca",
+    "tests/test_predictive_seed.py": "6966800b7fafda3d908b4b3b08d0439acb59c73992d8000bab113ef6eb921edd"
+  },
+  "artifacts": [
+    {
+      "path": "results/mpc_search_20261125/seed_development/first/predictive_seed.py",
+      "bytes": 7271,
+      "sha256": "1b8c5f1ba08d0d708600ae3f52e6d1b5f4ba5faf2b71da7eefd22d742524a77a",
+      "stage": "first"
+    },
+    {
+      "path": "results/mpc_search_20261125/seed_development/first/test_predictive_seed.py",
+      "bytes": 7917,
+      "sha256": "7c8f96afa01f52d6d590d9b72c4bebf36cb2c69433634887910769186e828c3b",
+      "stage": "first"
+    },
+    {
+      "path": "results/mpc_search_20261125/seed_development/first/tests.log",
+      "bytes": 99,
+      "sha256": "c671d8270fe5ecc9e29cac3126a3d36f7e72600cd58aacb8d451c62a77d28b17",
+      "stage": "first"
+    },
+    {
+      "path": "results/mpc_search_20261125/seed_development/first/tests.xml",
+      "bytes": 1790,
+      "sha256": "da994dad04d83587bae9b8b6cc0929ec6de59cc08b9d394301d2608f2c14a810",
+      "stage": "first"
+    },
+    {
+      "path": "results/mpc_search_20261125/seed_development/final/gazebo_env_tests.log",
+      "bytes": 99,
+      "sha256": "94fa3920d42e70e436a8bfbfb8c34a8b9fd6eee5198f7b34fbe0745746f36ed0",
+      "stage": "final"
+    },
+    {
+      "path": "results/mpc_search_20261125/seed_development/final/gazebo_env_tests.xml",
+      "bytes": 2202,
+      "sha256": "981ae023858e26ee52faee3632ed9ebed19ff50d0513a0dd873c9059ff8d3892",
+      "stage": "final"
+    },
+    {
+      "path": "results/mpc_search_20261125/seed_development/final/local_tests.log",
+      "bytes": 99,
+      "sha256": "4a91b1e99cfbc7c0e985a229c4d7ccde2f2039963bfe029e669a495cf3c79e4a",
+      "stage": "final"
+    },
+    {
+      "path": "results/mpc_search_20261125/seed_development/final/local_tests.xml",
+      "bytes": 2202,
+      "sha256": "0b626a185be2a979dc9e6c10a0716f56db5eff77a03a9f3b4401f86d81713955",
+      "stage": "final"
+    },
+    {
+      "path": "results/mpc_search_20261125/seed_development/final/predictive_seed.py",
+      "bytes": 7271,
+      "sha256": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca",
+      "stage": "final"
+    },
+    {
+      "path": "results/mpc_search_20261125/seed_development/final/test_predictive_seed.py",
+      "bytes": 9598,
+      "sha256": "6966800b7fafda3d908b4b3b08d0439acb59c73992d8000bab113ef6eb921edd",
+      "stage": "final"
+    }
+  ],
+  "implementation": "Current native controller/mirror deep-cloned; read-only design shared. Current command passed at already-observed anchor, fine5ms private feedback, coarse mean per20msstage independentlyscored. Explicit originalmethodavoidswrapperrecursion. No futuredata/livecontacts.",
+  "limitations": [
+    "Hardwaremode/least_squaresonly.",
+    "Averagedinputs need independentcoarserollout; fine/coarsestatepaths differ.",
+    "Nativepolicyrollout usesfrozenestimatedplane andmodel; no guaranteeofclosedloopimprovement.",
+    "SimpleMjModel/MjData deepcopyinteropprobe exists in siblingseed_copy_probe, not an experiment."
+  ]
+}

@@ -1,0 +1,198 @@
+"""Render I34 saved Gazebo MPC initialization comparison; never run physics.
+
+MUJOCO_GL=egl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -u results/mpc_search_20261125/videos/render_search.py
+"""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+from PIL import Image, ImageDraw
+import yaml
+
+from spherical_wheel.offroad import TerrainPlant
+from spherical_wheel.offroad_view import _camera, _caption, _draw, _font
+from spherical_wheel.terrain import Terrain
+
+HERE=Path(__file__).resolve().parent
+FAMILY=HERE.parent
+ROOT=HERE.parents[2]
+OLD=ROOT/'results/feedback_recovery_20261125'
+WIDTH,VIEW_HEIGHT,CHART_HEIGHT,FPS,SPEED=960,720,240,20,.5
+TARGET=HERE/'mpc_original_vs_predicted_native_seed.mp4'
+COLORS={'original':(238,153,59,255),'seeded':(61,196,161,255)}
+
+
+def sha(path):
+    h=hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda:stream.read(1024*1024),b''):h.update(block)
+    return h.hexdigest()
+
+
+def tilt(quaternion):
+    norm=np.sum(quaternion**2,axis=1)
+    return np.degrees(np.arccos(np.clip(1-2*np.sum(quaternion[:,1:3]**2,axis=1)/norm,-1,1)))
+
+
+def load(label):
+    folder=(OLD if label=='original' else FAMILY)/'runs/slope/mpc'
+    for name in ('summary.json','provenance.json','precision.npz','rollout.npz','terrain.json','plans.json'):
+        if not (folder/name).is_file():raise FileNotFoundError(f'Run incomplete: {folder/name}')
+    summary=json.loads((folder/'summary.json').read_text())
+    provenance=json.loads((folder/'provenance.json').read_text())
+    for key,value in provenance['generated_sha256'].items():assert sha(folder/key)==value,(label,key)
+    with np.load(folder/'rollout.npz') as z:log={k:z[k].copy() for k in z.files}
+    with np.load(folder/'precision.npz') as z:precise={k:z[k].copy() for k in z.files}
+    log.update(time_s=precise['time_s'],qpos=precise['exact_qpos'],qvel=precise['exact_qvel'],
+               input=precise['exact_applied'],reference_xy=precise['recovery_goal_xy'])
+    log['tilt_world_deg']=tilt(log['qpos'][:,3:7]);log['reference_tilt_deg']=tilt(log['reference_quat'])
+    log['goal_error_mm']=1000*np.linalg.norm(log['qpos'][:,:2]-log['reference_xy'],axis=1)
+    log['xy_speed_mm_s']=1000*np.linalg.norm(log['qvel'][:,:2],axis=1)
+    log['reference_error_deg']=np.degrees(log['attitude_error_rad'])
+    assert np.array_equal(log['reference_xy'],np.tile(log['reference_xy'][0],(len(log['time_s']),1)))
+    return dict(label=label,folder=folder,log=log,precise=precise,summary=summary,provenance=provenance,
+                metrics=summary['feedback_recovery'])
+
+
+def nearest(times,moment):
+    i=min(int(np.searchsorted(times,moment)),len(times)-1)
+    return i-1 if i and abs(times[i-1]-moment)<=abs(times[i]-moment) else i
+
+
+def chart_strip(run,index,moment,end,error_limit,tilt_limit):
+    log=run['log'];t=log['time_s'];image=Image.new('RGB',(WIDTH,CHART_HEIGHT),(12,22,32))
+    draw=ImageDraw.Draw(image,'RGBA');color=COLORS[run['label']]
+    for left,width,title,key,limit,threshold in [
+        (18,455,'Distance from retained goal (mm)','goal_error_mm',error_limit,5.),
+        (495,445,'Platform normal from vertical (deg)','tilt_world_deg',tilt_limit,None)]:
+        top,height=40,160
+        def point(x,y):return left+40+(width-50)*float(x)/end,top+height-height*float(y)/limit
+        draw.text((left,7),title,font=_font(14),fill=(230,240,247))
+        draw.rectangle([point(0,limit),point(.4,0)],fill=(125,138,151,40))
+        for frac in (0,.5,1):
+            yy=limit*frac;draw.line([point(0,yy),point(end,yy)],fill=(165,184,201,50),width=1)
+            draw.text((left+2,point(0,yy)[1]-7),f'{yy:g}',font=_font(11),fill=(195,212,224))
+        for tick in (0,.4,2,4,6,8):
+            if tick>end:continue
+            p=point(tick,0);draw.line([(p[0],top),(p[0],top+height)],fill=(150,175,192,35),width=1)
+            draw.text((p[0]-8,top+height+3),f'{tick:g}',font=_font(11),fill=(192,210,221))
+        if threshold is not None:
+            y=point(0,threshold)[1];draw.line([(point(0,0)[0],y),(point(end,0)[0],y)],fill=(166,199,142,190),width=1)
+            draw.text((left+width-83,y-15),'5 mm radius',font=_font(10),fill=(188,218,170))
+        if index:
+            draw.line([point(x,y) for x,y in zip(t[:index+1],log[key][:index+1])],fill=color,width=3)
+            if key=='tilt_world_deg':draw.line([point(x,y) for x,y in zip(t[:index+1],log['reference_tilt_deg'][:index+1])],fill=(245,203,93,255),width=2)
+        x=point(min(moment,end),0)[0];draw.line([(x,top),(x,top+height)],fill=(245,246,247,140),width=1)
+        p=point(t[index],log[key][index]);draw.ellipse((p[0]-3,p[1]-3,p[0]+3,p[1]+3),fill=color)
+        text=('Color: actual tilt | gold: reference | 0 deg: level platform' if key=='tilt_world_deg' else
+              'Gray: fixed-input drift | vertical line: simulation time')
+        draw.text((left+43,CHART_HEIGHT-20),text,font=_font(10),fill=(210,226,237))
+    return np.asarray(image)
+
+
+def panel(plant,renderer,run,moment,option,end,error_limit,tilt_limit,context):
+    log=run['log'];index=nearest(log['time_s'],moment);now=float(log['time_s'][index])
+    stopped=moment>now+.005 and now<float(run['summary']['requested_duration_s'])-1e-6
+    active=now>=.4-1e-9;code=int(run['precise']['mpc_plan_source_code'][index])
+    if stopped:stage=f"RUN STOPPED at {now:.3f}s; last state held | {run['summary']['failure']}"
+    elif not active:stage='FEEDBACK OFF: matched fixed torques; observer advances as shadow'
+    elif bool(run['precise']['mpc_fallback'][index]):stage='FEEDBACK ON: ACTUAL NATIVE LQR FALLBACK (MPC unavailable)'
+    else:
+        source={1:'accepted shifted/warm sequence',2:'accepted shaft-pulse seed',3:'SQP-refined candidate',
+                4:'predicted native-rollout candidate; not LQR fallback'}.get(code,'unknown source')
+        stage=f'FEEDBACK ON: MPC20ms | source {code}: {source}'
+    final=moment>=end-1e-8
+    passed=bool(run['summary']['completed'] and run['metrics']['final_1s_within_goal_and_speed_and_reference_lean'])
+    gate=('Final full-second return: '+('PASS' if passed else 'FAIL within 8s feedback')+
+          ' (<=5mm; <=5mm/s; reference error <=2deg)') if final else 'Return requires final full second <=5mm, <=5mm/s and reference error <=2deg.'
+    u=log['input'][index]
+    names=('shell A','shell B','belt A','belt B')
+    true_loads=np.asarray(log['support_loads_N'][index]);estimated_loads=np.asarray(log['estimated_support_loads_N'][index])
+    actual_patch=names[int(np.argmax(true_loads))] if true_loads.max()>.05 else 'wheel unloaded'
+    estimated_patch=names[int(np.argmax(estimated_loads))] if estimated_loads.max()>.05 else 'wheel unloaded'
+    lines=[stage,
+        f"t {now:.3f}s | goal error {log['goal_error_mm'][index]:.3f}mm | XY speed {log['xy_speed_mm_s'][index]:.2f}mm/s",
+        f"ABSOLUTE tilt {log['tilt_world_deg'][index]:.2f}deg | reference {log['reference_tilt_deg'][index]:.2f}deg | relative {log['reference_error_deg'][index]:.3f}deg",
+        'Torque [shaft,A,B] Nm: '+np.array2string(u[:3],precision=3)+' | belts [A,B] m/s: '+np.array2string(u[3:],precision=3),
+        f"Dominant wheel patch (evaluation): true {actual_patch} / estimated {estimated_patch} | load {float(log['normal_force_N'][index]):.2f}N",
+        'Observer-derived contacts in BOTH cases | same model, weights, 0.4s horizon and physical bounds.',
+        ('Original local search: held/shifted command seeds + one SQP refinement.' if run['label']=='original' else
+         'Added seed: cloned present-state native policy in private predictions; no recorded future inputs.'),
+        'Offline prototypes: 20ms simulated command hold / 5ms observer. Uniform10deg slope, not Mars.',
+        f"Context: LQR5ms reused final {context['lqr5_mm']:.3f}mm | held LQR20ms new final {context['lqr20_mm']:.3f}mm.",
+        gate]
+    camera=_camera(np.r_[log['qpos'][index,:2],.22],112.,-25.,1.32)
+    frame=_draw(plant,renderer,log,index,camera,option,False)
+    heading='GAZEBO / DART: '+('original MPC20ms (reused I32)' if run['label']=='original' else 'MPC20ms + predicted native-policy seed')
+    frame=_caption(frame,heading,lines,'Saved Gazebo/DART dynamics reconstructed in MuJoCo | camera follows robot | 0.5x playback | no new physics')
+    return np.concatenate([frame,chart_strip(run,index,moment,end,error_limit,tilt_limit)],axis=0)
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--preview',action='store_true');args=parser.parse_args()
+    if TARGET.exists():raise FileExistsError('Preserve completed video; choose a new stage')
+    source=Path(__file__).resolve();source_hash=sha(source)
+    snap=HERE/'source_snapshot'/f'render_search_{source_hash[:12]}.py';snap.parent.mkdir(exist_ok=True)
+    if not snap.exists():snap.write_bytes(source.read_bytes())
+    runs=[load(label) for label in ('original','seeded')]
+    a,b=runs;ma=a['log']['time_s']<.4-1e-9;mb=b['log']['time_s']<.4-1e-9
+    prefix={}
+    for key in ('time_s','qpos','qvel','input','reference_xy'):
+        np.testing.assert_array_equal(a['log'][key][ma],b['log'][key][mb]);prefix[key]=True
+    for key in ('qpos','qvel'):np.testing.assert_array_equal(a['log'][key][nearest(a['log']['time_s'],.4)],b['log'][key][nearest(b['log']['time_s'],.4)])
+    lqr5_path=OLD/'runs/slope/native/summary.json';lqr20_path=FAMILY/'runs/slope/native/summary.json'
+    context={'lqr5_mm':json.loads(lqr5_path.read_text())['feedback_recovery']['goal_error_final_mm'],
+             'lqr20_mm':json.loads(lqr20_path.read_text())['feedback_recovery']['goal_error_final_mm']}
+    end=max(float(r['summary']['requested_duration_s']) for r in runs)
+    error_limit=max(10.,np.ceil(max(float(r['log']['goal_error_mm'].max()) for r in runs)/10)*10)
+    tilt_limit=max(15.,np.ceil(max(float(r['log']['tilt_world_deg'].max()) for r in runs)/5)*5)
+    config_path=runs[1]['folder']/'source_snapshot/config/model.yaml';terrain_path=runs[1]['folder']/'terrain.json'
+    config=yaml.safe_load(config_path.read_text());terrain=Terrain.from_spec(json.loads(terrain_path.read_text()))
+    plant=TerrainPlant(config,terrain,HERE/'_render_scene',visual_bounds=(-.6,.6,-.6,.6));saved=plant.capture()
+    option=mujoco.MjvOption();option.geomgroup[3:]=0;times=np.arange(0,end+1e-9,SPEED/FPS)
+    assert np.isclose(times[-1],end)
+    checks=[]
+    for run in runs:
+        log=run['log'];m=run['metrics'];np.testing.assert_allclose([log['goal_error_mm'][-1],log['xy_speed_mm_s'][-1],log['tilt_world_deg'][-1]],
+            [m['goal_error_final_mm'],m['xy_speed_final_mm_s'],m['absolute_platform_tilt_final_deg']],atol=1e-9)
+        checks.append({'label':run['label'],'final_goal_error_mm':float(log['goal_error_mm'][-1]),'final_xy_speed_mm_s':float(log['xy_speed_mm_s'][-1]),
+            'final_absolute_tilt_deg':float(log['tilt_world_deg'][-1]),'final_reference_tilt_deg':float(log['reference_tilt_deg'][-1]),
+            'final_1s_gate':bool(run['summary']['completed'] and m['final_1s_within_goal_and_speed_and_reference_lean']), 'matches_report':True})
+    def frame(moment):return np.concatenate([panel(plant,renderer,r,moment,option,end,error_limit,tilt_limit,context) for r in runs],axis=1)
+    try:
+        with mujoco.Renderer(plant.model,height=VIEW_HEIGHT,width=WIDTH) as renderer:
+            if args.preview:
+                imageio.imwrite(HERE/'search_endpoint_preview.jpg',frame(end),quality=92);print('Endpoint preview saved; no physics.');return
+            writer=imageio.get_writer(TARGET,fps=FPS,codec='libx264',quality=8,macro_block_size=2,ffmpeg_log_level='error')
+            try:
+                for moment in times:writer.append_data(frame(float(moment)))
+            finally:writer.close()
+            for moment,name in ((0.,'search_first.jpg'),(.4,'search_feedback_on.jpg'),(end,'search_final.jpg')):imageio.imwrite(HERE/name,frame(moment),quality=92)
+    finally:plant.restore(saved)
+    with imageio.get_reader(TARGET) as reader:
+        meta=reader.get_meta_data();frames=reader.count_frames();last=reader.get_data(frames-1);imageio.imwrite(HERE/'search_decoded_final.jpg',last,quality=92)
+    assert frames==len(times) and tuple(meta['size'])==(1920,960) and np.isclose(meta['fps'],FPS)
+    paths=[source,snap,config_path,terrain_path,FAMILY/'protocol.json',lqr5_path,lqr20_path,
+           ROOT/'src/spherical_wheel/offroad_view.py',ROOT/'src/spherical_wheel/offroad.py',ROOT/'src/spherical_wheel/terrain.py']
+    for run in runs:paths += [run['folder']/name for name in ('precision.npz','rollout.npz','summary.json','provenance.json','plans.json')]
+    analysis=FAMILY/'analysis/report.json'
+    if analysis.exists():paths.append(analysis)
+    record={'status':'rendered_and_decoded_verified','video':{'path':str(TARGET.relative_to(ROOT)),'sha256':sha(TARGET),'bytes':TARGET.stat().st_size,
+        'dimensions':list(meta['size']),'fps':meta['fps'],'frames':frames,'duration_s':meta['duration'],'simulated_duration_s':end,'playback_speed':SPEED,'decoded_final_verified':True},
+        'source_snapshot':str(snap.relative_to(ROOT)),'endpoint_checks':checks,'shared_drift_prefix_verified':prefix,
+        'identical_feedback_switch_state_verified':True,'source_artifact_sha256':{str(p.relative_to(ROOT)):sha(p) for p in paths},
+        'stills':{p.name:sha(p) for p in (HERE/'search_first.jpg',HERE/'search_feedback_on.jpg',HERE/'search_final.jpg',HERE/'search_decoded_final.jpg')},
+        'context_endpoints':context,'scope':'Two saved Gazebo/DART state reconstructions. No controller or physics runs during rendering. Original MPC and native5ms results explicitly reused from I32.',
+        'seed_semantics':'New native-policy candidate uses current estimated-state clones/private predictions, not saved future commands. Source4 is predictive coarse native-rollout candidate, not actual LQR fallback; source3 SQP-refined candidate.',
+        'terrain':'Uniform10deg side-slope mesh.04m, not Mars. Both plans use observer-derived contacts and same weights/model/horizon/bounds.',
+        'timing':'0-.4s matched fixed input; then8s feedback,20ms command holds/5ms observation; no state/observer/goalresetatswitch.',
+        'runtime_scope':'Offline prototypes:20ms denotes simulated applied-command hold, not achieved wall-clock solve duration. HeldLQR20ms reference retains the original5ms-designed gains.',
+        'visualization':'Common physical model and analytic10deg slope appearance rendered in MuJoCo; both dynamic traces came from Gazebo. Camera follows robot; metric plots retain goal.'}
+    (HERE/'video_metadata.json').write_text(json.dumps(record,indent=2)+'\n');print(json.dumps(record['video'],indent=2),flush=True)
+
+
+if __name__=='__main__':main()

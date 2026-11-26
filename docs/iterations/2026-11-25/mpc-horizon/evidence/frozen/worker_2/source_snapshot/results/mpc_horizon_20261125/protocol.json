@@ -1,0 +1,83 @@
+{
+  "iteration": "I-35",
+  "status": "Declared before horizon calculations or any new Gazebo run. User authorized frozen horizon comparison, then one matched trial only if convincing.",
+  "declared_utc": "2026-11-26T00:47:47.685222+00:00",
+  "question": "Does0.4slookaheadmissfuturebenefitofcorrectiveleanandreturn?",
+  "source": "I32failedMPC savedstates at.4 and2s, sameasI34 frozencomparisons; past/currentonlyhistory reconstructed.",
+  "matrix": {
+    "anchors_s": [
+      0.4,
+      2.0
+    ],
+    "horizons_s": [
+      0.4,
+      0.8,
+      1.2
+    ],
+    "stage_s": 0.02,
+    "horizon_steps": [
+      20,
+      40,
+      60
+    ],
+    "jacobian_stride": 1,
+    "native_rollout_seed": true,
+    "max_refinement_budget": 5
+  },
+  "fixed": "Exactexistingweights/scales,input/changeweights,terminal_multiplier4,bounds,model,observer/contactlocator/friction,20mscommandperiod,referenceXY/lean andsolver tolerances. Terminal4 moves to eachnewend aspartofhorizonchange.",
+  "initialization": "Samepracticalnativefine5msrolloutmean4commands seed overfullH, independentcoarserescore. Verifyshared0.4sseedprefix andtargetprefix acrossH. At2old20stagepriorsequence paddedwithitslastboundedinputbefore runtime shift. Documentwarmextensionrule andfine/coarsefuturedivergence.",
+  "comparison": "No rawJ ranking acrossH. Compare predictedgoaltrajectory,speed,absolute/reflean,support,commonphysicalprefix andselected/nativecostatSAMEH. Distinguish acceptednonlinearrefinementfromretainedseedandQPfailures.",
+  "live_gate": {
+    "select": "ShortestlongerH (.8then1.2) meetingALLgatesatBOTHanchors; no newGzifnonepasses.",
+    "mechanical": "Allcontrolfinite/bounded; inspect1msprivatephysicssubsteps: no loadednonwheelcontact>0.05N, wheel-normal load>=5%weight, peakworld-uptilt<=20deg.",
+    "late_2s": "Terminalgoaldistance<=90%initial; final200msdistance trendtowardgoal; peakdistance<=75mm. Needatleast1successfulQP andacceptednonlinearimprovement>=1e-4relativefrombestinitialcandidate, withnormalizedfirstinputdifference>=1e-3 versus0.4sfullJaccontrol.",
+    "early_04s": "Allowovershoot. Peakdistance<=40mm and<=max(1.10*samenativecoarseseedpeak,initialdistance+5mm). Finaldistance<=max(1.10*samenativecoarseseedfinal,5mm).",
+    "cost": "SelectedmodeledJ<=independentlyscorednativecandidateatSAMEH; no unboundedclipping/PSDrepair. Longerunchangedseedaloneisnotplanningevidence."
+  },
+  "live_if_selected": "OneGazebo/DARTsameI32/I34slopefixture:.4sfixedinputdrift+8sfeedback,fullJac/practicalseed/fixed5refinementbudget,selectedN; originalreference/observercontinuous,20mscommandhold. Existing5msLQR/20msLQR/originalMPCreusedexplicitly. Preserveallfailures; no defaults promotion.",
+  "limitations": [
+    "Selectiongatesareconservativeexperimentrules,notstability/safetyproof.",
+    "No passingplan meansno convincingcandidateunderthisimplementation, notphysicalunreachabilityorprooflongerhorizon cannothelp.",
+    "Numericalnonconvex/maxiter/largeHessian failures diagnoseconditioning/search,notphysicalfeasibility.",
+    "No gain/weight/estimator/terminal-design search inthisexperiment.",
+    "Runtimewillbereported; privatecalculationsarenotnewGazebocases."
+  ],
+  "sources": [
+    {
+      "path": "scripts/run-mpc-comparison.py",
+      "sha256": "95fde864fdee6c502aa9c4a07b7f244cf88e0f36897933e46328b937bc12a4fd"
+    },
+    {
+      "path": "scripts/run-feedback-recovery.py",
+      "sha256": "c2d53326a8f3dfba20e13ff8c32298cb806560012422a43d6a5534b5458e364c"
+    },
+    {
+      "path": "scripts/diagnose-mpc-horizon.py",
+      "sha256": "548e03778fae1bfc42f2f5223bfc12bc102a8370de17271c57b29a6ae191f0e7"
+    },
+    {
+      "path": "src/spherical_wheel/predictive_seed.py",
+      "sha256": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca"
+    },
+    {
+      "path": "src/spherical_wheel/predictive_model.py",
+      "sha256": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473"
+    },
+    {
+      "path": "src/spherical_wheel/predictive_control.py",
+      "sha256": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f"
+    },
+    {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "sha256": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3"
+    },
+    {
+      "path": "config/model.yaml",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e"
+    }
+  ],
+  "old_pack_hashes": {
+    "results/mpc_search_20261125/presentation-pack.zip": "ffa21bcfc82a3ecd21d2d5f7488e33abd272173bbc09efa0ab9650374d542d0b",
+    "results/feedback_recovery_20261125/presentation-pack.zip": "ff161337e3dc5c4f5650d6f403d45c4eba62f3ba659e71ebaa875a140c3f8934"
+  }
+}

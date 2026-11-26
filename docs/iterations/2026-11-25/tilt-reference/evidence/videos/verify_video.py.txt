@@ -1,0 +1,45 @@
+"""Decode/check I43 presentation and immutable input hashes; no model calls."""
+from pathlib import Path
+import hashlib
+import json
+import imageio.v2 as imageio
+import numpy as np
+
+HERE=Path(__file__).resolve().parent
+ROOT=HERE.parents[2]
+
+
+def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def main():
+    target=HERE/'qa.json'
+    if target.exists():raise FileExistsError('Preserve prior final video QA')
+    source=Path(__file__);snapshot=HERE/'source_snapshot'/f'verify_video_{sha(source)[:12]}.py'
+    assert not snapshot.exists();snapshot.write_bytes(source.read_bytes())
+    metadata=json.loads((HERE/'video_metadata.json').read_text())
+    for rel,wanted in metadata['input_sha256'].items():assert sha(ROOT/rel)==wanted,rel
+    video=ROOT/metadata['video']['path'];assert sha(video)==metadata['video']['sha256']
+    assert metadata['arms']==['baseline','angle_only','consistent_rate']
+    assert metadata['fixed_common_camera_and_XY_per_chapter']and metadata['single_shared_display_geometry']
+    assert metadata['playback_speed']==.5 and metadata['fps']==20
+    expected=sum(len(np.arange(0.,row['window_s'][1]-row['window_s'][0]+1e-9,.5/20))for row in metadata['chapters'])+60
+    with imageio.get_reader(video)as reader:
+        info=reader.get_meta_data();count=reader.count_frames()
+        decoded={'first':reader.get_data(0),'last_motion':reader.get_data(count-61),'endcard':reader.get_data(count-1)}
+    assert count==expected==metadata['video']['frames']==326
+    assert tuple(info['size'])==(1600,1200)and info['fps']==20
+    for name,frame in decoded.items():
+        assert frame.std()>10,name
+        imageio.imwrite(HERE/f'qa_decoded_{name}.jpg',frame,quality=92)
+    assert np.mean(abs(decoded['first'].astype(float)-decoded['last_motion'].astype(float)))>.5
+    report={'iteration':'I-43','passed':True,'scope':__doc__,'video_sha256':sha(video),'source_sha256':sha(source),
+        'input_hashes_verified':len(metadata['input_sha256']),'frames':count,'fps':20,'dimensions':[1600,1200],
+        'duration_s':info['duration'],'motion_window_s':[row['window_s']for row in metadata['chapters']],
+        'playback_speed':.5,'first_last_motion_endcard_decoded':True,'endcard_duration_s':3.,
+        'meaning':'Presentation integrity only; not an additional simulation, controller test or successful screen.',
+        'visual_review':'Preview inspected for three arms/shared camera/worldXY/raw-vs-shaped labels. Final decoded stills are provided for reviewer inspection.'}
+    target.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))
+
+
+if __name__=='__main__':main()

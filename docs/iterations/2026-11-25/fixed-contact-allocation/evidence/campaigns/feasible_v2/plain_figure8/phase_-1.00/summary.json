@@ -1,0 +1,240 @@
+{
+  "sensing": {
+    "observer_force_error_median_N": 0.029009064353931923,
+    "observer_force_error_p95_N": 2.61389177820432,
+    "observer_moment_error_median_Nm": 0.0036684052750185206,
+    "observer_moment_error_p95_Nm": 0.17761649794811657
+  },
+  "terrain": "marsyard2021",
+  "controller": "hardware",
+  "parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "rolling_allocation": "feasible",
+    "rolling_damping_m_s": 0.01,
+    "rolling_speed_limits": [
+      20.0,
+      20.0,
+      20.0,
+      0.3,
+      0.3
+    ],
+    "rolling_acceleration_limits": [
+      100.0,
+      100.0,
+      100.0,
+      3.0,
+      3.0
+    ],
+    "rolling_effort_m_s": 0.001,
+    "rolling_change_m_s": 0.001,
+    "rolling_adaptive_effort": false,
+    "rolling_weak_effort_m_s": 0.005,
+    "rolling_authority_m_s": 0.02,
+    "rolling_reference_catchup_gain_s_inv": 1.0,
+    "rolling_reference_catchup_speed_m_s": 0.06,
+    "rolling_reference_position_limit_m": 1.0,
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "engine_version": "Gazebo Harmonic (gz-sim 8.10.0)",
+  "contact_mode": "analytic_clipped_floor",
+  "ground_model": "Gazebo collision with the marsyard2021_dem (grid 0.0942 m); contacts solved by DART. The MuJoCo mirror only evaluates kinematics.",
+  "path": {
+    "kind": "figure8",
+    "duration_s": 40.0,
+    "radius_m": 0.45,
+    "clockwise": false,
+    "start_s": 1.0,
+    "origin": [
+      -1.6,
+      9.6
+    ],
+    "sampled_peak_speed_m_s": 0.18743412395355608,
+    "sampled_peak_acceleration_m_s2": 0.07802436281520816
+  },
+  "completed": true,
+  "failure": null,
+  "completed_duration_s": 44.00000000000406,
+  "requested_duration_s": 44.0,
+  "tracking": {
+    "rms_error_m": 0.030511193153294792,
+    "max_error_m": 0.07805695638274934,
+    "final_error_m": 0.04809178703525622,
+    "rms_error_while_moving_m": 0.028399535265246332
+  },
+  "attitude": {
+    "max_tilt_deg": 13.641738008521733,
+    "max_error_from_reference_deg": 6.263991715884284,
+    "rms_error_from_reference_deg": 1.2537743725995734,
+    "final_error_from_reference_deg": 1.0969540516437075,
+    "heading_change_deg": 716.2629069476579
+  },
+  "ground": {
+    "max_slope_under_wheel_deg": 13.909717603775581,
+    "height_range_m": [
+      1.1044869627391292,
+      1.1742664968872243
+    ],
+    "friction_range": [
+      0.7,
+      0.7
+    ]
+  },
+  "contact": {
+    "normal_load_fraction_min": 0.0,
+    "normal_load_fraction_max": 7.384693381764793,
+    "normal_load_fraction_std": 0.2131465792917366,
+    "unloaded_time_s": 0.17500000000000002,
+    "utilization_mean": 0.22315951981946253,
+    "utilization_p95": 0.4188391492795627,
+    "utilization_max": 17.134133701822872,
+    "time_above_90pct_cone_s": 0.47000000000000003,
+    "max_slip_speed_m_s": 0.23306783780592946,
+    "slip_distance_m": 0.03546047002248313,
+    "sliding_time_s": 0.385,
+    "friction_loss_J": 0.4047746784638708,
+    "estimated_friction_min": 0.08139480718509697,
+    "normal_estimate_error_rms_deg": 2.9524253624210237,
+    "normal_estimate_error_max_deg": 15.796637067753736,
+    "normal_estimate_error_median_deg": 0.010279233448116263,
+    "normal_estimate_error_p95_deg": 6.623114852353149,
+    "support_time_share": {
+      "shell_A": 0.2218799908738307,
+      "shell_B": 0.6560574948665298,
+      "belt_A": 0.015856719142140086,
+      "belt_B": 0.10620579511749943
+    },
+    "support_handovers": 80,
+    "fork_ground_contact": false
+  },
+  "actuation": {
+    "max_input_fraction": [
+      1.0,
+      1.0,
+      1.0,
+      0.6299059556842217,
+      1.0
+    ],
+    "saturated_time_fraction": 0.023636363636363636,
+    "rms_torque_Nm": [
+      0.23482667593498888,
+      0.0988709601753684,
+      0.1702467353854648
+    ],
+    "max_joint_speed_rad_s": [
+      4.578316178476021,
+      18.393109942326983,
+      10.73057837443357
+    ],
+    "joint_work_J": 15.51767384935702,
+    "unloaded_fade_time_s": 0.0
+  },
+  "settled_at_end": false,
+  "engine": {
+    "simulator": "Gazebo Harmonic (gz-sim 8.10.0)",
+    "physics": "DART 6.19.5 via gz-physics 7.5.0",
+    "collision_detector": "ode",
+    "step_s": 0.001,
+    "ground": "marsyard2021_dem",
+    "world_info": {
+      "ground": "marsyard2021",
+      "collision_detector": "ode",
+      "dem_mesh": "/home/parrwnago/active-spherical-wheel/results/fixed_contact_allocation_20261125/feasible_v2/_workspaces/worker_130422/gazebo/world/marsyard2021_dem.obj",
+      "source": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain",
+      "cell_m": 0.09418837675350701,
+      "features": [
+        "lava",
+        "rocks_big",
+        "rocks_medium"
+      ]
+    }
+  },
+  "wall_time_s": 72.06086301803589,
+  "bridge_counters": {
+    "admitted": 54537,
+    "rejected": 162828,
+    "unmatched": 0
+  },
+  "mars": {
+    "gates": {
+      "completed": true,
+      "rms": true,
+      "p95": true,
+      "max": true,
+      "final": true,
+      "attitude": true,
+      "saturation": true,
+      "settled": false,
+      "closure": false
+    },
+    "passed": false,
+    "p95_moving_error_m": 0.05160404872786539,
+    "loop_closure_m": 0.05911502784838686,
+    "distance_travelled_m": 3.9175805740943757,
+    "reference_length_m": 2.7437439760646853,
+    "elevation_change_m": 0.001558328639464479,
+    "elevation_range_m": [
+      1.2242434316323867,
+      1.2934648564067652
+    ],
+    "max_heading_excursion_deg": 716.2629069476579,
+    "time_on_rock_s": 0.0,
+    "max_contact_height_above_dem_m": 4.810835252389012e-07
+  },
+  "route": {
+    "name": "plain_figure8",
+    "about": "A 0.9 m figure-eight on the plain: changing curvature and turn direction.",
+    "start_phase_rad": -1.0,
+    "initial_yaw_deg": 45.0,
+    "path": {
+      "kind": "figure8",
+      "duration_s": 40.0,
+      "radius_m": 0.45,
+      "clockwise": false,
+      "start_s": 1.0,
+      "origin": [
+        -1.6,
+        9.6
+      ],
+      "sampled_peak_speed_m_s": 0.18743412395355608,
+      "sampled_peak_acceleration_m_s2": 0.07802436281520816
+    }
+  },
+  "contact_input_audit": {
+    "checked_controller_calls": 8801,
+    "forbidden_contact_reads": 0,
+    "state_inputs": "Exact simulated measurements; no noise/delay."
+  }
+}

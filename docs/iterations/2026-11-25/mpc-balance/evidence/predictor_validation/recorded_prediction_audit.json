@@ -1,0 +1,947 @@
+{
+  "scope": "Offline predictive-model audit using previously saved Gazebo command sequences.\n\nNo Gazebo run or control update occurs. Future saved applied inputs are used\nonly to assess the predictor, not supplied to an online controller.\n",
+  "inputs": [
+    {
+      "path": "results/fixed_contact_allocation_20261125/runs/world_x/baseline/rollout.npz",
+      "sha256": "766cb6a4a538fc94b306fba0a0410e92a73fe450fe5fa0f060ef36686ca3249a"
+    },
+    {
+      "path": "results/fixed_contact_allocation_20261125/runs/world_y/baseline/rollout.npz",
+      "sha256": "6ef1bae2598dc5f6794279b3d9de686c12998f5f2c2c6f4513adcd73007fee02"
+    }
+  ],
+  "predictor_sha256": "6f7f55014640c91edc0d4a4a82e4837e4f2d12e035f8206e2531fd1f70ad7441",
+  "mujoco_version": "3.16.0",
+  "rows": [
+    {
+      "direction": "world_x",
+      "anchor_time_s": 0.8,
+      "prediction_s": 0.005,
+      "calibration": {
+        "plane_offset_m": 3.376579284667969e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.96871566772461,
+        "calibrated_normal_load_N": 17.968732408570876,
+        "normal_load_residual_N": 1.6740846266571907e-05,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007434674000251107
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.0012305620320366023,
+        "attitude_tangent_error_deg": 0.00038132600182712973,
+        "linear_velocity_error_m_s": 0.00031442542934072856,
+        "angular_velocity_error_rad_s": 0.0016971763410202321,
+        "joint_velocity_error_rad_s": 1.6712940651028388e-05
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0012305621347560405,
+        "attitude_tangent_error_deg": 0.0003813260393404744,
+        "linear_velocity_error_m_s": 0.0003144254904911453,
+        "angular_velocity_error_rad_s": 0.0016971767296958648,
+        "joint_velocity_error_rad_s": 1.6712936638346505e-05
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 0.8,
+      "prediction_s": 0.02,
+      "calibration": {
+        "plane_offset_m": 3.376579284667969e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.96871566772461,
+        "calibrated_normal_load_N": 17.968732408570876,
+        "normal_load_residual_N": 1.6740846266571907e-05,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007434674000251107
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.006280818422231761,
+        "attitude_tangent_error_deg": 0.001955289133233062,
+        "linear_velocity_error_m_s": 0.0003420345216399609,
+        "angular_velocity_error_rad_s": 0.0018555562248205363,
+        "joint_velocity_error_rad_s": 0.0005733083134936827
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.006353871910739566,
+        "attitude_tangent_error_deg": 0.0019755833870287484,
+        "linear_velocity_error_m_s": 0.0003586846713206147,
+        "angular_velocity_error_rad_s": 0.0019321307081313836,
+        "joint_velocity_error_rad_s": 0.0005580246346972072
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 0.8,
+      "prediction_s": 0.1,
+      "calibration": {
+        "plane_offset_m": 3.376579284667969e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.96871566772461,
+        "calibrated_normal_load_N": 17.968732408570876,
+        "normal_load_residual_N": 1.6740846266571907e-05,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007434674000251107
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.032714401888881306,
+        "attitude_tangent_error_deg": 0.010929439560907745,
+        "linear_velocity_error_m_s": 0.00032431350795002846,
+        "angular_velocity_error_rad_s": 0.002087082862899344,
+        "joint_velocity_error_rad_s": 0.00048274017896064606
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.04573555108691291,
+        "attitude_tangent_error_deg": 0.014388147580697414,
+        "linear_velocity_error_m_s": 0.0005240028278445443,
+        "angular_velocity_error_rad_s": 0.0030525439472290695,
+        "joint_velocity_error_rad_s": 0.004415677560572978
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 0.9,
+      "prediction_s": 0.005,
+      "calibration": {
+        "plane_offset_m": 3.373146057128907e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.959518432617188,
+        "calibrated_normal_load_N": 17.95948550432009,
+        "normal_load_residual_N": -3.292829709877765e-05,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007802788997651078
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.0012357855411352311,
+        "attitude_tangent_error_deg": 0.00038243307925726726,
+        "linear_velocity_error_m_s": 0.00031573883263738914,
+        "angular_velocity_error_rad_s": 0.0017048183023293194,
+        "joint_velocity_error_rad_s": 0.0009908218793648028
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0012357834488655073,
+        "attitude_tangent_error_deg": 0.0003824324865913177,
+        "linear_velocity_error_m_s": 0.00031573758925758816,
+        "angular_velocity_error_rad_s": 0.0017048121347377238,
+        "joint_velocity_error_rad_s": 0.000990816019752915
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 0.9,
+      "prediction_s": 0.02,
+      "calibration": {
+        "plane_offset_m": 3.373146057128907e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.959518432617188,
+        "calibrated_normal_load_N": 17.95948550432009,
+        "normal_load_residual_N": -3.292829709877765e-05,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007802788997651078
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.0062897592086697965,
+        "attitude_tangent_error_deg": 0.0019519313548794093,
+        "linear_velocity_error_m_s": 0.0003424179278713232,
+        "angular_velocity_error_rad_s": 0.0018393695124370498,
+        "joint_velocity_error_rad_s": 0.0015067413673630855
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0062331641489445306,
+        "attitude_tangent_error_deg": 0.0019345007905718576,
+        "linear_velocity_error_m_s": 0.00033399422862073844,
+        "angular_velocity_error_rad_s": 0.0017997074912413848,
+        "joint_velocity_error_rad_s": 0.00164558226131435
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 0.9,
+      "prediction_s": 0.1,
+      "calibration": {
+        "plane_offset_m": 3.373146057128907e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.959518432617188,
+        "calibrated_normal_load_N": 17.95948550432009,
+        "normal_load_residual_N": -3.292829709877765e-05,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007802788997651078
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.036420867768990464,
+        "attitude_tangent_error_deg": 0.01092163034318527,
+        "linear_velocity_error_m_s": 0.0019163809588514523,
+        "angular_velocity_error_rad_s": 0.007472171424408812,
+        "joint_velocity_error_rad_s": 0.033405078054941605
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.035373214904854004,
+        "attitude_tangent_error_deg": 0.01031547947538844,
+        "linear_velocity_error_m_s": 0.0020149235867106645,
+        "angular_velocity_error_rad_s": 0.007763112450825681,
+        "joint_velocity_error_rad_s": 0.03293055361847074
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 1.0,
+      "prediction_s": 0.005,
+      "calibration": {
+        "plane_offset_m": 3.8063049316406256e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 18.070520401000977,
+        "calibrated_normal_load_N": 18.070625947243215,
+        "normal_load_residual_N": 0.00010554624223857445,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.00787267600026098
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.0031003438582036646,
+        "attitude_tangent_error_deg": 0.0007526511341319743,
+        "linear_velocity_error_m_s": 0.0009105245816914553,
+        "angular_velocity_error_rad_s": 0.0038349979584533433,
+        "joint_velocity_error_rad_s": 0.014425723997715639
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0031003504726756876,
+        "attitude_tangent_error_deg": 0.0007526526305307321,
+        "linear_velocity_error_m_s": 0.0009105279001667953,
+        "angular_velocity_error_rad_s": 0.0038350091966477015,
+        "joint_velocity_error_rad_s": 0.014425718100527894
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 1.0,
+      "prediction_s": 0.02,
+      "calibration": {
+        "plane_offset_m": 3.8063049316406256e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 18.070520401000977,
+        "calibrated_normal_load_N": 18.070625947243215,
+        "normal_load_residual_N": 0.00010554624223857445,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.00787267600026098
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.030227984625067626,
+        "attitude_tangent_error_deg": 0.007737204883925297,
+        "linear_velocity_error_m_s": 0.0026119351243311705,
+        "angular_velocity_error_rad_s": 0.012169056486157279,
+        "joint_velocity_error_rad_s": 0.04361113537015781
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.02994377444950524,
+        "attitude_tangent_error_deg": 0.007708478594540575,
+        "linear_velocity_error_m_s": 0.002585506970791381,
+        "angular_velocity_error_rad_s": 0.012183472661140194,
+        "joint_velocity_error_rad_s": 0.04391124845469551
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 1.0,
+      "prediction_s": 0.1,
+      "calibration": {
+        "plane_offset_m": 3.8063049316406256e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 18.070520401000977,
+        "calibrated_normal_load_N": 18.070625947243215,
+        "normal_load_residual_N": 0.00010554624223857445,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.00787267600026098
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.3739690599935061,
+        "attitude_tangent_error_deg": 0.10742110354206279,
+        "linear_velocity_error_m_s": 0.004515326368693413,
+        "angular_velocity_error_rad_s": 0.02606744943948344,
+        "joint_velocity_error_rad_s": 0.06388359731327797
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.36628428434988497,
+        "attitude_tangent_error_deg": 0.1063546278124302,
+        "linear_velocity_error_m_s": 0.004315719688788468,
+        "angular_velocity_error_rad_s": 0.025042031338153498,
+        "joint_velocity_error_rad_s": 0.06138277445275717
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 1.2,
+      "prediction_s": 0.005,
+      "calibration": {
+        "plane_offset_m": 3.3788681030273444e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.96661949157715,
+        "calibrated_normal_load_N": 17.96647315212418,
+        "normal_load_residual_N": -0.00014633945296793627,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007259889000124531
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.001268645051713668,
+        "attitude_tangent_error_deg": 0.00039251723765285816,
+        "linear_velocity_error_m_s": 0.00032428931319650986,
+        "angular_velocity_error_rad_s": 0.0017513942420052688,
+        "joint_velocity_error_rad_s": 0.0006925784790894727
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0012686455097284824,
+        "attitude_tangent_error_deg": 0.0003925173922604089,
+        "linear_velocity_error_m_s": 0.00032428958570906833,
+        "angular_velocity_error_rad_s": 0.0017513958454921103,
+        "joint_velocity_error_rad_s": 0.0006925792452365689
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 1.2,
+      "prediction_s": 0.02,
+      "calibration": {
+        "plane_offset_m": 3.3788681030273444e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.96661949157715,
+        "calibrated_normal_load_N": 17.96647315212418,
+        "normal_load_residual_N": -0.00014633945296793627,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007259889000124531
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.006640907340791765,
+        "attitude_tangent_error_deg": 0.0020625064758007564,
+        "linear_velocity_error_m_s": 0.00037086347517836717,
+        "angular_velocity_error_rad_s": 0.0020016216733682326,
+        "joint_velocity_error_rad_s": 0.0006116632540377134
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0072627802462834875,
+        "attitude_tangent_error_deg": 0.0022520145622122643,
+        "linear_velocity_error_m_s": 0.0004738711144460005,
+        "angular_velocity_error_rad_s": 0.002502025309152305,
+        "joint_velocity_error_rad_s": 0.0010097286583796749
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 1.2,
+      "prediction_s": 0.1,
+      "calibration": {
+        "plane_offset_m": 3.3788681030273444e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.96661949157715,
+        "calibrated_normal_load_N": 17.96647315212418,
+        "normal_load_residual_N": -0.00014633945296793627,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007259889000124531
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.03745763734373008,
+        "attitude_tangent_error_deg": 0.012313635189282808,
+        "linear_velocity_error_m_s": 0.0003961372128326852,
+        "angular_velocity_error_rad_s": 0.0024566160747895444,
+        "joint_velocity_error_rad_s": 0.00044636920430708667
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.14481564550434065,
+        "attitude_tangent_error_deg": 0.04573857629239388,
+        "linear_velocity_error_m_s": 0.003480115832845297,
+        "angular_velocity_error_rad_s": 0.019470005957121277,
+        "joint_velocity_error_rad_s": 0.023760634716059832
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 1.4,
+      "prediction_s": 0.005,
+      "calibration": {
+        "plane_offset_m": 3.3903121948242185e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.971223831176758,
+        "calibrated_normal_load_N": 17.971363609874683,
+        "normal_load_residual_N": 0.00013977869792469733,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007810594001057325
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.0010791234430889895,
+        "attitude_tangent_error_deg": 0.00033685176558668583,
+        "linear_velocity_error_m_s": 0.00027476086563728053,
+        "angular_velocity_error_rad_s": 0.0014976639783449883,
+        "joint_velocity_error_rad_s": 0.002732255525533772
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0010791234063088696,
+        "attitude_tangent_error_deg": 0.0003368517622710645,
+        "linear_velocity_error_m_s": 0.000274760843879679,
+        "angular_velocity_error_rad_s": 0.0014976639441302683,
+        "joint_velocity_error_rad_s": 0.002732255233056681
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 1.4,
+      "prediction_s": 0.02,
+      "calibration": {
+        "plane_offset_m": 3.3903121948242185e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.971223831176758,
+        "calibrated_normal_load_N": 17.971363609874683,
+        "normal_load_residual_N": 0.00013977869792469733,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007810594001057325
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.005655029662716582,
+        "attitude_tangent_error_deg": 0.0017842466370876784,
+        "linear_velocity_error_m_s": 0.000313662258644759,
+        "angular_velocity_error_rad_s": 0.0017294837343110388,
+        "joint_velocity_error_rad_s": 0.002755833906926413
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.00577567113122732,
+        "attitude_tangent_error_deg": 0.0017842152342227996,
+        "linear_velocity_error_m_s": 0.0003385704332727432,
+        "angular_velocity_error_rad_s": 0.0017105865494634052,
+        "joint_velocity_error_rad_s": 0.003068530608460548
+      }
+    },
+    {
+      "direction": "world_x",
+      "anchor_time_s": 1.4,
+      "prediction_s": 0.1,
+      "calibration": {
+        "plane_offset_m": 3.3903121948242185e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.971223831176758,
+        "calibrated_normal_load_N": 17.971363609874683,
+        "normal_load_residual_N": 0.00013977869792469733,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007810594001057325
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.032069535212835704,
+        "attitude_tangent_error_deg": 0.010776956334761174,
+        "linear_velocity_error_m_s": 0.0003582240304490637,
+        "angular_velocity_error_rad_s": 0.002255186686337034,
+        "joint_velocity_error_rad_s": 0.0027279712432768245
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.06086220785026875,
+        "attitude_tangent_error_deg": 0.014755144022103902,
+        "linear_velocity_error_m_s": 0.0011647378272503191,
+        "angular_velocity_error_rad_s": 0.0028649618959115854,
+        "joint_velocity_error_rad_s": 0.012036028776000556
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 0.8,
+      "prediction_s": 0.005,
+      "calibration": {
+        "plane_offset_m": 3.376579284667969e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.96871566772461,
+        "calibrated_normal_load_N": 17.968732408570876,
+        "normal_load_residual_N": 1.6740846266571907e-05,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.00693545000103768
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.0012305620320366023,
+        "attitude_tangent_error_deg": 0.00038132600182712973,
+        "linear_velocity_error_m_s": 0.00031442542934072856,
+        "angular_velocity_error_rad_s": 0.0016971763410202321,
+        "joint_velocity_error_rad_s": 1.6712940651028388e-05
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0012305621347560405,
+        "attitude_tangent_error_deg": 0.0003813260393404744,
+        "linear_velocity_error_m_s": 0.0003144254904911453,
+        "angular_velocity_error_rad_s": 0.0016971767296958648,
+        "joint_velocity_error_rad_s": 1.6712936638346505e-05
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 0.8,
+      "prediction_s": 0.02,
+      "calibration": {
+        "plane_offset_m": 3.376579284667969e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.96871566772461,
+        "calibrated_normal_load_N": 17.968732408570876,
+        "normal_load_residual_N": 1.6740846266571907e-05,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.00693545000103768
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.006474009084686906,
+        "attitude_tangent_error_deg": 0.0019576564341620287,
+        "linear_velocity_error_m_s": 0.000386515360784604,
+        "angular_velocity_error_rad_s": 0.0019564587212016872,
+        "joint_velocity_error_rad_s": 0.0006340481747664239
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.006925543659694514,
+        "attitude_tangent_error_deg": 0.002104135216369404,
+        "linear_velocity_error_m_s": 0.0005115000401783574,
+        "angular_velocity_error_rad_s": 0.002660181905569264,
+        "joint_velocity_error_rad_s": 0.0005856559674215089
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 0.8,
+      "prediction_s": 0.1,
+      "calibration": {
+        "plane_offset_m": 3.376579284667969e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.96871566772461,
+        "calibrated_normal_load_N": 17.968732408570876,
+        "normal_load_residual_N": 1.6740846266571907e-05,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.00693545000103768
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.039790076160812565,
+        "attitude_tangent_error_deg": 0.012500507765655396,
+        "linear_velocity_error_m_s": 0.00040072391548155555,
+        "angular_velocity_error_rad_s": 0.002406530574849972,
+        "joint_velocity_error_rad_s": 0.0017307036126886694
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.21952013752735544,
+        "attitude_tangent_error_deg": 0.07071263750818083,
+        "linear_velocity_error_m_s": 0.004545526539197001,
+        "angular_velocity_error_rad_s": 0.02544175462398512,
+        "joint_velocity_error_rad_s": 0.007229065081090484
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 0.9,
+      "prediction_s": 0.005,
+      "calibration": {
+        "plane_offset_m": 3.4029006958007815e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.98358726501465,
+        "calibrated_normal_load_N": 17.983744799259963,
+        "normal_load_residual_N": 0.00015753424531439464,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007068163999065291
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.0014890669058796545,
+        "attitude_tangent_error_deg": 0.00046050918954184755,
+        "linear_velocity_error_m_s": 0.0003796999771317559,
+        "angular_velocity_error_rad_s": 0.002049260996533356,
+        "joint_velocity_error_rad_s": 0.0007711723831808687
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.001489066799357912,
+        "attitude_tangent_error_deg": 0.0004605091845084637,
+        "linear_velocity_error_m_s": 0.0003796999142947923,
+        "angular_velocity_error_rad_s": 0.002049260943035806,
+        "joint_velocity_error_rad_s": 0.0007711722590574663
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 0.9,
+      "prediction_s": 0.02,
+      "calibration": {
+        "plane_offset_m": 3.4029006958007815e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.98358726501465,
+        "calibrated_normal_load_N": 17.983744799259963,
+        "normal_load_residual_N": 0.00015753424531439464,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007068163999065291
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.007466266240020204,
+        "attitude_tangent_error_deg": 0.002318885571471316,
+        "linear_velocity_error_m_s": 0.00039636964843131774,
+        "angular_velocity_error_rad_s": 0.0021431150051910994,
+        "joint_velocity_error_rad_s": 0.0008768733724491269
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.007093234198401673,
+        "attitude_tangent_error_deg": 0.002209288803269211,
+        "linear_velocity_error_m_s": 0.0003402864256753202,
+        "angular_velocity_error_rad_s": 0.0018525562958327992,
+        "joint_velocity_error_rad_s": 0.0009688156935565179
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 0.9,
+      "prediction_s": 0.1,
+      "calibration": {
+        "plane_offset_m": 3.4029006958007815e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.98358726501465,
+        "calibrated_normal_load_N": 17.983744799259963,
+        "normal_load_residual_N": 0.00015753424531439464,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.007068163999065291
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.036800933607531616,
+        "attitude_tangent_error_deg": 0.012140518679069345,
+        "linear_velocity_error_m_s": 0.0003632171464539608,
+        "angular_velocity_error_rad_s": 0.0022885068544989634,
+        "joint_velocity_error_rad_s": 0.0003705346599827538
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0026697515219052483,
+        "attitude_tangent_error_deg": 0.003046275343071394,
+        "linear_velocity_error_m_s": 7.114397738187814e-05,
+        "angular_velocity_error_rad_s": 0.0012626363083430303,
+        "joint_velocity_error_rad_s": 0.005112640730083774
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.0,
+      "prediction_s": 0.005,
+      "calibration": {
+        "plane_offset_m": 3.382301330566407e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 18.00242805480957,
+        "calibrated_normal_load_N": 18.00253230217213,
+        "normal_load_residual_N": 0.00010424736256098299,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.009336292001535185
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.0013917105316815673,
+        "attitude_tangent_error_deg": 0.00043142660271331816,
+        "linear_velocity_error_m_s": 0.00035611088169039667,
+        "angular_velocity_error_rad_s": 0.0019273357349141873,
+        "joint_velocity_error_rad_s": 0.001597644325841147
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0013917145026661206,
+        "attitude_tangent_error_deg": 0.0004314281051548167,
+        "linear_velocity_error_m_s": 0.0003561132559083959,
+        "angular_velocity_error_rad_s": 0.0019273513415236682,
+        "joint_velocity_error_rad_s": 0.001597656185745796
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.0,
+      "prediction_s": 0.02,
+      "calibration": {
+        "plane_offset_m": 3.382301330566407e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 18.00242805480957,
+        "calibrated_normal_load_N": 18.00253230217213,
+        "normal_load_residual_N": 0.00010424736256098299,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.009336292001535185
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.006976032966835696,
+        "attitude_tangent_error_deg": 0.002173986944289309,
+        "linear_velocity_error_m_s": 0.00036728422532421995,
+        "angular_velocity_error_rad_s": 0.00199632540651607,
+        "joint_velocity_error_rad_s": 0.0015896994227562163
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.006797113606465644,
+        "attitude_tangent_error_deg": 0.0021095617972446317,
+        "linear_velocity_error_m_s": 0.00032255992815294983,
+        "angular_velocity_error_rad_s": 0.0017313168014306945,
+        "joint_velocity_error_rad_s": 0.0013906776855852464
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.0,
+      "prediction_s": 0.1,
+      "calibration": {
+        "plane_offset_m": 3.382301330566407e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 18.00242805480957,
+        "calibrated_normal_load_N": 18.00253230217213,
+        "normal_load_residual_N": 0.00010424736256098299,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.009336292001535185
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.032861966526232904,
+        "attitude_tangent_error_deg": 0.01094483516601418,
+        "linear_velocity_error_m_s": 0.00030377423908155873,
+        "angular_velocity_error_rad_s": 0.0019667161620285987,
+        "joint_velocity_error_rad_s": 0.0008537401664475571
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.025251968164279315,
+        "attitude_tangent_error_deg": 0.008259246247769018,
+        "linear_velocity_error_m_s": 0.0011315922570773703,
+        "angular_velocity_error_rad_s": 0.006018246973285678,
+        "joint_velocity_error_rad_s": 0.00618242005464911
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.2,
+      "prediction_s": 0.005,
+      "calibration": {
+        "plane_offset_m": 3.369712829589844e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.971948623657227,
+        "calibrated_normal_load_N": 17.97194964773474,
+        "normal_load_residual_N": 1.0240775125680557e-06,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.006793753000238212
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.0011576550129832623,
+        "attitude_tangent_error_deg": 0.00035878784952964,
+        "linear_velocity_error_m_s": 0.00029570574569022447,
+        "angular_velocity_error_rad_s": 0.001603381633940879,
+        "joint_velocity_error_rad_s": 0.0016329534226503092
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0011576550123530616,
+        "attitude_tangent_error_deg": 0.00035878784935519187,
+        "linear_velocity_error_m_s": 0.00029570574533652704,
+        "angular_velocity_error_rad_s": 0.0016033816328152228,
+        "joint_velocity_error_rad_s": 0.001632953403316433
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.2,
+      "prediction_s": 0.02,
+      "calibration": {
+        "plane_offset_m": 3.369712829589844e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.971948623657227,
+        "calibrated_normal_load_N": 17.97194964773474,
+        "normal_load_residual_N": 1.0240775125680557e-06,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.006793753000238212
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.006013131819342643,
+        "attitude_tangent_error_deg": 0.0018776511640420188,
+        "linear_velocity_error_m_s": 0.0003324506905758611,
+        "angular_velocity_error_rad_s": 0.0018010039496968446,
+        "joint_velocity_error_rad_s": 0.0022646785387663254
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.006024441120552269,
+        "attitude_tangent_error_deg": 0.0018797378448549768,
+        "linear_velocity_error_m_s": 0.00033713864911811024,
+        "angular_velocity_error_rad_s": 0.001805549077974266,
+        "joint_velocity_error_rad_s": 0.0021189206916718416
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.2,
+      "prediction_s": 0.1,
+      "calibration": {
+        "plane_offset_m": 3.369712829589844e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.971948623657227,
+        "calibrated_normal_load_N": 17.97194964773474,
+        "normal_load_residual_N": 1.0240775125680557e-06,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.006793753000238212
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.032533420100250524,
+        "attitude_tangent_error_deg": 0.010764349798057066,
+        "linear_velocity_error_m_s": 0.00032288438802964656,
+        "angular_velocity_error_rad_s": 0.002034605645041783,
+        "joint_velocity_error_rad_s": 0.0012832882960394129
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.07453331545637978,
+        "attitude_tangent_error_deg": 0.026607639786103914,
+        "linear_velocity_error_m_s": 0.001549976075584705,
+        "angular_velocity_error_rad_s": 0.009699956240933413,
+        "joint_velocity_error_rad_s": 0.004802749321815325
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.4,
+      "prediction_s": 0.005,
+      "calibration": {
+        "plane_offset_m": 3.342819213867188e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.85129737854004,
+        "calibrated_normal_load_N": 17.85117359066791,
+        "normal_load_residual_N": -0.00012378787213052078,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.01016937700114795
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.0013346784255700473,
+        "attitude_tangent_error_deg": 0.00041474735323180896,
+        "linear_velocity_error_m_s": 0.00034583081585046584,
+        "angular_velocity_error_rad_s": 0.001877547456501141,
+        "joint_velocity_error_rad_s": 0.0018704538392084389
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.0013346788279027498,
+        "attitude_tangent_error_deg": 0.00041474748007248007,
+        "linear_velocity_error_m_s": 0.00034583105688819007,
+        "angular_velocity_error_rad_s": 0.001877548778865927,
+        "joint_velocity_error_rad_s": 0.0018704556338227337
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.4,
+      "prediction_s": 0.02,
+      "calibration": {
+        "plane_offset_m": 3.342819213867188e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.85129737854004,
+        "calibrated_normal_load_N": 17.85117359066791,
+        "normal_load_residual_N": -0.00012378787213052078,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.01016937700114795
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.007326862321377848,
+        "attitude_tangent_error_deg": 0.0022962906327345252,
+        "linear_velocity_error_m_s": 0.0004220117915133824,
+        "angular_velocity_error_rad_s": 0.0022914933433388,
+        "joint_velocity_error_rad_s": 0.002867916334556217
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.008189852198512237,
+        "attitude_tangent_error_deg": 0.0025186334764038102,
+        "linear_velocity_error_m_s": 0.0005176751889166469,
+        "angular_velocity_error_rad_s": 0.00264969958864019,
+        "joint_velocity_error_rad_s": 0.0021146854300320545
+      }
+    },
+    {
+      "direction": "world_y",
+      "anchor_time_s": 1.4,
+      "prediction_s": 0.1,
+      "calibration": {
+        "plane_offset_m": 3.342819213867188e-05,
+        "plane_offset_bound_m": 0.003,
+        "estimated_normal_load_N": 17.85129737854004,
+        "calibrated_normal_load_N": 17.85117359066791,
+        "normal_load_residual_N": -0.00012378787213052078,
+        "load_fit_bracketed": true,
+        "load_fit_within_tolerance": true,
+        "predicted_contact_count": 1,
+        "private_input_clipping": false,
+        "plane_update_s": 0.01016937700114795
+      },
+      "nonlinear": {
+        "xy_position_error_mm": 0.2529141115724542,
+        "attitude_tangent_error_deg": 0.07077950086984189,
+        "linear_velocity_error_m_s": 0.006356677343157477,
+        "angular_velocity_error_rad_s": 0.03154296883334993,
+        "joint_velocity_error_rad_s": 0.08362891430113144
+      },
+      "frozen_affine": {
+        "xy_position_error_mm": 0.25530942879097174,
+        "attitude_tangent_error_deg": 0.07970514413503672,
+        "linear_velocity_error_m_s": 0.006436558491063488,
+        "angular_velocity_error_rad_s": 0.03937938628497743,
+        "joint_velocity_error_rad_s": 0.1153857957918995
+      }
+    }
+  ]
+}

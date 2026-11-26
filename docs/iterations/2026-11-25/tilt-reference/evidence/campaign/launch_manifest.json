@@ -1,0 +1,87 @@
+{
+  "iteration": "I-43",
+  "declared_before_processes_utc": "2026-11-26T04:40:47.788322+00:00",
+  "stage": "main",
+  "source_lock_sha256": "106beef48b15bfc0fecb2eb0fc058487dc6ecc6be5bcba3c014110f5dc3e3ca1",
+  "protocol_sha256": "ea3fc0ecb988b5388ebbe8d2b1b84c30b2f1cf8397eedc5596e9966e4908f3f3",
+  "max_concurrent_processes": 3,
+  "environment_removed": [
+    "PYTHONPATH",
+    "LD_LIBRARY_PATH",
+    "AMENT_PREFIX_PATH",
+    "CMAKE_PREFIX_PATH",
+    "COLCON_PREFIX_PATH"
+  ],
+  "MAMBA_ROOT_PREFIX": "/home/parrwnago/active-spherical-wheel/build/mamba",
+  "jobs": [
+    {
+      "id": "baseline",
+      "arm": "baseline",
+      "case": null,
+      "command_argv": [
+        "/home/parrwnago/active-spherical-wheel/build/tools/bin/micromamba",
+        "run",
+        "-p",
+        "/home/parrwnago/active-spherical-wheel/build/gazebo-env",
+        "env",
+        "MUJOCO_GL=egl",
+        "OPENBLAS_NUM_THREADS=1",
+        "OMP_NUM_THREADS=1",
+        "python",
+        "-u",
+        "/home/parrwnago/active-spherical-wheel/results/tilt_reference_20261125/run_tilt_reference.py",
+        "--output",
+        "/home/parrwnago/active-spherical-wheel/results/tilt_reference_20261125",
+        "--arm",
+        "baseline"
+      ],
+      "log": "results/tilt_reference_20261125/campaign/logs/baseline.log"
+    },
+    {
+      "id": "angle_only",
+      "arm": "angle_only",
+      "case": null,
+      "command_argv": [
+        "/home/parrwnago/active-spherical-wheel/build/tools/bin/micromamba",
+        "run",
+        "-p",
+        "/home/parrwnago/active-spherical-wheel/build/gazebo-env",
+        "env",
+        "MUJOCO_GL=egl",
+        "OPENBLAS_NUM_THREADS=1",
+        "OMP_NUM_THREADS=1",
+        "python",
+        "-u",
+        "/home/parrwnago/active-spherical-wheel/results/tilt_reference_20261125/run_tilt_reference.py",
+        "--output",
+        "/home/parrwnago/active-spherical-wheel/results/tilt_reference_20261125",
+        "--arm",
+        "angle_only"
+      ],
+      "log": "results/tilt_reference_20261125/campaign/logs/angle_only.log"
+    },
+    {
+      "id": "consistent_rate",
+      "arm": "consistent_rate",
+      "case": null,
+      "command_argv": [
+        "/home/parrwnago/active-spherical-wheel/build/tools/bin/micromamba",
+        "run",
+        "-p",
+        "/home/parrwnago/active-spherical-wheel/build/gazebo-env",
+        "env",
+        "MUJOCO_GL=egl",
+        "OPENBLAS_NUM_THREADS=1",
+        "OMP_NUM_THREADS=1",
+        "python",
+        "-u",
+        "/home/parrwnago/active-spherical-wheel/results/tilt_reference_20261125/run_tilt_reference.py",
+        "--output",
+        "/home/parrwnago/active-spherical-wheel/results/tilt_reference_20261125",
+        "--arm",
+        "consistent_rate"
+      ],
+      "log": "results/tilt_reference_20261125/campaign/logs/consistent_rate.log"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{"direction": "world_y", "time_s": 1.3999999999999921, "verified": false, "selected": "fixed_analytic_pose_best_found_input", "hold": {"xy_drift_m": 0.0015127857969900935, "rotation_drift_rad": 0.010612791776731021, "body_speed_m_s": 0.01818058106263531, "body_rate_rad_s": 0.13415130677101064, "joint_rate_rad_s": 0.4156989653717545}, "max_qacc": 0.47759396350993405, "failed_gates": ["xy_drift", "rotation_drift", "body_speed", "body_rate", "joint_rate"]}
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/scripts/audit-mpc-equilibrium.py", line 81, in <module>
+    main()
+  File "/home/parrwnago/active-spherical-wheel/scripts/audit-mpc-equilibrium.py", line 69, in main
+    (OUTPUT/'report.json').write_text(json.dumps({'status': 'audit_in_progress', 'settings': asdict(settings),
+  File "/usr/lib/python3.10/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+  File "/usr/lib/python3.10/json/encoder.py", line 201, in encode
+    chunks = list(chunks)
+  File "/usr/lib/python3.10/json/encoder.py", line 431, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.10/json/encoder.py", line 325, in _iterencode_list
+    yield from chunks
+  File "/usr/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.10/json/encoder.py", line 325, in _iterencode_list
+    yield from chunks
+  File "/usr/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.10/json/encoder.py", line 438, in _iterencode
+    o = _default(o)
+  File "/usr/lib/python3.10/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bool_ is not JSON serializable

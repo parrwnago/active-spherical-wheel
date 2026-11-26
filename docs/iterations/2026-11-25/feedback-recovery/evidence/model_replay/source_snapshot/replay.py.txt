@@ -1,0 +1,135 @@
+"""Replay actual later MPC inputs on each saved estimated plane; no Gazebo run."""
+from pathlib import Path
+from datetime import datetime, timezone
+import hashlib
+import json
+import traceback
+
+import mujoco
+import numpy as np
+
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.model import REPO_ROOT
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+
+HERE = Path(__file__).resolve().parent
+FAMILY = HERE.parent
+RUN = FAMILY/'runs/slope/mpc'
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    if (HERE/'report.json').exists():
+        raise FileExistsError('Preserve earlier replay report; choose a fresh stage')
+    sources = [Path(__file__), REPO_ROOT/'src/spherical_wheel/predictive_model.py',
+               REPO_ROOT/'src/spherical_wheel/mirror.py', FAMILY/'model_replay_protocol.json']
+    snapshot = HERE/'source_snapshot'
+    snapshot.mkdir(exist_ok=True)
+    recorded = []
+    for path in sources:
+        target = snapshot/path.name
+        if target.exists():
+            raise FileExistsError('Replay snapshot already exists; use a fresh stage')
+        target.write_bytes(path.read_bytes())
+        recorded.append({'origin': str(path.relative_to(REPO_ROOT)), 'snapshot': str(target.relative_to(HERE)), 'sha256': digest(path)})
+    provenance = {'captured_before_audit_utc': datetime.now(timezone.utc).isoformat(),
+                  'scope': 'Private estimated-plane actual-input replay; reused completed Gazebo rollout, no new Gazebo or controller run.',
+                  'sources': recorded,
+                  'inputs': {str(path.relative_to(REPO_ROOT)): digest(path) for path in [RUN/'plans.json', RUN/'precision.npz', RUN/'rollout.npz', RUN/'provenance.json']}}
+    (HERE/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
+    protocol = json.loads((FAMILY/'model_replay_protocol.json').read_text())
+    plans = json.loads((RUN/'plans.json').read_text())
+    with np.load(RUN/'precision.npz') as data:
+        exact = {key: data[key] for key in data}
+    with np.load(RUN/'rollout.npz') as data:
+        log = {key: data[key] for key in data}
+    original_provenance = json.loads((RUN/'provenance.json').read_text())
+    for relative in ('src/spherical_wheel/predictive_model.py', 'src/spherical_wheel/mirror.py'):
+        assert digest(REPO_ROOT/relative) == original_provenance['source_sha256'][relative], relative
+    mirror = StateMirror(model_dir=HERE/'private_model')
+    predictor = EstimatedPlanePredictor(mirror)
+    results = []
+    for requested in protocol['anchors_s']:
+        plan = min(plans, key=lambda row: abs(row['time_s']-requested))
+        assert abs(plan['time_s']-requested) < 1e-8
+        i = int(np.argmin(abs(exact['time_s']-plan['time_s'])))
+        q0, v0 = np.array(plan['qpos']), np.array(plan['qvel'])
+        np.testing.assert_array_equal(q0, exact['exact_qpos'][i])
+        np.testing.assert_array_equal(v0, exact['exact_qvel'][i])
+        preceding = exact['exact_applied'][i-1]
+        mirror.set_state(q0, v0, plan['time_s'], preceding)
+        calibration = predictor.update(q0, v0, plan['normal'], plan['point_m'], plan['load_N'],
+            friction=float(log['estimated_friction'][i]), command=preceding)
+        assert abs(calibration['plane_offset_m']-plan['calibration']['plane_offset_m']) <= 1e-12
+        max_steps = int(round(max(protocol['horizons_s'])/.02))
+        commands = []
+        for stage in range(max_steps):
+            held = exact['exact_applied'][i+4*stage:i+4*(stage+1)]
+            assert held.shape == (4, 5)
+            np.testing.assert_array_equal(held, np.tile(held[0], (4, 1)))
+            commands.append(held[0])
+        poses, velocities = predictor.rollout(q0, v0, commands, .02)
+        errors = []
+        for horizon in protocol['horizons_s']:
+            stage = int(round(horizon/.02))
+            truth_i = i+4*stage
+            assert abs(exact['time_s'][truth_i]-(plan['time_s']+horizon)) < 1e-8
+            truth_q, truth_v = exact['exact_qpos'][truth_i], exact['exact_qvel'][truth_i]
+            diff = np.zeros(9)
+            mujoco.mj_differentiatePos(predictor.model, diff, 1., truth_q, poses[stage])
+            errors.append({'horizon_s': horizon,
+                'xy_error_mm': float(1000*np.linalg.norm(poses[stage][:2]-truth_q[:2])),
+                'rotation_error_deg': float(np.degrees(np.linalg.norm(diff[3:6]))),
+                'linear_body_velocity_error_mm_s': float(1000*np.linalg.norm(velocities[stage][:3]-truth_v[:3])),
+                'angular_body_velocity_error_rad_s': float(np.linalg.norm(velocities[stage][3:6]-truth_v[3:6])),
+                'joint_velocity_error_rad_s_max': float(np.max(abs(velocities[stage][6:9]-truth_v[6:9]))),
+                'predicted_qpos': poses[stage].tolist(), 'predicted_qvel': velocities[stage].tolist(),
+                'actual_qpos': truth_q.tolist(), 'actual_qvel': truth_v.tolist()})
+        goal = exact['recovery_goal_xy'][i]
+        terminal = np.array(plan['nonlinear_states'][-1])
+        predicted_goal_q, _ = predictor.perturb(q0, v0, terminal)
+        initial_distance = float(np.linalg.norm(q0[:2]-goal)*1000)
+        predicted_distance = float(np.linalg.norm(predicted_goal_q[:2]-goal)*1000)
+        row = {'anchor_s': plan['time_s'], 'precision_index': i, 'calibration': calibration,
+               'calibration_offset_matches_saved_plan': True,
+               'all_actual_20ms_inputs_held_for_4x5ms_samples': True,
+               'actual_commands': np.asarray(commands).tolist(), 'errors': errors,
+               'selected_plan_forecast': {'scope': 'Own selected 0.4s nonlinear forecast, distinct from actual-input replay',
+                   'goal_distance_start_mm': initial_distance,
+                   'goal_distance_predicted_terminal_mm': predicted_distance,
+                   'predicted_distance_change_mm': predicted_distance-initial_distance,
+                   'predicts_net_retreat': predicted_distance > initial_distance,
+                   'selected_source': plan['command_source']}}
+        results.append(row)
+        print(json.dumps({'anchor_s': requested, 'errors': [{k:v for k,v in e.items() if not isinstance(v,list)} for e in errors],
+                          'forecast': row['selected_plan_forecast']}), flush=True)
+    aggregates = []
+    for horizon in protocol['horizons_s']:
+        selected = [next(e for e in row['errors'] if e['horizon_s'] == horizon) for row in results]
+        stats = {'horizon_s': horizon, 'anchors': len(selected)}
+        for key in ('xy_error_mm', 'rotation_error_deg', 'linear_body_velocity_error_mm_s', 'angular_body_velocity_error_rad_s'):
+            values = np.array([e[key] for e in selected])
+            stats[key] = {'median': float(np.median(values)), 'max': float(np.max(values))}
+        aggregates.append(stats)
+    report = {'status': 'completed', 'scope': provenance['scope'], 'protocol': protocol,
+              'rows': results, 'aggregate_over_six_declared_anchors': aggregates,
+              'limitations': ['Actual-input replay does not validate optimized plan quality or state/input Jacobians.',
+                              'One frozen support plane per anchor, no support injection or plane refitting at future states.',
+                              'Six selected anchors are not a broad model qualification and do not identify the sole cause of failed recovery.']}
+    (HERE/'report.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
+    np.savez_compressed(HERE/'replayed_states.npz',
+        anchor_s=np.array([row['anchor_s'] for row in results]),
+        predicted_qpos=np.array([[e['predicted_qpos'] for e in row['errors']] for row in results]),
+        predicted_qvel=np.array([[e['predicted_qvel'] for e in row['errors']] for row in results]))
+    print(json.dumps({'aggregate': aggregates}), flush=True)
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except Exception:
+        (HERE/'failure.txt').write_text(traceback.format_exc())
+        raise

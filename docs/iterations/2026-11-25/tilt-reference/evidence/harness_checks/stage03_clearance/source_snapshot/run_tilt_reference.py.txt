@@ -1,0 +1,368 @@
+"""I43 observer-only tilt-reference campaign; one fresh process per arm/case.
+
+Controller calls remain guarded against solved contacts and terrain. Simulator
+truth is acquired only by the existing evaluator after each guarded command.
+Raw-reference summaries are pure reductions of these same physical histories.
+"""
+from contextlib import ExitStack
+from datetime import datetime, timezone
+from importlib.metadata import version
+from pathlib import Path
+from unittest.mock import patch
+import argparse
+import copy
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import traceback
+import types
+
+import mujoco
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+ARMS = ('baseline', 'angle_only', 'consistent_rate')
+PROTOCOL_SHA = 'ea3fc0ecb988b5388ebbe8d2b1b84c30b2f1cf8397eedc5596e9966e4908f3f3'
+ALLOWED_RUNTIME_CHANGES = {'src/spherical_wheel/offroad_control.py'}
+DIAGNOSTIC_FIELDS = ('raw_theta_rad','theta_rad','z_rad','held_raw_theta_rad','theta_dot_rad_s',
+    'theta_ddot_rad_s2','raw_reference_quat','shaped_reference_quat',
+    'angular_velocity_equilibrium_rad_s','angular_velocity_world_rad_s',
+    'angular_velocity_body_rad_s','used_angular_velocity_body_rad_s')
+CHECK_SOURCE_EXTENSIONS = {'.py','.json','.log','.txt','.md','.yaml','.yml'}
+CHECK_SKIP_DIRECTORIES = {'__pycache__','.pytest_cache','_workspaces','workspaces','workspace',
+    '_forecast_workspaces','_geometry_workspace','_geometry_workspaces','geometry_workspace',
+    'geometry','meshes','models','model','generated','assets','source_snapshot','source_snapshots','pre_change'}
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def safe(value):
+    if isinstance(value, Path):return str(value)
+    if isinstance(value, dict):return {str(k):safe(v) for k,v in value.items()}
+    if isinstance(value, (tuple,list)):return [safe(v) for v in value]
+    if isinstance(value, np.ndarray):return safe(value.tolist())
+    if isinstance(value, np.generic):return safe(value.item())
+    if isinstance(value, float) and not np.isfinite(value):return None
+    return value
+
+
+def save(path,value):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text(json.dumps(safe(value),indent=2,allow_nan=False)+'\n')
+
+
+def digest(value):
+    return hashlib.sha256(json.dumps(safe(value),sort_keys=True,allow_nan=False).encode()).hexdigest()
+
+
+def load_helper():
+    path = ROOT/'scripts/run-lqr-contact-forecast.py'
+    helper = types.ModuleType('i43_unchanged_I40_helper'); helper.__file__ = str(path)
+    exec(compile(path.read_text(),str(path),'exec'),helper.__dict__)
+    return helper
+
+
+def state_of(controller):
+    generator = controller._tilt_reference
+    return None if generator is None else copy.deepcopy(generator.state_dict())
+
+
+def native_fingerprint(controller,helper):
+    extra = {name:getattr(controller,name) for name in
+             ('_plane','_slow_normal','_fall_end','_yaw_error','heading_reference')}
+    return digest({'I40_native_base_sha256':helper.controller_fingerprint(controller),
+        'entire_estimator_state':vars(controller.estimator),'controller_extra_history':extra,
+        'synchronizer_plane':controller.synchronizer._plane,
+        'synchronizer_private_state':{'qpos':controller.synchronizer._data.qpos,
+            'qvel':controller.synchronizer._data.qvel,'time_s':controller.synchronizer._data.time}})
+
+
+def up_from_quat(quat):
+    matrix = np.empty(9)
+    mujoco.mju_quat2Mat(matrix,np.asarray(quat,float))
+    return matrix.reshape(3,3)[:,2].copy()
+
+
+def tilt_diagnostic(controller,info,acceleration):
+    if 'tilt_reference' in info:
+        result = copy.deepcopy(info['tilt_reference'])
+    else:
+        lean = controller.lean_vector(info['estimate']['normal'],info.get('reference_acceleration_m_s2',acceleration))
+        size = float(np.linalg.norm(lean))
+        theta = np.zeros(2) if size < 1e-12 else np.arcsin(size)*np.array([-lean[1],lean[0]])/size
+        result = {'active':False,'initialized_now':False,'advanced':False,'substeps':0,
+            'time_s':float(controller.plant.data.time),'raw_theta_rad':theta,'theta_rad':theta.copy(),
+            'z_rad':theta.copy(),'held_raw_theta_rad':theta.copy(),'theta_dot_rad_s':np.zeros(2),
+            'theta_ddot_rad_s2':np.zeros(2),'raw_reference_quat':info['reference_quat'].copy(),
+            'shaped_reference_quat':info['reference_quat'].copy(),
+            **{name:np.zeros(3) for name in ('angular_velocity_equilibrium_rad_s',
+                'angular_velocity_world_rad_s','angular_velocity_body_rad_s','used_angular_velocity_body_rad_s')}}
+    assert set(DIAGNOSTIC_FIELDS) <= set(result)
+    for name in DIAGNOSTIC_FIELDS:
+        result[name] = np.asarray(result[name],float).copy()
+        assert np.isfinite(result[name]).all(),name
+    return result
+
+
+def numeric_state(state,prefix):
+    values = {f'{prefix}_initialized':state is not None,f'{prefix}_time_s':np.nan if state is None else state['time_s']}
+    for name in ('theta_rad','z_rad','held_raw_theta_rad'):
+        values[f'{prefix}_{name}'] = np.full(2,np.nan) if state is None else np.asarray(state[name],float).copy()
+    return values
+
+
+def raw_reference_log(log,raw_quat,raw_error):
+    raw = dict(log)
+    raw['reference_quat'] = np.asarray(raw_quat,float).copy()
+    raw['attitude_error_rad'] = np.asarray(raw_error,float).copy()
+    assert raw['reference_quat'].shape == log['reference_quat'].shape
+    assert raw['attitude_error_rad'].shape == log['attitude_error_rad'].shape
+    return raw
+
+
+def restore_gazebo_metadata(raw_summary,actual_summary):
+    for name in ('engine','engine_version','ground_model','wall_time_s','bridge_counters'):
+        raw_summary[name] = copy.deepcopy(actual_summary[name])
+    raw_summary['evaluation_reference'] = 'native_raw_tilt_formula_from_this_arm_current_observer'
+    raw_summary['evaluation_scope'] = 'Pure post-run reduction of the same actual Gazebo state/input log; no new simulation or commanded reference substitution.'
+    return raw_summary
+
+
+def parameters_for(protocol,arm):
+    from spherical_wheel.offroad_control import OffroadParams
+    parameters = dict(protocol['execution']['baseline_parameters'])
+    if arm != 'baseline':
+        parameters['tilt_reference'] = protocol['execution'][f'settings_{arm}']
+    return OffroadParams(**parameters)
+
+
+def preflight(output):
+    protocol = json.loads((output/'protocol.json').read_text())
+    assert sha(output/'protocol.json') == PROTOCOL_SHA
+    jobs = json.loads((output/'jobs.json').read_text())['cases']
+    assert [x['arm'] for x in jobs] == list(ARMS)
+    changes = {}
+    for rel,expected in protocol['pre_change_source_sha256'].items():
+        assert sha(output/'pre_change'/rel) == expected,rel
+        current = sha(ROOT/rel)
+        if current != expected:
+            assert rel in ALLOWED_RUNTIME_CHANGES or rel.startswith('tests/'),rel
+            changes[rel] = {'pre_change_sha256':expected,'current_sha256':current}
+    baseline = ROOT/protocol['baseline']
+    for name,expected in protocol['baseline_input_sha256'].items():
+        assert sha(baseline/name) == expected,name
+    original = json.loads((baseline/'provenance.json').read_text())
+    assert {key:version(key) for key in original['versions']} == original['versions']
+    helper = load_helper()
+    native = safe(parameters_for(protocol,'baseline').as_dict())
+    assert native == protocol['execution']['baseline_parameters'] == original['parameters']
+    assert 'tilt_reference' not in native
+    assert all({k:v for k,v in job.items() if k!='arm'} == protocol['execution']['same_case'] for job in jobs)
+    for arm in ARMS[1:]:
+        enabled = safe(parameters_for(protocol,arm).as_dict())
+        settings = enabled.pop('tilt_reference')
+        assert enabled == native and settings == protocol['execution'][f'settings_{arm}']
+    assert sha(ROOT/'generated/offroad/flat/control_schedule.npz') == protocol['execution']['gain_cache_sha256']
+    conditional = json.loads((output/'conditional_jobs.json').read_text())
+    assert conditional['protocol_sha256'] == PROTOCOL_SHA
+    assert conditional['arms'] == ['baseline','consistent_rate'] and conditional['additional_fresh_case_count'] == 8
+    from spherical_wheel.gazebo.mars import build_route
+    expected = [('plain_figure8',.3),('plain_figure8',-1.),('shape_triangle',.3),('shape_line_and_back',.3)]
+    assert [(j['path']['route'],j['phase_rad'])for j in conditional['cases']] == expected
+    for job in conditional['cases']:
+        path,yaw = build_route(job['path']['route'])
+        assert job['planned_path_spec'] == safe(path.spec())
+        assert job['duration_s'] == path.start_s+path.duration_s+3. and job['yaw_deg'] == yaw
+    report = {'passed':True,'scope':'Read-only source/data/config/version preflight; no simulator integration.',
+        'protocol_sha256':PROTOCOL_SHA,'jobs_sha256':sha(output/'jobs.json'),
+        'pre_change_references_verified':len(protocol['pre_change_source_sha256']),
+        'declared_source_changes':changes,'baseline_data_verified':len(protocol['baseline_input_sha256']),
+        'legacy_parameters_exact':True,'enabled_options_exact':True,'versions':original['versions'],
+        'conditional_jobs_sha256':sha(output/'conditional_jobs.json'),'conditional_cases_predeclared_only':4}
+    return protocol,jobs,helper,report
+
+
+def snapshot(directory,output,job,protocol,preflight_report):
+    sources = set((ROOT/'src/spherical_wheel').rglob('*.py'))
+    sources.update((ROOT/'tests').glob('*.py'))
+    sources.update((ROOT/'config').glob('*.yaml'))
+    for pattern in ('*.cc','*.cpp','CMakeLists.txt'):
+        sources.update((ROOT/'gazebo/plugin').rglob(pattern))
+    sources.update(output.glob('*.py'))
+    sources.update([output/'protocol.json',output/'jobs.json',output/'conditional_jobs.json',ROOT/'pyproject.toml',ROOT/'scripts/run-lqr-contact-forecast.py'])
+    for folder in [output/'tests',output/'harness_checks',output/'core_checks',output/'independent_checks']:
+        if folder.exists():
+            sources.update(p for p in folder.rglob('*') if bounded_check_source(p,folder))
+    records = []
+    for source in sorted(sources):
+        rel = source.relative_to(ROOT); target = directory/'source_snapshot'/rel
+        target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes(source.read_bytes())
+        records.append({'origin':str(rel),'snapshot':str(target.relative_to(directory)),'sha256':sha(source)})
+    from spherical_wheel.gazebo.bridge import plugin_path
+    provenance = {'iteration':'I-43','captured_before_execution_utc':datetime.now(timezone.utc).isoformat(),
+        'arm':job['arm'],'case':job,'argv':sys.argv,'process':{'pid':os.getpid(),'one_arm_per_process':True},
+        'git_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+        'protocol_sha256':PROTOCOL_SHA,'jobs_sha256':sha(output/'jobs.json'),'sources':records,
+        'parameters':safe(parameters_for(protocol,job['arm']).as_dict()),'preflight':preflight_report,
+        'bridge_binary':{'path':str(plugin_path().relative_to(ROOT)),'sha256':sha(plugin_path())},
+        'scope':'One fresh Gazebo/DART execution. Observer-only contacts in controller; evaluator truth afterward only. No oracle, dynamic forecast or actuator-limit change.'}
+    save(directory/'provenance.json',provenance)
+    return provenance
+
+
+def bounded_check_source(path,folder):
+    """Current check sources/metadata only; full check stages archive separately."""
+    return (path.is_file() and path.suffix in CHECK_SOURCE_EXTENSIONS
+        and not any(part in CHECK_SKIP_DIRECTORIES for part in path.relative_to(folder).parts)
+        and path.name not in {'hook_rows.json','partial_hook_rows.json','forecasts.json'}
+        and not path.name.startswith(('rollout','precision','partial_precision')))
+
+
+def select_job(output,protocol,jobs,arm,regression_case=None):
+    if regression_case is None:
+        return next(x for x in jobs if x['arm']==arm),'main'
+    assert arm in ('baseline','consistent_rate'),'Angle-only is an ablation, never the selected regression candidate'
+    clearance = json.loads((output/'regression_clearance.json').read_text())
+    assert clearance['protocol_sha256'] == PROTOCOL_SHA
+    assert clearance['passes_all_main_screen_conditions'] is True and clearance['chosen_candidate'] == 'consistent_rate'
+    report = ROOT/clearance['analysis_report']
+    assert sha(report) == clearance['analysis_report_sha256']
+    reduced = json.loads(report.read_text())
+    assert reduced['main_screen']['passes_all_conditions'] is True
+    assert reduced['main_screen']['chosen_candidate'] == 'consistent_rate'
+    assert reduced['prerequisite_checks']['passes_all_conditions'] is True
+    conditional = json.loads((output/'conditional_jobs.json').read_text())
+    source = next(x for x in conditional['cases']if x['case_id']==regression_case)
+    job = {k:v for k,v in source.items()if k!='planned_path_spec'}
+    return dict(job,arm=arm),'regression'
+
+
+def run_arm(output,arm,regression_case=None):
+    protocol,jobs,helper,audit = preflight(output)
+    import spherical_wheel.offroad_experiments as experiments
+    import spherical_wheel.gazebo.mars as mars
+    from spherical_wheel.gazebo.experiments import run_gazebo
+    from spherical_wheel.offroad_control import OffroadController
+    assert mars._WORKSPACE is None,'Use one fresh physical process per arm'
+    job,stage = select_job(output,protocol,jobs,arm,regression_case)
+    suffix = Path('runs')/arm if stage=='main' else Path('regression_runs')/job['case_id']/arm
+    directory = output/'campaign'/suffix
+    if directory.exists():raise FileExistsError(f'Preserve prior attempted arm: {directory}')
+    directory.mkdir(parents=True)
+    provenance = snapshot(directory,output,job,protocol,audit)
+    rows,truth = [],[]
+    workspace = None
+    try:
+        workspace,terrain = mars._workspace(output/'campaign/_workspaces'/suffix,[job['path']['route']])
+        assert sha(workspace.cache_path) == protocol['execution']['gain_cache_sha256']
+        physical = workspace.plant(terrain)
+        path = helper.make_path(job)
+        params = parameters_for(protocol,arm)
+        original = OffroadController.command
+        evaluate = experiments.measure_contact
+
+        def measured(plant):
+            measurement = evaluate(plant)
+            truth.append(helper.truth_contact_row(plant,measurement))
+            return measurement
+
+        def command(controller,xy,velocity,acceleration):
+            mirror = controller.plant
+            assert mirror.ground is None and mirror.terrain is None and mirror.data.ncon == 0
+            now = float(mirror.data.time)
+            before = state_of(controller)
+            native_before = native_fingerprint(controller,helper)
+            nominal = controller.nominal_joints.copy(); previous = mirror.last_input.copy()
+            # No physical contact/terrain/force read is performed here. The
+            # physical contact API is explicitly blocked during native control.
+            with ExitStack()as stack:
+                stack.enter_context(helper.guards())
+                stack.enter_context(patch.object(physical,'contact_records',helper.forbidden))
+                applied,info = original(controller,xy,velocity,acceleration)
+            after = state_of(controller)
+            diag = tilt_diagnostic(controller,info,acceleration)
+            actual_up = mirror.data.xmat[mirror.fork_id].reshape(3,3)[:,2].copy()
+            raw_error = float(np.arccos(np.clip(actual_up@up_from_quat(diag['raw_reference_quat']),-1.,1.)))
+            shaped_error = float(np.arccos(np.clip(actual_up@up_from_quat(diag['shaped_reference_quat']),-1.,1.)))
+            native_after = native_fingerprint(controller,helper)
+            row = dict(time_s=now,exact_qpos=mirror.data.qpos.copy(),exact_qvel=mirror.data.qvel.copy(),
+                exact_applied=applied.copy(),exact_previous_applied=previous,exact_native_requested=np.asarray(info['requested']).copy(),
+                exact_observer_wrench=np.r_[controller.observer.wrench()],exact_observer_generalized=controller.observer.generalized.copy(),
+                exact_observer_interval_mean=controller.observer.interval_mean.copy(),exact_estimated_normal=np.asarray(info['estimate']['normal']).copy(),
+                exact_nominal_joints_before=nominal,exact_reference_xy=np.asarray(xy).copy(),
+                exact_reference_velocity_m_s=np.asarray(velocity).copy(),exact_reference_acceleration_m_s2=np.asarray(acceleration).copy(),
+                exact_feedback_gain=np.asarray(info['feedback_gain']).copy(),exact_feedback_error=np.asarray(info['error']).copy(),
+                exact_feedback_reference_qvel=np.asarray(info['feedback_reference_qvel']).copy(),exact_support_torque=np.asarray(info['support_torque']).copy(),
+                exact_estimated_patch_loads_N=np.asarray(info['estimated_support_loads_N']).copy(),
+                exact_actual_up=actual_up,exact_absolute_tilt_rad=float(np.arccos(np.clip(actual_up[2],-1.,1.))),
+                exact_raw_reference_up_error_rad=raw_error,exact_shaped_reference_up_error_rad=shaped_error,
+                native_state_fingerprint_before=native_before,native_state_fingerprint_after=native_after,
+                full_state_fingerprint_before=digest({'native':native_before,'tilt':before}),
+                full_state_fingerprint_after=digest({'native':native_after,'tilt':after}),
+                tilt_state_fingerprint_before=digest(before),tilt_state_fingerprint_after=digest(after),
+                tilt_active=bool(diag['active']),tilt_initialized_now=bool(diag['initialized_now']),tilt_advanced=bool(diag['advanced']),
+                tilt_substeps=int(diag['substeps']),tilt_time_s=float(diag['time_s']))
+            row.update({f'tilt_{name}':diag[name].copy() for name in DIAGNOSTIC_FIELDS})
+            row.update(numeric_state(before,'tilt_state_before')); row.update(numeric_state(after,'tilt_state_after'))
+            rows.append(row)
+            if len(rows)%400==0:print(json.dumps({'arm':arm,'time_s':now,'stage':'simulate'}),flush=True)
+            return applied,info
+
+        with patch.object(OffroadController,'command',command),patch.object(experiments,'measure_contact',measured):
+            log,summary = run_gazebo(workspace,terrain,path,params,phase=job['phase_rad'],yaw_deg=job['yaw_deg'],
+                duration_s=job['duration_s'],record_diagnostics=True)
+        assert len(rows)==len(truth)==len(log['time_s'])
+        extra = {name:np.asarray([r[name] for r in rows])for name in rows[0]}
+        extra.update({name:np.asarray([r[name] for r in truth])for name in truth[0]})
+        np.testing.assert_array_equal(extra['time_s'],extra['truth_time_s'])
+        raw_log = raw_reference_log(log,extra['tilt_raw_reference_quat'],extra['exact_raw_reference_up_error_rad'])
+        raw_summary = restore_gazebo_metadata(experiments.summarize(raw_log,physical,path,params,summary['failure'],job['duration_s']),summary)
+        raw_summary = mars.evaluate_route(raw_log,raw_summary,path,terrain,mars.route_closed(job['path']['route']))
+        summary = mars.evaluate_route(log,summary,path,terrain,mars.route_closed(job['path']['route']))
+        metadata = {'iteration':'I-43','arm':arm,'case':job,'actual_path':path.spec(),'guarded_controller_calls':len(rows),
+            'truth_logging':'Evaluator after guarded command only; no true contact or terrain enters the controller.',
+            'summary_reference':'actual used (shaped if configured)','main_screen_reference':'raw_reference_summary.json',
+            'raw_reference_meaning':'Unshaped native tilt formula from this arm current observer; not a common future target replay.'}
+        summary['tilt_reference_campaign']=metadata
+        summary['contact_forecast_case']={'case':job,'actual_path':path.spec(),'activation':{},'guarded_controller_calls':len(rows),'forecast_affects_control':False}
+        raw_summary['tilt_reference_campaign']=dict(metadata,summary_reference='native raw tilt formula, evaluator only')
+        experiments.save_run(directory,log,summary,terrain)
+        np.savez_compressed(directory/'precision.npz',**extra)
+        save(directory/'raw_reference_summary.json',raw_summary)
+        provenance.update(actual_path=path.spec(),model_mass_kg=physical.total_mass,weight_N=physical.total_mass*9.81,
+            input_bounds=physical.bounds.copy(),controller_dt_s=physical.dt,physics_step_s=.001,
+            initial_nominal_joints=extra['exact_nominal_joints_before'][0],gain_cache_sha256=sha(workspace.cache_path),
+            engine=summary['engine'],versions=helper.versions(),
+            generated_sha256={name:sha(directory/name)for name in ('rollout.npz','precision.npz','summary.json','raw_reference_summary.json','terrain.json')})
+        save(directory/'provenance.json',provenance)
+        result={'iteration':'I-43','arm':arm,'completed':summary['completed'],'failure':summary['failure'],
+            'duration_s':summary['completed_duration_s'],'guarded_calls':len(rows),'directory':str(directory.relative_to(output))}
+        save(directory/'execution_result.json',result);print(json.dumps(result),flush=True)
+    except Exception:
+        save(directory/'execution_failure.json',{'iteration':'I-43','arm':arm,'traceback':traceback.format_exc(),'rows':len(rows)})
+        if rows:np.savez_compressed(directory/'partial_precision.npz',**{name:np.asarray([r[name]for r in rows])for name in rows[0]})
+        raise
+    finally:
+        if workspace is not None and workspace._current is not None:workspace._current[1].close()
+        files=[{'path':str(p.relative_to(directory)),'bytes':p.stat().st_size,'sha256':sha(p)}for p in sorted(directory.rglob('*')) if p.is_file()and p.name!='artifact_manifest.json']
+        save(directory/'artifact_manifest.json',{'iteration':'I-43','arm':arm,'files':files})
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output',type=Path,default=HERE)
+    parser.add_argument('--arm',choices=ARMS)
+    parser.add_argument('--regression-case',help='Predeclared conditional case ID; requires sealed passing main-screen clearance')
+    parser.add_argument('--preflight',action='store_true')
+    args=parser.parse_args();output=args.output.resolve()
+    if args.preflight:print(json.dumps(preflight(output)[3],indent=2))
+    elif args.arm:run_arm(output,args.arm,args.regression_case)
+    else:parser.error('Choose read-only --preflight or one declared --arm')
+
+
+if __name__=='__main__':main()

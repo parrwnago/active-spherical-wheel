@@ -1,0 +1,122 @@
+"""Bounded rolling-speed references; balance torques remain the LQR's job.
+
+The joint limits below are declared simulation assumptions, not motor specs.
+The 20 rad/s ceiling agrees with the existing incoming-shell preview ceiling.
+The belt speed ceiling is the plant's ideal surface-speed command bound.
+"""
+from dataclasses import dataclass
+
+import numpy as np
+from scipy.optimize import lsq_linear
+
+
+@dataclass(frozen=True)
+class AllocationSettings:
+    speed_limits: tuple = (20., 20., 20., .3, .3)
+    acceleration_limits: tuple = (100., 100., 100., 3., 3.)
+    effort_m_s: float = .001
+    change_m_s: float = .001
+    weak_effort_m_s: float | None = None
+    authority_m_s: float = .02
+
+    def __post_init__(self):
+        for name in ('speed_limits', 'acceleration_limits'):
+            value = np.asarray(getattr(self, name), float)
+            if value.shape != (5,) or not np.all(np.isfinite(value) & (value > 0)):
+                raise ValueError(f'{name} must contain five finite positive values')
+        for name in ('effort_m_s', 'change_m_s'):
+            value = getattr(self, name)
+            if not np.isfinite(value) or value <= 0:
+                raise ValueError(f'{name} must be finite and positive')
+        if not np.isfinite(self.authority_m_s) or self.authority_m_s <= 0:
+            raise ValueError('authority_m_s must be finite and positive')
+        if self.weak_effort_m_s is not None and (
+                not np.isfinite(self.weak_effort_m_s) or self.weak_effort_m_s < self.effort_m_s):
+            raise ValueError('Weak-direction effort must be finite and at least the regular effort')
+
+
+class BoundedRollingAllocator:
+    """Minimize tracking error + normalized speed cost + reference-change cost.
+
+    For drive rates d = S z, solve
+      ||J S z - b||² + effort² ||z||² + change² ||z-z_previous||²
+    subject to reference speed and acceleration bounds. S retains the old
+    allocator's normalization (rad/s for joints, m/s for belt surfaces).
+    Rows may be square-root load weighted by the caller. This is a kinematic
+    speed-demand cost, not a measurement of motor torque, power or energy.
+    """
+    scale = np.array([5., 5., 5., .3, .3])
+
+    def __init__(self, settings=None):
+        self.settings = settings or AllocationSettings()
+        self.reset()
+
+    def reset(self):
+        self.previous = np.zeros(5)
+        self.diagnostics = {}
+
+    def hold(self):
+        """Keep current references through an unloaded interval, not old contact data."""
+        drive = self.previous.copy()
+        self.diagnostics.update(
+            allocation_drive_reference=drive.copy(),
+            allocation_speed_limits=np.asarray(self.settings.speed_limits, float).copy(),
+            allocation_acceleration_limits=np.asarray(self.settings.acceleration_limits, float).copy(),
+            allocation_effort_weight_m_s=self.diagnostics.get('allocation_effort_weight_m_s', self.settings.effort_m_s),
+            allocation_change_weight_m_s=self.settings.change_m_s,
+            allocation_authority_m_s=np.nan,
+            allocation_effort_blend=np.nan,
+            allocation_active_bounds=np.isclose(np.abs(drive), self.settings.speed_limits,
+                                                 atol=1e-8, rtol=0.),
+            allocation_residual_rms_m_s=np.nan,
+            allocation_velocity_error_m_s=np.full(2, np.nan))
+        return drive
+
+    def solve(self, rows, rhs, dt, authority_matrix=None):
+        matrix = np.asarray(rows, float)
+        if matrix.shape == (0,):
+            matrix = matrix.reshape(0, 5)
+        if matrix.ndim != 2 or matrix.shape[1] != 5:
+            raise ValueError('Rolling matrix must have five columns')
+        target = np.asarray(rhs, float)
+        if target.shape != (len(matrix),) or not np.isfinite(matrix).all() or not np.isfinite(target).all():
+            raise ValueError('Rolling matrix and target must be finite and have matching rows')
+        if not np.isfinite(dt) or dt <= 0:
+            raise ValueError('Allocation interval must be finite and positive')
+        settings = self.settings
+        authority_matrix = matrix if authority_matrix is None else np.asarray(authority_matrix, float)
+        if authority_matrix.ndim != 2 or authority_matrix.shape[1] != 5 or not np.isfinite(authority_matrix).all():
+            raise ValueError('Authority matrix must be finite with five columns')
+        singular = np.linalg.svd(authority_matrix*self.scale, compute_uv=False)
+        authority = float(singular[1]) if len(singular) >= 2 else 0.
+        blend = settings.authority_m_s**2/(authority**2+settings.authority_m_s**2)
+        effort = settings.effort_m_s
+        if settings.weak_effort_m_s is not None:
+            effort += blend*(settings.weak_effort_m_s-effort)
+        limits = np.asarray(settings.speed_limits)
+        acceleration = np.asarray(settings.acceleration_limits)
+        lower = np.maximum(-limits, self.previous-dt*acceleration)
+        upper = np.minimum(limits, self.previous+dt*acceleration)
+        previous = self.previous/self.scale
+        augmented = np.vstack((matrix*self.scale, effort*np.eye(5),
+                               settings.change_m_s*np.eye(5)))
+        desired = np.r_[target, np.zeros(5), settings.change_m_s*previous]
+        solution = lsq_linear(augmented, desired, bounds=(lower/self.scale, upper/self.scale),
+                              method='bvls', tol=1e-10, max_iter=100)
+        if not solution.success:
+            raise RuntimeError(f'Rolling allocation failed: {solution.message}')
+        drive = np.clip(solution.x*self.scale, lower, upper)
+        self.diagnostics = {
+            'allocation_drive_reference': drive.copy(),
+            'allocation_speed_limits': limits.copy(),
+            'allocation_acceleration_limits': acceleration.copy(),
+            'allocation_active_bounds': (np.isclose(drive, lower, atol=1e-8, rtol=0.) |
+                                          np.isclose(drive, upper, atol=1e-8, rtol=0.)),
+            'allocation_effort_weight_m_s': effort,
+            'allocation_change_weight_m_s': settings.change_m_s,
+            'allocation_authority_m_s': authority,
+            'allocation_effort_blend': blend if settings.weak_effort_m_s is not None else 0.,
+            'allocation_residual_rms_m_s': float(np.linalg.norm(matrix@drive-target)),
+        }
+        self.previous = drive.copy()
+        return drive

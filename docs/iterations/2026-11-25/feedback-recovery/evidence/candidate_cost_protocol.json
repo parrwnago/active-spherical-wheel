@@ -1,0 +1,20 @@
+{
+  "declared_utc": "2026-11-25T23:27:27.005441+00:00",
+  "status": "Declared before frozen-anchor candidate cost comparison; matchedGazeboruns andactual-inputreplay complete. No newGazeboruns orcontrollerparameterchanges.",
+  "question": "Does the current MPC objective reject a native-LQR-derived bounded sequence, or did local one-SQP search miss a lower-cost feasible candidate?",
+  "anchor_s": 0.4,
+  "horizon_s": 0.4,
+  "samples": 20,
+  "stage_s": 0.02,
+  "candidates": [
+    "SavedselectedMPCsequence",
+    "Nativeclosedlooprunactualcommands,samplefirstofeach4x5msinterval",
+    "Nativeclosedlooprunactualcommands,meanofeach4x5msinterval"
+  ],
+  "method": "Samefrozenestimatedplane,q/v,targetstates,weights,bounds,previousactualinput andnonlinearscorerasMPC. Recompute savedselectedcostasanexactnesscheck, thenevaluate2bounded20msnative-derivedsequences.",
+  "limitations": [
+    "Nativefuturecommandsareoffline diagnostics, not deployablefutureknowledgeornewclosedloopcontroller.",
+    "A lowercostsequence onlydemonstrates a missedfeasiblecandidateatthisanchor; no globaloptimum, guaranteedseedfix, orperformancegainclaimed.",
+    "Ifbettergoaltrackinghaslargercost, thatsupportsobjective-priorityconcernatthisanchor, notsolecausation."
+  ]
+}

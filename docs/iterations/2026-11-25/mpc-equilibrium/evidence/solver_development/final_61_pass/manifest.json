@@ -1,0 +1,43 @@
+{
+  "status": "implemented and unit-tested; no simulator claim",
+  "scope": "target_inputs and augmented terminal-tail cost in AffineMPC only",
+  "tests": {
+    "current_suite_cases": 61,
+    "preexisting_cases": 43,
+    "new_cases": 18,
+    "venv_python": "3.10",
+    "gazebo_env_python": "3.12",
+    "overlap": "same61 tests in both environments; do not sum",
+    "initial_stage": "53pass1fail: fixture demanded2e-7 accuracy while solve tolerance1e-6; fixture now asks1e-9. Production solver unchanged for correction.",
+    "intermediate_stage": "60pass before multistage independent KKT case added"
+  },
+  "setup_error": "Bare python missing during initial snapshot command. Initial patch reversed; restored exact source snapshot saved via .venv/bin/python; patch reapplied. No simulation ran during correction.",
+  "default_parity": "six deterministic constant/mixed-LTV calls bit-identical to preserved pre-I31 source for states, inputs and reported component/objective costs",
+  "files": [
+    {
+      "path": "src/spherical_wheel/predictive_control.py",
+      "sha256": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f",
+      "size_bytes": 22312
+    },
+    {
+      "path": "tests/test_predictive_control.py",
+      "sha256": "af3d13bd8c6ae4b800f19ed0abf820978a919b01f4fef54ae5116000900ecfc5",
+      "size_bytes": 27647
+    },
+    {
+      "path": "results/mpc_equilibrium_20261125/tests/final_solver.xml",
+      "sha256": "3748aac22e934a7625340623971166faf51229a067c53e92efc7bab04eedf73c",
+      "size_bytes": 8777
+    },
+    {
+      "path": "results/mpc_equilibrium_20261125/tests/final_solver_gazebo_env.xml",
+      "sha256": "54305c645536c76f55c1b1b07a1e5f7100bc2abde1167453c736877299cd82c9",
+      "size_bytes": 8777
+    },
+    {
+      "path": "results/mpc_equilibrium_20261125/tests/prechange_default_parity.json",
+      "sha256": "6001dba76ad1b38fec2c3b7b8d631db4f57e61b1ebca22bcbbf49a5c78c545ba",
+      "size_bytes": 1449
+    }
+  ]
+}

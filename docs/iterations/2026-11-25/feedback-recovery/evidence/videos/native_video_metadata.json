@@ -1,0 +1,57 @@
+{
+  "status": "rendered_and_decoded_verified",
+  "video": {
+    "path": "results/feedback_recovery_20261125/videos/native_feedback_recovery.mp4",
+    "sha256": "492c6628039124cc80d0ed0d3138acbc847949d31abf62300dd3a61176b15159",
+    "bytes": 1521857,
+    "dimensions": [
+      960,
+      960
+    ],
+    "fps": 20.0,
+    "frames": 337,
+    "duration_s": 16.85,
+    "simulated_duration_s": 8.4,
+    "playback_speed": 0.5,
+    "final_frame_decoded": true
+  },
+  "source_snapshot": "results/feedback_recovery_20261125/videos/source_snapshot/render_recovery_ca9d06d60b87.py",
+  "endpoint_checks": [
+    {
+      "variant": "native",
+      "goal_error_final_mm": 0.3810167462097668,
+      "xy_speed_final_mm_s": 0.185102641725066,
+      "absolute_platform_tilt_final_deg": 9.731527497930774,
+      "reference_platform_tilt_final_deg": 9.730941772460938,
+      "matches_saved_report": true,
+      "final_1s_gate": true
+    }
+  ],
+  "source_artifact_sha256": {
+    "results/feedback_recovery_20261125/videos/render_recovery.py": "ca9d06d60b8742eb2d7c2856b202e8933cf2a8aad8ff401acdd0bb09b8c881fc",
+    "results/feedback_recovery_20261125/videos/source_snapshot/render_recovery_ca9d06d60b87.py": "ca9d06d60b8742eb2d7c2856b202e8933cf2a8aad8ff401acdd0bb09b8c881fc",
+    "results/feedback_recovery_20261125/runs/slope/native/source_snapshot/config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+    "results/feedback_recovery_20261125/runs/slope/native/terrain.json": "e02e98f80862d757dcf0f6b08afc9ffca00b11bb6af718cf0507c811293e8a3c",
+    "results/feedback_recovery_20261125/protocol.json": "bb05619f3cffa668e1f602d115cf854332981dbdbec573e08631ad41388951b6",
+    "src/spherical_wheel/offroad_view.py": "631370d0c5ee29417cb2e8531ced3139464f4ffa6bd8d6d33d12a4ae3b3c479f",
+    "src/spherical_wheel/offroad.py": "bb87ec5d188cc51acdc2591b8629dc94785b2c3aaff2e402947f911b993f5070",
+    "src/spherical_wheel/terrain.py": "43ff7b6bf2d53fd3cfccfaa9d02841195f78e0d7e6cc2181b01c0589176751eb",
+    "results/feedback_recovery_20261125/runs/slope/native/precision.npz": "9d3a296002dda4b1bb3e9cd7c0c1cb3f88ca6d7499c9789ee1eed41c6ed996c4",
+    "results/feedback_recovery_20261125/runs/slope/native/rollout.npz": "3a6fb2905dff63a2bedce8eaa6b22b836d498202bb6a5d4983ccdd4c2101ca06",
+    "results/feedback_recovery_20261125/runs/slope/native/summary.json": "033751105135eb2693ea8826e9cc3168b23cfa5d9ac2e4d4251cff08b2856c80",
+    "results/feedback_recovery_20261125/runs/slope/native/provenance.json": "64cdd61cb8b4e298bd716534973c6bc28b1acf03f2bbdcd80417e487fd2f2d63",
+    "results/feedback_recovery_20261125/runs/slope/native/plans.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "stills": {
+    "native_recovery_first.jpg": "ac77c0146569edd860e23efec99117a587bded74b1e93e0b4cd8d2fd3c5f8015",
+    "native_recovery_feedback_on.jpg": "26515c544bc239238f2d0d2d4999d460640ba87356eb2011960cf75f2c3fa7dd",
+    "native_recovery_final.jpg": "a320bdd4f839590e07c10baf988e141861f8990d7bb88ed23f8ac8423e5e9719",
+    "native_recovery_decoded_final.jpg": "1b22f59ac9668547f76d132fa5903c720bbd13d6d5480594b2d58ee6428c469b"
+  },
+  "scope": "Single panel reconstruct actual saved Gazebo/DART recovery dynamics. No private-model dynamics, controller execution or physics during rendering.",
+  "timeline": "0-.4s same fixed torques while native observer advances; feedback ON at.4s with no physical/estimator reset; originalXYgoal retained through8.4s.",
+  "platform_angles": "Absolute angle of platform normal from gravity vertical;0degmeanslevel. Gold reference intentionallyleansaboutslope; relativeattitudeerror is separate.",
+  "terrain": "Uniform10deg side-slope mesh .04m. Not Mars or rough offroad terrain.",
+  "visualization": "MuJoCo rendering only; commonphysicalmodel andanalytic10degterrain appearance. Camera follows eachrobot; lowercharts retainfixedgoalmetrics. Stoppedruns holdlaststate with explicit stoppedcaption.",
+  "result_caution": "Firstgoalradiusentry isnotsettledreturn. Finalfull1s gates andcontrollerfallback are shown; no broadterrain/hardware/real-time claim."
+}

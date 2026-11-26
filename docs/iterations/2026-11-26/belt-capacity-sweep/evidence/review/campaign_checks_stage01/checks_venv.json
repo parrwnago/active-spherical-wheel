@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "environment": "venv",
+  "unique_checks": 3,
+  "checks": {
+    "only_operating_belt_bounds_change": true,
+    "mirror_follow_preserves_actual_high_cap_input": true,
+    "incoming_preparation_uses_new_cap_with_old_torque_shell_bounds": true
+  },
+  "cases": [
+    {
+      "cap_m_s": 0.3,
+      "previous_belt_speed_preserved_m_s": 0.25,
+      "incoming_belt_targets_m_s": [
+        0.3,
+        0.3
+      ]
+    },
+    {
+      "cap_m_s": 0.6,
+      "previous_belt_speed_preserved_m_s": 0.55,
+      "incoming_belt_targets_m_s": [
+        0.6,
+        0.6
+      ]
+    },
+    {
+      "cap_m_s": 0.9,
+      "previous_belt_speed_preserved_m_s": 0.85,
+      "incoming_belt_targets_m_s": [
+        0.9,
+        0.9
+      ]
+    }
+  ],
+  "source_manifest_unchanged": true,
+  "gain_cache_unchanged": true,
+  "scope": "Synthetic design/physical fixtures + one actual StateMirror/synchronizer path. Kinematics only, no Gazebo/dynamics integration/gain design/controller rollout.",
+  "runner_sha256": "a248f7e94a74d7dc999e9a271f4602c4cac8f0274d17e03cc7c7a99b2a3ad213",
+  "gain_cache_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1"
+}

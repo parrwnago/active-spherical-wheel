@@ -1,0 +1,23 @@
+"""Plot the frozen actual-runtime matrix; no physics or search rerun."""
+from pathlib import Path
+import json
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+ROOT=Path(__file__).resolve().parent
+rows=json.loads((ROOT/'runtime_entrypoints/report.json').read_text())['rows']
+fig,axes=plt.subplots(2,2,figsize=(11,7),sharex=True,constrained_layout=True)
+for column,anchor in enumerate((.4,2.)):
+ for family,color,label in [('original','#b57430','Original seeds'),('original_plus_native','#237f8a','Add predicted native seed')]:
+  data=[r for r in rows if r['anchor_s']==anchor and r['seed_family']==family]
+  x=[r['refinements'] for r in data]
+  axes[0,column].plot(x,[r['cost'] for r in data],'o-',color=color,label=label)
+  axes[1,column].plot(x,[r['predicted_terminal_goal_error_mm'] for r in data],'o-',color=color,label=label)
+ axes[0,column].set_yscale('log');axes[0,column].set_ylim(45,40000)
+ axes[0,column].set_title(f'Saved state at {anchor:g} s')
+ axes[0,column].set_ylabel('Nonlinear cost (log scale)')
+ axes[1,column].set(xlabel='Refinement budget',ylabel='Predicted terminal goal error (mm)',ylim=(0,125),xticks=[1,2,5])
+ for row in range(2):axes[row,column].grid(alpha=.2);axes[row,column].legend(fontsize=8)
+fig.suptitle('I-34 frozen MPC search: same model, weights, horizon and input bounds\nActual runtime entry points; private predictions only',fontsize=12)
+fig.savefig(ROOT/'search_comparison.png',dpi=180);fig.savefig(ROOT/'search_comparison.pdf')

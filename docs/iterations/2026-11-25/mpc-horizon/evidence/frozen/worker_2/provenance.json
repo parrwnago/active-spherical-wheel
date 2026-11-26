@@ -1,0 +1,82 @@
+{
+  "captured_before_calculations_utc": "2026-11-26T00:50:22.120305+00:00",
+  "arguments": {
+    "output": "results/mpc_horizon_20261125/frozen/worker_2",
+    "protocol": "/home/parrwnago/active-spherical-wheel/results/mpc_horizon_20261125/protocol.json",
+    "anchors": [
+      2.0
+    ],
+    "horizons": [
+      0.4,
+      0.8,
+      1.2
+    ],
+    "refinements": 5
+  },
+  "sources": [
+    {
+      "origin": "scripts/diagnose-mpc-horizon.py",
+      "snapshot": "source_snapshot/scripts/diagnose-mpc-horizon.py",
+      "sha256": "ae2a909a7ea2e40d756f86c89903d5053043e64c0b03ddc13cf8b826fa9d1c99"
+    },
+    {
+      "origin": "results/mpc_horizon_20261125/protocol.json",
+      "snapshot": "source_snapshot/results/mpc_horizon_20261125/protocol.json",
+      "sha256": "0f5980b611d7c1510d5f6862becb2edfd3f8f5f15b68280dac985fbed3370701"
+    },
+    {
+      "origin": "scripts/run-mpc-comparison.py",
+      "snapshot": "source_snapshot/scripts/run-mpc-comparison.py",
+      "sha256": "95fde864fdee6c502aa9c4a07b7f244cf88e0f36897933e46328b937bc12a4fd"
+    },
+    {
+      "origin": "scripts/diagnose-mpc-search.py",
+      "snapshot": "source_snapshot/scripts/diagnose-mpc-search.py",
+      "sha256": "8e6a2204f31a54c46ead972ef8f2d6753289235b8aa843b043b5c521c31a0027"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_seed.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_seed.py",
+      "sha256": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_control.py",
+      "sha256": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_model.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_model.py",
+      "sha256": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_control.py",
+      "sha256": "b068402892c499d7df063f5e913e0e66efb9c24c1b9708f96511d0e0a37e06f3"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_sensing.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_sensing.py",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833"
+    },
+    {
+      "origin": "config/model.yaml",
+      "snapshot": "source_snapshot/config/model.yaml",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e"
+    }
+  ],
+  "inputs": {
+    "results/feedback_recovery_20261125/runs/slope/mpc/plans.json": "d37428f760c1faafc2fcdde33444f2c4f586d7d4ac67afd88292d3fe8e11e570",
+    "results/feedback_recovery_20261125/runs/slope/mpc/precision.npz": "1578706d750aa647bf7c9b87ca7ba3fa5f43f8030622ccdcad21efd4e4e9e19f",
+    "results/feedback_recovery_20261125/runs/slope/mpc/provenance.json": "b87cfe9b952b4e8fe48dae81543f5c8afd3c59043e260b725bf76f21d50e5715"
+  },
+  "versions": {
+    "numpy": "1.26.4",
+    "scipy": "1.15.3",
+    "mujoco": "3.16.0",
+    "osqp": "1.1.3"
+  },
+  "method": "Actual runtime class, private estimated-plane physics, full-stage Jacobians, same five refinement budget. Cold optimizer for each horizon.",
+  "warm_extension": "At2s preserve old preceding20-stage sequence, pad last bounded command toN; runtime shifts one stage exactlyasbefore. Native full-horizon rollout independent candidate.",
+  "cost_comparison": "Do not rank rawcosts acrossdifferentN; relativecandidatecost andstate/contactquality are perhorizon."
+}

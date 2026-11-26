@@ -1,0 +1,598 @@
+"""I40 saved-data analysis; no controller, predictor or Gazebo execution.
+
+Run only after the family protocol and campaign artifacts exist. The optional
+constant-velocity reference extrapolates geometry/state, not contact forces.
+Observer persistence holds only the current estimated patch-load vector.
+"""
+from __future__ import annotations
+
+import argparse
+import csv
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import shutil
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import mujoco
+import numpy as np
+
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.model import REPO_ROOT, load_config
+
+from forecast_metrics import (PATCHES, active_set, contact_comparison, distribution,
+    dominant, earliest_by_patch, equivalent_point, family, incoming_events, merge_confusions,
+    quaternion_angle_deg, self_check, stable_events, stable_dominant_family_events,
+    support_runs, warning_confusion)
+
+
+HERE = Path(__file__).resolve().parent
+DEFAULT_FAMILY = HERE.parent
+HORIZONS = (.05, .10, .20)
+
+
+def digest(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def safe(value):
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, dict):
+        return {str(k): safe(v) for k, v in value.items()}
+    if isinstance(value, (tuple, list)):
+        return [safe(v) for v in value]
+    if isinstance(value, np.ndarray):
+        return safe(value.tolist())
+    if isinstance(value, np.generic):
+        return safe(value.item())
+    if isinstance(value, float) and not np.isfinite(value):
+        return None
+    return value
+
+
+def save(path, value):
+    path.write_text(json.dumps(safe(value), indent=2, allow_nan=False)+'\n')
+
+
+def npz(path):
+    with np.load(path) as values:
+        return {k: values[k].copy() for k in values.files}
+
+
+def nearest(times, instant, tolerance=1e-7):
+    index = int(np.argmin(abs(times-instant)))
+    if abs(float(times[index])-float(instant)) > tolerance:
+        raise ValueError(f'No measured sample at {instant:.12f}; nearest is {times[index]:.12f}')
+    return index
+
+
+class Geometry:
+    """Contact-free evaluation at saved states; not a dynamics rollout."""
+    def __init__(self, directory):
+        self.mirror = StateMirror(load_config(), directory)
+        self.model, self.data = self.mirror.model, self.mirror.data
+        self.weight_N = float(self.model.body_subtreemass[self.mirror.fork_id]*
+                              abs(self.model.opt.gravity[2]))
+        self.patches = []
+        for name in PATCHES:
+            geom = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, name+'_smooth')
+            if geom < 0:
+                candidate = name if name.startswith('belt') else name+'_sector_000'
+                geom = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, candidate)
+            if geom < 0:
+                raise ValueError(f'Missing patch geometry {name}')
+            sign, low, high, _, radius = self.model.geom_user[geom, :5]
+            self.patches.append({'name': name, 'geom': geom,
+                'body': int(self.model.geom_bodyid[geom]), 'sign': float(sign),
+                'low': float(low), 'high': float(high), 'radius': float(radius)})
+
+    def constant_velocity(self, qpos, qvel, elapsed):
+        qpos = np.asarray(qpos, float).copy()
+        mujoco.mj_integratePos(self.model, qpos, np.asarray(qvel, float), float(elapsed))
+        return qpos
+
+    def evaluate(self, qpos, normal, plane_point, contact_points=None):
+        self.data.qpos[:] = qpos
+        mujoco.mj_kinematics(self.model, self.data)
+        mujoco.mj_comPos(self.model, self.data)
+        n = np.asarray(normal, float); n = n/np.linalg.norm(n)
+        p = np.asarray(plane_point, float)
+        projection = np.eye(3)-np.outer(n, n)
+        margins, gaps, levers = [], [], np.full((4, 3), np.nan)
+        for i, patch in enumerate(self.patches):
+            centre = self.data.xpos[patch['body']]
+            virtual = centre-patch['radius']*n
+            axis = self.data.xmat[patch['body']].reshape(3, 3)[:, 0]
+            signed = patch['sign']*float((-patch['radius']*n)@axis)
+            margin = signed-patch['low']
+            if patch['name'].startswith('shell'):
+                margin = min(margin, patch['high']-signed)
+            margins.append(margin); gaps.append(float((virtual-p)@n))
+            if contact_points is not None and np.isfinite(contact_points[i]).all():
+                jac = np.zeros((3, self.model.nv))
+                mujoco.mj_jac(self.model, self.data, jac, None,
+                              np.asarray(contact_points[i], float), patch['body'])
+                levers[i] = np.linalg.norm(projection@jac[:, 6:9], axis=0)
+        margins, gaps = np.asarray(margins), np.asarray(gaps)
+        return {'margins_m': margins, 'gaps_m': gaps,
+                'eligible': (margins >= -1e-12) & (gaps <= .02),
+                'drive_levers_m': levers}
+
+
+def fitted_plane(forecast):
+    meta = forecast.get('metadata', {})
+    plane = meta.get('frozen_plane', {})
+    normal = plane.get('normal', plane.get('normal_world', meta.get('plane_normal')))
+    point = plane.get('calibrated_point_m', plane.get('plane_point_m',
+        plane.get('point_m', meta.get('plane_point_m'))))
+    if normal is None or point is None:
+        raise ValueError('Forecast lacks its frozen estimated-plane normal/point; truth is not a substitute')
+    return np.asarray(normal, float), np.asarray(point, float)
+
+
+def contact_arrays(forecast):
+    if 'patch_loads_N' in forecast and 'patch_points_m' in forecast:
+        return np.asarray(forecast['patch_loads_N'], float), np.asarray(forecast['patch_points_m'], float)
+    loads, points = [], []
+    for contact in forecast['contacts']:
+        loads.append([contact['loads_N'][name] for name in PATCHES])
+        points.append([contact['points_m'].get(name) or [np.nan]*3 for name in PATCHES])
+    return np.asarray(loads, float), np.asarray(points, float)
+
+
+def support_endpoint(predicted, actual, low_threshold, high_threshold):
+    predicted, actual = np.asarray(predicted, float), np.asarray(actual, float)
+    both = predicted.sum() > low_threshold and actual.sum() > low_threshold
+    return {'dominant_predicted': dominant(predicted, low_threshold),
+            'dominant_actual': dominant(actual, low_threshold),
+            'dominant_agrees': dominant(predicted, low_threshold) == dominant(actual, low_threshold),
+            'dominant_family_agrees': family(dominant(predicted, low_threshold)) == family(dominant(actual, low_threshold)),
+            'raw': contact_comparison(predicted, actual, low_threshold),
+            'higher_load': contact_comparison(predicted, actual, high_threshold),
+            'total_wheel_load_absolute_error_N': float(abs(predicted.sum()-actual.sum())),
+            'load_share_l1_both_loaded': float(np.sum(abs(predicted/predicted.sum()-actual/actual.sum()))) if both else None}
+
+
+def endpoint_metrics(case_id, entry, forecast, actual, log, geometry, horizon, weight_N,
+                     actual_support_events, actual_family_events):
+    at = float(entry['anchor_time_s']); t = np.asarray(actual['time_s'], float)
+    ft = np.asarray(forecast['time_s'], float)
+    ai, pi = nearest(t, at+horizon), nearest(ft, at+horizon)
+    anchor = nearest(t, at)
+    q, v = np.asarray(forecast['qpos'], float), np.asarray(forecast['qvel'], float)
+    pred_loads, pred_points = contact_arrays(forecast)
+    true_loads, true_points = actual['truth_patch_loads_N'][ai], actual['truth_patch_points_m'][ai]
+    observer_loads = np.asarray(entry.get('anchor_estimated_patch_loads_N',
+        log['estimated_support_loads_N'][anchor]), float)
+    low, high = .05, max(.05, .05*weight_N)
+    normal, plane_point = fitted_plane(forecast)
+    truth_q, truth_v = actual['exact_qpos'][ai], actual['exact_qvel'][ai]
+    cv_q = geometry.constant_velocity(q[0], v[0], horizon)
+    pred_geo = geometry.evaluate(q[pi], normal, plane_point, pred_points[pi])
+    true_geo = geometry.evaluate(truth_q, normal, plane_point)
+    cv_geo = geometry.evaluate(cv_q, normal, plane_point)
+    true_normal = log['ground_normal'][ai]
+    true_levers = geometry.evaluate(truth_q, true_normal, plane_point, true_points)['drive_levers_m']
+    common = (pred_loads[pi] >= high) & (true_loads >= high)
+    point_errors = [float(1000*np.linalg.norm(pred_points[pi, i]-true_points[i]))
+                    for i in range(4) if common[i] and np.isfinite(pred_points[pi, i]).all()
+                    and np.isfinite(true_points[i]).all()]
+    lever_error = abs(pred_geo['drive_levers_m']-true_levers)*1000
+    # Exclude structurally unrelated motor columns, whose zero errors would
+    # otherwise dominate an effective-radius statistic. Always retain shaft;
+    # on shell contacts also retain that shell's own rotational drive.
+    lever_records = []
+    for patch in np.flatnonzero(common):
+        columns = (0, patch+1) if patch < 2 else (0,)
+        for column in columns:
+            if np.isfinite(lever_error[patch, column]):
+                lever_records.append({'patch': PATCHES[patch],
+                    'drive': ('shaft', 'shell_A', 'shell_B')[column],
+                    'absolute_error_mm': float(lever_error[patch, column])})
+    pred_equivalent = equivalent_point(pred_loads[pi], pred_points[pi])
+    true_equivalent = equivalent_point(true_loads, true_points)
+    dynamic = support_endpoint(pred_loads[pi], true_loads, low, high)
+    persistence = support_endpoint(observer_loads, true_loads, low, high)
+    eligible_actual = true_geo['eligible']
+    dynamic_geometry_agrees = bool(np.array_equal(pred_geo['eligible'], eligible_actual))
+    cv_geometry_agrees = bool(np.array_equal(cv_geo['eligible'], eligible_actual))
+    return {'case_id': case_id, 'anchor_time_s': at, 'selection_kind': entry['selection_kind'],
+        'horizon_s': horizon, 'actual_time_s': float(t[ai]),
+        'actual_stable_support_change_in_horizon': any(at+1e-9 < x['time_s'] <= at+horizon+1e-9
+                                                       for x in actual_support_events),
+        'actual_stable_shell_belt_handover_in_horizon': any(x['is_shell_belt_handover'] and
+            at+1e-9 < x['time_s'] <= at+horizon+1e-9 for x in actual_family_events),
+        'dynamic_xy_error_mm': float(1000*np.linalg.norm(q[pi, :2]-truth_q[:2])),
+        'constant_velocity_xy_error_mm': float(1000*np.linalg.norm(cv_q[:2]-truth_q[:2])),
+        'dynamic_rotation_error_deg': quaternion_angle_deg(q[pi, 3:7], truth_q[3:7]),
+        'constant_velocity_rotation_error_deg': quaternion_angle_deg(cv_q[3:7], truth_q[3:7]),
+        'dynamic_xy_velocity_error_mm_s': float(1000*np.linalg.norm(v[pi, :2]-truth_v[:2])),
+        'constant_velocity_xy_velocity_error_mm_s': float(1000*np.linalg.norm(v[0, :2]-truth_v[:2])),
+        'dynamic_support': dynamic, 'observer_persistence_support': persistence,
+        'dynamic_equivalent_point_error_mm': float(1000*np.linalg.norm(pred_equivalent-true_equivalent))
+            if pred_equivalent is not None and true_equivalent is not None else None,
+        'dynamic_matching_loaded_patch_point_errors_mm': point_errors,
+        'actual_higher_load_patch_count': int(np.sum(true_loads >= high)),
+        'matching_higher_load_patch_count': int(np.sum(common)),
+        'dynamic_matching_loaded_patch_drive_lever_errors_mm': [x['absolute_error_mm'] for x in lever_records],
+        'dynamic_drive_lever_comparisons': lever_records,
+        'dynamic_geometry_eligibility_set_agrees': dynamic_geometry_agrees,
+        'constant_velocity_geometry_eligibility_set_agrees': cv_geometry_agrees,
+        'dynamic_geometry_margin_mean_absolute_error_mm': float(1000*np.mean(abs(pred_geo['margins_m']-true_geo['margins_m']))),
+        'constant_velocity_geometry_margin_mean_absolute_error_mm': float(1000*np.mean(abs(cv_geo['margins_m']-true_geo['margins_m']))),
+        'dynamic_geometry_gap_mean_absolute_error_mm': float(1000*np.mean(abs(pred_geo['gaps_m']-true_geo['gaps_m']))),
+        'constant_velocity_geometry_gap_mean_absolute_error_mm': float(1000*np.mean(abs(cv_geo['gaps_m']-true_geo['gaps_m']))),
+        'actual_multiple_higher_load_patches': dynamic['higher_load']['actual_multiple_loaded'],
+        'predicted_multiple_higher_load_patches': dynamic['higher_load']['predicted_multiple_loaded']}
+
+
+def trajectory_metrics(case_id, actual, log, summary, weight_N, bounds):
+    t = actual['time_s']; q = actual['exact_qpos']; v = actual['exact_qvel']
+    reference = actual['exact_reference_xy']
+    error = np.linalg.norm(q[:, :2]-reference, axis=1)*1000
+    moving = np.linalg.norm(actual['exact_reference_velocity_m_s'], axis=1) > 1e-8
+    speed = np.linalg.norm(v[:, :2], axis=1)*1000
+    lean = np.degrees(log['attitude_error_rad'])
+    tail = t >= t[-1]-1.-1e-9
+    stationary_tail = bool(np.all(~moving[tail]))
+    actual_inputs = actual['exact_applied'][:-1]
+    high = max(.05, .05*weight_N)
+    changes = stable_events(t, actual['truth_patch_loads_N'], high)
+    multi = [r for r in support_runs(t, actual['truth_patch_loads_N'], high)
+             if len(r['patches']) >= 2 and r['duration_s'] >= .015-1e-10]
+    return {'case_id': case_id, 'completed': bool(summary['completed']), 'failure': summary.get('failure'),
+        'recorded_end_s': float(t[-1]), 'samples': len(t),
+        'rms_tracking_error_mm': float(np.sqrt(np.mean(error**2))),
+        'rms_moving_tracking_error_mm': float(np.sqrt(np.mean(error[moving]**2))) if moving.any() else None,
+        'peak_tracking_error_mm': float(np.max(error)), 'final_tracking_error_mm': float(error[-1]),
+        'final_xy_speed_mm_s': float(speed[-1]), 'peak_reference_lean_error_deg': float(np.max(lean)),
+        'final_reference_lean_error_deg': float(lean[-1]),
+        'actuated_inputs_finite_bounded': bool(np.isfinite(actual_inputs).all() and np.all(abs(actual_inputs) <= bounds+1e-10)),
+        'reference_stationary_in_final_second': stationary_tail,
+        'diagnostic_final1s_5mm_5mm_s_2deg': bool(np.all((error[tail] <= 5)&(speed[tail] <= 5)&(lean[tail] <= 2)))
+            if stationary_tail and t[-1]-t[0] >= 1-1e-9 else None,
+        'higher_load_threshold_N': high, 'stable_support_events': changes,
+        'stable_dominant_family_events': stable_dominant_family_events(t, actual['truth_patch_loads_N'], high),
+        'sustained_multiple_loaded_patch_runs': multi,
+        'multicontact_limit': 'Multiple loaded wheel patches on this fixture are not general unknown multi-surface contact estimation.'}
+
+
+def event_metrics(case_id, entry, forecast, actual_events, geometry, actual, log, weight_N):
+    at = float(entry['anchor_time_s']); ft = np.asarray(forecast['time_s'], float)
+    loads, _ = contact_arrays(forecast); high = max(.05, .05*weight_N)
+    predicted = stable_events(ft, loads, high, .015, initial_patches=active_set(loads[0], high))
+    predicted_incoming = incoming_events(predicted['events'])
+    truth_incoming = incoming_events(actual_events)
+    end = at+.12
+    actual_by_patch = earliest_by_patch(truth_incoming, at, end)
+    dynamic_by_patch = earliest_by_patch(predicted_incoming, at, end)
+    sync = forecast.get('anchor_kinematic_preview') or {}
+    targets = sync.get('targets', [])
+    sync_warnings = [x['name'] for x in targets if float(x.get('blend_weight', 0)) > 1e-12]
+    alignment, sync_geometry = [], []
+    normal, plane_point = fitted_plane(forecast)
+    t = actual['time_s']
+    for target in targets:
+        chosen = at+float(target.get('lookahead_s', 0))
+        if chosen > t[-1]+1e-8:
+            continue
+        ai = int(np.argmin(abs(t-chosen))); gap = abs(float(t[ai])-chosen)
+        alignment.append(gap)
+        actual_geometry = geometry.evaluate(actual['exact_qpos'][ai], normal, plane_point)
+        patch = PATCHES.index(target['name'])
+        sync_geometry.append({'patch': target['name'], 'selected_lookahead_s': float(target.get('lookahead_s', 0)),
+            'actual_nearest_time_s': float(t[ai]), 'time_alignment_error_s': gap,
+            'predicted_exposed': bool(target['predicted_exposed']),
+            'actual_virtual_patch_exposed_same_frozen_plane': bool(actual_geometry['margins_m'][patch] >= -1e-12),
+            'exposure_prediction_agrees': bool(target['predicted_exposed']) == bool(actual_geometry['margins_m'][patch] >= -1e-12)})
+    return {'case_id': case_id, 'anchor_time_s': at, 'selection_kind': entry['selection_kind'],
+        'warning_window_s': .12,
+        'actual_stable_incoming': actual_by_patch,
+        'dynamic_predicted_stable_incoming': dynamic_by_patch,
+        'dynamic_incoming_proxy': warning_confusion(dynamic_by_patch, actual_by_patch),
+        'native_kinematic_preparation_warning_proxy': warning_confusion(sync_warnings, actual_by_patch),
+        'dynamic_matched_incoming_timing_error_ms': [1000*(dynamic_by_patch[name]-actual_by_patch[name])
+            for name in actual_by_patch.keys() & dynamic_by_patch.keys()],
+        'native_sync_geometry_at_selected_times': sync_geometry,
+        'native_sync_max_nearest_sample_alignment_error_s': max(alignment, default=None),
+        'predicted_stable_events': predicted,
+        'comparison_limit': 'Preparation warning versus future load is a diagnostic proxy. The kinematic method predicts exposure/gap, not contact force or an exact load-transfer time.'}
+
+
+def average_defined(values):
+    values = [float(v) for v in values if v is not None]
+    return float(np.mean(values)) if values else None
+
+
+def summarize_endpoints(rows):
+    result = []
+    for selection in ('all', 'uniform', 'predeclared_event'):
+        for horizon in HORIZONS:
+            chosen = [r for r in rows if (selection == 'all' or r['selection_kind'] == selection)
+                      and abs(r['horizon_s']-horizon) < 1e-10]
+            item = {'selection_kind': selection, 'horizon_s': horizon, 'endpoint_count': len(chosen)}
+            for key in ('dynamic_xy_error_mm', 'constant_velocity_xy_error_mm',
+                        'dynamic_rotation_error_deg', 'constant_velocity_rotation_error_deg',
+                        'dynamic_xy_velocity_error_mm_s', 'constant_velocity_xy_velocity_error_mm_s',
+                        'dynamic_equivalent_point_error_mm',
+                        'dynamic_geometry_margin_mean_absolute_error_mm',
+                        'constant_velocity_geometry_margin_mean_absolute_error_mm'):
+                item[key] = distribution(r[key] for r in chosen if r[key] is not None)
+            item['dynamic_matching_loaded_patch_point_error_mm'] = distribution(
+                value for r in chosen for value in r['dynamic_matching_loaded_patch_point_errors_mm'])
+            item['dynamic_matching_loaded_patch_drive_lever_error_mm'] = distribution(
+                value for r in chosen for value in r['dynamic_matching_loaded_patch_drive_lever_errors_mm'])
+            item['dynamic_equivalent_point_error_when_dominant_wrong_mm'] = distribution(
+                r['dynamic_equivalent_point_error_mm'] for r in chosen
+                if not r['dynamic_support']['dominant_agrees'] and r['dynamic_equivalent_point_error_mm'] is not None)
+            item['actual_higher_load_patch_occurrences'] = sum(r['actual_higher_load_patch_count'] for r in chosen)
+            item['matching_higher_load_patch_occurrences'] = sum(r['matching_higher_load_patch_count'] for r in chosen)
+            for method in ('dynamic_support', 'observer_persistence_support'):
+                item[method] = {'dominant_agreement_fraction': average_defined(r[method]['dominant_agrees'] for r in chosen),
+                    'dominant_family_agreement_fraction': average_defined(r[method]['dominant_family_agrees'] for r in chosen),
+                    'raw_set_agreement_fraction': average_defined(r[method]['raw']['exact_set_agreement'] for r in chosen),
+                    'higher_load_set_agreement_fraction': average_defined(r[method]['higher_load']['exact_set_agreement'] for r in chosen),
+                    'higher_load_jaccard_defined': distribution(r[method]['higher_load']['jaccard'] for r in chosen
+                        if r[method]['higher_load']['jaccard'] is not None),
+                    'load_share_l1_both_loaded': distribution(r[method]['load_share_l1_both_loaded'] for r in chosen
+                        if r[method]['load_share_l1_both_loaded'] is not None),
+                    'total_wheel_load_absolute_error_N': distribution(r[method]['total_wheel_load_absolute_error_N'] for r in chosen)}
+            item['dynamic_xy_error_lower_than_cv_fraction'] = average_defined(
+                r['dynamic_xy_error_mm'] < r['constant_velocity_xy_error_mm'] for r in chosen)
+            item['dynamic_geometry_eligibility_set_agreement_fraction'] = average_defined(
+                r['dynamic_geometry_eligibility_set_agrees'] for r in chosen)
+            item['constant_velocity_geometry_eligibility_set_agreement_fraction'] = average_defined(
+                r['constant_velocity_geometry_eligibility_set_agrees'] for r in chosen)
+            result.append(item)
+    return result
+
+
+def event_summary(rows, cases):
+    out = []
+    for selection in ('all', 'uniform', 'predeclared_event'):
+        chosen = [r for r in rows if selection == 'all' or r['selection_kind'] == selection]
+        item = {'selection_kind': selection, 'anchors': len(chosen),
+            'dynamic_incoming_proxy': merge_confusions(r['dynamic_incoming_proxy'] for r in chosen),
+            'native_kinematic_preparation_warning_proxy': merge_confusions(
+                r['native_kinematic_preparation_warning_proxy'] for r in chosen),
+            'dynamic_matched_incoming_absolute_timing_error_ms': distribution(abs(v) for r in chosen
+                for v in r['dynamic_matched_incoming_timing_error_ms']),
+            'native_sync_exposure_agreement_fraction': average_defined(
+                x['exposure_prediction_agrees'] for r in chosen for x in r['native_sync_geometry_at_selected_times'])}
+        unique, covered, dynamic_found, kinematic_found = set(), set(), set(), set()
+        for case in cases:
+            for event in incoming_events(case['stable_support_events']['events']):
+                identity = (case['case_id'], event['patch'], round(event['time_s'], 9))
+                unique.add(identity)
+                opportunities = [r for r in chosen if r['case_id'] == case['case_id'] and
+                    r['anchor_time_s']+1e-9 < event['time_s'] <= r['anchor_time_s']+.12+1e-9]
+                if opportunities:
+                    covered.add(identity)
+                    if any(event['patch'] in r['dynamic_incoming_proxy']['warning_patches'] for r in opportunities):
+                        dynamic_found.add(identity)
+                    if any(event['patch'] in r['native_kinematic_preparation_warning_proxy']['warning_patches'] for r in opportunities):
+                        kinematic_found.add(identity)
+        item['unique_actual_incoming_events'] = len(unique)
+        item['unique_actual_incoming_events_covered_by_forecast_window'] = len(covered)
+        item['covered_unique_events_dynamically_warned'] = len(dynamic_found)
+        item['covered_unique_events_kinematically_warned'] = len(kinematic_found)
+        item['coverage_limit'] = 'Events outside forecast windows are unobserved opportunities, not automatic false negatives. Multiple incoming patches can belong to one physical handover.'
+        out.append(item)
+    return out
+
+
+def controlled_transfer(cases, event_rows, case_id, post_cold_s=.3):
+    """Nominate the first eligible family transfer, never search for a nicer one."""
+    case = next((x for x in cases if x['case_id'] == case_id), None)
+    if case is None:
+        return {'case_id': case_id, 'candidate': None, 'reason': 'case absent'}
+    all_events = case['stable_dominant_family_events']['stable_events']
+    candidates = [x for x in all_events if x['is_shell_belt_handover'] and x['time_s'] > post_cold_s+1e-9]
+    if not candidates:
+        return {'case_id': case_id, 'post_cold_threshold_s': post_cold_s, 'candidate': None,
+                'reason': 'No stable shell-belt dominant-family transfer after declared cold window'}
+    first = candidates[0]
+    nearby = [x for x in all_events if x is not first and abs(x['time_s']-first['time_s']) <= .1+1e-9]
+    forecasts = [x for x in event_rows if x['case_id'] == case_id and
+                 x['anchor_time_s']+1e-9 < first['time_s'] <= x['anchor_time_s']+.2+1e-9]
+    chosen = min(forecasts, key=lambda x: (x['selection_kind'] != 'predeclared_event',
+        abs((first['time_s']-x['anchor_time_s'])-.1))) if forecasts else None
+    return {'case_id': case_id, 'post_cold_threshold_s': post_cold_s, 'candidate': first,
+        'isolated_plus_minus_100ms': not nearby, 'nearby_other_stable_family_events': nearby,
+        'covering_forecast_count': len(forecasts),
+        'illustrative_forecast_anchor_s': chosen['anchor_time_s'] if chosen else None,
+        'illustrative_forecast_selection_kind': chosen['selection_kind'] if chosen else None,
+        'selection_limit': 'First post-cold candidate only. Failure of isolation or forecast coverage is retained; no later good example is substituted.'}
+
+
+def write_csv(path, rows):
+    keys = sorted({k for row in rows for k in row})
+    with path.open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=keys); writer.writeheader()
+        for row in rows:
+            writer.writerow({k: json.dumps(safe(v), sort_keys=True) if isinstance(v, (dict, list, tuple)) else safe(v)
+                             for k, v in row.items()})
+
+
+def plots(output, endpoints, trajectories, series):
+    fig, axes = plt.subplots(1, 3, figsize=(14, 4.5))
+    for ax, suffix, title in zip(axes, ('xy_error_mm', 'rotation_error_deg', 'xy_velocity_error_mm_s'),
+        ('XY forecast error (mm)', 'Body rotation error (deg)', 'XY velocity error (mm/s)')):
+        for method, label in (('dynamic', '5 ms native feedback model'), ('constant_velocity', 'Constant-velocity diagnostic reference')):
+            medians = [distribution(r[method+'_'+suffix] for r in endpoints
+                if r['selection_kind'] == 'uniform' and abs(r['horizon_s']-h) < 1e-10)['median'] for h in HORIZONS]
+            ax.plot(np.asarray(HORIZONS)*1000, medians, '-o', label=label)
+        ax.set(xlabel='Lookahead (ms)', ylabel=title); ax.grid(alpha=.25)
+    axes[0].legend(fontsize=8)
+    fig.suptitle('I40 uniform anchors: forecast quality, not a changed controller\nConstant velocity has no force model; its 200 ms extrapolation exceeds native synchronizer horizon')
+    fig.tight_layout(); fig.savefig(output/'forecast_errors.png', dpi=150); plt.close(fig)
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    for case in trajectories:
+        t, error, lean, xy, ref = series[case['case_id']]
+        axes[0, 0].plot(t, error, label=case['case_id'])
+        axes[0, 1].plot(t, lean)
+        axes[1, 0].plot(xy[:, 0]*1000, xy[:, 1]*1000, label=case['case_id'])
+        axes[1, 1].plot(ref[:, 0]*1000, ref[:, 1]*1000, label=case['case_id'])
+    axes[0, 0].set(xlabel='Simulation time (s)', ylabel='Tracking error (mm)')
+    axes[0, 1].set(xlabel='Simulation time (s)', ylabel='Reference-relative lean error (deg)')
+    axes[1, 0].set(xlabel='Body world X (mm)', ylabel='Body world Y (mm)')
+    axes[1, 1].set(xlabel='Reference world X (mm)', ylabel='Reference world Y (mm)')
+    for ax in axes.flat: ax.grid(alpha=.25)
+    axes[0, 0].legend(fontsize=7)
+    fig.suptitle('I40 unchanged-LQR trajectory coverage; completion and quality are separate')
+    fig.tight_layout(); fig.savefig(output/'trajectory_coverage.png', dpi=150); plt.close(fig)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--family', type=Path, default=DEFAULT_FAMILY)
+    parser.add_argument('--output', type=Path, default=HERE)
+    parser.add_argument('--self-check', action='store_true')
+    args = parser.parse_args()
+    if args.self_check:
+        print(json.dumps(self_check(), indent=2)); return
+    family, output = args.family.resolve(), args.output.resolve()
+    protocol = family/'protocol.json'
+    if not protocol.is_file():
+        raise FileNotFoundError('Declare protocol before numerical analysis')
+    if (output/'report.json').exists() or (output/'source_snapshot').exists():
+        raise FileExistsError('Preserve earlier completed analysis; choose a new output stage')
+    forecast_files = sorted((family/'campaign/runs').rglob('forecasts.json'))
+    if not forecast_files:
+        raise FileNotFoundError('No completed forecast artifacts')
+    output.mkdir(parents=True, exist_ok=True)
+    sources = [Path(__file__).resolve(), HERE/'forecast_metrics.py', protocol,
+        REPO_ROOT/'src/spherical_wheel/contact_prediction.py',
+        REPO_ROOT/'src/spherical_wheel/predictive_seed.py',
+        REPO_ROOT/'src/spherical_wheel/predictive_model.py', REPO_ROOT/'config/model.yaml']
+    if (family/'protocol_clarifications.json').exists():
+        sources.append(family/'protocol_clarifications.json')
+    source_entries = []
+    for source in sources:
+        relative = source.relative_to(REPO_ROOT)
+        target = output/'source_snapshot'/relative; target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+        source_entries.append({'origin': str(relative), 'snapshot': str(target.relative_to(output)), 'sha256': digest(source)})
+    checks = self_check()
+    geometry = Geometry(output/'_geometry_workspace')
+    endpoints, events, cases, audits, series, inputs, failures = [], [], [], [], {}, [], []
+    source_verification = []
+    for forecast_file in forecast_files:
+        folder = forecast_file.parent
+        detail = json.loads(forecast_file.read_text())
+        case_id = detail.get('case_id', folder.name)
+        actual, log = npz(folder/'precision.npz'), npz(folder/'rollout.npz')
+        summary = json.loads((folder/'summary.json').read_text())
+        provenance = json.loads((folder/'provenance.json').read_text())
+        forecast_provenance = json.loads((folder/'forecast_provenance.json').read_text())
+        source_count = 0
+        for stage in (provenance, forecast_provenance):
+            for source in stage['sources']:
+                if digest(folder/source['snapshot']) != source['sha256']:
+                    raise ValueError(f'Source snapshot hash mismatch: {case_id}: {source}')
+                source_count += 1
+            for name, expected in stage['generated_sha256'].items():
+                if digest(folder/name) != expected:
+                    raise ValueError(f'Campaign artifact hash mismatch: {case_id}/{name}')
+        if digest(folder/'provenance.json') != forecast_provenance['actual_run_provenance_sha256']:
+            raise ValueError('Forecast does not reference this exact actual-run provenance')
+        if digest(folder/'precision.npz') != forecast_provenance['precision_sha256']:
+            raise ValueError('Forecast does not reference this exact actual trace')
+        source_verification.append({'case_id': case_id, 'source_references_verified': source_count,
+            'generated_artifacts_verified': True, 'forecast_references_exact_fresh_trace': True,
+            'actual_and_forecast_policy_parameters_identical': provenance['parameters'] == forecast_provenance['parameters']})
+        weight = float(provenance.get('weight_N', geometry.weight_N))
+        if abs(weight-geometry.weight_N) > 1e-7:
+            raise ValueError('Evaluation geometry mass differs from campaign')
+        bounds = np.asarray(provenance.get('input_bounds', provenance.get('bounds', geometry.mirror.bounds)), float)
+        case = trajectory_metrics(case_id, actual, log, summary, weight, bounds); cases.append(case)
+        case['terrain'] = provenance['case']['terrain']
+        case['existing_mars_route_evaluation'] = summary.get('mars')
+        case['protocol_gate_type'] = ('existing_mars_route_gates' if provenance['case']['terrain'] == 'marsyard2021'
+                                     else 'controlled_final1s_5mm_5mm_s_2deg')
+        case['protocol_gate_passed'] = (bool(summary.get('mars', {}).get('passed', False))
+            if provenance['case']['terrain'] == 'marsyard2021' else
+            bool(case['completed'] and case['actuated_inputs_finite_bounded'] and case['diagnostic_final1s_5mm_5mm_s_2deg']))
+        case['truth_time_matches_measurement_time'] = bool(np.array_equal(actual['truth_time_s'], actual['time_s']))
+        for failure in detail.get('failures', []):
+            failures.append({'case_id': case_id, 'record': failure})
+        t = actual['time_s']; error = 1000*np.linalg.norm(actual['exact_qpos'][:, :2]-actual['exact_reference_xy'], axis=1)
+        series[case_id] = (t, error, np.degrees(log['attitude_error_rad']),
+                           actual['exact_qpos'][:, :2], actual['exact_reference_xy'])
+        for row in detail['rows']:
+            forecast = row['forecast']; at = float(row['anchor_time_s']); anchor = nearest(t, at)
+            ft = np.asarray(forecast['time_s'], float)
+            q = np.asarray(forecast['qpos'], float); v = np.asarray(forecast['qvel'], float)
+            command = np.asarray(forecast['commands'], float)
+            audits.append({'case_id': case_id, 'anchor_time_s': at, 'selection_kind': row['selection_kind'],
+                'history_audit': row.get('history_audit'),
+                'calibration': row.get('calibration'),
+                'source_state_unchanged': row.get('source_state_unchanged'),
+                'anchor_qpos_bit_equal': np.array_equal(q[0], actual['exact_qpos'][anchor]),
+                'anchor_qvel_bit_equal': np.array_equal(v[0], actual['exact_qvel'][anchor]),
+                'first_command_max_difference': float(np.max(abs(command[0]-actual['exact_applied'][anchor]))),
+                'forecast_dt_all_5ms': bool(np.allclose(np.diff(ft), .005, atol=1e-10, rtol=0)),
+                'forecast_commands_finite_bounded': bool(np.isfinite(command).all() and np.all(abs(command) <= bounds+1e-10)),
+                'sampled_predicted_nonwheel_loaded_endpoints': sum(
+                    float(x.get('max_nonwheel_geom_load_N', 0)) > .05 for x in forecast['contacts']),
+                'sampled_predicted_min_wheel_load_N': min(float(x['total_wheel_load_N']) for x in forecast['contacts'])})
+            for h in HORIZONS:
+                if at+h > t[-1]+1e-8:
+                    continue
+                endpoints.append(endpoint_metrics(case_id, row, forecast, actual, log, geometry, h, weight,
+                    case['stable_support_events']['events'],
+                    case['stable_dominant_family_events']['stable_events']))
+            events.append(event_metrics(case_id, row, forecast, case['stable_support_events']['events'], geometry, actual, log, weight))
+        for name in ('precision.npz', 'rollout.npz', 'forecasts.json', 'summary.json', 'provenance.json'):
+            path = folder/name
+            inputs.append({'path': str(path.relative_to(REPO_ROOT)), 'sha256': digest(path)})
+    report = {'iteration': 'I-40', 'status': 'analyzed',
+        'scope': 'Saved-data reduction of unchanged native-LQR Gazebo trajectories and diagnostic private forecasts. No new physics in analysis.',
+        'controller_adoption': False, 'horizons_s': HORIZONS,
+        'raw_load_threshold_N': .05, 'higher_load_threshold': 'max(.05N,.05*modelweight)',
+        'stable_event_dwell_s': .015,
+        'trajectory_cases': cases, 'forecast_audits': audits,
+        'source_and_input_verification': source_verification,
+        'forecast_failures': failures, 'attempted_forecast_count': len(audits)+len(failures),
+        'endpoint_summaries': summarize_endpoints(endpoints),
+        'per_case_endpoint_summaries': {case['case_id']: summarize_endpoints(
+            [row for row in endpoints if row['case_id'] == case['case_id']]) for case in cases},
+        'endpoint_summaries_by_actual_support_change': {
+            str(changed): summarize_endpoints([row for row in endpoints
+                if row['actual_stable_support_change_in_horizon'] == changed]) for changed in (False, True)},
+        'incoming_warning_summaries': event_summary(events, cases),
+        'controlled_transfer_nomination': controlled_transfer(cases, events, 'flat_y_transfer', .3),
+        'separate_late_x_stress_transfer': controlled_transfer(cases, events, 'slope_x_late', .3),
+        'forecast_count': len(audits), 'endpoint_count': len(endpoints),
+        'limits': ['Uniform and truth-conditioned anchors remain separate; overlapping forecasts are not independent events.',
+            'Observer persistence holds only current estimated patch loads; no future point/lever is invented.',
+            'Constant velocity forecasts only geometry/state, not forces;200ms extrapolation is not the native120ms synchronizer.',
+            'Kinematic warning versus future incoming load is a proxy, not equivalent force predictions or exact load-transfer timing.',
+            'Contacts use simulator force timing conventions; filtered observer differences are not pure localization error.',
+            'Matching dominant labels do not establish complete contact geometry or general multi-contact posterior accuracy.',
+            'No command changes: trajectory results measure coverage/limitations, not controller improvement.']}
+    save(output/'report.json', report); save(output/'endpoint_metrics.json', endpoints)
+    save(output/'incoming_events.json', events)
+    write_csv(output/'endpoint_metrics.csv', endpoints); write_csv(output/'trajectory_metrics.csv', cases)
+    plots(output, endpoints, cases, series)
+    provenance = {'captured_before_analysis_sources': source_entries, 'inputs': inputs,
+        'completed_utc': datetime.now(timezone.utc).isoformat(), 'arithmetic_self_checks': checks,
+        'scope': report['scope'], 'geometry': 'contact-free kinematics/Jacobians only; no dynamics or contacts integrated during analysis'}
+    save(output/'provenance.json', provenance)
+    artifacts = []
+    for path in sorted(output.rglob('*')):
+        if not path.is_file() or '_geometry_workspace' in path.parts or '__pycache__' in path.parts or path.name == 'artifact_manifest.json':
+            continue
+        artifacts.append({'path': str(path.relative_to(output)), 'bytes': path.stat().st_size, 'sha256': digest(path)})
+    save(output/'artifact_manifest.json', {'files': artifacts})
+    print(json.dumps(safe({'cases': len(cases), 'forecasts': len(audits), 'endpoints': len(endpoints),
+        'completed_cases': sum(c['completed'] for c in cases), 'controller_adoption': False,
+        'report': str((output/'report.json').relative_to(REPO_ROOT))}), indent=2))
+
+
+if __name__ == '__main__':
+    main()

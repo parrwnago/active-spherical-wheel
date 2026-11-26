@@ -1,0 +1,88 @@
+# Research presentation notes — 2026-11-26
+
+- **I-53 teammate publication and acceleration audit:**
+  [record](teammate-handoff/README.md), [start-here guide](../../TEAMMATE_HANDOFF.md).
+  The user's playback 10 s cue is recorded 32 s. R reaches 1.025 m/s after a
+  support/gain switch requests −7.719 N m shell torque, clipped at −0.600;
+  reference slew constraints do not bound actual acceleration. N is calmer in this
+  window but still transient. Keep the overall improvement qualified.
+  Current source/tests/history, selected media/data and frozen native-run
+  restoration recipe are prepared for the requested push; defaults unchanged.
+- **I-52 scheduling × joint-reference configuration study:**
+  [record](contact-scheduling-joint-tracking/README.md). Twelve complete 44 s
+  cells across phases −1/+0.3/+0.9. Ground-normal phase lowers RMS at all
+  starts, but +0.3 peak/lean and turns regress. Fixed reference slew limiting
+  worsens −1 RMS 51.08→76.79 mm and lean 7.40→13.20°. The combination at +0.9
+  finishes 9.53 mm from goal and passes original settling/route gates, but four
+  turn overshoots worsen. No candidate passes the full screen across starts;
+  defaults remain. One unscorable native crash plus its unchanged serial retry
+  are retained separately. Historical correction: the recovered old MuJoCo
+  normal-phase sweep improved 3.72% with zero falls, below its 5% margin;
+  previous generic regression wording was too broad.
+- **I-51 reference/handoff isolation completed:** [record](allocation-handoff-isolation/README.md).
+  Five fresh 44 s cases complete. Baseline uses plain LS, with original XY and
+  body targets; the old 191 mm drift was not intentional feasible-reference
+  relaxation. Reference slew limiting improves RMS 50.49→44.21 mm and final
+  190.19→32.69 mm, but turn/settling gates fail. Belt handoff slew improves RMS
+  52.52→42.06 mm yet worsens peak relative lean 6.05→11.68°. A separate phase
+  diagnostic matches the original first 38 s exactly, then changes only
+  normal-relative scheduling: final 190.19→53.99 mm, late RMS 84.65→56.71 mm,
+  whole moving RMS essentially unchanged. This implicates scheduling in that
+  episode; no time-gated/default policy is adopted. All tradeoffs retained.
+- **I-50 saved-log handoff/deviation audit:** [record](belt-handoff-investigation/README.md).
+  Video18s maps to recorded32s. Baseline31.650s shell re-entry has almost
+  parallel drive directions, infeasible +489/−1761rad/s references and clipped
+  joint-speed LQR torque demand. Raised32.170s is a separate discontinuity:
+  prepared belt−.012→loadedLQR−.303m/s in5ms, then support chatter. Existing
+  kinematic preview prepares incoming no-slip speed but guarantees neither
+  contact onset nor continuous loaded-command takeover. Late191mm departure
+  starts under correct support, accurate normal, nonsingular allocation and
+  unsaturated commands; its full physical cause remains unresolved. No new
+  physics/default changes. Slow saved-state replay and exact evidence retained.
+- **I-49 belt-capacity sweep completed:** [record](belt-capacity-sweep/README.md).
+  Same fixed LQR design, three fresh44s Marsfigure8 runs at.30/.60/.90m/s.
+  Highercaps reduce peak191→110mm/final190→49mm/relativelean8.71→6.05°,
+  but movingRMS50.49→52.52mm and settling/turn gates still fail. .60/.90body
+  motion matches exactly despite45ms of differentappliedbeltA commands and
+  differentcalculatedslip. Useful capacity tradeoff; no motor/default selected.
+- **I-48 saved-contact clock/radius diagnostic:**
+  [record](contact-clock-disentangling/README.md).
+  Matching the plugin's radial-R convention removes4 Mars/10flat individual
+  admitted-point band violations; prior-pose shift alone does not. Old logs
+  support this comparison, not an unrecorded computation-delay estimate.
+  Controller and observer remain unchanged; no new simulation.
+- **I-47 presentation preparation; saved-data analysis only:**
+  [PDF and source/evidence record](presentation-preparation/README.md).
+  Explains the full current loop, dynamics and observer math, soft cost versus
+  clipping, single-contact directional singularity, lockstep/measurement clocks
+  and turn metric distinctions. Includes a five-minute outline and professor
+  Q&A. No new simulation or controller change; earlier outcomes remain intact.
+- **I-46 completed; filter retained:** [current support-routing audit](support-routing-timing/README.md).
+  Selected a gentle Mars corridor before control outcomes; both 16 s Mars/flat
+  cases completed with transfers in both directions. Seven common transitions
+  give 0 ms median timing improvement; mismatch-equivalent Mars 5→0 ms, flat
+  10→10 ms. Command maxima unchanged; registered benefit gates fail. Historical
+  90→55 ms disagreement helps classification, but the useful cue follows belt-A
+  saturation and leaves the largest jump unchanged. Keep the baseline stack.
+  54 selected unique tests pass each environment; failed site criteria, initial
+  flat setup and pre-reduction tie bug are retained. No faster routing actuated.
+- **I-45 completed; current map-to-contact integration parked:** [configuration isolation](contact-preview-pose-isolation/README.md).
+  On 244 matched resolved-contact patch-mean targets, memory RMS improves
+  11.492→7.722 mm with hindsight actual configuration, but observer tangent is
+  still lower at 7.476 mm. Motion contributes substantially; no material map
+  advantage meets the registered rule. Tails improve, median/identity remain
+  worse. Dense actual-pose memory has 0/33 complete contact previews. All 714 CV
+  rows reproduce; 61 selected tests pass in each environment. No new physics,
+  depth capture, controller changes or demonstrated driving gain.
+- **I-44 implemented/analyzed, offline:** [four-camera terrain memory](terrain-map-preview/README.md).
+  Four depth views and exact simulated state recover terrain at 277/327 uniform
+  forecast queries (84.7%); current views alone cover none of those underbody
+  locations. Memory passes the registered terrain-utility screen, but early
+  bump coverage is only 3/33 and matched future-contact point RMS worsens
+  7.90→11.30 mm (271 pairs). Keep LQR/observer/feedforward unchanged. One reused
+  Gazebo trace, zero new physics runs; 75 selected unique tests pass in each
+  environment. No SLAM/state estimator or tracking-improvement claim.
+- The prior [I-43 experiment](../2026-11-25/tilt-reference/README.md) remains
+  rejected for adoption: reduced early demand did not pass whole-route lean and
+  turning criteria. Terrain sensing is a new hypothesis, not a correction to
+  those preserved results.

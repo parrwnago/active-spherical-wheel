@@ -1,0 +1,23 @@
+{
+  "iteration": "I-40",
+  "stage": "warning_aggregation_correction",
+  "completed_utc": "2026-11-26T02:35:29.638307+00:00",
+  "issue": "Initial merge_confusions consumed a generator for TP and incorrectly reported zero FP/FN. Per-anchor records are correct.",
+  "change": "Materialize the generator once before three sums; recompute warning summary only.",
+  "scope": "Saved-data arithmetic only; zero additional physics, geometry evaluations, predictions or controller executions.",
+  "initial_report_sha256": "0b215f4a1486d5f0f3042642871d07f74c76d4de79ae139e0a92faf5372cf7af",
+  "initial_artifact_manifest_sha256": "52fa2962ec7b0265a4d5dfac02b295ce2cdccd9fa6f62add1cdddf9030aa36c4",
+  "per_anchor_events_sha256": "399d701f79bd3f0e29a45a67b8d8de253d53935418e896b38cf67cf42a77221d",
+  "source_sha256": "5400ad5127639b38f9ade0b2b425030f0fa9f55f77adfcf1b8972ff92f8e9a65",
+  "all_other_report_values_exactly_unchanged": true,
+  "adversarial_generator_fp_fn_check": {
+    "anchor_patch_tp": 5,
+    "anchor_patch_fp": 7,
+    "anchor_patch_fn": 9,
+    "precision": 0.4166666666666667,
+    "recall": 0.35714285714285715,
+    "independence_limit": "Anchors overlap and are not independent transfers."
+  },
+  "method_independent_actual_positive_denominators_checked": true,
+  "initial_stage_retained_unchanged": true
+}

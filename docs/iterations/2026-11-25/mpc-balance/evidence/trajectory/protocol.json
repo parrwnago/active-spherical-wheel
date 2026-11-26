@@ -1,0 +1,73 @@
+{
+  "status": "Declared before trajectory-MPC closed-loop trial; informed by preserved initial/calibration audits.",
+  "case": {
+    "warm_s": 0.8,
+    "motion_s": 0.6,
+    "recovery_s": 4.0,
+    "nominal_distance_m": 0.016,
+    "peak_speed_m_s": 0.04,
+    "slope_degrees": [
+      0,
+      10
+    ],
+    "shaft_phase_rad": 1.5707963267948966
+  },
+  "mpc": {
+    "kind": "One-SQP-step successive trajectory linearization with nonlinear cost screening",
+    "horizon_steps": 20,
+    "step_s": 0.02,
+    "horizon_s": 0.4,
+    "replan_s": 0.02,
+    "sensing_s": 0.005,
+    "direct_physical_inputs": [
+      "shaft torque Nm",
+      "shellA torque Nm",
+      "shellB torque Nm",
+      "beltA speed m/s",
+      "beltB speed m/s"
+    ],
+    "jacobian_stride": 5,
+    "jacobian_nodes": [
+      0,
+      5,
+      10,
+      15,
+      19
+    ],
+    "initial_seed_shaft_torque_Nm": [
+      -0.03,
+      0.03
+    ],
+    "initial_seed_duration_s": 0.12,
+    "line_search_alpha": [
+      1,
+      0.5,
+      0.25
+    ],
+    "load_residual_fraction": 0.1,
+    "load_gate": "Bracketed nearest-load solution away from3mmoffsetbound, residual<=10%; strict.002diagnosticretained. Nominalpredictiongood doesnotguaranteeFDJacobianquality.",
+    "costs": "Same state/input/change/terminal costs as initial candidate. No broadcoefficientsearch.",
+    "command_selection": "Select lowest finite nonlinear-private-model cost among bounded warm/initialseed/SQPline-search input sequences; label selected source andQPfailures explicitly. Seeds change only predicted torque sequences, never livepose.",
+    "runtime": "Offline; cost and solve failuresreported, no real-timeclaim."
+  },
+  "acceptance": {
+    "all": "no physical failure; hard applied-input bounds respected; useful original-goal recovery; fallback active samples <=5 percent",
+    "weak_y": "final original-goal error <=5mm, no worse peak reference-relative lean and lower lean-error integral plus lower original-clock path RMS than matched baseline",
+    "strong_x": "no greater than10 percent path-RMS regression and no worse peak lean; final original-goal error <=5mm",
+    "not_accepted": "Frozen/stalled travel, mostly LQR fallback, success inferred only from QP bound compliance",
+    "runtime": "offline wall-time measured, no real-time claim; no runtime gate for physics proof-of-concept"
+  },
+  "prediction_screen_reference": {
+    "20ms_xy_m": 0.0005,
+    "20ms_angle_degrees": 0.2,
+    "100ms_xy_m": 0.002,
+    "100ms_angle_degrees": 1.0,
+    "scope": "Proposed diagnostic tolerances; prior recorded-input audit passed. Optimized400msplans must be checked separately; a frozen model may omit phase\u00d7drive benefits."
+  },
+  "baseline": "REUSE initial LQR worldX/Y runs; verify exactwarm prefix, no newbaselinephysics.",
+  "limitations": [
+    "Force-admission gaps make some full-state finite-difference Jacobians ill-conditioned; nonlinear screening doesnotprovegloballyoptimalorrobustcontrol.",
+    "Sparse Jacobian interpolation approximatesintermediatecontactmodes; nominal nonlinearstate drift is retained atall20nodes.",
+    "Use same originalgoal andconstraints. Physical configuration is not frozen orreset."
+  ]
+}

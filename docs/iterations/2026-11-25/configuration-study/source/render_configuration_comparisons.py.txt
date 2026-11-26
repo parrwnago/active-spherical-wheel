@@ -1,0 +1,224 @@
+"""Render two four-second configuration comparisons from saved Gazebo states.
+
+Reproduce from the repository root:
+MUJOCO_GL=egl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -u results/configuration_study_20261125/videos/render_configuration_comparisons.py
+
+The analytical MuJoCo terrain model is used only as a viewer for the logged
+Gazebo/DART configurations. No integration or controller execution occurs.
+"""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+
+from spherical_wheel.offroad import TerrainPlant
+from spherical_wheel.offroad_view import _camera, _caption, _draw, _font
+from spherical_wheel.terrain import Terrain
+
+
+OUTPUT = Path(__file__).resolve().parent
+STUDY = OUTPUT.parent
+CONTROLLED = STUDY / 'controlled'
+CASE = CONTROLLED / 'runs/side_slope_10/phase_1.5708/pitch_0'
+SUPPORTS = ('shell A', 'shell B', 'belt A', 'belt B')
+WIDTH, HEIGHT, FPS, SPEED = 960, 720, 20, .5
+
+
+def load_run(motion, variant):
+    directory = CASE / motion / variant
+    summary = json.loads((directory / 'summary.json').read_text())
+    assert summary['completed'], f'Incomplete run: {directory}'
+    with np.load(directory / 'rollout.npz') as saved:
+        log = {key: np.asarray(value, dtype=np.float64) if value.dtype.kind == 'f'
+               else np.asarray(value) for key, value in saved.items()}
+    assert abs(log['time_s'][-1] - 4.) < 1e-6
+    log['planned_xy'] = log['reference_xy'][::8]
+    log['patch_changes_so_far'] = np.r_[0, np.cumsum(np.diff(log['configuration_patch']) != 0)]
+    return {'directory': directory, 'summary': summary, 'log': log,
+            'motion': motion, 'variant': variant}
+
+
+def nearest(times, moment):
+    index = min(int(np.searchsorted(times, moment)), len(times) - 1)
+    if index and abs(times[index - 1] - moment) <= abs(times[index] - moment):
+        index -= 1
+    return index
+
+
+def vector(values, digits=2):
+    return '[' + ', '.join(f'{value:+.{digits}f}' for value in values) + ']'
+
+
+def loads(values):
+    entries = [f'{name} {value:.1f} N' for name, value in zip(SUPPORTS, values) if value > .05]
+    return ' + '.join(entries) if entries else 'no loaded patch'
+
+
+def caption_lines(run, index):
+    log = run['log']
+    qref = log['reference_quat'][index]
+    ref_lean = np.rad2deg(np.arccos(np.clip(1. - 2. * np.sum(qref[1:3]**2) / np.dot(qref, qref), -1., 1.)))
+    error = np.linalg.norm(log['qpos'][index, :2] - log['reference_xy'][index]) * 1000.
+    refs = log['allocation_drive_reference'][index]
+    clipping = ', '.join(name for name, active in zip(
+        ('shaft', 'shell A', 'shell B', 'belt A', 'belt B'), log['actuator_saturated'][index]) if active) or 'none'
+    lines = [
+        f"t {log['time_s'][index]:.3f} s | XY error {error:.0f} mm | requested world velocity {vector(log['reference_velocity_m_s'][index])} m/s",
+        'Slope 10 deg in world Y | initial shaft phase pi/2 | nominal fork pitch offset 0 deg',
+        f"Body lean actual/reference {np.rad2deg(log['tilt_rad'][index]):.1f}/{ref_lean:.1f} deg | attitude error {np.rad2deg(log['attitude_error_rad'][index]):.1f} deg",
+        'Actual support: ' + loads(log['support_loads_N'][index]) + ' | estimated: ' + loads(log['estimated_support_loads_N'][index]),
+        f"Estimated patch changes so far: {log['patch_changes_so_far'][index]} | cold observer reset; initial attitude error 0 deg",
+        'Joint reference rates [shaft,A,B]: ' + vector(refs[:3], 1) + ' | actual rates: ' + vector(log['qvel'][index, 6:9], 1) + ' rad/s',
+        'Belt references [A,B]: ' + vector(refs[3:]) + ' | final speed commands: ' + vector(log['input'][index, 3:]) + ' m/s',
+        'Torque request/final [shaft,A,B] N m: ' + vector(log['command'][index, :3]) + ' / ' + vector(log['input'][index, :3]),
+        'Final command limits: torque +/-[1.5, 0.6, 0.6] N m; belts +/-0.30 m/s | clipping: ' + clipping,
+    ]
+    if run['variant'] == 'adaptive':
+        limits = log['allocation_speed_limits'][index]
+        accels = log['allocation_acceleration_limits'][index]
+        lines.append(f'Reference-only limits: joints +/-{limits[0]:g} rad/s; belts +/-{limits[3]:g} m/s; acceleration {accels[0]:g} rad/s2, {accels[3]:g} m/s2')
+        lines.append(f"Existing geometry-adaptive cost 0.001 to 0.005 (now {log['allocation_effort_weight_m_s'][index]:.4f}); change cost 0.001")
+    else:
+        lines += ['Baseline least-squares allocation: no explicit drive-reference speed/acceleration limits.',
+                  'LQR feedback unchanged; final command limits do not bound measured joint speed.']
+    return lines
+
+
+def render_panel(plant, renderer, run, moment, heading, footer):
+    log = run['log']
+    index = nearest(log['time_s'], moment)
+    # A common stationary camera exposes travel in the wrong direction instead
+    # of recentering each robot independently. Orange reference and cyan trail
+    # use logged world coordinates on the same analytical sloped plane.
+    camera = _camera(np.array([0., -.10, .22]), 112., -25., 1.35)
+    option = mujoco.MjvOption()
+    option.geomgroup[3:] = 0
+    frame = _draw(plant, renderer, log, index, camera, option, shadows=False)
+    frame = _caption(frame, heading, caption_lines(run, index), footer)
+    return xy_inset(frame, log, index)
+
+
+def xy_inset(frame, log, index):
+    """Small unobstructed XY view; identical world bounds for all panels."""
+    from PIL import Image, ImageDraw
+    image = Image.fromarray(frame)
+    draw = ImageDraw.Draw(image, 'RGBA')
+    left, top, size = 16, 466, 216
+    draw.rounded_rectangle((left, top, left + size, top + size), radius=5,
+                           fill=(10, 18, 27, 220), outline=(120, 140, 150, 180))
+    draw.text((left + 8, top + 5), 'World XY | same scale | 0.1 m grid',
+              font=_font(11), fill=(230, 240, 245))
+    x0, y0, side = left + 20, top + 28, 180
+    def point(xy):
+        x, y = xy
+        return (x0 + (x + .30) / .60 * side, y0 + (.20 - y) / .60 * side)
+    for coordinate in np.arange(-.30, .301, .10):
+        draw.line([point((coordinate, -.40)), point((coordinate, .20))], fill=(140, 155, 165, 60))
+    for coordinate in np.arange(-.40, .201, .10):
+        draw.line([point((-.30, coordinate)), point((.30, coordinate))], fill=(140, 155, 165, 60))
+    draw.line([point((-.30, 0)), point((.30, 0))], fill=(200, 215, 225, 110))
+    draw.line([point((0, -.40)), point((0, .20))], fill=(200, 215, 225, 110))
+    draw.text((x0 + side - 10, point((0, 0))[1] + 2), '+X', font=_font(10), fill=(220, 230, 235))
+    draw.text((point((0, 0))[0] + 3, y0), '+Y', font=_font(10), fill=(220, 230, 235))
+    planned = [point(xy) for xy in log['planned_xy']]
+    if len(planned) > 1:
+        draw.line(planned, fill=(255, 160, 50, 255), width=2)
+    trail = [point(xy) for xy in log['qpos'][:index + 1, :2]]
+    if len(trail) > 1:
+        draw.line(trail, fill=(30, 220, 240, 255), width=2)
+    for xy, color in [(log['reference_xy'][index], (255, 160, 50, 255)),
+                      (log['qpos'][index, :2], (30, 220, 240, 255))]:
+        x, y = point(xy)
+        draw.ellipse((x-3, y-3, x+3, y+3), fill=color)
+    return np.asarray(image)
+
+
+def provenance(run):
+    return {'directory': str(run['directory']),
+            'rollout_sha256': hashlib.sha256((run['directory'] / 'rollout.npz').read_bytes()).hexdigest(),
+            'tracking': run['summary']['tracking'],
+            'attitude': run['summary']['attitude'],
+            'estimated_patch_changes': int(run['log']['patch_changes_so_far'][-1]),
+            'configuration': run['summary']['configuration_case']}
+
+
+def render_comparison(plant, name, runs, headings, comparison_note, preview_only=False):
+    target = OUTPUT / (name + '.mp4')
+    footer = 'Gazebo/DART replay | Exact state; estimated contact | 4 s mechanism test | 0.5x | Cyan: actual; orange: reference'
+    saved = plant.capture()
+    try:
+        with mujoco.Renderer(plant.model, height=HEIGHT, width=WIDTH) as renderer:
+            if not preview_only:
+                writer = imageio.get_writer(target, fps=FPS, codec='libx264', quality=8,
+                                            macro_block_size=2, ffmpeg_log_level='error')
+                try:
+                    for moment in np.arange(0., 4. + 1e-8, SPEED / FPS):
+                        panels = [render_panel(plant, renderer, run, moment, heading, footer)
+                                  for run, heading in zip(runs, headings)]
+                        writer.append_data(np.concatenate(panels, axis=1))
+                finally:
+                    writer.close()
+            # Paired stills at active motion and at the common last state.
+            for moment, suffix in [(2., 'at_2s'), (4., 'final')]:
+                panels = [render_panel(plant, renderer, run, moment, heading, footer)
+                          for run, heading in zip(runs, headings)]
+                imageio.imwrite(OUTPUT / f'{name}_{suffix}.jpg', np.concatenate(panels, axis=1), quality=90)
+    finally:
+        plant.restore(saved)
+    if preview_only:
+        return None
+    with imageio.get_reader(target) as reader:
+        metadata = reader.get_meta_data()
+        count = reader.count_frames()
+        last = reader.get_data(count - 1)
+        assert last.shape == (HEIGHT, WIDTH * 2, 3)
+        imageio.imwrite(OUTPUT / f'{name}_decoded_final.jpg', last, quality=90)
+    return {'file': str(target), 'size_bytes': target.stat().st_size,
+            'sha256': hashlib.sha256(target.read_bytes()).hexdigest(),
+            'fps': metadata['fps'], 'dimensions': list(metadata['size']),
+            'frames': count, 'video_duration_s': metadata['duration'],
+            'simulation_interval_s': [0., 4.], 'playback_speed': SPEED,
+            'final_frame_decoded': True,
+            'comparison': comparison_note,
+            'render_scope': 'Logged Gazebo/DART qpos in analytical MuJoCo terrain viewer; no new physics.',
+            'sensing': 'Exact state inputs, estimated contacts. Actual support displayed for evaluation only.',
+            'limits': 'Adaptive bounds apply to drive references; final torque/belt-command limits are separate; actual joint rates need not obey reference bounds.',
+            'runs': [provenance(run) for run in runs]}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--preview-only', action='store_true')
+    args = parser.parse_args()
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    baseline_y = load_run('world_y', 'baseline')
+    adaptive_y = load_run('world_y', 'adaptive')
+    baseline_x = load_run('world_x', 'baseline')
+    config_path = sorted((CONTROLLED / '_workspaces').glob('worker_*/flat/model_config.json'))[0]
+    config = json.loads(config_path.read_text())
+    terrain = Terrain.from_spec(json.loads((baseline_y['directory'] / 'terrain.json').read_text()))
+    plant = TerrainPlant(config, terrain, OUTPUT / '_replay_scene', visual_bounds=(-1.1, 1.1, -1.1, 1.1))
+    reports = []
+    reports.append(render_comparison(plant, 'world_y_baseline_vs_adaptive',
+        [baseline_y, adaptive_y],
+        ['Baseline least squares | world-Y request', 'Existing geometry-adaptive bounded | world-Y request'],
+        'Same world-Y reference and initial physical geometry; baseline versus existing adaptive allocator.',
+        args.preview_only))
+    reports.append(render_comparison(plant, 'baseline_world_x_vs_world_y',
+        [baseline_x, baseline_y],
+        ['Baseline | world-X request', 'Baseline | world-Y request (different direction)'],
+        'Different reference directions, same baseline algorithm and initial physical geometry. Not an algorithm improvement comparison.',
+        args.preview_only))
+    if not args.preview_only:
+        payload = {'config_source': str(config_path), 'videos': reports,
+                   'caveat': 'Four-second mechanism cases, not route qualification. No new smooth-weight policy was implemented.'}
+        (OUTPUT / 'video_metadata.json').write_text(json.dumps(payload, indent=2) + '\n')
+        print(json.dumps(payload, indent=2), flush=True)
+
+
+if __name__ == '__main__':
+    main()

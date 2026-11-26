@@ -1,0 +1,113 @@
+"""Replay saved measurements through the disabled-feature controller; no Gazebo run."""
+from datetime import datetime, timezone
+from pathlib import Path
+import hashlib
+import json
+import shutil
+import sys
+import traceback
+import types
+
+import numpy as np
+
+FAMILY = Path(__file__).resolve().parent
+ROOT = FAMILY.parents[1]
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def save(path, value):
+    path.write_text(json.dumps(value, indent=2) + '\n')
+
+
+def main():
+    destination = FAMILY / 'default_replay/stage01'
+    destination.mkdir(parents=True, exist_ok=False)
+    helper_path = ROOT / 'scripts/run-lqr-contact-forecast.py'
+    helper = types.ModuleType('I43_saved_history_helper')
+    helper.__file__ = str(helper_path)
+    exec(compile(helper_path.read_text(), str(helper_path), 'exec'), helper.__dict__)
+    protocol = json.loads((FAMILY / 'protocol.json').read_text())
+    baseline = ROOT / protocol['baseline']
+    actual = json.loads((baseline / 'provenance.json').read_text())
+    for rel, digest in protocol['baseline_input_sha256'].items():
+        assert sha(baseline / rel) == digest, rel
+    assert helper.versions() == actual['versions']
+    from spherical_wheel.model import load_config
+    from spherical_wheel.offroad_control import OffroadController, OffroadParams
+    from spherical_wheel.offroad_experiments import Workspace
+    parameters = OffroadParams(**helper.PARAMETERS)
+    assert parameters.tilt_reference is None
+    assert helper.safe(parameters.as_dict()) == actual['parameters']
+    sources = [Path(__file__).resolve(), helper_path, FAMILY / 'protocol.json',
+               *sorted((ROOT / 'src/spherical_wheel').rglob('*.py'))]
+    snapshots = []
+    for source in sources:
+        rel = source.relative_to(ROOT)
+        target = destination / 'source_snapshot' / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+        snapshots.append({'origin': str(rel), 'snapshot': str(target.relative_to(destination)), 'sha256': sha(source)})
+    save(destination / 'provenance.json', {
+        'iteration': 'I-43', 'captured_before_execution_utc': datetime.now(timezone.utc).isoformat(),
+        'sources': snapshots, 'versions': helper.versions(),
+        'inputs': {str((baseline / rel).relative_to(ROOT)): digest for rel, digest in protocol['baseline_input_sha256'].items()},
+        'scope': 'Native command/after_step on saved current/past measurements. No Gazebo construction, plant stepping or private dynamics forecast.'})
+    result = {'iteration': 'I-43', 'passed': False, 'scope': 'Saved-history disabled-feature regression only; not an additional simulation or repo suite.'}
+    try:
+        with np.load(baseline / 'precision.npz') as archive:
+            exact = {key: archive[key].copy() for key in archive.files}
+        workspace = Workspace(load_config(), destination / '_workspace',
+                              seed_cache=ROOT / 'generated/offroad/flat/control_schedule.npz')
+        mirror = workspace.mirror()
+        mirror.set_state(exact['exact_qpos'][0], exact['exact_qvel'][0],
+                         exact['time_s'][0], exact['exact_previous_applied'][0])
+        job = actual['case']
+        controller = OffroadController(mirror, workspace.design, parameters,
+                                       phase=job['phase_rad'], record_diagnostics=True)
+        controller.nominal_joints = np.asarray(actual['initial_nominal_joints'], float).copy()
+        path = helper.make_path(job)
+        metrics = {key: {'maximum_absolute_gap': 0., 'all_rows_bit_identical': True}
+                   for key in ['applied', 'requested', 'observer_wrench', 'normal', 'nominal_before', 'reference']}
+        with helper.guards():
+            for index, now in enumerate(exact['time_s']):
+                mirror.set_state(exact['exact_qpos'][index], exact['exact_qvel'][index],
+                                 float(now), exact['exact_previous_applied'][index])
+                nominal = controller.nominal_joints.copy()
+                reference = path(float(now))
+                applied, info = controller.command(*reference)
+                assert controller._tilt_reference is None
+                pairs = {
+                    'applied': (applied, exact['exact_applied'][index]),
+                    'requested': (info['requested'], exact['exact_native_requested'][index]),
+                    'observer_wrench': (np.r_[controller.observer.wrench()], exact['exact_observer_wrench'][index]),
+                    'normal': (info['estimate']['normal'], exact['exact_estimated_normal'][index]),
+                    'nominal_before': (nominal, exact['exact_nominal_joints_before'][index]),
+                    'reference': (np.concatenate(reference), np.r_[exact['exact_reference_xy'][index],
+                        exact['exact_reference_velocity_m_s'][index], exact['exact_reference_acceleration_m_s2'][index]])}
+                for key, (current, saved) in pairs.items():
+                    current, saved = np.asarray(current), np.asarray(saved)
+                    metrics[key]['maximum_absolute_gap'] = max(metrics[key]['maximum_absolute_gap'], float(np.max(abs(current - saved))))
+                    metrics[key]['all_rows_bit_identical'] &= bool(current.shape == saved.shape and current.dtype == saved.dtype and current.tobytes() == saved.tobytes())
+                assert all(v['all_rows_bit_identical'] for v in metrics.values()), (index, float(now), metrics)
+                if index + 1 < len(exact['time_s']):
+                    controller.after_step()
+        for item in snapshots:
+            assert sha(ROOT / item['origin']) == item['sha256'], item['origin']
+        result.update(passed=True, guarded_command_calls=len(exact['time_s']),
+                      exact_disabled_feature=True, legacy_serialized_parameters_unchanged=True, fields=metrics)
+    except Exception:
+        result['failure_traceback'] = traceback.format_exc()
+        raise
+    finally:
+        save(destination / 'report.json', result)
+        files = [p for p in destination.rglob('*') if p.is_file() and '_workspace' not in p.relative_to(destination).parts]
+        save(destination / 'artifact_manifest.json', {'files': [
+            {'path': str(p.relative_to(destination)), 'bytes': p.stat().st_size, 'sha256': sha(p)} for p in sorted(files)]})
+        print(json.dumps(result, indent=2), flush=True)
+
+
+if __name__ == '__main__':
+    main()

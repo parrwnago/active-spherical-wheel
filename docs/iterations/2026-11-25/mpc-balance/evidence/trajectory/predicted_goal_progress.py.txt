@@ -1,0 +1,37 @@
+"""Reproduction helper saved after the equivalent inline plan-progress audit.
+
+Own-model predictions are not actual future motion or a model-validation result.
+"""
+from pathlib import Path
+import hashlib
+import json
+
+import numpy as np
+
+
+HERE = Path(__file__).resolve().parent
+
+
+def main():
+    source = HERE/'runs/world_y/mpc/plans.json'
+    plans = json.loads(source.read_text())
+    rows = []
+    for at in (.8, 1., 1.4, 2., 3., 5.):
+        plan = min(plans, key=lambda row: abs(row['time_s']-at))
+        goal = np.array(plan['target_states'])[-1, :2]
+        prediction = np.array(plan['nonlinear_states'])[-1, :2]
+        remaining = float(np.linalg.norm(goal))
+        progress = float(prediction@goal/max(remaining, 1e-12))
+        rows.append({'time_s': plan['time_s'], 'command_source': plan.get('command_source'),
+                     'remaining_goal_mm': 1000*remaining,
+                     'predicted_horizon_progress_mm': 1000*progress,
+                     'predicted_terminal_remaining_mm': float(1000*np.linalg.norm(goal-prediction)),
+                     'cost': plan.get('nonlinear_cost')})
+    report = {'scope': 'Saved own-model nonlinear terminal predictions at selected plans; not actual future travel or a model-validation result.',
+              'input_sha256': hashlib.sha256(source.read_bytes()).hexdigest(), 'rows': rows}
+    (HERE/'predicted_goal_progress.json').write_text(json.dumps(report, indent=2)+'\n')
+    print(json.dumps(report, indent=2))
+
+
+if __name__ == '__main__':
+    main()

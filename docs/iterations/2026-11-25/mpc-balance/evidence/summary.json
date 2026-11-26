@@ -1,0 +1,706 @@
+{
+  "status": "experimental_mpc_not_accepted_against_declared_protocol",
+  "actual_new_gazebo_campaign_runs": 7,
+  "completed_runs": 7,
+  "run_count_definition": "Four initial runs (two LQR baselines and two frozen MPC), one new affine-calibration world-X run, and two new trajectory-MPC runs. Later analyses reuse initial baselines and earlier candidates; those rows are not new runs.",
+  "guarded_controller_calls": 7567,
+  "initial_acceptance": {
+    "world_x": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": true,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": false,
+        "path_rms_regression_at_most_10pct": false
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "fallback_at_most_5pct",
+        "path_rms_regression_at_most_10pct"
+      ]
+    },
+    "world_y": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": false,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": true,
+        "lower_lean_integral": true,
+        "lower_original_clock_path_rms": true
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "final_goal_within_5mm"
+      ]
+    }
+  },
+  "calibration_gate_acceptance": {
+    "world_x": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": false,
+        "no_worse_peak_reference_lean": false,
+        "fallback_at_most_5pct": true,
+        "path_rms_regression_at_most_10pct": false
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "final_goal_within_5mm",
+        "no_worse_peak_reference_lean",
+        "path_rms_regression_at_most_10pct"
+      ]
+    }
+  },
+  "trajectory_acceptance": {
+    "world_x": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": false,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": true,
+        "path_rms_regression_at_most_10pct": true
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "final_goal_within_5mm"
+      ]
+    },
+    "world_y": {
+      "checks": {
+        "completed_without_physical_failure": true,
+        "hard_input_bounds": true,
+        "final_goal_within_5mm": false,
+        "no_worse_peak_reference_lean": true,
+        "fallback_at_most_5pct": true,
+        "lower_lean_integral": true,
+        "lower_original_clock_path_rms": true
+      },
+      "passed_all": false,
+      "failed_checks": [
+        "final_goal_within_5mm"
+      ]
+    }
+  },
+  "trajectory_counter_clarification": {
+    "actuated_accepted_plan_updates_per_case": 230,
+    "actuated_successful_QP_calls_per_case": 232,
+    "plan_records_including_terminal_per_case": 231,
+    "successful_QP_calls_including_terminal_per_case": 233,
+    "meaning": "First update solves three seeds. The report field actuated_qp_solved_plans is a legacy name for successful QP calls, not a count of accepted plan updates. Accepted nonlinear sequences and selected warm/SQP command sources remain separate."
+  },
+  "physical_runs": [
+    {
+      "stage": "initial",
+      "direction": "world_x",
+      "policy": "mpc",
+      "completed": true,
+      "failure": null,
+      "mpc_experiment": {
+        "variant": "mpc",
+        "motion": "world_x",
+        "activation": {
+          "time_s": 0.8000000000000006,
+          "original_goal_origin": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286
+          ],
+          "qpos": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286,
+            0.11816582981754487,
+            0.9963690145247048,
+            -0.08513973318012588,
+            1.751028293096126e-05,
+            -0.00011145616009128502,
+            1.572013301305727,
+            0.0036110177315199516,
+            -0.004654148953402597
+          ],
+          "qvel": [
+            7.660264340170469e-05,
+            0.000346100778245253,
+            6.092080991331252e-05,
+            -0.0029255423011177797,
+            -0.00037539013401160484,
+            -0.000645960933659438,
+            0.0026141880732475213,
+            0.0036976024769256573,
+            -0.0028258440855612565
+          ],
+          "physical_state_not_reset": true,
+          "live_estimator_preserved": true
+        },
+        "plans_generated_including_terminal": 231,
+        "qp_solved_plans": 73,
+        "qp_success_definition": "QP solved with bounded input and finite replay; nonlinear/affine agreement is measured, not an acceptance gate.",
+        "fallback_actuated_active_samples": 628,
+        "guarded_controller_calls": 1081,
+        "original_goal_error_final_mm": 1.7941750013339828,
+        "original_goal_progress_final_mm": 15.2726764464549,
+        "active_path_error_rms_mm": 13.57912090988503,
+        "active_peak_reference_lean_deg": 0.9242801563582576,
+        "active_lean_error_integral_deg_s": 1.019389402050962,
+        "active_input_limit_occupancy_fraction": 0.008695652173913044,
+        "mpc_update_time_median_s": 0.009103383999899961,
+        "scope": "Local affine constrained MPC with estimated private-plane dynamics. Not nonlinear configuration planning, hard-tilt safety, or real-time qualification.",
+        "diagnostic_components": "Native LQR/FF/sync fields are shadows in MPC mode; mpc_command_delta added to their native requested sum yields actual final input."
+      },
+      "wall_time_s": 42.749473333358765
+    },
+    {
+      "stage": "initial",
+      "direction": "world_y",
+      "policy": "mpc",
+      "completed": true,
+      "failure": null,
+      "mpc_experiment": {
+        "variant": "mpc",
+        "motion": "world_y",
+        "activation": {
+          "time_s": 0.8000000000000006,
+          "original_goal_origin": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286
+          ],
+          "qpos": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286,
+            0.11816582981754487,
+            0.9963690145247048,
+            -0.08513973318012588,
+            1.751028293096126e-05,
+            -0.00011145616009128502,
+            1.572013301305727,
+            0.0036110177315199516,
+            -0.004654148953402597
+          ],
+          "qvel": [
+            7.660264340170469e-05,
+            0.000346100778245253,
+            6.092080991331252e-05,
+            -0.0029255423011177797,
+            -0.00037539013401160484,
+            -0.000645960933659438,
+            0.0026141880732475213,
+            0.0036976024769256573,
+            -0.0028258440855612565
+          ],
+          "physical_state_not_reset": true,
+          "live_estimator_preserved": true
+        },
+        "plans_generated_including_terminal": 231,
+        "qp_solved_plans": 231,
+        "qp_success_definition": "QP solved with bounded input and finite replay; nonlinear/affine agreement is measured, not an acceptance gate.",
+        "fallback_actuated_active_samples": 0,
+        "guarded_controller_calls": 1081,
+        "original_goal_error_final_mm": 25.081235430644366,
+        "original_goal_progress_final_mm": -8.753198551085285,
+        "active_path_error_rms_mm": 20.07124066238992,
+        "active_peak_reference_lean_deg": 1.7683859623783094,
+        "active_lean_error_integral_deg_s": 0.6152126789822947,
+        "active_input_limit_occupancy_fraction": 0.04782608695652174,
+        "mpc_update_time_median_s": 0.36351597500106436,
+        "scope": "Local affine constrained MPC with estimated private-plane dynamics. Not nonlinear configuration planning, hard-tilt safety, or real-time qualification.",
+        "diagnostic_components": "Native LQR/FF/sync fields are shadows in MPC mode; mpc_command_delta added to their native requested sum yields actual final input."
+      },
+      "wall_time_s": 87.69411492347717
+    },
+    {
+      "stage": "initial",
+      "direction": "world_x",
+      "policy": "baseline",
+      "completed": true,
+      "failure": null,
+      "mpc_experiment": {
+        "variant": "baseline",
+        "motion": "world_x",
+        "activation": {
+          "time_s": 0.8000000000000006,
+          "original_goal_origin": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286
+          ],
+          "qpos": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286,
+            0.11816582981754487,
+            0.9963690145247048,
+            -0.08513973318012588,
+            1.751028293096126e-05,
+            -0.00011145616009128502,
+            1.572013301305727,
+            0.0036110177315199516,
+            -0.004654148953402597
+          ],
+          "qvel": [
+            7.660264340170469e-05,
+            0.000346100778245253,
+            6.092080991331252e-05,
+            -0.0029255423011177797,
+            -0.00037539013401160484,
+            -0.000645960933659438,
+            0.0026141880732475213,
+            0.0036976024769256573,
+            -0.0028258440855612565
+          ],
+          "physical_state_not_reset": true,
+          "live_estimator_preserved": true
+        },
+        "plans": 0,
+        "successful_plans": 0,
+        "fallback_active_samples": 0,
+        "guarded_controller_calls": 1081,
+        "original_goal_error_final_mm": 5.300235765395867,
+        "original_goal_progress_final_mm": 15.519110780197632,
+        "active_path_error_rms_mm": 10.366450957688176,
+        "active_peak_reference_lean_deg": 1.3909749557582145,
+        "active_lean_error_integral_deg_s": 0.8075508161779441,
+        "active_input_limit_occupancy_fraction": 0.0,
+        "mpc_update_time_median_s": null,
+        "scope": "Local affine constrained MPC with estimated private-plane dynamics. Not nonlinear configuration planning, hard-tilt safety, or real-time qualification.",
+        "diagnostic_components": "Native LQR/FF/sync fields are shadows in MPC mode; mpc_command_delta added to their native requested sum yields actual final input."
+      },
+      "wall_time_s": 7.632692813873291
+    },
+    {
+      "stage": "initial",
+      "direction": "world_y",
+      "policy": "baseline",
+      "completed": true,
+      "failure": null,
+      "mpc_experiment": {
+        "variant": "baseline",
+        "motion": "world_y",
+        "activation": {
+          "time_s": 0.8000000000000006,
+          "original_goal_origin": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286
+          ],
+          "qpos": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286,
+            0.11816582981754487,
+            0.9963690145247048,
+            -0.08513973318012588,
+            1.751028293096126e-05,
+            -0.00011145616009128502,
+            1.572013301305727,
+            0.0036110177315199516,
+            -0.004654148953402597
+          ],
+          "qvel": [
+            7.660264340170469e-05,
+            0.000346100778245253,
+            6.092080991331252e-05,
+            -0.0029255423011177797,
+            -0.00037539013401160484,
+            -0.000645960933659438,
+            0.0026141880732475213,
+            0.0036976024769256573,
+            -0.0028258440855612565
+          ],
+          "physical_state_not_reset": true,
+          "live_estimator_preserved": true
+        },
+        "plans": 0,
+        "successful_plans": 0,
+        "fallback_active_samples": 0,
+        "guarded_controller_calls": 1081,
+        "original_goal_error_final_mm": 98.82571930310188,
+        "original_goal_progress_final_mm": -74.46692210339017,
+        "active_path_error_rms_mm": 235.6309365968619,
+        "active_peak_reference_lean_deg": 9.362855753562268,
+        "active_lean_error_integral_deg_s": 13.574734160812277,
+        "active_input_limit_occupancy_fraction": 0.17155266015200868,
+        "mpc_update_time_median_s": null,
+        "scope": "Local affine constrained MPC with estimated private-plane dynamics. Not nonlinear configuration planning, hard-tilt safety, or real-time qualification.",
+        "diagnostic_components": "Native LQR/FF/sync fields are shadows in MPC mode; mpc_command_delta added to their native requested sum yields actual final input."
+      },
+      "wall_time_s": 10.721157312393188
+    },
+    {
+      "stage": "calibration_gate",
+      "direction": "world_x",
+      "policy": "mpc",
+      "completed": true,
+      "failure": null,
+      "mpc_experiment": {
+        "variant": "mpc",
+        "motion": "world_x",
+        "activation": {
+          "time_s": 0.8000000000000006,
+          "original_goal_origin": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286
+          ],
+          "qpos": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286,
+            0.11816582981754487,
+            0.9963690145247048,
+            -0.08513973318012588,
+            1.751028293096126e-05,
+            -0.00011145616009128502,
+            1.572013301305727,
+            0.0036110177315199516,
+            -0.004654148953402597
+          ],
+          "qvel": [
+            7.660264340170469e-05,
+            0.000346100778245253,
+            6.092080991331252e-05,
+            -0.0029255423011177797,
+            -0.00037539013401160484,
+            -0.000645960933659438,
+            0.0026141880732475213,
+            0.0036976024769256573,
+            -0.0028258440855612565
+          ],
+          "physical_state_not_reset": true,
+          "live_estimator_preserved": true
+        },
+        "plans_generated_including_terminal": 231,
+        "qp_solved_plans": 224,
+        "qp_success_definition": "QP solved with bounded input and finite replay; nonlinear/affine agreement is measured, not an acceptance gate.",
+        "fallback_actuated_active_samples": 28,
+        "guarded_controller_calls": 1081,
+        "original_goal_error_final_mm": 29.538915129272205,
+        "original_goal_progress_final_mm": 8.773364749308405,
+        "active_path_error_rms_mm": 19.732612520811536,
+        "active_peak_reference_lean_deg": 3.8158800176773413,
+        "active_lean_error_integral_deg_s": 1.1619245926635677,
+        "active_input_limit_occupancy_fraction": 0.030434782608695653,
+        "mpc_update_time_median_s": 0.3869967139980872,
+        "scope": "Local affine constrained MPC with estimated private-plane dynamics. Not nonlinear configuration planning, hard-tilt safety, or real-time qualification.",
+        "diagnostic_components": "Native LQR/FF/sync fields are shadows in MPC mode; mpc_command_delta added to their native requested sum yields actual final input."
+      },
+      "wall_time_s": 91.43424844741821
+    },
+    {
+      "stage": "trajectory",
+      "direction": "world_x",
+      "policy": "mpc",
+      "completed": true,
+      "failure": null,
+      "mpc_experiment": {
+        "variant": "mpc",
+        "motion": "world_x",
+        "activation": {
+          "time_s": 0.8000000000000006,
+          "original_goal_origin": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286
+          ],
+          "qpos": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286,
+            0.11816582981754487,
+            0.9963690145247048,
+            -0.08513973318012588,
+            1.751028293096126e-05,
+            -0.00011145616009128502,
+            1.572013301305727,
+            0.0036110177315199516,
+            -0.004654148953402597
+          ],
+          "qvel": [
+            7.660264340170469e-05,
+            0.000346100778245253,
+            6.092080991331252e-05,
+            -0.0029255423011177797,
+            -0.00037539013401160484,
+            -0.000645960933659438,
+            0.0026141880732475213,
+            0.0036976024769256573,
+            -0.0028258440855612565
+          ],
+          "physical_state_not_reset": true,
+          "live_estimator_preserved": true
+        },
+        "plans_generated_including_terminal": 231,
+        "accepted_plans": 231,
+        "qp_success_definition": "Affine: solved QP and finite replay. Trajectory: best bounded finite nonlinear sequence among warm/seed/SQP line-search plans; QP counts separately in trials.",
+        "fallback_actuated_active_samples": 0,
+        "guarded_controller_calls": 1081,
+        "original_goal_error_final_mm": 8.163008028952067,
+        "original_goal_progress_final_mm": 8.868392569316427,
+        "active_path_error_rms_mm": 9.183791887660316,
+        "active_peak_reference_lean_deg": 0.8361304583915297,
+        "active_lean_error_integral_deg_s": 0.32106130658276744,
+        "active_input_limit_occupancy_fraction": 0.0,
+        "mpc_update_time_median_s": 2.0190818989976833,
+        "scope": "Successive trajectory linearization with nonlinear candidate screening, estimated private-plane dynamics, and sparse Jacobian knots; no hard-tilt or real-time qualification.",
+        "diagnostic_components": "Native LQR/FF/sync fields are shadows in MPC mode; mpc_command_delta added to their native requested sum yields actual final input."
+      },
+      "wall_time_s": 439.310653924942
+    },
+    {
+      "stage": "trajectory",
+      "direction": "world_y",
+      "policy": "mpc",
+      "completed": true,
+      "failure": null,
+      "mpc_experiment": {
+        "variant": "mpc",
+        "motion": "world_y",
+        "activation": {
+          "time_s": 0.8000000000000006,
+          "original_goal_origin": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286
+          ],
+          "qpos": [
+            -1.1690362005545123e-05,
+            -0.020756870016445286,
+            0.11816582981754487,
+            0.9963690145247048,
+            -0.08513973318012588,
+            1.751028293096126e-05,
+            -0.00011145616009128502,
+            1.572013301305727,
+            0.0036110177315199516,
+            -0.004654148953402597
+          ],
+          "qvel": [
+            7.660264340170469e-05,
+            0.000346100778245253,
+            6.092080991331252e-05,
+            -0.0029255423011177797,
+            -0.00037539013401160484,
+            -0.000645960933659438,
+            0.0026141880732475213,
+            0.0036976024769256573,
+            -0.0028258440855612565
+          ],
+          "physical_state_not_reset": true,
+          "live_estimator_preserved": true
+        },
+        "plans_generated_including_terminal": 231,
+        "accepted_plans": 231,
+        "qp_success_definition": "Affine: solved QP and finite replay. Trajectory: best bounded finite nonlinear sequence among warm/seed/SQP line-search plans; QP counts separately in trials.",
+        "fallback_actuated_active_samples": 0,
+        "guarded_controller_calls": 1081,
+        "original_goal_error_final_mm": 24.973062368519663,
+        "original_goal_progress_final_mm": -8.786919012327504,
+        "active_path_error_rms_mm": 19.63395175511738,
+        "active_peak_reference_lean_deg": 1.7188415796309562,
+        "active_lean_error_integral_deg_s": 0.6000682210659453,
+        "active_input_limit_occupancy_fraction": 0.0,
+        "mpc_update_time_median_s": 1.634273731000576,
+        "scope": "Successive trajectory linearization with nonlinear candidate screening, estimated private-plane dynamics, and sparse Jacobian knots; no hard-tilt or real-time qualification.",
+        "diagnostic_components": "Native LQR/FF/sync fields are shadows in MPC mode; mpc_command_delta added to their native requested sum yields actual final input."
+      },
+      "wall_time_s": 361.71441197395325
+    }
+  ],
+  "selected_test_records_not_additive": [
+    {
+      "artifact": "predictor_validation/gazebo_env_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "12",
+      "time": "1.725",
+      "timestamp": "2026-11-25T05:39:21.321707-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "predictor_validation/initial_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "12",
+      "time": "1.554",
+      "timestamp": "2026-11-25T05:38:50.697194-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/combined_predictive.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "41",
+      "time": "1.878",
+      "timestamp": "2026-11-25T05:41:38.993442-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/gazebo_env_integration.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "51",
+      "time": "44.290",
+      "timestamp": "2026-11-25T05:44:16.644285-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/solver_final_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "29",
+      "time": "0.345",
+      "timestamp": "2026-11-25T05:40:03.767884-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/solver_ltv_kkt_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "43",
+      "time": "0.396",
+      "timestamp": "2026-11-25T05:55:14.133264-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/solver_ltv_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "40",
+      "time": "0.350",
+      "timestamp": "2026-11-25T05:53:07.775132-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/solver_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "28",
+      "time": "0.341",
+      "timestamp": "2026-11-25T05:38:12.878841-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/trajectory_integration.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "69",
+      "time": "45.954",
+      "timestamp": "2026-11-25T06:00:40.863513-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/predictor/ltv_predictor_gazebo_env_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "15",
+      "time": "2.210",
+      "timestamp": "2026-11-25T05:51:54.578771-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/predictor/ltv_predictor_stride_gazebo_env_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "16",
+      "time": "2.645",
+      "timestamp": "2026-11-25T05:56:57.482371-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/predictor/ltv_predictor_stride_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "16",
+      "time": "2.728",
+      "timestamp": "2026-11-25T05:54:33.466377-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "tests/predictor/ltv_predictor_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "15",
+      "time": "2.221",
+      "timestamp": "2026-11-25T05:51:15.611613-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "solver_development/final_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "29",
+      "time": "0.345",
+      "timestamp": "2026-11-25T05:40:03.767884-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "solver_development/focused_tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "28",
+      "time": "0.341",
+      "timestamp": "2026-11-25T05:38:12.878841-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "solver_development/kkt_tests/tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "43",
+      "time": "0.396",
+      "timestamp": "2026-11-25T05:55:14.133264-05:00",
+      "hostname": "PARRA-Legion"
+    },
+    {
+      "artifact": "solver_development/ltv_tests/tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "40",
+      "time": "0.374",
+      "timestamp": "2026-11-25T05:50:55.740618-05:00",
+      "hostname": "PARRA-Legion"
+    }
+  ],
+  "evidence_separation": {
+    "prediction": "Recorded-input and short-horizon model accuracy are diagnostic checks, not closed-loop goal success or general validity of optimized400ms plans.",
+    "model_derivatives": "The static force-fit gap, full-state finite-difference sensitivity and failed reduced-state hypothesis are preserved; passing nominal replay does not validate local Jacobians.",
+    "solver": "Initial fixture failure and independent external-KKT audit are retained alongside corrected solver/source stages. Accepted nonlinear plans, successful QP solves, and selected command sources are separate quantities.",
+    "runtime": "Offline wall time and model/solve time are reported; no real-time qualification.",
+    "control_acceptance": "Original-goal recovery, lean, path error, input bounds and fallback occupancy are judged by the predeclared protocol. A completed run or bounded QP does not imply acceptance."
+  },
+  "limitations": [
+    "Simulation-only ideal measurements and belts; no hardware validation.",
+    "Simple 16mm warm-start fixtures, not broad Mars-route or robustness qualification.",
+    "Final trajectory cases reuse original baselines; no independent new baseline campaigns are implied.",
+    "Full-LTV predictor test/benchmark sources are not a claim that the closed-loop trial computed all20 full finite-difference Jacobians; final protocol uses sparse stride5 nodes.",
+    "The reduced-derivative and predicted-progress reproduction helpers were authored after equivalent inline analyses; their original outputs were not rerun.",
+    "Selected test suites overlap; their counts must not be added into one unique/full-repository result.",
+    "NPZ, full plan JSON and MP4 files remain local; compact reports and exact launch-source references are archived."
+  ]
+}

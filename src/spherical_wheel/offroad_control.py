@@ -45,8 +45,11 @@ reported but does not limit any command. Freezing the sensed normal while the
 support crosses the equatorial gap left it stale whenever the wheel lingered
 there; it is slowed instead.
 
-The feedback gains themselves are the unchanged flat-floor library. Nothing
-here adds an external force, resets a state or moves the requested target.
+The feedback gains themselves are the unchanged flat-floor library. No mode
+adds an external force or resets the physical state. The opt-in ``feasible``
+allocator projects travel feedback setpoints while retaining the original
+nominal trajectory and destination in evaluation; other modes retain their
+existing travel setpoints.
 In ``terrain_aware`` the state feedback and the contact wrench are simulator
 ground truth. ``momentum_observer`` is the same controller without the force
 sensor: the force and moment behind the normal and the load fraction come from
@@ -77,11 +80,14 @@ import numpy as np
 from scipy.linalg import solve_discrete_are
 
 from .contact_sensing import (ContactEstimator, MomentumObserver, SupportLocator, intrinsic_normal, measure_contact,
-                              measure_records)
+                              measure_records, records_from_mujoco)
 from .control import design_lqr, find_equilibrium, linearize
 from .experiments import rolling_feedforward, rolling_feedforward_records
 from .recovery_control import ScheduledBalanceFeedback, build_gain_library
+from .rolling_allocation import AllocationSettings, BoundedRollingAllocator, FeasibleRollingAllocator
+from .feasible_reference import FeasibleMotionReference, FeasibleReferenceSettings, balance_travel_priority
 from .synchronization import ContactSynchronizer
+from .tilt_reference import TiltReference, TiltReferenceSettings
 
 # State weights of the flat-floor LQR (control.design_lqr), in its scaled
 # coordinates. Order: x y z roll pitch yaw shaft shell_A shell_B, then the
@@ -199,6 +205,21 @@ class OffroadParams:
     support_feedforward: float = 1.        # 1 applies the full static holding torque
     schedule_on_ground_normal: bool = False  # True measures the gain phase against the sensed normal
     shaft_error: str = 'rolling'           # 'material', 'free' or 'rolling'
+    rolling_allocation: str = 'least_squares'  # 'damped', 'bounded', 'feasible' are opt-in experiments
+    rolling_damping_m_s: float = .01       # penalty per normalized drive rate for 'damped'
+    rolling_speed_limits: tuple = (20., 20., 20., .3, .3)  # assumed reference limits: rad/s, rad/s, rad/s, m/s, m/s
+    rolling_acceleration_limits: tuple = (100., 100., 100., 3., 3.)  # assumed reference limits per second
+    rolling_effort_m_s: float = .001       # normalized speed cost for 'bounded'; not electrical effort
+    rolling_change_m_s: float = .001       # normalized reference-change cost for 'bounded'
+    rolling_adaptive_effort: bool = False  # increase speed cost as estimated horizontal authority vanishes
+    rolling_weak_effort_m_s: float = .005
+    rolling_authority_m_s: float = .02     # normalized Jacobian singular value for half of the cost increase
+    rolling_reference_catchup_gain_s_inv: float = 1.
+    rolling_reference_catchup_speed_m_s: float = .06
+    rolling_reference_position_limit_m: float = .05
+    rolling_reference_balance_guard: bool = False
+    rolling_reference_lean_scale_deg: float = 3.
+    rolling_reference_rate_horizon_s: float = .1
     track_contact_point: bool = False      # reference applies to the ground contact point, not the wheel centre
     slip_threshold_m_s: float = .02        # surface speed that counts as sliding for the friction estimate
     friction_recovery_s: float = 1.5       # how fast that estimate relaxes back once sliding stops
@@ -217,12 +238,33 @@ class OffroadParams:
     heading_normal_time_constant_s: float = .5  # low-pass on the normal that sets the fall line
     heading_error_limit_rad: float = .5    # bound on the heading error used
     fall_line_hysteresis_deg: float = 20.  # keep the chosen end of the fall line until the other is this much closer
+    tilt_reference: TiltReferenceSettings | dict | None = None  # opt-in bounded tilt shaping; None preserves native behavior
 
     def __post_init__(self):
+        if isinstance(self.tilt_reference,dict):
+            self.tilt_reference = TiltReferenceSettings(**self.tilt_reference)
+        elif self.tilt_reference is not None and not isinstance(self.tilt_reference,TiltReferenceSettings):
+            raise ValueError('tilt_reference must be settings, a settings dictionary, or None')
+        if self.tilt_reference is not None and (not self.ground_aware or
+                not np.isfinite(self.max_lean_deg) or not 0 < self.max_lean_deg < 90):
+            raise ValueError('Tilt shaping requires ground-aware control and max_lean_deg between 0 and 90')
         if self.mode not in CONTROLLER_MODES:
             raise ValueError(f'Choose a controller mode from {CONTROLLER_MODES}')
         if self.shaft_error not in ('material', 'free', 'rolling'):
             raise ValueError('Shaft error must be material, free or rolling')
+        if self.rolling_allocation not in ('least_squares', 'damped', 'bounded', 'feasible'):
+            raise ValueError('Rolling allocation must be least_squares, damped, bounded or feasible')
+        AllocationSettings(self.rolling_speed_limits, self.rolling_acceleration_limits,
+                           self.rolling_effort_m_s, self.rolling_change_m_s,
+                           self.rolling_weak_effort_m_s if self.rolling_adaptive_effort or self.rolling_allocation == 'feasible' else None,
+                           self.rolling_authority_m_s)
+        FeasibleReferenceSettings(self.rolling_reference_catchup_gain_s_inv,
+                                 self.rolling_reference_catchup_speed_m_s,
+                                 self.rolling_reference_position_limit_m)
+        balance_travel_priority(0., 0., np.radians(self.rolling_reference_lean_scale_deg),
+                                self.rolling_reference_rate_horizon_s)
+        if not np.isfinite(self.rolling_damping_m_s) or self.rolling_damping_m_s <= 0:
+            raise ValueError('Rolling damping must be finite and positive')
         if self.normal_source not in ('intrinsic', 'solver'):
             raise ValueError('Normal source must be intrinsic or solver')
         if self.mode in OBSERVER_MODES and self.normal_source != 'intrinsic':
@@ -252,7 +294,10 @@ class OffroadParams:
         return self.mode != 'flat_baseline'
 
     def as_dict(self):
-        return asdict(self)
+        values = asdict(self)
+        if self.tilt_reference is None:
+            values.pop('tilt_reference')
+        return values
 
 
 class FlatDesign:
@@ -321,13 +366,30 @@ class OffroadController:
     the schedule, as the lab's scenario reset does.
     """
 
-    def __init__(self, plant, design, params=None, phase=None):
+    def __init__(self, plant, design, params=None, phase=None, record_diagnostics=False):
         self.params = params or OffroadParams()
+        self.record_diagnostics = bool(record_diagnostics)
+        if self.record_diagnostics and self.params.mode != 'hardware':
+            raise ValueError('Detailed contact diagnostics require hardware mode')
         if self.params.ground_aware and self.params.lqr_weights != getattr(design, 'weights', 'flat'):
             design = design.variant(self.params.lqr_weights)
         self.plant, self.design = plant, design
+        self._tilt_reference = (None if self.params.tilt_reference is None else
+            TiltReference(self.params.tilt_reference,np.radians(self.params.max_lean_deg)))
         self.feedback = ScheduledBalanceFeedback(plant, design.points)
         self.synchronizer = ContactSynchronizer(plant)
+        allocator_class = FeasibleRollingAllocator if self.params.rolling_allocation == 'feasible' else BoundedRollingAllocator
+        self.rolling_allocator = (allocator_class(AllocationSettings(
+            self.params.rolling_speed_limits, self.params.rolling_acceleration_limits,
+            self.params.rolling_effort_m_s, self.params.rolling_change_m_s,
+            self.params.rolling_weak_effort_m_s if self.params.rolling_adaptive_effort or self.params.rolling_allocation == 'feasible' else None,
+            self.params.rolling_authority_m_s))
+            if self.params.rolling_allocation in ('bounded', 'feasible') else None)
+        self.motion_reference = (FeasibleMotionReference(FeasibleReferenceSettings(
+            self.params.rolling_reference_catchup_gain_s_inv,
+            self.params.rolling_reference_catchup_speed_m_s,
+            self.params.rolling_reference_position_limit_m))
+            if self.params.rolling_allocation == 'feasible' else None)
         model = plant.model
         self.carrier_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, 'carrier')
         self.radius = float(plant.config['geometry']['sphere_radius_m'])
@@ -356,6 +418,8 @@ class OffroadController:
         self.reset(phase)
 
     def reset(self, phase=None):
+        if self._tilt_reference is not None:
+            self._tilt_reference.reset()
         phase = self.plant.config['simulation'].get('initial_shaft_phase_rad', .30) if phase is None else phase
         self.ordinary = self.design.local(phase)
         self.nominal_joints = self.ordinary['equilibrium']['qpos'][7:10].copy()
@@ -371,6 +435,8 @@ class OffroadController:
             ground = getattr(self.plant, 'ground', None)
             self.estimator.reset(ground['normal'] if ground else (0., 0., 1.))
         self._vref = np.zeros(self.plant.model.nv)
+        if self.rolling_allocator is not None:
+            self.rolling_allocator.reset()
         self._sync = {'commands': [0.]*5, 'blend_weights': [0.]*5, 'targets': []}
         self._held = None
         quat = self.plant.data.qpos[3:7]
@@ -511,7 +577,43 @@ class OffroadController:
             self._yaw_error = self._update_heading_target(normal, yaw)
         moving = bool(np.linalg.norm(velocity) > 0)
         touching = sum(measurement['loads_N'].values()) > .001
-        if not moving:
+        nominal_center = np.asarray(xy, float).copy()
+        if aware and params.track_contact_point:
+            nominal_center += self.radius*normal[:2]
+        reference_acceleration = np.asarray(acceleration, float)
+        relaxed_position_error = np.zeros(2)
+        travel_priority, balance_metric = 1., 0.
+        if self.motion_reference is not None and params.rolling_reference_balance_guard:
+            desired_rotation = np.empty(9)
+            mujoco.mju_quat2Mat(desired_rotation, self.reference_attitude(normal, acceleration))
+            actual_up = plant.data.xmat[plant.fork_id].reshape(3, 3)[:, 2]
+            desired_up = desired_rotation.reshape(3, 3)[:, 2]
+            lean_error = float(np.arccos(np.clip(actual_up@desired_up, -1., 1.)))
+            # Free-joint angular rates are body-frame. Rotation about body z
+            # leaves its up vector unchanged; only the transverse rates enter.
+            lean_rate = float(np.linalg.norm(plant.data.qvel[3:5]))
+            travel_priority, balance_metric = balance_travel_priority(
+                lean_error, lean_rate, np.radians(params.rolling_reference_lean_scale_deg),
+                params.rolling_reference_rate_horizon_s)
+        damping = params.rolling_damping_m_s if params.rolling_allocation == 'damped' else 0.
+        if self.rolling_allocator is not None:
+            if (moving or self.motion_reference is not None) and aware and not touching and self._held is not None:
+                # Keep the last bounded references through a brief dropout.
+                # Their change is zero, so both reference bounds still hold.
+                drive = self.rolling_allocator.hold()
+                self.rolling_allocator.diagnostics['allocation_requested_velocity_m_s'] = travel_priority*np.asarray(velocity, float)
+                body_velocity = (self.rolling_allocator.diagnostics['allocation_accepted_velocity_m_s']
+                                 if self.motion_reference is not None else velocity)
+                vref = np.r_[body_velocity, 0., 0., 0., 0., drive[:3]]
+                feedforward = np.r_[np.zeros(3), drive[3:]]
+            else:
+                contact_records = getattr(plant, 'contact_records', None)
+                bounded_records = (records if records is not None else
+                                   contact_records() if contact_records is not None else records_from_mujoco(plant))
+                vref, feedforward = rolling_feedforward_records(
+                    plant, bounded_records, np.asarray(velocity, float), allocator=self.rolling_allocator,
+                    reference=self.motion_reference, position=nominal_center, reference_priority=travel_priority)
+        elif not moving:
             vref, feedforward = np.zeros(9), np.zeros(5)
         elif aware and not touching and self._held is not None:
             # A surface handover can leave one interval with no contact. The
@@ -519,23 +621,58 @@ class OffroadController:
             # than drop the velocity reference to zero for that interval.
             vref, feedforward = self._held['vref'].copy(), self._held['feedforward'].copy()
         elif records is not None:
-            vref, feedforward = rolling_feedforward_records(plant, records, np.asarray(velocity, float))
+            vref, feedforward = rolling_feedforward_records(plant, records, np.asarray(velocity, float), damping)
         else:
-            vref, feedforward = rolling_feedforward(plant, np.asarray(velocity, float))
+            vref, feedforward = rolling_feedforward(plant, np.asarray(velocity, float), damping)
         qref = equilibrium['qpos'].copy()
         qref[:2] = xy
-        if aware and params.track_contact_point:
+        if self.motion_reference is not None:
+            allocated = self.rolling_allocator.diagnostics
+            reference = self.motion_reference.feedback(
+                nominal_center, plant.data.qpos[:2], acceleration,
+                allocated['allocation_accepted_velocity_m_s'], allocated['allocation_velocity_response'],
+                valid=allocated['allocation_accepted_velocity_valid'], priority=travel_priority)
+            qref[:2] = reference['xy']
+            vref[:2] = reference['velocity']
+            reference_acceleration = reference['acceleration']
+            relaxed_position_error = reference['relaxed_position_error_m']
+        elif aware and params.track_contact_point:
             # The reference names where the wheel should touch the ground. The
             # centre sits one radius along the ground normal from that point,
             # so on a slope it is offset horizontally and need not be dragged
             # back over the reference as the slope comes and goes.
             qref[:2] = np.asarray(xy)+self.radius*normal[:2]
         qref[7:10] = self.nominal_joints
-        qref[3:7] = self.reference_attitude(normal, acceleration)
+        qref[3:7] = self.reference_attitude(normal, reference_acceleration)
+        tilt_diagnostics = None
+        if self._tilt_reference is not None:
+            raw_quat = qref[3:7].copy()
+            lean = self.lean_vector(normal,reference_acceleration)
+            size = float(np.linalg.norm(lean))
+            raw_theta = (np.zeros(2) if size < 1e-12 else
+                         np.arcsin(size)*np.array([-lean[1],lean[0]])/size)
+            tilt_diagnostics = self._tilt_reference.update(raw_theta,plant.data.time)
+            world_rate,body_rate = np.zeros(3),np.zeros(3)
+            if tilt_diagnostics['active'] and not tilt_diagnostics['initialized_now']:
+                mujoco.mju_mulQuat(qref[3:7],equilibrium['qpos'][3:7],tilt_diagnostics['q_tilt'])
+                equilibrium_rotation = np.empty(9)
+                mujoco.mju_quat2Mat(equilibrium_rotation,equilibrium['qpos'][3:7])
+                world_rate = equilibrium_rotation.reshape(3,3)@tilt_diagnostics['angular_velocity_equilibrium_rad_s']
+                body_rate = plant.data.xmat[plant.fork_id].reshape(3,3).T@world_rate
+            # Angular references from a dropout-held rolling allocation belong
+            # to the previous attitude/time. Always replace them here.
+            used_rate = (body_rate.copy() if tilt_diagnostics['active'] and
+                         self.params.tilt_reference.use_rate_reference else np.zeros(3))
+            vref[3:6] = used_rate
+            tilt_diagnostics.update(raw_reference_quat=raw_quat,shaped_reference_quat=qref[3:7].copy(),
+                angular_velocity_world_rad_s=world_rate,angular_velocity_body_rad_s=body_rate,
+                used_angular_velocity_body_rad_s=used_rate)
         diagnostics = {'measurement': measurement, 'estimate': estimate, 'drive_fade': 1.,
                        'observed': sensed if self.observer is not None else None,
                        'support_torque': np.zeros(5), 'reference_quat': qref[3:7].copy(),
                        'heading_target_error_rad': self._yaw_error if aware else None}
+        if tilt_diagnostics is not None:
+            diagnostics['tilt_reference'] = tilt_diagnostics
         if aware:
             command, feedback = self._terrain_feedback(qref, vref, feedforward, normal, measurement, touching)
             diagnostics['support_torque'] = feedback.pop('support_torque')
@@ -543,6 +680,14 @@ class OffroadController:
             command, feedback = self.feedback.compute(qref, vref, equilibrium['u'], design['K'], feedforward)
         diagnostics.update(effective_phase_rad=feedback['effective_phase_rad'], yaw_rad=feedback['yaw_rad'],
                            error=feedback['error'])
+        if self.record_diagnostics:
+            pre_sync = command.copy()
+            diagnostics.update(equilibrium_command=np.array(equilibrium['u'], copy=True),
+                               rolling_feedforward=np.array(feedforward, copy=True),
+                               support_command=diagnostics['support_torque'].copy(),
+                               lqr_command=-feedback['K']@feedback['error'],
+                               feedback_reference_qvel=feedback['reference_qvel'].copy(),
+                               feedback_gain=np.array(feedback['K'], copy=True))
         sync = {'commands': [0.]*5, 'blend_weights': [0.]*5, 'targets': []}
         if params.synchronize and records is not None:
             # The plane through the located support with the sensed normal,
@@ -560,14 +705,64 @@ class OffroadController:
             sync = self.synchronizer.preview(command)
             weights = np.asarray(sync['blend_weights'])
             command = (1.-weights)*command+weights*np.asarray(sync['commands'])
+        if self.record_diagnostics:
+            diagnostics['transition_command_delta'] = command-pre_sync
+            pre_heading = command.copy()
         if aware:
             heading_torque, diagnostics['heading_error_rad'] = self._heading_torque(feedback['yaw_rad'])
             command = command+heading_torque
+            if self.record_diagnostics:
+                diagnostics['heading_command'] = command-pre_heading
+                pre_fade = command.copy()
             command, diagnostics['drive_fade'] = self._fade_when_unloaded(command, estimate, vref)
+            if self.record_diagnostics:
+                diagnostics['fade_command_delta'] = command-pre_fade
         self._sync, self._vref = sync, vref
         applied = np.clip(command, -plant.bounds, plant.bounds)
         diagnostics.update(requested=command.copy(), reference_qpos=qref, reference_qvel=vref,
                            sync_weights=np.asarray(sync['blend_weights']))
+        if self.record_diagnostics:
+            defaults = dict(
+                allocation_requested_velocity_m_s=np.asarray(velocity, float).copy(),
+                allocation_accepted_velocity_m_s=vref[:2].copy(),
+                allocation_velocity_response=np.eye(2),
+                allocation_modal_effort_m_s=np.full(2, np.nan),
+                allocation_accepted_velocity_valid=False,
+                allocation_reference_residual_rms_m_s=np.nan)
+            if self.rolling_allocator is not None:
+                defaults.update(self.rolling_allocator.diagnostics)
+            diagnostics.update(defaults)
+            diagnostics.update(feedback_reference_xy=qref[:2].copy(),
+                reference_acceleration_m_s2=reference_acceleration.copy(),
+                reference_position_error_relaxed_m=relaxed_position_error.copy(),
+                reference_catchup_velocity_m_s=defaults['allocation_requested_velocity_m_s']-travel_priority*np.asarray(velocity, float),
+                reference_travel_priority=travel_priority, reference_balance_metric_rad=balance_metric)
+            from .contact_kinematics import rolling_consistency
+            diagnostics.update(rolling_consistency(plant, records,
+                self.params.support_min_load_fraction*self.weight))
+            diagnostics.update(
+                estimated_contact_point_m=np.asarray(measurement['point_m']).copy(),
+                estimated_support_loads_N=np.array([measurement['loads_N'][name]
+                    for name in ('shell_A', 'shell_B', 'belt_A', 'belt_B')]),
+                reference_velocity_m_s=np.asarray(velocity, float).copy(),
+                tracking_velocity_error_m_s=plant.data.qvel[:2]-np.asarray(velocity, float),
+                actuator_saturated=np.abs(command) > plant.bounds+1e-12,
+                clipping_command_delta=applied-command,
+                input_bounds=plant.bounds.copy())
+            if self.rolling_allocator is not None:
+                diagnostics.update(self.rolling_allocator.diagnostics)
+            else:
+                diagnostics.update(
+                    allocation_drive_reference=np.r_[vref[6:9], feedforward[3:]],
+                    allocation_speed_limits=np.full(5, np.nan),
+                    allocation_acceleration_limits=np.full(5, np.nan),
+                    allocation_active_bounds=np.zeros(5, bool),
+                    allocation_effort_weight_m_s=damping,
+                    allocation_change_weight_m_s=0.,
+                    allocation_authority_m_s=np.nan,
+                    allocation_effort_blend=0.,
+                    allocation_residual_rms_m_s=np.nan,
+                    allocation_velocity_error_m_s=np.full(2, np.nan))
         return applied, diagnostics
 
     def _terrain_feedback(self, qref, vref, feedforward, normal, measurement, touching):
@@ -620,7 +815,7 @@ class OffroadController:
         support_torque = params.support_feedforward*self.support_torque(normal, loads)
         command = np.asarray(equilibrium['u'])+np.asarray(feedforward)+support_torque-gain@error
         return command, {'effective_phase_rad': phase, 'yaw_rad': yaw, 'error': error,
-                         'support_torque': support_torque}
+                         'support_torque': support_torque, 'K': gain, 'reference_qvel': vref}
 
     def _heading_torque(self, yaw):
         """Hold the starting heading with whichever shell is not carrying load.

@@ -1,0 +1,28 @@
+{
+  "status": "clear for registered fifth nativecase; source-only review, no execution",
+  "reviewed_source_sha256": {
+    "results/allocation_handoff_isolation_20261126/run_isolation_case.py": "d04d985b007fc53bcfc31b014a877fea4c893cee1229b8a85cc6e537dd938a41",
+    "results/allocation_handoff_isolation_20261126/run_late_phase_case.py": "a442b932467994e3caf628639be4c49f66edc1f6a0700bbb2bb0663f3117cd38",
+    "results/allocation_handoff_isolation_20261126/phase_schedule_isolation/protocol.json": "eff89571ea3d904e54f1824a7e9059353e882fee248fc677e08013cd3998a007",
+    "src/spherical_wheel/offroad_control.py": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766"
+  },
+  "permitted_differences": [
+    "Docstring/provenance scope",
+    "CASE_CAPS onlyphase_late030=.30",
+    "Beforeguardednativecommand assign schedule_on_ground_normal=(time>=38\u22121e\u22129)",
+    "Log exact_phase_schedule_on_normal"
+  ],
+  "observations": [
+    "phase_late selectsneither reference norhandoffcomponent; originalnativecommand invokedonce.",
+    "Initialparameters/cache/ordinarydesign/path/helper unchanged; no effect fromassigningfalse toalreadyfalseparameter before38s.",
+    "Selectedruntimeparameter isread only for supportvector usedtogainphase atoffroad_control.py:772; ordinaryshaftgainrow isrestorednormally.",
+    "Nativecurrentreferences/observer unaffected directly; command/statehistoryafteractivation canchange andmustbeevaluated.",
+    "Protocolseparatelyhashbindsnewrunnerandinputs; originalfourrunner/candidate filesstillmatchprotectedhashes.",
+    "Switchminus1e\u22129 resolvesfloatclock onnominal38sgrid, notprior37.995row.",
+    "Exactactualpre38commonprecisionparityandstateat38 remain requiredrawQA; sourceaudit doesnotprovephysicalparity."
+  ],
+  "verified_sources": 61,
+  "verified_inputs": 9,
+  "runtime_or_physics_calls": 0,
+  "prior_negative_evidence": "Global normal-relative scheduling regressions retained; this is late-only mechanism diagnostic, no adoption claim."
+}

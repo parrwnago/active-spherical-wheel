@@ -1,0 +1,4706 @@
+{
+  "scope": "Presentation-only interpretation of existing I41/I42/I46 data, no new physics or controller execution.",
+  "inventory": {
+    "recording_search_command": [
+      "rg",
+      "--files",
+      "-uu",
+      "-g",
+      "!**/.git/**",
+      "-g",
+      "!**/.venv/**",
+      "-g",
+      "!**/.cache/**",
+      "-g",
+      "*.bag",
+      "-g",
+      "*.db3",
+      "-g",
+      "*.mcap",
+      "-g",
+      "*rosbag*",
+      "-g",
+      "metadata.yaml"
+    ],
+    "recording_matches": [],
+    "workspace_scope": "/home/parrwnago/active-spherical-wheel",
+    "no_matches_means": "No matching ROS-bag/MCAP/DB3 artifacts found in this workspace; not a claim about other machines.",
+    "NPZ_schemas": {
+      "historical_I46": {
+        "path": "results/support_routing_timing_20261126/campaign/historical_stage01/precision.npz",
+        "arrays": {
+          "time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "exact_qpos": {
+            "shape": [
+              8801,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_qvel": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_previous_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_native_requested": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_nominal_joints_before": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_xy": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_velocity_m_s": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_acceleration_m_s2": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_estimated_normal": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_wrench": {
+            "shape": [
+              8801,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_generalized": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_interval_mean": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_gain": {
+            "shape": [
+              8801,
+              5,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_error": {
+            "shape": [
+              8801,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_support_torque": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_rolling_feedforward": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_reference_qvel": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_qpos": {
+            "shape": [
+              8801,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_sync_weights": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_transition_command_delta": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_heading_command": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_fade_command_delta": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "input_bounds": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_touching": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "shadow_fallback_code": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "shadow_used_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_feedback_effective_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "shadow_used_feedback_effective_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "shadow_feedback_gain": {
+            "shape": [
+              8801,
+              5,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "shadow_support_torque": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_gain_command_delta": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_support_command_delta": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_pre_sync_command_delta": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_pre_sync_command": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_pre_sync_clipped_command": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_pre_sync_clipped_command": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_pre_sync_command": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_pre_sync_reconstruction_max_gap": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "shadow_delta_reconstruction_max_gap": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "shadow_history_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "shadow_feedback_call_count": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "filtered_valid_wrench": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "filtered_intrinsic_normal_valid": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "filtered_records_available": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "filtered_normal": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "filtered_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_shares": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_total_load_N": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "filtered_point_m": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "filtered_patch_points_m": {
+            "shape": [
+              8801,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "filtered_point_valid": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "filtered_record_count": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "filtered_signed_band_coordinate_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_lower_band_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_upper_band_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_nearest_band_boundary_abs_m": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "filtered_dominant_patch_index": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "interval_valid_wrench": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "interval_intrinsic_normal_valid": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "interval_records_available": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "interval_normal": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "interval_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_shares": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_total_load_N": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "interval_point_m": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "interval_patch_points_m": {
+            "shape": [
+              8801,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "interval_point_valid": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "interval_record_count": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "interval_signed_band_coordinate_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_lower_band_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_upper_band_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_nearest_band_boundary_abs_m": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "interval_dominant_patch_index": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "truth_time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_points_m": {
+            "shape": [
+              8801,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_contact_counts": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "int64"
+          },
+          "truth_equivalent_point_m": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_valid": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          }
+        },
+        "potential_wall_time_keys": []
+      },
+      "I41_signals": {
+        "path": "results/figure8_event_audit_20261125/events/full_audit/mars/signals.npz",
+        "arrays": {
+          "time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "tracking_error_mm": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "local_path_distance_mm": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "signed_normal_error_mm": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "alongtrack_error_mm": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "reference_phase_lag_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "projection_window_boundary": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "reference_speed_mm_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "actual_speed_mm_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "reference_acceleration_mm_s2": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "logged_DEM_tangent_slope_deg": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float32"
+          },
+          "estimated_vs_logged_DEM_normal_error_deg": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "estimated_normal_step_deg": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "contact_equivalent_point_gap_mm": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "true_dominant_patch_code": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "estimated_dominant_patch_code": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "dominant_patch_disagreement": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "gain_relative_frobenius_step": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "maximum_sync_weight": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float32"
+          },
+          "sync_delta_max_normalized": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "LQR_max_normalized": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "requested_max_normalized": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "applied_max_normalized": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "requested_outside_bound": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "applied_at_99percent_bound": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "reference_drive_speed_max_rad_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float32"
+          },
+          "actual_drive_speed_max_rad_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "reference_lean_error_deg": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float32"
+          },
+          "command_reconstruction_max_normalized_error": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "applied_reconstruction_max_normalized_error": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "heading_rad": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float32"
+          },
+          "estimated_horizontal_authority_m_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "estimated_strong_horizontal_authority_m_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "weak_direction_requested_speed_mm_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          }
+        },
+        "potential_wall_time_keys": []
+      },
+      "original_I40": {
+        "path": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/precision.npz",
+        "arrays": {
+          "time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "exact_qpos": {
+            "shape": [
+              8801,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_qvel": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_previous_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_native_requested": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_wrench": {
+            "shape": [
+              8801,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "exact_estimated_normal": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_nominal_joints_before": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_xy": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_velocity_m_s": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_acceleration_m_s2": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "truth_time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_points_m": {
+            "shape": [
+              8801,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_contact_counts": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "int64"
+          },
+          "truth_equivalent_point_m": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          }
+        },
+        "potential_wall_time_keys": []
+      },
+      "I42_baseline": {
+        "path": "results/handoff_factorial_20261125/campaign/runs/baseline/precision.npz",
+        "arrays": {
+          "time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "exact_qpos": {
+            "shape": [
+              8801,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_qvel": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_previous_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_native_requested": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_wrench": {
+            "shape": [
+              8801,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_generalized": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_interval_mean": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_estimated_normal": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_nominal_joints_before": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_xy": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_velocity_m_s": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_acceleration_m_s2": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_gain": {
+            "shape": [
+              8801,
+              5,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_error": {
+            "shape": [
+              8801,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_support_torque": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "intervention_window_active": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_requested": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_applied": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_fallback_code": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "sync_mask_active": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "native_sync_weights": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_weights": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_nominal_increment": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_nominal_increment": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "controller_fingerprint_before": {
+            "shape": [
+              8801
+            ],
+            "dtype": "<U64"
+          },
+          "controller_fingerprint_after": {
+            "shape": [
+              8801
+            ],
+            "dtype": "<U64"
+          },
+          "scope_observer_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_normal_filter_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_measured_state_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_contact_geometry_fields_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_rolling_reference_feedforward_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_original_measurement_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_routed_measurement_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "native_sync_target_blend_weight": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_normal_load_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_normal_load_fraction": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_lookahead_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_joint_speed_rad_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_surface_speed_m_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_torque_Nm": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_current_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_predicted_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_predicted_support_gap_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_blend_weight": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_normal_load_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_normal_load_fraction": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_lookahead_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_joint_speed_rad_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_surface_speed_m_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_torque_Nm": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_current_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_predicted_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_predicted_support_gap_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_points_m": {
+            "shape": [
+              8801,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_contact_counts": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "int64"
+          },
+          "truth_equivalent_point_m": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          }
+        },
+        "potential_wall_time_keys": []
+      },
+      "I42_feedback_shares": {
+        "path": "results/handoff_factorial_20261125/campaign/runs/feedback_shares/precision.npz",
+        "arrays": {
+          "time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "exact_qpos": {
+            "shape": [
+              8801,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_qvel": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_previous_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_native_requested": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_wrench": {
+            "shape": [
+              8801,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_generalized": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_interval_mean": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_estimated_normal": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_nominal_joints_before": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_xy": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_velocity_m_s": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_acceleration_m_s2": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_gain": {
+            "shape": [
+              8801,
+              5,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_error": {
+            "shape": [
+              8801,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_support_torque": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "intervention_window_active": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_requested": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_applied": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_fallback_code": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "sync_mask_active": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "native_sync_weights": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_weights": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_nominal_increment": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_nominal_increment": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "controller_fingerprint_before": {
+            "shape": [
+              8801
+            ],
+            "dtype": "<U64"
+          },
+          "controller_fingerprint_after": {
+            "shape": [
+              8801
+            ],
+            "dtype": "<U64"
+          },
+          "scope_observer_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_normal_filter_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_measured_state_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_contact_geometry_fields_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_rolling_reference_feedforward_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_original_measurement_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_routed_measurement_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "native_sync_target_blend_weight": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_normal_load_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_normal_load_fraction": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_lookahead_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_joint_speed_rad_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_surface_speed_m_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_torque_Nm": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_current_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_predicted_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_predicted_support_gap_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_blend_weight": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_normal_load_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_normal_load_fraction": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_lookahead_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_joint_speed_rad_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_surface_speed_m_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_torque_Nm": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_current_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_predicted_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_predicted_support_gap_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_points_m": {
+            "shape": [
+              8801,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_contact_counts": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "int64"
+          },
+          "truth_equivalent_point_m": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          }
+        },
+        "potential_wall_time_keys": []
+      },
+      "I42_sync_off": {
+        "path": "results/handoff_factorial_20261125/campaign/runs/sync_off/precision.npz",
+        "arrays": {
+          "time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "exact_qpos": {
+            "shape": [
+              8801,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_qvel": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_previous_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_native_requested": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_wrench": {
+            "shape": [
+              8801,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_generalized": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_interval_mean": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_estimated_normal": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_nominal_joints_before": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_xy": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_velocity_m_s": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_acceleration_m_s2": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_gain": {
+            "shape": [
+              8801,
+              5,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_error": {
+            "shape": [
+              8801,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_support_torque": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "intervention_window_active": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_requested": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_applied": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_fallback_code": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "sync_mask_active": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "native_sync_weights": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_weights": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_nominal_increment": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_nominal_increment": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "controller_fingerprint_before": {
+            "shape": [
+              8801
+            ],
+            "dtype": "<U64"
+          },
+          "controller_fingerprint_after": {
+            "shape": [
+              8801
+            ],
+            "dtype": "<U64"
+          },
+          "scope_observer_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_normal_filter_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_measured_state_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_contact_geometry_fields_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_rolling_reference_feedforward_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_original_measurement_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_routed_measurement_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "native_sync_target_blend_weight": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_normal_load_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_normal_load_fraction": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_lookahead_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_joint_speed_rad_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_surface_speed_m_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_torque_Nm": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_current_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_predicted_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_predicted_support_gap_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_blend_weight": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_normal_load_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_normal_load_fraction": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_lookahead_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_joint_speed_rad_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_surface_speed_m_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_torque_Nm": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_current_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_predicted_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_predicted_support_gap_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_points_m": {
+            "shape": [
+              8801,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_contact_counts": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "int64"
+          },
+          "truth_equivalent_point_m": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          }
+        },
+        "potential_wall_time_keys": []
+      },
+      "I42_both": {
+        "path": "results/handoff_factorial_20261125/campaign/runs/both/precision.npz",
+        "arrays": {
+          "time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "exact_qpos": {
+            "shape": [
+              8801,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_qvel": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_previous_applied": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_native_requested": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_wrench": {
+            "shape": [
+              8801,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_generalized": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_interval_mean": {
+            "shape": [
+              8801,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_estimated_normal": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_nominal_joints_before": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_xy": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_velocity_m_s": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_acceleration_m_s2": {
+            "shape": [
+              8801,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_gain": {
+            "shape": [
+              8801,
+              5,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_error": {
+            "shape": [
+              8801,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_support_torque": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_feedback_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "intervention_window_active": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_requested": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_applied": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "oracle_fallback_code": {
+            "shape": [
+              8801
+            ],
+            "dtype": "int64"
+          },
+          "sync_mask_active": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "native_sync_weights": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_weights": {
+            "shape": [
+              8801,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_nominal_increment": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_nominal_increment": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "controller_fingerprint_before": {
+            "shape": [
+              8801
+            ],
+            "dtype": "<U64"
+          },
+          "controller_fingerprint_after": {
+            "shape": [
+              8801
+            ],
+            "dtype": "<U64"
+          },
+          "scope_observer_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_normal_filter_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_measured_state_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_contact_geometry_fields_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_rolling_reference_feedforward_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_original_measurement_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "scope_routed_measurement_unchanged": {
+            "shape": [
+              8801
+            ],
+            "dtype": "bool"
+          },
+          "native_sync_target_blend_weight": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_normal_load_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_normal_load_fraction": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_lookahead_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_joint_speed_rad_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_surface_speed_m_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_target_torque_Nm": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_current_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_predicted_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_sync_target_predicted_support_gap_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_blend_weight": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_normal_load_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_normal_load_fraction": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_lookahead_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_joint_speed_rad_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_surface_speed_m_s": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_target_torque_Nm": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_current_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_predicted_patch_margin_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "used_sync_target_predicted_support_gap_m": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_time_s": {
+            "shape": [
+              8801
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_loads_N": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_points_m": {
+            "shape": [
+              8801,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_contact_counts": {
+            "shape": [
+              8801,
+              4
+            ],
+            "dtype": "int64"
+          },
+          "truth_equivalent_point_m": {
+            "shape": [
+              8801,
+              3
+            ],
+            "dtype": "float64"
+          }
+        },
+        "potential_wall_time_keys": []
+      },
+      "I46_mars": {
+        "path": "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/precision.npz",
+        "arrays": {
+          "time_s": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "exact_qpos": {
+            "shape": [
+              3201,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_qvel": {
+            "shape": [
+              3201,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_applied": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_previous_applied": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_native_requested": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_nominal_joints_before": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_xy": {
+            "shape": [
+              3201,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_velocity_m_s": {
+            "shape": [
+              3201,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_acceleration_m_s2": {
+            "shape": [
+              3201,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_estimated_normal": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_wrench": {
+            "shape": [
+              3201,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_generalized": {
+            "shape": [
+              3201,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_interval_mean": {
+            "shape": [
+              3201,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_gain": {
+            "shape": [
+              3201,
+              5,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_error": {
+            "shape": [
+              3201,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_support_torque": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_rolling_feedforward": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_reference_qvel": {
+            "shape": [
+              3201,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_qpos": {
+            "shape": [
+              3201,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_sync_weights": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_transition_command_delta": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_heading_command": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_fade_command_delta": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "input_bounds": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_touching": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "shadow_fallback_code": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "shadow_used_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_feedback_effective_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "shadow_used_feedback_effective_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "shadow_feedback_gain": {
+            "shape": [
+              3201,
+              5,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "shadow_support_torque": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_gain_command_delta": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_support_command_delta": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_pre_sync_command_delta": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_pre_sync_command": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_pre_sync_clipped_command": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_pre_sync_clipped_command": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_pre_sync_command": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_pre_sync_reconstruction_max_gap": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "shadow_delta_reconstruction_max_gap": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "shadow_history_unchanged": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "shadow_feedback_call_count": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "filtered_valid_wrench": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "filtered_intrinsic_normal_valid": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "filtered_records_available": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "filtered_normal": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "filtered_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_shares": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_total_load_N": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "filtered_point_m": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "filtered_patch_points_m": {
+            "shape": [
+              3201,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "filtered_point_valid": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "filtered_record_count": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "filtered_signed_band_coordinate_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_lower_band_margin_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_upper_band_margin_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_nearest_band_boundary_abs_m": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "filtered_dominant_patch_index": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "interval_valid_wrench": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "interval_intrinsic_normal_valid": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "interval_records_available": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "interval_normal": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "interval_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_shares": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_total_load_N": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "interval_point_m": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "interval_patch_points_m": {
+            "shape": [
+              3201,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "interval_point_valid": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "interval_record_count": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "interval_signed_band_coordinate_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_lower_band_margin_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_upper_band_margin_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_nearest_band_boundary_abs_m": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "interval_dominant_patch_index": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "truth_interval_valid": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "truth_interval_start_s": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_end_s": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_wrench_world": {
+            "shape": [
+              3201,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_all_external_wrench_world": {
+            "shape": [
+              3201,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_body_wrench_world": {
+            "shape": [
+              3201,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_body_load_N": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_patch_points_m": {
+            "shape": [
+              3201,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_equivalent_point_m": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_sample_count": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "native_history_fingerprint_before": {
+            "shape": [
+              3201
+            ],
+            "dtype": "<U64"
+          },
+          "native_history_fingerprint_after": {
+            "shape": [
+              3201
+            ],
+            "dtype": "<U64"
+          },
+          "truth_time_s": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_points_m": {
+            "shape": [
+              3201,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_contact_counts": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "int64"
+          },
+          "truth_equivalent_point_m": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_last_wrench_world": {
+            "shape": [
+              3201,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "truth_last_body_load_N": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          }
+        },
+        "potential_wall_time_keys": []
+      },
+      "I46_flat": {
+        "path": "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/precision.npz",
+        "arrays": {
+          "time_s": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "exact_qpos": {
+            "shape": [
+              3201,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_qvel": {
+            "shape": [
+              3201,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_applied": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_previous_applied": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_native_requested": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_nominal_joints_before": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_xy": {
+            "shape": [
+              3201,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_velocity_m_s": {
+            "shape": [
+              3201,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_acceleration_m_s2": {
+            "shape": [
+              3201,
+              2
+            ],
+            "dtype": "float64"
+          },
+          "exact_estimated_normal": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_wrench": {
+            "shape": [
+              3201,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_generalized": {
+            "shape": [
+              3201,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_observer_interval_mean": {
+            "shape": [
+              3201,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_gain": {
+            "shape": [
+              3201,
+              5,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_error": {
+            "shape": [
+              3201,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "exact_support_torque": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_rolling_feedforward": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_feedback_reference_qvel": {
+            "shape": [
+              3201,
+              9
+            ],
+            "dtype": "float64"
+          },
+          "exact_reference_qpos": {
+            "shape": [
+              3201,
+              10
+            ],
+            "dtype": "float64"
+          },
+          "exact_sync_weights": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_transition_command_delta": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_heading_command": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "exact_fade_command_delta": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "input_bounds": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_touching": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "shadow_fallback_code": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "shadow_used_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "native_feedback_effective_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "shadow_used_feedback_effective_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "shadow_feedback_gain": {
+            "shape": [
+              3201,
+              5,
+              18
+            ],
+            "dtype": "float64"
+          },
+          "shadow_support_torque": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_gain_command_delta": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_support_command_delta": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_pre_sync_command_delta": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_pre_sync_command": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_pre_sync_clipped_command": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_pre_sync_clipped_command": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "shadow_pre_sync_command": {
+            "shape": [
+              3201,
+              5
+            ],
+            "dtype": "float64"
+          },
+          "native_pre_sync_reconstruction_max_gap": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "shadow_delta_reconstruction_max_gap": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "shadow_history_unchanged": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "shadow_feedback_call_count": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "filtered_valid_wrench": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "filtered_intrinsic_normal_valid": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "filtered_records_available": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "filtered_normal": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "filtered_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_shares": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_total_load_N": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "filtered_point_m": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "filtered_patch_points_m": {
+            "shape": [
+              3201,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "filtered_point_valid": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "filtered_record_count": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "filtered_signed_band_coordinate_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_lower_band_margin_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_upper_band_margin_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "filtered_nearest_band_boundary_abs_m": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "filtered_dominant_patch_index": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "interval_valid_wrench": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "interval_intrinsic_normal_valid": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "interval_records_available": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "interval_normal": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "interval_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_shares": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_total_load_N": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "interval_point_m": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "interval_patch_points_m": {
+            "shape": [
+              3201,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "interval_point_valid": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "interval_record_count": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "interval_signed_band_coordinate_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_lower_band_margin_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_upper_band_margin_m": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "interval_nearest_band_boundary_abs_m": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "interval_dominant_patch_index": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "truth_interval_valid": {
+            "shape": [
+              3201
+            ],
+            "dtype": "bool"
+          },
+          "truth_interval_start_s": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_end_s": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_wrench_world": {
+            "shape": [
+              3201,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_all_external_wrench_world": {
+            "shape": [
+              3201,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_body_wrench_world": {
+            "shape": [
+              3201,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_body_load_N": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_patch_points_m": {
+            "shape": [
+              3201,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_mean_equivalent_point_m": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_interval_sample_count": {
+            "shape": [
+              3201
+            ],
+            "dtype": "int64"
+          },
+          "native_history_fingerprint_before": {
+            "shape": [
+              3201
+            ],
+            "dtype": "<U64"
+          },
+          "native_history_fingerprint_after": {
+            "shape": [
+              3201
+            ],
+            "dtype": "<U64"
+          },
+          "truth_time_s": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_loads_N": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_points_m": {
+            "shape": [
+              3201,
+              4,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_patch_contact_counts": {
+            "shape": [
+              3201,
+              4
+            ],
+            "dtype": "int64"
+          },
+          "truth_equivalent_point_m": {
+            "shape": [
+              3201,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "truth_last_wrench_world": {
+            "shape": [
+              3201,
+              6
+            ],
+            "dtype": "float64"
+          },
+          "truth_last_body_load_N": {
+            "shape": [
+              3201
+            ],
+            "dtype": "float64"
+          }
+        },
+        "potential_wall_time_keys": []
+      }
+    },
+    "timing_conclusion": "No per-command wall-computation/communication/deadline fields in these saved arrays. Aggregate elapsed/wall times and simulation clocks are separate."
+  },
+  "native_history_identity": {
+    "time_s": {
+      "I46_vs_I40_exact": true,
+      "I42_baseline_vs_I40_exact": true
+    },
+    "exact_qpos": {
+      "I46_vs_I40_exact": true,
+      "I42_baseline_vs_I40_exact": true
+    },
+    "exact_qvel": {
+      "I46_vs_I40_exact": true,
+      "I42_baseline_vs_I40_exact": true
+    },
+    "exact_applied": {
+      "I46_vs_I40_exact": true,
+      "I42_baseline_vs_I40_exact": true
+    },
+    "exact_native_requested": {
+      "I46_vs_I40_exact": true,
+      "I42_baseline_vs_I40_exact": true
+    },
+    "exact_observer_wrench": {
+      "I46_vs_I40_exact": true,
+      "I42_baseline_vs_I40_exact": true
+    }
+  },
+  "patch_metadata": {
+    "shell_A": {
+      "sign": 1.0,
+      "lower_m": 0.01,
+      "upper_m": 0.11565465836,
+      "radius_m": 0.12,
+      "kind": 2.0
+    },
+    "shell_B": {
+      "sign": -1.0,
+      "lower_m": 0.01,
+      "upper_m": 0.11565465836,
+      "radius_m": 0.12,
+      "kind": 2.0
+    },
+    "belt_A": {
+      "sign": 1.0,
+      "lower_m": 0.11565465836,
+      "upper_m": 0.12,
+      "radius_m": 0.12,
+      "kind": 4.0
+    },
+    "belt_B": {
+      "sign": -1.0,
+      "lower_m": 0.11565465836,
+      "upper_m": 0.12,
+      "radius_m": 0.12,
+      "kind": 4.0
+    }
+  },
+  "display_samples": [
+    {
+      "time_s": 6.699999999999879,
+      "true_last1ms_dominant_patch": "belt_A",
+      "native_effective_patch": "belt_A",
+      "fast_effective_patch": "belt_A",
+      "raw_filtered_patch": "belt_A",
+      "raw_interval_patch": "belt_A",
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        17.92400428620924,
+        0.0
+      ],
+      "native_effective_loads_N": [
+        0.0,
+        0.0,
+        17.937276869618913,
+        0.0
+      ],
+      "fast_effective_loads_N": [
+        0.0,
+        0.0,
+        17.937276869618913,
+        0.0
+      ],
+      "filtered_point_gap_mm": 0.4302544205632915,
+      "interval_point_gap_mm": 0.07945072101222247,
+      "filtered_nearest_band_boundary_mm": 0.02787626419421818,
+      "interval_nearest_band_boundary_mm": 0.02635750040566598,
+      "gain_relative_step": 0.14924463141204874,
+      "belt_A_requested_m_s": 0.43251245458010884,
+      "belt_A_applied_m_s": 0.3,
+      "shell_A_requested_Nm": 0.02236023670785852,
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "filtered_force_to_interval_gap_N": 1.2970828211474348,
+      "filtered_moment_to_interval_gap_Nm": 0.15967875454451685,
+      "filtered_selected_lower_margin_mm": 0.02787626419421818,
+      "filtered_selected_upper_margin_mm": 4.3174653758057815,
+      "interval_selected_lower_margin_mm": 0.02635750040566598,
+      "interval_selected_upper_margin_mm": 4.318984139594334,
+      "true_equivalent_point_in_its_band_current_pose_margin_mm": 0.011339525344336576
+    },
+    {
+      "time_s": 6.724999999999879,
+      "true_last1ms_dominant_patch": "shell_A",
+      "native_effective_patch": "belt_A",
+      "fast_effective_patch": "shell_A",
+      "raw_filtered_patch": "belt_A",
+      "raw_interval_patch": "shell_A",
+      "true_patch_loads_N": [
+        17.835392078931076,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "native_effective_loads_N": [
+        0.0,
+        0.0,
+        18.90655456762105,
+        0.0
+      ],
+      "fast_effective_loads_N": [
+        18.90655456762105,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "filtered_point_gap_mm": 0.46200595267316225,
+      "interval_point_gap_mm": 0.3380298454664854,
+      "filtered_nearest_band_boundary_mm": 0.005360131067971841,
+      "interval_nearest_band_boundary_mm": 0.008446364060624156,
+      "gain_relative_step": 0.1609923056179235,
+      "belt_A_requested_m_s": 0.4205328576948129,
+      "belt_A_applied_m_s": 0.3,
+      "shell_A_requested_Nm": 0.04606959441953769,
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "filtered_force_to_interval_gap_N": 2.367325852545924,
+      "filtered_moment_to_interval_gap_Nm": 0.25121643336656885,
+      "filtered_selected_lower_margin_mm": 0.005360131067971841,
+      "filtered_selected_upper_margin_mm": 4.339981508932028,
+      "interval_selected_lower_margin_mm": 105.64621199593938,
+      "interval_selected_upper_margin_mm": 0.008446364060624156,
+      "true_equivalent_point_in_its_band_current_pose_margin_mm": 0.06894521593833747
+    },
+    {
+      "time_s": 6.774999999999878,
+      "true_last1ms_dominant_patch": "shell_A",
+      "native_effective_patch": "shell_A",
+      "fast_effective_patch": "shell_A",
+      "raw_filtered_patch": "shell_A",
+      "raw_interval_patch": "shell_A",
+      "true_patch_loads_N": [
+        17.342163091300385,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "native_effective_loads_N": [
+        17.36716976011316,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fast_effective_loads_N": [
+        17.36716976011316,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "filtered_point_gap_mm": 1.4757417287709593,
+      "interval_point_gap_mm": 0.43152274219601827,
+      "filtered_nearest_band_boundary_mm": 0.4279884171040499,
+      "interval_nearest_band_boundary_mm": 0.6332392340864385,
+      "gain_relative_step": 0.003219552779088302,
+      "belt_A_requested_m_s": -0.032480463390152765,
+      "belt_A_applied_m_s": -0.032480463390152765,
+      "shell_A_requested_Nm": -0.024410867687635257,
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "sync_delta": [
+        0.0,
+        0.0,
+        0.0,
+        -0.032480463390152765,
+        0.0
+      ],
+      "filtered_force_to_interval_gap_N": 0.1470307363982175,
+      "filtered_moment_to_interval_gap_Nm": 0.00507829288719256,
+      "filtered_selected_lower_margin_mm": 105.22666994289594,
+      "filtered_selected_upper_margin_mm": 0.42798841710406377,
+      "interval_selected_lower_margin_mm": 105.02141912591355,
+      "interval_selected_upper_margin_mm": 0.6332392340864523,
+      "true_equivalent_point_in_its_band_current_pose_margin_mm": 0.7176362462768676
+    },
+    {
+      "time_s": 6.824999999999877,
+      "true_last1ms_dominant_patch": "belt_A",
+      "native_effective_patch": "belt_A",
+      "fast_effective_patch": "belt_A",
+      "raw_filtered_patch": "belt_A",
+      "raw_interval_patch": "belt_A",
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        20.8722477626769,
+        0.0
+      ],
+      "native_effective_loads_N": [
+        0.0,
+        0.0,
+        18.627657457433422,
+        0.0
+      ],
+      "fast_effective_loads_N": [
+        0.0,
+        0.0,
+        18.627657457433422,
+        0.0
+      ],
+      "filtered_point_gap_mm": 0.1391790190894549,
+      "interval_point_gap_mm": 0.20075642599795804,
+      "filtered_nearest_band_boundary_mm": 0.03924086044453101,
+      "interval_nearest_band_boundary_mm": 0.008303591625041795,
+      "gain_relative_step": 0.19236385123224656,
+      "belt_A_requested_m_s": 0.8347418461273584,
+      "belt_A_applied_m_s": 0.3,
+      "shell_A_requested_Nm": 0.10636418100285082,
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "filtered_force_to_interval_gap_N": 3.700038696004504,
+      "filtered_moment_to_interval_gap_Nm": 0.42023000074173394,
+      "filtered_selected_lower_margin_mm": 0.03924086044453101,
+      "filtered_selected_upper_margin_mm": 4.306100779555469,
+      "interval_selected_lower_margin_mm": 0.008303591625041795,
+      "interval_selected_upper_margin_mm": 4.337038048374958,
+      "true_equivalent_point_in_its_band_current_pose_margin_mm": 0.039519975735965995
+    },
+    {
+      "time_s": 6.854999999999876,
+      "true_last1ms_dominant_patch": "belt_A",
+      "native_effective_patch": "belt_A",
+      "fast_effective_patch": "shell_A",
+      "raw_filtered_patch": "belt_A",
+      "raw_interval_patch": "shell_A",
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        15.191188591925972,
+        0.0
+      ],
+      "native_effective_loads_N": [
+        0.0,
+        0.0,
+        18.296499491293364,
+        0.0
+      ],
+      "fast_effective_loads_N": [
+        18.296499491293364,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "filtered_point_gap_mm": 0.19297505387399158,
+      "interval_point_gap_mm": 0.08658113676017765,
+      "filtered_nearest_band_boundary_mm": 0.021009318028869517,
+      "interval_nearest_band_boundary_mm": 0.031454067668912344,
+      "gain_relative_step": 0.0003522988624882596,
+      "belt_A_requested_m_s": 0.8142649814544745,
+      "belt_A_applied_m_s": 0.3,
+      "shell_A_requested_Nm": 0.0614489679648577,
+      "sync_weights": [
+        0.0,
+        0.3499998154728843,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_delta": [
+        0.0,
+        0.010286254525208961,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "filtered_force_to_interval_gap_N": 10.037968199715717,
+      "filtered_moment_to_interval_gap_Nm": 1.1850189475440538,
+      "filtered_selected_lower_margin_mm": 0.021009318028869517,
+      "filtered_selected_upper_margin_mm": 4.324332321971131,
+      "interval_selected_lower_margin_mm": 105.62320429233108,
+      "interval_selected_upper_margin_mm": 0.031454067668912344,
+      "true_equivalent_point_in_its_band_current_pose_margin_mm": -0.014044219364975352
+    },
+    {
+      "time_s": 6.859999999999876,
+      "true_last1ms_dominant_patch": "belt_A",
+      "native_effective_patch": "shell_A",
+      "fast_effective_patch": "shell_A",
+      "raw_filtered_patch": "shell_A",
+      "raw_interval_patch": "shell_A",
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        14.532933417908005,
+        0.0
+      ],
+      "native_effective_loads_N": [
+        16.421387073252458,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fast_effective_loads_N": [
+        16.421387073252458,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "filtered_point_gap_mm": 0.18265501708381515,
+      "interval_point_gap_mm": 0.19021035182381635,
+      "filtered_nearest_band_boundary_mm": 0.025896242108455758,
+      "interval_nearest_band_boundary_mm": 0.024841993045310318,
+      "gain_relative_step": 0.23800375323095901,
+      "belt_A_requested_m_s": 0.0,
+      "belt_A_applied_m_s": 0.0,
+      "shell_A_requested_Nm": -0.5686373937806255,
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "filtered_force_to_interval_gap_N": 8.128315631723659,
+      "filtered_moment_to_interval_gap_Nm": 0.911626874818571,
+      "filtered_selected_lower_margin_mm": 105.62876211789154,
+      "filtered_selected_upper_margin_mm": 0.025896242108455758,
+      "interval_selected_lower_margin_mm": 105.62981636695469,
+      "interval_selected_upper_margin_mm": 0.024841993045310318,
+      "true_equivalent_point_in_its_band_current_pose_margin_mm": -0.07817283765744476
+    },
+    {
+      "time_s": 6.864999999999876,
+      "true_last1ms_dominant_patch": "shell_A",
+      "native_effective_patch": "shell_A",
+      "fast_effective_patch": "belt_A",
+      "raw_filtered_patch": "shell_A",
+      "raw_interval_patch": "belt_A",
+      "true_patch_loads_N": [
+        21.71556636705262,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "native_effective_loads_N": [
+        18.495366855886402,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fast_effective_loads_N": [
+        0.0,
+        0.0,
+        18.495366855886402,
+        0.0
+      ],
+      "filtered_point_gap_mm": 0.3309975048491507,
+      "interval_point_gap_mm": 0.5057189399993328,
+      "filtered_nearest_band_boundary_mm": 0.014623987288200913,
+      "interval_nearest_band_boundary_mm": 0.02175683132443762,
+      "gain_relative_step": 0.0064544263731565405,
+      "belt_A_requested_m_s": 0.12936664317410249,
+      "belt_A_applied_m_s": 0.12936664317410249,
+      "shell_A_requested_Nm": -0.39996415014976516,
+      "sync_weights": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "sync_delta": [
+        0.0,
+        0.0,
+        0.0,
+        0.12936664317410249,
+        0.0
+      ],
+      "filtered_force_to_interval_gap_N": 12.058660249552682,
+      "filtered_moment_to_interval_gap_Nm": 1.3941723575125387,
+      "filtered_selected_lower_margin_mm": 105.6400343727118,
+      "filtered_selected_upper_margin_mm": 0.014623987288200913,
+      "interval_selected_lower_margin_mm": 0.02175683132443762,
+      "interval_selected_upper_margin_mm": 4.323584808675562,
+      "true_equivalent_point_in_its_band_current_pose_margin_mm": 0.07785775660859584
+    },
+    {
+      "time_s": 6.899999999999875,
+      "true_last1ms_dominant_patch": "belt_A",
+      "native_effective_patch": "belt_A",
+      "fast_effective_patch": "belt_A",
+      "raw_filtered_patch": "belt_A",
+      "raw_interval_patch": "belt_A",
+      "true_patch_loads_N": [
+        0.0,
+        0.0,
+        16.19169272980362,
+        0.0
+      ],
+      "native_effective_loads_N": [
+        0.0,
+        0.0,
+        17.665074619115693,
+        0.0
+      ],
+      "fast_effective_loads_N": [
+        0.0,
+        0.0,
+        17.665074619115693,
+        0.0
+      ],
+      "filtered_point_gap_mm": 5.881646657662118,
+      "interval_point_gap_mm": 0.2809926788163704,
+      "filtered_nearest_band_boundary_mm": 1.8289626057032966,
+      "interval_nearest_band_boundary_mm": 1.7446372251945093,
+      "gain_relative_step": 0.0015513831345276086,
+      "belt_A_requested_m_s": 0.589984318417701,
+      "belt_A_applied_m_s": 0.3,
+      "shell_A_requested_Nm": 0.13006251860181803,
+      "sync_weights": [
+        0.0,
+        0.35,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sync_delta": [
+        0.0,
+        0.03508360967320068,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "filtered_force_to_interval_gap_N": 3.275661463498902,
+      "filtered_moment_to_interval_gap_Nm": 0.2529507946250544,
+      "filtered_selected_lower_margin_mm": 1.8289626057032966,
+      "filtered_selected_upper_margin_mm": 2.5163790342967034,
+      "interval_selected_lower_margin_mm": 2.6007044148054907,
+      "interval_selected_upper_margin_mm": 1.7446372251945093,
+      "true_equivalent_point_in_its_band_current_pose_margin_mm": 1.7959531118402206
+    }
+  ],
+  "fresh_seven_transitions": [
+    {
+      "case_id": "mars_compact_outback",
+      "direction": "shell_to_belt",
+      "preceding_mean_truth_time_s": 3.049999999999957,
+      "native_offset_preceding_ms": 0.0,
+      "fast_offset_preceding_ms": 0.0,
+      "native_offset_next_hold_ms": 4.999999999999893,
+      "fast_offset_next_hold_ms": 4.999999999999893,
+      "native_offset_last1ms_ms": 0.0,
+      "fast_offset_last1ms_ms": 0.0
+    },
+    {
+      "case_id": "mars_compact_outback",
+      "direction": "belt_to_shell",
+      "preceding_mean_truth_time_s": 3.8699999999999397,
+      "native_offset_preceding_ms": -9.999999999999787,
+      "fast_offset_preceding_ms": -4.999999999999893,
+      "native_offset_next_hold_ms": -4.999999999999893,
+      "fast_offset_next_hold_ms": 0.0,
+      "native_offset_last1ms_ms": -4.999999999999893,
+      "fast_offset_last1ms_ms": 0.0
+    },
+    {
+      "case_id": "mars_compact_outback",
+      "direction": "shell_to_belt",
+      "preceding_mean_truth_time_s": 11.585000000000411,
+      "native_offset_preceding_ms": -5.000000000000782,
+      "fast_offset_preceding_ms": -5.000000000000782,
+      "native_offset_next_hold_ms": 0.0,
+      "fast_offset_next_hold_ms": 0.0,
+      "native_offset_last1ms_ms": 0.0,
+      "fast_offset_last1ms_ms": 0.0
+    },
+    {
+      "case_id": "flat_compact_outback",
+      "direction": "shell_to_belt",
+      "preceding_mean_truth_time_s": 2.8899999999999606,
+      "native_offset_preceding_ms": -4.999999999999893,
+      "fast_offset_preceding_ms": -4.999999999999893,
+      "native_offset_next_hold_ms": 0.0,
+      "fast_offset_next_hold_ms": 0.0,
+      "native_offset_last1ms_ms": -4.999999999999893,
+      "fast_offset_last1ms_ms": -4.999999999999893
+    },
+    {
+      "case_id": "flat_compact_outback",
+      "direction": "belt_to_shell",
+      "preceding_mean_truth_time_s": 4.149999999999934,
+      "native_offset_preceding_ms": -4.999999999999893,
+      "fast_offset_preceding_ms": -4.999999999999893,
+      "native_offset_next_hold_ms": 0.0,
+      "fast_offset_next_hold_ms": 0.0,
+      "native_offset_last1ms_ms": 0.0,
+      "fast_offset_last1ms_ms": 0.0
+    },
+    {
+      "case_id": "flat_compact_outback",
+      "direction": "shell_to_belt",
+      "preceding_mean_truth_time_s": 10.185000000000192,
+      "native_offset_preceding_ms": -5.000000000000782,
+      "fast_offset_preceding_ms": -5.000000000000782,
+      "native_offset_next_hold_ms": 0.0,
+      "fast_offset_next_hold_ms": 0.0,
+      "native_offset_last1ms_ms": -5.000000000000782,
+      "fast_offset_last1ms_ms": -5.000000000000782
+    },
+    {
+      "case_id": "flat_compact_outback",
+      "direction": "belt_to_shell",
+      "preceding_mean_truth_time_s": 11.330000000000371,
+      "native_offset_preceding_ms": -5.000000000000782,
+      "fast_offset_preceding_ms": -5.000000000000782,
+      "native_offset_next_hold_ms": 0.0,
+      "fast_offset_next_hold_ms": 0.0,
+      "native_offset_last1ms_ms": 0.0,
+      "fast_offset_last1ms_ms": 0.0
+    }
+  ],
+  "clock_mismatch_equivalent_seconds": {
+    "mars_compact_outback": {
+      "preceding_mean": {
+        "native": 0.005,
+        "fast": 0.0
+      },
+      "last1ms": {
+        "native": 0.005,
+        "fast": 0.0
+      },
+      "next_hold_aux": {
+        "native": 0.005,
+        "fast": 0.005
+      }
+    },
+    "flat_compact_outback": {
+      "preceding_mean": {
+        "native": 0.01,
+        "fast": 0.01
+      },
+      "last1ms": {
+        "native": 0.01,
+        "fast": 0.01
+      },
+      "next_hold_aux": {
+        "native": 0.0,
+        "fast": 0.0
+      }
+    }
+  },
+  "registered_I46_decision": {
+    "passes_all_conditions": false,
+    "checks": {
+      "all_case_coverage": true,
+      "enough_common_paired_events": true,
+      "paired_median_absolute_timing_improvement": false,
+      "each_case_wrong_duration_benefit": false,
+      "extra_false_family_transition_nonregression": true,
+      "each_case_command_and_noise_nonregression": true
+    },
+    "case_coverage": {
+      "mars_compact_outback": {
+        "completed": true,
+        "full_scoring_window": true,
+        "actual_exposure_guard": true,
+        "true_each_direction": true,
+        "common_matched_each_direction": true
+      },
+      "flat_compact_outback": {
+        "completed": true,
+        "full_scoring_window": true,
+        "actual_exposure_guard": true,
+        "true_each_direction": true,
+        "common_matched_each_direction": true
+      }
+    },
+    "case_benefit": {
+      "mars_compact_outback": {
+        "native_mismatch_s": 0.005,
+        "fast_mismatch_s": 0.0,
+        "absolute_reduction_s": 0.005,
+        "relative_reduction": 1.0,
+        "absolute_pass": false,
+        "relative_pass": true
+      },
+      "flat_compact_outback": {
+        "native_mismatch_s": 0.01,
+        "fast_mismatch_s": 0.01,
+        "absolute_reduction_s": 0.0,
+        "relative_reduction": 0.0,
+        "absolute_pass": false,
+        "relative_pass": false
+      }
+    },
+    "case_nonregression": {
+      "mars_compact_outback": {
+        "max_normalized_requested_step_increase": 0.0,
+        "requested_step_pass": true,
+        "noise_flip_fraction_increase": -0.00020833333333333337,
+        "noise_pass": true
+      },
+      "flat_compact_outback": {
+        "max_normalized_requested_step_increase": 0.0,
+        "requested_step_pass": true,
+        "noise_flip_fraction_increase": 0.0,
+        "noise_pass": true
+      }
+    },
+    "paired_timing_improvement_s": {
+      "n": 7,
+      "mean": 0.0007142857142856991,
+      "rms": 0.0018898223650460958,
+      "median": 0.0,
+      "p95": 0.0034999999999999216,
+      "maximum": 0.004999999999999893
+    },
+    "common_paired_events": [
+      {
+        "case_id": "mars_compact_outback",
+        "truth_index": 0,
+        "truth_time_s": 3.049999999999957,
+        "direction": "shell_to_belt",
+        "native_signed_offset_s": 0.0,
+        "fast_signed_offset_s": 0.0,
+        "absolute_timing_improvement_s": 0.0
+      },
+      {
+        "case_id": "mars_compact_outback",
+        "truth_index": 1,
+        "truth_time_s": 3.8699999999999397,
+        "direction": "belt_to_shell",
+        "native_signed_offset_s": -0.009999999999999787,
+        "fast_signed_offset_s": -0.004999999999999893,
+        "absolute_timing_improvement_s": 0.004999999999999893
+      },
+      {
+        "case_id": "mars_compact_outback",
+        "truth_index": 2,
+        "truth_time_s": 11.585000000000411,
+        "direction": "shell_to_belt",
+        "native_signed_offset_s": -0.005000000000000782,
+        "fast_signed_offset_s": -0.005000000000000782,
+        "absolute_timing_improvement_s": 0.0
+      },
+      {
+        "case_id": "flat_compact_outback",
+        "truth_index": 0,
+        "truth_time_s": 2.8899999999999606,
+        "direction": "shell_to_belt",
+        "native_signed_offset_s": -0.004999999999999893,
+        "fast_signed_offset_s": -0.004999999999999893,
+        "absolute_timing_improvement_s": 0.0
+      },
+      {
+        "case_id": "flat_compact_outback",
+        "truth_index": 1,
+        "truth_time_s": 4.149999999999934,
+        "direction": "belt_to_shell",
+        "native_signed_offset_s": -0.004999999999999893,
+        "fast_signed_offset_s": -0.004999999999999893,
+        "absolute_timing_improvement_s": 0.0
+      },
+      {
+        "case_id": "flat_compact_outback",
+        "truth_index": 2,
+        "truth_time_s": 10.185000000000192,
+        "direction": "shell_to_belt",
+        "native_signed_offset_s": -0.005000000000000782,
+        "fast_signed_offset_s": -0.005000000000000782,
+        "absolute_timing_improvement_s": 0.0
+      },
+      {
+        "case_id": "flat_compact_outback",
+        "truth_index": 3,
+        "truth_time_s": 11.330000000000371,
+        "direction": "belt_to_shell",
+        "native_signed_offset_s": -0.005000000000000782,
+        "fast_signed_offset_s": -0.005000000000000782,
+        "absolute_timing_improvement_s": 0.0
+      }
+    ],
+    "total_native_extra_family_events": 0,
+    "total_fast_extra_family_events": 0,
+    "decision": "retain_filter_no_integration",
+    "interpretation": "Registered diagnostic screen, not adoption; all candidate commands remained shadow-only."
+  },
+  "historical_causality": {
+    "first_native_belt_A_request_saturation_s": 6.699999999999879,
+    "first_truth_correcting_effective_route_s": 6.724999999999879,
+    "first_any_shadow_command_difference_s": 6.724999999999879,
+    "maximum_requested_step_relative_reduction": 0.0,
+    "cue_not_after_saturation": false,
+    "ten_percent_requested_jump_reduction": false,
+    "interpretation": "Necessary diagnostic timing/jump checks only; even an early cue does not establish the cause of departure or recovery under fast routing."
+  },
+  "confirmed": [
+    "Synchronous finite blocking Gazebo steps separate wall-clock computation from simulated motion.",
+    "Momentum residual uses preceding held input, an interval estimate and an explicit100rad/s low-pass.",
+    "Current pose classifies the filtered-wrench support point; point closeness alone does not establish patch identity.",
+    "Fresh event offsets can be early relative to preceding5ms mean; no universal fixed label delay is demonstrated.",
+    "I46 does not justify replacing the wrench filter; I42 truth feedback shares did not prevent the6.860s departure."
+  ],
+  "unestablished": [
+    "Per-command computation/transport latency and deadline misses were not logged in these arrays.",
+    "The lockstep data do not demonstrate CPU calculation latency causing physical stale actuation.",
+    "A net wrench does not uniquely determine arbitrary simultaneous contact locations/load distributions.",
+    "Shadow command sensitivities do not establish an alternative closed-loop outcome."
+  ]
+}

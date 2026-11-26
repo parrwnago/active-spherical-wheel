@@ -1,0 +1,419 @@
+{
+  "iteration": "I-46",
+  "passed": true,
+  "created_utc": "2026-11-26T07:32:22.976200+00:00",
+  "scope": "Independent saved-array QA of I46 clocks, raw contacts and command algebra.\n\nNo controller, contact locator, physics, terrain or scientific event/noise\nreducer is invoked.  Raw bridge admission/aggregation is reconstructed with\nindependent vectorized arithmetic rather than the producer's helper.\n",
+  "render_or_simulation_calls": 0,
+  "cases": {
+    "mars_compact_outback": {
+      "raw_integrity_passed": true,
+      "manifest": {
+        "passed": true,
+        "files": 71,
+        "failures": []
+      },
+      "commands": {
+        "separate_gain_delta": {
+          "passed": true,
+          "maximum_absolute_gap": 6.938893903907228e-18,
+          "tolerance": 1e-10
+        },
+        "separate_holding_delta": {
+          "passed": true,
+          "maximum_absolute_gap": 0.0,
+          "tolerance": 1e-10
+        },
+        "combined_delta": {
+          "passed": true,
+          "maximum_absolute_gap": 1.3877787807814457e-17,
+          "tolerance": 1e-10
+        },
+        "shadow_reconstruction": {
+          "passed": true,
+          "maximum_absolute_gap": 5.204170427930421e-18,
+          "tolerance": 1e-10
+        },
+        "native_component_sum": {
+          "passed": true,
+          "maximum_absolute_gap": 4.336808689942018e-19,
+          "tolerance": 1e-10
+        },
+        "native_actual_clip": {
+          "passed": true,
+          "maximum_absolute_gap": 0.0,
+          "tolerance": 1e-10
+        },
+        "native_shaft_gain_row": {
+          "passed": true,
+          "maximum_absolute_gap": 0.0,
+          "tolerance": 0.0
+        },
+        "one_native_feedback_each": {
+          "passed": true
+        },
+        "all_shadow_history_guards": {
+          "passed": true
+        },
+        "exact_fallback_delta": {
+          "passed": true
+        }
+      },
+      "truth": {
+        "passed": true,
+        "checks": {
+          "relative_substep_clock": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-09
+          },
+          "interval_endpoint_clock": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-09
+          },
+          "plugin_step_spacing": {
+            "passed": true,
+            "maximum_absolute_gap": 2.3306009899748403e-15,
+            "tolerance": 1e-08
+          },
+          "t0_truth_invalid": {
+            "passed": true
+          },
+          "all_following_intervals_valid": {
+            "passed": true
+          },
+          "start_clock": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-09
+          },
+          "end_clock": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-09
+          },
+          "mean_patch_loads": {
+            "passed": true,
+            "maximum_absolute_gap": 7.105427357601002e-15,
+            "tolerance": 1e-10
+          },
+          "mean_patch_points": {
+            "passed": true,
+            "maximum_absolute_gap": 3.552713678800501e-15,
+            "tolerance": 1e-10
+          },
+          "mean_equivalent_point": {
+            "passed": true,
+            "maximum_absolute_gap": 3.552713678800501e-15,
+            "tolerance": 1e-10
+          },
+          "mean_wheel_wrench": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "mean_body_wrench": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "mean_all_external_wrench": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "mean_body_load": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "last_tick_patch_loads": {
+            "passed": true,
+            "maximum_absolute_gap": 7.105427357601002e-15,
+            "tolerance": 1e-10
+          },
+          "last_tick_patch_points": {
+            "passed": true,
+            "maximum_absolute_gap": 1.7763568394002505e-15,
+            "tolerance": 1e-10
+          },
+          "last_tick_resolved_counts": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 0.0
+          },
+          "last_tick_wheel_wrench": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          }
+        },
+        "physics_samples": 16000,
+        "contacts": 76664,
+        "executed_intervals": 3200,
+        "published_terminal_command_is_unactuated": true,
+        "timing": "Last completed1ms solver records vs integrated endpoint pose; independent convention retained without shifts."
+      },
+      "folder": "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback",
+      "source_failures": [],
+      "collection_complete": true,
+      "failure": null,
+      "actual_exposure_guard": {
+        "passed": true,
+        "maximum_segment_distance_m": 0.02519318901831045,
+        "samples_outside_100mm": 0,
+        "interpretation": "Acceptance condition separate from raw integrity; Mars/flat are not an isolated slope experiment."
+      }
+    },
+    "flat_compact_outback": {
+      "raw_integrity_passed": true,
+      "manifest": {
+        "passed": true,
+        "files": 71,
+        "failures": []
+      },
+      "commands": {
+        "separate_gain_delta": {
+          "passed": true,
+          "maximum_absolute_gap": 0.0,
+          "tolerance": 1e-10
+        },
+        "separate_holding_delta": {
+          "passed": true,
+          "maximum_absolute_gap": 0.0,
+          "tolerance": 1e-10
+        },
+        "combined_delta": {
+          "passed": true,
+          "maximum_absolute_gap": 0.0,
+          "tolerance": 1e-10
+        },
+        "shadow_reconstruction": {
+          "passed": true,
+          "maximum_absolute_gap": 0.0,
+          "tolerance": 1e-10
+        },
+        "native_component_sum": {
+          "passed": true,
+          "maximum_absolute_gap": 1.6155871338926322e-27,
+          "tolerance": 1e-10
+        },
+        "native_actual_clip": {
+          "passed": true,
+          "maximum_absolute_gap": 0.0,
+          "tolerance": 1e-10
+        },
+        "native_shaft_gain_row": {
+          "passed": true,
+          "maximum_absolute_gap": 0.0,
+          "tolerance": 0.0
+        },
+        "one_native_feedback_each": {
+          "passed": true
+        },
+        "all_shadow_history_guards": {
+          "passed": true
+        },
+        "exact_fallback_delta": {
+          "passed": true
+        }
+      },
+      "truth": {
+        "passed": true,
+        "checks": {
+          "relative_substep_clock": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-09
+          },
+          "interval_endpoint_clock": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-09
+          },
+          "plugin_step_spacing": {
+            "passed": true,
+            "maximum_absolute_gap": 2.3306009899748403e-15,
+            "tolerance": 1e-08
+          },
+          "t0_truth_invalid": {
+            "passed": true
+          },
+          "all_following_intervals_valid": {
+            "passed": true
+          },
+          "start_clock": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-09
+          },
+          "end_clock": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-09
+          },
+          "mean_patch_loads": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "mean_patch_points": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "mean_equivalent_point": {
+            "passed": true,
+            "maximum_absolute_gap": 3.552713678800501e-15,
+            "tolerance": 1e-10
+          },
+          "mean_wheel_wrench": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "mean_body_wrench": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "mean_all_external_wrench": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "mean_body_load": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "last_tick_patch_loads": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "last_tick_patch_points": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          },
+          "last_tick_resolved_counts": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 0.0
+          },
+          "last_tick_wheel_wrench": {
+            "passed": true,
+            "maximum_absolute_gap": 0.0,
+            "tolerance": 1e-10
+          }
+        },
+        "physics_samples": 16000,
+        "contacts": 64000,
+        "executed_intervals": 3200,
+        "published_terminal_command_is_unactuated": true,
+        "timing": "Last completed1ms solver records vs integrated endpoint pose; independent convention retained without shifts."
+      },
+      "folder": "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected",
+      "source_failures": [],
+      "collection_complete": true,
+      "failure": null,
+      "actual_exposure_guard": {
+        "passed": true,
+        "maximum_segment_distance_m": 0.01079703573181204,
+        "samples_outside_100mm": 0,
+        "interpretation": "Acceptance condition separate from raw integrity; Mars/flat are not an isolated slope experiment."
+      }
+    }
+  },
+  "historical": {
+    "manifest": {
+      "passed": true,
+      "files": 66,
+      "failures": []
+    },
+    "samples": 8801,
+    "native_parity": true,
+    "all_shadow_histories_unchanged": true,
+    "commands": {
+      "separate_gain_delta": {
+        "passed": true,
+        "maximum_absolute_gap": 2.220446049250313e-16,
+        "tolerance": 1e-10
+      },
+      "separate_holding_delta": {
+        "passed": true,
+        "maximum_absolute_gap": 0.0,
+        "tolerance": 1e-10
+      },
+      "combined_delta": {
+        "passed": true,
+        "maximum_absolute_gap": 2.220446049250313e-16,
+        "tolerance": 1e-10
+      },
+      "shadow_reconstruction": {
+        "passed": true,
+        "maximum_absolute_gap": 7.105427357601002e-15,
+        "tolerance": 1e-10
+      },
+      "native_component_sum": {
+        "passed": true,
+        "maximum_absolute_gap": 1.3877787807814457e-17,
+        "tolerance": 1e-10
+      },
+      "native_actual_clip": {
+        "passed": true,
+        "maximum_absolute_gap": 0.0,
+        "tolerance": 1e-10
+      },
+      "native_shaft_gain_row": {
+        "passed": true,
+        "maximum_absolute_gap": 0.0,
+        "tolerance": 0.0
+      },
+      "one_native_feedback_each": {
+        "passed": true
+      },
+      "all_shadow_history_guards": {
+        "passed": true
+      },
+      "exact_fallback_delta": {
+        "passed": true
+      }
+    },
+    "truth_limit": "Historical last1ms truth only; no preceding5ms truth reconstructed."
+  },
+  "inputs_sha256": {
+    "results/support_routing_timing_20261126/protocol.json": "a4e4cc0f138582d40eef4a8870f39c4c70b5aa69d29e292f52427b966d94bff3",
+    "results/support_routing_timing_20261126/campaign/jobs.json": "1e3cccc962f0ed94f1d1066577695ef706ae447014ccd013e50b2b476ffdd74a",
+    "results/support_routing_timing_20261126/protocol_clarifications.json": "08aafc261040bcae37cbaa9457229d67e97c9eacac7049b8efc7058eb62cccc6",
+    "results/support_routing_timing_20261126/review/bridge_equivalence_stage01/report.json": "6326126f309d8b58cb2cd3e3069db940863fc4c413c063ff90329ad60676fb45",
+    "results/support_routing_timing_20261126/setup_correction_stage02/report.json": "4e302626d02cd1dbaec7d18d43ee2a12033bf7a5461b1ee0b4139d27cfe6852a",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback/failure.json": "324e54b399de31b589f854235adca3b227917de720e30db59f1836983f155c0b",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/artifact_manifest.json": "07db4b42bee1b8a237007379d2b5a5f2cdc4d0001efbd04755db490daff23074",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/report.json": "b800706591dfbf5166e9693a105f7327858bbb96c592e0092b0a39b04c51e881",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/precision.npz": "1ff9b77685fe2c4462d16cc5ba07aebfd488cf0dcd1c4f19bcd26dedf326fdde",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/truth_substeps.npz": "ba47afdb917c0b73bb6b72296bb644c6bbbbfed435de777df290c8cd258acb27",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/rollout.npz": "ffd6b314f0f49883b4aa219e99b18a8a6e484ce552319296f5d6aed2915bdfd6",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/summary.json": "fcafdfb22b199cf924d8f256a29ee76957aaa6a4e1ab75cd651fc889a8443623",
+    "results/support_routing_timing_20261126/campaign/runs/mars_compact_outback/provenance.json": "d7927ccf61e4c5409db5d2579783a2c80d341d61948c7a6f9ae801fe1916c48d",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/artifact_manifest.json": "ef06b7451691962e3db2a51d8f1fa1982d06bf02429f950399f4bdff8298cd6c",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/report.json": "f9c6290bf9c58c14de6e8523837914e0d51b9b215f78fef8a1a4313e30a36757",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/precision.npz": "ea6779d1c09acdfca2add37e0b865f32985542a087aaa8b7d0c7014791002bcf",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/truth_substeps.npz": "8581ccd5f4cda595fc18f6ef57f7b37a986b97e913dcc7e825c00ad94d5170ff",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/rollout.npz": "b7c06038e71f31626b3ad8288d6ef133c1be61118490df21dddd2b04fcbaf56d",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/summary.json": "840cbc41af16cce7003511771208879c03901738ca126de5ee934c368bce5fca",
+    "results/support_routing_timing_20261126/campaign/runs/flat_compact_outback_setup_corrected/provenance.json": "f207845441415f690dce38ae4a15d794cbec79a201245cc4aab68470ede93bab",
+    "results/support_routing_timing_20261126/campaign/historical_stage01/artifact_manifest.json": "7d7b5b151835972c663104f916c3f66aad4d1558b30aa54d03fcd1d120fb7455",
+    "results/support_routing_timing_20261126/campaign/historical_stage01/report.json": "03adcd502bdb1cdc4784014ef148014f4fe2b997c05088a63d644ddf2aa1a917",
+    "results/support_routing_timing_20261126/campaign/historical_stage01/precision.npz": "d7422409ce8fc6240c124984ef4ab476b7fb58474c808025138c654757f9bc0b"
+  },
+  "inputs_unchanged": true,
+  "source_sha256": "53fd9c2801236305daeb39a725a9ac6e3705c3f5540a364d5cdf5b8c70b3c17e",
+  "retained_setup_failure": {
+    "path": "campaign/runs/flat_compact_outback/failure.json",
+    "native_command_samples": 0,
+    "correction": "Explicitly reviewed flat-only level-ground setup correction; original failed attempt retained, not a successful route."
+  },
+  "scientific_gate_ownership": "Timing/noise/event/causal decision belongs canonical analysis reducer; no duplicate scientific reduction here."
+}

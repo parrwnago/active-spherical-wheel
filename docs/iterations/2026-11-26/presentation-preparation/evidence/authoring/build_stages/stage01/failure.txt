@@ -1,0 +1,41 @@
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/results/presentation_preparation_20261126/authoring/build_guide.py", line 109, in <module>
+    report=build(json.loads((HERE/'guide_content.json').read_text()))
+  File "/home/parrwnago/active-spherical-wheel/results/presentation_preparation_20261126/authoring/build_guide.py", line 79, in build
+    elif k=='eq':story.extend([equation(b['text'],b.get('height',.47)),Spacer(1,7)])
+  File "/home/parrwnago/active-spherical-wheel/results/presentation_preparation_20261126/authoring/build_guide.py", line 43, in equation
+    fig=plt.figure(figsize=(7.0,height),dpi=240);fig.text(.01,.5,'$'+expr+'$',fontsize=13,ha='left',va='center',color='#17334D');fig.savefig(path,transparent=True,dpi=240,bbox_inches='tight',pad_inches=.035);plt.close(fig)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/figure.py", line 3497, in savefig
+    self.canvas.print_figure(fname, **kwargs)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/backend_bases.py", line 2157, in print_figure
+    self.figure.draw(renderer)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/artist.py", line 94, in draw_wrapper
+    result = draw(artist, renderer, *args, **kwargs)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/artist.py", line 71, in draw_wrapper
+    return draw(artist, renderer)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/figure.py", line 3264, in draw
+    mimage._draw_list_compositing_images(
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/image.py", line 134, in _draw_list_compositing_images
+    a.draw(renderer)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/artist.py", line 71, in draw_wrapper
+    return draw(artist, renderer)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/text.py", line 752, in draw
+    bbox, info, descent = self._get_layout(renderer)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/text.py", line 382, in _get_layout
+    w, h, d = _get_text_metrics_with_cache(
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/text.py", line 69, in _get_text_metrics_with_cache
+    return _get_text_metrics_with_cache_impl(
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/text.py", line 77, in _get_text_metrics_with_cache_impl
+    return renderer_ref().get_text_width_height_descent(text, fontprop, ismath)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/backends/backend_agg.py", line 215, in get_text_width_height_descent
+    self.mathtext_parser.parse(s, self.dpi, prop)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/mathtext.py", line 86, in parse
+    return self._parse_cached(s, dpi, prop, antialiased, load_glyph_flags)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/mathtext.py", line 100, in _parse_cached
+    box = self._parser.parse(s, fontset, fontsize, dpi)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/matplotlib/_mathtext.py", line 2160, in parse
+    raise ValueError("\n" + ParseException.explain(err, 0)) from None
+ValueError: 
+\mathcal J=\sum_{k=0}^{\infty}\left(\tilde e_k^T Q\tilde e_k+\tilde u_k^T R_u\tilde u_k\right)
+^
+ParseFatalException: Unknown symbol: \mathcal, found '\'  (at char 0), (line:1, col:1)

@@ -1,0 +1,588 @@
+{
+  "iteration": "I-49",
+  "captured_before_execution_utc": "2026-11-26T09:02:21.541944+00:00",
+  "case": {
+    "case_id": "mars_cap030",
+    "terrain": "marsyard2021",
+    "phase_rad": 0.9,
+    "path": {
+      "kind": "mars_route",
+      "route": "plain_figure8"
+    },
+    "duration_s": 44.0,
+    "yaw_deg": 45.0,
+    "reanchor_at_motion_start": false,
+    "uniform_anchor_start_s": 0.4,
+    "cap_m_s": 0.3
+  },
+  "argv": [
+    "results/belt_capacity_sweep_20261126/run_capacity_case.py",
+    "--output",
+    "results/belt_capacity_sweep_20261126",
+    "--cap",
+    "0.30",
+    "--case-id",
+    "mars_cap030",
+    "--run"
+  ],
+  "process": {
+    "pid": 366798,
+    "one_case_per_fresh_process": true
+  },
+  "sources": [
+    {
+      "origin": "config/model.yaml",
+      "snapshot": "source_snapshot/config/model.yaml",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e"
+    },
+    {
+      "origin": "gazebo/plugin/SphericalWheelBridge.cc",
+      "snapshot": "source_snapshot/gazebo/plugin/SphericalWheelBridge.cc",
+      "sha256": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e"
+    },
+    {
+      "origin": "generated/offroad/flat/control_schedule.npz",
+      "snapshot": "source_snapshot/generated/offroad/flat/control_schedule.npz",
+      "sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1"
+    },
+    {
+      "origin": "results/belt_capacity_sweep_20261126/campaign/jobs.json",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/campaign/jobs.json",
+      "sha256": "7a73960f5b9ee3862ae75d017deea4f3e4635263d678b56502778bcfc040f7d8"
+    },
+    {
+      "origin": "results/belt_capacity_sweep_20261126/protocol.json",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/protocol.json",
+      "sha256": "577e7c7a04d1cccf77550a5c7aa46e3a152dbb7392704c95ba1fddfde02557a3"
+    },
+    {
+      "origin": "results/belt_capacity_sweep_20261126/run_capacity_case.py",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/run_capacity_case.py",
+      "sha256": "a248f7e94a74d7dc999e9a271f4602c4cac8f0274d17e03cc7c7a99b2a3ad213"
+    },
+    {
+      "origin": "results/belt_capacity_sweep_20261126/verify_capacity_runner.py",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/verify_capacity_runner.py",
+      "sha256": "9574be68921c86eb2e1ff97f3582db4a65ba3f07c97528477da6ae6dcd00bd7f"
+    },
+    {
+      "origin": "scripts/run-lqr-contact-forecast.py",
+      "snapshot": "source_snapshot/scripts/run-lqr-contact-forecast.py",
+      "sha256": "4e4d590037801f178bb05e779ddb49fb093f5cae830212b9f90d57ddce1790cf"
+    },
+    {
+      "origin": "src/spherical_wheel/__init__.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/__init__.py",
+      "sha256": "3ec9d9b209172f8b735dba797aee9e1b7850bd28129d86083636525edbdb4d47"
+    },
+    {
+      "origin": "src/spherical_wheel/__main__.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/__main__.py",
+      "sha256": "b0694f2035697f7295db710bca58167353174c77a7d92c8b620a2c150f464888"
+    },
+    {
+      "origin": "src/spherical_wheel/cli.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/cli.py",
+      "sha256": "8f808e8ec874b0e2bbb8d1ccc9d9fd96c6612ab655a12adebda7e4bfe9232406"
+    },
+    {
+      "origin": "src/spherical_wheel/contact.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact.py",
+      "sha256": "a534156e7b304d60efd3e44911477ff5b89dedd076a90eb47e0c46fb2068fb84"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_diagnostics.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_diagnostics.py",
+      "sha256": "f0a927e4c230b4f181f4d72cf5216f38d34de26573dcd511027047ff5a36cbcb"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_kinematics.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_kinematics.py",
+      "sha256": "678eff4f9792e86dd3b9dece83edaaf2517b8416df3b736352cb0a0142b98351"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_pose_diagnostic.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_pose_diagnostic.py",
+      "sha256": "6cb83937e643a1536b7242101670e4661e4cfe1b6d4173e32a741477eb953edb"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_prediction.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_prediction.py",
+      "sha256": "cb9deeee1e254ea2b1eb9b88511a68eb07b1b55233fc6ac3de808b849e978f3f"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_sensing.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_sensing.py",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833"
+    },
+    {
+      "origin": "src/spherical_wheel/control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/control.py",
+      "sha256": "e0c4107601e07cafe29b726341de4c32bb8151506a539e913b0d6eec2e0c8e6f"
+    },
+    {
+      "origin": "src/spherical_wheel/experiments.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/experiments.py",
+      "sha256": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638"
+    },
+    {
+      "origin": "src/spherical_wheel/feasible_reference.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/feasible_reference.py",
+      "sha256": "c044a48fdd00efa35d1ed1094183806c10d6329748eae5eedac713b0710438aa"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/__init__.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/__init__.py",
+      "sha256": "3d8aa250141d5f840b41a5a4bd1cd7b5d115942165f5b64567c72b883a1410c9"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/__main__.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/__main__.py",
+      "sha256": "e6fd3883bc41a08c518f4f24c4a72ff5de9a94cff725e7959ea115c38bd2105e"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/bridge.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/bridge.py",
+      "sha256": "6b1f7e2ec860e6d21a6a025d1581952836aef3515da66f60a2314d15776c18a4"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/experiments.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/experiments.py",
+      "sha256": "4fd2fa15833b724a027de054261698829b87c0667a14d2821c1684f989d6308b"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars.py",
+      "sha256": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars_compare.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars_compare.py",
+      "sha256": "11cd6b314bae383f150c48bfc864672878a1f109757476713ecfcee90f966ceb"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars_observer.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars_observer.py",
+      "sha256": "f420a80f2fbd5a45f3ca926e3c76c3959e65114d65226c02c76ed24ceb49b67a"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars_shapes.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars_shapes.py",
+      "sha256": "f5205692cdeda87e1487d6f4d27f63d5fc0adf15e35682a9e11602d02791a107"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/model_sdf.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/model_sdf.py",
+      "sha256": "34abc16930ebe04f3f8333aa8d57803c9c33c12e9eea7a12f668fb6a2da05d49"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/parity.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/parity.py",
+      "sha256": "35140f72c13af341731e8b260e2e3f80458b3876c5db04f18f78cf7840cc68b6"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/plant.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/plant.py",
+      "sha256": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/worlds.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/worlds.py",
+      "sha256": "ad8b8133fb57b2bcab729ce6eb215f931ac04128b925c496710d8176ef0b39d4"
+    },
+    {
+      "origin": "src/spherical_wheel/lab_runtime.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/lab_runtime.py",
+      "sha256": "64bf8c70fae337553e35a55202bb626b15abe5a23f28a6d6cf02177034bfb096"
+    },
+    {
+      "origin": "src/spherical_wheel/lab_server.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/lab_server.py",
+      "sha256": "d5af071ce3c3aeabe5a02c3e9e31ab5c9c087f9bd1076c9905318d0f2a6cf311"
+    },
+    {
+      "origin": "src/spherical_wheel/mirror.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/mirror.py",
+      "sha256": "8e6325a9c44f79516c32c2af079718c3355f447d0d2751c44a684b6b8cf7b038"
+    },
+    {
+      "origin": "src/spherical_wheel/mobility.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/mobility.py",
+      "sha256": "92c08f5fe4001065128f8b9fe7b6821c8a63d9d4b7622da961778d1fd3adbab8"
+    },
+    {
+      "origin": "src/spherical_wheel/model.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/model.py",
+      "sha256": "d41d35b283ef4732cd2b7c321539491054a8070c86a2109a577d470a8c406e72"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad.py",
+      "sha256": "bb87ec5d188cc51acdc2591b8629dc94785b2c3aaff2e402947f911b993f5070"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_analysis.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_analysis.py",
+      "sha256": "c212949b09147b91aead5fee473594d6dc1c775f5f95860d0f189d5a0dfe10ac"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_cli.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_cli.py",
+      "sha256": "a41ce3e8974862fd11006a3bf72be80602eb7d172adaf4b1c19b70f5701e8331"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_control.py",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_experiments.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_experiments.py",
+      "sha256": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_geometry.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_geometry.py",
+      "sha256": "b843181c5537050d544118df534a0f53e2e2905054fef32fe66d702395afc4ae"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_suite.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_suite.py",
+      "sha256": "2e201f4fea2110fe6539385b0763b6eacc7bf0028683765acc45d9d030187d5c"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_view.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_view.py",
+      "sha256": "631370d0c5ee29417cb2e8531ced3139464f4ffa6bd8d6d33d12a4ae3b3c479f"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_control.py",
+      "sha256": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_equilibrium.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_equilibrium.py",
+      "sha256": "c8a5c340a7ce9f52c8334f9f8a7fa0491f21ea63fd1125cb0dbabc2f58b15ad2"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_model.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_model.py",
+      "sha256": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_seed.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_seed.py",
+      "sha256": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca"
+    },
+    {
+      "origin": "src/spherical_wheel/recovery_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/recovery_control.py",
+      "sha256": "b3a6bad0870c22ada4c926a7659befb756e31f8ed5defb5506786dc466f5b17d"
+    },
+    {
+      "origin": "src/spherical_wheel/rolling_allocation.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/rolling_allocation.py",
+      "sha256": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092"
+    },
+    {
+      "origin": "src/spherical_wheel/sensitivity.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/sensitivity.py",
+      "sha256": "4555fc809dab22aa2629148700fc8b8464076603a2be9377b3bd0c7af2d607be"
+    },
+    {
+      "origin": "src/spherical_wheel/sim.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/sim.py",
+      "sha256": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975"
+    },
+    {
+      "origin": "src/spherical_wheel/support_routing_audit.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/support_routing_audit.py",
+      "sha256": "c7436cab44467f51d0110041aa7c132889d74ba397c0b36c21d409408b2169ba"
+    },
+    {
+      "origin": "src/spherical_wheel/synchronization.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/synchronization.py",
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    {
+      "origin": "src/spherical_wheel/terrain.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/terrain.py",
+      "sha256": "43ff7b6bf2d53fd3cfccfaa9d02841195f78e0d7e6cc2181b01c0589176751eb"
+    },
+    {
+      "origin": "src/spherical_wheel/terrain_depth.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/terrain_depth.py",
+      "sha256": "476f87cc8f4a9b1081d7ea2be4c6b15e89ebb2efade31f9c3516a5d6dd24a549"
+    },
+    {
+      "origin": "src/spherical_wheel/terrain_memory.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/terrain_memory.py",
+      "sha256": "938752c4a3c4e402191cbf75c464860ae5082f1750368c8342c65635552a7388"
+    },
+    {
+      "origin": "src/spherical_wheel/tilt_reference.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/tilt_reference.py",
+      "sha256": "598fe7e5f4a20d2933daf00f95526949fe0e73fb1eebc56b73b712de35dffa7d"
+    },
+    {
+      "origin": "src/spherical_wheel/transition.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/transition.py",
+      "sha256": "6330b2d0bfc832167105fb44354f00731e54b6a510c2ed96a4d45482652d13f3"
+    },
+    {
+      "origin": "src/spherical_wheel/validation.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/validation.py",
+      "sha256": "f66410a457be404a5934b08d0bee5c4812cc3fea5e5bdf5fa6a9d16b188fd171"
+    },
+    {
+      "origin": "src/spherical_wheel/visualize.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/visualize.py",
+      "sha256": "cfa603e710fe63d7ff0e63e5d2057748b6758efcb304e8f79d1a0318ef736b51"
+    }
+  ],
+  "protocol_sha256": "577e7c7a04d1cccf77550a5c7aa46e3a152dbb7392704c95ba1fddfde02557a3",
+  "versions": {
+    "numpy": "1.26.4",
+    "scipy": "1.15.3",
+    "mujoco": "3.16.0"
+  },
+  "input_sha256": {
+    "gain_cache": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+    "historical_precision": "f6982688dcc4fed3ee89c4341389fcecaa8a12ed8687ec6809f3f4c2cd9b31c6",
+    "historical_rollout": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+    "historical_provenance": "4ca53165a2d2e3f712dfb97d69ba716590bbd6c343397ac1b18de3db5053d371",
+    "event_geometry": "8c22badf1f684a44c0aab32c5f2d0c4a8c8780bbe12567739e430d876013d79b",
+    "event_helper": "144068d7b6d9d1ad1734308df564011e0d5f9799b88ac5a3de8f68d091970283",
+    "event_turns": "9a5a5293f93c8e8e630796793ceb6fac16362f5759e7562c95b1141171a0789b"
+  },
+  "input_paths": {
+    "gain_cache": "generated/offroad/flat/control_schedule.npz",
+    "historical_precision": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/precision.npz",
+    "historical_rollout": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/rollout.npz",
+    "historical_provenance": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/provenance.json",
+    "event_geometry": "results/figure8_event_audit_20261125/events/selection_stage02_corrected/reference_geometry.npz",
+    "event_helper": "results/figure8_event_audit_20261125/events/selection_stage02_corrected/selection_source/event_metrics.py",
+    "event_turns": "results/figure8_event_audit_20261125/events/selection_stage02_corrected/turn_events.json"
+  },
+  "git_head": "9067a660cecf312fc87f477d1251e4148d8c6c0a",
+  "parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "rolling_allocation": "least_squares",
+    "rolling_damping_m_s": 0.01,
+    "rolling_speed_limits": [
+      20.0,
+      20.0,
+      20.0,
+      0.3,
+      0.3
+    ],
+    "rolling_acceleration_limits": [
+      100.0,
+      100.0,
+      100.0,
+      3.0,
+      3.0
+    ],
+    "rolling_effort_m_s": 0.001,
+    "rolling_change_m_s": 0.001,
+    "rolling_adaptive_effort": false,
+    "rolling_weak_effort_m_s": 0.005,
+    "rolling_authority_m_s": 0.02,
+    "rolling_reference_catchup_gain_s_inv": 1.0,
+    "rolling_reference_catchup_speed_m_s": 0.06,
+    "rolling_reference_position_limit_m": 0.05,
+    "rolling_reference_balance_guard": false,
+    "rolling_reference_lean_scale_deg": 3.0,
+    "rolling_reference_rate_horizon_s": 0.1,
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "bridge_binary": {
+    "path": "build/gazebo/libSphericalWheelBridge.so",
+    "sha256": "6e76050bb1555368491bbcea3861cb8ff6cd4348fa8f4ee7665c960dc74c6f90"
+  },
+  "measurement_boundary": "Native hardware mode uses exact simulated qpos/qvel and known previous applied commands; observer-only contacts. Solved contacts are evaluator-only after guarded command.",
+  "scope": "Ideal belt operating-capacity sensitivity with original .30 design gains. Synchronization uses the operating cap; no motor sizing validation, retuning or default/config edits.",
+  "actual_path": {
+    "kind": "figure8",
+    "duration_s": 40.0,
+    "radius_m": 0.45,
+    "clockwise": false,
+    "start_s": 1.0,
+    "origin": [
+      -1.6,
+      9.6
+    ],
+    "sampled_peak_speed_m_s": 0.18743412395355608,
+    "sampled_peak_acceleration_m_s2": 0.07802436281520816
+  },
+  "model_mass_kg": 1.8599999999999999,
+  "weight_N": 18.2466,
+  "input_bounds": [
+    1.5,
+    0.6,
+    0.6,
+    0.3,
+    0.3
+  ],
+  "mirror_input_bounds": [
+    1.5,
+    0.6,
+    0.6,
+    0.3,
+    0.3
+  ],
+  "design": {
+    "gain_bank_sha256": "4799fc67825651033a93ec989bc8f08c558ae8e2b92fef0cbd3a932dfa75a5bf",
+    "design_bounds": [
+      1.5,
+      0.6,
+      0.6,
+      0.3,
+      0.3
+    ],
+    "design_config_sha256": "ef5472907013f8bf97a5cae4d06382b4c4f3901579b79de9a3f8b57ed8505541",
+    "weights": "flat"
+  },
+  "ordinary_design_sha256": "49a6d5cc8fc29c7a46356a340c4fa6cce5a205cd73e33e4437c97324f57c0d0f",
+  "initial_nominal_joints": [
+    0.784312753001061,
+    0.0,
+    0.0
+  ],
+  "controller_dt_s": 0.005,
+  "physics_step_s": 0.001,
+  "engine": {
+    "simulator": "Gazebo Harmonic (gz-sim 8.10.0)",
+    "physics": "DART 6.19.5 via gz-physics 7.5.0",
+    "collision_detector": "ode",
+    "step_s": 0.001,
+    "ground": "marsyard2021_dem",
+    "world_info": {
+      "ground": "marsyard2021",
+      "collision_detector": "ode",
+      "dem_mesh": "/home/parrwnago/active-spherical-wheel/results/belt_capacity_sweep_20261126/campaign/_workspaces/mars_cap030/worker_366798/gazebo/world/marsyard2021_dem.obj",
+      "source": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain",
+      "cell_m": 0.09418837675350701,
+      "features": [
+        "lava",
+        "rocks_big",
+        "rocks_medium"
+      ]
+    }
+  },
+  "gain_cache_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+  "preflight": {
+    "passed": true,
+    "scope": "Read-only registrations, hashes and cache arrays. No model construction, equilibrium calculation or integration.",
+    "protocol_sha256": "577e7c7a04d1cccf77550a5c7aa46e3a152dbb7392704c95ba1fddfde02557a3",
+    "gain_cache_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+    "parameters": {
+      "mode": "hardware",
+      "synchronize": true,
+      "normal_source": "intrinsic",
+      "observer_cutoff_rad_s": 100.0,
+      "support_min_load_fraction": 0.05,
+      "normal_time_constant_s": 0.02,
+      "rim_aware": true,
+      "rim_time_constant_s": 0.2,
+      "rim_hold_speed_m_s": 0.02,
+      "gap_margin_m": 0.002,
+      "lean_gain": 1.0,
+      "support_feedforward": 1.0,
+      "schedule_on_ground_normal": false,
+      "shaft_error": "rolling",
+      "rolling_allocation": "least_squares",
+      "rolling_damping_m_s": 0.01,
+      "rolling_speed_limits": [
+        20.0,
+        20.0,
+        20.0,
+        0.3,
+        0.3
+      ],
+      "rolling_acceleration_limits": [
+        100.0,
+        100.0,
+        100.0,
+        3.0,
+        3.0
+      ],
+      "rolling_effort_m_s": 0.001,
+      "rolling_change_m_s": 0.001,
+      "rolling_adaptive_effort": false,
+      "rolling_weak_effort_m_s": 0.005,
+      "rolling_authority_m_s": 0.02,
+      "rolling_reference_catchup_gain_s_inv": 1.0,
+      "rolling_reference_catchup_speed_m_s": 0.06,
+      "rolling_reference_position_limit_m": 0.05,
+      "rolling_reference_balance_guard": false,
+      "rolling_reference_lean_scale_deg": 3.0,
+      "rolling_reference_rate_horizon_s": 0.1,
+      "track_contact_point": false,
+      "slip_threshold_m_s": 0.02,
+      "friction_recovery_s": 1.5,
+      "heading_gain": 0.0,
+      "heading_damping": 0.06,
+      "heading_torque_limit_Nm": 0.15,
+      "heading_min_lever": 0.12,
+      "unload_fraction": 0.3,
+      "airborne_damping_Nms": 0.01,
+      "max_lean_deg": 28.0,
+      "lqr_weights": "flat",
+      "heading_reference": "none",
+      "heading_actuation": "shells",
+      "heading_roll_budget_Nm": 0.0,
+      "fall_line_slope_deg": [
+        6.0,
+        12.0
+      ],
+      "heading_normal_time_constant_s": 0.5,
+      "heading_error_limit_rad": 0.5,
+      "fall_line_hysteresis_deg": 20.0
+    },
+    "verified_source_count": 54,
+    "verified_baseline_inputs": 7
+  },
+  "source_hashes_unchanged_after": true,
+  "elapsed_s": 110.26560700799746,
+  "generated_sha256": {
+    "rollout.npz": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+    "precision.npz": "dff68cf48f5752d12ee2f377784f96953963f28ee14b4f87a5b19bbdd3ac1b94",
+    "summary.json": "63e11e5bbdbfff4902327b0d32b424234085ba3d957b4d877d655c855a406600",
+    "terrain.json": "b11e232f3f491c276f98ddbf639efef735accbb8806084f7260398155fad6a8c"
+  }
+}

@@ -1,0 +1,470 @@
+{
+  "iteration": "I-46",
+  "date": "2026-11-26",
+  "status": "registered_before_routing_replay_or_native_case_outcomes",
+  "question": "Does removing the existing momentum-wrench filter improve current-pose support routing, without increasing false handoffs or command discontinuities?",
+  "scope": "Shadow diagnostics only. Reuse one44s nativeMars history, two fresh16s nativebaseline cases (selectedMars+flatcontrol), plus two isolated.1s stepping-equivalence fixturebranches. No fast signal applied to robot; all livegains/observer/FF/sync/limits unchanged.",
+  "inputs": {
+    "historical_precision": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/precision.npz",
+    "historical_provenance": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/provenance.json",
+    "historical_rollout": "results/lqr_contact_forecast_20261125/campaign/runs/mars_figure8_p090/rollout.npz",
+    "site_report": "results/support_routing_timing_20261126/site_selection/revision_stage02/report.json",
+    "strict_site_report": "results/support_routing_timing_20261126/site_selection/report.json",
+    "gain_cache": "generated/offroad/flat/control_schedule.npz"
+  },
+  "input_sha256": {
+    "historical_precision": "f6982688dcc4fed3ee89c4341389fcecaa8a12ed8687ec6809f3f4c2cd9b31c6",
+    "historical_provenance": "4ca53165a2d2e3f712dfb97d69ba716590bbd6c343397ac1b18de3db5053d371",
+    "historical_rollout": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+    "site_report": "5ccdc306db72a53ef58fe2f80064ad73182f583c6bcd0987e951ed4d81e485ab",
+    "strict_site_report": "3797484e60eb8a5929d2846a07deb34ea4a96aa6c2998f4ff1e8c57ede87e6d7",
+    "gain_cache": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1"
+  },
+  "historical": {
+    "case_id": "historical_mars_figure8",
+    "phase_rad": 0.9,
+    "yaw_deg": 45.0,
+    "duration_s": 44.0,
+    "primary_window_s": [
+      6.4,
+      7.4
+    ],
+    "primary_departure_time_s": 6.86,
+    "source": "I40 exactnativefullprecision, I42 handoffevent reused; reconstructedinterval_mean is estimator output, NOT truephysicsintervalmean. Savedtruthlast1ms only."
+  },
+  "execution": {
+    "parameters": {
+      "mode": "hardware",
+      "rolling_allocation": "least_squares",
+      "synchronize": true,
+      "tilt_reference": null,
+      "track_contact_point": false
+    },
+    "control_dt_s": 0.005,
+    "physics_dt_s": 0.001,
+    "control_dt": 0.005,
+    "physics_dt": 0.001,
+    "observer_cutoff_rad_s": 100.0,
+    "gain_cache": "generated/offroad/flat/control_schedule.npz",
+    "gain_cache_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+    "max_parallel_native_cases": 2,
+    "case_retry_policy": "No site/phase/path/parameter retries selected by outcomes. Preserve incomplete/failed/insufficienthandoff cases."
+  },
+  "cases": [
+    {
+      "origin_xy_m": [
+        -2.363639610306789,
+        8.336360389693212
+      ],
+      "leg_distance_m": 0.18,
+      "heading_deg": 45.0,
+      "leg_duration_s": 6.0,
+      "start_s": 1.0,
+      "duration_s": 16.0,
+      "phase_rad": 1.1,
+      "yaw_deg": 45.0,
+      "visual_bounds": [
+        -3.0,
+        -1.5999999999999999,
+        7.7,
+        9.1
+      ],
+      "ground_check_points": [
+        [
+          -2.363639610306789,
+          8.336360389693212
+        ],
+        [
+          -2.3,
+          8.4
+        ],
+        [
+          -2.2363603896932105,
+          8.463639610306789
+        ],
+        [
+          -2.4060660171779817,
+          8.506066017177982
+        ],
+        [
+          -2.193933982822018,
+          8.293933982822018
+        ],
+        [
+          -2.4202081528017128,
+          8.392928932188136
+        ],
+        [
+          -2.179791847198287,
+          8.407071067811865
+        ]
+      ],
+      "case_id": "mars_compact_outback",
+      "terrain": "marsyard2021_dem"
+    },
+    {
+      "origin_xy_m": [
+        -2.363639610306789,
+        8.336360389693212
+      ],
+      "leg_distance_m": 0.18,
+      "heading_deg": 45.0,
+      "leg_duration_s": 6.0,
+      "start_s": 1.0,
+      "duration_s": 16.0,
+      "phase_rad": 1.1,
+      "yaw_deg": 45.0,
+      "visual_bounds": [
+        -3.0,
+        -1.5999999999999999,
+        7.7,
+        9.1
+      ],
+      "ground_check_points": [
+        [
+          -2.363639610306789,
+          8.336360389693212
+        ],
+        [
+          -2.3,
+          8.4
+        ],
+        [
+          -2.2363603896932105,
+          8.463639610306789
+        ],
+        [
+          -2.4060660171779817,
+          8.506066017177982
+        ],
+        [
+          -2.193933982822018,
+          8.293933982822018
+        ],
+        [
+          -2.4202081528017128,
+          8.392928932188136
+        ],
+        [
+          -2.179791847198287,
+          8.407071067811865
+        ]
+      ],
+      "case_id": "flat_compact_outback",
+      "terrain": "flat",
+      "flat_height_m": 0.0
+    }
+  ],
+  "map_selection": {
+    "selected": {
+      "center_xy_m": [
+        -2.3,
+        8.4
+      ],
+      "start_xy_m": [
+        -2.363639610306789,
+        8.336360389693212
+      ],
+      "end_xy_m": [
+        -2.2363603896932105,
+        8.463639610306789
+      ],
+      "heading_deg": 45.0,
+      "length_m": 0.18,
+      "squared_distance_to_old_site": 1.929999999999998,
+      "feature_blocked": false,
+      "plane_point_m": [
+        -2.3,
+        8.4,
+        1.1839659223629955
+      ],
+      "plane_normal": [
+        -0.024888986448991932,
+        0.06702817205950543,
+        0.997440606003136
+      ],
+      "plane_gradient": [
+        0.024952850625086422,
+        -0.06720016375520878
+      ],
+      "plane_slope_deg": 4.1001417818747665,
+      "along_path_grade_deg": -1.7111086527924422,
+      "plane_rmse_m": 0.0027757693496385095,
+      "plane_max_abs_m": 0.008844861165810907,
+      "clipped_area_m2": 0.2317434855195756,
+      "clipped_triangles": 122,
+      "strict_stage01_qualified": false,
+      "strict_stage01_rejection_reasons": [
+        "plane_RMS_above_1mm",
+        "plane_max_abs_above_3mm"
+      ],
+      "qualified": true,
+      "rejection_reasons": [],
+      "minimum_feature_clearance_m": 1.1759834686323685,
+      "feature_clearance_definition": "Exact minimum XY route-center-segment to raw transformed feature triangle distance; clearance beyond protected capsule is distance-.22m.",
+      "feature_clearance_beyond_capsule_m": 0.9559834686323685
+    },
+    "strict_failed_stage": "results/support_routing_timing_20261126/site_selection/report.json",
+    "revised_stage": "results/support_routing_timing_20261126/site_selection/revision_stage02/report.json",
+    "reason_for_precontrol_revision": "No1mmRMS/3mmmaxsiteamong2091. Before anycontroloutcomes, retainfailure and allow3mmRMS/10mmmax,sameslope/clearance/grid/ranking. Naturalgroundabout half oldsite roughness, notperfectplane.",
+    "selection_uses": "ExactDEMtrianglegeometry andfeatureprojection only, no savedtracking/controloutcomes.",
+    "protected_capsule_radius_m": 0.22,
+    "actual_exposure_guard": "Actualwheelcentre XY distance to registeredsegment<=.10m keepswheelR.12 withinprotected.22 nominalcapsule. Report excursions; no source/criteria retuning.",
+    "flat_limit": "Same XY/reference/phase/yaw but planez0 andbalancedflatinit/collisiontype differ fromMars. Within-case shadow comparisons arepaired; cross-case differences do NOT isolate slope as solecause."
+  },
+  "shadow": {
+    "sources": [
+      "filtered_native_wrench",
+      "existing_interval_mean_wrench"
+    ],
+    "geometry": "Same currentqpos, same SupportLocator, sameintrinsic inverse geometry; no fixedtimeshift or futurestate.",
+    "raw_and_effective": "Lograwlocatedloads/shares/points/margins separatelyfromfeedback-used heldloads duringdropout.",
+    "counterfactual_scope": "Feedbackgain interpolation andholdingtorquerouting ONLY. Reuse native normal,error,phase,FF,equilibrium,references,touching/dropout. Native shaftgain rowfixed. Fastshares scaledto nativecurrentinferredtotal iftouching andvalidfasttotal; otherwiseexactnativefallback withreason.",
+    "fast_total_min_N": 0.001,
+    "commands": "delta_pre_sync=delta_support\u2212(K_fast\u2212K_native)@same_error. Save separategain/supportdeltas, unclippedpre-synccandidate andphysicalboundclipping sensitivity. Neverapplyshadowcommand; do not callnativefeedback twice ormutate held/history.",
+    "not_tested": "No change torollingFFgeometry,normalfilter,synchronizer/heading/fade, full closedloopfastselector or newestimator."
+  },
+  "truth_sampling": {
+    "fresh": "Only actualnative-loop held5ms steps afterfirstloopcommand; excludeplacement/reset/settling. Split originalrun(5) into5originalrun(1) barriers. Read eachpostsolve bridge state andrawcontacts; no mirrorforward orobserver/controller between1ms ticks.",
+    "raw_fields": "FullbridgeSTATE_FIELDS array, allcontactrows withoffsets, relativecontrolclock, pluginclock/iterations, admissibility flags.",
+    "wrench": "Sumadmittedexternalcontactforce/moment about eachmatchingpost-stepcentre; worldframe. Mean all5 per-stepwrenches andnormalpatchloads, thennormalize meanloads (notmeanshares). Netallcontact vswheelpatch/bodyload distinguished.",
+    "timing_limit": "Contactrecordsarelastsolverstep whilepublishedbodyposeisintegrated. Record convention, no alignmenttuning or exact instantaneousforceclaim.",
+    "t0": "No preceding5ms intervaltruth at t0; explicitinvalid notzero. Historicaldata haslastsampletruthonly andstaysseparatestratum."
+  },
+  "bridge_fixture": {
+    "terrain": "flat",
+    "qpos": [
+      0.0,
+      0.0,
+      0.1203,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.1,
+      0.0,
+      0.0
+    ],
+    "qvel": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "commands": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.02,
+        0.01,
+        -0.01,
+        0.03,
+        -0.02
+      ],
+      [
+        0.02,
+        0.01,
+        -0.01,
+        0.03,
+        -0.02
+      ],
+      [
+        0.02,
+        0.01,
+        -0.01,
+        0.03,
+        -0.02
+      ],
+      [
+        0.02,
+        0.01,
+        -0.01,
+        0.03,
+        -0.02
+      ],
+      [
+        0.02,
+        0.01,
+        -0.01,
+        0.03,
+        -0.02
+      ],
+      [
+        -0.02,
+        -0.01,
+        0.01,
+        -0.03,
+        0.02
+      ],
+      [
+        -0.02,
+        -0.01,
+        0.01,
+        -0.03,
+        0.02
+      ],
+      [
+        -0.02,
+        -0.01,
+        0.01,
+        -0.03,
+        0.02
+      ],
+      [
+        -0.02,
+        -0.01,
+        0.01,
+        -0.03,
+        0.02
+      ],
+      [
+        -0.02,
+        -0.01,
+        0.01,
+        -0.03,
+        0.02
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "physical_step_s": 0.001,
+    "control_dt_s": 0.005,
+    "branches": [
+      "batch",
+      "single"
+    ],
+    "held_intervals": 20,
+    "duration_s": 0.1,
+    "isolation": "Separatefreshprocess/server for eachbranch, sameworld/reset/inputsequence. Noone-serverreset historyequivalenceclaim.",
+    "acceptance": {
+      "state_max_absolute_difference": 1e-10,
+      "contact_max_absolute_difference": 1e-08
+    },
+    "interpretation": "Two shortphysical steppingfixtures, notadditionaltrajectoryexperiments orhardwarevalidation."
+  },
+  "evaluation": {
+    "fresh_window_s": [
+      0.5,
+      15.5
+    ],
+    "historical_window_s": [
+      6.4,
+      7.4
+    ],
+    "load_threshold": "max(.05N,.05*modelweight)",
+    "body_contact_exclusion": "Body/platformnormal load>.05*weight excludeswheelroutingprimary andretainsfailure/context.",
+    "primary_truth": "Fresh preceding5ms meanpatchloads, secondarylast1ms; historicallast1msonly, do notpooltruthconventions.",
+    "true_unique_patch": "Loaded truth withdominantnormalizedshare>=.8. Allotherloadedstatesretained shareerror/tie table.",
+    "support_error": "0.5L1distancebetweennormalizedeffectivefeedbackloads andtruthshares; missingestimatepenalty1 reported separately fromTVofvalidshares. Also rawlocator error/status.",
+    "wrong_patch_duration": "Sum5ms heldintervals oneligible true_unique_patch whereeffectiveestimateddominantpatch nottrueone; unknowncountswrong, tiesexplicit. Terminalunactuatedobservationexcluded.",
+    "family_events": {
+      "strong_family_share": 0.8,
+      "stable_dwell_s": 0.015,
+      "dwell_convention": "last\u2212first>=15ms; runstarttimestampreported afterretrospectiveconfirmation.",
+      "max_gap_between_stable_runs_s": 0.05,
+      "pair_window_s": [
+        -0.1,
+        0.15
+      ],
+      "matching": "Chronologicaltruth events,samedirection shell\u2194belt, one-to-one nearestabs signedtime match,tieearlier. Unmatched/extraestimatedswitches, censoredstarts andshortblips reported. Negativeoffsetearly,positivelate. Noevent reused."
+    },
+    "command_steps": "Infinitynormof adjacentpre-synccommanddifference normalizedelementwiseactualinputbounds; no mixingrawNm/mps. Comparehypotheticalfast andnativeatSAMEphysicalstate/history; separate requested/clipped views, notclosedlooptrajectorybenefit.",
+    "historical_causality_limit": "Reportfirst relevant nativebeltA request saturation in[6.4,6.86], fastcorrectiontimeandstepchange. Ifcorrectionarrivesafter saturation ordoesnotreduce primarymaxnormalizedstep by10%, do notclaimfilterdelayexplainsfirstdeparture. Evenearliercueisnotcausalproofwithoutliveintervention."
+  },
+  "noise": {
+    "kind": "Offline localwrench sensitivity, notphysicalsensornoise, notnewphysics andnotareplaywithnoisybodymeasurements.",
+    "wrench_per_axis_sigma_force_weight_fraction": 0.002,
+    "wrench_per_axis_sigma_moment_weight_radius_fraction": 0.002,
+    "draws_per_sample": 32,
+    "seed": 460026,
+    "sample_stride_s": 0.02,
+    "paired": "Same perturbation vector appliedtofiltered andmeanwrench atsamemeasuredpose. Sourcehistoryunchanged.",
+    "report": "Dominantlabel flip/invalidfraction versusunperturbed, withboundarymargins; doesnotrepresent differentfilterattenuationofhardwaremeasurementnoise."
+  },
+  "registered_gate": {
+    "minimum_each_family_direction_per_fresh_case": 1,
+    "minimum_paired_family_events_total": 4,
+    "minimum_median_abs_timing_improvement_s": 0.005,
+    "wrong_patch_duration_relative_reduction_min": 0.2,
+    "wrong_patch_duration_absolute_reduction_s_min": 0.01,
+    "max_extra_false_family_transitions_total": 1,
+    "max_normalized_command_step_increase": 0.05,
+    "max_noise_flip_fraction_increase": 0.05,
+    "case_completion_required": true,
+    "actual_exposure_guard_required": true,
+    "interpretation": "Allfreshcase integrity/coverage andprimarysupport/gainstep/noiseconditions needed tojustify onlyaseparateboundedlivehandoffcandidate, neverautomaticadoption. Wrongdurationbenefitrequired inEACHcase; timingcombinedcommonfreshtruth events. Ifbaselinewrongdurationzero, no demonstratedimprovementthere (notdivisionbyzero). Missingevents/insufficientcasecoverage=inconclusive, nointegration.",
+    "stop": "Ifmeanwrenchpremature/noisy/notbetterretainfilter. Ifhistoricaljump remains aftersaturation, donot sellthisasa6.86sfix. Retainmixedresults andnooutcomeparameterrescue."
+  },
+  "presentation": "Mapsite/corridorandgeometry-onlyselectionincludingfailedfirstcriteria. ActualnativeGazebo motion labeledUNCHANGEDcontrol, filtered/mean estimates, truthconventions andshadow-onlycommands clearlyseparated. Preserveallcases, source/tests/QA/plots/video andreproductionbundle."
+}

@@ -1,0 +1,82 @@
+"""Pure synthetic-array adapter checks, never actual campaign outcomes."""
+from __future__ import annotations
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import shutil
+import sys
+import numpy as np
+from scipy.spatial.transform import Rotation
+
+HERE=Path(__file__).resolve().parent
+from analyze_tilt import generator_audit,window_metrics,common_prefix,turns,reference_lift_audit
+
+
+def main():
+    out=HERE/'adapter_checks'/(sys.argv[1] if len(sys.argv)>1 else 'stage01');out.mkdir(parents=True,exist_ok=False)
+    for p in (Path(__file__),HERE/'analyze_tilt.py',HERE/'geometry.py',HERE/'window_math.py'):
+        shutil.copyfile(p,out/p.name)
+    module_path=HERE.parent/'independent_checks/stage02/source/spherical_wheel/tilt_reference.py'
+    spec=importlib.util.spec_from_file_location('adapter_frozen_tilt',module_path)
+    module=importlib.util.module_from_spec(spec);sys.modules[spec.name]=module;spec.loader.exec_module(module)
+    folder=out/'synthetic_case';folder.mkdir();shutil.copyfile(module_path,folder/'tilt_reference.py')
+    source_sha=hashlib.sha256(module_path.read_bytes()).hexdigest()
+    (out/'source_manifest.json').write_text(json.dumps({p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.iterdir() if p.is_file()},indent=2)+'\n')
+    settings={'time_constant_s':.08,'max_rate_deg_s':60.,'activation_time_s':4.,'use_rate_reference':True}
+    generator=module.TiltReference(module.TiltReferenceSettings(**settings),np.radians(28.))
+    time=np.arange(806)*.005;rows=[];actual=Rotation.from_rotvec([.1,.2,.3]).as_matrix();anchor=Rotation.from_rotvec([-.04,.03,.1]).as_matrix()
+    xyzw=Rotation.from_matrix(actual).as_quat();q=np.r_[xyzw[-1],xyzw[:3]]
+    for i,t in enumerate(time):
+        target=np.array([.2,.1]) if t<=4. else np.array([-.2,.1])
+        row=generator.update(target,float(t));row={f'tilt_{k}':v for k,v in row.items()}
+        world=anchor@row['tilt_angular_velocity_equilibrium_rad_s'];body=actual.T@world
+        def wxyz(rotation):
+            value=Rotation.from_matrix(rotation).as_quat();return np.r_[value[-1],value[:3]]
+        raw_lift=Rotation.from_rotvec(np.r_[target,0.]).as_matrix()
+        shaped_lift=Rotation.from_rotvec(np.r_[row['tilt_theta_rad'],0.]).as_matrix()
+        row.update(time_s=t,exact_qpos=np.r_[0.,0.,0.,q,0.,0.,0.],
+            tilt_raw_reference_quat=wxyz(anchor@raw_lift),tilt_shaped_reference_quat=wxyz(anchor@shaped_lift),
+            tilt_angular_velocity_world_rad_s=world,tilt_angular_velocity_body_rad_s=body,
+            tilt_used_angular_velocity_body_rad_s=body,exact_feedback_reference_qvel=np.r_[0.,0.,0.,body,0.,0.,0.],
+            tilt_clock_before_s=np.nan if i==0 else time[i-1],tilt_clock_after_s=t)
+        rows.append(row)
+    raw={k:np.asarray([row[k] for row in rows]) for k in rows[0]}
+    provenance={'sources':[{'origin':'src/spherical_wheel/tilt_reference.py','snapshot':'tilt_reference.py','sha256':source_sha}],
+        'parameters':{'tilt_reference':settings,'max_lean_deg':28.}}
+    audit=generator_audit('consistent_rate',folder,raw,provenance,source_sha)
+    assert audit['passed']
+    assert reference_lift_audit(raw)['passed']
+    raw['tilt_angular_velocity_world_rad_s'][-1,0]+=.01
+    assert not reference_lift_audit(raw)['passed']
+    raw['tilt_angular_velocity_world_rad_s'][-1,0]-=.01
+    # An incomplete trace must retain unavailable windows, not manufacture zero error.
+    n=len(time);raw.update(exact_reference_xy=np.zeros((n,2)),exact_native_requested=np.zeros((n,5)),
+        exact_applied=np.zeros((n,5)),truth_patch_loads_N=np.ones((n,4)),
+        exact_raw_reference_up_error_rad=np.zeros(n),exact_shaped_reference_up_error_rad=np.zeros(n),exact_absolute_tilt_rad=np.zeros(n))
+    log={'attitude_error_rad':np.zeros(n),'estimated_support_loads_N':np.ones((n,4))}
+    geometry={'local_path_distance_m':np.zeros(n),'artificial_projection_window_boundary':np.zeros(n,bool),
+        'competing_global_vertex_branch_flag':np.zeros(n,bool)}
+    absent=window_metrics(raw,log,geometry,np.ones(5),(6.4,7.4))
+    assert not absent['available'] and not absent['window_complete'] and absent['raw_tilt_max_deg'] is None
+    fixed=json.loads((HERE/'dependencies/I41_turn_events.json').read_text())['rows']
+    raw['exact_qvel']=np.zeros((n,9))
+    missing=turns(raw,geometry,fixed)
+    assert all(not r['window_complete'] and r['geometric_component_overshoot_mm'] is None for r in missing)
+    # Canonical state comparison can pass despite intentionally different clock bookkeeping hashes.
+    for key in ('exact_previous_applied','exact_observer_wrench','exact_estimated_normal','exact_nominal_joints_before',
+                'exact_reference_velocity_m_s','exact_reference_acceleration_m_s2'):
+        raw[key]=np.zeros((n,3))
+    for key in ('native_state_fingerprint_before','native_state_fingerprint_after','comparable_state_fingerprint_before'):
+        raw[key]=np.full(n,'same')
+    raw['full_state_fingerprint_before']=np.full(n,'baseline_clock_none')
+    other={k:v.copy() for k,v in raw.items()};other['full_state_fingerprint_before']=np.full(n,'enabled_clock_known')
+    prefix=common_prefix(raw,other)
+    assert prefix['all_prefix_fields_bit_equal'] and not prefix['true_full_before_warm_comparison']['bit_equal']
+    report={'scope':'Synthetic ODE/reference-array adapter checks; no campaign outcomes or robot physics.',
+        'assertions_passed':6,'generator_reconstruction':audit,'missing_window_retained':True,
+        'missing_turns_retained':True,'clock_bookkeeping_not_confused_with_dynamic_state':True,'passed':True}
+    (out/'report.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))
+
+
+if __name__=='__main__':main()

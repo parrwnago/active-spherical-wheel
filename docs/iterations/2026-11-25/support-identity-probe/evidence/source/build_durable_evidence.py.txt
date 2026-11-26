@@ -1,0 +1,194 @@
+"""Preserve finalized support-identity evidence; no experiments or doc edits."""
+from pathlib import Path
+from datetime import datetime, timezone
+import hashlib
+import json
+
+
+REPO = Path(__file__).resolve().parents[2]
+FAMILY = Path(__file__).resolve().parent
+DEST = REPO/'docs/iterations/2026-11-25/support-identity-probe/evidence'
+VARIANTS = ('baseline', 'last_substep', 'interval_mean', 'contact_records')
+ENTRIES = []
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def copy(source, target, stage, description=''):
+    source = Path(source); target = DEST/target
+    assert source.exists() and source.suffix not in ('.npz', '.mp4'), source
+    data = source.read_bytes(); target.parent.mkdir(parents=True, exist_ok=True); target.write_bytes(data)
+    ENTRIES.append({'snapshot': str(target.relative_to(DEST)), 'origin': str(source.relative_to(REPO)),
+                    'bytes': len(data), 'sha256': sha(data), 'source_stage': stage, 'description': description})
+
+
+def generated(target, value, stage, origins):
+    target = DEST/target; target.parent.mkdir(parents=True, exist_ok=True)
+    data = (json.dumps(value, indent=2, allow_nan=False)+'\n').encode(); target.write_bytes(data)
+    ENTRIES.append({'snapshot': str(target.relative_to(DEST)), 'derived_from': origins, 'bytes': len(data),
+                    'sha256': sha(data), 'source_stage': stage})
+
+
+def main():
+    # Refuse to capture the mutable three-branch report or unfinished media.
+    comparison = json.loads((FAMILY/'comparison/report.json').read_text())
+    assert set(comparison['completed_variants']) == set(VARIANTS)
+    media_paths = [FAMILY/'videos'/f'metadata_{name}.json' for name in (
+        'historical_information_timing', 'probe_baseline_vs_interval_mean', 'probe_baseline_vs_contact_records')]
+    media = [json.loads(path.read_text()) for path in media_paths]
+    for value in media:
+        assert value['final_frame_decoded']
+        assert sha(Path(value['file']).read_bytes()) == value['sha256']
+
+    for name in ('audit.json', 'samples.csv', 'episode_context.png', 'episode_context.pdf',
+                 'transition_zoom.png', 'transition_zoom.pdf'):
+        copy(FAMILY/'audit'/name, 'audit/'+name, 'historical_saved_run_audit')
+    copy(FAMILY/'audit/analyze_saved_support_mismatch.py',
+         'source/historical_audit/analyze_saved_support_mismatch.py.txt', 'historical_saved_run_audit')
+    for name in ('shadow_report.json', 'reconstruction_validation.json', 'provenance.json',
+                 'artifact_manifest.json', 'shadow_samples.csv', 'shadow_feedback_routing.png',
+                 'shadow_feedback_routing.pdf', 'analysis.log'):
+        copy(FAMILY/'shadow'/name, 'shadow/'+name, 'validated_same_state_counterfactual')
+    for path in sorted((FAMILY/'shadow/source_snapshot').iterdir()):
+        if path.is_file():
+            target = path.name+'.txt' if path.suffix == '.py' else path.name
+            copy(path, 'source/shadow/'+target, 'archived_shadow_sources',
+                 'Archived historical controller plus validated reconstruction helpers; not the fresh experiment source.')
+    for name in ('report.json', 'metrics.csv', 'comparison.png', 'comparison.pdf'):
+        copy(FAMILY/'comparison'/name, 'comparison/'+name, 'final_four_branch_comparison')
+    copy(FAMILY/'analyze_probe_comparison.py', 'source/comparison/analyze_probe_comparison.py.txt',
+         'corrected_final_analysis')
+    for name in ('comparison_analysis.log', 'comparison_analysis_failed_shadow_selection.log'):
+        copy(FAMILY/name, 'comparison/'+name, 'analysis_failure_and_correction')
+    copy(FAMILY/'final_analysis_manifest.json', 'comparison/final_analysis_manifest.json', 'frozen_final_analysis')
+    for name in ('report.json', 'metrics.csv', 'analysis_source.py.txt', 'analysis.log'):
+        copy(FAMILY/'comparison_before_duration_precision_fix'/name,
+             'comparison_before_duration_precision_fix/'+name, 'pre_duration_precision_fix_analysis')
+
+    provenance, summaries = {}, {}
+    for variant in VARIANTS:
+        directory = FAMILY/'runs'/variant
+        provenance[variant] = json.loads((directory/'provenance.json').read_text())
+        summaries[variant] = json.loads((directory/'summary.json').read_text())
+        for name in ('summary.json', 'provenance.json', 'terrain.json'):
+            copy(directory/name, f'campaigns/{variant}/{name}', 'fresh_probe_run')
+        copy(FAMILY/'runner_logs'/f'{variant}.log', f'campaigns/{variant}/runner.log', 'fresh_probe_run')
+        path = directory/'source_snapshot/scripts/probe-support-identity.py'
+        expected = provenance[variant]['source_sha256']['scripts/probe-support-identity.py']
+        assert sha(path.read_bytes()) == expected
+        copy(path, f'source/harness_by_campaign/{variant}.py.txt', f'{variant}_exact_launch_harness')
+
+    # One full baseline prelaunch archive supplies the common core/config.
+    for path in sorted((FAMILY/'runs/baseline/source_snapshot').rglob('*')):
+        if path.is_file() and path.suffix in ('.py', '.yaml', '.yml'):
+            relative = path.relative_to(FAMILY/'runs/baseline/source_snapshot')
+            copy(path, 'source/baseline_prelaunch/'+str(relative)+('.txt' if path.suffix == '.py' else ''),
+                 'baseline_exact_prelaunch_source')
+    shared = sorted(set.intersection(*(set(item['source_sha256']) for item in provenance.values())))
+    common_core = [name for name in shared if name != 'scripts/probe-support-identity.py']
+    assert all(len({item['source_sha256'][name] for item in provenance.values()}) == 1 for name in common_core)
+    # Verify every campaign's own immutable snapshot before asserting equality.
+    for variant, record in provenance.items():
+        for name, expected in record['source_sha256'].items():
+            assert sha((FAMILY/'runs'/variant/'source_snapshot'/name).read_bytes()) == expected
+    harness_hashes = {variant: record['source_sha256']['scripts/probe-support-identity.py'] for variant, record in provenance.items()}
+    generated('source/shared_core_verification.json', {
+        'checked_shared_core_config_files': len(common_core),
+        'all_campaign_archives_match_recorded_hashes': True,
+        'all_branches_same_core_config': True, 'harness_sha256_by_variant': harness_hashes,
+        'first_three_harnesses_identical': len({harness_hashes[name] for name in VARIANTS[:3]}) == 1,
+        'fourth_launch_harness_is_distinct': harness_hashes['contact_records'] != harness_hashes['baseline'],
+        'common_core_config_sha256': {name: provenance['baseline']['source_sha256'][name] for name in common_core},
+        'claim_limit': 'Fresh current-source runs; historical shadow sources differ. Shared core hashes do not imply that harness interventions are equivalent.'
+    }, 'source_stage_verification', [f'results/support_identity_probe_20261125/runs/{v}/provenance.json' for v in VARIANTS])
+    copy(FAMILY/'source_stage_audit.json', 'source/source_stage_audit.json', 'source_stage_verification')
+    copy(FAMILY/'runs/contact_records/provenance_clarification.json',
+         'campaigns/contact_records/provenance_clarification.json', 'post_run_metadata_clarification')
+    for path in sorted((FAMILY/'after_run_metadata_only_source').iterdir()):
+        if path.is_file():
+            copy(path, 'source/after_run_metadata_only/'+path.name+('.txt' if path.suffix == '.py' else ''),
+                 'post_run_metadata_clarification', 'Later descriptive correction; not the fourth exact launch source.')
+
+    video_inventory = []
+    for metadata_path, value in zip(media_paths, media):
+        stem = Path(value['file']).stem
+        copy(metadata_path, 'media/'+metadata_path.name, 'verified_completed_media')
+        for name in (stem+'.jpg', stem+'_decoded_final.jpg'):
+            copy(FAMILY/'videos'/name, 'media/'+name, 'verified_completed_media')
+        expected = value['renderer_sha256']
+        candidates = [path for path in (FAMILY/'videos/source_snapshot').glob('*.py') if sha(path.read_bytes()) == expected]
+        assert candidates, (metadata_path, expected)
+        copy(candidates[0], 'source/renderers/'+candidates[0].name+'.txt', 'exact_completed_clip_renderer')
+        video_inventory.append({**value, 'local_video_path': str(Path(value['file']).relative_to(REPO)),
+                                'copied_into_evidence': False})
+    generated('media/inventory.json', {'completed_selected_videos_local_only': video_inventory},
+              'verified_completed_media', [str(path.relative_to(REPO)) for path in media_paths])
+
+    shadow = json.loads((FAMILY/'shadow/shadow_report.json').read_text())
+    audit = json.loads((FAMILY/'audit/audit.json').read_text())
+    outcome = {
+        'status': 'diagnostic_probe_only_no_production_controller_change',
+        'historical_audit': {'case': audit['case'], 'timing': audit['timing'],
+                             'transition_summary': audit['summary']['transition']},
+        'shadow': {'samples': shadow['samples'], 'validation': shadow['validation'],
+                   'aggregate': shadow['aggregate'], 'correction': shadow['correction'],
+                   'scope': 'Archived same-state counterfactual only; no rollout or plant-state update.'},
+        'fresh_simulation_runs': len(VARIANTS),
+        'completed': sum(summaries[name]['completed'] for name in VARIANTS),
+        'passed_all_gates': sum(summaries[name]['mars']['passed'] for name in VARIANTS),
+        'guarded_controller_calls': sum(summaries[name]['support_identity_probe']['guarded_controller_calls'] for name in VARIANTS),
+        'intervention_window_s': comparison['intervention_window_s'],
+        'last_intervened_command_held_until_s': comparison['last_intervened_command_held_until_s'],
+        'runs': {name: {'original_path_moving_rms_mm': comparison['runs'][name]['original_path_moving_rms_mm'],
+                        'full_run_including_settle_position_rms_mm': comparison['runs'][name]['full_run']['position_rms_mm'],
+                        'max_original_path_error_mm': comparison['runs'][name]['full_run']['position_max_mm'],
+                        'final_original_goal_error_mm': comparison['runs'][name]['full_run']['position_end_mm'],
+                        'max_attitude_error_deg': comparison['runs'][name]['full_run']['attitude_max_deg'],
+                        'max_attitude_error_during_intervention_deg': comparison['runs'][name]['intervention']['attitude_max_deg'],
+                        'max_complete_record_vs_native_load_change_N': comparison['runs'][name].get('max_record_total_load_change_N'),
+                        'max_complete_record_vs_native_point_change_mm': comparison['runs'][name].get('max_record_equivalent_point_change_mm'),
+                        'probe_scope_and_injection_audit': summaries[name]['support_identity_probe']}
+                 for name in VARIANTS},
+        'paired_prefix_checks': comparison['paired_prefix_checks'],
+        'baseline_support_timing_audit': comparison['baseline_support_timing_audit'],
+        'historical_context_comparison': comparison['historical_context_comparison'],
+        'analysis_failure_and_correction': 'Initial comparison analysis selected the oracle shadow for candidate samples outside the intervention even when routing was native. A reconstruction assertion failed; selection was corrected using each sample injection flag. The failure log is retained. No controller, physics, or saved simulation rerun changed.',
+        'duration_precision_correction': 'Final analysis uses the validated declared 0.005 s control period, separating elapsed time, actually held commands, and a sample-indicator duration that includes the unheld terminal sample. The earlier float32-median-based report/source is retained as an analysis stage; no physics changed.',
+        'metric_definitions': {'original_path_moving_rms_mm': 'Original nominal-path RMS over the route moving window; this is the documentation comparison metric.',
+                               'full_run_including_settle_position_rms_mm': 'Original nominal-path RMS over all saved samples, including settling; a different valid metric.'},
+        'source_stage_notes': [
+            'The historical timing audit reads the old saved adaptive-bounded case; the shadow reconstructs its archived feedback source and validates on 141 identical states.',
+            'The four fresh runs use the same 45 core/configuration source files. First three launch harness snapshots are identical; the fourth launch harness is separately preserved.',
+            'The fourth original generic contact-boundary metadata field was misleading. Its appended clarification and later metadata-only harness are preserved separately from immutable launch bytes.',
+            'The feedback-only and complete-record clips use different exact renderer snapshots; both are preserved. No video or rollout payload is copied here.'],
+        'limitations': comparison['limitations']+[
+            'Simulator truth is deliberately exposed inside diagnostic harness windows; these variants are not hardware-capable controllers.',
+            'Complete contact-record injection changes points, normals, forces, loads, topology, and several consumers; it does not isolate support identity alone.',
+            'Load-total preservation audits apply to feedback-share interventions. The full-record branch deliberately replaces the total and geometry; its separate native-versus-routed changes are reported.',
+            'The full raw per-contact record dictionaries and normals were not serialized. Saved source, summaries, aggregate fields, and substep loads do not permit exact offline reconstruction of every injected record.',
+            'One trajectory/start and one execution per branch do not establish statistical robustness or a general controller improvement.',
+            'Sample-held mismatch durations and latest-substep versus interval-mean labels have different information timing; they are not calibrated support-error probabilities.']}
+    generated('summary.json', outcome, 'compact_derived_summary', [
+        'results/support_identity_probe_20261125/audit/audit.json',
+        'results/support_identity_probe_20261125/shadow/shadow_report.json',
+        'results/support_identity_probe_20261125/comparison/report.json'])
+    copy(Path(__file__).resolve(), 'source/build_durable_evidence.py.txt', 'evidence_archival_helper')
+    manifest = {'created_utc': datetime.now(timezone.utc).isoformat(),
+                'scope': 'Finalized compact support-identity evidence. Original artifacts retained; no tests or simulations executed by this copier.',
+                'snapshot_count_excluding_this_manifest': len(ENTRIES),
+                'snapshot_bytes_excluding_this_manifest': sum(item['bytes'] for item in ENTRIES),
+                'files': ENTRIES, 'source_stage_notes': outcome['source_stage_notes'],
+                'omitted_large_artifacts': 'NPZ rollouts/probes/truth-substeps, MP4 videos, and the full 1.12 MB shadow_details.json remain local; compact summaries/CSV and input hashes are preserved.'}
+    (DEST/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+    for item in ENTRIES:
+        assert sha((DEST/item['snapshot']).read_bytes()) == item['sha256']
+    assert not list(DEST.rglob('*.npz')) and not list(DEST.rglob('*.mp4'))
+    print(json.dumps({'files': len(ENTRIES), 'bytes': manifest['snapshot_bytes_excluding_this_manifest'],
+                      'physical_runs': outcome['fresh_simulation_runs'], 'guarded_calls': outcome['guarded_controller_calls'],
+                      'shared_core_config_files': len(common_core), 'completed_media': len(media)}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

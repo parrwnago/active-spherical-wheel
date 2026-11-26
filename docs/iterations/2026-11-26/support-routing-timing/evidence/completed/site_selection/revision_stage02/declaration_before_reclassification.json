@@ -1,0 +1,28 @@
+{
+  "declared_utc": "2026-11-26T07:10:09.128065+00:00",
+  "criteria": {
+    "fitted_slope_deg_min": 2.0,
+    "fitted_slope_deg_max": 6.0,
+    "plane_rmse_m_max": 0.003,
+    "plane_max_abs_m_max": 0.01,
+    "protected_capsule_radius_m": 0.22,
+    "ranking": [
+      "squared_distance_to_old_site",
+      "plane_rmse_m",
+      "center_x",
+      "center_y"
+    ]
+  },
+  "scope": "Reclassify SAME2091 measured geometry candidates before any I46 control outcomes; no new grid, controller, observer or physics.",
+  "rationale": "Strict1mm/3mm corridor plane criteria produced no candidate and independent dense-grid checks corroborated the geometry. Natural Mars3mm/10mm limits are about half old-site residuals; require paired flat control for timing analysis.",
+  "input_sha256": {
+    "/home/parrwnago/active-spherical-wheel/results/support_routing_timing_20261126/site_selection/candidates.json": "b4a4983e23a9683aa5a17379e5ca9ee6a1c1401a29d12b4aab134222ae13e5c8",
+    "/home/parrwnago/active-spherical-wheel/results/support_routing_timing_20261126/site_selection/report.json": "3797484e60eb8a5929d2846a07deb34ea4a96aa6c2998f4ff1e8c57ede87e6d7",
+    "/home/parrwnago/active-spherical-wheel/results/support_routing_timing_20261126/site_selection/review_stage01/report.json": "7df24782c7b3ce88cb7e55f636a35506b5fe9211b45f52cb03946a576ef4ffb4"
+  },
+  "source_sha256": {
+    "select_site.py": "68b4f206cbd4afc645206e1f4181759f358a42301d84002a2f0281d8bc100d4c",
+    "reclassify.py": "f1d91b645eb7b1a656c8850ed097cd1a85eed3f04f489b0791eb137602156698"
+  },
+  "source_stage_retained": "Original report/candidates and strict criteria remain unchanged."
+}

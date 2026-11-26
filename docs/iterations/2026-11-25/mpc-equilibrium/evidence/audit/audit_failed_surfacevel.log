@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/scripts/audit-mpc-equilibrium.py", line 81, in <module>
+    main()
+  File "/home/parrwnago/active-spherical-wheel/scripts/audit-mpc-equilibrium.py", line 56, in main
+    result = solve_goal_equilibrium(predictor, reference, settings=settings)
+  File "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/predictive_equilibrium.py", line 187, in solve_goal_equilibrium
+    fixed_audit = record('fixed_analytic_pose_best_found_input', reference, fixed_input, fixed)
+  File "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/predictive_equilibrium.py", line 179, in record
+    audit = audit_rest_target(predictor, q, inputs, settings)
+  File "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/predictive_equilibrium.py", line 83, in audit_rest_target
+    contacts = _private_contact_diagnostics(predictor, qpos, zero, inputs)
+  File "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/predictive_equilibrium.py", line 63, in _private_contact_diagnostics
+    velocity = jacobian@qvel+data.geom_xmat[geom].reshape(3, 3)@model.geom_surfacevel[geom]
+ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 6 is different from 3)

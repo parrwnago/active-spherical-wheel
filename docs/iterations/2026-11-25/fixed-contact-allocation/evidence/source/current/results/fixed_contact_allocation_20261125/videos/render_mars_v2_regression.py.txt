@@ -1,0 +1,173 @@
+"""Saved-state Mars replay of the V2 +0.30 figure-eight regression.
+
+MUJOCO_GL=egl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -u results/fixed_contact_allocation_20261125/videos/render_mars_v2_regression.py
+
+No dynamics or controller runs occur. Event selection always uses distance to
+the original nominal path, separately from the projected feedback reference.
+"""
+from pathlib import Path
+import hashlib
+import json
+
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+from PIL import Image, ImageDraw
+
+from spherical_wheel.model import load_config
+from spherical_wheel.offroad_view import _camera, _caption, _draw, _font
+from spherical_wheel.gazebo.mars import MarsYard, build_route, route_samples
+from spherical_wheel.gazebo.mars_compare import replay_plant
+
+OUTPUT = Path(__file__).resolve().parent
+STUDY = OUTPUT.parent
+ROUTE, PHASE = 'plain_figure8', 'phase_+0.30'
+WIDTH, HEIGHT, FPS, SPEED = 960, 720, 20, .25
+
+
+def load_run(variant):
+    directory = STUDY/variant/ROUTE/PHASE
+    summary = json.loads((directory/'summary.json').read_text())
+    with np.load(directory/'rollout.npz') as saved:
+        log = {key: value.astype(float) if value.dtype.kind == 'f' else value for key,value in saved.items()}
+    return {'variant':variant,'directory':directory,'summary':summary,'log':log}
+
+
+def nearest(times, moment):
+    i=min(int(np.searchsorted(times,moment)),len(times)-1)
+    return i-1 if i and abs(times[i-1]-moment)<=abs(times[i]-moment) else i
+
+
+def vec(values,digits=2):
+    return '['+','.join(f'{v:+.{digits}f}' for v in values)+']'
+
+
+def support(values):
+    return '+'.join(f'{name} {v:.1f}N' for name,v in zip(('shell A','shell B','belt A','belt B'),values) if v>.05) or 'unloaded'
+
+
+def caption(run,i):
+    d,s=run['log'],run['summary'];candidate=run['variant']=='feasible_v2'
+    nominal=np.linalg.norm(d['qpos'][i,:2]-d['reference_xy'][i])*1000
+    managed=np.linalg.norm(d['qpos'][i,:2]-d['feedback_reference_xy'][i])*1000
+    gap=np.linalg.norm(d['reference_xy'][i]-d['feedback_reference_xy'][i])*1000
+    p=s['parameters'];q=d['reference_quat'][i]
+    reflean=np.rad2deg(np.arccos(np.clip(1-2*np.sum(q[1:3]**2)/np.dot(q,q),-1,1)))
+    refs=d['allocation_drive_reference'][i]
+    clip=','.join(name for name,active in zip(('shaft','A','B','beltA','beltB'),d['actuator_saturated'][i]) if active) or 'none'
+    lines=[
+        f"t {d['time_s'][i]:.3f}s | ORIGINAL-path error {nominal:.0f}mm | feedback-reference error {managed:.0f}mm | goal/ref gap {gap:.1f}mm",
+        f"Full-run original-path peak {1000*s['tracking']['max_error_m']:.0f}mm | full-run attitude-error peak {s['attitude']['max_error_from_reference_deg']:.2f}deg",
+        f"Body lean actual/reference {np.rad2deg(d['tilt_rad'][i]):.1f}/{reflean:.1f}deg | current attitude error {np.rad2deg(d['attitude_error_rad'][i]):.1f}deg",
+        'Original / feedback body velocity XY m/s: '+vec(d['reference_velocity_m_s'][i])+' / '+vec(d['reference_qvel'][i,:2]),
+        'Actual support: '+support(d['support_loads_N'][i])+' | estimated: '+support(d['estimated_support_loads_N'][i]),
+        'Joint references / actual rates [shaft,A,B] rad/s: '+vec(refs[:3],1)+' / '+vec(d['qvel'][i,6:9],1),
+        'Belt references / final commands [A,B] m/s: '+vec(refs[3:])+' / '+vec(d['input'][i,3:]),
+        'Torque request / final [shaft,A,B] N m: '+vec(d['command'][i,:3])+' / '+vec(d['input'][i,:3]),
+        'Final command bounds: torque +/-[1.5,0.6,0.6] N m; belts +/-0.3m/s | clipping: '+clip,
+    ]
+    if candidate:
+        lines += [f"V2 settings: position-error cap {p['rolling_reference_position_limit_m']:g}m; catch-up gain {p['rolling_reference_catchup_gain_s_inv']:g}/s; balance guard OFF",
+                  f"Catch-up speed cap {p['rolling_reference_catchup_speed_m_s']:g}m/s; reference-only limits +/-20rad/s, +/-0.3m/s; accel 100rad/s2, 3m/s2",
+                  'Experimental feasible allocation and projected feedback references; existing LQR design.']
+    else:
+        lines += ['Fresh baseline: existing least-squares allocation and original feedback references.',
+                  'No explicit drive-reference speed/acceleration bounds; actual joint speed is measured separately.',
+                  'Same nominal path and phase +0.30. Existing LQR design; default controller retained.']
+    return lines
+
+
+def xy_inset(frame,run,i,start,end,centre,half_range):
+    d=run['log'];image=Image.fromarray(frame);draw=ImageDraw.Draw(image,'RGBA')
+    left,top,w,h=16,456,244,228
+    draw.rounded_rectangle((left,top,left+w,top+h),radius=5,fill=(10,18,27,225),outline=(130,145,155,170))
+    draw.text((left+8,top+6),'World XY | common scale | grid 0.1m',font=_font(11),fill=(235,240,245))
+    draw.text((left+8,top+22),'Orange goal; green feedback; cyan robot',font=_font(10),fill=(220,230,235))
+    x0,y0,side=left+24,top+43,174
+    def point(xy):
+        x,y=np.asarray(xy)-centre
+        return x0+side*(x/half_range+1)/2,y0+side*(1-y/half_range)/2
+    for x in np.arange(np.ceil((centre[0]-half_range)/.1)*.1,centre[0]+half_range,.1):
+        draw.line([point([x,centre[1]-half_range]),point([x,centre[1]+half_range])],fill=(150,170,185,65))
+    for y in np.arange(np.ceil((centre[1]-half_range)/.1)*.1,centre[1]+half_range,.1):
+        draw.line([point([centre[0]-half_range,y]),point([centre[0]+half_range,y])],fill=(150,170,185,65))
+    draw.text((x0+side+3,y0+side/2),'X',font=_font(10),fill=(235,240,245))
+    draw.text((x0+side/2,y0-4),'Y',font=_font(10),fill=(235,240,245))
+    first,last=nearest(d['time_s'],start),nearest(d['time_s'],end)
+    for values,color in [(d['reference_xy'][first:last+1:4],(255,160,50,240)),
+                         (d['qpos'][first:i+1,:2],(30,220,240,255))]:
+        if len(values)>1:draw.line([point(xy) for xy in values],fill=color,width=2)
+    for xy,color,radius,outline in [
+        (d['feedback_reference_xy'][i],(80,235,125,255),5,True),
+        (d['reference_xy'][i],(255,160,50,255),3,False),
+        (d['qpos'][i,:2],(30,220,240,255),4,False)]:
+        x,y=point(xy);box=(x-radius,y-radius,x+radius,y+radius)
+        if outline:draw.ellipse(box,outline=color,width=2)
+        else:draw.ellipse(box,fill=color)
+    return np.asarray(image)
+
+
+def main():
+    runs=[load_run('baseline'),load_run('feasible_v2')]
+    baseline,candidate=[run['log'] for run in runs]
+    params=runs[1]['summary']['parameters']
+    assert params['rolling_reference_position_limit_m']==1.
+    assert params['rolling_reference_catchup_gain_s_inv']==1.
+    assert not params.get('rolling_reference_balance_guard',False)
+    error=np.linalg.norm(candidate['qpos'][:,:2]-candidate['reference_xy'],axis=1)
+    event_i=int(np.argmax(error));event=float(candidate['time_s'][event_i])
+    start,end=event-1.,event+1.
+    path,_=build_route(ROUTE);planned=route_samples(path,400)
+    bounds_points=np.vstack([planned,baseline['qpos'][:,:2],candidate['qpos'][:,:2]])
+    bounds=tuple(float(v) for v in (bounds_points[:,0].min()-1.6,bounds_points[:,0].max()+1.6,
+                                   bounds_points[:,1].min()-1.6,bounds_points[:,1].max()+1.6))
+    for run in runs:run['log']['planned_xy']=planned
+    clip_points=[]
+    for run in runs:
+        d=run['log'];window=(d['time_s']>=start)&(d['time_s']<=end)
+        clip_points.extend([d['qpos'][window,:2],d['reference_xy'][window],d['feedback_reference_xy'][window]])
+    clip_points=np.vstack(clip_points);low,high=clip_points.min(0),clip_points.max(0)
+    centre=(low+high)/2;half_range=max(.2,float((high-low).max())*.60)
+    plant=replay_plant(load_config(),MarsYard(),bounds,OUTPUT/'_mars_v2_regression_scene')
+    camera_centre=np.mean([d['qpos'][nearest(d['time_s'],event),:3] for d in (baseline,candidate)],axis=0)
+    camera_centre[2]+=.12
+    option=mujoco.MjvOption();option.geomgroup[3:]=0
+    target=OUTPUT/'mars_figure8_p030_v2_regression.mp4'
+    footer='Gazebo/DART saved-state replay | Exact state; estimated contact | 0.25x | Original goal stays evaluated'
+    saved=plant.capture()
+    def frame_at(renderer,moment):
+        panels=[]
+        for run in runs:
+            d=run['log'];i=nearest(d['time_s'],moment)
+            camera=_camera(camera_centre,112.,-24.,1.8)
+            frame=_draw(plant,renderer,d,i,camera,option,False)
+            title=('Fresh existing baseline' if run['variant']=='baseline' else 'Experimental V2 | position cap 1m | guard OFF')+' | figure-eight +0.30'
+            panels.append(xy_inset(_caption(frame,title,caption(run,i),footer),run,i,start,end,centre,half_range))
+        return np.concatenate(panels,axis=1)
+    try:
+        with mujoco.Renderer(plant.model,height=HEIGHT,width=WIDTH) as renderer:
+            writer=imageio.get_writer(target,fps=FPS,codec='libx264',quality=8,macro_block_size=2,ffmpeg_log_level='error')
+            try:
+                for moment in np.arange(start,end+1e-8,SPEED/FPS):writer.append_data(frame_at(renderer,moment))
+            finally:writer.close()
+            imageio.imwrite(target.with_suffix('.jpg'),frame_at(renderer,event),quality=90)
+    finally:plant.restore(saved)
+    with imageio.get_reader(target) as reader:
+        meta=reader.get_meta_data();count=reader.count_frames();last=reader.get_data(count-1)
+        imageio.imwrite(OUTPUT/(target.stem+'_decoded_final.jpg'),last,quality=90)
+    result=dict(file=str(target),sha256=hashlib.sha256(target.read_bytes()).hexdigest(),size_bytes=target.stat().st_size,
+        fps=meta['fps'],frames=count,dimensions=list(meta['size']),video_duration_s=meta['duration'],
+        sim_interval_s=[start,end],event_time_s=event,playback_speed=SPEED,final_frame_decoded=True,
+        event_selection='Largest candidate error to ORIGINAL nominal path; +/-1 simulation second.',
+        candidate='feasible_v2; position-error cap 1m, catch-up gain 1/s, catch-up speed cap 0.06m/s, balance guard off.',
+        scope='Saved Gazebo/DART states drawn in the MuJoCo Mars viewer; no new physics or controller calls.',
+        evidence=[dict(variant=run['variant'],directory=str(run['directory']),
+                       rollout_sha256=hashlib.sha256((run['directory']/'rollout.npz').read_bytes()).hexdigest(),
+                       full_run_tracking=run['summary']['tracking'],full_run_attitude=run['summary']['attitude'],
+                       event_original_path_error_mm=float(1000*np.linalg.norm(run['log']['qpos'][nearest(run['log']['time_s'],event),:2]-run['log']['reference_xy'][nearest(run['log']['time_s'],event)])),
+                       event_feedback_reference_error_mm=float(1000*np.linalg.norm(run['log']['qpos'][nearest(run['log']['time_s'],event),:2]-run['log']['feedback_reference_xy'][nearest(run['log']['time_s'],event)]))) for run in runs])
+    (OUTPUT/'metadata_mars_figure8_p030_v2_regression.json').write_text(json.dumps(result,indent=2)+'\n')
+    print(json.dumps(result,indent=2),flush=True)
+
+
+if __name__=='__main__':main()

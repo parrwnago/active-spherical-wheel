@@ -1,0 +1,52 @@
+{
+  "captured_utc": "2026-11-26T09:08:00.265952+00:00",
+  "sources": [
+    {
+      "origin": "results/belt_capacity_sweep_20261126/review/check_cap_equivalence.py",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/review/check_cap_equivalence.py",
+      "sha256": "aa2e9e210636c2d083a5db37694814f4e319fe52dfccda55c2434db26b8169ab"
+    },
+    {
+      "origin": "results/belt_capacity_sweep_20261126/protocol.json",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/protocol.json",
+      "sha256": "577e7c7a04d1cccf77550a5c7aa46e3a152dbb7392704c95ba1fddfde02557a3"
+    },
+    {
+      "origin": "results/belt_capacity_sweep_20261126/run_capacity_case.py",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/run_capacity_case.py",
+      "sha256": "a248f7e94a74d7dc999e9a271f4602c4cac8f0274d17e03cc7c7a99b2a3ad213"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_sensing.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_sensing.py",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/plant.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/plant.py",
+      "sha256": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/bridge.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/bridge.py",
+      "sha256": "6b1f7e2ec860e6d21a6a025d1581952836aef3515da66f60a2314d15776c18a4"
+    },
+    {
+      "origin": "gazebo/plugin/SphericalWheelBridge.cc",
+      "snapshot": "source_snapshot/gazebo/plugin/SphericalWheelBridge.cc",
+      "sha256": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e"
+    }
+  ],
+  "input_sha256": {
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap060/precision.npz": "9294c3315ec880444c3d65dcaf162ca9412db3ad455b02ea52c0ec95de7fd8b2",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap060/rollout.npz": "a3ce38ec30e27b53442e57de31b3cac5eb993a96cac3ffa2989046e3df969bb9",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap060/provenance.json": "3fb46ed71a67c5ca3bfdae4ed24b520ab26a23a3e06e50609b6c1d52fea3318c",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap060/artifact_manifest.json": "71ca1435f4855a032ddeec3be61b321bc51a6d3a0860f9392885a12c1ee9db14",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap090/precision.npz": "18e90b8d7ce68c3d1f4c50b6c3cd36ca29597af8e4e0c230220c2655f5803a91",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap090/rollout.npz": "79fc8dac90e0eb2522dd61afe21ef7802aab90b8511bdb0a01eb5d030d637968",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap090/provenance.json": "05f55431b41965ab0d9228b19cee3e9f1701992c97ff3f8ac3490cefc42bead1",
+    "results/belt_capacity_sweep_20261126/campaign/runs/mars_cap090/artifact_manifest.json": "ea968fae0a14b8305151016e34c9b88027c3922368174c5569a42361ba938fdd"
+  },
+  "question": "When .60/.90 applied belts differ, are equal saved states explained by no loaded endpoint contact, or compatible with a loaded friction-limited response?",
+  "scope": "Read saved arrays only. Current and next endpoints distinguished; no within5ms contact history or physics-response causality inferred."
+}

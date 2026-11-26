@@ -1,0 +1,182 @@
+"""Separate fixed-input hold fixtures: Gazebo versus frozen estimated-plane model.
+
+Two .4s fixtures, each explicitly reset to its saved target with zero velocity.
+No controller or observer runs; these are not closed-loop performance trials.
+"""
+from datetime import datetime, timezone
+from importlib.metadata import version
+from pathlib import Path
+import hashlib
+import json
+from time import perf_counter
+import traceback
+
+import mujoco
+import numpy as np
+
+from spherical_wheel.gazebo.experiments import GAZEBO_VERSIONS
+from spherical_wheel.gazebo.plant import GazeboPlant
+from spherical_wheel.mirror import StateMirror
+from spherical_wheel.model import REPO_ROOT, load_config
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+from spherical_wheel.terrain import Terrain
+
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent
+FIRST = ROOT.parent/'audit/first_y2.json'
+SEARCH = ROOT/'report.json'
+PLANS = REPO_ROOT/'results/mpc_balance_20261125/trajectory/runs/world_y/mpc/plans.json'
+NAMES = ('shell_A', 'shell_B', 'belt_A', 'belt_B', 'platform')
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def record_sources():
+    sources = [Path(__file__), FIRST, SEARCH, PLANS,
+               *sorted((REPO_ROOT/'src/spherical_wheel').rglob('*.py')),
+               *sorted((REPO_ROOT/'config').glob('*.yaml'))]
+    hashes = {}
+    for path in sources:
+        relative = path.relative_to(REPO_ROOT)
+        hashes[str(relative)] = sha(path)
+        if path.suffix in ('.py', '.yaml'):
+            destination = HERE/'source_snapshot'/relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(path.read_bytes())
+    declaration = {'created_before_fixtures_utc': datetime.now(timezone.utc).isoformat(),
+        'scope': 'Two separate open-loop fixed-input hold fixtures, not controller or estimator validation. Explicit target resets affect only this diagnostic process.',
+        'duration_s': .4, 'checkpoints_s': [.2, .4], 'control_sample_s': .005,
+        'cases': ['analytic_pose_best_holding', 'nearby_pose_independent_fit'],
+        'matching': 'Each saved pose/input pair is identical across engines, initial qvel is zero, fixed command applied before first integration. Poses differ between the two cases.',
+        'ground': 'Gazebo actual10deg side-slope mesh at.04m resolution, matching earlier fixtures. Private plane frozen from observed/estimatedY2 state, no recalibration at target poses.',
+        'state_and_force_timing': 'qpos/qvel saved after interval; contact loads are latest physics-step solver values. Startup contacts are evaluated before advancing.',
+        'versions': {name: version(name) for name in ('numpy', 'scipy', 'mujoco')},
+        'gazebo_versions': GAZEBO_VERSIONS, 'source_sha256': hashes}
+    (HERE/'declaration.json').write_text(json.dumps(declaration, indent=2)+'\n')
+    return declaration
+
+
+def private_contacts(predictor):
+    loads = np.zeros(5)
+    names = []
+    for i, contact in enumerate(predictor.data.contact):
+        if contact.efc_address < 0:
+            continue
+        force = np.zeros(6)
+        mujoco.mj_contactForce(predictor.model, predictor.data, i, force)
+        geoms = [mujoco.mj_id2name(predictor.model, mujoco.mjtObj.mjOBJ_GEOM, int(g)) or '' for g in contact.geom]
+        names.append(geoms)
+        for k, prefix in enumerate(NAMES):
+            if any(g.startswith(prefix) for g in geoms):
+                loads[k] += force[0]
+    return loads, names
+
+
+def metrics(model, q_initial, trace):
+    q = np.asarray(trace['qpos'])
+    v = np.asarray(trace['qvel'])
+    differences = []
+    for pose in q:
+        dq = np.zeros(9)
+        mujoco.mj_differentiatePos(model, dq, 1., q_initial, pose)
+        differences.append(dq)
+    delta = np.asarray(differences)
+    xy = 1000*np.linalg.norm(delta[:, :2], axis=1)
+    angles = np.degrees(np.linalg.norm(delta[:, 3:6], axis=1))
+    result = {}
+    for t in (.2, .4):
+        i = int(round(t/.005))
+        result[str(t)] = {'xy_drift_end_mm': float(xy[i]), 'xy_drift_peak_mm': float(xy[:i+1].max()),
+            'rotation_end_deg': float(angles[i]), 'rotation_peak_deg': float(angles[:i+1].max()),
+            'body_speed_end_m_s': float(np.linalg.norm(v[i, :3])),
+            'angular_speed_end_rad_s': float(np.linalg.norm(v[i, 3:6])),
+            'internal_speed_end_rad_s': float(np.max(abs(v[i, 6:]))),
+            'normal_load_end_N': float(np.sum(trace['support_loads_N'][i])),
+            'min_normal_load_N': float(np.min(np.sum(trace['support_loads_N'][:i+1], axis=1)))}
+    return result
+
+
+def main():
+    declaration = record_sources()
+    first = json.loads(FIRST.read_text())
+    search = json.loads(SEARCH.read_text())
+    plan = min(json.loads(PLANS.read_text()), key=lambda row: abs(row['time_s']-2.))
+    with np.load(PLANS.with_name('precision.npz')) as z:
+        index = int(np.argmin(abs(z['time_s']-plan['time_s'])))
+        preceding = z['exact_applied'][index-1].copy()
+    mirror = StateMirror(load_config(), HERE/'private_mirror')
+    mirror.set_state(plan['qpos'], plan['qvel'], plan['time_s'], preceding)
+    predictor = EstimatedPlanePredictor(mirror)
+    calibration = predictor.update(plan['qpos'], plan['qvel'], plan['normal'], plan['point_m'], plan['load_N'], command=preceding)
+    assert abs(calibration['plane_offset_m']-first['plane_calibration']['plane_offset_m']) < 1e-10
+    cases = [('analytic_pose_best_holding', first['rows'][1]), ('nearby_pose_independent_fit', search['result'])]
+    terrain = Terrain(name='side_slope_10', features=[{'type': 'plane', 'slope': [0., np.tan(np.deg2rad(10.))]}])
+    plant = None
+    report = {'declaration': declaration, 'private_plane_calibration': calibration, 'cases': {}}
+    started = perf_counter()
+    try:
+        plant = GazeboPlant(load_config(), terrain, HERE/'gazebo_mirror', visual_bounds=(-.6,.6,-.6,.6),
+                            world_dir=HERE/'world', heightmap_cell_m=.04)
+        report.update(ground_check=plant.ground_check, world_info=plant.world_info,
+                      bridge_counters_before=plant.sim.counters())
+        for label, saved in cases:
+            q0, u = np.asarray(saved['qpos']), np.asarray(saved['input'])
+            assert np.all(abs(u) <= plant.bounds+1e-12)
+            records = {}
+            for engine in ('private_mujoco', 'gazebo_dart'):
+                trace = {'time_s': [], 'qpos': [], 'qvel': [], 'support_loads_N': [], 'contact_names': []}
+                if engine == 'private_mujoco':
+                    predictor._assign(q0, np.zeros(9), u)
+                else:
+                    plant.reset(qpos=q0, qvel=np.zeros(9))
+                    plant.apply_input(u)
+                    assert np.max(abs(plant.data.qpos-q0)) < 1e-12
+                    assert np.max(abs(plant.data.qvel)) < 1e-12
+                for step in range(81):
+                    if step:
+                        if engine == 'private_mujoco':
+                            for _ in range(5):
+                                mujoco.mj_step(predictor.model, predictor.data)
+                        else:
+                            plant.step(u)
+                    if engine == 'private_mujoco':
+                        q, v = predictor.data.qpos.copy(), predictor.data.qvel.copy()
+                        loads, contacts = private_contacts(predictor)
+                    else:
+                        q, v = plant.data.qpos.copy(), plant.data.qvel.copy()
+                        loads, contacts = np.zeros(5), []
+                        for contact in plant.contact_records():
+                            contacts.append(contact['name'])
+                            if contact['name'] in NAMES:
+                                loads[NAMES.index(contact['name'])] += contact['normal_force']
+                    trace['time_s'].append(.005*step)
+                    trace['qpos'].append(q)
+                    trace['qvel'].append(v)
+                    trace['support_loads_N'].append(loads)
+                    trace['contact_names'].append(contacts)
+                directory = HERE/label/engine
+                directory.mkdir(parents=True, exist_ok=True)
+                np.savez_compressed(directory/'trace.npz', **{k: np.asarray(v) for k,v in trace.items() if k != 'contact_names'}, fixed_input=u)
+                (directory/'contacts.json').write_text(json.dumps(trace['contact_names'], indent=2)+'\n')
+                records[engine] = {'metrics': metrics(predictor.model, q0, trace),
+                                   'initial_support_loads_N': trace['support_loads_N'][0].tolist(),
+                                   'initial_contacts': trace['contact_names'][0]}
+            report['cases'][label] = {'qpos_initial': q0.tolist(), 'input': u.tolist(), 'engines': records}
+            print(json.dumps({label: report['cases'][label]}, indent=2), flush=True)
+        report.update(status='completed', gazebo_hold_executions=2, private_hold_executions=2,
+                      bridge_counters_after=plant.sim.counters(), wall_s=perf_counter()-started)
+        report['generated_world_sha256'] = {str(p.relative_to(HERE)):sha(p) for p in sorted((HERE/'world').rglob('*')) if p.is_file() and p.suffix in ('.json','.sdf','.xml')}
+        (HERE/'report.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
+    except Exception:
+        (HERE/'failure.json').write_text(json.dumps({'stage':'fixture_execution', 'traceback': traceback.format_exc(), 'partial_report': report}, indent=2)+'\n')
+        raise
+    finally:
+        if plant is not None:
+            plant.close()
+
+
+if __name__ == '__main__':
+    main()

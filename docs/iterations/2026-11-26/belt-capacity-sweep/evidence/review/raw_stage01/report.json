@@ -1,0 +1,147 @@
+{
+  "iteration": "I-49",
+  "passed": true,
+  "cases": {
+    "mars_cap030": {
+      "cap_m_s": 0.3,
+      "samples": 8801,
+      "completed": true,
+      "failure": null,
+      "passed": true,
+      "checks": {
+        "sources_unchanged": true,
+        "bounds": true,
+        "applied_clipping": true,
+        "prior_alignment": true,
+        "rollout_qpos": true,
+        "rollout_applied": true,
+        "rollout_requested": true,
+        "one_per_5ms": true,
+        "no_input_exceeds_own_cap": true,
+        "design_bounds": true
+      }
+    },
+    "mars_cap060": {
+      "cap_m_s": 0.6,
+      "samples": 8801,
+      "completed": true,
+      "failure": null,
+      "passed": true,
+      "checks": {
+        "sources_unchanged": true,
+        "bounds": true,
+        "applied_clipping": true,
+        "prior_alignment": true,
+        "rollout_qpos": true,
+        "rollout_applied": true,
+        "rollout_requested": true,
+        "one_per_5ms": true,
+        "no_input_exceeds_own_cap": true,
+        "design_bounds": true
+      }
+    },
+    "mars_cap090": {
+      "cap_m_s": 0.9,
+      "samples": 8801,
+      "completed": true,
+      "failure": null,
+      "passed": true,
+      "checks": {
+        "sources_unchanged": true,
+        "bounds": true,
+        "applied_clipping": true,
+        "prior_alignment": true,
+        "rollout_qpos": true,
+        "rollout_applied": true,
+        "rollout_requested": true,
+        "one_per_5ms": true,
+        "no_input_exceeds_own_cap": true,
+        "design_bounds": true
+      }
+    }
+  },
+  "checks": {
+    "baseline_historical_all_common_arrays_identical": true,
+    "fixed_gain_bank": true,
+    "fixed_ordinary_design": true,
+    "mars_cap030_reference_identical": true,
+    "mars_cap030_initial_state_identical": true,
+    "mars_cap060_reference_identical": true,
+    "mars_cap060_initial_state_identical": true,
+    "mars_cap090_reference_identical": true,
+    "mars_cap090_initial_state_identical": true,
+    "input_hashes_stable": true
+  },
+  "baseline_history_parity": {
+    "time_s": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_qpos": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_qvel": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_applied": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_previous_applied": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_native_requested": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_observer_wrench": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_estimated_normal": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_nominal_joints_before": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_reference_xy": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_reference_velocity_m_s": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "exact_reference_acceleration_m_s2": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "truth_time_s": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "truth_patch_loads_N": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "truth_patch_points_m": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "truth_patch_contact_counts": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    },
+    "truth_equivalent_point_m": {
+      "bit_identical": true,
+      "maximum_absolute_gap": 0.0
+    }
+  },
+  "scope": "Capacity bounds/total clipping/measurement history/gain-bank/reference/source checks. Completion/fall is an outcome, not a harness-pass requirement.",
+  "source_sha256": "048e9bb61910b933541739b6d14eb302b562ec1187b1a4ccc790aa804c9b77f9"
+}

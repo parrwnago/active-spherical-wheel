@@ -1,0 +1,55 @@
+{
+  "status": "rendered_and_decoded_verified",
+  "video": {
+    "path": "results/mpc_equilibrium_20261125/videos/nearby_goal_hold_gazebo_vs_private.mp4",
+    "sha256": "cc8a8e9f3786b7a35bd2817bad32d8a3dc6a1fedf2c2ddb0f9cbb9ef0933c07e",
+    "size_bytes": 499914,
+    "dimensions": [
+      1920,
+      720
+    ],
+    "fps": 20.0,
+    "frames": 81,
+    "duration_s": 4.05,
+    "simulated_duration_s": 0.4,
+    "playback_speed": 0.1,
+    "final_frame_decoded": true
+  },
+  "case": "nearby_pose_independent_fit",
+  "source_snapshot": "results/mpc_equilibrium_20261125/videos/source_snapshot/render_hold_55d6f35bd14e.py",
+  "endpoint_checks": [
+    {
+      "engine": "gazebo_dart",
+      "xy_drift_mm": 8.12499035800385,
+      "rotation_change_deg": 4.237798234163463,
+      "matches_saved_report": true
+    },
+    {
+      "engine": "private_mujoco",
+      "xy_drift_mm": 8.119732745612719,
+      "rotation_change_deg": 4.251415274922491,
+      "matches_saved_report": true
+    }
+  ],
+  "source_artifact_sha256": {
+    "results/mpc_equilibrium_20261125/independent_search/gazebo_hold/report.json": "bc6886684932eb0dd05bed7c5eca83ecdff27c547d0e105062e6347d1582667e",
+    "results/mpc_equilibrium_20261125/independent_search/gazebo_hold/declaration.json": "3bb9f82bf76bdd801bfa10051f50b507144598e50b5eb542d22b831c79b03edd",
+    "results/mpc_equilibrium_20261125/independent_search/gazebo_hold/gazebo_mirror/model_config.json": "9e1e141da88e39da2e9f1b18cf379638d8592975f59c00f8f7f8b434c7024daf",
+    "results/mpc_equilibrium_20261125/independent_search/gazebo_hold/nearby_pose_independent_fit/gazebo_dart/trace.npz": "2fe418f57fc2732278761b235f911d08a64fed8a33fb674236f34de0eab2587d",
+    "results/mpc_equilibrium_20261125/independent_search/gazebo_hold/nearby_pose_independent_fit/private_mujoco/trace.npz": "016450cf42d16e7dab9237def235012c451c4e0d0dda4ce52760ffb922f1ff8e",
+    "results/mpc_equilibrium_20261125/videos/render_hold.py": "55d6f35bd14eb4ba82924ea179f79aa64e7955d7deebd5669318a5ab371f2037",
+    "results/mpc_equilibrium_20261125/videos/source_snapshot/render_hold_55d6f35bd14e.py": "55d6f35bd14eb4ba82924ea179f79aa64e7955d7deebd5669318a5ab371f2037",
+    "src/spherical_wheel/offroad_view.py": "631370d0c5ee29417cb2e8531ced3139464f4ffa6bd8d6d33d12a4ae3b3c479f",
+    "src/spherical_wheel/offroad.py": "bb87ec5d188cc51acdc2591b8629dc94785b2c3aaff2e402947f911b993f5070",
+    "src/spherical_wheel/terrain.py": "43ff7b6bf2d53fd3cfccfaa9d02841195f78e0d7e6cc2181b01c0589176751eb"
+  },
+  "stills": {
+    "hold_first.jpg": "11bc5033646b8445afc618201ad407685116b81e7daff0acbc5626514f0e3e69",
+    "hold_final.jpg": "e57364e654d2140b79da84b224a2deabe845fde28557418ba0d1b0da180a2d80",
+    "hold_decoded_final.jpg": "ed9db1f49a1c5e4cf6db71e416fd4b8592c630921308a2e2df326d075422fe9d"
+  },
+  "scope": "One saved-data reconstruction of two separate open-loop fixed-input hold fixtures (one target/input pair, two engines); no MPC, LQR, observer or new physics during rendering.",
+  "initialization": "Same returned Gazebo state after its documented1us idle reset microstep; tiny nonzero twist is preserved in both engine traces. No ongoing performance trajectory reset.",
+  "visualization_limit": "Both states are drawn with common MuJoCo model/actual10deg terrain visuals; private physics used its own frozen estimated plane, not the actual mesh. Cyan path and inset are saved centreXY, orange marker is retained initial goal.",
+  "physics_count_note": "Corrected capture repeats two distinct target/input fixtures after a contact-name logging correction; movie presents nearby pair only. Repeated executions are not new distinct trajectory cases."
+}

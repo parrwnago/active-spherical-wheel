@@ -1,0 +1,77 @@
+{
+  "iteration": "I-44",
+  "scope": "I44 saved robot motion, ideal depth and causal map/prediction presentation.\n\nNo depth is rendered, map recomputed, controller called or dynamics integrated.\nOnly the actual saved robot state is re-rendered for visual context. Map and\ndepth displays use completed, past-only anchor snapshots from the campaign.\n",
+  "chapters": [
+    {
+      "id": "early_bump",
+      "start_s": 6.4,
+      "stop_s": 10.0,
+      "speed": 0.5
+    },
+    {
+      "id": "late_revisit",
+      "start_s": 30.0,
+      "stop_s": 36.0,
+      "speed": 1.0
+    }
+  ],
+  "fps": 20,
+  "dimensions": [
+    1600,
+    1200
+  ],
+  "knowledge_display": "Map/prediction/depth held at latest stored anchor<=displaytime; depth is latest delivered batch at that anchor. Robot moves continuously through actual saved states.",
+  "map_boundary": "Observed cell means only; no true terrain heatmap, future cells or future actual contact marker is inserted.",
+  "frames": 326,
+  "chapter_views": [
+    {
+      "id": "early_bump",
+      "start_s": 6.4,
+      "stop_s": 10.0,
+      "speed": 0.5,
+      "lookat_xyz_m": [
+        -1.496121916761938,
+        9.694115227873738,
+        1.2363539924708387
+      ],
+      "camera_distance_m": 1.3,
+      "map_bounds_xy_m": [
+        -2.7520975538003203,
+        -0.2401462797235554,
+        8.438139590835355,
+        10.95009086491212
+      ]
+    },
+    {
+      "id": "late_revisit",
+      "start_s": 30.0,
+      "stop_s": 36.0,
+      "speed": 1.0,
+      "lookat_xyz_m": [
+        -1.7821554234870722,
+        9.413478943727007,
+        1.2497482352782774
+      ],
+      "camera_distance_m": 1.3,
+      "map_bounds_xy_m": [
+        -3.1244460690006486,
+        -0.43986477797349566,
+        8.07118829821343,
+        10.755769589240584
+      ]
+    }
+  ],
+  "video": {
+    "path": "results/terrain_memory_20261126/videos/terrain_memory_shadow.mp4",
+    "sha256": "9a32e0203a5f7221c4921a181ae80edab8aa688afd19f7fe90b60d3faadff2d1",
+    "bytes": 4305580,
+    "frames": 326,
+    "fps": 20,
+    "dimensions": [
+      1600,
+      1200
+    ],
+    "duration_s": 16.3,
+    "decoded_last": true
+  }
+}

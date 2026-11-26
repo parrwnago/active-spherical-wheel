@@ -1,0 +1,575 @@
+diff --git a/OFFROAD.md b/OFFROAD.md
+index 08155d2..aac763a 100644
+--- a/OFFROAD.md
++++ b/OFFROAD.md
+@@ -106,6 +106,145 @@ The suite, envelope and held-out set below have not been run with it. In Gazebo
+ 
+ **What it does not remove.** It still needs the full state, including the base's linear velocity, which hardware would have to estimate. The per-surface loads used for gain blending and rim detection, the contact points of the rolling feedforward and the incoming-drive preview still come from the simulator. A push on the body reads as ground force while it lasts. Its slip speed is reported as zero, so the friction estimate stays at the nominal coefficient. It has not been tested with sensor noise, bias or delay, or with model parameters that differ from the plant's.
+ 
++### Estimated-contact correction diagnostics
++
++See the [iteration log](ITERATION_LOG.md) for the hypothesis/change/result/decision
++sequence, including rejected candidates, and the
++[presentation notes](docs/iterations/2026-11-25/README.md) for preserved evidence.
++
++The separate `hardware` mode uses `StateMirror` and `SupportLocator` to estimate
++contact locations and load shares as well as the net wrench. It reads no solved
++contacts or terrain during control. Its current simulation inputs are still exact
++body pose/velocity, joint angles/rates, and ideal applied drive inputs. The name
++does not imply that a physical robot or a sensor-estimation pipeline has been tested.
++
++`run_offroad(..., record_diagnostics=True)` in this mode adds estimated contact
++points/load shares, drive-rate references, the LQR and feedforward command
++contributions, transition corrections, clipping, and rolling-consistency signals.
++The components sum to the requested command; clipping explains the applied command.
++`reference_qvel` is the allocator's velocity reference; `feedback_reference_qvel`
++also contains the vertical velocity added for tracking along the estimated slope.
++The option does not change the controller's commands. Existing contact-force,
++point, load and slip columns remain simulator truth used only by the evaluator.
++
++Rolling consistency compares tangential body velocity with the velocity predicted
++from the measured body rotation, joint rates, estimated contacts and the preceding
++interval's applied belt speeds. It does not compare desired and actual speed.
++The load-weighted RMS of individual contact residuals preserves opposing slip that
++could cancel in a vector average. A mismatch over 0.02 m/s is labelled kinematic
++inconsistency, not proof of slip or an incorrect radius. Invalid/unloaded estimates
++are marked explicitly. Previous-interval saturation flags contextualize these
++measurements; current-command saturation flags describe the upcoming interval.
++
++Inside the Gazebo environment described in [GAZEBO.md](GAZEBO.md):
++
++```bash
++MUJOCO_GL=egl python scripts/run-contact-diagnostics.py --output results/contact_diagnostics/baseline
++python -m spherical_wheel.contact_diagnostics results/contact_diagnostics/baseline/plain_figure8/phase_+0.90/rollout.npz --output results/contact_diagnostics/events
++```
++
++The study uses the existing figure-eight at phases +0.30, +0.90 and -1.00 rad,
++plus triangle and out-and-back regressions. It blocks simulator contact APIs
++during each controller call and writes annotated correction-event plots.
++
++`OffroadParams(rolling_allocation='damped', rolling_damping_m_s=.01)` is an
++opt-in allocation experiment, also selected by the script's `--variant damped`.
++It adds a least-squares penalty on normalized drive rates to prevent nearly
++singular contact Jacobians from requesting extreme opposing rates. The existing
++scales (5 rad/s for joints, 0.3 m/s for belts) are preferences, not asserted motor
++limits. The default remains `least_squares`: damping removes numerical spikes
++but did not consistently improve trajectory tracking across the tested phases.
++
++`OffroadParams(rolling_allocation='bounded')` is a second opt-in experiment.
++It minimizes estimated-contact velocity error, normalized drive-speed demand,
++and changes in those drive references using bounded least squares. Contacts
++are weighted by their estimated load share. The normalization stays at
++`(5, 5, 5, .3, .3)`; the effort and change coefficients both default to
++0.001 m/s per normalized unit and can be set with `rolling_effort_m_s` and
++`rolling_change_m_s`. Weak drive directions need larger rates to achieve the
++same velocity, so the effort cost naturally permits more error there.
++
++The declared simulation **reference** speed limits are `(20, 20, 20, .3, .3)`
++in rad/s for the shaft/shells and m/s for the belts. Reference acceleration
++limits are `(100, 100, 100, 3, 3)` per second, including starting, stopping
++and contact changes. A brief unloaded interval holds the last references.
++The 20 rad/s choice matches the existing incoming-shell preview ceiling;
++the acceleration limits are experimental assumptions. These are configurable
++through `rolling_speed_limits` and `rolling_acceleration_limits`, not identified
++motor capabilities. Actual joint speeds can exceed the reference ceilings.
++The balance LQR, holding torques, synchronization and final actuator bounds
++remain in place; final torques and belt commands are not slew limited by this
++allocator. Drive-speed cost is a proxy for command demand, not electrical
++energy or torque effort. The timed path reference is unchanged in this trial.
++
++```bash
++MUJOCO_GL=egl python scripts/run-contact-diagnostics.py --variant bounded --output results/contact_allocation/bounded
++python scripts/compare-contact-allocation.py --baseline results/contact_diagnostics/baseline --candidate results/contact_allocation/bounded --output results/contact_allocation/comparison
++```
++
++The optional diagnostics include allocated drive references, limits, active
++bounds, cost coefficients, and the residual velocity the allocation cannot
++match. Keep the default allocator until comparisons establish the desired
++tracking-versus-demand tradeoff.
++
++For a geometry-dependent cost, set `rolling_adaptive_effort=True` with the
++bounded allocator, or add `--adaptive-effort` to the study command. Let `s`
++be the smaller singular value of the normalized, load-averaged horizontal
++contact Jacobian. The speed-cost coefficient is
++`base + (weak - base) * threshold**2 / (s**2 + threshold**2)`.
++Defaults are base 0.001, weak 0.005, and threshold 0.02 m/s per normalized
++unit. These are tunable via `rolling_effort_m_s`, `rolling_weak_effort_m_s`,
++and `rolling_authority_m_s`. This raises the penalty smoothly near aligned
++drive directions or vanishing levers using estimated geometry alone. It
++does not select weights by route name. Diagnostics record `s`, the blend,
++and the coefficient actually used. The common-translation authority measure
++does not certify that all constraints in a general multi-contact situation
++can be satisfied.
++
++The focused Gazebo comparison on 2026-11-25 ran a fresh baseline and three
++bounded variants on the same five cases. All 20 runs completed; each setting
++passed all existing acceptance gates on only one of its five cases. Moving
++RMS errors in millimetres were:
++
++| Case | Existing | Fixed cost .001 | Fixed cost .005 | Geometry-adaptive .001–.005 |
++| --- | ---: | ---: | ---: | ---: |
++| Figure-eight, +0.30 rad | 57.0 | 51.8 | 62.7 | 60.7 |
++| Figure-eight, +0.90 rad | 50.5 | 67.6 | 46.2 | 55.5 |
++| Figure-eight, -1.00 rad | 41.3 | 38.6 | 38.8 | 77.1 |
++| Triangle, +0.30 rad | 24.4 | 23.8 | 35.2 | 23.4 |
++| Out-and-back, +0.30 rad | 34.0 | 30.0 | 33.5 | 33.9 |
++
++All bounded variants respected their reference speed and acceleration bounds.
++The fixed .005 cost reduced the difficult +0.90 run's largest joint reference
++from 1760.5 to 2.1 rad/s and peak position error from 190.9 to 85.3 mm, but
++increased the triangle's peak error from 68.8 to 166.2 mm. Adaptive weighting
++recovered triangle tracking but regressed the -1.00 figure-eight. Reference
++bounds also did not prevent an unloaded shell from reaching 44.3 rad/s in the
++first fixed-.001 trial. No variant consistently improved tracking and attitude,
++so `least_squares` remains the default and the broader suite was not used to
++qualify these candidates. These are single runs per setting; small Gazebo
++numerical differences can change later handovers.
++
++Raw logs, source hashes, input audits, comparison JSON/CSV/plots and videos are
++in `results/weighted_allocation_20261125/`. Reproduce the stronger fixed-cost
++trial with `--variant bounded --effort-weight .005`; the adaptive trial uses
++`--variant bounded --adaptive-effort`. The controller's timed reference path
++was identical across settings, so these results do not hide tracking error by
++slowing the requested trajectory.
++
++In the adaptive -1.00 regression, the onset at 28.975 s had only about
++0.0000006 m/s allocation residual and no active allocation bounds. The estimated
++support switched shell/belt 18 times over 28.900–29.385 s, alongside large
++attitude/velocity feedback corrections and clipped belt commands. This is
++evidence to inspect contact-transition/gain-blending continuity; it does not
++establish that remaining allocation infeasibility or position error caused
++the excursion. Event evidence is saved with the adaptive comparison.
++
++`tests/test_multicontact_diagnostics.py` includes real Gazebo fixtures for two
++loaded rims and two contacts in a V-groove. The latter supplies the exact net
++wrench to isolate the locator's equivalent-support limitation. These fixtures
++do not establish closed-loop traversal of general multi-contact terrain.
++
+ ## What the controller does with it
+ 
+ `offroad_control.py` keeps the flat-floor gain library unchanged and corrects the places where assuming a level floor is wrong. They are listed by how much the tuning sweep found they matter.
+diff --git a/README.md b/README.md
+index d16ada3..6ef50cf 100644
+--- a/README.md
++++ b/README.md
+@@ -4,6 +4,10 @@ This is a working MuJoCo design study for the supplied active spherical wheel. I
+ 
+ The simulation is intended to answer whether the interpreted mechanism can balance and follow slow local trajectories under its stated assumptions. The result files record what each run actually achieved. They do not establish hardware performance or global stability through every shell/belt contact transition.
+ 
++The [iteration log](ITERATION_LOG.md) records hypotheses, experiments, unsuccessful
++trials, and the decisions they informed. [Presentation notes and evidence snapshots](docs/iterations/2026-11-25/README.md)
++preserve the development sequence alongside measured results.
++
+ ## Interactive browser lab on Linux or Ubuntu under WSL2
+ 
+ From the project directory, run:
+diff --git a/src/spherical_wheel/experiments.py b/src/spherical_wheel/experiments.py
+index 0c12629..2c2c3bd 100644
+--- a/src/spherical_wheel/experiments.py
++++ b/src/spherical_wheel/experiments.py
+@@ -26,11 +26,29 @@ def reference(t, duration, mode):
+     return position,derivative*ds,second*ds**2+derivative*dds
+ 
+ 
+-def rolling_feedforward(plant, velocity):
++def _rolling_allocation(rows, rhs, regularization_m_s=0.):
++    """Scaled rolling least squares, optionally damped near a vanishing lever.
++
++    The scales are the existing allocation preferences, not motor speed limits.
++    A positive regularization penalizes large normalized drive rates even if
++    an almost singular contact Jacobian can algebraically match the velocity.
++    """
++    if not np.isfinite(regularization_m_s) or regularization_m_s < 0:
++        raise ValueError('Rolling regularization must be finite and nonnegative')
++    scale=np.array([5.,5.,5.,.3,.3])
++    matrix=np.asarray(rows)*scale
++    target=np.asarray(rhs)
++    if regularization_m_s > 0:
++        matrix=np.vstack((matrix, regularization_m_s*np.eye(5)))
++        target=np.r_[target, np.zeros(5)]
++    return scale*np.linalg.lstsq(matrix,target,rcond=1e-7)[0]
++
++
++def rolling_feedforward(plant, velocity, regularization_m_s=0.):
+     """Minimum normalized contact-speed allocation; no extra forces are applied."""
+     records=getattr(plant,'contact_records',None)
+     if records is not None:
+-        return rolling_feedforward_records(plant,records(),velocity)
++        return rolling_feedforward_records(plant,records(),velocity,regularization_m_s)
+     rows=[]; rhs=[]
+     for c in plant.data.contact:
+         if c.efc_address < 0:
+@@ -52,16 +70,15 @@ def rolling_feedforward(plant, velocity):
+         rows.extend(row);rhs.extend(-velocity)
+     if not rows:
+         return np.zeros(9),np.zeros(5)
+-    scale=np.array([5.,5.,5.,.3,.3])
+-    allocated=scale*np.linalg.lstsq(np.asarray(rows)*scale,np.asarray(rhs),rcond=1e-7)[0]
++    allocated=_rolling_allocation(rows,rhs,regularization_m_s)
+     qvel=np.r_[velocity,0.,0.,0.,0.,allocated[:3]]
+     u=np.r_[np.zeros(3),allocated[3:]]
+     return qvel,u
+ 
+ 
+-def rolling_feedforward_records(plant, records, velocity):
++def rolling_feedforward_records(plant, records, velocity, regularization_m_s=0., allocator=None):
+     """``rolling_feedforward`` from contact records (see contact_sensing.records_from_mujoco)."""
+-    rows=[]; rhs=[]
++    rows=[]; rhs=[]; loads=[]
+     for record in records:
+         name=record['name']
+         if not name.startswith(('shell_','belt_')):
+@@ -73,10 +90,26 @@ def rolling_feedforward_records(plant, records, velocity):
+             side=0 if name.startswith('belt_A') else 1
+             row[:,3+side]=plant.data.geom_xmat[int(record['geom'])].reshape(3,3)[:2,1]
+         rows.extend(row);rhs.extend(-velocity)
++        loads.append(max(float(record.get('normal_force', 0.)), 0.))
++    if allocator is not None:
++        # Normalize load shares so adding duplicate contact records does not
++        # change the relative tracking/effort costs. No solver loads are read.
++        shares = np.asarray(loads, float)
++        if len(shares):
++            shares = shares/shares.sum() if shares.sum() > 0 else np.ones(len(shares))/len(shares)
++        weights = np.repeat(np.sqrt(shares), 2)
++        matrix = np.asarray(rows, float).reshape(-1, 5)
++        target = np.asarray(rhs, float)
++        authority = (shares[:, None, None]*matrix.reshape(-1, 2, 5)).sum(axis=0)
++        allocated = allocator.solve(matrix*weights[:, None], target*weights, plant.dt,
++                                    authority_matrix=authority)
++        residual = (matrix@allocated-target).reshape(-1, 2)
++        allocator.diagnostics['allocation_velocity_error_m_s'] = (
++            -(shares[:, None]*residual).sum(axis=0) if len(shares) else np.full(2, np.nan))
++        return np.r_[velocity, 0., 0., 0., 0., allocated[:3]], np.r_[np.zeros(3), allocated[3:]]
+     if not rows:
+         return np.zeros(9),np.zeros(5)
+-    scale=np.array([5.,5.,5.,.3,.3])
+-    allocated=scale*np.linalg.lstsq(np.asarray(rows)*scale,np.asarray(rhs),rcond=1e-7)[0]
++    allocated=_rolling_allocation(rows,rhs,regularization_m_s)
+     qvel=np.r_[velocity,0.,0.,0.,0.,allocated[:3]]
+     u=np.r_[np.zeros(3),allocated[3:]]
+     return qvel,u
+diff --git a/src/spherical_wheel/offroad_control.py b/src/spherical_wheel/offroad_control.py
+index 9f6aaea..60c20c9 100644
+--- a/src/spherical_wheel/offroad_control.py
++++ b/src/spherical_wheel/offroad_control.py
+@@ -77,10 +77,11 @@ import numpy as np
+ from scipy.linalg import solve_discrete_are
+ 
+ from .contact_sensing import (ContactEstimator, MomentumObserver, SupportLocator, intrinsic_normal, measure_contact,
+-                              measure_records)
++                              measure_records, records_from_mujoco)
+ from .control import design_lqr, find_equilibrium, linearize
+ from .experiments import rolling_feedforward, rolling_feedforward_records
+ from .recovery_control import ScheduledBalanceFeedback, build_gain_library
++from .rolling_allocation import AllocationSettings, BoundedRollingAllocator
+ from .synchronization import ContactSynchronizer
+ 
+ # State weights of the flat-floor LQR (control.design_lqr), in its scaled
+@@ -199,6 +200,15 @@ class OffroadParams:
+     support_feedforward: float = 1.        # 1 applies the full static holding torque
+     schedule_on_ground_normal: bool = False  # True measures the gain phase against the sensed normal
+     shaft_error: str = 'rolling'           # 'material', 'free' or 'rolling'
++    rolling_allocation: str = 'least_squares'  # 'damped' and 'bounded' are opt-in experiments
++    rolling_damping_m_s: float = .01       # penalty per normalized drive rate for 'damped'
++    rolling_speed_limits: tuple = (20., 20., 20., .3, .3)  # assumed reference limits: rad/s, rad/s, rad/s, m/s, m/s
++    rolling_acceleration_limits: tuple = (100., 100., 100., 3., 3.)  # assumed reference limits per second
++    rolling_effort_m_s: float = .001       # normalized speed cost for 'bounded'; not electrical effort
++    rolling_change_m_s: float = .001       # normalized reference-change cost for 'bounded'
++    rolling_adaptive_effort: bool = False  # increase speed cost as estimated horizontal authority vanishes
++    rolling_weak_effort_m_s: float = .005
++    rolling_authority_m_s: float = .02     # normalized Jacobian singular value for half of the cost increase
+     track_contact_point: bool = False      # reference applies to the ground contact point, not the wheel centre
+     slip_threshold_m_s: float = .02        # surface speed that counts as sliding for the friction estimate
+     friction_recovery_s: float = 1.5       # how fast that estimate relaxes back once sliding stops
+@@ -223,6 +233,14 @@ class OffroadParams:
+             raise ValueError(f'Choose a controller mode from {CONTROLLER_MODES}')
+         if self.shaft_error not in ('material', 'free', 'rolling'):
+             raise ValueError('Shaft error must be material, free or rolling')
++        if self.rolling_allocation not in ('least_squares', 'damped', 'bounded'):
++            raise ValueError('Rolling allocation must be least_squares, damped or bounded')
++        AllocationSettings(self.rolling_speed_limits, self.rolling_acceleration_limits,
++                           self.rolling_effort_m_s, self.rolling_change_m_s,
++                           self.rolling_weak_effort_m_s if self.rolling_adaptive_effort else None,
++                           self.rolling_authority_m_s)
++        if not np.isfinite(self.rolling_damping_m_s) or self.rolling_damping_m_s <= 0:
++            raise ValueError('Rolling damping must be finite and positive')
+         if self.normal_source not in ('intrinsic', 'solver'):
+             raise ValueError('Normal source must be intrinsic or solver')
+         if self.mode in OBSERVER_MODES and self.normal_source != 'intrinsic':
+@@ -321,13 +339,22 @@ class OffroadController:
+     the schedule, as the lab's scenario reset does.
+     """
+ 
+-    def __init__(self, plant, design, params=None, phase=None):
++    def __init__(self, plant, design, params=None, phase=None, record_diagnostics=False):
+         self.params = params or OffroadParams()
++        self.record_diagnostics = bool(record_diagnostics)
++        if self.record_diagnostics and self.params.mode != 'hardware':
++            raise ValueError('Detailed contact diagnostics require hardware mode')
+         if self.params.ground_aware and self.params.lqr_weights != getattr(design, 'weights', 'flat'):
+             design = design.variant(self.params.lqr_weights)
+         self.plant, self.design = plant, design
+         self.feedback = ScheduledBalanceFeedback(plant, design.points)
+         self.synchronizer = ContactSynchronizer(plant)
++        self.rolling_allocator = (BoundedRollingAllocator(AllocationSettings(
++            self.params.rolling_speed_limits, self.params.rolling_acceleration_limits,
++            self.params.rolling_effort_m_s, self.params.rolling_change_m_s,
++            self.params.rolling_weak_effort_m_s if self.params.rolling_adaptive_effort else None,
++            self.params.rolling_authority_m_s))
++            if self.params.rolling_allocation == 'bounded' else None)
+         model = plant.model
+         self.carrier_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, 'carrier')
+         self.radius = float(plant.config['geometry']['sphere_radius_m'])
+@@ -371,6 +398,8 @@ class OffroadController:
+             ground = getattr(self.plant, 'ground', None)
+             self.estimator.reset(ground['normal'] if ground else (0., 0., 1.))
+         self._vref = np.zeros(self.plant.model.nv)
++        if self.rolling_allocator is not None:
++            self.rolling_allocator.reset()
+         self._sync = {'commands': [0.]*5, 'blend_weights': [0.]*5, 'targets': []}
+         self._held = None
+         quat = self.plant.data.qpos[3:7]
+@@ -511,7 +540,21 @@ class OffroadController:
+             self._yaw_error = self._update_heading_target(normal, yaw)
+         moving = bool(np.linalg.norm(velocity) > 0)
+         touching = sum(measurement['loads_N'].values()) > .001
+-        if not moving:
++        damping = params.rolling_damping_m_s if params.rolling_allocation == 'damped' else 0.
++        if self.rolling_allocator is not None:
++            if moving and aware and not touching and self._held is not None:
++                # Keep the last bounded references through a brief dropout.
++                # Their change is zero, so both reference bounds still hold.
++                drive = self.rolling_allocator.hold()
++                vref = np.r_[velocity, 0., 0., 0., 0., drive[:3]]
++                feedforward = np.r_[np.zeros(3), drive[3:]]
++            else:
++                contact_records = getattr(plant, 'contact_records', None)
++                bounded_records = (records if records is not None else
++                                   contact_records() if contact_records is not None else records_from_mujoco(plant))
++                vref, feedforward = rolling_feedforward_records(
++                    plant, bounded_records, np.asarray(velocity, float), allocator=self.rolling_allocator)
++        elif not moving:
+             vref, feedforward = np.zeros(9), np.zeros(5)
+         elif aware and not touching and self._held is not None:
+             # A surface handover can leave one interval with no contact. The
+@@ -519,9 +562,9 @@ class OffroadController:
+             # than drop the velocity reference to zero for that interval.
+             vref, feedforward = self._held['vref'].copy(), self._held['feedforward'].copy()
+         elif records is not None:
+-            vref, feedforward = rolling_feedforward_records(plant, records, np.asarray(velocity, float))
++            vref, feedforward = rolling_feedforward_records(plant, records, np.asarray(velocity, float), damping)
+         else:
+-            vref, feedforward = rolling_feedforward(plant, np.asarray(velocity, float))
++            vref, feedforward = rolling_feedforward(plant, np.asarray(velocity, float), damping)
+         qref = equilibrium['qpos'].copy()
+         qref[:2] = xy
+         if aware and params.track_contact_point:
+@@ -543,6 +586,14 @@ class OffroadController:
+             command, feedback = self.feedback.compute(qref, vref, equilibrium['u'], design['K'], feedforward)
+         diagnostics.update(effective_phase_rad=feedback['effective_phase_rad'], yaw_rad=feedback['yaw_rad'],
+                            error=feedback['error'])
++        if self.record_diagnostics:
++            pre_sync = command.copy()
++            diagnostics.update(equilibrium_command=np.array(equilibrium['u'], copy=True),
++                               rolling_feedforward=np.array(feedforward, copy=True),
++                               support_command=diagnostics['support_torque'].copy(),
++                               lqr_command=-feedback['K']@feedback['error'],
++                               feedback_reference_qvel=feedback['reference_qvel'].copy(),
++                               feedback_gain=np.array(feedback['K'], copy=True))
+         sync = {'commands': [0.]*5, 'blend_weights': [0.]*5, 'targets': []}
+         if params.synchronize and records is not None:
+             # The plane through the located support with the sensed normal,
+@@ -560,14 +611,49 @@ class OffroadController:
+             sync = self.synchronizer.preview(command)
+             weights = np.asarray(sync['blend_weights'])
+             command = (1.-weights)*command+weights*np.asarray(sync['commands'])
++        if self.record_diagnostics:
++            diagnostics['transition_command_delta'] = command-pre_sync
++            pre_heading = command.copy()
+         if aware:
+             heading_torque, diagnostics['heading_error_rad'] = self._heading_torque(feedback['yaw_rad'])
+             command = command+heading_torque
++            if self.record_diagnostics:
++                diagnostics['heading_command'] = command-pre_heading
++                pre_fade = command.copy()
+             command, diagnostics['drive_fade'] = self._fade_when_unloaded(command, estimate, vref)
++            if self.record_diagnostics:
++                diagnostics['fade_command_delta'] = command-pre_fade
+         self._sync, self._vref = sync, vref
+         applied = np.clip(command, -plant.bounds, plant.bounds)
+         diagnostics.update(requested=command.copy(), reference_qpos=qref, reference_qvel=vref,
+                            sync_weights=np.asarray(sync['blend_weights']))
++        if self.record_diagnostics:
++            from .contact_kinematics import rolling_consistency
++            diagnostics.update(rolling_consistency(plant, records,
++                self.params.support_min_load_fraction*self.weight))
++            diagnostics.update(
++                estimated_contact_point_m=np.asarray(measurement['point_m']).copy(),
++                estimated_support_loads_N=np.array([measurement['loads_N'][name]
++                    for name in ('shell_A', 'shell_B', 'belt_A', 'belt_B')]),
++                reference_velocity_m_s=np.asarray(velocity, float).copy(),
++                tracking_velocity_error_m_s=plant.data.qvel[:2]-np.asarray(velocity, float),
++                actuator_saturated=np.abs(command) > plant.bounds+1e-12,
++                clipping_command_delta=applied-command,
++                input_bounds=plant.bounds.copy())
++            if self.rolling_allocator is not None:
++                diagnostics.update(self.rolling_allocator.diagnostics)
++            else:
++                diagnostics.update(
++                    allocation_drive_reference=np.r_[vref[6:9], feedforward[3:]],
++                    allocation_speed_limits=np.full(5, np.nan),
++                    allocation_acceleration_limits=np.full(5, np.nan),
++                    allocation_active_bounds=np.zeros(5, bool),
++                    allocation_effort_weight_m_s=damping,
++                    allocation_change_weight_m_s=0.,
++                    allocation_authority_m_s=np.nan,
++                    allocation_effort_blend=0.,
++                    allocation_residual_rms_m_s=np.nan,
++                    allocation_velocity_error_m_s=np.full(2, np.nan))
+         return applied, diagnostics
+ 
+     def _terrain_feedback(self, qref, vref, feedforward, normal, measurement, touching):
+@@ -620,7 +706,7 @@ class OffroadController:
+         support_torque = params.support_feedforward*self.support_torque(normal, loads)
+         command = np.asarray(equilibrium['u'])+np.asarray(feedforward)+support_torque-gain@error
+         return command, {'effective_phase_rad': phase, 'yaw_rad': yaw, 'error': error,
+-                         'support_torque': support_torque}
++                         'support_torque': support_torque, 'K': gain, 'reference_qvel': vref}
+ 
+     def _heading_torque(self, yaw):
+         """Hold the starting heading with whichever shell is not carrying load.
+diff --git a/src/spherical_wheel/offroad_experiments.py b/src/spherical_wheel/offroad_experiments.py
+index a87e71a..19d744a 100644
+--- a/src/spherical_wheel/offroad_experiments.py
++++ b/src/spherical_wheel/offroad_experiments.py
+@@ -190,9 +190,27 @@ _LOG_KEYS = ('time_s', 'qpos', 'qvel', 'command', 'input', 'reference_xy', 'refe
+              'support_direction', 'contact_point_m', 'contact_moment_Nm', 'observer_force_N', 'observer_moment_Nm')
+ _UNOBSERVED = np.full(3, np.nan)
+ 
++# Opt-in diagnostics use only controller-visible measurements/estimates.
++# Existing unprefixed contact columns remain simulator truth for evaluation.
++_DIAGNOSTIC_KEYS = (
++    'estimated_contact_point_m', 'estimated_contact_points_m', 'estimated_support_loads_N',
++    'reference_velocity_m_s', 'reference_qvel', 'feedback_reference_qvel', 'rolling_feedforward', 'lqr_command',
++    'equilibrium_command', 'support_command', 'transition_command_delta', 'heading_command',
++    'fade_command_delta', 'clipping_command_delta', 'sync_weights', 'feedback_gain',
++    'contact_velocity_residual_m_s', 'contact_velocity_residual_rms_m_s',
++    'contact_velocity_residual_max_m_s', 'predicted_body_velocity_m_s', 'measured_body_velocity_m_s',
++    'velocity_consistency_valid', 'kinematic_inconsistency', 'actuator_saturated',
++    'tracking_velocity_error_m_s', 'input_bounds', 'previous_applied_input',
++    'previous_actuator_saturated',
++    'allocation_drive_reference', 'allocation_speed_limits', 'allocation_acceleration_limits',
++    'allocation_active_bounds', 'allocation_effort_weight_m_s', 'allocation_change_weight_m_s',
++    'allocation_residual_rms_m_s', 'allocation_velocity_error_m_s',
++    'allocation_authority_m_s', 'allocation_effort_blend',
++)
++
+ 
+ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=None, pushes=(),
+-                balanced_lean=True, settle_s=3., yaw_deg=0.):
++                balanced_lean=True, settle_s=3., yaw_deg=0., record_diagnostics=False):
+     """Simulate one run and return ``(log, summary)``.
+ 
+     ``pushes`` are ``(start_s, duration_s, [Fx, Fy, Fz])`` world forces on the
+@@ -204,17 +222,23 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
+     follows the simulated robot's state before every call. Its contact
+     estimates stay in its diagnostics; the log's contact columns are the
+     solver's in every mode, so they measure what really happened.
++
++    ``record_diagnostics`` adds estimated contacts, measured rolling-consistency
++    residuals, and separate command contributions without feeding them back.
++    These additional fields currently require ``hardware`` mode.
+     """
+     params = params or OffroadParams()
+     plant = workspace.plant(terrain)
+     phase = plant.config['simulation'].get('initial_shaft_phase_rad', .30) if phase is None else phase
+     controller = OffroadController(workspace.mirror() if params.mode == 'hardware' else plant,
+-                                   workspace.design, params, phase)
++                                   workspace.design, params, phase, record_diagnostics=record_diagnostics)
+     place_on_ground(plant, controller, path.origin, phase, balanced_lean, yaw_deg)
+     duration = float(duration_s if duration_s is not None else path.start_s+path.duration_s+settle_s)
+     count = int(round(duration/plant.dt))
+-    log = {key: [] for key in _LOG_KEYS}
++    keys = _LOG_KEYS+_DIAGNOSTIC_KEYS if record_diagnostics else _LOG_KEYS
++    log = {key: [] for key in keys}
+     failure = None
++    previous_requested = plant.last_input.copy()
+     for index in range(count+1):
+         now = float(plant.data.time)
+         xy, velocity, acceleration = path(now)
+@@ -255,7 +279,12 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
+                                     else _UNOBSERVED.copy()),
+                'observer_moment_Nm': (diagnostics['observed']['moment_Nm'].copy() if diagnostics.get('observed')
+                                       else _UNOBSERVED.copy())}
+-        for key in _LOG_KEYS:
++        if record_diagnostics:
++            row.update({key: diagnostics[key] for key in _DIAGNOSTIC_KEYS
++                        if key not in ('previous_applied_input', 'previous_actuator_saturated')})
++            row['previous_applied_input'] = plant.last_input.copy()
++            row['previous_actuator_saturated'] = np.abs(previous_requested) > plant.bounds+1e-12
++        for key in keys:
+             log[key].append(row[key])
+         if snapshot['balance_failed']:
+             failure = 'fork or platform touched the ground'
+@@ -269,6 +298,7 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
+             break
+         plant.step(applied, np.r_[push, np.zeros(3)])
+         controller.after_step()
++        previous_requested = diagnostics['requested'].copy()
+     log = {key: np.asarray(value) for key, value in log.items()}
+     summary = summarize(log, plant, path, params, failure, duration)
+     return log, summary
+diff --git a/tests/test_hardware_mode.py b/tests/test_hardware_mode.py
+index f131170..112e86b 100644
+--- a/tests/test_hardware_mode.py
++++ b/tests/test_hardware_mode.py
+@@ -180,3 +180,49 @@ def test_hardware_is_its_own_controller_mode():
+         OffroadParams(mode='hardware', normal_source='solver')
+     with pytest.raises(ValueError):
+         OffroadParams(mode='hardware', support_min_load_fraction=0.)
++
++
++@pytest.mark.parametrize('allocation', ['least_squares', 'bounded'])
++def test_diagnostic_logging_preserves_commands_and_separates_contributions(workspace, allocation):
++    terrain = make_terrain('ramp', grade_deg=8.)
++    plant, mirror = workspace.plant(terrain), workspace.mirror()
++    params = OffroadParams(mode='hardware', rolling_allocation=allocation)
++    plain = OffroadController(mirror, workspace.design, params, .30)
++    traced = OffroadController(mirror, workspace.design, params, .30,
++                               record_diagnostics=True)
++    path = ReferencePath(.3, 0., 4., start_s=.1)
++    place_on_ground(plant, plain, path.origin, .30, True, 0.)
++    traced.reset(.30)
++    traced.nominal_joints = plain.nominal_joints.copy()
++    for _ in range(100):
++        measure_for(plain, plant)
++        applied, first = plain.command(*path(plant.data.time))
++        applied_traced, details = traced.command(*path(plant.data.time))
++        np.testing.assert_array_equal(applied, applied_traced)
++        np.testing.assert_array_equal(first['requested'], details['requested'])
++        components = sum(details[key] for key in (
++            'equilibrium_command', 'rolling_feedforward', 'support_command', 'lqr_command',
++            'transition_command_delta', 'heading_command', 'fade_command_delta'))
++        np.testing.assert_allclose(components, details['requested'], atol=1e-12)
++        np.testing.assert_allclose(components+details['clipping_command_delta'], applied, atol=1e-12)
++        np.testing.assert_array_equal(details['feedback_reference_qvel'][6:], details['reference_qvel'][6:])
++        normal = details['estimate']['normal']
++        assert details['feedback_reference_qvel'][2] == pytest.approx(
++            -float(normal[:2]@details['reference_qvel'][:2])/max(normal[2], .2))
++        plant.step(applied)
++        plain.after_step()
++        traced.after_step()
++
++
++def test_detailed_rollout_keeps_previous_interval_inputs_aligned(workspace):
++    from spherical_wheel.offroad_experiments import run_offroad
++    log, _ = run_offroad(workspace, make_terrain('slope', grade_deg=8.),
++                         ReferencePath(.2, 0., 2., start_s=.05, ramp_s=.3),
++                         OffroadParams(mode='hardware'), duration_s=.4,
++                         record_diagnostics=True)
++    np.testing.assert_array_equal(log['previous_applied_input'][1:], log['input'][:-1])
++    np.testing.assert_array_equal(log['previous_actuator_saturated'][1:], log['actuator_saturated'][:-1])
++    components = sum(log[key] for key in (
++        'equilibrium_command', 'rolling_feedforward', 'support_command', 'lqr_command',
++        'transition_command_delta', 'heading_command', 'fade_command_delta'))
++    np.testing.assert_allclose(components, log['command'], atol=1e-12)

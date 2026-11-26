@@ -1,0 +1,173 @@
+{
+  "scope": "Two NEW extended original LQR/FF baselines, not additional MPC or held-drift experiments. Original warm/path/goal/settings retained, recovery4s\u21928s.",
+  "source_sha256": "813e00d5119ef4ae9e1188d50e109529ebeb936c74a7ae007af7775f77a7b066",
+  "new_gazebo_executions": 2,
+  "rows": [
+    {
+      "direction": "world_y",
+      "reused_old_run": "results/mpc_balance_20261125/initial/runs/world_y/baseline",
+      "new_run": "results/feedback_recovery_20261125/extended_original_baselines/runs/world_y/baseline",
+      "old": {
+        "completed": true,
+        "failure": null,
+        "completed_time_s": 5.399999999999907,
+        "original_goal_xy_m": [
+          -1.1690362005544144e-05,
+          -0.004756870016445286
+        ],
+        "goal_error_at_old_deadline_5p4s_mm": 98.82571930310188,
+        "goal_error_final_mm": 98.82571930310188,
+        "goal_error_final1s_max_mm": 270.31914143337355,
+        "xy_speed_final_mm_s": 131.82995307412844,
+        "xy_speed_final1s_max_mm_s": 203.87284499837452,
+        "reference_lean_error_final_deg": 1.066287938643959,
+        "reference_lean_error_final1s_max_deg": 1.2286713105710751,
+        "absolute_platform_tilt_final_deg": 8.70620346069336,
+        "goal_error_and_speed_and_reference_lean_final1s": false,
+        "gate": "Final1s goal<=5mm, XYspeed<=5mm/s, referenceleanerror<=2deg; completion required."
+      },
+      "new": {
+        "completed": true,
+        "failure": null,
+        "completed_time_s": 9.40000000000007,
+        "original_goal_xy_m": [
+          -1.1690362005544144e-05,
+          -0.004756870016445286
+        ],
+        "goal_error_at_old_deadline_5p4s_mm": 98.82571930310188,
+        "goal_error_final_mm": 5.804023477435359,
+        "goal_error_final1s_max_mm": 11.538637545722535,
+        "xy_speed_final_mm_s": 1.720974187678942,
+        "xy_speed_final1s_max_mm_s": 8.442617762069846,
+        "reference_lean_error_final_deg": 0.037544285882357246,
+        "reference_lean_error_final1s_max_deg": 0.24495227482335732,
+        "absolute_platform_tilt_final_deg": 9.451562881469727,
+        "goal_error_and_speed_and_reference_lean_final1s": false,
+        "gate": "Final1s goal<=5mm, XYspeed<=5mm/s, referenceleanerror<=2deg; completion required."
+      },
+      "prefix_samples": 1081,
+      "prefix_through_old_duration_bit_identical": true,
+      "prefix_exact_equality_by_key": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_applied": true,
+        "exact_observer_wrench": true,
+        "mpc_native_requested": true,
+        "mpc_native_applied": true,
+        "mpc_original_goal_xy": true,
+        "mpc_actual_input_at_limit": true
+      },
+      "prefix_max_abs_difference_by_key": {
+        "time_s": 0.0,
+        "exact_qpos": 0.0,
+        "exact_qvel": 0.0,
+        "exact_applied": 0.0,
+        "exact_observer_wrench": 0.0,
+        "mpc_native_requested": 0.0,
+        "mpc_native_applied": 0.0,
+        "mpc_original_goal_xy": 0.0,
+        "mpc_actual_input_at_limit": 0.0
+      },
+      "changed_common_source_paths": [
+        "scripts/run-mpc-comparison.py",
+        "src/spherical_wheel/predictive_control.py",
+        "src/spherical_wheel/predictive_model.py"
+      ],
+      "shared_core_source_hashes_equal": false,
+      "inputs_sha256": {
+        "results/mpc_balance_20261125/initial/runs/world_y/baseline/precision.npz": "7ddd4ac26147a7ff4dc090093e9ce8f4b29edfe834fe804f9e668d58356a351d",
+        "results/mpc_balance_20261125/initial/runs/world_y/baseline/rollout.npz": "64bad91bc89e175084b0f8dc4bffd82667de57931198f15ffb9401f95b74791a",
+        "results/mpc_balance_20261125/initial/runs/world_y/baseline/summary.json": "46dba4e2c7654d39ab0c9e8c3e03fa22b91a7338756e1680fab923199c5b10b9",
+        "results/mpc_balance_20261125/initial/runs/world_y/baseline/provenance.json": "d29c293b89b9f1b5f6b402abf46874dfea0c2516c860f941e0d436b7242b40a5",
+        "results/feedback_recovery_20261125/extended_original_baselines/runs/world_y/baseline/precision.npz": "0325231c051dd76b16271733b6d65f5ca402abe63934f351f2edea9086de444a",
+        "results/feedback_recovery_20261125/extended_original_baselines/runs/world_y/baseline/rollout.npz": "24aff973c2f46b60658db77ff208180a358602795095689f2322180bbce269d1",
+        "results/feedback_recovery_20261125/extended_original_baselines/runs/world_y/baseline/summary.json": "5427295ad7ea7dc5d8e6a9024f3db72475579aa85a294c97275dff7d6ec752ff",
+        "results/feedback_recovery_20261125/extended_original_baselines/runs/world_y/baseline/provenance.json": "38aa6ae5f0f4a89fb759c11aa7c2b92135a2a463f63a2eeb1e5fe325ea7c147e"
+      }
+    },
+    {
+      "direction": "world_x",
+      "reused_old_run": "results/mpc_balance_20261125/initial/runs/world_x/baseline",
+      "new_run": "results/feedback_recovery_20261125/extended_original_baselines/runs/world_x/baseline",
+      "old": {
+        "completed": true,
+        "failure": null,
+        "completed_time_s": 5.399999999999907,
+        "original_goal_xy_m": [
+          0.015988309637994455,
+          -0.020756870016445286
+        ],
+        "goal_error_at_old_deadline_5p4s_mm": 5.300235765395867,
+        "goal_error_final_mm": 5.300235765395867,
+        "goal_error_final1s_max_mm": 8.860474092586266,
+        "xy_speed_final_mm_s": 3.444156082468606,
+        "xy_speed_final1s_max_mm_s": 4.235804817341807,
+        "reference_lean_error_final_deg": 0.013545552454711274,
+        "reference_lean_error_final1s_max_deg": 0.014468987026885056,
+        "absolute_platform_tilt_final_deg": 9.735898971557617,
+        "goal_error_and_speed_and_reference_lean_final1s": false,
+        "gate": "Final1s goal<=5mm, XYspeed<=5mm/s, referenceleanerror<=2deg; completion required."
+      },
+      "new": {
+        "completed": true,
+        "failure": null,
+        "completed_time_s": 9.40000000000007,
+        "original_goal_xy_m": [
+          0.015988309637994455,
+          -0.020756870016445286
+        ],
+        "goal_error_at_old_deadline_5p4s_mm": 5.300235765395867,
+        "goal_error_final_mm": 139.60659045028788,
+        "goal_error_final1s_max_mm": 139.60659045028788,
+        "xy_speed_final_mm_s": 298.62301168570934,
+        "xy_speed_final1s_max_mm_s": 298.62301168570934,
+        "reference_lean_error_final_deg": 4.534071243238047,
+        "reference_lean_error_final1s_max_deg": 4.534071243238047,
+        "absolute_platform_tilt_final_deg": 5.2139997482299805,
+        "goal_error_and_speed_and_reference_lean_final1s": false,
+        "gate": "Final1s goal<=5mm, XYspeed<=5mm/s, referenceleanerror<=2deg; completion required."
+      },
+      "prefix_samples": 1081,
+      "prefix_through_old_duration_bit_identical": true,
+      "prefix_exact_equality_by_key": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_applied": true,
+        "exact_observer_wrench": true,
+        "mpc_native_requested": true,
+        "mpc_native_applied": true,
+        "mpc_original_goal_xy": true,
+        "mpc_actual_input_at_limit": true
+      },
+      "prefix_max_abs_difference_by_key": {
+        "time_s": 0.0,
+        "exact_qpos": 0.0,
+        "exact_qvel": 0.0,
+        "exact_applied": 0.0,
+        "exact_observer_wrench": 0.0,
+        "mpc_native_requested": 0.0,
+        "mpc_native_applied": 0.0,
+        "mpc_original_goal_xy": 0.0,
+        "mpc_actual_input_at_limit": 0.0
+      },
+      "changed_common_source_paths": [
+        "scripts/run-mpc-comparison.py",
+        "src/spherical_wheel/predictive_control.py",
+        "src/spherical_wheel/predictive_model.py"
+      ],
+      "shared_core_source_hashes_equal": false,
+      "inputs_sha256": {
+        "results/mpc_balance_20261125/initial/runs/world_x/baseline/precision.npz": "5970a55f6eab1761e89a2c8f3d144fcbda45aa61e48607dca0fe47c2123ec4aa",
+        "results/mpc_balance_20261125/initial/runs/world_x/baseline/rollout.npz": "defa4b9d97bac744bc691de41b67d102f5be7e09a70afd748167c6f4b3327bdc",
+        "results/mpc_balance_20261125/initial/runs/world_x/baseline/summary.json": "d620a323da912f1b86833333d9ae16289cdbb197213bbf11e4eada234b5d9c54",
+        "results/mpc_balance_20261125/initial/runs/world_x/baseline/provenance.json": "3a41b7e6af288aaf75ab310f04e882a8d8916aa7664c407f85f0ef69b8c1d9c0",
+        "results/feedback_recovery_20261125/extended_original_baselines/runs/world_x/baseline/precision.npz": "7f6609de9912a3b5b520b51e009b0215c9ca15323da9d2124f9241e858e70d6b",
+        "results/feedback_recovery_20261125/extended_original_baselines/runs/world_x/baseline/rollout.npz": "bdc4974e6694af06ad75ab56102dc95ac65fbe15efbdd2c25629835a5d1ae254",
+        "results/feedback_recovery_20261125/extended_original_baselines/runs/world_x/baseline/summary.json": "bac8b0ceffed8b3a1038daa33ed40998362ee90bda83ad6fc25f3574ee4b3f0e",
+        "results/feedback_recovery_20261125/extended_original_baselines/runs/world_x/baseline/provenance.json": "79aced2567808285069e50ba3a949e1a2ad7cad3f74f1daa85d92b9edf9e01bb"
+      }
+    }
+  ]
+}

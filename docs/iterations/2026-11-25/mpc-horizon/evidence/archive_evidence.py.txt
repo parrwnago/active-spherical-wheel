@@ -1,0 +1,96 @@
+"""Archive completed I35 evidence. No numerical experiment or test execution."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+
+FAMILY = Path(__file__).resolve().parent
+REPO = FAMILY.parents[1]
+DEST = REPO / 'docs/iterations/2026-11-25/mpc-horizon/evidence'
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+if DEST.exists():
+    raise FileExistsError('Preserve previous collection; use a new archive stage')
+protocol = json.loads((FAMILY / 'protocol.json').read_text())
+report = json.loads((FAMILY / 'frozen/report.json').read_text())
+assert report['selected_longer_horizon_s'] is None
+assert not report['new_Gazebo_authorized_by_gate']
+assert len(report['rows']) == 6
+assert report['qp_solved_count'] == report['qp_call_count'] == 42
+assert sha(FAMILY / 'protocol.json') == report['protocol_sha256']
+source_count = artifact_count = 0
+for worker in ('worker_04', 'worker_2'):
+    folder = FAMILY / 'frozen' / worker
+    provenance = json.loads((folder / 'provenance.json').read_text())
+    for item in provenance['sources']:
+        assert sha(folder / item['snapshot']) == item['sha256'], item
+        source_count += 1
+    for item in json.loads((folder / 'artifact_manifest.json').read_text())['files']:
+        assert sha(folder / item['path']) == item['sha256'], item
+        artifact_count += 1
+for item in json.loads((FAMILY / 'frozen/artifact_manifest.json').read_text())['files']:
+    assert sha(FAMILY / 'frozen' / item['path']) == item['sha256'], item
+    artifact_count += 1
+assert sha(REPO / 'scripts/diagnose-mpc-horizon.py') == sha(
+    FAMILY / 'frozen/worker_04/source_snapshot/scripts/diagnose-mpc-horizon.py')
+for rel, expected in protocol['old_pack_hashes'].items():
+    assert sha(REPO / rel) == expected, rel
+for row in report['prefix_checks']:
+    assert all(row[k] for k in ('target_first_20_bit_equal',
+        'native_fine_first_80_bit_equal', 'native_coarse_first_20_bit_equal',
+        'current_qpos_bit_equal', 'current_qvel_bit_equal'))
+assert all(r['contact_replay_stage_states_bit_exact'] for r in report['rows'])
+
+DEST.mkdir(parents=True)
+files, inventory = [], []
+allowed = {'.json', '.log', '.csv', '.png', '.jpg', '.jpeg', '.md', '.txt',
+           '.py', '.yaml', '.yml', '.toml', '.xml'}
+for source in sorted(FAMILY.rglob('*')):
+    if not source.is_file():
+        continue
+    rel = source.relative_to(FAMILY)
+    if '__pycache__' in rel.parts or source.suffix == '.pyc':
+        continue
+    inventory.append({'origin': str(source.relative_to(REPO)),
+                      'bytes': source.stat().st_size, 'sha256': sha(source)})
+    generated = any(x in rel.parts for x in
+        ('history_workspace', 'meshes', '_workspaces', '_render_scene'))
+    if generated or source.suffix not in allowed:
+        continue
+    target_rel = rel.with_suffix(rel.suffix + '.txt') if source.suffix == '.py' else rel
+    target = DEST / target_rel
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(source, target)
+    assert sha(source) == sha(target)
+    stage = ('exact_tested_source__see_worker_provenance' if 'source_snapshot' in rel.parts else
+             'never_executed_later_proposed_instrumentation' if 'unrun_trace_instrumentation' in rel.parts else
+             'declared_pre_change_source' if rel.parts[0] == 'pre_change' or 'pre_1ms_instrumentation' in rel.parts else
+             'exact_postprocess_source' if 'postprocess_source' in rel.parts else
+             'completed_I35_artifact_or_read_only_archival_tool')
+    files.append({'snapshot': str(target_rel), 'origin': str(source.relative_to(REPO)),
+                  'bytes': source.stat().st_size, 'sha256': sha(source), 'stage': stage})
+inventory_path = DEST / 'raw_inventory.json'
+inventory_path.write_text(json.dumps(inventory, indent=2) + '\n')
+files.append({'snapshot': 'raw_inventory.json', 'origin': 'archive_evidence.py',
+              'bytes': inventory_path.stat().st_size, 'sha256': sha(inventory_path),
+              'stage': 'archival_index__no_new_experiment'})
+manifest = {
+    'iteration': 'I-35',
+    'scope': 'Six saved-state private MuJoCo forecasts; zero new Gazebo trials. Copy/hash verification only during archival.',
+    'artifact_count_excluding_manifest': len(files),
+    'artifact_bytes_excluding_manifest': sum(f['bytes'] for f in files),
+    'files': files,
+    'verified_worker_source_references': source_count,
+    'verified_worker_and_final_artifact_references_including_overlap': artifact_count,
+    'raw_inventory_count': len(inventory),
+    'all_shared_prefixes_and_replay_endpoints_bit_exact': True,
+    'source_input_boundary': 'I32 baseline plans/precision/provenance remain at worker-recorded paths and hashes; generated history-workspace geometry inventoried, not copied. Model mass properties retained separately.',
+    'counts': '6 frozen forecast cases, 42 solved QP calls, 0 new Gazebo executions; no new unit-test suite. Counts describe different nested work and are not additive.',
+    'old_pack_hashes_verified_unchanged': protocol['old_pack_hashes'],
+    'stage_boundary': 'Pre-change, exact tested worker sources, never-executed later instrumentation, and read-only postprocessing are labeled separately. Archived Python has .py.txt suffix; restore origin paths to reproduce.'}
+(DEST / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+print(json.dumps({k: v for k, v in manifest.items() if k != 'files'}, indent=2))

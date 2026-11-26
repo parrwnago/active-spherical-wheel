@@ -1,0 +1,101 @@
+{
+  "iteration": "I-46",
+  "stage": "revision_stage02",
+  "status": "site_selected_geometry_only",
+  "selected": {
+    "center_xy_m": [
+      -2.3,
+      8.4
+    ],
+    "start_xy_m": [
+      -2.363639610306789,
+      8.336360389693212
+    ],
+    "end_xy_m": [
+      -2.2363603896932105,
+      8.463639610306789
+    ],
+    "heading_deg": 45.0,
+    "length_m": 0.18,
+    "squared_distance_to_old_site": 1.929999999999998,
+    "feature_blocked": false,
+    "plane_point_m": [
+      -2.3,
+      8.4,
+      1.1839659223629955
+    ],
+    "plane_normal": [
+      -0.024888986448991932,
+      0.06702817205950543,
+      0.997440606003136
+    ],
+    "plane_gradient": [
+      0.024952850625086422,
+      -0.06720016375520878
+    ],
+    "plane_slope_deg": 4.1001417818747665,
+    "along_path_grade_deg": -1.7111086527924422,
+    "plane_rmse_m": 0.0027757693496385095,
+    "plane_max_abs_m": 0.008844861165810907,
+    "clipped_area_m2": 0.2317434855195756,
+    "clipped_triangles": 122,
+    "strict_stage01_qualified": false,
+    "strict_stage01_rejection_reasons": [
+      "plane_RMS_above_1mm",
+      "plane_max_abs_above_3mm"
+    ],
+    "qualified": true,
+    "rejection_reasons": [],
+    "minimum_feature_clearance_m": 1.1759834686323685,
+    "feature_clearance_definition": "Exact minimum XY route-center-segment to raw transformed feature triangle distance; clearance beyond protected capsule is distance-.22m.",
+    "feature_clearance_beyond_capsule_m": 0.9559834686323685
+  },
+  "criteria": {
+    "fitted_slope_deg_min": 2.0,
+    "fitted_slope_deg_max": 6.0,
+    "plane_rmse_m_max": 0.003,
+    "plane_max_abs_m_max": 0.01,
+    "protected_capsule_radius_m": 0.22,
+    "ranking": [
+      "squared_distance_to_old_site",
+      "plane_rmse_m",
+      "center_x",
+      "center_y"
+    ]
+  },
+  "candidates": 2091,
+  "qualified": 16,
+  "rejected": 2075,
+  "rejection_counts": {
+    "fitted_slope_outside_2_to_6_deg": 949,
+    "plane_RMS_above_3mm": 1720,
+    "plane_max_abs_above_10mm": 1698,
+    "feature_triangle_projection_within_protected_capsule": 311
+  },
+  "strict_stage01_qualified": 0,
+  "original_inputs_sha256": {
+    "/home/parrwnago/active-spherical-wheel/results/support_routing_timing_20261126/site_selection/candidates.json": "b4a4983e23a9683aa5a17379e5ca9ee6a1c1401a29d12b4aab134222ae13e5c8",
+    "/home/parrwnago/active-spherical-wheel/results/support_routing_timing_20261126/site_selection/report.json": "3797484e60eb8a5929d2846a07deb34ea4a96aa6c2998f4ff1e8c57ede87e6d7",
+    "/home/parrwnago/active-spherical-wheel/results/support_routing_timing_20261126/site_selection/review_stage01/report.json": "7df24782c7b3ce88cb7e55f636a35506b5fe9211b45f52cb03946a576ef4ffb4"
+  },
+  "feature_assets": [
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/lava.obj",
+      "sha256": "7c5db43cb0b1d2aa509c793d662f02d13c41f34cf43c2a8232acc1be57a5f2a9"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_big.obj",
+      "sha256": "7a8e0be5a3f1c7bbc7ffe8c5a511be14b25485c713a8caf6cf42dd20e9fdb49f"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_medium.obj",
+      "sha256": "ccf20567f10256c2617879d73a1d842d4275cf36c9d6a2f93f4162584614d342"
+    }
+  ],
+  "method": "No geometry re-fit and no new site grid; only fixed criteria reclassification. Exact selected feature clearance evaluated from same raw transformed triangles.",
+  "limitations": [
+    "Fitted2\u20136deg local slope does not mean every DEM facet has that grade.",
+    "Natural Mars is not an exact plane;3mm RMS/10mm peak are setup criteria, not controller acceptance gates.",
+    "Geometry-only selection does not guarantee actual shell/belt force transfers or good control."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "status": "Declared before private-model replay, after matchedfeedbackcomparison results. No new Gazebo controller runs.",
+  "declared_utc": "2026-11-25T23:24:15.783172+00:00",
+  "question": "Does the MPC private model predict saved Gazebo motion when replaying the actual later applied inputs, separate from replanning/target choice?",
+  "case": "CompletedI32MPCslopefeedbackrecovery",
+  "anchors_s": [
+    0.4,
+    0.6,
+    1.0,
+    2.0,
+    4.0,
+    7.0
+  ],
+  "horizons_s": [
+    0.02,
+    0.1,
+    0.4
+  ],
+  "method": "At eachsavedplananchor rebuildexactestimatedplane fromnormal/point/load/friction andactualpreviousinput; retainitsfrozenplane. Replayactualfutureinputs in.02schunks afterchecking4x.005sheldinputsagree, compare tosavedexactGazebostate.",
+  "metrics": "XY, quaternionrotation,bodyvelocity mismatch; strictly private-model audit, no liveground/contact feed, no weightchange.",
+  "limitations": [
+    "Actual-inputreplayisnotoptimizedplanperformance orlocalJacobianvalidation.",
+    "Frozenplane approximation/controlchanges matter; a few anchors do notidentifysolecause or broadlyvalidatemodel.",
+    "SavedGazebodata reused, not new controllerexecutions."
+  ]
+}

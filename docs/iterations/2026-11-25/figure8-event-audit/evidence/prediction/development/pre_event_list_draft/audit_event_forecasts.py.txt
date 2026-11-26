@@ -1,0 +1,215 @@
+"""Dense I41 forecasts from the SAME saved native-LQR Mars history.
+
+Requires a declared protocol and explicit event-selected anchor list. This
+never launches Gazebo or modifies the I40 inputs/source. Optional saved-future-
+input replay is an offline diagnostic, never a deployable forecast candidate.
+"""
+from contextlib import ExitStack
+from datetime import datetime, timezone
+import argparse
+import copy
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import traceback
+
+import numpy as np
+
+from spherical_wheel.contact_prediction import forecast_native_contacts, _contact_snapshot
+from spherical_wheel.model import REPO_ROOT, load_config
+from spherical_wheel.offroad_control import OffroadController, OffroadParams
+from spherical_wheel.offroad_experiments import Workspace
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+
+
+FAMILY = Path(__file__).resolve().parents[1]
+I40 = REPO_ROOT / 'results/lqr_contact_forecast_20261125'
+HELPER = REPO_ROOT / 'scripts/run-lqr-contact-forecast.py'
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def helper_module():
+    spec = importlib.util.spec_from_file_location('i41_native_history_helper', HELPER)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def actual_input_replay(predictor, exact, index, horizon_s, threshold=.05):
+    """Diagnostic only: drive the frozen plane with saved FUTURE actual inputs."""
+    dt = .005
+    count = int(round(horizon_s / dt))
+    qpos = exact['exact_qpos'][index].copy()
+    qvel = exact['exact_qvel'][index].copy()
+    now = float(exact['time_s'][index])
+    commands = exact['exact_applied'][index:index + count].copy()
+    if len(commands) != count or index + count >= len(exact['time_s']):
+        raise ValueError('The saved actual future does not cover the requested replay horizon')
+    predictor._assign(qpos, qvel, exact['exact_previous_applied'][index])
+    qs, vs = [qpos.copy()], [qvel.copy()]
+    contacts = [_contact_snapshot(predictor, now, threshold, 0.)]
+    for k, command in enumerate(commands):
+        qpos, qvel = predictor.transition(qpos, qvel, command, dt)
+        qs.append(qpos.copy()); vs.append(qvel.copy())
+        contacts.append(_contact_snapshot(predictor, now + (k + 1) * dt,
+                                          threshold, -float(predictor.model.opt.timestep)))
+    return {'time_s': now + np.arange(count + 1) * dt, 'qpos': np.asarray(qs),
+            'qvel': np.asarray(vs), 'commands': commands, 'contacts': contacts,
+            'metadata': {'method': 'OFFLINE_saved_future_actual_5ms_input_replay',
+                         'future_actual_commands_used': True,
+                         'deployable_forecast': False,
+                         'purpose': 'Separate frozen-plane plant prediction from divergence of the predicted feedback command sequence.',
+                         'future_actual_states_or_contacts_supplied_to_prediction': False,
+                         'plane_shared_with_native_forecast': True,
+                         'native_interval_s': dt, 'horizon_s': float(horizon_s)}}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--protocol', type=Path, default=FAMILY / 'protocol.json')
+    parser.add_argument('--anchors', type=Path, required=True)
+    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--horizon-s', type=float, default=.2)
+    parser.add_argument('--actual-input-replay', action='store_true',
+                        help='Only if declared in protocol: add explicitly offline saved-future-input replay')
+    args = parser.parse_args()
+    args.protocol, args.anchors, args.output = (p.resolve() for p in (args.protocol, args.anchors, args.output))
+    assert args.protocol.is_file(), 'Declare I41 protocol before numerical work'
+    protocol = json.loads(args.protocol.read_text())
+    assert protocol['iteration'].replace('-', '') == 'I41'
+    selection = json.loads(args.anchors.read_text())
+    assert selection['case_id'] == 'mars_figure8_p090', 'This audit is the declared Mars history only'
+    assert args.horizon_s > 0 and np.isclose(args.horizon_s / .005, round(args.horizon_s / .005))
+    if args.output.exists():
+        raise FileExistsError('Preserve previous numerical stage; use a fresh output directory')
+    actual_folder = I40 / 'campaign/runs' / selection['case_id']
+    actual = json.loads((actual_folder / 'provenance.json').read_text())
+    helper = helper_module()
+    assert helper.versions() == actual['versions'], 'Use the actual Gazebo-run numerical environment'
+    for name, digest in actual['generated_sha256'].items():
+        assert sha(actual_folder / name) == digest, name
+    for item in actual['sources']:
+        assert sha(REPO_ROOT / item['origin']) == item['sha256'], item['origin']
+    jobs = json.loads((I40 / 'campaign/jobs.json').read_text())
+    if isinstance(jobs, dict):
+        jobs = jobs.get('cases', jobs.get('jobs'))
+    job = next(j for j in jobs if j['case_id'] == selection['case_id'])
+    args.output.mkdir(parents=True)
+    sources = [Path(__file__).resolve(), HELPER, args.protocol, args.anchors]
+    sources += [REPO_ROOT / item['origin'] for item in actual['sources']]
+    entries = []
+    for source in sorted(set(sources)):
+        rel = source.relative_to(REPO_ROOT)
+        target = args.output / 'source_snapshot' / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+        entries.append({'origin': str(rel), 'snapshot': str(target.relative_to(args.output)),
+                        'sha256': sha(source)})
+    provenance = {'iteration': 'I-41', 'captured_before_calculations_utc': datetime.now(timezone.utc).isoformat(),
+        'arguments': helper.safe(vars(args)), 'sources': entries, 'versions': helper.versions(),
+        'raw_inputs': {str((actual_folder / name).relative_to(REPO_ROOT)): sha(actual_folder / name)
+                       for name in ('precision.npz', 'rollout.npz', 'summary.json', 'provenance.json', 'forecasts.json')},
+        'measurement_boundary': 'New normal forecasts receive reconstructed past/current state/controller history and known reference only. Optional actual-input replay is stored separately and explicitly uses saved future inputs for offline diagnosis.',
+        'no_new_Gazebo': True}
+    helper.save_json(args.output / 'provenance.json', provenance)
+    with np.load(actual_folder / 'precision.npz') as z:
+        exact = {k: z[k].copy() for k in z.files}
+    groups = {}
+    for anchor in selection['anchors']:
+        requested = float(anchor['anchor_time_s'])
+        index = int(np.argmin(abs(exact['time_s'] - requested)))
+        assert abs(exact['time_s'][index] - requested) <= .0025 + 1e-9
+        assert exact['time_s'][index] + args.horizon_s <= exact['time_s'][-1] + 1e-9
+        groups.setdefault(index, []).append(anchor)
+    workspace = Workspace(load_config(), args.output / 'history_workspace',
+        seed_cache=REPO_ROOT / 'generated/offroad/flat/control_schedule.npz')
+    mirror = workspace.mirror()
+    mirror.set_state(exact['exact_qpos'][0], exact['exact_qvel'][0], exact['time_s'][0], exact['exact_previous_applied'][0])
+    controller = OffroadController(mirror, workspace.design, OffroadParams(**helper.PARAMETERS),
+        phase=job['phase_rad'], record_diagnostics=True)
+    controller.nominal_joints = np.asarray(actual['initial_nominal_joints'], float).copy()
+    path, original = helper.make_path(job), OffroadController.command
+    maximum = dict(applied=0., requested=0., observer_wrench=0., estimated_normal=0., nominal_joints=0., reference=0.)
+    rows, failures = [], []
+    try:
+        with helper.guards():
+            for index in range(max(groups, default=-1) + 1):
+                now = float(exact['time_s'][index])
+                mirror.set_state(exact['exact_qpos'][index], exact['exact_qvel'][index], now,
+                                 exact['exact_previous_applied'][index])
+                reference = path(now)
+                maximum['nominal_joints'] = max(maximum['nominal_joints'], float(np.max(abs(
+                    controller.nominal_joints - exact['exact_nominal_joints_before'][index]))))
+                command, info = original(controller, *reference)
+                pairs = {'applied': (command, exact['exact_applied'][index]),
+                    'requested': (info['requested'], exact['exact_native_requested'][index]),
+                    'observer_wrench': (np.r_[controller.observer.wrench()], exact['exact_observer_wrench'][index]),
+                    'estimated_normal': (info['estimate']['normal'], exact['exact_estimated_normal'][index]),
+                    'reference': (np.concatenate(reference), np.r_[exact['exact_reference_xy'][index],
+                         exact['exact_reference_velocity_m_s'][index], exact['exact_reference_acceleration_m_s2'][index]])}
+                for key, (value, target) in pairs.items():
+                    maximum[key] = max(maximum[key], float(np.max(abs(np.asarray(value) - target))))
+                if max(maximum.values()) > 1e-7:
+                    raise RuntimeError(f'Native history mismatch at {now}: {maximum}')
+                if index in groups:
+                    item = {'anchor_index': index, 'anchor_time_s': now,
+                        'history_audit': {'passed': True, 'samples': index + 1,
+                            'tolerance': 1e-7, 'maximum_absolute_differences': maximum.copy()},
+                        'anchor_estimated_patch_loads_N': info['estimated_support_loads_N'].copy(),
+                        'anchor_native_diagnostics': {key: copy.deepcopy(info[key]) for key in
+                            ('requested', 'reference_quat', 'reference_qvel', 'lqr_command',
+                             'support_command', 'rolling_feedforward', 'transition_command_delta',
+                             'heading_command', 'fade_command_delta', 'feedback_gain') if key in info}}
+                    before = helper.controller_fingerprint(controller)
+                    try:
+                        predictor = EstimatedPlanePredictor(mirror, max_plane_offset_m=.003, calibration_iterations=20)
+                        calibration = predictor.update(mirror.data.qpos, mirror.data.qvel, info['estimate']['normal'],
+                            info['measurement']['point_m'], sum(info['measurement']['loads_N'].values()),
+                            friction=info['estimate']['friction'], command=mirror.last_input)
+                        predicted = forecast_native_contacts(controller, predictor, path, now, args.horizon_s,
+                            current_command=command, command_function=original)
+                        item.update(calibration=calibration, forecast=predicted,
+                                    future_actual_data_used_by_forecast=False, success=True)
+                        if args.actual_input_replay:
+                            item['offline_actual_input_replay'] = actual_input_replay(
+                                predictor, exact, index, args.horizon_s)
+                        assert helper.controller_fingerprint(controller) == before
+                        item['source_state_unchanged'] = True
+                    except Exception as error:
+                        assert helper.controller_fingerprint(controller) == before
+                        item.update(success=False, failure=str(error), traceback=traceback.format_exc())
+                    for anchor in groups[index]:
+                        row = dict(item, **{k: v for k, v in anchor.items()
+                                          if k not in ('anchor_index', 'anchor_time_s')})
+                        rows.append(row)
+                        if not row['success']:
+                            failures.append({k: row.get(k) for k in ('anchor_time_s', 'event_id', 'failure')})
+                    print(json.dumps({'anchor_time_s': now, 'success': item['success'],
+                                      'event_labels': len(groups[index]), 'failure': item.get('failure')}), flush=True)
+                if index < max(groups, default=-1):
+                    controller.after_step()
+    except Exception as error:
+        failures.append({'stage': 'history_reconstruction', 'failure': str(error), 'traceback': traceback.format_exc()})
+    result = {'iteration': 'I-41', 'case_id': selection['case_id'], 'rows': rows, 'failures': failures,
+        'planned_rows': sum(map(len, groups.values())), 'unique_requested_anchors': len(groups),
+        'successful_rows': sum(r['success'] for r in rows),
+        'history_maximum_absolute_differences': maximum,
+        'no_new_Gazebo': True,
+        'scope': 'Dense private forecasts at event-selected saved-history anchors; zero new actual trajectories. Native forecast and optional offline future-input replay are separate diagnostics.'}
+    helper.save_json(args.output / 'forecasts.json', result)
+    provenance['generated_sha256'] = {'forecasts.json': sha(args.output / 'forecasts.json')}
+    helper.save_json(args.output / 'provenance.json', provenance)
+    files = []
+    for p in sorted(args.output.rglob('*')):
+        if p.is_file() and not any(x in p.parts for x in ('history_workspace', '__pycache__')):
+            files.append({'path': str(p.relative_to(args.output)), 'bytes': p.stat().st_size, 'sha256': sha(p)})
+    helper.save_json(args.output / 'artifact_manifest.json', {'files': files})
+    print(json.dumps({k: v for k, v in result.items() if k != 'rows'}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

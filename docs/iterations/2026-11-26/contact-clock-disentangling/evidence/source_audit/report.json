@@ -1,0 +1,158 @@
+{
+  "iteration": "I-48",
+  "scope": "No observer/filter/controller/physics invocation; no clock fitting or source/data changes.",
+  "cases": {
+    "mars": {
+      "substeps": 16000,
+      "all_raw_contact_rows": 76664,
+      "eligible_records": 17107,
+      "first_substep_rows_excluded": 8,
+      "smooth_record_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "metadata": {
+        "radius_m": 0.12,
+        "gap_half_m": 0.01,
+        "polar_rim_m": 0.11565465836
+      },
+      "clock_checks": {
+        "relative_time_continuous": true,
+        "bridge_time_continuous": true,
+        "iteration_increments_one": true,
+        "constant1ms_step": true,
+        "no_reset_or_pending_reset": true,
+        "bridge_minus_relative_time_range_s": [
+          0.011009999998897513,
+          0.011010000000149844
+        ]
+      },
+      "conditions": [
+        {
+          "case_id": "mars",
+          "condition": "prior_raw",
+          "records": 17107,
+          "violating_records": 5,
+          "violating_record_fraction": 0.00029227801484772313,
+          "minimum_margin_m": -2.408169043408015e-05,
+          "minimum_margin_um": -24.08169043408015,
+          "normal_load_weighted_violating_fraction": 0.00031734385528736837
+        },
+        {
+          "case_id": "mars",
+          "condition": "prior_radial_R",
+          "records": 17107,
+          "violating_records": 0,
+          "violating_record_fraction": 0.0,
+          "minimum_margin_m": 1.589477041791243e-07,
+          "minimum_margin_um": 0.1589477041791243,
+          "normal_load_weighted_violating_fraction": 0.0
+        },
+        {
+          "case_id": "mars",
+          "condition": "post_raw",
+          "records": 17107,
+          "violating_records": 4,
+          "violating_record_fraction": 0.00023382241187817852,
+          "minimum_margin_m": -2.520961931243293e-05,
+          "minimum_margin_um": -25.209619312432928,
+          "normal_load_weighted_violating_fraction": 0.0002499764934409261
+        },
+        {
+          "case_id": "mars",
+          "condition": "post_radial_R",
+          "records": 17107,
+          "violating_records": 0,
+          "violating_record_fraction": 0.0,
+          "minimum_margin_m": 1.661032077021618e-07,
+          "minimum_margin_um": 0.1661032077021618,
+          "normal_load_weighted_violating_fraction": 0.0
+        }
+      ]
+    },
+    "flat": {
+      "substeps": 16000,
+      "all_raw_contact_rows": 64000,
+      "eligible_records": 15999,
+      "first_substep_rows_excluded": 4,
+      "smooth_record_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "metadata": {
+        "radius_m": 0.12,
+        "gap_half_m": 0.01,
+        "polar_rim_m": 0.11565465836
+      },
+      "clock_checks": {
+        "relative_time_continuous": true,
+        "bridge_time_continuous": true,
+        "iteration_increments_one": true,
+        "constant1ms_step": true,
+        "no_reset_or_pending_reset": true,
+        "bridge_minus_relative_time_range_s": [
+          0.011009999998897513,
+          0.011010000000149844
+        ]
+      },
+      "conditions": [
+        {
+          "case_id": "flat",
+          "condition": "prior_raw",
+          "records": 15999,
+          "violating_records": 10,
+          "violating_record_fraction": 0.0006250390649415588,
+          "minimum_margin_m": -2.690440649712189e-05,
+          "minimum_margin_um": -26.90440649712189,
+          "normal_load_weighted_violating_fraction": 0.0006250390579153386
+        },
+        {
+          "case_id": "flat",
+          "condition": "prior_radial_R",
+          "records": 15999,
+          "violating_records": 0,
+          "violating_record_fraction": 0.0,
+          "minimum_margin_m": 2.955624828215875e-09,
+          "minimum_margin_um": 0.002955624828215875,
+          "normal_load_weighted_violating_fraction": 0.0
+        },
+        {
+          "case_id": "flat",
+          "condition": "post_raw",
+          "records": 15999,
+          "violating_records": 10,
+          "violating_record_fraction": 0.0006250390649415588,
+          "minimum_margin_m": -2.689902933822319e-05,
+          "minimum_margin_um": -26.89902933822319,
+          "normal_load_weighted_violating_fraction": 0.0006250390579153386
+        },
+        {
+          "case_id": "flat",
+          "condition": "post_radial_R",
+          "records": 15999,
+          "violating_records": 0,
+          "violating_record_fraction": 0.0,
+          "minimum_margin_m": 2.955625980072263e-09,
+          "minimum_margin_um": 0.002955625980072263,
+          "normal_load_weighted_violating_fraction": 0.0
+        }
+      ]
+    }
+  },
+  "source_findings": [
+    "PreUpdate caches center/carrier axes; OnContact admits using that cache.",
+    "Admit radially normalizes each smooth contact vector to R before band projection.",
+    "PostUpdate publishes updated state and contact messages; normal sign/fallback Admit still use cached geometry.",
+    "Rows do not serialize per-contact producer timestamp or decision-match flag; force epoch remains unproved.",
+    "A2 projected a load-weighted equivalent raw vector, which differs from an individual solver point and plugin radial normalization."
+  ],
+  "limits": [
+    "Prior published pose is a source-backed proxy, not a calibrated sensor/force delay.",
+    "This tests contact/admission conventions only; no observer error, filter benefit or closed-loop fix is established.",
+    "Rims/body and first substep are excluded from this smooth-point band diagnostic."
+  ]
+}

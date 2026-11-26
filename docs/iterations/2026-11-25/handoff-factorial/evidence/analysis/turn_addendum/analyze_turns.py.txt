@@ -1,0 +1,124 @@
+"""Post-primary I42 six-turn regression; saved arrays and fixed I41 events only."""
+from __future__ import annotations
+import csv
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import sys
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+HERE=Path(__file__).resolve().parent
+ANALYSIS=HERE.parent
+FAMILY=ANALYSIS.parent
+sys.path.insert(0,str(HERE/'source'))
+from event_metrics import actual_reversal_candidates
+
+ARMS=('baseline','feedback_shares','sync_off','both')
+COLORS=('#2878b5','#e28b2a','#27956c','#a3489a')
+
+
+def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def read_npz(path):
+    with np.load(path) as z:return {k:z[k].copy() for k in z.files}
+def save(path,value):path.write_text(json.dumps(value,indent=2,allow_nan=False)+'\n')
+
+
+def main():
+    if (HERE/'report.json').exists():raise FileExistsError('Preserve completed secondary analysis')
+    protocol=json.loads((HERE/'protocol.json').read_text())
+    for record in protocol['sources']:assert sha(HERE/record['path'])==record['sha256']
+    assert sha(ANALYSIS/protocol['primary_report']['path'])==protocol['primary_report']['sha256']
+    source=Path(__file__).resolve();shutil.copyfile(source,HERE/'source'/source.name)
+    primary=json.loads((ANALYSIS/'stage01/report.json').read_text())
+    events=json.loads((HERE/'source/I41_turn_events.json').read_text())['rows']
+    assert len(events)==6
+    inputs={}
+    for arm in ARMS:
+        for path in (FAMILY/'campaign/runs'/arm/'precision.npz',ANALYSIS/'stage01'/arm/'geometry.npz'):
+            inputs[str(path.relative_to(FAMILY))]=sha(path)
+    save(HERE/'inputs_before_reduction.json',{'source_sha256':sha(source),'protocol_sha256':sha(HERE/'protocol.json'),
+        'input_sha256':inputs,'primary_report_sha256':protocol['primary_report']['sha256']})
+    rows=[];per_arm={}
+    for arm in ARMS:
+        actual=read_npz(FAMILY/'campaign/runs'/arm/'precision.npz')
+        geometry=read_npz(ANALYSIS/'stage01'/arm/'geometry.npz')
+        t=actual['time_s'];xy=actual['exact_qpos'][:,:2];velocity=actual['exact_qvel'][:,:2]
+        result=[]
+        for event in events:
+            at=event['time_s'];axis=event['axis_index'];lo,hi=event['window_s']
+            selected=(t>=lo-1e-9)&(t<=hi+1e-9)
+            after=selected&(t>=at)
+            signed=event['incoming_sign']*(xy[:,axis]-event['reference_component_extremum_m'])
+            peak_index=int(np.flatnonzero(selected)[np.argmax(signed[selected])])
+            candidates=actual_reversal_candidates(t,velocity[:,axis],event['incoming_sign'],event['outgoing_sign'],lo,hi,.1)
+            first=candidates[0] if candidates else None
+            i=int(np.argmin(abs(t-at)))
+            row={'arm':arm,'event_id':event['event_id'],'reference_time_s':at,'axis':event['axis'],
+                'reference_speed_mm_s':1000*event['reference_vector_speed_m_s'],
+                'window_s':[lo,hi],'window_complete':bool(t[0]<=lo and t[-1]>=hi),
+                'geometric_component_overshoot_mm':max(0.,float(1000*signed[peak_index])),
+                'overshoot_peak_time_s':float(t[peak_index]),
+                'post_event_geometric_overshoot_mm':max(0.,float(1000*np.max(signed[after]))),
+                'actual_reversal_lag_s':float(first['interpolated_zero_time_s']-at) if first else None,
+                'actual_reversal_missing_in_window':first is None,'actual_reversal_multiple_in_window':len(candidates)>1,
+                'actual_reversal_candidates':candidates,
+                'local_path_error_at_event_mm':float(1000*geometry['local_path_distance_m'][i]),
+                'time_aligned_error_at_event_mm':float(1000*geometry['time_aligned_error_m'][i]),
+                'post_event_peak_local_path_error_mm':float(1000*np.max(geometry['local_path_distance_m'][after])),
+                'projection_window_boundary_samples':int(geometry['artificial_projection_window_boundary'][selected].sum())}
+            result.append(row)
+        per_arm[arm]=result;rows.extend(result)
+    baseline_match={}
+    for actual,old in zip(per_arm['baseline'],events):
+        baseline_match[actual['event_id']]={key:actual[key]==old[key] for key in (
+            'geometric_component_overshoot_mm','post_event_geometric_overshoot_mm','actual_reversal_lag_s',
+            'actual_reversal_missing_in_window','actual_reversal_multiple_in_window','local_path_error_at_event_mm',
+            'time_aligned_error_at_event_mm','post_event_peak_local_path_error_mm')}
+    assert all(all(checks.values()) for checks in baseline_match.values())
+    comparisons=[]
+    for index,event in enumerate(events):
+        base=per_arm['baseline'][index]
+        comparison={'event_id':event['event_id'],'reference_time_s':event['time_s'],'axis':event['axis'],'arms':{}}
+        for arm in ARMS:
+            row=per_arm[arm][index]
+            comparison['arms'][arm]={key:row[key] for key in ('geometric_component_overshoot_mm','actual_reversal_lag_s',
+                'actual_reversal_missing_in_window','actual_reversal_multiple_in_window','post_event_peak_local_path_error_mm')}
+            comparison['arms'][arm]['overshoot_difference_from_baseline_mm']=row['geometric_component_overshoot_mm']-base['geometric_component_overshoot_mm']
+            comparison['arms'][arm]['reversal_lag_difference_from_baseline_s']=(row['actual_reversal_lag_s']-base['actual_reversal_lag_s']) if row['actual_reversal_lag_s'] is not None and base['actual_reversal_lag_s'] is not None else None
+        comparisons.append(comparison)
+    save(HERE/'report.json',{'iteration':'I-42','stage':'Post-primary saved-data turn addendum',
+        'protocol_sha256':sha(HERE/'protocol.json'),'source_sha256':sha(source),'inputs_sha256':inputs,
+        'fixed_event_source_sha256':sha(HERE/'source/I41_turn_events.json'),'baseline_exact_I41_metric_match':baseline_match,
+        'first_turn':comparisons[0],'turn_comparison':comparisons,'rows':rows,
+        'limits':['Secondary analysis declared after primary outcome; no primary screen or report changed.',
+            'All six turns occur after the4–10s intervention; native control/synchronization is restored at these turns, with carried physical/controller history.',
+            'Component reversals occur at nonzero vector speed, not full robot stops. Geometric overshoot and reversal lag measure different behavior.',
+            'The first sustained new-sign crossing is reported even if multiple crossings occur; no favorable crossing selection.',
+            'One run per arm and one path; no statistical or general robustness inference.']})
+    keys=['arm','event_id','reference_time_s','axis','reference_speed_mm_s','geometric_component_overshoot_mm',
+          'post_event_geometric_overshoot_mm','actual_reversal_lag_s','actual_reversal_missing_in_window',
+          'actual_reversal_multiple_in_window','post_event_peak_local_path_error_mm']
+    with (HERE/'turn_metrics.csv').open('w',newline='') as stream:
+        writer=csv.DictWriter(stream,fieldnames=keys);writer.writeheader()
+        writer.writerows({key:row[key] for key in keys} for row in rows)
+    fig,axes=plt.subplots(2,1,figsize=(11,8),sharex=True)
+    for arm,color in zip(ARMS,COLORS):
+        axes[0].plot(range(1,7),[row['geometric_component_overshoot_mm'] for row in per_arm[arm]],'o-',label=arm,color=color)
+        axes[1].plot(range(1,7),[row['actual_reversal_lag_s'] for row in per_arm[arm]],'o-',label=arm,color=color)
+    axes[0].set_ylabel('Geometric component overshoot (mm)')
+    axes[1].set_ylabel('First sustained component-reversal lag (s)');axes[1].axhline(0,color='grey',ls=':')
+    axes[1].set_xticks(range(1,7),[f'{e["axis"]} @ {e["time_s"]:.3f}s' for e in events]);axes[1].set_xlabel('All six fixed I41 reference component turns')
+    for ax in axes:ax.grid(alpha=.2);ax.legend(fontsize=8)
+    fig.suptitle('I42 secondary turn check: all turns after intervention ends10s')
+    fig.tight_layout();fig.savefig(HERE/'turn_comparison.png',dpi=150);plt.close(fig)
+    files=sorted(p for p in HERE.rglob('*') if p.is_file() and '__pycache__' not in p.parts)
+    save(HERE/'artifact_manifest.json',{'files':[{'path':str(p.relative_to(HERE)),'bytes':p.stat().st_size,'sha256':sha(p)} for p in files]})
+    print(json.dumps(comparisons,indent=2))
+
+
+if __name__=='__main__':main()

@@ -1,0 +1,28 @@
+{
+  "iteration": "I-43",
+  "passed": true,
+  "scope": "109 unique selected tests repeated in two environments, not the complete repository suite. 20 pure mathematics cases overlap the independent math stage and are counted once.",
+  "unique_selected_tests": 109,
+  "new_pure_tests": 20,
+  "new_controller_integration_tests": 12,
+  "existing_selected_tests": 77,
+  "environments": [
+    ".venv",
+    "build/gazebo-env"
+  ],
+  "stages": [
+    "stage01",
+    "stage02_existing_regression"
+  ],
+  "module_sha256": "598fe7e5f4a20d2933daf00f95526949fe0e73fb1eebc56b73b712de35dffa7d",
+  "controller_sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+  "predictive_seed_source_unchanged": true,
+  "contact_prediction_source_unchanged": true,
+  "existing_protected_tests_unchanged": true,
+  "pre_change_existing_origin_changes": [
+    "src/spherical_wheel/offroad_control.py"
+  ],
+  "patch": "implementation_patch.diff",
+  "no_Gazebo_campaign_launched_by_core_owner": true,
+  "limitation": "Reference rate/coordinate acceleration caps are design assumptions. Passing tests does not demonstrate trajectory improvement or adoption-gate success."
+}

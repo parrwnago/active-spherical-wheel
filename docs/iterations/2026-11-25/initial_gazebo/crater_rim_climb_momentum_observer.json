@@ -1,0 +1,210 @@
+{
+  "sensing": {
+    "observer_force_error_median_N": 0.02602273762276868,
+    "observer_force_error_p95_N": 1.5655647046942476,
+    "observer_moment_error_median_Nm": 0.002907112099802245,
+    "observer_moment_error_p95_Nm": 0.10694420221202913
+  },
+  "terrain": "marsyard2021",
+  "controller": "momentum_observer",
+  "parameters": {
+    "mode": "momentum_observer",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "engine_version": "Gazebo Harmonic (gz-sim 8.10.0)",
+  "contact_mode": "analytic_clipped_floor",
+  "ground_model": "Gazebo collision with the marsyard2021_dem (grid 0.0942 m); contacts solved by DART. The MuJoCo mirror only evaluates kinematics.",
+  "path": {
+    "distance_m": 5.0,
+    "heading_deg": 247.0,
+    "duration_s": 51.5,
+    "start_s": 1.0,
+    "profile": "cruise",
+    "ramp_s": 1.5,
+    "origin": [
+      -11.99,
+      17.91
+    ],
+    "cruise_speed_m_s": 0.1
+  },
+  "completed": false,
+  "failure": "fork or platform touched the ground",
+  "completed_duration_s": 25.34999999999924,
+  "requested_duration_s": 55.5,
+  "tracking": {
+    "rms_error_m": 0.060811656271992705,
+    "max_error_m": 0.5182195681254862,
+    "final_error_m": 0.5182195681254862,
+    "rms_error_while_moving_m": 0.06197073373507517
+  },
+  "attitude": {
+    "max_tilt_deg": 43.509466214202774,
+    "max_error_from_reference_deg": 32.54917671884659,
+    "rms_error_from_reference_deg": 3.702233993188308,
+    "final_error_from_reference_deg": 32.54917671884659,
+    "heading_change_deg": 326.04286939488514
+  },
+  "ground": {
+    "max_slope_under_wheel_deg": 21.65463106696945,
+    "height_range_m": [
+      1.1927700676415203,
+      1.4844266088114373
+    ],
+    "friction_range": [
+      0.7,
+      0.7
+    ]
+  },
+  "contact": {
+    "normal_load_fraction_min": 0.0,
+    "normal_load_fraction_max": 16.48224728084686,
+    "normal_load_fraction_std": 0.3816195759819337,
+    "unloaded_time_s": 0.23500000000000001,
+    "utilization_mean": 0.2563140584520561,
+    "utilization_p95": 0.5093284057977387,
+    "utilization_max": 2.319007560914463,
+    "time_above_90pct_cone_s": 0.20500000000000002,
+    "max_slip_speed_m_s": 0.9099969901778604,
+    "slip_distance_m": 0.07313617700867701,
+    "sliding_time_s": 0.29,
+    "friction_loss_J": 1.841924750745081,
+    "estimated_friction_min": 0.7,
+    "normal_estimate_error_rms_deg": 2.2371969972148675,
+    "normal_estimate_error_max_deg": 17.21460228026297,
+    "normal_estimate_error_median_deg": 0.004992958169480664,
+    "normal_estimate_error_p95_deg": 5.7851471851632885,
+    "support_time_share": {
+      "shell_A": 0.49621815286624205,
+      "shell_B": 0.43929140127388533,
+      "belt_A": 0.06449044585987261,
+      "belt_B": 0.0
+    },
+    "support_handovers": 17,
+    "fork_ground_contact": true
+  },
+  "actuation": {
+    "max_input_fraction": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.28734018609404577
+    ],
+    "saturated_time_fraction": 0.03451676528599606,
+    "rms_torque_Nm": [
+      0.26755483612548536,
+      0.1924571978725168,
+      0.22021022821603684
+    ],
+    "max_joint_speed_rad_s": [
+      22.091412046561288,
+      53.729266811448284,
+      93.65365290519699
+    ],
+    "joint_work_J": 28.790668349479475,
+    "unloaded_fade_time_s": 0.05
+  },
+  "settled_at_end": false,
+  "engine": {
+    "simulator": "Gazebo Harmonic (gz-sim 8.10.0)",
+    "physics": "DART 6.19.5 via gz-physics 7.5.0",
+    "collision_detector": "ode",
+    "step_s": 0.001,
+    "ground": "marsyard2021_dem",
+    "world_info": {
+      "ground": "marsyard2021",
+      "collision_detector": "ode",
+      "dem_mesh": "/home/parrwnago/active-spherical-wheel/results/gazebo/mars_regenerated_20261124/replays/_workspaces/worker_42800/gazebo/world/marsyard2021_dem.obj",
+      "source": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain",
+      "cell_m": 0.09418837675350701,
+      "features": [
+        "lava",
+        "rocks_big",
+        "rocks_medium"
+      ]
+    }
+  },
+  "wall_time_s": 32.686588287353516,
+  "bridge_counters": {
+    "admitted": 76794,
+    "rejected": 221791,
+    "unmatched": 0
+  },
+  "mars": {
+    "gates": {
+      "completed": false,
+      "rms": false,
+      "p95": true,
+      "max": false,
+      "final": false,
+      "attitude": false,
+      "saturation": true,
+      "settled": false
+    },
+    "passed": false,
+    "p95_moving_error_m": 0.06347356069901156,
+    "loop_closure_m": 2.2621930326714828,
+    "distance_travelled_m": 3.045729168836255,
+    "reference_length_m": 5.0,
+    "elevation_change_m": 0.17028411461112847,
+    "elevation_range_m": [
+      1.31278131775555,
+      1.598750925794582
+    ],
+    "max_heading_excursion_deg": 361.8836815069592,
+    "time_on_rock_s": 0.0,
+    "max_contact_height_above_dem_m": 5.571010486482564e-06
+  },
+  "route": {
+    "name": "crater_rim_climb",
+    "about": "The same rim driven uphill: 0.72 m climb.",
+    "initial_yaw_deg": 247.0,
+    "path": {
+      "distance_m": 5.0,
+      "heading_deg": 247.0,
+      "duration_s": 51.5,
+      "start_s": 1.0,
+      "profile": "cruise",
+      "ramp_s": 1.5,
+      "origin": [
+        -11.99,
+        17.91
+      ],
+      "cruise_speed_m_s": 0.1
+    },
+    "start_phase_rad": 0.3
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "iteration": "I-50",
+  "status": "Completed saved-data/source/current-kinematics audit; no runtime changes, controller replay, forecast or new physics.",
+  "captured_utc": "2026-11-26T09:33:36.029929+00:00",
+  "main_findings": [
+    "Video18s mapsrecorded32s. Literalrecorded18s hasno beltpreparation; these are different windows.",
+    "Existing incomingprep forecasts120ms constantvelocity overcurrentestimatedplane andalreadyactivates before the raisedarmbeltBhandoff. It minimizesincomingmodeltangentialvelocity towardzero; it doesnotdirectlytrackoutgoingslip.",
+    "Baseline estimatedsupportchangesbeltB31.645\u2192shellB31.650 duringalternatinghandoff; at31.650theverifiedrollingmatrixisnearlysingular withhugejointreferences andsynczero. Thisisnotthecausebeforealltransfers; itisonefailurewithinthehandoffregion, occurringbeforetheraisedarm32.170modechange.",
+    "Raisedarms32.170s switchfromunloadedprep toloadedLQR/rollingcontrol witha.291249m/s beltBstep;32.190s switchback toshelldrivewitha.451307m/s beltstep. Supportchatterandunmatchedcontrolbranchesareconcreteobservations.",
+    "Neither observation proves that synchronization alone causedallpathdeviation or that copyingoutgoingslip iscorrect. Fullfuturetargetpoints/gaps and1mscontacthistory were notlogged. Baseline rolling singularity occursduringanexistingalternatingsupporthandoff."
+  ],
+  "source_citations": {
+    "preview_contract": {
+      "path": "src/spherical_wheel/synchronization.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py",
+      "line": 15,
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    "preview_settings": {
+      "path": "src/spherical_wheel/synchronization.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py",
+      "line": 28,
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    "world_velocity": {
+      "path": "src/spherical_wheel/synchronization.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py",
+      "line": 93,
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    "estimated_record_velocity": {
+      "path": "src/spherical_wheel/synchronization.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py",
+      "line": 130,
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    "constant_velocity_forecast": {
+      "path": "src/spherical_wheel/synchronization.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py",
+      "line": 180,
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    "outgoing_diagnostic": {
+      "path": "src/spherical_wheel/synchronization.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py",
+      "line": 197,
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    "load_geometry_gate": {
+      "path": "src/spherical_wheel/synchronization.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py",
+      "line": 200,
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    "belt_target": {
+      "path": "src/spherical_wheel/synchronization.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py",
+      "line": 224,
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    "shell_target": {
+      "path": "src/spherical_wheel/synchronization.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/synchronization.py",
+      "line": 235,
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    "current_estimated_plane_and_blend": {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 691,
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766"
+    },
+    "final_total_clip": {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 721,
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766"
+    },
+    "loaded_gain_selection": {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 768,
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766"
+    },
+    "loaded_feedback_sum": {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 815,
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766"
+    },
+    "nominal_history": {
+      "path": "src/spherical_wheel/offroad_control.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_control.py",
+      "line": 891,
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766"
+    },
+    "rolling_preference_not_limits": {
+      "path": "src/spherical_wheel/experiments.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/experiments.py",
+      "line": 29,
+      "sha256": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638"
+    },
+    "rolling_matrix": {
+      "path": "src/spherical_wheel/experiments.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/experiments.py",
+      "line": 79,
+      "sha256": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638"
+    },
+    "locator_one_record_per_patch": {
+      "path": "src/spherical_wheel/contact_sensing.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py",
+      "line": 397,
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833"
+    },
+    "saved_point_semantics": {
+      "path": "src/spherical_wheel/contact_kinematics.py",
+      "absolute_path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_kinematics.py",
+      "line": 14,
+      "sha256": "678eff4f9792e86dd3b9dece83edaaf2517b8416df3b736352cb0a0142b98351"
+    }
+  },
+  "stage_lineage": {
+    "stage01": {
+      "status": "complete",
+      "report": "stage01/report.json",
+      "scope": "All5msrows for17\u201319and30\u201334, video clock, weights/decomposition/contactsupport/nominalhistory."
+    },
+    "stage02_current_kinematics": {
+      "status": "retained setup failure before row processing",
+      "reason": "patch vs patch.object guard setup; existing private modelcompiled but no geometry rows/physics."
+    },
+    "stage03_current_kinematics": {
+      "status": "complete",
+      "report": "stage03_current_kinematics/report.json",
+      "scope": "Algebraic boundedtargetrecovery andprivatecurrentpointJacobianprojection only."
+    },
+    "stage04_rolling_geometry_syntax_failure": {
+      "status": "retained syntax failure before execution",
+      "reason": "Missing whitespace else4/else2; no imports/calculations."
+    },
+    "stage05_rolling_geometry": {
+      "status": "complete",
+      "report": "stage05_rolling_geometry/report.json",
+      "scope": "Independent exactsinglepatchrollingD/SVD/reference reconstruction; fixedtimes anddeclaredmaxrawtorque/jump selections."
+    }
+  },
+  "evidence": {
+    "video_mapping": "stage01/report.json#video18s_frame360",
+    "handoff": "stage03_current_kinematics/report.json",
+    "rolling_matrix": "stage05_rolling_geometry/report.json"
+  },
+  "scope_limits": [
+    "Targets recovered only forweights>=1e-6. Theseareboundedcommands beforeblend, notunsaturatedneeds. Finalcap andactualmotorresponse aredifferentquantities.",
+    "Current-pose kinematics usesexactq/qdot andsavedfloat32estimatedpatchpoints orcurrentvirtualspherepoints withfilteredestimatednormal. Thisisamodeledresidual, notindependenttruephysicalslip.",
+    "Loaded solepatch mismatchtoitsownloadweightedoutgoingvelocity iszero byconstruction, notatestofgoodsynchronization.",
+    "Current-pose residual withafutureselectedtarget isnotmissingfuturepredictedresidual. No previewmethodwasreplayed.",
+    "Physicalslip/contactcolumns arelatest1mssolveat5msendpoints, notcompletecontactevolutionoverthehold.",
+    ".60/.90statehistories areidenticalhere; theyareseparatecapacityarms butnotindependentrealizationsofthishandoff."
+  ]
+}

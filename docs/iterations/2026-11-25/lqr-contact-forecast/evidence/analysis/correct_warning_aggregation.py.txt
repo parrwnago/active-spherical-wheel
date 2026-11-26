@@ -1,0 +1,94 @@
+"""Correct one sealed I40 report reduction; no physics/model evaluation.
+
+The original merge_confusions consumed a generator when summing TP, leaving
+FP and FN zero. Per-anchor records and all other primary calculations remain
+unchanged. This stage materializes that iterable once and reruns only warning
+summary arithmetic. Initial source, report and artifact manifest are retained.
+"""
+from __future__ import annotations
+
+from copy import deepcopy
+from datetime import datetime, timezone
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import shutil
+
+HERE = Path(__file__).resolve().parent
+OUTPUT = HERE/'corrected'
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def fixed_merge_confusions(rows):
+    rows = list(rows)
+    tp = sum(row['tp'] for row in rows)
+    fp = sum(row['fp'] for row in rows)
+    fn = sum(row['fn'] for row in rows)
+    return {'anchor_patch_tp': tp, 'anchor_patch_fp': fp, 'anchor_patch_fn': fn,
+            'precision': tp/(tp+fp) if tp+fp else None,
+            'recall': tp/(tp+fn) if tp+fn else None,
+            'independence_limit': 'Anchors overlap and are not independent transfers.'}
+
+
+def main():
+    if OUTPUT.exists():
+        raise FileExistsError('Preserve completed correction stage')
+    OUTPUT.mkdir()
+    source = Path(__file__).resolve()
+    snap = OUTPUT/'source_snapshot'; snap.mkdir()
+    for path in (source, HERE/'analyze_forecasts.py', HERE/'forecast_metrics.py'):
+        shutil.copyfile(path, snap/path.name)
+    # Adversarial generator test with nonzero FP/FN would have caught the bug.
+    check = fixed_merge_confusions(iter([{'tp': 1, 'fp': 2, 'fn': 3}, {'tp': 4, 'fp': 5, 'fn': 6}]))
+    assert (check['anchor_patch_tp'], check['anchor_patch_fp'], check['anchor_patch_fn']) == (5, 7, 9)
+    assert abs(check['precision']-5/12) < 1e-15 and abs(check['recall']-5/14) < 1e-15
+    none = fixed_merge_confusions(iter([]))
+    assert none['precision'] is None and none['recall'] is None
+    spec = importlib.util.spec_from_file_location('sealed_initial_i40_analysis', HERE/'analyze_forecasts.py')
+    module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    module.merge_confusions = fixed_merge_confusions
+    original = json.loads((HERE/'report.json').read_text())
+    events = json.loads((HERE/'incoming_events.json').read_text())
+    corrected = deepcopy(original)
+    corrected['incoming_warning_summaries'] = module.event_summary(events, corrected['trajectory_cases'])
+    for selection in ('all', 'uniform', 'predeclared_event'):
+        rows = [r for r in events if selection == 'all' or r['selection_kind'] == selection]
+        truth_positive_count = sum(len(r['actual_stable_incoming']) for r in rows)
+        summary = next(r for r in corrected['incoming_warning_summaries'] if r['selection_kind'] == selection)
+        for method in ('dynamic_incoming_proxy', 'native_kinematic_preparation_warning_proxy'):
+            assert summary[method]['anchor_patch_tp']+summary[method]['anchor_patch_fn'] == truth_positive_count
+    unchanged_keys = [k for k in original if k != 'incoming_warning_summaries']
+    assert all(corrected[k] == original[k] for k in unchanged_keys)
+    record = {'iteration': 'I-40', 'stage': 'warning_aggregation_correction',
+        'completed_utc': datetime.now(timezone.utc).isoformat(),
+        'issue': 'Initial merge_confusions consumed a generator for TP and incorrectly reported zero FP/FN. Per-anchor records are correct.',
+        'change': 'Materialize the generator once before three sums; recompute warning summary only.',
+        'scope': 'Saved-data arithmetic only; zero additional physics, geometry evaluations, predictions or controller executions.',
+        'initial_report_sha256': digest(HERE/'report.json'),
+        'initial_artifact_manifest_sha256': digest(HERE/'artifact_manifest.json'),
+        'per_anchor_events_sha256': digest(HERE/'incoming_events.json'),
+        'source_sha256': digest(source),
+        'all_other_report_values_exactly_unchanged': True,
+        'adversarial_generator_fp_fn_check': check,
+        'method_independent_actual_positive_denominators_checked': True,
+        'initial_stage_retained_unchanged': True}
+    corrected['warning_aggregation_correction'] = record
+    (OUTPUT/'report.json').write_text(json.dumps(corrected, indent=2, allow_nan=False)+'\n')
+    (OUTPUT/'correction.json').write_text(json.dumps(record, indent=2)+'\n')
+    files = []
+    for path in sorted(OUTPUT.rglob('*')):
+        if path.is_file():
+            files.append({'path': str(path.relative_to(OUTPUT)), 'bytes': path.stat().st_size,
+                          'sha256': digest(path)})
+    (OUTPUT/'artifact_manifest.json').write_text(json.dumps({'files': files}, indent=2)+'\n')
+    print(json.dumps({'corrected_report': str(OUTPUT/'report.json'),
+                     'incoming_warning_summaries': corrected['incoming_warning_summaries'],
+                     'all_other_values_exactly_unchanged': True}, indent=2))
+
+
+if __name__ == '__main__':
+    main()

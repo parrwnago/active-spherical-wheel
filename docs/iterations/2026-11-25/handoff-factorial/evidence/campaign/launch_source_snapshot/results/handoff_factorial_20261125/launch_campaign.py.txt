@@ -1,0 +1,136 @@
+"""Launch exactly four I42 fresh isolated diagnostic processes, at most three at once."""
+from pathlib import Path
+from datetime import datetime, timezone
+import argparse
+import concurrent.futures
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+ARMS = ('baseline', 'feedback_shares', 'sync_off', 'both')
+PROTOCOL_SHA = 'fb616686edbfbca9ac6f2b3fbfb8da152be52513279fd208d825d67480e0b86f'
+RUNNER_SHA = 'b4f529bc6a923d17f2b1e7deaf7d27a6338d2a7ef28d6b72f6fb680830f14fa1'
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def save(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, indent=2)+'\n')
+
+
+def now():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def environment():
+    env = os.environ.copy()
+    for name in ['PYTHONPATH', 'LD_LIBRARY_PATH', 'AMENT_PREFIX_PATH', 'CMAKE_PREFIX_PATH', 'COLCON_PREFIX_PATH']:
+        env.pop(name, None)
+    env.update(MAMBA_ROOT_PREFIX=str(ROOT/'build/mamba'))
+    return env
+
+
+def command(arm):
+    return [str(ROOT/'build/tools/bin/micromamba'), 'run', '-p', str(ROOT/'build/gazebo-env'),
+            'env', 'MUJOCO_GL=egl', 'OPENBLAS_NUM_THREADS=1', 'OMP_NUM_THREADS=1',
+            'python', '-u', str(HERE/'run_handoff_factorial.py'), '--output', str(HERE), '--arm', arm]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--launch', action='store_true', help='Only after core checks and root launch clearance')
+    args = parser.parse_args()
+    assert sha(HERE/'protocol.json') == PROTOCOL_SHA
+    protocol = json.loads((HERE/'protocol.json').read_text())
+    assert tuple(x['arm'] for x in json.loads((HERE/'jobs.json').read_text())['cases']) == ARMS
+    assert protocol['execution']['intervention_window_s'] == [4., 10.]
+    for rel, digest in protocol['baseline_source_sha256'].items():
+        assert sha(ROOT/rel) == digest, rel
+    baseline = ROOT/protocol['baseline']
+    for rel, digest in protocol['baseline_input_sha256'].items():
+        assert sha(baseline/rel) == digest, rel
+    campaign = HERE/'campaign'
+    if not args.launch:
+        print(json.dumps({'preflight': 'Protocol/jobs/baseline sources and raw input hashes verified; no physics.',
+                          'protocol_sha256': PROTOCOL_SHA, 'cases': list(ARMS),
+                          'source_references': len(protocol['baseline_source_sha256']),
+                          'baseline_inputs': len(protocol['baseline_input_sha256']),
+                          'commands': {a: command(a) for a in ARMS}}, indent=2))
+        return
+    if (campaign/'launch_manifest.json').exists() or (campaign/'launch_status.json').exists():
+        raise FileExistsError('Preserve all prior attempted launches; choose a separately declared stage')
+    for arm in ARMS:
+        assert not (campaign/'runs'/arm).exists(), arm
+    assert (HERE/'run_handoff_factorial.py').is_file()
+    assert sha(HERE/'run_handoff_factorial.py') == RUNNER_SHA
+    checks = json.loads((HERE/'harness_checks/stage01/report.json').read_text())
+    assert checks['passed'] and checks['both_readonly_preflights_passed']
+    assert checks['source_unchanged_after_checks'] and checks['runner_sha256'] == RUNNER_SHA
+    sources = [Path(__file__), HERE/'run_handoff_factorial.py', HERE/'protocol.json', HERE/'jobs.json']
+    sources += [ROOT/rel for rel in protocol['baseline_source_sha256']]
+    # Preserve extra harness test/helper files if the harness owner added them.
+    sources += [p for p in HERE.glob('*.py') if p not in sources]
+    sources += [p for folder in [HERE/'tests',HERE/'harness_checks/stage01']
+                for p in folder.rglob('*') if p.is_file() and '__pycache__' not in p.parts]
+    snapshot = campaign/'launch_source_snapshot'
+    snapshot.mkdir(parents=True, exist_ok=False)
+    records = []
+    for source in sorted(set(sources)):
+        rel = source.relative_to(ROOT)
+        target = snapshot/rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+        digest = sha(source)
+        assert sha(target) == digest
+        records.append({'origin': str(rel), 'snapshot': str(target.relative_to(campaign)), 'sha256': digest})
+    env = environment()
+    manifest = {'iteration': 'I-42', 'captured_before_execution_utc': now(), 'protocol_sha256': PROTOCOL_SHA,
+                'scope': 'Exactly four fresh Gazebo/DART physical processes; no state restore or internal reuse.',
+                'max_concurrent_processes': 3, 'sources': records,
+                'environment_overrides': {'MAMBA_ROOT_PREFIX': env['MAMBA_ROOT_PREFIX'],
+                    'MUJOCO_GL': 'egl', 'OPENBLAS_NUM_THREADS': '1', 'OMP_NUM_THREADS': '1'},
+                'environment_removed': ['PYTHONPATH', 'LD_LIBRARY_PATH', 'AMENT_PREFIX_PATH', 'CMAKE_PREFIX_PATH', 'COLCON_PREFIX_PATH'],
+                'jobs': [{'arm': arm, 'command_argv': command(arm), 'cwd': str(ROOT),
+                          'log': str((campaign/'logs'/f'{arm}.log').relative_to(ROOT))} for arm in ARMS]}
+    save(campaign/'launch_manifest.json', manifest)
+    (campaign/'logs').mkdir(exist_ok=True)
+    statuses = {a: {'arm': a, 'status': 'queued'} for a in ARMS}
+    save(campaign/'launch_status.json', statuses)
+
+    def run(arm):
+        path = campaign/'logs'/f'{arm}.log'
+        started = now()
+        with path.open('x') as log:
+            process = subprocess.Popen(command(arm), cwd=ROOT, env=env, stdout=log, stderr=subprocess.STDOUT)
+            print(json.dumps({'arm': arm, 'status': 'started', 'pid': process.pid, 'utc': started}), flush=True)
+            code = process.wait()
+        result = {'arm': arm, 'status': 'completed' if code == 0 else 'failed', 'exit_code': code,
+                  'started_utc': started, 'finished_utc': now(), 'log': str(path.relative_to(ROOT))}
+        print(json.dumps(result), flush=True)
+        return result
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+        pending = {pool.submit(run, a): a for a in ARMS}
+        for future in concurrent.futures.as_completed(pending):
+            arm = pending[future]
+            try:
+                statuses[arm] = future.result()
+            except Exception as exc:
+                statuses[arm] = {'arm': arm, 'status': 'launch_exception', 'error': repr(exc), 'finished_utc': now()}
+            save(campaign/'launch_status.json', statuses)
+    for record in records:
+        assert sha(ROOT/record['origin']) == record['sha256'], record['origin']
+    if any(x['status'] != 'completed' for x in statuses.values()):
+        raise SystemExit('One or more attempts failed. Retain all logs and partial folders; no retries authorized by this launcher.')
+
+
+if __name__ == '__main__':
+    main()

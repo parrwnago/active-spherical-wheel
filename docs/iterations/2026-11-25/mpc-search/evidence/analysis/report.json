@@ -1,0 +1,261 @@
+{
+  "scope": "I34 two new Gazebo cases with explicitly reused I32 baselines; no new physics in analysis.",
+  "rows": [
+    {
+      "case": "native_5ms_reused",
+      "reused_not_new_run": true,
+      "completed": true,
+      "failure": null,
+      "final_goal_error_mm": 0.3810167462097668,
+      "peak_goal_error_after_feedback_mm": 32.78783698916192,
+      "final_xy_speed_mm_s": 0.185102641725066,
+      "final1s_goal_error_max_mm": 0.3810167462097668,
+      "final1s_xy_speed_max_mm_s": 0.5182619101821746,
+      "final1s_reference_lean_max_deg": 0.00588198182188445,
+      "final_absolute_platform_tilt_deg": 9.731527497930774,
+      "final_reference_tilt_deg": 9.730933154743097,
+      "settled_return_passed": true,
+      "hard_inputs_bounded": true,
+      "fallback_actuated_fraction": 0.0,
+      "input_limit_occupancy_fraction": 0.00375,
+      "mpc_update_wall_median_s": null
+    },
+    {
+      "case": "native_held_20ms",
+      "reused_not_new_run": false,
+      "completed": true,
+      "failure": null,
+      "final_goal_error_mm": 49.02638757714378,
+      "peak_goal_error_after_feedback_mm": 83.10899830969527,
+      "final_xy_speed_mm_s": 9.213430177297607,
+      "final1s_goal_error_max_mm": 58.16699514395931,
+      "final1s_xy_speed_max_mm_s": 260.03985704103167,
+      "final1s_reference_lean_max_deg": 1.1728572458295523,
+      "final_absolute_platform_tilt_deg": 10.451666284322087,
+      "final_reference_tilt_deg": 9.74834719660923,
+      "settled_return_passed": false,
+      "hard_inputs_bounded": true,
+      "fallback_actuated_fraction": 0.0,
+      "input_limit_occupancy_fraction": 0.7375,
+      "mpc_update_wall_median_s": null
+    },
+    {
+      "case": "mpc_original_20ms_reused",
+      "reused_not_new_run": true,
+      "completed": true,
+      "failure": null,
+      "final_goal_error_mm": 31.21498393710652,
+      "peak_goal_error_after_feedback_mm": 88.27839728671405,
+      "final_xy_speed_mm_s": 17.797722805876223,
+      "final1s_goal_error_max_mm": 49.51754029562091,
+      "final1s_xy_speed_max_mm_s": 19.422558133140758,
+      "final1s_reference_lean_max_deg": 0.01749477750446723,
+      "final_absolute_platform_tilt_deg": 9.739136414403866,
+      "final_reference_tilt_deg": 9.731118063951778,
+      "settled_return_passed": false,
+      "hard_inputs_bounded": true,
+      "fallback_actuated_fraction": 0.0,
+      "input_limit_occupancy_fraction": 0.01,
+      "mpc_update_wall_median_s": 0.9968986090025282
+    },
+    {
+      "case": "mpc_native_seed_20ms",
+      "reused_not_new_run": false,
+      "completed": true,
+      "failure": null,
+      "final_goal_error_mm": 28.98166564092416,
+      "peak_goal_error_after_feedback_mm": 88.6426780781205,
+      "final_xy_speed_mm_s": 18.224025881667753,
+      "final1s_goal_error_max_mm": 47.93912798647733,
+      "final1s_xy_speed_max_mm_s": 19.66586850398299,
+      "final1s_reference_lean_max_deg": 0.019929219675261095,
+      "final_absolute_platform_tilt_deg": 9.748939475186148,
+      "final_reference_tilt_deg": 9.731115511861601,
+      "settled_return_passed": false,
+      "hard_inputs_bounded": true,
+      "fallback_actuated_fraction": 0.0,
+      "input_limit_occupancy_fraction": 0.0025,
+      "mpc_update_wall_median_s": 2.0201418069991632
+    }
+  ],
+  "new_gazebo_executions": 2,
+  "reused_baselines": 2,
+  "exact_shared_drift_prefix": {
+    "native_held_20ms": {
+      "time_s": true,
+      "exact_qpos": true,
+      "exact_qvel": true,
+      "exact_applied": true,
+      "exact_observer_wrench": true,
+      "exact_estimated_normal": true,
+      "recovery_native_requested": true,
+      "recovery_native_applied": true,
+      "recovery_goal_xy": true
+    },
+    "mpc_original_20ms_reused": {
+      "time_s": true,
+      "exact_qpos": true,
+      "exact_qvel": true,
+      "exact_applied": true,
+      "exact_observer_wrench": true,
+      "exact_estimated_normal": true,
+      "recovery_native_requested": true,
+      "recovery_native_applied": true,
+      "recovery_goal_xy": true
+    },
+    "mpc_native_seed_20ms": {
+      "time_s": true,
+      "exact_qpos": true,
+      "exact_qvel": true,
+      "exact_applied": true,
+      "exact_observer_wrench": true,
+      "exact_estimated_normal": true,
+      "recovery_native_requested": true,
+      "recovery_native_applied": true,
+      "recovery_goal_xy": true
+    }
+  },
+  "identical_feedback_switch_state": {
+    "native_held_20ms": {
+      "exact_qpos": true,
+      "exact_qvel": true,
+      "exact_observer_wrench": true,
+      "exact_estimated_normal": true
+    },
+    "mpc_original_20ms_reused": {
+      "exact_qpos": true,
+      "exact_qvel": true,
+      "exact_observer_wrench": true,
+      "exact_estimated_normal": true
+    },
+    "mpc_native_seed_20ms": {
+      "exact_qpos": true,
+      "exact_qvel": true,
+      "exact_observer_wrench": true,
+      "exact_estimated_normal": true
+    }
+  },
+  "seeded_plan_audit": {
+    "accepted_plans_including_terminal": 401,
+    "accepted_actuated_plans": 400,
+    "solved_qp_calls_including_terminal": 804,
+    "solved_qp_calls_actuated": 802,
+    "native_seed_failures": [],
+    "plans_with_candidate_cost_comparison": 401,
+    "selected_cost_to_native_candidate_ratio_max": 0.9970101403612338,
+    "actuated_source_counts": {
+      "3": 1600
+    },
+    "source_codes": {
+      "0": "true native fallback",
+      "1": "shifted predictive warm sequence",
+      "2": "initial shaft seed",
+      "3": "SQP-refined predictive sequence",
+      "4": "native-policy predicted coarse candidate, not actual native fallback"
+    }
+  },
+  "inputs": [
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/native/rollout.npz",
+      "sha256": "3a6fb2905dff63a2bedce8eaa6b22b836d498202bb6a5d4983ccdd4c2101ca06",
+      "reused": true
+    },
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/native/precision.npz",
+      "sha256": "9d3a296002dda4b1bb3e9cd7c0c1cb3f88ca6d7499c9789ee1eed41c6ed996c4",
+      "reused": true
+    },
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/native/summary.json",
+      "sha256": "033751105135eb2693ea8826e9cc3168b23cfa5d9ac2e4d4251cff08b2856c80",
+      "reused": true
+    },
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/native/plans.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "reused": true
+    },
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/native/provenance.json",
+      "sha256": "64cdd61cb8b4e298bd716534973c6bc28b1acf03f2bbdcd80417e487fd2f2d63",
+      "reused": true
+    },
+    {
+      "path": "results/mpc_search_20261125/runs/slope/native/rollout.npz",
+      "sha256": "ccf676fd5c876c06a9bf4f7544a853a4989662c5b092b238fdac0ccdeda63f1d",
+      "reused": false
+    },
+    {
+      "path": "results/mpc_search_20261125/runs/slope/native/precision.npz",
+      "sha256": "585ff0dabaf4a0db6753a2f6af297f4498ae6a544dda2562797912fcd93e4243",
+      "reused": false
+    },
+    {
+      "path": "results/mpc_search_20261125/runs/slope/native/summary.json",
+      "sha256": "137d47da6296ff9d7c62718081699cb8f7be05e36e929082a3a14d6a9d315680",
+      "reused": false
+    },
+    {
+      "path": "results/mpc_search_20261125/runs/slope/native/plans.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "reused": false
+    },
+    {
+      "path": "results/mpc_search_20261125/runs/slope/native/provenance.json",
+      "sha256": "475b9e803af8b5e48e80f997dd6201c01f1f922d1d186335e9254c1be1847489",
+      "reused": false
+    },
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/mpc/rollout.npz",
+      "sha256": "7dde1a987359a6acdfbcf5e033c10fac05f1388268790044a36a3f6ce7eff8a7",
+      "reused": true
+    },
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/mpc/precision.npz",
+      "sha256": "1578706d750aa647bf7c9b87ca7ba3fa5f43f8030622ccdcad21efd4e4e9e19f",
+      "reused": true
+    },
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/mpc/summary.json",
+      "sha256": "c523e6b740813e65fce088c8956f8ba987262aa778368781c2e7ec2d2b989cad",
+      "reused": true
+    },
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/mpc/plans.json",
+      "sha256": "d37428f760c1faafc2fcdde33444f2c4f586d7d4ac67afd88292d3fe8e11e570",
+      "reused": true
+    },
+    {
+      "path": "results/feedback_recovery_20261125/runs/slope/mpc/provenance.json",
+      "sha256": "b87cfe9b952b4e8fe48dae81543f5c8afd3c59043e260b725bf76f21d50e5715",
+      "reused": true
+    },
+    {
+      "path": "results/mpc_search_20261125/runs/slope/mpc/rollout.npz",
+      "sha256": "ae15697f397d02af2ac7dbbec110b18ec56c9c5764f9a3fe830ede6d58ee8bbb",
+      "reused": false
+    },
+    {
+      "path": "results/mpc_search_20261125/runs/slope/mpc/precision.npz",
+      "sha256": "b42fb372d188ac72be053f382440e3f42dafe6b35bc0aa0638116ef5b2477d04",
+      "reused": false
+    },
+    {
+      "path": "results/mpc_search_20261125/runs/slope/mpc/summary.json",
+      "sha256": "ef125bf148e05b40e6123845461bb4912a73a891a87592f92fba9d1416273609",
+      "reused": false
+    },
+    {
+      "path": "results/mpc_search_20261125/runs/slope/mpc/plans.json",
+      "sha256": "9c1d8ef28c7bc094df980cc0cb48d2b7acc98df4bcc0ab0fcbc74b38db78e6bd",
+      "reused": false
+    },
+    {
+      "path": "results/mpc_search_20261125/runs/slope/mpc/provenance.json",
+      "sha256": "09cdca2584e3b52be9fe12c0d6c3f3d834c412cdef95d75dc29ea7598bcb2809",
+      "reused": false
+    }
+  ],
+  "source_sha256": "3c5eec7bc52529a916a0f4b5067fdad234aefdf64f9ad597fd12f15f141b8a6a",
+  "limits": "Held20msnativeusesunchanged5msdesignedgains; notretuned50HzLQR. MPCnativecandidateisprivatepredictedpolicy, notfuturemeasurement oractualnativefallback. No roughterrain/globalstability/real-timeclaim."
+}

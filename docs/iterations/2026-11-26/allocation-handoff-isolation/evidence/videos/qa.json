@@ -1,0 +1,164 @@
+{
+  "iteration": "I-51",
+  "passed": true,
+  "primary": {
+    "passed": true,
+    "checks": {
+      "all_inputs_unchanged": true,
+      "video_hash_matches": true,
+      "h264": true,
+      "resolution": true,
+      "fps": true,
+      "frame_count": true,
+      "duration": true,
+      "no_physics_controller_or_scientific_reduction": true,
+      "defaults_unchanged": true,
+      "primary_four_cases_only": true,
+      "full44s_schedule": true,
+      "actual_clocks_match": true,
+      "all4_end_at44": true,
+      "same_original_camera": true,
+      "playback2x": true,
+      "raw_integrity_passed": true,
+      "decoded_frames_nonblank": true
+    },
+    "video": {
+      "path": "results/allocation_handoff_isolation_20261126/videos/allocation_handoff_comparison.mp4",
+      "sha256": "46859559f09dffe721b36073eef91e62037ee772cf40e5064da39a8866f5de53",
+      "bytes": 6867508,
+      "frames": 561,
+      "fps": 20,
+      "duration_s": 28.05
+    },
+    "stills": {
+      "decoded_0000.jpg": {
+        "sha256": "a45a335e009f5c02854b56565271af94bb484dce85fc216485be066811619f86",
+        "shape": [
+          1500,
+          1800,
+          3
+        ],
+        "pixel_std": 38.749405369800336
+      },
+      "decoded_0040.jpg": {
+        "sha256": "d889231cb75049d707fdab098d7ff0d6a7c6208a7cafe997d77b65980f2383ca",
+        "shape": [
+          1500,
+          1800,
+          3
+        ],
+        "pixel_std": 74.43373998642548
+      },
+      "decoded_0280.jpg": {
+        "sha256": "be92e424d24c2c894f3d280526153ea1a84b67bd9c5de636079e9f8f23236e84",
+        "shape": [
+          1500,
+          1800,
+          3
+        ],
+        "pixel_std": 74.44450655903343
+      },
+      "decoded_0560.jpg": {
+        "sha256": "ddd7a4ba900674066460b1f1445ba35ea467e7c028590ba624c5ca9b936deed1",
+        "shape": [
+          1500,
+          1800,
+          3
+        ],
+        "pixel_std": 31.640277821320957
+      }
+    },
+    "visual_review": "Preview32.170s and finaldecoded24s/endcard inspected: fixedcamera, pairedrows, actualdivergence and mixedoutcomes readable. Screensfalse and handoff11.68deg lean retained.",
+    "limitations": [
+      "Video poses sampled100ms from original5ms native logs; fulltrace error strips retain allsamples.",
+      "No combined candidate or separate fifth phasecase appears.",
+      "Mechanistic modifierbounds are separate from physical performance and acceptancegates."
+    ]
+  },
+  "late_phase": {
+    "passed": true,
+    "checks": {
+      "all_inputs_unchanged": true,
+      "video_hash_matches": true,
+      "h264": true,
+      "resolution": true,
+      "fps": true,
+      "frame_count": true,
+      "duration": true,
+      "no_physics_controller_or_scientific_reduction": true,
+      "defaults_unchanged": true,
+      "only_separate_matched_history_pair": true,
+      "fixed36_44_schedule": true,
+      "actual_clocks_match": true,
+      "exact38_switch_labels": true,
+      "same_camera_as_primary": true,
+      "half_speed": true,
+      "explicit_diagnostic_time_gate": true,
+      "root_matched_history_QA_passed": true,
+      "decoded_frames_nonblank": true
+    },
+    "video": {
+      "path": "results/allocation_handoff_isolation_20261126/videos/late_phase_diagnostic.mp4",
+      "bytes": 2474163,
+      "sha256": "73557fed18e34106b2bd60e08de5a002042bcfb48a0d17dc113ffda5154af3ce",
+      "frames": 421,
+      "fps": 20,
+      "duration_s": 21.05
+    },
+    "stills": {
+      "phase_decoded_0000.jpg": {
+        "sha256": "9e61a7e6c99d35a6c39c8da8c00b1dfcf42333e169ab929fbc386b0919bc351c",
+        "shape": [
+          1200,
+          1800,
+          3
+        ],
+        "pixel_std": 37.79669591157158
+      },
+      "phase_decoded_0040.jpg": {
+        "sha256": "abf3b2c37e2b760d546d44d63d012399ff4d312b5f51b463bec5f1cc1584fec3",
+        "shape": [
+          1200,
+          1800,
+          3
+        ],
+        "pixel_std": 67.98791462598659
+      },
+      "phase_decoded_0120.jpg": {
+        "sha256": "1a1ea9c591afb506cb06f824b6f0ea1f82517e3ab5490f4d747b01035cebaf18",
+        "shape": [
+          1200,
+          1800,
+          3
+        ],
+        "pixel_std": 67.90810315064961
+      },
+      "phase_decoded_0260.jpg": {
+        "sha256": "11cfe7b4bb32bb028ae3200e98e92029e2a6952e2ed29030ad1624639c797395",
+        "shape": [
+          1200,
+          1800,
+          3
+        ],
+        "pixel_std": 67.93571843724494
+      },
+      "phase_decoded_0420.jpg": {
+        "sha256": "25612c7b997c54bcde32f06b0156159cae8c4315002e7be6e7ce18047097ba28",
+        "shape": [
+          1200,
+          1800,
+          3
+        ],
+        "pixel_std": 31.327951187612598
+      }
+    },
+    "visual_review": "Two-panel preview and finaldecoded38s/endcard inspected; clocks/switchmarker, matchedcamera and diagnostic-only qualification readable.",
+    "limitations": [
+      "The38s gate is a selected episode-isolation intervention, not a deployable controller or default.",
+      "Improved late/final error in one episode does not imply a fullroute fix; movingRMS is essentiallyunchanged and slightlyworse.",
+      "Pose frames sampled25ms from original5ms native logs; plots retain allsamples."
+    ]
+  },
+  "source_sha256": "2731fa5becedd699563415137721b8e81ef0e331e7105f1e2c651c0d53af2c14",
+  "scope": "Bounded I51 saved-media hashes, clocks, decoded-frame and encoding QA."
+}

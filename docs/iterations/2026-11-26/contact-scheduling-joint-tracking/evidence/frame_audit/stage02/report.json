@@ -1,0 +1,132 @@
+{
+  "status": "completedsource/mathaudit; I52nativeexperimentproposed/parent-registeredseparately",
+  "historical_schedule_evidence": {
+    "report": "results/offroad/tuning/tuning.json",
+    "report_sha256": "8fe261bf6ba05280018f848566f3ddb33a0c85f2b2bc1ac999e514eab22abb91",
+    "reported_values": [
+      false,
+      true
+    ],
+    "reported_costs": [
+      2.745654738817209,
+      2.6436046468742234
+    ],
+    "reported_falls": [
+      0,
+      0
+    ],
+    "relative_cost_improvement": 0.037167853080809145,
+    "minimum_required_improvement": 0.05,
+    "adoption_threshold_cost": 2.608372001876348,
+    "candidate_passed_margin": false,
+    "reported_chosen": false,
+    "scenarios": [
+      "ramp_forward",
+      "ramp_lateral",
+      "cross_slope",
+      "hills",
+      "washboard",
+      "bumps",
+      "rough"
+    ],
+    "variants": [
+      [
+        7,
+        0.3
+      ],
+      [
+        23,
+        0.9
+      ]
+    ],
+    "runs_per_setting": 14,
+    "controller_mode": "terrain_aware",
+    "scope": "Legacyoff-roadtuningreport; pipelineusesMuJoCoWorkspace. NotcurrentGazebo/hardwareobserverexperiment. Exactrun-executedoldsourceprovenancenotrecovered; preservedcurrentsourceisexplanatoryonly.",
+    "legacy_Mars_claim": {
+      "source": "src/spherical_wheel/offroad_control.py:28",
+      "source_sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "statement": "Codecommentstatesnormal-relativephaseincreasedfallsonMars; exactcontrolleddata/countsnotrecovered.",
+      "referenced_legacy_study": "results/gazebo/mars_yaw_study",
+      "referenced_folder_present": false,
+      "audited_scope": "Currentresults/gazeboJSON searchfoundno schedule_on_ground_normal:true report; thisdoesnotestablishhistoricalexperimentneverran."
+    }
+  },
+  "original_three_jobs": [
+    {
+      "start_phase_rad": -1.0,
+      "initial_yaw_deg": 45.0,
+      "path": {
+        "kind": "figure8",
+        "duration_s": 40.0,
+        "radius_m": 0.45,
+        "clockwise": false,
+        "start_s": 1.0,
+        "origin": [
+          -1.6,
+          9.6
+        ],
+        "sampled_peak_speed_m_s": 0.18743412395355608,
+        "sampled_peak_acceleration_m_s2": 0.07802436281520816
+      },
+      "origin_summary": "results/contact_diagnostics_20261125/baseline/plain_figure8/phase_-1.00/summary.json",
+      "summary_sha256": "6362eb695a5fdf6e6963229feaa101aa17e1b32ed1232089381215c1c9684727"
+    },
+    {
+      "start_phase_rad": 0.3,
+      "initial_yaw_deg": 45.0,
+      "path": {
+        "kind": "figure8",
+        "duration_s": 40.0,
+        "radius_m": 0.45,
+        "clockwise": false,
+        "start_s": 1.0,
+        "origin": [
+          -1.6,
+          9.6
+        ],
+        "sampled_peak_speed_m_s": 0.18743412395355608,
+        "sampled_peak_acceleration_m_s2": 0.07802436281520816
+      },
+      "origin_summary": "results/contact_diagnostics_20261125/baseline/plain_figure8/phase_+0.30/summary.json",
+      "summary_sha256": "499a3dad03f0c1cc823484f7d92b8aa73c6e32ad3783d824015921cdc54aa0a0"
+    },
+    {
+      "start_phase_rad": 0.9,
+      "initial_yaw_deg": 45.0,
+      "path": {
+        "kind": "figure8",
+        "duration_s": 40.0,
+        "radius_m": 0.45,
+        "clockwise": false,
+        "start_s": 1.0,
+        "origin": [
+          -1.6,
+          9.6
+        ],
+        "sampled_peak_speed_m_s": 0.18743412395355608,
+        "sampled_peak_acceleration_m_s2": 0.07802436281520816
+      },
+      "origin_summary": "results/contact_diagnostics_20261125/baseline/plain_figure8/phase_+0.90/summary.json",
+      "summary_sha256": "c763754d6e416edb8785bf74b6f96613ef2fa1a042ddcfb86592e12685f5b58c"
+    }
+  ],
+  "math_and_source": {
+    "phase_definition": "phi_z=atan2(\u2212(Rcarrier^T worldZ)_x,(Rcarrier^T worldZ)_z); phi_n replacesworldZwithcurrentfilteredestimatednormal. Thisonlychangeslookupangle.",
+    "flat_bank": "FlatDesign usesprivateflatPlant equilibriumandcomplete5msfinite-differenceA/B; K optimizedwithfixedflatQ/R. NormalflagdoesnotredoA/B/equilibriumorgains.",
+    "error_coordinates": "WorldXYposition/linearvelocityrotatedtoactualheading; quaterniondifferenceusesPlant.error/mj_differentiatePos; freejointangularvelocityisbodyframe; cyclicshellpositionerrorszero; shaft_error rollingreplaceseshaft=ex/R\u2212epitch.",
+    "reference_frames": "Rawworldleanreference usesestimatednormal+desiredacceleration; currentactualyaw right-multiplied. Nativeangularrate targetzero; oldguardchangesonlyjointvref6:9. No addedyawtarget/rate orfullterrainframe transform.",
+    "input_coordinates": "Firstthreeactuatorsphysicalshaft/shelltorques; lasttwoidealbeltcarrierYspeeds. Normalflagdoesnotrotateinputcoordinates.",
+    "ordinary_anchor": "Afterload/phasegainblend, K[0]=ownordinary.local(startphase).design.K[0]. Thisrowisfixedwithinrun, differsacrossstartingphases; onlywithinphaseordinaryhash/initialstateequalityshouldbeasserted.",
+    "load_blending": "Currentestimatedpatchloads blenddifferentflatbankregimegains; dropoutholdspriorgain. Effectivephasecomputednowdoesnotmeangainupdatedwhenunloaded. Interpolation/convexloadblendplusshaftrowreplacementhasnoglobal/commonLyapunovcertificate.",
+    "gravity_limit": "Afullterrain-framecontrollerneedsstate/inputmappinganddynamicsincludingtiltedgravity/contactgeometry. Changingnormalphaserecreatesneither; evenacoordinaterotationrequiresK_orig=U*K_terrain*T andappropriatetransformedA/B/equilibrium. Staticlean/holdingtorquecompensatezeroorderbalancebutnotallnonlineardynamicderivatives.",
+    "claim_boundary": "Contact-relativephaseindexingisahybridheuristic; notfullyterrain-consistentLQR orguaranteedjointtracking."
+  },
+  "factorial_recommendation": {
+    "scope": "12fresh44sMarscases: 3originalphases \u00d72normalphaseflags\u00d72exactI51jointreferenceguards. cap.30,ordinaryperphase/flatbank/config/observer/referenceprogramsame; no beltslew,weights,camerasortimegates.",
+    "initialization": "place_on_groundusesterrain,ordinary,phase,lean_factor andyaw; notnormalphaseflag/guard. Requireexactinitialphysicalstatewithinphasefourarms; ordinarydesignperphaseprotected.",
+    "no_extra_flat_physics": "WithestimatednormalexactworldZ, phaseflagalgebraisidenticalforallcarrierrotations; purefixturecoverswiringwithoutfourmorephysicalcases. Physicalflatnormal-estimationtransientswouldbeaseparatesensor/schedulingquestion.",
+    "tracking_metrics": "Reportactual\u2212nativeLSjointtargetsANDactual\u2212usedguardedtargets, actual/native/usedcurves, referenceboxmodifications andnominalrollingresidual. Neitherreducedusedtargeterrornorboundedrefaloneimpliesbetterrobotmotion.",
+    "configuration_metrics": "Bothphasesanddifference, dominantestimatedsupport/loadshare/touching/heldgain, raw+usedjointrefs, actualjointandbodyrates, unwrappedheading/bodyZrate, torque/speedcaps, nominalerror/lean/settling/sixturns. Preferperphaseeffects andsamepredeclaredconfigurationbins; do notpoolstatehistoriesasidenticalconfigurations.",
+    "analysis": "Withinphase normalonlyvsbaseline, guardonlyvsbaseline,bothvsbaseline; normal effect atbothguardlevels andguard effectatbothnormallevels; interaction=C11\u2212C10\u2212C01+C00 descriptive, notstatisticalreplication. Preserveall3phaseoutcomesandfailures."
+  }
+}

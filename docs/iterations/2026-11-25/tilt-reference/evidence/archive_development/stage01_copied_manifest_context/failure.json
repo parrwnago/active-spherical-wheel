@@ -1,0 +1,8 @@
+{
+  "scope": "Archive preflight only; no compact evidence/ZIP or scientific results changed.",
+  "script_sha256": "a65f8eff668e3b84e13423566482eb95b081859be4267d4ba4207485681665f0",
+  "manifest": "analysis/stage01/source/independent_artifact_manifest.json",
+  "entry": "math_audit.log",
+  "reason": "Copied artifact manifest retains paths relative to its original independent-check directory; log was not copied beside the renamed manifest.",
+  "correction": "Resolve file references also against original directories of byte-identical manifests, and require expected content hash. Preserve all manifests unchanged."
+}

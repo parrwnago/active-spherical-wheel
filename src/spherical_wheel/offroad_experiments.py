@@ -190,9 +190,33 @@ _LOG_KEYS = ('time_s', 'qpos', 'qvel', 'command', 'input', 'reference_xy', 'refe
              'support_direction', 'contact_point_m', 'contact_moment_Nm', 'observer_force_N', 'observer_moment_Nm')
 _UNOBSERVED = np.full(3, np.nan)
 
+# Opt-in diagnostics use only controller-visible measurements/estimates.
+# Existing unprefixed contact columns remain simulator truth for evaluation.
+_DIAGNOSTIC_KEYS = (
+    'estimated_contact_point_m', 'estimated_contact_points_m', 'estimated_support_loads_N',
+    'reference_velocity_m_s', 'reference_qvel', 'feedback_reference_qvel', 'rolling_feedforward', 'lqr_command',
+    'equilibrium_command', 'support_command', 'transition_command_delta', 'heading_command',
+    'fade_command_delta', 'clipping_command_delta', 'sync_weights', 'feedback_gain',
+    'contact_velocity_residual_m_s', 'contact_velocity_residual_rms_m_s',
+    'contact_velocity_residual_max_m_s', 'predicted_body_velocity_m_s', 'measured_body_velocity_m_s',
+    'velocity_consistency_valid', 'kinematic_inconsistency', 'actuator_saturated',
+    'tracking_velocity_error_m_s', 'input_bounds', 'previous_applied_input',
+    'previous_actuator_saturated',
+    'allocation_drive_reference', 'allocation_speed_limits', 'allocation_acceleration_limits',
+    'allocation_active_bounds', 'allocation_effort_weight_m_s', 'allocation_change_weight_m_s',
+    'allocation_residual_rms_m_s', 'allocation_velocity_error_m_s',
+    'allocation_authority_m_s', 'allocation_effort_blend',
+    'allocation_requested_velocity_m_s', 'allocation_accepted_velocity_m_s',
+    'allocation_velocity_response', 'allocation_modal_effort_m_s',
+    'allocation_accepted_velocity_valid', 'allocation_reference_residual_rms_m_s',
+    'feedback_reference_xy', 'reference_acceleration_m_s2',
+    'reference_position_error_relaxed_m', 'reference_catchup_velocity_m_s',
+    'reference_travel_priority', 'reference_balance_metric_rad',
+)
+
 
 def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=None, pushes=(),
-                balanced_lean=True, settle_s=3., yaw_deg=0.):
+                balanced_lean=True, settle_s=3., yaw_deg=0., record_diagnostics=False):
     """Simulate one run and return ``(log, summary)``.
 
     ``pushes`` are ``(start_s, duration_s, [Fx, Fy, Fz])`` world forces on the
@@ -204,17 +228,23 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
     follows the simulated robot's state before every call. Its contact
     estimates stay in its diagnostics; the log's contact columns are the
     solver's in every mode, so they measure what really happened.
+
+    ``record_diagnostics`` adds estimated contacts, measured rolling-consistency
+    residuals, and separate command contributions without feeding them back.
+    These additional fields currently require ``hardware`` mode.
     """
     params = params or OffroadParams()
     plant = workspace.plant(terrain)
     phase = plant.config['simulation'].get('initial_shaft_phase_rad', .30) if phase is None else phase
     controller = OffroadController(workspace.mirror() if params.mode == 'hardware' else plant,
-                                   workspace.design, params, phase)
+                                   workspace.design, params, phase, record_diagnostics=record_diagnostics)
     place_on_ground(plant, controller, path.origin, phase, balanced_lean, yaw_deg)
     duration = float(duration_s if duration_s is not None else path.start_s+path.duration_s+settle_s)
     count = int(round(duration/plant.dt))
-    log = {key: [] for key in _LOG_KEYS}
+    keys = _LOG_KEYS+_DIAGNOSTIC_KEYS if record_diagnostics else _LOG_KEYS
+    log = {key: [] for key in keys}
     failure = None
+    previous_requested = plant.last_input.copy()
     for index in range(count+1):
         now = float(plant.data.time)
         xy, velocity, acceleration = path(now)
@@ -255,7 +285,12 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
                                     else _UNOBSERVED.copy()),
                'observer_moment_Nm': (diagnostics['observed']['moment_Nm'].copy() if diagnostics.get('observed')
                                       else _UNOBSERVED.copy())}
-        for key in _LOG_KEYS:
+        if record_diagnostics:
+            row.update({key: diagnostics[key] for key in _DIAGNOSTIC_KEYS
+                        if key not in ('previous_applied_input', 'previous_actuator_saturated')})
+            row['previous_applied_input'] = plant.last_input.copy()
+            row['previous_actuator_saturated'] = np.abs(previous_requested) > plant.bounds+1e-12
+        for key in keys:
             log[key].append(row[key])
         if snapshot['balance_failed']:
             failure = 'fork or platform touched the ground'
@@ -269,6 +304,7 @@ def run_offroad(workspace, terrain, path, params=None, duration_s=None, phase=No
             break
         plant.step(applied, np.r_[push, np.zeros(3)])
         controller.after_step()
+        previous_requested = diagnostics['requested'].copy()
     log = {key: np.asarray(value) for key, value in log.items()}
     summary = summarize(log, plant, path, params, failure, duration)
     return log, summary

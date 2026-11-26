@@ -1,0 +1,244 @@
+{
+  "passed": true,
+  "synthetic_checks": [
+    {
+      "name": "earlier_on_symmetric_saved_grid_offset_tie",
+      "passed": true,
+      "evidence": {
+        "result": {
+          "matches": [
+            {
+              "truth_index": 0,
+              "estimate_index": 0,
+              "truth_time_s": 1.1,
+              "estimated_time_s": 1.05,
+              "direction": "shell_to_belt",
+              "signed_offset_s": -0.050000000000000044
+            }
+          ],
+          "unmatched_truth_indices": [],
+          "extra_estimate_indices": [
+            1
+          ]
+        },
+        "absolute_offsets_s": [
+          0.050000000000000044,
+          0.04999999999999982
+        ],
+        "expected_index": 0
+      }
+    },
+    {
+      "name": "full_context_avoids_false_extra_from_outside_window_truth",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "name": "estimated_event_outside_scoring_window_can_match_inside_truth",
+      "passed": true,
+      "evidence": [
+        {
+          "truth_index": 1,
+          "estimate_index": 1,
+          "truth_time_s": 0.6,
+          "estimated_time_s": 0.655,
+          "direction": "belt_to_shell",
+          "signed_offset_s": 0.05500000000000005
+        }
+      ]
+    },
+    {
+      "name": "long_unknown_gap_censors_instead_of_fabricating_handoff",
+      "passed": true,
+      "evidence": {
+        "events": [],
+        "stable_runs": [
+          {
+            "family": "shell",
+            "start_s": 0.0,
+            "end_s": 0.045,
+            "first_index": 0,
+            "last_index": 9,
+            "span_s": 0.045,
+            "samples": 10
+          },
+          {
+            "family": "belt",
+            "start_s": 0.15,
+            "end_s": 0.195,
+            "first_index": 30,
+            "last_index": 39,
+            "span_s": 0.04500000000000001,
+            "samples": 10
+          }
+        ],
+        "short_blips": [],
+        "censored_starts": [
+          {
+            "family": "shell",
+            "start_s": 0.0,
+            "end_s": 0.045,
+            "first_index": 0,
+            "last_index": 9,
+            "span_s": 0.045,
+            "samples": 10
+          },
+          {
+            "family": "belt",
+            "start_s": 0.15,
+            "end_s": 0.195,
+            "first_index": 30,
+            "last_index": 39,
+            "span_s": 0.04500000000000001,
+            "samples": 10
+          }
+        ]
+      }
+    },
+    {
+      "name": "unknown_and_tie_wrong_body_excluded_terminal_unactuated",
+      "passed": true,
+      "evidence": {
+        "primary": 4,
+        "wrong": 2,
+        "missing": 1,
+        "tie": 1
+      }
+    },
+    {
+      "name": "invalid_gaps_not_bridged_by_share_variation",
+      "passed": true,
+      "evidence": 0
+    },
+    {
+      "name": "belt_steps_normalized_by_speed_bound",
+      "passed": true,
+      "evidence": {
+        "native": {
+          "requested": {
+            "normalized_adjacent_step": {
+              "n": 4,
+              "mean": 0.25,
+              "rms": 0.5,
+              "median": 0.0,
+              "p95": 0.8499999999999996,
+              "maximum": 1.0
+            },
+            "maximum_step_time_s": 0.005
+          },
+          "clipped": {
+            "normalized_adjacent_step": {
+              "n": 4,
+              "mean": 0.25,
+              "rms": 0.5,
+              "median": 0.0,
+              "p95": 0.8499999999999996,
+              "maximum": 1.0
+            },
+            "maximum_step_time_s": 0.005
+          },
+          "requested_saturation_fraction": 0.8
+        },
+        "fast": {
+          "requested": {
+            "normalized_adjacent_step": {
+              "n": 4,
+              "mean": 0.25,
+              "rms": 0.5,
+              "median": 0.0,
+              "p95": 0.8499999999999996,
+              "maximum": 1.0
+            },
+            "maximum_step_time_s": 0.005
+          },
+          "clipped": {
+            "normalized_adjacent_step": {
+              "n": 4,
+              "mean": 0.25,
+              "rms": 0.5,
+              "median": 0.0,
+              "p95": 0.8499999999999996,
+              "maximum": 1.0
+            },
+            "maximum_step_time_s": 0.005
+          },
+          "requested_saturation_fraction": 0.8
+        },
+        "same_state_delta_normalized_inf": {
+          "n": 5,
+          "mean": 0.0,
+          "rms": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "maximum": 0.0
+        }
+      }
+    },
+    {
+      "name": "all_registered_gate_prerequisites_can_pass_synthetic_fixture",
+      "passed": true,
+      "evidence": {
+        "all_case_coverage": true,
+        "enough_common_paired_events": true,
+        "paired_median_absolute_timing_improvement": true,
+        "each_case_wrong_duration_benefit": true,
+        "extra_false_family_transition_nonregression": true,
+        "each_case_command_and_noise_nonregression": true
+      }
+    },
+    {
+      "name": "per_case_command_noise_failure_not_hidden_by_other_case_gain",
+      "passed": true,
+      "evidence": {
+        "A": {
+          "max_normalized_requested_step_increase": 0.06000000000000005,
+          "requested_step_pass": false,
+          "noise_flip_fraction_increase": 0.06,
+          "noise_pass": false
+        },
+        "B": {
+          "max_normalized_requested_step_increase": -0.5,
+          "requested_step_pass": true,
+          "noise_flip_fraction_increase": -0.1,
+          "noise_pass": true
+        }
+      }
+    },
+    {
+      "name": "zero_baseline_mismatch_is_no_demonstrated_benefit",
+      "passed": true,
+      "evidence": {
+        "native_mismatch_s": 0.0,
+        "fast_mismatch_s": 0.0,
+        "absolute_reduction_s": 0.0,
+        "relative_reduction": null,
+        "absolute_pass": false,
+        "relative_pass": false
+      }
+    }
+  ],
+  "manual_review": [
+    {
+      "topic": "historical_truth",
+      "passed": true,
+      "finding": "Historical adapter constructs only last1ms truth from original saved records; does not invent preceding-mean truth."
+    },
+    {
+      "topic": "effective_held_support",
+      "passed": true,
+      "finding": "Primary sources use native_feedback_effective_loads_N and shadow_used_feedback_effective_loads_N; raw locator loads are separate."
+    },
+    {
+      "topic": "shared_draw_noise_and_geometry",
+      "passed": true,
+      "finding": "One perturbation matrix per saved pose reused in both sources; same current qpos and locator, logged baseline loads parity asserted; exact model/asset hashes retained. No physics/observer/controller updates."
+    },
+    {
+      "topic": "noise_scope",
+      "passed": true,
+      "finding": "Static paired local wrench perturbation assesses raw locator sensitivity, explicitly distinct from noisy measurement propagation through filters."
+    }
+  ],
+  "scientific_blockers": [],
+  "scope": "No raw campaign reduction or new physics; frozen-source review only."
+}

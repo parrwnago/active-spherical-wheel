@@ -1,0 +1,217 @@
+"""Render support-information probes from saved Gazebo states only.
+
+Fresh branches must be selected explicitly after experiment review:
+MUJOCO_GL=egl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -u results/support_identity_probe_20261125/videos/render_probe_replay.py --branches baseline last_substep --start 28.7 --end 31.7 --speed .3
+
+An optional historical single-run replay never claims that a sampled label
+disagreement proves an erroneous continuous support estimate:
+MUJOCO_GL=egl OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -u results/support_identity_probe_20261125/videos/render_probe_replay.py --historical --start 28.90 --end 29.385 --speed .05
+"""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+
+import imageio.v2 as imageio
+import mujoco
+import numpy as np
+from PIL import Image, ImageDraw
+
+from spherical_wheel.model import load_config
+from spherical_wheel.offroad_view import _camera, _caption, _draw, _font
+from spherical_wheel.gazebo.mars import MarsYard, build_route, route_samples
+from spherical_wheel.gazebo.mars_compare import replay_plant
+
+OUTPUT = Path(__file__).resolve().parent
+STUDY = OUTPUT.parent
+REPO = STUDY.parent.parent
+HISTORICAL = REPO/'results/weighted_allocation_20261125/bounded_adaptive/plain_figure8/phase_-1.00'
+WIDTH, HEIGHT, FPS = 960, 720, 20
+NAMES = ('shell A', 'shell B', 'belt A', 'belt B')
+COLORS = ((60,155,235,255),(175,130,235,255),(250,170,60,255),(210,100,100,255))
+
+
+def read_npz(path):
+    with np.load(path) as saved:
+        return {key:value.astype(float) if value.dtype.kind=='f' else value for key,value in saved.items()}
+
+
+def load_run(branch,historical=False):
+    directory = HISTORICAL if historical else STUDY/'runs'/branch
+    required = ['rollout.npz','summary.json'] + ([] if historical else ['probe.npz','truth_substeps.npz','provenance.json'])
+    for name in required:
+        assert (directory/name).is_file(),f'Run not complete: {directory/name}'
+    summary=json.loads((directory/'summary.json').read_text())
+    assert summary['completed'],f'Run did not complete: {directory}'
+    log=read_npz(directory/'rollout.npz')
+    probe=None if historical else read_npz(directory/'probe.npz')
+    if probe is not None:
+        assert len(probe['time_s'])==len(log['time_s'])
+        assert np.max(abs(probe['time_s']-log['time_s']))<3e-6
+    return dict(branch=branch,directory=directory,summary=summary,log=log,probe=probe,historical=historical)
+
+
+def nearest(times,moment):
+    i=min(int(np.searchsorted(times,moment)),len(times)-1)
+    return i-1 if i and abs(times[i-1]-moment)<=abs(times[i]-moment) else i
+
+
+def vec(values,digits=2):
+    return '['+','.join(f'{v:+.{digits}f}' for v in values)+']'
+
+
+def dominant(values):
+    total=float(np.nansum(values))
+    if not np.isfinite(values).all():return 'not recorded'
+    if total<=.001:return 'unloaded'
+    i=int(np.argmax(values))
+    return f'{NAMES[i]} ({100*values[i]/total:.0f}%)'
+
+
+def support_values(run,i):
+    d,p=run['log'],run['probe']
+    if p is None:
+        return [d['estimated_support_loads_N'][i],d['support_loads_N'][i],np.full(4,np.nan),d['estimated_support_loads_N'][i]]
+    return [p['probe_native_loads_N'][i],p['probe_truth_last_loads_N'][i],
+            p['probe_truth_interval_mean_loads_N'][i],p['probe_feedback_loads_N'][i]]
+
+
+def annotations(run,i):
+    d,p,s=run['log'],run['probe'],run['summary']
+    moment=float(d['time_s'][i]);values=support_values(run,i)
+    nominal=float(1000*np.linalg.norm(d['qpos'][i,:2]-d['reference_xy'][i]))
+    if p is None:
+        status='Historical saved run; no feedback intervention'
+    else:
+        injected=bool(p['probe_injected'][i]);in_window=bool(p['probe_in_window'][i])
+        status=('DIAGNOSTIC ORACLE feedback-share input ACTIVE' if injected else
+                'Declared window; native feedback-share input' if in_window else
+                'Outside intervention window; earlier intervention effects may persist' if run['branch']!='baseline' else
+                'Native estimated feedback-share input')
+    point_error=np.linalg.norm(d['estimated_contact_point_m'][i]-d['contact_point_m'][i])*1000
+    angle=np.rad2deg(np.arccos(np.clip(d['estimated_normal'][i]@d['ground_normal'][i],-1,1)))
+    cutoff=s['parameters']['observer_cutoff_rad_s']
+    clipping=','.join(name for name,active in zip(('shaft','A','B','beltA','beltB'),d['actuator_saturated'][i]) if active) or 'none'
+    refs=d['allocation_drive_reference'][i]
+    return [
+        f"t {moment:09.3f}s | original-path error {nominal:.0f}mm | attitude error {np.rad2deg(d['attitude_error_rad'][i]):.1f}deg",
+        status,
+        ('Historical sampled transition: no intervention or interval-mean truth reconstruction.' if p is None else
+         'Probe commands: 28.900-29.385s inclusive; final intervened command held through 29.390s.'),
+        f"Observer: preceding 5ms momentum, then {1000/cutoff:g}ms wrench filter | current-state contact geometry",
+        'Solved support: latest completed 1ms substep; five-substep mean is unfiltered (when recorded).',
+        'Native estimate: '+dominant(values[0])+' | latest 1ms: '+dominant(values[1])+' | five-step mean: '+dominant(values[2]),
+        f'Estimated point vs latest-substep point: {point_error:.3f}mm | ground-normal difference {angle:.3f}deg',
+        'Joint references / actual rates [shaft,A,B] rad/s: '+vec(refs[:3],1)+' / '+vec(d['qvel'][i,6:9],1),
+        'Torque request / final [shaft,A,B] N m: '+vec(d['command'][i,:3])+' / '+vec(d['input'][i,:3]),
+        'Belt reference / final command [A,B] m/s: '+vec(refs[3:])+' / '+vec(d['input'][i,3:])+' | clipping: '+clipping,
+        'Reference-only limits: joints 20rad/s, belts 0.3m/s; final torque bounds [1.5,0.6,0.6]N m.',
+        ('No per-physics-step history in historical log; sampled label differences do not establish continuous error.'
+         if p is None else 'Feedback shares rescaled to inferred total; estimator, locator, rolling feedforward and synchronization stay native.'),
+    ]
+
+
+def share_panel(frame,run,i):
+    image=Image.fromarray(frame);draw=ImageDraw.Draw(image,'RGBA')
+    left,top,w,h=16,466,360,218
+    draw.rounded_rectangle((left,top,left+w,top+h),radius=5,fill=(10,18,27,228),outline=(145,160,175,180))
+    draw.text((left+9,top+7),'Support information: normalized load shares',font=_font(13),fill=(235,240,245))
+    labels=('Observer inferred','Last 1ms solved','Mean of five 1ms','Feedback input')
+    for row,(label,values) in enumerate(zip(labels,support_values(run,i))):
+        y=top+34+row*29
+        draw.text((left+9,y+2),label,font=_font(11),fill=(220,230,238))
+        start,barwidth=left+136,208
+        draw.rectangle((start,y,start+barwidth,y+17),fill=(70,80,90,160))
+        if not np.isfinite(values).all():
+            draw.text((start+6,y+1),'not recorded',font=_font(11),fill=(220,225,230));continue
+        total=float(np.sum(values))
+        if total<=.001:
+            draw.text((start+6,y+1),'unloaded input',font=_font(11),fill=(220,225,230));continue
+        position=start
+        for value,color in zip(values,COLORS):
+            end=position+barwidth*max(0,float(value))/total
+            if end>position:draw.rectangle((position,y,end,y+17),fill=color)
+            position=end
+    for index,(name,color) in enumerate(zip(NAMES,COLORS)):
+        x=left+10+(index%2)*175;y=top+161+(index//2)*18
+        draw.rectangle((x,y+2,x+10,y+12),fill=color)
+        draw.text((x+15,y),name,font=_font(11),fill=(225,235,240))
+    draw.text((left+9,top+h-17),'Input shares; unloaded feedback can retain held gain.',font=_font(10),fill=(210,220,230))
+    return np.asarray(image)
+
+
+def evidence(run):
+    paths=['rollout.npz','summary.json']+([] if run['historical'] else ['probe.npz','truth_substeps.npz','provenance.json'])
+    return dict(branch=run['branch'],directory=str(run['directory']),historical=run['historical'],
+                artifact_sha256={name:hashlib.sha256((run['directory']/name).read_bytes()).hexdigest() for name in paths},
+                tracking=run['summary']['tracking'],attitude=run['summary']['attitude'],
+                intervention=run['summary'].get('support_identity_probe'))
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--branches',nargs=2,choices=('baseline','last_substep','interval_mean'))
+    parser.add_argument('--historical',action='store_true')
+    parser.add_argument('--start',type=float,required=True)
+    parser.add_argument('--end',type=float,required=True)
+    parser.add_argument('--speed',type=float,required=True)
+    parser.add_argument('--preview-s',type=float,default=28.975)
+    parser.add_argument('--name')
+    args=parser.parse_args()
+    if args.historical==bool(args.branches):parser.error('Choose --historical or two explicit --branches')
+    assert args.end>args.start and args.speed>0
+    runs=[load_run('historical',True)] if args.historical else [load_run(branch) for branch in args.branches]
+    for run in runs:
+        assert args.start>=run['log']['time_s'][0] and args.end<=run['log']['time_s'][-1]
+    path,_=build_route('plain_figure8');planned=route_samples(path,400)
+    points=np.vstack([planned,*[run['log']['qpos'][:,:2] for run in runs]])
+    bounds=(float(points[:,0].min()-1.6),float(points[:,0].max()+1.6),float(points[:,1].min()-1.6),float(points[:,1].max()+1.6))
+    for run in runs:run['log']['planned_xy']=planned
+    token=args.name or ('historical_support_transition' if args.historical else 'probe_'+'_vs_'.join(args.branches))
+    OUTPUT.mkdir(parents=True,exist_ok=True)
+    target=OUTPUT/(token+'.mp4')
+    assert not target.exists(),f'Preserve previous replay; choose another --name: {target}'
+    plant=replay_plant(load_config(),MarsYard(),bounds,OUTPUT/('_scene_'+token))
+    middle=(args.start+args.end)/2
+    centre=np.mean([run['log']['qpos'][nearest(run['log']['time_s'],middle),:3] for run in runs],axis=0)
+    centre[2]+=.12
+    option=mujoco.MjvOption();option.geomgroup[3:]=0
+    saved=plant.capture()
+    footer=f'Saved Gazebo/DART states | {args.speed:g}x | Exact state; inferred contacts | Diagnostic routing only'
+    titles={'baseline':'Fresh native estimated-support feedback',
+            'last_substep':'Diagnostic oracle: last-1ms feedback shares',
+            'interval_mean':'Diagnostic routing: true 5ms-mean feedback shares',
+            'historical':'Historical adaptive -1.00 | sampled support information'}
+    def frame_at(renderer,moment):
+        panels=[]
+        for run in runs:
+            d=run['log'];i=nearest(d['time_s'],moment)
+            camera=_camera(centre,112.,-24.,1.8)
+            frame=_draw(plant,renderer,d,i,camera,option,False)
+            title=titles[run['branch']]+(' | phase -1.00' if not run['historical'] else '')
+            panels.append(share_panel(_caption(frame,title,annotations(run,i),footer),run,i))
+        return np.concatenate(panels,axis=1)
+    try:
+        with mujoco.Renderer(plant.model,height=HEIGHT,width=WIDTH) as renderer:
+            writer=imageio.get_writer(target,fps=FPS,codec='libx264',quality=8,macro_block_size=2,ffmpeg_log_level='error')
+            try:
+                for moment in np.arange(args.start,args.end+1e-8,args.speed/FPS):writer.append_data(frame_at(renderer,moment))
+            finally:writer.close()
+            preview=float(np.clip(args.preview_s,args.start,args.end))
+            imageio.imwrite(target.with_suffix('.jpg'),frame_at(renderer,preview),quality=90)
+    finally:plant.restore(saved)
+    with imageio.get_reader(target) as reader:
+        metadata=reader.get_meta_data();count=reader.count_frames();last=reader.get_data(count-1)
+        imageio.imwrite(OUTPUT/(token+'_decoded_final.jpg'),last,quality=90)
+    report=dict(file=str(target),sha256=hashlib.sha256(target.read_bytes()).hexdigest(),size_bytes=target.stat().st_size,
+                fps=metadata['fps'],frames=count,dimensions=list(metadata['size']),video_duration_s=metadata['duration'],
+                sim_interval_s=[args.start,args.end],playback_speed=args.speed,preview_s=preview,final_frame_decoded=True,
+                rendering='Saved states only. No new physics, controller calls or counterfactual state updates.',
+                timing='Observer: preceding5ms momentum plus10ms wrench filter. Last1ms support is instantaneous at control boundary; preceding-five-substep mean is unfiltered.',
+                semantics='A sampled support-label disagreement is not labelled continuously wrong. Diagnostic oracle feedback-share injection is not deployable sensing.',
+                renderer_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),sources=[evidence(run) for run in runs])
+    (OUTPUT/('metadata_'+token+'.json')).write_text(json.dumps(report,indent=2)+'\n')
+    print(json.dumps(report,indent=2),flush=True)
+
+
+if __name__=='__main__':main()
