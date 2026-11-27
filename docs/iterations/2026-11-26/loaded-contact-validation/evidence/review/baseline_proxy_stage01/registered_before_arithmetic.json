@@ -1,0 +1,88 @@
+{
+  "registered_before_arithmetic_utc": "2026-11-27T01:09:06.737106+00:00",
+  "input_sha256": {
+    "results/loaded_contact_validation_20261126/review/baseline_proxy_stage01/inspect_baseline.py": "d1353333da3aefe22dcb61f8b91fba2aa09af4038018692e955d9ce1ff3b0498",
+    "results/loaded_contact_validation_20261126/review/baseline_proxy_stage01/plan.json": "9eaf2b4e00027bd0e8b276bfe788fa100b09d2bc000869494ed10e85b00c2d90",
+    "results/loaded_contact_validation_20261126/protocol.json": "c600f3403290f57ff0e971c7cf9ecda9350458b4f10d08b8f35e84ea2074e9b7",
+    "results/loaded_contact_validation_20261126/campaign/runs/early_shellB_native/endpoints.npz": "607603ecb76a43f599b9397d63979160daedcf612830bccd5f4fbc0e89653de4",
+    "results/loaded_contact_validation_20261126/campaign/runs/early_shellB_native/provenance.json": "7d0ceab8cb81360243c158c9742c0b5e72d1041b37c2030894baab20192572dc",
+    "results/loaded_contact_validation_20261126/campaign/runs/early_shellB_native/artifact_manifest.json": "e2052d9591d42d383fe9e84757550abc5fabd2f51702ab05f81ccff16c13b390",
+    "results/loaded_contact_validation_20261126/campaign/runs/early_shellB_governed/endpoints.npz": "d73d213f346e1990505fdec08fef4a10a29ecaf4983fdfca1e38b6967f0293ea",
+    "results/loaded_contact_validation_20261126/campaign/runs/early_shellB_governed/provenance.json": "66e90aea137b0af2171660f12513361a6685c6bf7fd5e44aabb37c4ccd2ec738",
+    "results/loaded_contact_validation_20261126/campaign/runs/early_shellB_governed/artifact_manifest.json": "d87e01722a387e780d80eb2d1d2058ab397c5a3a95171f949607c0d2f146da12",
+    "results/loaded_contact_validation_20261126/model_tools/predictions_stage01/early_shellB/matrices.npz": "a9dbd7be64f7bcd59f4659a4f1f13981bb62349d710c92dbe5df368ae3fa6e42",
+    "results/loaded_contact_validation_20261126/model_tools/predictions_stage01/early_shellB/predictions.json": "14507f7bcf2142d21f391f488f3c7aa1fb7de6982d2d6456b6b8d6a333e1f3a3",
+    "results/loaded_contact_validation_20261126/campaign/runs/late_beltB_native/endpoints.npz": "176b6400c2a3c0d67ce9c91d0baffb7426608c558a7f71e9abdcd32e3bb779ad",
+    "results/loaded_contact_validation_20261126/campaign/runs/late_beltB_native/provenance.json": "41d60aa3d6d7c9f4c5d5a32b40ca95477e61b68373780d5cbbc2bb5a1fb8f77a",
+    "results/loaded_contact_validation_20261126/campaign/runs/late_beltB_native/artifact_manifest.json": "f661f163b5c4c970cf651487fea2bd9373fc3d75343ca28b82554fad8caeb6c7",
+    "results/loaded_contact_validation_20261126/campaign/runs/late_beltB_governed/endpoints.npz": "9dc41e9c218f6c8dd009a68b5a074d979cae87df5e8246b331deabe84afd756b",
+    "results/loaded_contact_validation_20261126/campaign/runs/late_beltB_governed/provenance.json": "5e3a78437c725ed14e94f043b46f0933ee556203d05e1e5a070299cab3ec0908",
+    "results/loaded_contact_validation_20261126/campaign/runs/late_beltB_governed/artifact_manifest.json": "0a68f00d775f9a788c866a58fb1d4a4b86214850babae89edc2b41728dc8f2af",
+    "results/loaded_contact_validation_20261126/model_tools/predictions_stage01/late_beltB/matrices.npz": "18c0235e243f6eb08d3d1daae10146cfe6ea3960a46d4a22e8a48161932d2f61",
+    "results/loaded_contact_validation_20261126/model_tools/predictions_stage01/late_beltB/predictions.json": "1305b56bd0062bbc4333ca557d38a63a012459ca3abfd45e24af18489897174f"
+  },
+  "plan": {
+    "iteration": "I-57",
+    "scope": "Post-primary exploratory baseline-proxy audit; prior G-agreement results were already known when this question was selected",
+    "question": "Does omitting the held-native future velocity change materially affect the actual I56 current-velocity-plus-differential-G objective proxy, even when paired G is accurate?",
+    "events": [
+      "early_shellB",
+      "late_beltB"
+    ],
+    "branches": [
+      "native",
+      "governed"
+    ],
+    "horizons_s": [
+      0.005,
+      0.02
+    ],
+    "sources": "Only already-sealed I57 held-native/governed endpoint arrays, root registration, and exact frozen model matrices/predictions",
+    "frames": "Endpoint angular qvel is rotated separately into world; transverse angular velocity is then represented in the common initial fork frame. Planar velocity remains in world XY and yaw is physical world-Z angular velocity.",
+    "comparisons": [
+      "Actual held native versus current velocity (the native center of the current-plus-G-delta proxy)",
+      "Actual held governed versus current velocity plus G_h times (u_governed-u_native)",
+      "Actual held native and governed versus their exact frozen affine offset+G_h u",
+      "Governed proxy error equals omitted native baseline drift plus paired differential prediction error",
+      "Governed affine error equals native affine error plus paired differential prediction error"
+    ],
+    "outputs": "Retain every 10-component physical/common-frame value and planar/transverse/yaw/encoder group vectors, signed errors, norms and decomposition residuals. Include both model horizons and both events.",
+    "decision_boundary": "Descriptive exploratory arithmetic only. No fitting, retuning, new physics, new acceptance gates, controller adoption, or attribution of the entire trajectory deviation. Affine offsets remain unvalidated soft-contact approximations."
+  },
+  "outcome_awareness": "Primary differential-response agreement was already known. These absolute-baseline computations had not yet been performed.",
+  "physical_rows": [
+    "world_vx_m_s",
+    "world_vy_m_s",
+    "world_vz_m_s",
+    "initial_fork_wx_rad_s",
+    "initial_fork_wy_rad_s",
+    "initial_fork_wz_rad_s",
+    "shaft_rate_rad_s",
+    "shell_A_rate_rad_s",
+    "shell_B_rate_rad_s",
+    "world_wz_rad_s"
+  ],
+  "groups": {
+    "planar": [
+      0,
+      1
+    ],
+    "transverse": [
+      3,
+      4
+    ],
+    "world_yaw": [
+      9
+    ],
+    "shaft": [
+      6
+    ],
+    "shell_A": [
+      7
+    ],
+    "shell_B": [
+      8
+    ]
+  },
+  "no_new_physics": true
+}

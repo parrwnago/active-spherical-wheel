@@ -1,0 +1,19 @@
+{
+  "iteration": "I-57",
+  "scope": "Post-primary exploratory baseline-proxy audit; prior G-agreement results were already known when this question was selected",
+  "question": "Does omitting the held-native future velocity change materially affect the actual I56 current-velocity-plus-differential-G objective proxy, even when paired G is accurate?",
+  "events": ["early_shellB", "late_beltB"],
+  "branches": ["native", "governed"],
+  "horizons_s": [0.005, 0.02],
+  "sources": "Only already-sealed I57 held-native/governed endpoint arrays, root registration, and exact frozen model matrices/predictions",
+  "frames": "Endpoint angular qvel is rotated separately into world; transverse angular velocity is then represented in the common initial fork frame. Planar velocity remains in world XY and yaw is physical world-Z angular velocity.",
+  "comparisons": [
+    "Actual held native versus current velocity (the native center of the current-plus-G-delta proxy)",
+    "Actual held governed versus current velocity plus G_h times (u_governed-u_native)",
+    "Actual held native and governed versus their exact frozen affine offset+G_h u",
+    "Governed proxy error equals omitted native baseline drift plus paired differential prediction error",
+    "Governed affine error equals native affine error plus paired differential prediction error"
+  ],
+  "outputs": "Retain every 10-component physical/common-frame value and planar/transverse/yaw/encoder group vectors, signed errors, norms and decomposition residuals. Include both model horizons and both events.",
+  "decision_boundary": "Descriptive exploratory arithmetic only. No fitting, retuning, new physics, new acceptance gates, controller adoption, or attribution of the entire trajectory deviation. Affine offsets remain unvalidated soft-contact approximations."
+}

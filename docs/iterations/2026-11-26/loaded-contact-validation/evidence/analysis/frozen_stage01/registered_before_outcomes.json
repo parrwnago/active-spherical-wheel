@@ -1,0 +1,67 @@
+{
+  "registered_utc": "2026-11-27T00:57:59.323302+00:00",
+  "scope": "Freeze I57 pure paired-endpoint reduction, scoring, plots and synthetic checks before consuming new native outcomes. No physics.",
+  "source_sha256": {
+    "response_metrics.py": "37389bfc2fef8a305435db71b3552c4499aaadcdd4f304e989872cc0940d98e7",
+    "reduce_responses.py": "2efc288bc02b7b7da1a527e3a994906dea07ab7f2244f876d67bb5a97eef3820",
+    "plot_responses.py": "b0c7fcc0d83431ae37207f3848dc0cb2970b0620b662ffe27a0035455ee0d5c6",
+    "check_arithmetic.py": "b08960981ec18a6bca9f5b434d6cbe2fb3b537fca20e15a7c67750d02785b33d"
+  },
+  "groups": {
+    "planar": {
+      "indices": [
+        0,
+        1
+      ],
+      "floor": 0.0002,
+      "units": "m/s"
+    },
+    "transverse": {
+      "indices": [
+        3,
+        4
+      ],
+      "floor": 0.002,
+      "units": "rad/s"
+    },
+    "world_yaw": {
+      "indices": [
+        9
+      ],
+      "floor": 0.002,
+      "units": "rad/s"
+    },
+    "shaft": {
+      "indices": [
+        6
+      ],
+      "floor": 0.02,
+      "units": "rad/s"
+    },
+    "shell_A": {
+      "indices": [
+        7
+      ],
+      "floor": 0.02,
+      "units": "rad/s"
+    },
+    "shell_B": {
+      "indices": [
+        8
+      ],
+      "floor": 0.02,
+      "units": "rad/s"
+    }
+  },
+  "thresholds": {
+    "relative_error_max": 0.5,
+    "cosine_min": 0.8,
+    "gain_min": 0.5,
+    "gain_max": 2.0,
+    "nonlinearity_max": 0.25
+  },
+  "contact_mode_load_threshold_N": 0.05,
+  "contact_scope": "Five endpoint last-solve samples only, not continuity within5ms or integrated impulses.",
+  "control_requirement": "Every completed branch prefix bitwise matched; original continuation matches savedfuture; governed duplicate matches states, inputhistory and raw contact rows.",
+  "inference_scope": "Finite matched-command physical response at two selected states, not a full I56 drift cause, derivative proof, stability or adoption."
+}

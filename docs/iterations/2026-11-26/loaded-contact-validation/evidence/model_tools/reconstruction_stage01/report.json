@@ -1,0 +1,54 @@
+{
+  "iteration": "I-57",
+  "completed_utc": "2026-11-27T00:54:31.645882+00:00",
+  "states": [
+    {
+      "id": "early_shell_B",
+      "saved_time_s": 4.854999999999919,
+      "contact_names": [
+        "shell_B"
+      ],
+      "contact_loads_N": [
+        18.09904833888709
+      ],
+      "tangent_confidence": 0.9999999990185025,
+      "reconstruction": {
+        "contact_names_loads_rank_match": true,
+        "estimated_point_loads_match": true,
+        "slip_confidence_match": true,
+        "native_governed_impulse_and_residual_match": true,
+        "frozen_model_response_reconstruction_passed": true
+      }
+    },
+    {
+      "id": "late_belt_B",
+      "saved_time_s": 35.924999999999926,
+      "contact_names": [
+        "belt_B"
+      ],
+      "contact_loads_N": [
+        18.668919133745646
+      ],
+      "tangent_confidence": 0.994031273935864,
+      "reconstruction": {
+        "contact_names_loads_rank_match": true,
+        "estimated_point_loads_match": true,
+        "slip_confidence_match": true,
+        "native_governed_impulse_and_residual_match": true,
+        "frozen_model_response_reconstruction_passed": true
+      }
+    }
+  ],
+  "interpretation_notes": [
+    "Loaded and free input columns share exactly the same saved state and rigid-body terms; free columns remove only the supplied contact penalty.",
+    "Fork transverse angular changes are generalized velocity rows 3 and 4; physical world-Z rate is projected by the fixed initial fork rotation.",
+    "All three relative encoder-rate components are retained; shell angular velocity is not identified with its relative encoder rate.",
+    "At 20 ms, coefficients remain held at the initial geometry. There is no contact transition prediction, motor dynamics, unilateral impulse condition or friction-cone enforcement.",
+    "Belt speeds are ideal prescribed surface velocities; their response columns are instantaneous penalties and do not scale linearly with horizon like torque columns.",
+    "Contact strength 10 and slip-confidence scale .02 m/s are the frozen I56 model assumptions, not fitted physical contact compliance or measured friction.",
+    "Affine offsets may imply infeasible impulses. Reported friction/load ratios are model diagnostics, not physical friction certificates.",
+    "No later native endpoint was read in prediction. Scientific agreement must be assessed separately against preregistered native paired perturbations."
+  ],
+  "input_hashes_unchanged": true,
+  "dynamics_guard_active": true
+}

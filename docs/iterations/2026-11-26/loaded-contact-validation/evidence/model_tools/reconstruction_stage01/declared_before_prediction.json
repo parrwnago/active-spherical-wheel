@@ -1,0 +1,71 @@
+{
+  "registered_before_prediction_utc": "2026-11-27T00:54:30.303410+00:00",
+  "source_run": "results/constrained_handoff_20261126/campaign/runs/m100_H",
+  "input_sha256": {
+    "results/loaded_contact_validation_20261126/model_tools/evaluate_frozen_model.py": "248b8da253984a03d6e26b9aa6f552493103dc673115321d237aba63692f63ab",
+    "results/loaded_contact_validation_20261126/model_tools/reconstruction_registration.json": "9605a07f6ad69d579972c032945097efaceed3618deeb3dcf65d52685b65ff2d",
+    "results/constrained_handoff_20261126/campaign/_workspaces/m100_H/worker_450379/mirror/model.xml": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36",
+    "results/constrained_handoff_20261126/campaign/runs/m100_H/source_snapshot/config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+    "results/constrained_handoff_20261126/campaign/runs/m100_H/precision.npz": "d33ca65d7ed4f72fa49bd0115621aac771600c502989f33d39e939687ee88104",
+    "results/constrained_handoff_20261126/campaign/runs/m100_H/governor_diagnostics.json": "7105b294dfbef77d87f70f57b327f86f4be9841ec25f5eacee8b14777da77cce",
+    "results/constrained_handoff_20261126/campaign/runs/m100_H/provenance.json": "e34a00d2326db68ce7d9cd56f9ebb54c877742cd8c9367dd22568a1c9815759a",
+    "src/spherical_wheel/handoff_model.py": "663a13b553c402adf3e1d795c34bfba7c5bd886471ef9c3cc36135e9ac08a559",
+    "src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "results/constrained_handoff_20261126/campaign_tools/adapter.py": "d6bdcf77062b5c6dd060bd4c00f2cea3d9aa2bc773dda0e326313f4524e9ab84"
+  },
+  "measurement_whitelist": [
+    "time_s",
+    "exact_qpos",
+    "exact_qvel",
+    "exact_applied",
+    "exact_previous_applied",
+    "exact_native_applied",
+    "exact_observer_wrench",
+    "exact_input_bounds",
+    "exact_estimated_support_loads_N",
+    "exact_estimated_contact_point_m",
+    "exact_estimated_normal"
+  ],
+  "excluded_precision_columns": "All non-whitelisted fields, including all truth_* evaluation fields",
+  "reconstruction": "Pure SupportLocator records from measured q/v and exact saved observer wrench; same prior belt speeds and slip/confidence heuristic as frozen adapter",
+  "horizons_s": [
+    0.005,
+    0.02
+  ],
+  "input_columns": [
+    "shaft_torque_Nm",
+    "shell_A_torque_Nm",
+    "shell_B_torque_Nm",
+    "belt_A_speed_m_s",
+    "belt_B_speed_m_s"
+  ],
+  "generalized_velocity_rows": [
+    "world_vx_m_s",
+    "world_vy_m_s",
+    "world_vz_m_s",
+    "fork_wx_rad_s",
+    "fork_wy_rad_s",
+    "fork_wz_rad_s",
+    "shaft_rate_rad_s",
+    "shell_A_rate_rad_s",
+    "shell_B_rate_rad_s"
+  ],
+  "physical_velocity_rows": [
+    "world_vx_m_s",
+    "world_vy_m_s",
+    "world_vz_m_s",
+    "world_wx_rad_s",
+    "world_wy_rad_s",
+    "world_wz_rad_s",
+    "fork_wx_rad_s",
+    "fork_wy_rad_s",
+    "fork_wz_rad_s",
+    "shaft_rate_rad_s",
+    "shell_A_rate_rad_s",
+    "shell_B_rate_rad_s"
+  ],
+  "model_source_frozen": true,
+  "contact_strength": 10.0,
+  "no_simulator_or_observer_update": true,
+  "endpoint_interpretation": "Frozen-geometry affine velocity sensitivity, not an integrated trajectory forecast"
+}

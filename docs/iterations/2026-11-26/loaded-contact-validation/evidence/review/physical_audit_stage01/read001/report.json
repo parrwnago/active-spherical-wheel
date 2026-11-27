@@ -1,0 +1,5065 @@
+{
+  "iteration": "I-57",
+  "available_cases": [
+    "early_shellB_continue",
+    "early_shellB_native",
+    "early_shellB_governed",
+    "early_shellB_governed_repeat",
+    "early_shellB_midpoint",
+    "early_shellB_u0_full",
+    "early_shellB_u0_half",
+    "early_shellB_u1_full",
+    "early_shellB_u1_half",
+    "early_shellB_u2_full",
+    "late_beltB_continue"
+  ],
+  "missing_cases": [
+    "early_shellB_u2_half",
+    "early_shellB_u3_full",
+    "early_shellB_u3_half",
+    "early_shellB_u4_full",
+    "early_shellB_u4_half",
+    "late_beltB_native",
+    "late_beltB_governed",
+    "late_beltB_governed_repeat",
+    "late_beltB_midpoint",
+    "late_beltB_u0_full",
+    "late_beltB_u0_half",
+    "late_beltB_u1_full",
+    "late_beltB_u1_half",
+    "late_beltB_u2_full",
+    "late_beltB_u2_half",
+    "late_beltB_u3_full",
+    "late_beltB_u3_half",
+    "late_beltB_u4_full",
+    "late_beltB_u4_half"
+  ],
+  "failures": {},
+  "frame_convention": "Endpointworldomega difference then R0.T projection; compare full worldtranslation and relativehingerates. Both loaded/free predictions use the same frozen source state/terms.",
+  "cases": {
+    "early_shellB_continue": {
+      "job": {
+        "case_id": "early_shellB_continue",
+        "event_id": "early_shellB",
+        "mode": "continue_saved",
+        "delta_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "role": "exact_recorded_policy_control"
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "original_continuation_time_s": true,
+        "original_continuation_exact_qpos": true,
+        "original_continuation_exact_qvel": true,
+        "original_continuation_exact_previous_applied": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 8.326672684688674e-17,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            18.099010075646994,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.099009968615512,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.099009856317775,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.099009738815383,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.099009616169937,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    },
+    "early_shellB_native": {
+      "job": {
+        "case_id": "early_shellB_native",
+        "event_id": "early_shellB",
+        "mode": "hold_native",
+        "delta_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "role": "native_center_amplitude_only_counterfactual",
+        "held_command": [
+          0.05683703446454173,
+          -0.07808166341496708,
+          -0.17708051976454858,
+          0.0,
+          0.0
+        ],
+        "first_step_candidate_slew_admissible": true
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 8.326672684688674e-17,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            18.099010075646994,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.098440001559705,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.09836197681335,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.09828958972789,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.09822224183278,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    },
+    "early_shellB_governed": {
+      "job": {
+        "case_id": "early_shellB_governed",
+        "event_id": "early_shellB",
+        "mode": "hold_governed",
+        "delta_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "role": "governed_center",
+        "held_command": [
+          0.05934441777637921,
+          -4.895835323640018e-06,
+          -0.2078761665935129,
+          0.0,
+          0.0
+        ],
+        "first_step_candidate_slew_admissible": true
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 8.326672684688674e-17,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            18.099010075646994,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.099009968615512,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.098948071468456,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.09888298825373,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.09881511089663,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    },
+    "early_shellB_governed_repeat": {
+      "job": {
+        "case_id": "early_shellB_governed_repeat",
+        "event_id": "early_shellB",
+        "mode": "hold_governed",
+        "delta_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "role": "deterministic_duplicate_control",
+        "held_command": [
+          0.05934441777637921,
+          -4.895835323640018e-06,
+          -0.2078761665935129,
+          0.0,
+          0.0
+        ],
+        "first_step_candidate_slew_admissible": true
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 8.326672684688674e-17,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            18.099010075646994,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.099009968615512,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.098948071468456,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.09888298825373,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.09881511089663,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    },
+    "early_shellB_midpoint": {
+      "job": {
+        "case_id": "early_shellB_midpoint",
+        "event_id": "early_shellB",
+        "mode": "hold_midpoint",
+        "delta_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "role": "native_governed_midpoint_amplitude_only_counterfactual",
+        "held_command": [
+          0.05809072612046047,
+          -0.03904327962514536,
+          -0.19247834317903073,
+          0.0,
+          0.0
+        ],
+        "first_step_candidate_slew_admissible": true
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 1.1102230246251565e-16,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            18.099010075646994,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.09872469268402,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.098653438244465,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.09858237123252,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.098511393370256,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    },
+    "early_shellB_u0_full": {
+      "job": {
+        "case_id": "early_shellB_u0_full",
+        "event_id": "early_shellB",
+        "mode": "hold_governed",
+        "delta_input": [
+          -0.05,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "role": "governed_center_column_probe",
+        "input_column": 0,
+        "amplitude": "full",
+        "epsilon_multiplier": 1.0,
+        "held_command": [
+          0.009344417776379205,
+          -4.895835323640018e-06,
+          -0.2078761665935129,
+          0.0,
+          0.0
+        ],
+        "first_step_candidate_slew_admissible": true
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 8.326672684688674e-17,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            18.099010075646994,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.03953806779531,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.03879300650421,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.03777687632175,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.036476808908063,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    },
+    "early_shellB_u0_half": {
+      "job": {
+        "case_id": "early_shellB_u0_half",
+        "event_id": "early_shellB",
+        "mode": "hold_governed",
+        "delta_input": [
+          -0.025,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "role": "governed_center_column_probe",
+        "input_column": 0,
+        "amplitude": "half",
+        "epsilon_multiplier": 0.5,
+        "held_command": [
+          0.034344417776379206,
+          -4.895835323640018e-06,
+          -0.2078761665935129,
+          0.0,
+          0.0
+        ],
+        "first_step_candidate_slew_admissible": true
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 8.326672684688674e-17,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            18.099010075646994,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.06929618846538,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.06897809894425,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.068587928309213,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.068121175713397,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    },
+    "early_shellB_u1_full": {
+      "job": {
+        "case_id": "early_shellB_u1_full",
+        "event_id": "early_shellB",
+        "mode": "hold_governed",
+        "delta_input": [
+          0.0,
+          -0.02,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "role": "governed_center_column_probe",
+        "input_column": 1,
+        "amplitude": "full",
+        "epsilon_multiplier": 1.0,
+        "held_command": [
+          0.05934441777637921,
+          -0.020004895835323642,
+          -0.2078761665935129,
+          0.0,
+          0.0
+        ],
+        "first_step_candidate_slew_admissible": true
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 8.326672684688674e-17,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            18.099010075646994,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.132780426261313,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.132762305257813,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.13279026686931,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.13286427125747,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    },
+    "early_shellB_u1_half": {
+      "job": {
+        "case_id": "early_shellB_u1_half",
+        "event_id": "early_shellB",
+        "mode": "hold_governed",
+        "delta_input": [
+          0.0,
+          -0.01,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "role": "governed_center_column_probe",
+        "input_column": 1,
+        "amplitude": "half",
+        "epsilon_multiplier": 0.5,
+        "held_command": [
+          0.05934441777637921,
+          -0.01000489583532364,
+          -0.2078761665935129,
+          0.0,
+          0.0
+        ],
+        "first_step_candidate_slew_admissible": true
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 1.1102230246251565e-16,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            18.099010075646994,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.115895706813834,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.115857653146843,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.115842530065276,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.115850547366975,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    },
+    "early_shellB_u2_full": {
+      "job": {
+        "case_id": "early_shellB_u2_full",
+        "event_id": "early_shellB",
+        "mode": "hold_governed",
+        "delta_input": [
+          0.0,
+          0.0,
+          -0.02,
+          0.0,
+          0.0
+        ],
+        "role": "governed_center_column_probe",
+        "input_column": 2,
+        "amplitude": "full",
+        "epsilon_multiplier": 1.0,
+        "held_command": [
+          0.05934441777637921,
+          -4.895835323640018e-06,
+          -0.2278761665935129,
+          0.0,
+          0.0
+        ],
+        "first_step_candidate_slew_admissible": true
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 8.326672684688674e-17,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            18.099010075646994,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.18305817863561,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.183080612742728,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.18319916424085,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            18.183413158285745,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ],
+          [
+            "shell_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    },
+    "late_beltB_continue": {
+      "job": {
+        "case_id": "late_beltB_continue",
+        "event_id": "late_beltB",
+        "mode": "continue_saved",
+        "delta_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "role": "exact_recorded_policy_control"
+      },
+      "checks": {
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "prefix_count": true,
+        "anchor_equals_original": true,
+        "all_five_endpoints": true,
+        "command_amplitude": true,
+        "no_post_init_reset": true,
+        "original_continuation_time_s": true,
+        "original_continuation_exact_qpos": true,
+        "original_continuation_exact_qvel": true,
+        "original_continuation_exact_previous_applied": true,
+        "frozen_model_anchor_qv": true,
+        "rotation_map_world": true,
+        "bridge_world_omega_consistent": true
+      },
+      "all_checks": true,
+      "bridge_world_omega_max_error": 2.220446049250313e-15,
+      "contact": {
+        "normal_loads_N": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            16.39500958660857,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            15.214684403800574,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            14.314060107025767,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            13.775692873905959,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            13.656979514888736,
+            0.0
+          ]
+        ],
+        "modes": [
+          [
+            "belt_B"
+          ],
+          [
+            "belt_B"
+          ],
+          [
+            "belt_B"
+          ],
+          [
+            "belt_B"
+          ],
+          [
+            "belt_B"
+          ]
+        ],
+        "endpoint_mode_changed": false,
+        "limitation": "Endpoint force samples only; no certification of mode or friction feasibility within5ms holds."
+      }
+    }
+  },
+  "events": {
+    "early_shellB": {
+      "duplicate_available": true,
+      "pairs": {
+        "governed_minus_native": {
+          "h005ms": {
+            "delta_input": [
+              0.0025073833118374744,
+              0.07807676757964345,
+              -0.030795646828964324,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.0007157985426152452,
+              0.0001081679317623584,
+              8.916712741799735e-05,
+              0.001897256963684358,
+              -0.0008525727220513798,
+              -0.017015471296614876,
+              4.957318376486912e-05,
+              -4.466745418750008e-06,
+              -0.01714206085119862,
+              0.004822331149729003,
+              0.3079921760790749,
+              -0.0064355921168504915
+            ],
+            "loaded_prediction": [
+              -0.0007059105365888811,
+              0.00010532671735658281,
+              8.785937236283748e-05,
+              0.001879403538819558,
+              -0.0008986953604618823,
+              -0.01699079040119453,
+              6.418476861114186e-17,
+              -6.639383053758108e-17,
+              -0.017118024695331153,
+              0.0048488528179217154,
+              0.30808311156350615,
+              -0.007022421272403691
+            ],
+            "free_prediction": [
+              0.000979602235029561,
+              -0.0001354427839737789,
+              0.00011552080052599127,
+              0.00027637843669006126,
+              -0.008666906496937209,
+              -0.012505201419168955,
+              -0.00805008950185155,
+              -0.0006476524363677663,
+              -0.01289760912474677,
+              0.003365741659909127,
+              0.3116170543747615,
+              -0.10281448778064539
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.0007157985426152452,
+                  0.0001081679317623584
+                ],
+                "predicted": [
+                  -0.0007059105365888811,
+                  0.00010532671735658281
+                ],
+                "observed_norm": 0.0007239253104235652,
+                "predicted_norm": 0.0007137250192170059,
+                "floor": 0.0002,
+                "error": 0.014211559770009576,
+                "cosine": 0.9999982588747183,
+                "gain_ratio": 1.0142916262312753,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  4.957318376486912e-05,
+                  -4.466745418750008e-06
+                ],
+                "predicted": [
+                  6.418476861114186e-17,
+                  -6.639383053758108e-17
+                ],
+                "observed_norm": 4.977401293065898e-05,
+                "predicted_norm": 9.234622490994884e-17,
+                "floor": 0.002,
+                "error": 0.024887006465294553,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.017015471296614876
+                ],
+                "predicted": [
+                  -0.01699079040119453
+                ],
+                "observed_norm": 0.017015471296614876,
+                "predicted_norm": 0.01699079040119453,
+                "floor": 0.002,
+                "error": 0.0014504973144796036,
+                "cosine": 1.0,
+                "gain_ratio": 1.0014526043131349,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.004822331149729003
+                ],
+                "predicted": [
+                  0.0048488528179217154
+                ],
+                "observed_norm": 0.004822331149729003,
+                "predicted_norm": 0.0048488528179217154,
+                "floor": 0.02,
+                "error": 0.0013260834096356401,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  0.3079921760790749
+                ],
+                "predicted": [
+                  0.30808311156350615
+                ],
+                "observed_norm": 0.3079921760790749,
+                "predicted_norm": 0.30808311156350615,
+                "floor": 0.02,
+                "error": 0.0002952525794287855,
+                "cosine": 1.0,
+                "gain_ratio": 0.9997048345689261,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.0064355921168504915
+                ],
+                "predicted": [
+                  -0.007022421272403691
+                ],
+                "observed_norm": 0.0064355921168504915,
+                "predicted_norm": 0.007022421272403691,
+                "floor": 0.02,
+                "error": 0.029341457777659966,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.0007157985426152452,
+                  0.0001081679317623584
+                ],
+                "predicted": [
+                  0.000979602235029561,
+                  -0.0001354427839737789
+                ],
+                "observed_norm": 0.0007239253104235652,
+                "predicted_norm": 0.0009889212742202884,
+                "floor": 0.0002,
+                "error": 2.366008542283325,
+                "cosine": -0.999920768227785,
+                "gain_ratio": 0.732035329095677,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  4.957318376486912e-05,
+                  -4.466745418750008e-06
+                ],
+                "predicted": [
+                  -0.00805008950185155,
+                  -0.0006476524363677663
+                ],
+                "observed_norm": 4.977401293065898e-05,
+                "predicted_norm": 0.00807610021397417,
+                "floor": 0.002,
+                "error": 4.062579951638138,
+                "cosine": null,
+                "gain_ratio": 0.006163124727518169,
+                "status": "overprediction_observed_unresolved",
+                "predicted_nullspace": false,
+                "observed_quiet": true
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.017015471296614876
+                ],
+                "predicted": [
+                  -0.012505201419168955
+                ],
+                "observed_norm": 0.017015471296614876,
+                "predicted_norm": 0.012505201419168955,
+                "floor": 0.002,
+                "error": 0.26506876000215235,
+                "cosine": 1.0,
+                "gain_ratio": 1.3606715098992508,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.004822331149729003
+                ],
+                "predicted": [
+                  0.003365741659909127
+                ],
+                "observed_norm": 0.004822331149729003,
+                "predicted_norm": 0.003365741659909127,
+                "floor": 0.02,
+                "error": 0.07282947449099378,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  0.3079921760790749
+                ],
+                "predicted": [
+                  0.3116170543747615
+                ],
+                "observed_norm": 0.3079921760790749,
+                "predicted_norm": 0.3116170543747615,
+                "floor": 0.02,
+                "error": 0.011769384345516366,
+                "cosine": 1.0,
+                "gain_ratio": 0.9883675227501278,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.0064355921168504915
+                ],
+                "predicted": [
+                  -0.10281448778064539
+                ],
+                "observed_norm": 0.0064355921168504915,
+                "predicted_norm": 0.10281448778064539,
+                "floor": 0.02,
+                "error": 4.818944783189745,
+                "cosine": null,
+                "gain_ratio": 0.06259421464590498,
+                "status": "overprediction_observed_unresolved",
+                "predicted_nullspace": false,
+                "observed_quiet": true
+              }
+            }
+          },
+          "h020ms": {
+            "delta_input": [
+              0.0025073833118374744,
+              0.07807676757964345,
+              -0.030795646828964324,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.0028607290204632927,
+              0.0004306718157151344,
+              0.000356275790364631,
+              0.007623844251090958,
+              -0.0034207526503025696,
+              -0.06802527341274123,
+              0.00019473527655820898,
+              -5.82086594276502e-05,
+              -0.06853627552370843,
+              0.01935099289295915,
+              1.231295765054032,
+              -0.025613856136256358
+            ],
+            "loaded_prediction": [
+              -0.0028236421463555244,
+              0.00042130686942633126,
+              0.0003514374894513499,
+              0.007517614155278232,
+              -0.003594781441847529,
+              -0.06796316160477812,
+              2.5673907444456745e-16,
+              -2.655753221503243e-16,
+              -0.06847209878132461,
+              0.019395411271686862,
+              1.2323324462540246,
+              -0.028089685089614763
+            ],
+            "free_prediction": [
+              0.003918408940118244,
+              -0.0005417711358951156,
+              0.0004620832021039651,
+              0.001105513746760245,
+              -0.034667625987748835,
+              -0.05002080567667582,
+              -0.0322003580074062,
+              -0.0025906097454710653,
+              -0.05159043649898708,
+              0.013462966639636509,
+              1.246468217499046,
+              -0.41125795112258157
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.0028607290204632927,
+                  0.0004306718157151344
+                ],
+                "predicted": [
+                  -0.0028236421463555244,
+                  0.00042130686942633126
+                ],
+                "observed_norm": 0.002892965388899812,
+                "predicted_norm": 0.0028549000768680237,
+                "floor": 0.0002,
+                "error": 0.013222070663325394,
+                "cosine": 0.9999991421327092,
+                "gain_ratio": 1.0133333255129364,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.00019473527655820898,
+                  -5.82086594276502e-05
+                ],
+                "predicted": [
+                  2.5673907444456745e-16,
+                  -2.655753221503243e-16
+                ],
+                "observed_norm": 0.00020324880311718027,
+                "predicted_norm": 3.6938489963979537e-16,
+                "floor": 0.002,
+                "error": 0.10162440155842911,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.06802527341274123
+                ],
+                "predicted": [
+                  -0.06796316160477812
+                ],
+                "observed_norm": 0.06802527341274123,
+                "predicted_norm": 0.06796316160477812,
+                "floor": 0.002,
+                "error": 0.000913069582039624,
+                "cosine": 1.0,
+                "gain_ratio": 1.0009139040400195,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.01935099289295915
+                ],
+                "predicted": [
+                  0.019395411271686862
+                ],
+                "observed_norm": 0.01935099289295915,
+                "predicted_norm": 0.019395411271686862,
+                "floor": 0.02,
+                "error": 0.0022209189363856657,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  1.231295765054032
+                ],
+                "predicted": [
+                  1.2323324462540246
+                ],
+                "observed_norm": 1.231295765054032,
+                "predicted_norm": 1.2323324462540246,
+                "floor": 0.02,
+                "error": 0.0008419432839900826,
+                "cosine": 1.0,
+                "gain_ratio": 0.9991587649881783,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.025613856136256358
+                ],
+                "predicted": [
+                  -0.028089685089614763
+                ],
+                "observed_norm": 0.025613856136256358,
+                "predicted_norm": 0.028089685089614763,
+                "floor": 0.02,
+                "error": 0.09665975088592284,
+                "cosine": 1.0,
+                "gain_ratio": 0.9118598536986176,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.0028607290204632927,
+                  0.0004306718157151344
+                ],
+                "predicted": [
+                  0.003918408940118244,
+                  -0.0005417711358951156
+                ],
+                "observed_norm": 0.002892965388899812,
+                "predicted_norm": 0.003955685096881154,
+                "floor": 0.0002,
+                "error": 2.367304344745367,
+                "cosine": -0.9999276152191255,
+                "gain_ratio": 0.731343703567496,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.00019473527655820898,
+                  -5.82086594276502e-05
+                ],
+                "predicted": [
+                  -0.0322003580074062,
+                  -0.0025906097454710653
+                ],
+                "observed_norm": 0.00020324880311718027,
+                "predicted_norm": 0.03230440085589668,
+                "floor": 0.002,
+                "error": 16.246962209420488,
+                "cosine": null,
+                "gain_ratio": 0.006291675367199398,
+                "status": "overprediction_observed_unresolved",
+                "predicted_nullspace": false,
+                "observed_quiet": true
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.06802527341274123
+                ],
+                "predicted": [
+                  -0.05002080567667582
+                ],
+                "observed_norm": 0.06802527341274123,
+                "predicted_norm": 0.05002080567667582,
+                "floor": 0.002,
+                "error": 0.26467321383368586,
+                "cosine": 1.0,
+                "gain_ratio": 1.3599395789912416,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.01935099289295915
+                ],
+                "predicted": [
+                  0.013462966639636509
+                ],
+                "observed_norm": 0.01935099289295915,
+                "predicted_norm": 0.013462966639636509,
+                "floor": 0.02,
+                "error": 0.294401312666132,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  1.231295765054032
+                ],
+                "predicted": [
+                  1.246468217499046
+                ],
+                "observed_norm": 1.231295765054032,
+                "predicted_norm": 1.246468217499046,
+                "floor": 0.02,
+                "error": 0.01232234599974303,
+                "cosine": 1.0,
+                "gain_ratio": 0.9878276459583891,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.025613856136256358
+                ],
+                "predicted": [
+                  -0.41125795112258157
+                ],
+                "observed_norm": 0.025613856136256358,
+                "predicted_norm": 0.41125795112258157,
+                "floor": 0.02,
+                "error": 15.056073280604043,
+                "cosine": 1.0,
+                "gain_ratio": 0.06228172869689215,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              }
+            }
+          }
+        },
+        "midpoint_minus_native": {
+          "h005ms": {
+            "delta_input": [
+              0.0012536916559187372,
+              0.039038383789821725,
+              -0.015397823414482148,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.00035790238989691624,
+              5.4067755724662193e-05,
+              4.4583074293120975e-05,
+              0.0009485677590355679,
+              -0.0004262684202757036,
+              -0.008507775652630223,
+              2.479184750289157e-05,
+              -2.1659074997035753e-06,
+              -0.008571062523878577,
+              0.0024110038199582212,
+              0.15399613631580333,
+              -0.0032177564786013135
+            ],
+            "loaded_prediction": [
+              -0.0003529552682944397,
+              5.26633586782913e-05,
+              4.392968618141863e-05,
+              0.0009397017694097785,
+              -0.00044934768023094634,
+              -0.008495395200597267,
+              2.688821387764051e-17,
+              -3.363059613778474e-17,
+              -0.008559012347665578,
+              0.002424426408960857,
+              0.1540415557817531,
+              -0.0035112106362018315
+            ],
+            "free_prediction": [
+              0.0004898011175147807,
+              -6.772139198688953e-05,
+              5.776040026299567e-05,
+              0.00013818921834503052,
+              -0.004333453248468606,
+              -0.006252600709584482,
+              -0.004025044750925777,
+              -0.00032382621818388316,
+              -0.006448804562373388,
+              0.0016828708299545636,
+              0.15580852718738075,
+              -0.05140724389032264
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.00035790238989691624,
+                  5.4067755724662193e-05
+                ],
+                "predicted": [
+                  -0.0003529552682944397,
+                  5.26633586782913e-05
+                ],
+                "observed_norm": 0.00036196331706821617,
+                "predicted_norm": 0.0003568625096085021,
+                "floor": 0.0002,
+                "error": 0.014207519324242272,
+                "cosine": 0.9999983428710157,
+                "gain_ratio": 1.0142934808851451,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  2.479184750289157e-05,
+                  -2.1659074997035753e-06
+                ],
+                "predicted": [
+                  2.688821387764051e-17,
+                  -3.363059613778474e-17
+                ],
+                "observed_norm": 2.488627850651646e-05,
+                "predicted_norm": 4.3058019486647567e-17,
+                "floor": 0.002,
+                "error": 0.012443139253243371,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.008507775652630223
+                ],
+                "predicted": [
+                  -0.008495395200597267
+                ],
+                "observed_norm": 0.008507775652630223,
+                "predicted_norm": 0.008495395200597267,
+                "floor": 0.002,
+                "error": 0.0014551925836370709,
+                "cosine": 1.0,
+                "gain_ratio": 1.001457313255078,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.0024110038199582212
+                ],
+                "predicted": [
+                  0.002424426408960857
+                ],
+                "observed_norm": 0.0024110038199582212,
+                "predicted_norm": 0.002424426408960857,
+                "floor": 0.02,
+                "error": 0.000671129450131782,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  0.15399613631580333
+                ],
+                "predicted": [
+                  0.1540415557817531
+                ],
+                "observed_norm": 0.15399613631580333,
+                "predicted_norm": 0.1540415557817531,
+                "floor": 0.02,
+                "error": 0.00029493899675915917,
+                "cosine": 1.0,
+                "gain_ratio": 0.9997051479666038,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.0032177564786013135
+                ],
+                "predicted": [
+                  -0.0035112106362018315
+                ],
+                "observed_norm": 0.0032177564786013135,
+                "predicted_norm": 0.0035112106362018315,
+                "floor": 0.02,
+                "error": 0.0146727078800259,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.00035790238989691624,
+                  5.4067755724662193e-05
+                ],
+                "predicted": [
+                  0.0004898011175147807,
+                  -6.772139198688953e-05
+                ],
+                "observed_norm": 0.00036196331706821617,
+                "predicted_norm": 0.0004944606371101444,
+                "floor": 0.0002,
+                "error": 2.3660063750511813,
+                "cosine": -0.9999213408061336,
+                "gain_ratio": 0.732036667637886,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  2.479184750289157e-05,
+                  -2.1659074997035753e-06
+                ],
+                "predicted": [
+                  -0.004025044750925777,
+                  -0.00032382621818388316
+                ],
+                "observed_norm": 2.488627850651646e-05,
+                "predicted_norm": 0.004038050106987086,
+                "floor": 0.002,
+                "error": 2.031295265922813,
+                "cosine": null,
+                "gain_ratio": 0.00616294445268409,
+                "status": "overprediction_observed_unresolved",
+                "predicted_nullspace": false,
+                "observed_quiet": true
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.008507775652630223
+                ],
+                "predicted": [
+                  -0.006252600709584482
+                ],
+                "observed_norm": 0.008507775652630223,
+                "predicted_norm": 0.006252600709584482,
+                "floor": 0.002,
+                "error": 0.2650722157146377,
+                "cosine": 1.0,
+                "gain_ratio": 1.360677907928589,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.0024110038199582212
+                ],
+                "predicted": [
+                  0.0016828708299545636
+                ],
+                "observed_norm": 0.0024110038199582212,
+                "predicted_norm": 0.0016828708299545636,
+                "floor": 0.02,
+                "error": 0.03640664950018288,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  0.15399613631580333
+                ],
+                "predicted": [
+                  0.15580852718738075
+                ],
+                "observed_norm": 0.15399613631580333,
+                "predicted_norm": 0.15580852718738075,
+                "floor": 0.02,
+                "error": 0.011769067165819717,
+                "cosine": 1.0,
+                "gain_ratio": 0.9883678325936694,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.0032177564786013135
+                ],
+                "predicted": [
+                  -0.05140724389032264
+                ],
+                "observed_norm": 0.0032177564786013135,
+                "predicted_norm": 0.05140724389032264,
+                "floor": 0.02,
+                "error": 2.409474370586066,
+                "cosine": null,
+                "gain_ratio": 0.06259344471892711,
+                "status": "overprediction_observed_unresolved",
+                "predicted_nullspace": false,
+                "observed_quiet": true
+              }
+            }
+          },
+          "h020ms": {
+            "delta_input": [
+              0.0012536916559187372,
+              0.039038383789821725,
+              -0.015397823414482148,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.0014306003715478372,
+              0.00021404170365478927,
+              0.00017809729008018765,
+              0.003806894842907034,
+              -0.0017089972431108807,
+              -0.03401570215013128,
+              9.769241336418872e-05,
+              -2.357091357773483e-05,
+              -0.03427055606920849,
+              0.009662224692662591,
+              0.6156515777760438,
+              -0.012803731911098237
+            ],
+            "loaded_prediction": [
+              -0.0014118210731777587,
+              0.0002106534347131652,
+              0.00017571874472567452,
+              0.003758807077639114,
+              -0.0017973907209237854,
+              -0.03398158080238907,
+              1.0755285551056204e-16,
+              -1.3452238455113896e-16,
+              -0.03423604939066231,
+              0.009697705635843427,
+              0.6161662231270124,
+              -0.014044842544807326
+            ],
+            "free_prediction": [
+              0.0019592044700591227,
+              -0.00027088556794755813,
+              0.00023104160105198268,
+              0.0005527568733801221,
+              -0.017333812993874424,
+              -0.025010402838337928,
+              -0.016100179003703106,
+              -0.0012953048727355327,
+              -0.025795218249493553,
+              0.006731483319818254,
+              0.623234108749523,
+              -0.20562897556129056
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.0014306003715478372,
+                  0.00021404170365478927
+                ],
+                "predicted": [
+                  -0.0014118210731777587,
+                  0.0002106534347131652
+                ],
+                "observed_norm": 0.0014465238587649547,
+                "predicted_norm": 0.0014274500384340084,
+                "floor": 0.0002,
+                "error": 0.013191981453056422,
+                "cosine": 0.9999999196568281,
+                "gain_ratio": 1.013362163170258,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  9.769241336418872e-05,
+                  -2.357091357773483e-05
+                ],
+                "predicted": [
+                  1.0755285551056204e-16,
+                  -1.3452238455113896e-16
+                ],
+                "observed_norm": 0.000100495749142979,
+                "predicted_norm": 1.7223207794659027e-16,
+                "floor": 0.002,
+                "error": 0.05024787457142144,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.03401570215013128
+                ],
+                "predicted": [
+                  -0.03398158080238907
+                ],
+                "observed_norm": 0.03401570215013128,
+                "predicted_norm": 0.03398158080238907,
+                "floor": 0.002,
+                "error": 0.0010031057889562456,
+                "cosine": 1.0,
+                "gain_ratio": 1.0010041130205398,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.009662224692662591
+                ],
+                "predicted": [
+                  0.009697705635843427
+                ],
+                "observed_norm": 0.009662224692662591,
+                "predicted_norm": 0.009697705635843427,
+                "floor": 0.02,
+                "error": 0.0017740471590418222,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  0.6156515777760438
+                ],
+                "predicted": [
+                  0.6161662231270124
+                ],
+                "observed_norm": 0.6156515777760438,
+                "predicted_norm": 0.6161662231270124,
+                "floor": 0.02,
+                "error": 0.0008359360546555454,
+                "cosine": 1.0,
+                "gain_ratio": 0.9991647621507769,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.012803731911098237
+                ],
+                "predicted": [
+                  -0.014044842544807326
+                ],
+                "observed_norm": 0.012803731911098237,
+                "predicted_norm": 0.014044842544807326,
+                "floor": 0.02,
+                "error": 0.06205553168545444,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.0014306003715478372,
+                  0.00021404170365478927
+                ],
+                "predicted": [
+                  0.0019592044700591227,
+                  -0.00027088556794755813
+                ],
+                "observed_norm": 0.0014465238587649547,
+                "predicted_norm": 0.0019778425484405777,
+                "floor": 0.0002,
+                "error": 2.3672715125737933,
+                "cosine": -0.9999381390574822,
+                "gain_ratio": 0.7313645163036162,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  9.769241336418872e-05,
+                  -2.357091357773483e-05
+                ],
+                "predicted": [
+                  -0.016100179003703106,
+                  -0.0012953048727355327
+                ],
+                "observed_norm": 0.000100495749142979,
+                "predicted_norm": 0.016152200427948345,
+                "floor": 0.002,
+                "error": 8.123859084614912,
+                "cosine": null,
+                "gain_ratio": 0.0062217992892838305,
+                "status": "overprediction_observed_unresolved",
+                "predicted_nullspace": false,
+                "observed_quiet": true
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.03401570215013128
+                ],
+                "predicted": [
+                  -0.025010402838337928
+                ],
+                "observed_norm": 0.03401570215013128,
+                "predicted_norm": 0.025010402838337928,
+                "floor": 0.002,
+                "error": 0.2647394803743187,
+                "cosine": 1.0,
+                "gain_ratio": 1.3600621457399844,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.009662224692662591
+                ],
+                "predicted": [
+                  0.006731483319818254
+                ],
+                "observed_norm": 0.009662224692662591,
+                "predicted_norm": 0.006731483319818254,
+                "floor": 0.02,
+                "error": 0.14653706864221683,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  0.6156515777760438
+                ],
+                "predicted": [
+                  0.623234108749523
+                ],
+                "observed_norm": 0.6156515777760438,
+                "predicted_norm": 0.623234108749523,
+                "floor": 0.02,
+                "error": 0.012316269863012463,
+                "cosine": 1.0,
+                "gain_ratio": 0.9878335751092105,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.012803731911098237
+                ],
+                "predicted": [
+                  -0.20562897556129056
+                ],
+                "observed_norm": 0.012803731911098237,
+                "predicted_norm": 0.20562897556129056,
+                "floor": 0.02,
+                "error": 9.641262182509616,
+                "cosine": null,
+                "gain_ratio": 0.062266185376593036,
+                "status": "overprediction_observed_unresolved",
+                "predicted_nullspace": false,
+                "observed_quiet": true
+              }
+            }
+          }
+        },
+        "early_shellB_u0_full": {
+          "h005ms": {
+            "delta_input": [
+              -0.05,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.00047363910828109534,
+              -0.002976827733223844,
+              -0.00010142796893057411,
+              -0.01955865915503805,
+              0.003317120604573523,
+              -0.000371861537331708,
+              -0.001049284492048431,
+              0.01971724624050427,
+              0.0019524140947180624,
+              -0.046500944519930934,
+              -0.0004514767401029296,
+              0.002919357075009704
+            ],
+            "loaded_prediction": [
+              -0.00047026496437162625,
+              -0.002959466011798962,
+              -8.626541565944808e-05,
+              -0.019472108169900634,
+              0.003292603512478096,
+              -0.0003922228302869941,
+              -0.0010536348495007034,
+              0.019630488868090837,
+              0.0019214144849488874,
+              -0.04676430236559237,
+              -0.0004074087594303729,
+              0.003032163963092998
+            ],
+            "free_prediction": [
+              -0.00034958461578416547,
+              -0.0015527282554754314,
+              4.3459962591289696e-05,
+              -0.01251972372115149,
+              0.0027758473170102563,
+              -0.0015316682483407184,
+              -2.435918171642198e-18,
+              0.012914906813612376,
+              1.1439116785832793e-17,
+              -0.06711661603591469,
+              -1.0166399862576616e-17,
+              -1.073121475756283e-17
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.00047363910828109534,
+                  -0.002976827733223844
+                ],
+                "predicted": [
+                  -0.00047026496437162625,
+                  -0.002959466011798962
+                ],
+                "observed_norm": 0.003014272276716873,
+                "predicted_norm": 0.002996596104200348,
+                "floor": 0.0002,
+                "error": 0.005867603553686364,
+                "cosine": 0.9999999796766773,
+                "gain_ratio": 1.0058987504160966,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  -0.001049284492048431,
+                  0.01971724624050427
+                ],
+                "predicted": [
+                  -0.0010536348495007034,
+                  0.019630488868090837
+                ],
+                "observed_norm": 0.019745146169474995,
+                "predicted_norm": 0.019658744608858435,
+                "floor": 0.002,
+                "error": 0.0043993787256256895,
+                "cosine": 0.9999998962584913,
+                "gain_ratio": 1.0043950700991164,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.000371861537331708
+                ],
+                "predicted": [
+                  -0.0003922228302869941
+                ],
+                "observed_norm": 0.000371861537331708,
+                "predicted_norm": 0.0003922228302869941,
+                "floor": 0.002,
+                "error": 0.010180646477643052,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shaft": {
+                "observed": [
+                  -0.046500944519930934
+                ],
+                "predicted": [
+                  -0.04676430236559237
+                ],
+                "observed_norm": 0.046500944519930934,
+                "predicted_norm": 0.04676430236559237,
+                "floor": 0.02,
+                "error": 0.0056634945457625435,
+                "cosine": 1.0,
+                "gain_ratio": 0.994368399990177,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_A": {
+                "observed": [
+                  -0.0004514767401029296
+                ],
+                "predicted": [
+                  -0.0004074087594303729
+                ],
+                "observed_norm": 0.0004514767401029296,
+                "predicted_norm": 0.0004074087594303729,
+                "floor": 0.02,
+                "error": 0.002203399033627834,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_B": {
+                "observed": [
+                  0.002919357075009704
+                ],
+                "predicted": [
+                  0.003032163963092998
+                ],
+                "observed_norm": 0.002919357075009704,
+                "predicted_norm": 0.003032163963092998,
+                "floor": 0.02,
+                "error": 0.005640344404164699,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.00047363910828109534,
+                  -0.002976827733223844
+                ],
+                "predicted": [
+                  -0.00034958461578416547,
+                  -0.0015527282554754314
+                ],
+                "observed_norm": 0.003014272276716873,
+                "predicted_norm": 0.0015915949355739792,
+                "floor": 0.0002,
+                "error": 0.4742413358809987,
+                "cosine": 0.9979741510531558,
+                "gain_ratio": 1.8938689796910115,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  -0.001049284492048431,
+                  0.01971724624050427
+                ],
+                "predicted": [
+                  -2.435918171642198e-18,
+                  0.012914906813612376
+                ],
+                "observed_norm": 0.019745146169474995,
+                "predicted_norm": 0.012914906813612376,
+                "floor": 0.002,
+                "error": 0.3485814436832971,
+                "cosine": 0.9985869981041795,
+                "gain_ratio": 1.5288647803996165,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.000371861537331708
+                ],
+                "predicted": [
+                  -0.0015316682483407184
+                ],
+                "observed_norm": 0.000371861537331708,
+                "predicted_norm": 0.0015316682483407184,
+                "floor": 0.002,
+                "error": 0.5799033555045051,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shaft": {
+                "observed": [
+                  -0.046500944519930934
+                ],
+                "predicted": [
+                  -0.06711661603591469
+                ],
+                "observed_norm": 0.046500944519930934,
+                "predicted_norm": 0.06711661603591469,
+                "floor": 0.02,
+                "error": 0.44333876932645105,
+                "cosine": 1.0,
+                "gain_ratio": 0.692838037231315,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_A": {
+                "observed": [
+                  -0.0004514767401029296
+                ],
+                "predicted": [
+                  -1.0166399862576616e-17
+                ],
+                "observed_norm": 0.0004514767401029296,
+                "predicted_norm": 1.0166399862576616e-17,
+                "floor": 0.02,
+                "error": 0.02257383700514597,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_B": {
+                "observed": [
+                  0.002919357075009704
+                ],
+                "predicted": [
+                  -1.073121475756283e-17
+                ],
+                "observed_norm": 0.002919357075009704,
+                "predicted_norm": 1.073121475756283e-17,
+                "floor": 0.02,
+                "error": 0.14596785375048574,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            }
+          },
+          "h020ms": {
+            "delta_input": [
+              -0.05,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.001901846945246864,
+              -0.011957572026927942,
+              -0.0004075078138985106,
+              -0.07868834398599481,
+              0.013434911833322835,
+              -0.0015090793345469422,
+              -0.004133859821400246,
+              0.0793471462424518,
+              0.007846734468639921,
+              -0.18682774491458742,
+              -0.0022062534228033392,
+              0.010901299614974602
+            ],
+            "loaded_prediction": [
+              -0.001881059857486505,
+              -0.011837864047195848,
+              -0.0003450616626377923,
+              -0.07788843267960253,
+              0.013170414049912383,
+              -0.0015688913211479765,
+              -0.004214539398002814,
+              0.07852195547236335,
+              0.00768565793979555,
+              -0.18705720946236948,
+              -0.0016296350377214917,
+              0.012128655852371993
+            ],
+            "free_prediction": [
+              -0.0013983384631366619,
+              -0.006210913021901725,
+              0.00017383985036515878,
+              -0.05007889488460596,
+              0.011103389268041025,
+              -0.006126672993362873,
+              -9.743672686568792e-18,
+              0.0516596272544495,
+              4.575646714333117e-17,
+              -0.26846646414365877,
+              -4.066559945030646e-17,
+              -4.292485903025132e-17
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.001901846945246864,
+                  -0.011957572026927942
+                ],
+                "predicted": [
+                  -0.001881059857486505,
+                  -0.011837864047195848
+                ],
+                "observed_norm": 0.012107871430698065,
+                "predicted_norm": 0.011986384416801391,
+                "floor": 0.0002,
+                "error": 0.010034744547915546,
+                "cosine": 0.9999999896338048,
+                "gain_ratio": 1.0101354177934077,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  -0.004133859821400246,
+                  0.0793471462424518
+                ],
+                "predicted": [
+                  -0.004214539398002814,
+                  0.07852195547236335
+                ],
+                "observed_norm": 0.07945475702463647,
+                "predicted_norm": 0.07863497843543374,
+                "floor": 0.002,
+                "error": 0.010435189466121255,
+                "cosine": 0.9999987666248814,
+                "gain_ratio": 1.0104251136773166,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.0015090793345469422
+                ],
+                "predicted": [
+                  -0.0015688913211479765
+                ],
+                "observed_norm": 0.0015090793345469422,
+                "predicted_norm": 0.0015688913211479765,
+                "floor": 0.002,
+                "error": 0.029905993300517134,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shaft": {
+                "observed": [
+                  -0.18682774491458742
+                ],
+                "predicted": [
+                  -0.18705720946236948
+                ],
+                "observed_norm": 0.18682774491458742,
+                "predicted_norm": 0.18705720946236948,
+                "floor": 0.02,
+                "error": 0.0012282145132510133,
+                "cosine": 1.0,
+                "gain_ratio": 0.9987732921471374,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_A": {
+                "observed": [
+                  -0.0022062534228033392
+                ],
+                "predicted": [
+                  -0.0016296350377214917
+                ],
+                "observed_norm": 0.0022062534228033392,
+                "predicted_norm": 0.0016296350377214917,
+                "floor": 0.02,
+                "error": 0.02883091925409238,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_B": {
+                "observed": [
+                  0.010901299614974602
+                ],
+                "predicted": [
+                  0.012128655852371993
+                ],
+                "observed_norm": 0.010901299614974602,
+                "predicted_norm": 0.012128655852371993,
+                "floor": 0.02,
+                "error": 0.061367811869869525,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.001901846945246864,
+                  -0.011957572026927942
+                ],
+                "predicted": [
+                  -0.0013983384631366619,
+                  -0.006210913021901725
+                ],
+                "observed_norm": 0.012107871430698065,
+                "predicted_norm": 0.006366379742295917,
+                "floor": 0.0002,
+                "error": 0.4764400554243034,
+                "cosine": 0.9979704834018315,
+                "gain_ratio": 1.90184562040146,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  -0.004133859821400246,
+                  0.0793471462424518
+                ],
+                "predicted": [
+                  -9.743672686568792e-18,
+                  0.0516596272544495
+                ],
+                "observed_norm": 0.07945475702463647,
+                "predicted_norm": 0.0516596272544495,
+                "floor": 0.002,
+                "error": 0.35233156854963243,
+                "cosine": 0.9986456344942154,
+                "gain_ratio": 1.5380435602696483,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.0015090793345469422
+                ],
+                "predicted": [
+                  -0.006126672993362873
+                ],
+                "observed_norm": 0.0015090793345469422,
+                "predicted_norm": 0.006126672993362873,
+                "floor": 0.002,
+                "error": 2.3087968294079655,
+                "cosine": null,
+                "gain_ratio": 0.24631302114242964,
+                "status": "overprediction_observed_unresolved",
+                "predicted_nullspace": false,
+                "observed_quiet": true
+              },
+              "shaft": {
+                "observed": [
+                  -0.18682774491458742
+                ],
+                "predicted": [
+                  -0.26846646414365877
+                ],
+                "observed_norm": 0.18682774491458742,
+                "predicted_norm": 0.26846646414365877,
+                "floor": 0.02,
+                "error": 0.43697320901879083,
+                "cosine": 1.0,
+                "gain_ratio": 0.6959071983553754,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_A": {
+                "observed": [
+                  -0.0022062534228033392
+                ],
+                "predicted": [
+                  -4.066559945030646e-17
+                ],
+                "observed_norm": 0.0022062534228033392,
+                "predicted_norm": 4.066559945030646e-17,
+                "floor": 0.02,
+                "error": 0.11031267114016492,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_B": {
+                "observed": [
+                  0.010901299614974602
+                ],
+                "predicted": [
+                  -4.292485903025132e-17
+                ],
+                "observed_norm": 0.010901299614974602,
+                "predicted_norm": 4.292485903025132e-17,
+                "floor": 0.02,
+                "error": 0.5450649807487322,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            }
+          }
+        },
+        "early_shellB_u0_half": {
+          "h005ms": {
+            "delta_input": [
+              -0.025,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.00023681542405330227,
+              -0.0014884178221019801,
+              -5.07146744012158e-05,
+              -0.00977935162417657,
+              0.001658537486805731,
+              -0.00018593656220924903,
+              -0.0005246691785361309,
+              0.009858640275587383,
+              0.0009762025195888228,
+              -0.02325051484853991,
+              -0.00022566445074190256,
+              0.00145979224865192
+            ],
+            "loaded_prediction": [
+              -0.00023513248218581313,
+              -0.001479733005899481,
+              -4.313270782972404e-05,
+              -0.009736054084950317,
+              0.001646301756239048,
+              -0.00019611141514349706,
+              -0.0005268174247503517,
+              0.009815244434045418,
+              0.0009607072424744437,
+              -0.023382151182796185,
+              -0.00020370437971518646,
+              0.001516081981546499
+            ],
+            "free_prediction": [
+              -0.00017479230789208274,
+              -0.0007763641277377157,
+              2.1729981295644848e-05,
+              -0.006259861860575745,
+              0.0013879236585051281,
+              -0.0007658341241703592,
+              -1.217959085821099e-18,
+              0.006457453406806188,
+              5.719558392916396e-18,
+              -0.033558308017957346,
+              -5.083199931288308e-18,
+              -5.365607378781415e-18
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.00023681542405330227,
+                  -0.0014884178221019801
+                ],
+                "predicted": [
+                  -0.00023513248218581313,
+                  -0.001479733005899481
+                ],
+                "observed_norm": 0.0015071393957495594,
+                "predicted_norm": 0.001498298052100174,
+                "floor": 0.0002,
+                "error": 0.00586964525045178,
+                "cosine": 0.9999999803005759,
+                "gain_ratio": 1.0059009244769375,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  -0.0005246691785361309,
+                  0.009858640275587383
+                ],
+                "predicted": [
+                  -0.0005268174247503517,
+                  0.009815244434045418
+                ],
+                "observed_norm": 0.009872591647097506,
+                "predicted_norm": 0.009829372304429217,
+                "floor": 0.002,
+                "error": 0.004400970223029954,
+                "cosine": 0.999999897453826,
+                "gain_ratio": 1.0043969585574466,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.00018593656220924903
+                ],
+                "predicted": [
+                  -0.00019611141514349706
+                ],
+                "observed_norm": 0.00018593656220924903,
+                "predicted_norm": 0.00019611141514349706,
+                "floor": 0.002,
+                "error": 0.005087426467124012,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shaft": {
+                "observed": [
+                  -0.02325051484853991
+                ],
+                "predicted": [
+                  -0.023382151182796185
+                ],
+                "observed_norm": 0.02325051484853991,
+                "predicted_norm": 0.023382151182796185,
+                "floor": 0.02,
+                "error": 0.005661652445711021,
+                "cosine": 1.0,
+                "gain_ratio": 0.9943702214040456,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_A": {
+                "observed": [
+                  -0.00022566445074190256
+                ],
+                "predicted": [
+                  -0.00020370437971518646
+                ],
+                "observed_norm": 0.00022566445074190256,
+                "predicted_norm": 0.00020370437971518646,
+                "floor": 0.02,
+                "error": 0.0010980035513358049,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_B": {
+                "observed": [
+                  0.00145979224865192
+                ],
+                "predicted": [
+                  0.001516081981546499
+                ],
+                "observed_norm": 0.00145979224865192,
+                "predicted_norm": 0.001516081981546499,
+                "floor": 0.02,
+                "error": 0.0028144866447289587,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.00023681542405330227,
+                  -0.0014884178221019801
+                ],
+                "predicted": [
+                  -0.00017479230789208274,
+                  -0.0007763641277377157
+                ],
+                "observed_norm": 0.0015071393957495594,
+                "predicted_norm": 0.0007957974677869896,
+                "floor": 0.0002,
+                "error": 0.4742426876959567,
+                "cosine": 0.9979739526343896,
+                "gain_ratio": 1.8938730729323885,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  -0.0005246691785361309,
+                  0.009858640275587383
+                ],
+                "predicted": [
+                  -1.217959085821099e-18,
+                  0.006457453406806188
+                ],
+                "observed_norm": 0.009872591647097506,
+                "predicted_norm": 0.006457453406806188,
+                "floor": 0.002,
+                "error": 0.34858292153950915,
+                "cosine": 0.9985868582426152,
+                "gain_ratio": 1.5288676549631384,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.00018593656220924903
+                ],
+                "predicted": [
+                  -0.0007658341241703592
+                ],
+                "observed_norm": 0.00018593656220924903,
+                "predicted_norm": 0.0007658341241703592,
+                "floor": 0.002,
+                "error": 0.28994878098055504,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shaft": {
+                "observed": [
+                  -0.02325051484853991
+                ],
+                "predicted": [
+                  -0.033558308017957346
+                ],
+                "observed_norm": 0.02325051484853991,
+                "predicted_norm": 0.033558308017957346,
+                "floor": 0.02,
+                "error": 0.44333612552518376,
+                "cosine": 1.0,
+                "gain_ratio": 0.6928393063231422,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_A": {
+                "observed": [
+                  -0.00022566445074190256
+                ],
+                "predicted": [
+                  -5.083199931288308e-18
+                ],
+                "observed_norm": 0.00022566445074190256,
+                "predicted_norm": 5.083199931288308e-18,
+                "floor": 0.02,
+                "error": 0.011283222537094873,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_B": {
+                "observed": [
+                  0.00145979224865192
+                ],
+                "predicted": [
+                  -5.365607378781415e-18
+                ],
+                "observed_norm": 0.00145979224865192,
+                "predicted_norm": 5.365607378781415e-18,
+                "floor": 0.02,
+                "error": 0.07298961243259626,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            }
+          },
+          "h020ms": {
+            "delta_input": [
+              -0.025,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.0009505708772451565,
+              -0.005979085722976852,
+              -0.00020381080137684893,
+              -0.03934580287350629,
+              0.006715490249703741,
+              -0.0007551138435454297,
+              -0.002069189269061914,
+              0.0396747997061201,
+              0.003922873184216868,
+              -0.09341713583523847,
+              -0.0010973215482468213,
+              0.0054601103737492995
+            ],
+            "loaded_prediction": [
+              -0.0009405299287432525,
+              -0.005918932023597924,
+              -0.00017253083131889616,
+              -0.03894421633980127,
+              0.006585207024956192,
+              -0.0007844456605739882,
+              -0.002107269699001407,
+              0.039260977736181674,
+              0.003842828969897775,
+              -0.09352860473118474,
+              -0.0008148175188607458,
+              0.006064327926185996
+            ],
+            "free_prediction": [
+              -0.0006991692315683309,
+              -0.0031054565109508627,
+              8.691992518257939e-05,
+              -0.02503944744230298,
+              0.0055516946340205126,
+              -0.0030633364966814367,
+              -4.871836343284396e-18,
+              0.02582981362722475,
+              2.2878233571665585e-17,
+              -0.13423323207182938,
+              -2.033279972515323e-17,
+              -2.146242951512566e-17
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.0009505708772451565,
+                  -0.005979085722976852
+                ],
+                "predicted": [
+                  -0.0009405299287432525,
+                  -0.005918932023597924
+                ],
+                "observed_norm": 0.0060541763333563595,
+                "predicted_norm": 0.005993192208400696,
+                "floor": 0.0002,
+                "error": 0.010073371478764713,
+                "cosine": 0.9999999969035918,
+                "gain_ratio": 1.0101755663484615,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  -0.002069189269061914,
+                  0.0396747997061201
+                ],
+                "predicted": [
+                  -0.002107269699001407,
+                  0.039260977736181674
+                ],
+                "observed_norm": 0.0397287210460134,
+                "predicted_norm": 0.03931748921771687,
+                "floor": 0.002,
+                "error": 0.010460200341718405,
+                "cosine": 0.9999988517771217,
+                "gain_ratio": 1.0104592596444646,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.0007551138435454297
+                ],
+                "predicted": [
+                  -0.0007844456605739882
+                ],
+                "observed_norm": 0.0007551138435454297,
+                "predicted_norm": 0.0007844456605739882,
+                "floor": 0.002,
+                "error": 0.014665908514279293,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shaft": {
+                "observed": [
+                  -0.09341713583523847
+                ],
+                "predicted": [
+                  -0.09352860473118474
+                ],
+                "observed_norm": 0.09341713583523847,
+                "predicted_norm": 0.09352860473118474,
+                "floor": 0.02,
+                "error": 0.0011932382099882064,
+                "cosine": 1.0,
+                "gain_ratio": 0.9988081839105091,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_A": {
+                "observed": [
+                  -0.0010973215482468213
+                ],
+                "predicted": [
+                  -0.0008148175188607458
+                ],
+                "observed_norm": 0.0010973215482468213,
+                "predicted_norm": 0.0008148175188607458,
+                "floor": 0.02,
+                "error": 0.014125201469303772,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_B": {
+                "observed": [
+                  0.0054601103737492995
+                ],
+                "predicted": [
+                  0.006064327926185996
+                ],
+                "observed_norm": 0.0054601103737492995,
+                "predicted_norm": 0.006064327926185996,
+                "floor": 0.02,
+                "error": 0.03021087762183484,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.0009505708772451565,
+                  -0.005979085722976852
+                ],
+                "predicted": [
+                  -0.0006991692315683309,
+                  -0.0031054565109508627
+                ],
+                "observed_norm": 0.0060541763333563595,
+                "predicted_norm": 0.0031831898711479584,
+                "floor": 0.0002,
+                "error": 0.47646535608445945,
+                "cosine": 0.9979663235322859,
+                "gain_ratio": 1.9019212106166425,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  -0.002069189269061914,
+                  0.0396747997061201
+                ],
+                "predicted": [
+                  -4.871836343284396e-18,
+                  0.02582981362722475
+                ],
+                "observed_norm": 0.0397287210460134,
+                "predicted_norm": 0.02582981362722475,
+                "floor": 0.002,
+                "error": 0.3523585994947397,
+                "cosine": 0.9986427617483368,
+                "gain_ratio": 1.5380955363974882,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  -0.0007551138435454297
+                ],
+                "predicted": [
+                  -0.0030633364966814367
+                ],
+                "observed_norm": 0.0007551138435454297,
+                "predicted_norm": 0.0030633364966814367,
+                "floor": 0.002,
+                "error": 1.1541113265680034,
+                "cosine": null,
+                "gain_ratio": 0.24650045607573867,
+                "status": "overprediction_observed_unresolved",
+                "predicted_nullspace": false,
+                "observed_quiet": true
+              },
+              "shaft": {
+                "observed": [
+                  -0.09341713583523847
+                ],
+                "predicted": [
+                  -0.13423323207182938
+                ],
+                "observed_norm": 0.09341713583523847,
+                "predicted_norm": 0.13423323207182938,
+                "floor": 0.02,
+                "error": 0.4369230106624015,
+                "cosine": 1.0,
+                "gain_ratio": 0.695931509607473,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_A": {
+                "observed": [
+                  -0.0010973215482468213
+                ],
+                "predicted": [
+                  -2.033279972515323e-17
+                ],
+                "observed_norm": 0.0010973215482468213,
+                "predicted_norm": 2.033279972515323e-17,
+                "floor": 0.02,
+                "error": 0.05486607741234004,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_B": {
+                "observed": [
+                  0.0054601103737492995
+                ],
+                "predicted": [
+                  -2.146242951512566e-17
+                ],
+                "observed_norm": 0.0054601103737492995,
+                "predicted_norm": 2.146242951512566e-17,
+                "floor": 0.02,
+                "error": 0.27300551868746603,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            }
+          }
+        },
+        "early_shellB_u1_full": {
+          "h005ms": {
+            "delta_input": [
+              0.0,
+              -0.02,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.00034151842790038165,
+              7.489423678694231e-05,
+              4.376827111862887e-05,
+              5.384203547838945e-05,
+              0.0032749938347925688,
+              0.005371324270315753,
+              0.0030590355549097786,
+              1.4689119101941222e-05,
+              0.005497426098018479,
+              -0.00016958574950339325,
+              -0.08196844891779387,
+              -0.0078089381796274115
+            ],
+            "loaded_prediction": [
+              -0.00034414538859602024,
+              7.606740103343255e-05,
+              3.570660585859699e-05,
+              6.0069911024803885e-05,
+              0.0032898361641039266,
+              0.005375617161733414,
+              0.0030747602694627097,
+              1.133280168383856e-05,
+              0.005501782538715879,
+              -0.00016296350377215734,
+              -0.08200185868715623,
+              -0.00783183557906933
+            ],
+            "free_prediction": [
+              -0.00040695794309481703,
+              9.022987564551956e-05,
+              -4.978740535586347e-05,
+              0.00014866673389906938,
+              0.0036072343873266004,
+              0.005322213520960771,
+              0.003405202488452379,
+              4.5986195433036774e-18,
+              0.005455712098178851,
+              -3.913981048222436e-18,
+              -0.08222773135797189,
+              -0.006096133761539639
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.00034151842790038165,
+                  7.489423678694231e-05
+                ],
+                "predicted": [
+                  -0.00034414538859602024,
+                  7.606740103343255e-05
+                ],
+                "observed_norm": 0.0003496340705644213,
+                "predicted_norm": 0.000352451837833039,
+                "floor": 0.0002,
+                "error": 0.008228656715363325,
+                "cosine": 0.999998630906694,
+                "gain_ratio": 0.9920052416638199,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.0030590355549097786,
+                  1.4689119101941222e-05
+                ],
+                "predicted": [
+                  0.0030747602694627097,
+                  1.133280168383856e-05
+                ],
+                "observed_norm": 0.003059070822393978,
+                "predicted_norm": 0.0030747811543360938,
+                "floor": 0.002,
+                "error": 0.0052561434975308486,
+                "cosine": 0.9999993771519298,
+                "gain_ratio": 0.9948905853283376,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  0.005371324270315753
+                ],
+                "predicted": [
+                  0.005375617161733414
+                ],
+                "observed_norm": 0.005371324270315753,
+                "predicted_norm": 0.005375617161733414,
+                "floor": 0.002,
+                "error": 0.0007992240277478242,
+                "cosine": 1.0,
+                "gain_ratio": 0.9992014142211948,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  -0.00016958574950339325
+                ],
+                "predicted": [
+                  -0.00016296350377215734
+                ],
+                "observed_norm": 0.00016958574950339325,
+                "predicted_norm": 0.00016296350377215734,
+                "floor": 0.02,
+                "error": 0.0003311122865617958,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.08196844891779387
+                ],
+                "predicted": [
+                  -0.08200185868715623
+                ],
+                "observed_norm": 0.08196844891779387,
+                "predicted_norm": 0.08200185868715623,
+                "floor": 0.02,
+                "error": 0.0004075930410232633,
+                "cosine": 1.0,
+                "gain_ratio": 0.9995925730233771,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.0078089381796274115
+                ],
+                "predicted": [
+                  -0.00783183557906933
+                ],
+                "observed_norm": 0.0078089381796274115,
+                "predicted_norm": 0.00783183557906933,
+                "floor": 0.02,
+                "error": 0.0011448699720958966,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.00034151842790038165,
+                  7.489423678694231e-05
+                ],
+                "predicted": [
+                  -0.00040695794309481703,
+                  9.022987564551956e-05
+                ],
+                "observed_norm": 0.0003496340705644213,
+                "predicted_norm": 0.0004168407344621807,
+                "floor": 0.0002,
+                "error": 0.19223652597397659,
+                "cosine": 0.999997336741318,
+                "gain_ratio": 0.8387713619580119,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.0030590355549097786,
+                  1.4689119101941222e-05
+                ],
+                "predicted": [
+                  0.003405202488452379,
+                  4.5986195433036774e-18
+                ],
+                "observed_norm": 0.003059070822393978,
+                "predicted_norm": 0.003405202488452379,
+                "floor": 0.002,
+                "error": 0.1132626440524723,
+                "cosine": 0.9999884711776067,
+                "gain_ratio": 0.8983521046891654,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  0.005371324270315753
+                ],
+                "predicted": [
+                  0.005322213520960771
+                ],
+                "observed_norm": 0.005371324270315753,
+                "predicted_norm": 0.005322213520960771,
+                "floor": 0.002,
+                "error": 0.009143136195740148,
+                "cosine": 1.0,
+                "gain_ratio": 1.0092275045263717,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  -0.00016958574950339325
+                ],
+                "predicted": [
+                  -3.913981048222436e-18
+                ],
+                "observed_norm": 0.00016958574950339325,
+                "predicted_norm": 3.913981048222436e-18,
+                "floor": 0.02,
+                "error": 0.008479287475169467,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.08196844891779387
+                ],
+                "predicted": [
+                  -0.08222773135797189
+                ],
+                "observed_norm": 0.08196844891779387,
+                "predicted_norm": 0.08222773135797189,
+                "floor": 0.02,
+                "error": 0.0031631980792762456,
+                "cosine": 1.0,
+                "gain_ratio": 0.9968467761922161,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.0078089381796274115
+                ],
+                "predicted": [
+                  -0.006096133761539639
+                ],
+                "observed_norm": 0.0078089381796274115,
+                "predicted_norm": 0.006096133761539639,
+                "floor": 0.02,
+                "error": 0.08564022090438864,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            }
+          },
+          "h020ms": {
+            "delta_input": [
+              0.0,
+              -0.02,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.001372593652375483,
+              0.0002945688418401287,
+              0.00017557044813439927,
+              0.00019688357733393252,
+              0.013154348656323346,
+              0.021494874221003074,
+              0.012284848048018484,
+              8.72262650508911e-05,
+              0.022004094380538908,
+              -0.0006636712759431271,
+              -0.32773707530789364,
+              -0.03136607819020118
+            ],
+            "loaded_prediction": [
+              -0.001376581554384081,
+              0.0003042696041337302,
+              0.00014282642343438795,
+              0.00024027964409921554,
+              0.013159344656415706,
+              0.021502468646933656,
+              0.012299041077850839,
+              4.533120673535424e-05,
+              0.022007130154863518,
+              -0.0006518540150886293,
+              -0.3280074347486249,
+              -0.03132734231627732
+            ],
+            "free_prediction": [
+              -0.0016278317723792681,
+              0.00036091950258207824,
+              -0.00019914962142345387,
+              0.0005946669355962775,
+              0.014428937549306402,
+              0.021288854083843085,
+              0.013620809953809517,
+              1.839447817321471e-17,
+              0.021822848392715404,
+              -1.5655924192889745e-17,
+              -0.32891092543188755,
+              -0.024384535046158555
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.001372593652375483,
+                  0.0002945688418401287
+                ],
+                "predicted": [
+                  -0.001376581554384081,
+                  0.0003042696041337302
+                ],
+                "observed_norm": 0.0014038461942550912,
+                "predicted_norm": 0.001409807351332156,
+                "floor": 0.0002,
+                "error": 0.007471243734021038,
+                "cosine": 0.9999811856966919,
+                "gain_ratio": 0.9957716513029727,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.012284848048018484,
+                  8.72262650508911e-05
+                ],
+                "predicted": [
+                  0.012299041077850839,
+                  4.533120673535424e-05
+                ],
+                "observed_norm": 0.012285157711003074,
+                "predicted_norm": 0.012299124617344375,
+                "floor": 0.002,
+                "error": 0.003600596927356465,
+                "cosine": 0.9999941707406519,
+                "gain_ratio": 0.998864398339244,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  0.021494874221003074
+                ],
+                "predicted": [
+                  0.021502468646933656
+                ],
+                "observed_norm": 0.021494874221003074,
+                "predicted_norm": 0.021502468646933656,
+                "floor": 0.002,
+                "error": 0.000353313345893481,
+                "cosine": 1.0,
+                "gain_ratio": 0.9996468114403383,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  -0.0006636712759431271
+                ],
+                "predicted": [
+                  -0.0006518540150886293
+                ],
+                "observed_norm": 0.0006636712759431271,
+                "predicted_norm": 0.0006518540150886293,
+                "floor": 0.02,
+                "error": 0.0005908630427248868,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.32773707530789364
+                ],
+                "predicted": [
+                  -0.3280074347486249
+                ],
+                "observed_norm": 0.32773707530789364,
+                "predicted_norm": 0.3280074347486249,
+                "floor": 0.02,
+                "error": 0.0008249278494881684,
+                "cosine": 1.0,
+                "gain_ratio": 0.9991757520955631,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.03136607819020118
+                ],
+                "predicted": [
+                  -0.03132734231627732
+                ],
+                "observed_norm": 0.03136607819020118,
+                "predicted_norm": 0.03132734231627732,
+                "floor": 0.02,
+                "error": 0.0012349607014613343,
+                "cosine": 1.0,
+                "gain_ratio": 1.0012364877151974,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.001372593652375483,
+                  0.0002945688418401287
+                ],
+                "predicted": [
+                  -0.0016278317723792681,
+                  0.00036091950258207824
+                ],
+                "observed_norm": 0.0014038461942550912,
+                "predicted_norm": 0.0016673629378487229,
+                "floor": 0.0002,
+                "error": 0.1878562414911491,
+                "cosine": 0.9999769656604773,
+                "gain_ratio": 0.8419559787423199,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.012284848048018484,
+                  8.72262650508911e-05
+                ],
+                "predicted": [
+                  0.013620809953809517,
+                  1.839447817321471e-17
+                ],
+                "observed_norm": 0.012285157711003074,
+                "predicted_norm": 0.013620809953809517,
+                "floor": 0.002,
+                "error": 0.10897755269319111,
+                "cosine": 0.999974793731438,
+                "gain_ratio": 0.901940321659588,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  0.021494874221003074
+                ],
+                "predicted": [
+                  0.021288854083843085
+                ],
+                "observed_norm": 0.021494874221003074,
+                "predicted_norm": 0.021288854083843085,
+                "floor": 0.002,
+                "error": 0.00958461701342188,
+                "cosine": 1.0,
+                "gain_ratio": 1.0096773709072648,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  -0.0006636712759431271
+                ],
+                "predicted": [
+                  -1.5655924192889745e-17
+                ],
+                "observed_norm": 0.0006636712759431271,
+                "predicted_norm": 1.5655924192889745e-17,
+                "floor": 0.02,
+                "error": 0.03318356379715557,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.32773707530789364
+                ],
+                "predicted": [
+                  -0.32891092543188755
+                ],
+                "observed_norm": 0.32773707530789364,
+                "predicted_norm": 0.32891092543188755,
+                "floor": 0.02,
+                "error": 0.0035816824290969378,
+                "cosine": 1.0,
+                "gain_ratio": 0.9964311002364773,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.03136607819020118
+                ],
+                "predicted": [
+                  -0.024384535046158555
+                ],
+                "observed_norm": 0.03136607819020118,
+                "predicted_norm": 0.024384535046158555,
+                "floor": 0.02,
+                "error": 0.2225825970880756,
+                "cosine": 1.0,
+                "gain_ratio": 1.2863102835804314,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              }
+            }
+          }
+        },
+        "early_shellB_u1_half": {
+          "h005ms": {
+            "delta_input": [
+              0.0,
+              -0.01,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.00017075887906595308,
+              3.744709072105992e-05,
+              2.1884095046609156e-05,
+              2.6914846364210765e-05,
+              0.0016374966179690947,
+              0.0026856610235211076,
+              0.0015295161607897572,
+              7.35060956786102e-06,
+              0.002748712607475983,
+              -8.480860425122069e-05,
+              -0.0409842227379964,
+              -0.003904462573219164
+            ],
+            "loaded_prediction": [
+              -0.00017207269429801012,
+              3.8033700516716276e-05,
+              1.7853302929298494e-05,
+              3.0034955512401943e-05,
+              0.0016449180820519633,
+              0.002687808580866707,
+              0.0015373801347313548,
+              5.66640084191928e-06,
+              0.0027508912693579397,
+              -8.148175188607867e-05,
+              -0.041000929343578116,
+              -0.003915917789534665
+            ],
+            "free_prediction": [
+              -0.00020347897154740852,
+              4.511493782275978e-05,
+              -2.4893702677931734e-05,
+              7.433336694953469e-05,
+              0.0018036171936633002,
+              0.0026611067604803856,
+              0.0017026012442261896,
+              2.2993097716518387e-18,
+              0.0027278560490894255,
+              -1.956990524111218e-18,
+              -0.04111386567898594,
+              -0.0030480668807698194
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.00017075887906595308,
+                  3.744709072105992e-05
+                ],
+                "predicted": [
+                  -0.00017207269429801012,
+                  3.8033700516716276e-05
+                ],
+                "observed_norm": 0.0001748167022436131,
+                "predicted_norm": 0.0001762259189165195,
+                "floor": 0.0002,
+                "error": 0.007194132185929517,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "transverse": {
+                "observed": [
+                  0.0015295161607897572,
+                  7.35060956786102e-06
+                ],
+                "predicted": [
+                  0.0015373801347313548,
+                  5.66640084191928e-06
+                ],
+                "observed_norm": 0.001529533823613606,
+                "predicted_norm": 0.0015373905771680469,
+                "floor": 0.002,
+                "error": 0.004021151737582918,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "world_yaw": {
+                "observed": [
+                  0.0026856610235211076
+                ],
+                "predicted": [
+                  0.002687808580866707
+                ],
+                "observed_norm": 0.0026856610235211076,
+                "predicted_norm": 0.002687808580866707,
+                "floor": 0.002,
+                "error": 0.0007996382740751973,
+                "cosine": 1.0,
+                "gain_ratio": 0.9992010006363969,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  -8.480860425122069e-05
+                ],
+                "predicted": [
+                  -8.148175188607867e-05
+                ],
+                "observed_norm": 8.480860425122069e-05,
+                "predicted_norm": 8.148175188607867e-05,
+                "floor": 0.02,
+                "error": 0.00016634261825710124,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.0409842227379964
+                ],
+                "predicted": [
+                  -0.041000929343578116
+                ],
+                "observed_norm": 0.0409842227379964,
+                "predicted_norm": 0.041000929343578116,
+                "floor": 0.02,
+                "error": 0.00040763504747953484,
+                "cosine": 1.0,
+                "gain_ratio": 0.9995925310511448,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.003904462573219164
+                ],
+                "predicted": [
+                  -0.003915917789534665
+                ],
+                "observed_norm": 0.003904462573219164,
+                "predicted_norm": 0.003915917789534665,
+                "floor": 0.02,
+                "error": 0.0005727608157750363,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.00017075887906595308,
+                  3.744709072105992e-05
+                ],
+                "predicted": [
+                  -0.00020347897154740852,
+                  4.511493782275978e-05
+                ],
+                "observed_norm": 0.0001748167022436131,
+                "predicted_norm": 0.00020842036723109036,
+                "floor": 0.0002,
+                "error": 0.16803275954185565,
+                "cosine": null,
+                "gain_ratio": 0.838769764040294,
+                "status": "overprediction_observed_unresolved",
+                "predicted_nullspace": false,
+                "observed_quiet": true
+              },
+              "transverse": {
+                "observed": [
+                  0.0015295161607897572,
+                  7.35060956786102e-06
+                ],
+                "predicted": [
+                  0.0017026012442261896,
+                  2.2993097716518387e-18
+                ],
+                "observed_norm": 0.001529533823613606,
+                "predicted_norm": 0.0017026012442261896,
+                "floor": 0.002,
+                "error": 0.08662054832604076,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "world_yaw": {
+                "observed": [
+                  0.0026856610235211076
+                ],
+                "predicted": [
+                  0.0026611067604803856
+                ],
+                "observed_norm": 0.0026856610235211076,
+                "predicted_norm": 0.0026611067604803856,
+                "floor": 0.002,
+                "error": 0.009142726064709937,
+                "cosine": 1.0,
+                "gain_ratio": 1.009227086791621,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  -8.480860425122069e-05
+                ],
+                "predicted": [
+                  -1.956990524111218e-18
+                ],
+                "observed_norm": 8.480860425122069e-05,
+                "predicted_norm": 1.956990524111218e-18,
+                "floor": 0.02,
+                "error": 0.004240430212560937,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.0409842227379964
+                ],
+                "predicted": [
+                  -0.04111386567898594
+                ],
+                "observed_norm": 0.0409842227379964,
+                "predicted_norm": 0.04111386567898594,
+                "floor": 0.02,
+                "error": 0.0031632402014385584,
+                "cosine": 1.0,
+                "gain_ratio": 0.9968467343352779,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.003904462573219164
+                ],
+                "predicted": [
+                  -0.0030480668807698194
+                ],
+                "observed_norm": 0.003904462573219164,
+                "predicted_norm": 0.0030480668807698194,
+                "floor": 0.02,
+                "error": 0.04281978462246723,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            }
+          },
+          "h020ms": {
+            "delta_input": [
+              0.0,
+              -0.01,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.0006862727134167588,
+              0.00014727608341201601,
+              8.778197325280516e-05,
+              9.792989498537755e-05,
+              0.0065771612309243055,
+              0.010747353490037553,
+              0.006142301141258014,
+              4.4116464871570785e-05,
+              0.0110020197050067,
+              -0.0003331325587915164,
+              -0.1638684126958201,
+              -0.015682547600913727
+            ],
+            "loaded_prediction": [
+              -0.0006882907771920405,
+              0.0001521348020668651,
+              7.141321171719398e-05,
+              0.00012013982204960777,
+              0.006579672328207853,
+              0.010751234323466828,
+              0.006149520538925419,
+              2.266560336767712e-05,
+              0.011003565077431759,
+              -0.00032592700754431467,
+              -0.16400371737431246,
+              -0.01566367115813866
+            ],
+            "free_prediction": [
+              -0.0008139158861896341,
+              0.00018045975129103912,
+              -9.957481071172694e-05,
+              0.00029733346779813876,
+              0.007214468774653201,
+              0.010644427041921542,
+              0.006810404976904758,
+              9.197239086607355e-18,
+              0.010911424196357702,
+              -7.827962096444873e-18,
+              -0.16445546271594377,
+              -0.012192267523079277
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.0006862727134167588,
+                  0.00014727608341201601
+                ],
+                "predicted": [
+                  -0.0006882907771920405,
+                  0.0001521348020668651
+                ],
+                "observed_norm": 0.0007018977717058117,
+                "predicted_norm": 0.000704903675666078,
+                "floor": 0.0002,
+                "error": 0.007495611145190892,
+                "cosine": 0.9999811586618826,
+                "gain_ratio": 0.9957357238101703,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.006142301141258014,
+                  4.4116464871570785e-05
+                ],
+                "predicted": [
+                  0.006149520538925419,
+                  2.266560336767712e-05
+                ],
+                "observed_norm": 0.00614245957026762,
+                "predicted_norm": 0.0061495623086721875,
+                "floor": 0.002,
+                "error": 0.003684703617248736,
+                "cosine": 0.9999938871030107,
+                "gain_ratio": 0.9988450009857529,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  0.010747353490037553
+                ],
+                "predicted": [
+                  0.010751234323466828
+                ],
+                "observed_norm": 0.010747353490037553,
+                "predicted_norm": 0.010751234323466828,
+                "floor": 0.002,
+                "error": 0.0003610966581560903,
+                "cosine": 1.0,
+                "gain_ratio": 0.9996390336855737,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  -0.0003331325587915164
+                ],
+                "predicted": [
+                  -0.00032592700754431467
+                ],
+                "observed_norm": 0.0003331325587915164,
+                "predicted_norm": 0.00032592700754431467,
+                "floor": 0.02,
+                "error": 0.00036027756236008655,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.1638684126958201
+                ],
+                "predicted": [
+                  -0.16400371737431246
+                ],
+                "observed_norm": 0.1638684126958201,
+                "predicted_norm": 0.16400371737431246,
+                "floor": 0.02,
+                "error": 0.0008256910301775778,
+                "cosine": 1.0,
+                "gain_ratio": 0.9991749901730363,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.015682547600913727
+                ],
+                "predicted": [
+                  -0.01566367115813866
+                ],
+                "observed_norm": 0.015682547600913727,
+                "predicted_norm": 0.01566367115813866,
+                "floor": 0.02,
+                "error": 0.0009438221387533807,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.0006862727134167588,
+                  0.00014727608341201601
+                ],
+                "predicted": [
+                  -0.0008139158861896341,
+                  0.00018045975129103912
+                ],
+                "observed_norm": 0.0007018977717058117,
+                "predicted_norm": 0.0008336814689243614,
+                "floor": 0.0002,
+                "error": 0.1878992568048048,
+                "cosine": 0.9999769357480498,
+                "gain_ratio": 0.8419256009269576,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.006142301141258014,
+                  4.4116464871570785e-05
+                ],
+                "predicted": [
+                  0.006810404976904758,
+                  9.197239086607355e-18
+                ],
+                "observed_norm": 0.00614245957026762,
+                "predicted_norm": 0.006810404976904758,
+                "floor": 0.002,
+                "error": 0.10900500045147801,
+                "cosine": 0.9999742075616789,
+                "gain_ratio": 0.9019228065141126,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  0.010747353490037553
+                ],
+                "predicted": [
+                  0.010644427041921542
+                ],
+                "observed_norm": 0.010747353490037553,
+                "predicted_norm": 0.010644427041921542,
+                "floor": 0.002,
+                "error": 0.00957691102385536,
+                "cosine": 1.0,
+                "gain_ratio": 1.0096695151097048,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  -0.0003331325587915164
+                ],
+                "predicted": [
+                  -7.827962096444873e-18
+                ],
+                "observed_norm": 0.0003331325587915164,
+                "predicted_norm": 7.827962096444873e-18,
+                "floor": 0.02,
+                "error": 0.016656627939575428,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.1638684126958201
+                ],
+                "predicted": [
+                  -0.16445546271594377
+                ],
+                "observed_norm": 0.1638684126958201,
+                "predicted_norm": 0.16445546271594377,
+                "floor": 0.02,
+                "error": 0.003582447711954071,
+                "cosine": 1.0,
+                "gain_ratio": 0.9964303404068877,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.015682547600913727
+                ],
+                "predicted": [
+                  -0.012192267523079277
+                ],
+                "observed_norm": 0.015682547600913727,
+                "predicted_norm": 0.012192267523079277,
+                "floor": 0.02,
+                "error": 0.17451400389172245,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              }
+            }
+          }
+        },
+        "early_shellB_u2_full": {
+          "h005ms": {
+            "delta_input": [
+              0.0,
+              0.0,
+              -0.01999999999999999,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.0013461490270215844,
+              0.00016322524180017398,
+              0.00016557397311030986,
+              0.0007318276133947144,
+              0.007857470402650606,
+              0.0025554277375419154,
+              0.00775366462993369,
+              0.0006763340381786588,
+              0.002868602583379596,
+              0.0011876090180385247,
+              -0.007807761800083579,
+              -0.023882707670372483
+            ],
+            "loaded_prediction": [
+              -0.0013462819693504185,
+              0.00016487475941752403,
+              0.00014477772307408337,
+              0.0007386927040612666,
+              0.007864364575148271,
+              0.002581586383289227,
+              0.007761181236881905,
+              0.0006680584666326595,
+              0.0028941750171158254,
+              0.001212865585237137,
+              -0.007831835579069317,
+              -0.024318103039315565
+            ],
+            "free_prediction": [
+              -0.0004069579430948091,
+              9.022987564551784e-05,
+              -4.978740535586251e-05,
+              0.00014866673389906285,
+              0.0036072343873265666,
+              0.005322213520960763,
+              0.0034052024884523445,
+              4.4857821728105816e-18,
+              0.005455712098178842,
+              -4.1399070062169206e-18,
+              -0.006096133761539634,
+              -0.08222773135797179
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.0013461490270215844,
+                  0.00016322524180017398
+                ],
+                "predicted": [
+                  -0.0013462819693504185,
+                  0.00016487475941752403
+                ],
+                "observed_norm": 0.0013560087324615147,
+                "predicted_norm": 0.001356340232866012,
+                "floor": 0.0002,
+                "error": 0.0012203949193005624,
+                "cosine": 0.9999992853750637,
+                "gain_ratio": 0.9997555919993638,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.00775366462993369,
+                  0.0006763340381786588
+                ],
+                "predicted": [
+                  0.007761181236881905,
+                  0.0006680584666326595
+                ],
+                "observed_norm": 0.007783106251663521,
+                "predicted_norm": 0.007789880378193706,
+                "floor": 0.002,
+                "error": 0.0014363988788629305,
+                "cosine": 0.9999993477126016,
+                "gain_ratio": 0.9991303940238738,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  0.0025554277375419154
+                ],
+                "predicted": [
+                  0.002581586383289227
+                ],
+                "observed_norm": 0.0025554277375419154,
+                "predicted_norm": 0.002581586383289227,
+                "floor": 0.002,
+                "error": 0.010236503800523744,
+                "cosine": 1.0,
+                "gain_ratio": 0.9898672204359931,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.0011876090180385247
+                ],
+                "predicted": [
+                  0.001212865585237137
+                ],
+                "observed_norm": 0.0011876090180385247,
+                "predicted_norm": 0.001212865585237137,
+                "floor": 0.02,
+                "error": 0.0012628283599306137,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.007807761800083579
+                ],
+                "predicted": [
+                  -0.007831835579069317
+                ],
+                "observed_norm": 0.007807761800083579,
+                "predicted_norm": 0.007831835579069317,
+                "floor": 0.02,
+                "error": 0.0012036889492869109,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_B": {
+                "observed": [
+                  -0.023882707670372483
+                ],
+                "predicted": [
+                  -0.024318103039315565
+                ],
+                "observed_norm": 0.023882707670372483,
+                "predicted_norm": 0.024318103039315565,
+                "floor": 0.02,
+                "error": 0.01823056978933796,
+                "cosine": 1.0,
+                "gain_ratio": 0.9820958333699314,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.0013461490270215844,
+                  0.00016322524180017398
+                ],
+                "predicted": [
+                  -0.0004069579430948091,
+                  9.022987564551784e-05
+                ],
+                "observed_norm": 0.0013560087324615147,
+                "predicted_norm": 0.00041684073446217264,
+                "floor": 0.0002,
+                "error": 0.6947030990012806,
+                "cosine": 0.9952483102568548,
+                "gain_ratio": 3.253061949934189,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.00775366462993369,
+                  0.0006763340381786588
+                ],
+                "predicted": [
+                  0.0034052024884523445,
+                  4.4857821728105816e-18
+                ],
+                "observed_norm": 0.007783106251663521,
+                "predicted_norm": 0.0034052024884523445,
+                "floor": 0.002,
+                "error": 0.5654226211940463,
+                "cosine": 0.9962172401637794,
+                "gain_ratio": 2.2856515223565816,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  0.0025554277375419154
+                ],
+                "predicted": [
+                  0.005322213520960763
+                ],
+                "observed_norm": 0.0025554277375419154,
+                "predicted_norm": 0.005322213520960763,
+                "floor": 0.002,
+                "error": 1.0827094590748394,
+                "cosine": 1.0,
+                "gain_ratio": 0.4801437836865686,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.0011876090180385247
+                ],
+                "predicted": [
+                  -4.1399070062169206e-18
+                ],
+                "observed_norm": 0.0011876090180385247,
+                "predicted_norm": 4.1399070062169206e-18,
+                "floor": 0.02,
+                "error": 0.059380450901926445,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.007807761800083579
+                ],
+                "predicted": [
+                  -0.006096133761539634
+                ],
+                "observed_norm": 0.007807761800083579,
+                "predicted_norm": 0.006096133761539634,
+                "floor": 0.02,
+                "error": 0.08558140192719724,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_B": {
+                "observed": [
+                  -0.023882707670372483
+                ],
+                "predicted": [
+                  -0.08222773135797179
+                ],
+                "observed_norm": 0.023882707670372483,
+                "predicted_norm": 0.08222773135797179,
+                "floor": 0.02,
+                "error": 2.4429819471424,
+                "cosine": 1.0,
+                "gain_ratio": 0.29044590281107285,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              }
+            }
+          },
+          "h020ms": {
+            "delta_input": [
+              0.0,
+              0.0,
+              -0.01999999999999999,
+              0.0,
+              0.0
+            ],
+            "observed_physical_delta": [
+              -0.005399456589784116,
+              0.000640620944019784,
+              0.0006633840837218796,
+              0.00289970956028035,
+              0.03156510912765287,
+              0.010275621367887317,
+              0.0311390029888424,
+              0.0027547638127884905,
+              0.011538049812139562,
+              0.004815480004595585,
+              -0.03134445675785402,
+              -0.09581015239517338
+            ],
+            "loaded_prediction": [
+              -0.005385127877401674,
+              0.0006594990376700961,
+              0.0005791108922963335,
+              0.0029547708162450666,
+              0.031457458300593086,
+              0.010326345533156908,
+              0.03104472494752762,
+              0.002672233866530638,
+              0.011576700068463302,
+              0.004851462340948548,
+              -0.03132734231627727,
+              -0.09727241215726226
+            ],
+            "free_prediction": [
+              -0.0016278317723792365,
+              0.00036091950258207136,
+              -0.00019914962142345005,
+              0.0005946669355962514,
+              0.014428937549306266,
+              0.021288854083843053,
+              0.013620809953809378,
+              1.7943128691242326e-17,
+              0.02182284839271537,
+              -1.6559628024867682e-17,
+              -0.024384535046158538,
+              -0.32891092543188716
+            ],
+            "loaded": {
+              "planar": {
+                "observed": [
+                  -0.005399456589784116,
+                  0.000640620944019784
+                ],
+                "predicted": [
+                  -0.005385127877401674,
+                  0.0006594990376700961
+                ],
+                "observed_norm": 0.005437327161287972,
+                "predicted_norm": 0.005425360931464048,
+                "floor": 0.0002,
+                "error": 0.004358776382618165,
+                "cosine": 0.9999929065866149,
+                "gain_ratio": 1.0022056099078176,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.0311390029888424,
+                  0.0027547638127884905
+                ],
+                "predicted": [
+                  0.03104472494752762,
+                  0.002672233866530638
+                ],
+                "observed_norm": 0.03126061788902108,
+                "predicted_norm": 0.031159521512774825,
+                "floor": 0.002,
+                "error": 0.0040081680437785245,
+                "cosine": 0.9999971875291814,
+                "gain_ratio": 1.0032444778141028,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  0.010275621367887317
+                ],
+                "predicted": [
+                  0.010326345533156908
+                ],
+                "observed_norm": 0.010275621367887317,
+                "predicted_norm": 0.010326345533156908,
+                "floor": 0.002,
+                "error": 0.004936359900152747,
+                "cosine": 1.0,
+                "gain_ratio": 0.995087888052291,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.004815480004595585
+                ],
+                "predicted": [
+                  0.004851462340948548
+                ],
+                "observed_norm": 0.004815480004595585,
+                "predicted_norm": 0.004851462340948548,
+                "floor": 0.02,
+                "error": 0.001799116817648161,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.03134445675785402
+                ],
+                "predicted": [
+                  -0.03132734231627727
+                ],
+                "observed_norm": 0.03134445675785402,
+                "predicted_norm": 0.03132734231627727,
+                "floor": 0.02,
+                "error": 0.0005460117464777746,
+                "cosine": 1.0,
+                "gain_ratio": 1.0005463100381757,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.09581015239517338
+                ],
+                "predicted": [
+                  -0.09727241215726226
+                ],
+                "observed_norm": 0.09581015239517338,
+                "predicted_norm": 0.09727241215726226,
+                "floor": 0.02,
+                "error": 0.015262054443434429,
+                "cosine": 1.0,
+                "gain_ratio": 0.9849673743083001,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              }
+            },
+            "free": {
+              "planar": {
+                "observed": [
+                  -0.005399456589784116,
+                  0.000640620944019784
+                ],
+                "predicted": [
+                  -0.0016278317723792365,
+                  0.00036091950258207136
+                ],
+                "observed_norm": 0.005437327161287972,
+                "predicted_norm": 0.0016673629378486906,
+                "floor": 0.0002,
+                "error": 0.6955589999754225,
+                "cosine": 0.9949946814625414,
+                "gain_ratio": 3.2610339583914856,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "transverse": {
+                "observed": [
+                  0.0311390029888424,
+                  0.0027547638127884905
+                ],
+                "predicted": [
+                  0.013620809953809378,
+                  1.7943128691242326e-17
+                ],
+                "observed_norm": 0.03126061788902108,
+                "predicted_norm": 0.013620809953809378,
+                "floor": 0.002,
+                "error": 0.5672781615510047,
+                "cosine": 0.9961096450297168,
+                "gain_ratio": 2.2950630685716544,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "world_yaw": {
+                "observed": [
+                  0.010275621367887317
+                ],
+                "predicted": [
+                  0.021288854083843053
+                ],
+                "observed_norm": 0.010275621367887317,
+                "predicted_norm": 0.021288854083843053,
+                "floor": 0.002,
+                "error": 1.0717826515458768,
+                "cosine": 1.0,
+                "gain_ratio": 0.48267611433749685,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shaft": {
+                "observed": [
+                  0.004815480004595585
+                ],
+                "predicted": [
+                  -1.6559628024867682e-17
+                ],
+                "observed_norm": 0.004815480004595585,
+                "predicted_norm": 1.6559628024867682e-17,
+                "floor": 0.02,
+                "error": 0.24077400022978007,
+                "cosine": null,
+                "gain_ratio": null,
+                "status": "unresolved_below_floor",
+                "predicted_nullspace": true,
+                "observed_quiet": true
+              },
+              "shell_A": {
+                "observed": [
+                  -0.03134445675785402
+                ],
+                "predicted": [
+                  -0.024384535046158538
+                ],
+                "observed_norm": 0.03134445675785402,
+                "predicted_norm": 0.024384535046158538,
+                "floor": 0.02,
+                "error": 0.22204633391681058,
+                "cosine": 1.0,
+                "gain_ratio": 1.2854235973136559,
+                "status": "resolved_pass",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              },
+              "shell_B": {
+                "observed": [
+                  -0.09581015239517338
+                ],
+                "predicted": [
+                  -0.32891092543188716
+                ],
+                "observed_norm": 0.09581015239517338,
+                "predicted_norm": 0.32891092543188716,
+                "floor": 0.02,
+                "error": 2.4329443927328174,
+                "cosine": 1.0,
+                "gain_ratio": 0.29129513490428066,
+                "status": "resolved_fail",
+                "predicted_nullspace": false,
+                "observed_quiet": false
+              }
+            }
+          }
+        }
+      },
+      "columns": {},
+      "nonlinearity": {
+        "u0": {
+          "full_delta": [
+            -0.05,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "half_delta": [
+            -0.025,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "full_half_delta_exact": true,
+          "horizons": {
+            "h005ms": {
+              "planar": {
+                "ratio": 3.794414588264291e-06,
+                "unresolved": false,
+                "passes": true
+              },
+              "transverse": {
+                "ratio": 3.2344359340550195e-06,
+                "unresolved": false,
+                "passes": true
+              },
+              "world_yaw": {
+                "ratio": 5.793543395027356e-06,
+                "unresolved": true,
+                "passes": true
+              },
+              "shaft": {
+                "ratio": 1.8317294360810937e-06,
+                "unresolved": false,
+                "passes": true
+              },
+              "shell_A": {
+                "ratio": 7.3919309562242574e-06,
+                "unresolved": true,
+                "passes": true
+              },
+              "shell_B": {
+                "ratio": 1.137111470678187e-05,
+                "unresolved": true,
+                "passes": true
+              }
+            },
+            "h020ms": {
+              "planar": {
+                "ratio": 7.643997165475187e-05,
+                "unresolved": false,
+                "passes": true
+              },
+              "transverse": {
+                "ratio": 6.471201017899919e-05,
+                "unresolved": false,
+                "passes": true
+              },
+              "world_yaw": {
+                "ratio": 0.0005741762719585486,
+                "unresolved": true,
+                "passes": true
+              },
+              "shaft": {
+                "ratio": 3.493461794182761e-05,
+                "unresolved": false,
+                "passes": true
+              },
+              "shell_A": {
+                "ratio": 0.0005805163154848358,
+                "unresolved": true,
+                "passes": true
+              },
+              "shell_B": {
+                "ratio": 0.0009460566261998427,
+                "unresolved": true,
+                "passes": true
+              }
+            }
+          }
+        },
+        "u1": {
+          "full_delta": [
+            0.0,
+            -0.02,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "half_delta": [
+            0.0,
+            -0.01,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "full_half_delta_exact": true,
+          "horizons": {
+            "h005ms": {
+              "planar": {
+                "ratio": 1.9221560192386852e-06,
+                "unresolved": false,
+                "passes": true
+              },
+              "transverse": {
+                "ratio": 4.094245028321204e-06,
+                "unresolved": false,
+                "passes": true
+              },
+              "world_yaw": {
+                "ratio": 4.1391534482113067e-07,
+                "unresolved": false,
+                "passes": true
+              },
+              "shaft": {
+                "ratio": 1.5729499524066992e-06,
+                "unresolved": true,
+                "passes": true
+              },
+              "shell_A": {
+                "ratio": 4.198933994499029e-08,
+                "unresolved": false,
+                "passes": true
+              },
+              "shell_B": {
+                "ratio": 6.516594541761123e-07,
+                "unresolved": true,
+                "passes": true
+              }
+            },
+            "h020ms": {
+              "planar": {
+                "ratio": 3.634802918154384e-05,
+                "unresolved": false,
+                "passes": true
+              },
+              "transverse": {
+                "ratio": 8.434819703680725e-05,
+                "unresolved": false,
+                "passes": true
+              },
+              "world_yaw": {
+                "ratio": 7.780502749067871e-06,
+                "unresolved": false,
+                "passes": true
+              },
+              "shaft": {
+                "ratio": 0.00012969208199528626,
+                "unresolved": true,
+                "passes": true
+              },
+              "shell_A": {
+                "ratio": 7.625510578408675e-07,
+                "unresolved": false,
+                "passes": true
+              },
+              "shell_B": {
+                "ratio": 3.1339218367241274e-05,
+                "unresolved": false,
+                "passes": true
+              }
+            }
+          }
+        }
+      },
+      "duplicate_fields_exact": {
+        "offset_steps": true,
+        "offset_s": true,
+        "time_s": true,
+        "exact_qpos": true,
+        "exact_qvel": true,
+        "exact_previous_applied": true,
+        "bridge_state": true,
+        "actual_applied": true,
+        "command_sequence": true,
+        "contact_offsets": true,
+        "contact_rows": true
+      },
+      "duplicate_all_exact": true,
+      "all_available_case_checks": true
+    },
+    "late_beltB": {
+      "duplicate_available": false,
+      "pairs": {},
+      "columns": {},
+      "nonlinearity": {},
+      "all_available_case_checks": true
+    }
+  }
+}

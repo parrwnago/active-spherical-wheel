@@ -3494,6 +3494,82 @@ the balance-response loss imposed by rate bounds before another controller
 variant; do not blame these regressions on estimator delay without evidence.
 [Record, evidence and reproduction](docs/iterations/2026-11-26/constrained-handoff/README.md).
 
+## I-57 — loaded-contact response validation / 2026-11-26 / analyzed, retained
+
+Question: does the frozen I-56 response model predict matched-state physical
+input effects, or did its loaded-contact approximation mislead allocation?
+Keep runtime/model/controller defaults unchanged at source revision 75c9549.
+Select prior H states 4.855 s (early shell B) and 35.925 s (late belt B) before
+new perturbations. Reconstruct the original observer-derived patch records and
+both 5/20 ms response matrices exactly; seal all predictions before physics.
+
+Register 30 fresh serial Gazebo processes, 15 per state: saved continuation;
+held native, governed, midpoint and duplicate governed; five governed-centered
+input columns at full/half feasible steps. Every process replays all original
+applied inputs from initialization and byte-checks every 5 ms prefix state,
+clock and actual previous command. No saved-pose branch reset or live observer/
+controller update. Native/midpoint are explicitly amplitude-only diagnostic
+counterfactuals, possibly outside the candidate's optional first-step slew box.
+Keep original run(5) holds and log 0/5/10/15/20 ms endpoints/contacts. Compare
+angular vectors in world/common initial frame, not different moving body frames.
+
+Both continuation pilots pass exactly, including all four post-anchor states.
+The early state's 15 branches complete and duplicate exactly. Every resolved
+loaded response passes its coarse registered screen; observed native-to-governed
+20 ms planar change [-.002860729,+.000430672] m/s matches modeled
+[-.002823642,+.000421307] to 1.322% vector error. Removing the contact penalty
+predicts the opposite planar direction (236.7% error). Yaw error is 0.091%;
+transverse change .000203 rad/s is below the .002 resolution floor, compatible
+with a predicted nullspace but not a directional-accuracy claim. Half/full
+column responses are nearly linear; zero unloaded-belt responses remain
+unresolved, not positive directional tests. No endpoint support-mode changes
+occur in this early set. These local results do not identify the whole-route
+drift cause. All 30 branches ultimately complete; every prefix, continuation
+and duplicate control is exact. Late native-to-governed 20 ms errors are
+1.351% planar, 1.204% transverse and 1.988% world yaw; the large transverse
+change is real: predicted 3.741 versus observed 3.783 rad/s. Prior shaft torque
++1.197503 N m and the optional 60 N m/s rate bound force +0.897503, while the
+clipped native request is -1.5. The first feasible command remains opposite
+the native request; a complete reversal needs at least 44.96 ms at that rate.
+This confirms a local physical cost of the assumed rate bound, not the cause
+of the entire trajectory or proof of a new controller fix.
+
+Final loaded scores: 118 pass, 165 unresolved, five fail. The five are small
+late 20 ms couplings: shell-A/B torque planar full probes have 73.26% error
+on ~0.55 mm/s observed effects; half probes cross the 0.2 mm/s resolution
+floor; belt-B full yaw crosses the 0.002 rad/s floor. Preserve failures without
+widening thresholds. All 25 predicted-small transverse checks are quiet;
+full/half groups give 67 passes, 77 unresolved and no failed linearity checks.
+These correlated scores are not independent experiments. No endpoint support
+change is observed; this does not validate contact transfers or multicontact.
+
+Separate post-primary exploratory analysis identifies the yaw-cost baseline
+assumption. At the late held-command 20 ms endpoint, current+Gdelta predicts
+-0.00584 rad/s versus actual governed +0.76183; omitted native future change
+is +0.79683, paired response error only -0.02917. A frozen affine forecast
+gives +0.73614 there. A further one-step audit reconstructs all 8,800 original
+H intervals: affine RMS improves in every group, including planar
+0.019260→0.008616 m/s and world yaw 0.096866→0.008064 rad/s, but large tails
+and occasional worse component errors remain. Exact current state and actual
+applied input are supplied every step; this is not a multistep forecast or
+cost/controller validation. No model fitting, gate changes or new physics in
+these exploratory analyses.
+
+Preserve eight pure replay contracts and eight separate arithmetic checks plus
+a fabricated end-to-end schema fixture; these are not a full repo suite or
+extra physical trials. The first synthetic figure's clipped annotation is
+retained; the later freeze changes only that label, with numerical rules fixed.
+Raw 5 ms contact endpoints cannot certify within-hold contact continuity. Coarse
+thresholds are engineering assumptions, not calibrated model confidence.
+Portable standalone NumPy replay reproduces every loaded/free score and
+linearity metric plus direct endpoint controls; full pre-anchor parity remains
+separate recorded certification. Independent formulas agree with final results.
+No runtime/default changes. Decision: preserve native LQR; next isolate balance
+priority above optional smoothing while retaining amplitude caps, with auxiliary
+yaw/momentum disabled first. Investigate the cost's velocity baseline separately.
+Neither proposed controller change is executed in I-57.
+[Experiment record](docs/iterations/2026-11-26/loaded-contact-validation/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

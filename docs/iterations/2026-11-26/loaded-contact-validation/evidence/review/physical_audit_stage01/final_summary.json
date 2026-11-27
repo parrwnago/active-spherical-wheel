@@ -1,0 +1,173 @@
+{
+  "iteration": "I-57",
+  "generated_utc": "2026-11-27T01:14:31.365770+00:00",
+  "purpose": "Post-outcome summary of sealed independent I57 audit; thresholds unchanged.",
+  "source_sha256": "ddb4ea7157c26f6245feb46659316f3863e0fcc3fe5800eafe8d0ac717144345",
+  "independent_report_sha256": "83b9e89c3518014c68ea5d303d1c1d63fb4c07093cf4235fcb272a1aab7bf367",
+  "canonical_report_sha256": "3918f207bb43d1b66c0ef38785a194568362dab2f330d6aac4da8f5354d94a25",
+  "completed_cases": 30,
+  "missing": 0,
+  "execution_failures": [],
+  "all_independent_case_checks": true,
+  "both_duplicates_exact": true,
+  "loaded_group_counts": {
+    "resolved_pass": 118,
+    "unresolved_below_floor": 165,
+    "resolved_fail": 2,
+    "false_authority_observed_resolved": 3
+  },
+  "free_group_counts": {
+    "resolved_fail": 21,
+    "overprediction_observed_unresolved": 15,
+    "resolved_pass": 90,
+    "unresolved_below_floor": 150,
+    "false_authority_observed_resolved": 12
+  },
+  "critical_model_group_failures": [
+    {
+      "event": "late_beltB",
+      "pair": "late_beltB_u1_full",
+      "horizon": "h020ms",
+      "group": "planar",
+      "metrics": {
+        "observed": [
+          -0.0005498915087070455,
+          2.2231304437569932e-05
+        ],
+        "predicted": [
+          -0.0002176073470878145,
+          -0.00020609179398994664
+        ],
+        "observed_norm": 0.0005503407146896426,
+        "predicted_norm": 0.00029971116938911567,
+        "floor": 0.0002,
+        "error": 0.7325783790638142,
+        "cosine": 0.6976868504126219,
+        "gain_ratio": 1.8362369204036373,
+        "status": "resolved_fail",
+        "predicted_nullspace": false,
+        "observed_quiet": false
+      }
+    },
+    {
+      "event": "late_beltB",
+      "pair": "late_beltB_u1_half",
+      "horizon": "h020ms",
+      "group": "planar",
+      "metrics": {
+        "observed": [
+          -0.0002749672591967345,
+          1.1108363729306348e-05
+        ],
+        "predicted": [
+          -0.00010880367354390725,
+          -0.00010304589699497332
+        ],
+        "observed_norm": 0.0002751915503334118,
+        "predicted_norm": 0.00014985558469455783,
+        "floor": 0.0002,
+        "error": 0.7325713715557267,
+        "cosine": null,
+        "gain_ratio": null,
+        "status": "false_authority_observed_resolved",
+        "predicted_nullspace": true,
+        "observed_quiet": false
+      }
+    },
+    {
+      "event": "late_beltB",
+      "pair": "late_beltB_u2_full",
+      "horizon": "h020ms",
+      "group": "planar",
+      "metrics": {
+        "observed": [
+          -0.000549891508706879,
+          2.2231304437791977e-05
+        ],
+        "predicted": [
+          -0.00021760734708782452,
+          -0.00020609179398995342
+        ],
+        "observed_norm": 0.0005503407146894852,
+        "predicted_norm": 0.0002997111693891276,
+        "floor": 0.0002,
+        "error": 0.7325783790639949,
+        "cosine": 0.6976868504123291,
+        "gain_ratio": 1.8362369204030389,
+        "status": "resolved_fail",
+        "predicted_nullspace": false,
+        "observed_quiet": false
+      }
+    },
+    {
+      "event": "late_beltB",
+      "pair": "late_beltB_u2_half",
+      "horizon": "h020ms",
+      "group": "planar",
+      "metrics": {
+        "observed": [
+          -0.00027496725919667897,
+          1.1108363729528392e-05
+        ],
+        "predicted": [
+          -0.00010880367354391226,
+          -0.00010304589699497671
+        ],
+        "observed_norm": 0.0002751915503333653,
+        "predicted_norm": 0.0001498555846945638,
+        "floor": 0.0002,
+        "error": 0.7325713715561332,
+        "cosine": null,
+        "gain_ratio": null,
+        "status": "false_authority_observed_resolved",
+        "predicted_nullspace": true,
+        "observed_quiet": false
+      }
+    },
+    {
+      "event": "late_beltB",
+      "pair": "late_beltB_u4_full",
+      "horizon": "h020ms",
+      "group": "world_yaw",
+      "metrics": {
+        "observed": [
+          0.0022656124792441723
+        ],
+        "predicted": [
+          0.0015402188339561714
+        ],
+        "observed_norm": 0.0022656124792441723,
+        "predicted_norm": 0.0015402188339561714,
+        "floor": 0.002,
+        "error": 0.3201755163045352,
+        "cosine": null,
+        "gain_ratio": null,
+        "status": "false_authority_observed_resolved",
+        "predicted_nullspace": true,
+        "observed_quiet": false
+      }
+    }
+  ],
+  "predicted_small_transverse_failures": [],
+  "full_half_linearity_counts": {
+    "pass": 67,
+    "unresolved": 77
+  },
+  "maximum_resolved_full_half_discrepancy": [
+    0.0115539345178004,
+    "late_beltB",
+    "native_to_governed",
+    "h020ms",
+    "planar"
+  ],
+  "endpoint_mode_change_cases": [],
+  "interpretation": [
+    "Loaded major finite native-to-governed responses are accurate at both sampled single-support states. This is a short response validation, not contact/handoff prediction or a full trajectory cause.",
+    "Early finite pair: free dynamics predicts opposite planar direction and excessive transverse response; loaded agrees. Late finite pair: free errors remain much larger but some meet the loose engineering screen.",
+    "All predicted-small transverse responses stay below the registered absolute2mrad/s floor. This is absolute quietness within this experiment, not resolved directional accuracy.",
+    "Five small late20ms cross-coupling failures remain: planar responses to full/half shellA and shellB torque probes, and yaw response to the full loadedbeltB speed probe. They are retained; model is not given a blanket pass.",
+    "Full/half responses are nearly linear at fixed initial conditions. This rules out strong amplitude nonlinearity in these probes as a sole explanation for remaining errors; it does not prove constant geometry.",
+    "No endpoint mode changes were observed. Contacts inside each5ms hold were not recorded. No simulator result is hardware evidence.",
+    "At late anchor, changing shaft command from+1.197503Nm to native\u22121.5Nm at assumed60Nm/s requires44.96ms. First admissible+.897503Nm is exactly governed. Native/midpoint branches violate candidate slew as declared amplitude-only counterfactuals."
+  ]
+}

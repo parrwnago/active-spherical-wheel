@@ -68,7 +68,23 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-56 is a rejected experimental command allocator.** It adds hard
+**Latest: I-57 tests the model before another controller change.** All 30
+fresh-prefix Gazebo diagnostics reproduce their starting histories exactly.
+The dominant native-to-governed physical responses match the frozen contact
+model closely at both selected states; five small 20 ms cross-coupling scores
+fail, so model accuracy remains qualified. At the late state, the assumed slew
+bound forces +0.898 N m shaft torque while native LQR requests -1.5; its
+predicted large balance-response cost is confirmed. A separate held-command
+analysis finds a poor yaw-cost baseline: proxy -0.006 versus actual +0.762 rad/s
+after 20 ms. The missing term is mostly the native command's own future motion.
+This narrows the next experiment to balance priority and the cost baseline,
+separately. Native LQR, observer and feedforward remain selected; no controller
+fix or full-trajectory root cause is established.
+[I-57 record and reproducible data](iterations/2026-11-26/loaded-contact-validation/README.md)
+· [Main response figure](iterations/2026-11-26/loaded-contact-validation/evidence/analysis/stage01/native_governed_response.pdf)
+· [Yaw-baseline figure](iterations/2026-11-26/loaded-contact-validation/evidence/review/baseline_proxy_stage01/baseline_yaw_comparison.pdf).
+
+**I-56 remains a rejected experimental command allocator.** It adds hard
 total-command amplitude and slew boxes after native LQR, prioritizes a local
 balance-response match, then penalizes travel changes, yaw and unloaded-shell
 momentum. Three new 44 s runs complete, and native B exactly reproduces the
@@ -265,6 +281,9 @@ are the shorter current index. Useful checkpoints:
 - I-54–I-56: saved momentum audit, matched-prefix causal diagnostics, then a
   bounded allocator that satisfies its numerical constraints but regresses
   physical balance/tracking. Defaults remain unchanged.
+- I-57: matched-state model validation and separate baseline diagnostics;
+  dominant local response is accurate, optional smoothing can prevent the
+  native balance action, and a velocity-correction model needs a valid baseline.
 
 Historical `results/` links in archived iteration records may refer to ignored
 full datasets. Use this page's tracked media/report links first; a plain clone
@@ -277,6 +296,9 @@ not new robot trials. Default settings and older evidence were preserved.
 I-56 separately adds 41 passing model/allocator tests and a three-run Gazebo
 screen; this is not a repeat of the full repository suite. Its portable saved-
 array replay reproduces the published metrics and gates without simulation.
+I-57 adds 30 short held-input diagnostics after exact prefixes, eight pure replay
+contracts and eight separate arithmetic checks. Its portable NumPy replay
+reproduces all paired scores; output-group counts are not independent tests.
 
 AI assistance: Codex helped implement experimental code, analyze logs and draft
 figures/documentation. The team supplied design direction and observations.

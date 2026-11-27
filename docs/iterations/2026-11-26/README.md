@@ -1,5 +1,16 @@
 # Research presentation notes — 2026-11-26
 
+- **I-57 loaded-contact response validation completed:**
+  [record](loaded-contact-validation/README.md). All 30 fresh-prefix Gazebo
+  probes and exact controls complete. Dominant response errors are ~1–2%; five
+  weak late cross-coupling scores fail, 165 remain unresolved. At the late state,
+  the optional slew bound forces +0.898 N m shaft torque versus the native
+  -1.5 request, with a physically confirmed balance-response cost. Separate
+  exploratory analysis finds current+Gdelta omits native future motion: held
+  20 ms yaw proxy -0.006 versus measured +0.762 rad/s. Whole-trace one-step
+  affine predictions improve average error but retain large tails. Keep native
+  LQR; next isolate balance priority over optional smoothing. No default change,
+  new controller, contact-transfer or multicontact validation is claimed.
 - **I-56 bounded handoff candidate:** [record](constrained-handoff/README.md).
   Three fresh 44 s Gazebo comparisons use native B, a bounds/continuity ablation
   and a full yaw/momentum-aware total-command allocator. Existing LQR, observer,
