@@ -1,0 +1,93 @@
+{
+  "iteration": "I-71",
+  "registered_utc": "2026-11-27T21:15:27.090965+00:00",
+  "base_commit": "dd4f74b1209cd27a8ef6233dfb50e4bdd39fca81",
+  "question": "Does removing simultaneous endpoint pair states, while retaining preceding-interval two-family transition evidence, improve frozen saved-log support decisions and isolate temporal retention?",
+  "status": "Registered before new saved-data extraction/filter arithmetic; diagnostic only; no adoption/tuning/new physics.",
+  "recording": "Original I58 native Gazebo/DART Mars figure-eight:44s,5ms,8801frames each,shaft phases-1.0,+.3,+.9rad,yaw45deg; unchanged LQR/momentum observer/feedforward/120ms incoming preparation; caps1.5/.6/.6Nm,.3/.3mps.",
+  "cases": [
+    "m100_B",
+    "p030_B",
+    "p090_B"
+  ],
+  "allowed_endpoint_mode_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    20
+  ],
+  "disabled_endpoint_mode_indices": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "mode_order": "Same21indexI70bank:4singleton rolling/slip modes0..7,6pair rolling/slip8..19,unknown20; outputs padded21 with disabled probabilities exactly zero.",
+  "prior": "Condition original I70base prior onto allowed endpoints; preserve all allowed relative prior odds.",
+  "transitions": "Keep each original diagonal holding probability T_ii EXACTLY. For i!=j among allowed endpoints, distribute 1-T_ii proportional to original allowed offdiagonal T_ij. Thus dwell/affinity parameters fixed, jump destination probabilities change by removal of forbidden endpoints. Not whole-row conditioning (which would change dwell).",
+  "evidence": "Copy all I70node/edge costs byte-exact. Mask pair endpoints only. Preserve single-to-single directed edge evidence for two-family unions; unknown/self/same-family transitions use current node cost. Frame control uses same conditional prior and .005/.020 evidence tempering, no history or edge. No-edgehistory secondary; edgehistoryPRIMARY.",
+  "fixed": "I70noise/friction/fit geometry/pointshortlist/velocity/slip/unknown costs, dwell, prior ratios, affinity, correlation time, clock, gap reset, all original16adoptiongates. No refit/NNLS/parameter grid/calibration.",
+  "inference_boundary": "Read only projected originaltime,costs,validity,selectedcandidateIDs and physicalpointlookups from alreadysealedgeometry. No labels/baselinefamily/trajectory/reference/futurestate. Endpointpoint map uses candidate IDs from originalcompletefit and only currentfamily role; no crossbody means.",
+  "first_gap": "Same I70 first frame/gap behavior: nominal5ms on first/reset; unknown observation atframe0; gap>.05s reset; reject duplicate/nonincreasingtime.",
+  "comparators": [
+    "Frozen native N",
+    "Frozen I60raw F",
+    "Frozen I60accepted/fallback A",
+    "I70frame/noedge/primary summaries",
+    "I71restrictedframe",
+    "I71restrictednoedge secondary",
+    "I71restrictededgePRIMARY"
+  ],
+  "evaluation": "Exact I70masks, pressurelabels, metrics, sixteen adoption gates reused. Same23423primarydominant and23894loaded rows including471truepairrows. Alltruepairs deliberately unsupported/countaserrors in loadedsetdomain; no denominator pruning. Update allnewpointarrays fromI71prediction before point evaluation.",
+  "continuation_gates": {
+    "primary_pooled_errors": "Strictly fewer than matching restricted frame",
+    "per_phase_errors": "No increase vs matching restricted frame in any of3cases",
+    "missed_transitions": "No more than restricted frame",
+    "reverted_attempts": "No more than restricted frame",
+    "false_support_changes": "No more than restricted frame",
+    "p95_absolute_latency_s_maximum": 0.05
+  },
+  "decision": "All continuationgates required to support further investigation of this temporal variant. Anyfail=>stop thisHMMversion; no post-result tuning/sweep. Passing diagnostic is not adoption/general multicontact solution. Original16adoption gates reported separately unchanged; no controller promotion evenifpassed inthisretrospective diagnostic.",
+  "limitations": [
+    "Previously inspected3episodes, not unseenvalidation.",
+    "Pressuretruth final1mssample versus observerpreceding5ms, not allforce routing or firsttouch.",
+    "Removing pair endpoints changes expressivity and jumpdestination odds; reducedgraph effects not isolated dwell tuning.",
+    "Frame-to-edgehistory comparison includes history+directededge likelihood; noedgecontrol distinguishes part of that difference."
+  ],
+  "staging": "Projecttruthfreepackets withsource/inputseals; source/tests frozen before contracttests; all3predictionoutputs seal BEFORE truth evaluation. No new scientificarithmetic before eachsource/input seal. Preserve setup failures/corrections separately.",
+  "source_input_bindings": {
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/protocol/protocol.json": "925664f7d856a627a55389756fc17d4cf58be29cc1f8bc7f6f132e98c8695c6d",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/protocol/inference_source_input_seal.json": "11fbe67710f45e0e49c780072e682b8209ed6f343fd380b2581e63e3d623c6d8",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/inference/all_three_sealed.json": "0299d6d957f731be17d512549bf11442abe77c5bea756c394b1ccd4758fa5a63",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/stage01/science.json": "c4a8476393506e9479ac5f0d7c5aa2d542d0da52f185f3b5af24b3f25dc5138d",
+    "src/spherical_wheel/temporal_contact_filter.py": "fb60315abf406c2981ec8686f0aa484650cafe11bbb8976f766f0e428f47df85",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/inference/stage01/m100_B/model_evidence.npz": "8de78cf115e416f6ca2a35dce66921ab4379c8d766648ca938a574e5452bc5ac",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/inference/stage01/m100_B/predictions.npz": "d855e39437d0146e6b41e00f712ebba01fe5b6749ef598f6fe81f3e4b6e4c8e3",
+    "results/temporal_contact_modes_20261127/inputs/stage01/m100_B/features.npz": "47acaa1af2990919fbbc860177de28010b024bfe0994d5ed7b4df56a0904bd18",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/packets_stage01/m100_B/evaluation_packet.npz": "f8d1f0e9240a90b53c684d59d5d14d89315a12140d55902fe0f1cfb2fb41e5b3",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/inference/stage01/p030_B/model_evidence.npz": "9e0bd0f2543971144e8423aaa85031e96749031f348e14358aec3532ec33293c",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/inference/stage01/p030_B/predictions.npz": "a3879f7ac6701a631b3d03f6c62c3ed7fc67a7168ba98bf7ec0c8d3f301726ce",
+    "results/temporal_contact_modes_20261127/inputs/stage01/p030_B/features.npz": "372e078248c70c6ac78b96beb08e234d70d1a68f2038370e775f3fe611eeecb5",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/packets_stage01/p030_B/evaluation_packet.npz": "5d16d9da1225d9d35847d5d3adb0af986463991b2bd556251476c87234319293",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/inference/stage01/p090_B/model_evidence.npz": "f12bd2374fb657fa6e0f2a5a6b05df1391f48698ee395e36364e3ef4e273880b",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/inference/stage01/p090_B/predictions.npz": "b1b907fbcabddb28c01a45cb92984b8eb26c74ee9f65e08f06821dc7207a7af5",
+    "results/temporal_contact_modes_20261127/inputs/stage01/p090_B/features.npz": "8d2ec6bf53ae6e9d43d0dc339cc220bb27ecba81bfd4280edb35d0b48bd66e4c",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/packets_stage01/p090_B/evaluation_packet.npz": "c778f307a64534f9175c68547c344e8450ee0b5146bcee778360b63d94d08afb",
+    "src/spherical_wheel/offroad_control.py": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+    "src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "src/spherical_wheel/synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+  }
+}

@@ -1,5 +1,29 @@
 # Research presentation notes — 2026-11-27
 
+**I-71: endpoint-pair restriction does not rescue this HMM; stop the version.**
+[Full record and portable replay](endpoint-pair-ablation/README.md),
+[three-page explanation/results PDF](endpoint-pair-ablation/evidence/publication/plots_stage01/endpoint_pair_ablation_report.pdf)
+and [comparison image](endpoint-pair-ablation/evidence/publication/plots_stage01/overview.png).
+
+- Freeze I-70 costs/points and remove current pair states, while retaining
+  two-family previous-interval transfer evidence. Keep diagonal holding
+  probabilities and all dwell/noise/fit parameters fixed; condition only allowed
+  priors/jump destinations. No new physics or live controller changes.
+- Restricted frame303errors; no-edgehistory492; primary425 versus oldI70primary
+  564 and guardedA124. Allthree phases regress versus matchingframe56→83,
+  110→160,137→182. Four of eight predeclared continuation checks fail.
+- Keep all471true pair-pressure rows as expressivity failures. Full-loadedset
+  errors896, so eliminating pair outputs is not a generalmulticontact solution.
+- Current exactlymatched23,153pointrows: A→primaryRMS2.61048→2.32530mm,
+  max26.90764→29.45375mm,coverage98.8473%. Different matched rows fromI70.
+  All71pressure transitions acquired,p9540ms. Seven of sixteen adoption gates fail.
+- Twenty-seven new input/inference/evaluation contracts pass; original21metric
+  contracts are reused. Independent recurrence/point/prefix checks agree,
+  and isolated replay matches81arrays exactly. Preserve verifier-only boolean
+  formatter failure and correction separately from the scientific stop.
+- Keep LQR, momentum observer, geometry support, feedforward and incoming
+  preparation. No further tuning of this HMM under the failed continuation gate.
+
 **I-70: temporal contact modes implemented; first prototype not adopted.**
 [Full record and portable replay](temporal-contact-modes/README.md),
 [four-page explanation/results PDF](temporal-contact-modes/evidence/plots_stage02/temporal_contact_report.pdf)

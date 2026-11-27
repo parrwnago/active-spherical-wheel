@@ -1,17 +1,21 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 5 — 27 November 2026, through I-70.** Baseline: repository commit
-`cdb85d5`; the selected live controller remains unchanged. I-70 adds opt-in
-offline estimation code, with no default or live-control change. This is a study and discussion
+**Revision 6 — 27 November 2026, through I-71.** Baseline: repository commit
+`dd4f74b`; the selected live controller remains unchanged. I-71 completes a
+bounded saved-log ablation of I-70's opt-in estimator, with no active-code,
+default or live-control change. This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest experiment, I-70, implements and evaluates a hybrid temporal contact
-estimator on three existing recordings. It fails six of sixteen acceptance
-gates and is **not adopted**. It makes 564 primary mistakes against the
-comparison policy's 124; 424 of those new mistakes are unknown or pair outputs
-on dominant-singleton labels, rather than wrong-singleton assignments. Read
-Section 14 for the complete comparison. No new driving improvement is claimed.
+The latest experiment, I-71, removes simultaneous endpoint pair states while
+retaining two-family evidence for the preceding transition interval. It reduces
+I-70's 564 primary mistakes to **425**, but its matching memory-free control has
+**303**, the frozen accepted/fallback comparison A has **124**, and original
+native N has **412**. All three phases regress against the matching frame
+control. It fails four of eight continuation checks and seven of sixteen
+adoption gates. The registered decision is **STOP THIS HMM VERSION**, with no
+subsequent tuning or adoption. Read Sections 14–15 for both retained iterations.
+No new driving improvement is claimed.
 The I-68/I-69 force-boundary findings remain relevant qualifications on the
 recorded pressure labels, but the user has **stopped the solver-investigation
 direction**. Preserve that history without treating it as the next work item.
@@ -379,7 +383,7 @@ particle filter and it has not replaced the live locator.
 
 ### Common evidence and notation
 
-I-60–I-67 and I-70 reuse three I-58 **native** 44-second Gazebo/DART Mars figure-eight
+I-60–I-67 and I-70–I-71 reuse three I-58 **native** 44-second Gazebo/DART Mars figure-eight
 recordings: shaft starts **-1.0, +0.3, +0.9 rad**, initial yaw 45 degrees,
 unchanged input bounds. Each has 8,801 saved states. The primary `[1,41)`-second
 evaluation mask has **23,423** states with at least 1 N total normal load and
@@ -412,6 +416,7 @@ the candidate point or force representation is correct.
 | [I-66: point versus load representation](iterations/2026-11-27/contact-geometry-load-audit/README.md) | On those 41 lost useful corrections, sampled-point replacement lowers joint-vector RMS 0.13926→0.10568 N m, 24.1%. Thirty-seven improve, four worsen; the registered criterion fails because the -1-rad focus case worsens. Truth-assisted relative preferences become 276/294 useful, 4/6 harmful. | Geometry matters, but does not explain all disagreement. Diagnostic only. |
 | [I-67: original-bank capacity](iterations/2026-11-27/contact-bank-audit/README.md) | Existing usable candidates reproduce all 29 newly correct I-66 reference-point decisions. On the 41 focus rows, selected median distance is 6.26 mm versus 0.81 mm for the nearest usable candidate. Known-correct-family any-point capacity is 27/41 focus, 280/294 useful and 5/6 harmful. | Selection opportunity within the existing bank; no deployable selector or live improvement. |
 | [I-70: hybrid temporal modes](iterations/2026-11-27/temporal-contact-modes/README.md) | Implements a causal 21-mode rolling/slip, single/pair/unknown estimator. Primary mistakes A124→564; frame evidence305 and no-edge temporal control646. Matched point RMS improves but maximum worsens; six of sixteen gates fail. | Completed shadow experiment, not adopted. Section 14 separates identity errors, abstention, multi-contact and timing results. |
+| [I-71: endpoint-pair stopping ablation](iterations/2026-11-27/endpoint-pair-ablation/README.md) | Keep nine singleton/unknown endpoint modes and preceding-interval pair edges, using frozen I-70 costs. Primary mistakes fall to425 but matching frame has303; every phase regresses. Four of eight continuation checks and seven of sixteen adoption gates fail. | Stop this HMM version without tuning. All471 true pair-label rows remain errors in the full loaded-set comparison; Section 15 gives the scope. |
 
 Every row is offline saved-log work, not a new driving improvement. Episodes
 were inspected before these later analyses; whole-episode holdouts reduce
@@ -910,21 +915,128 @@ terrain validation or evidence of improved balance/tracking. Independent
 recurrence and force-QP checks support numerical correctness; they do not
 convert failed scientific gates into acceptance.
 
-The current decision is to keep the live baseline. If estimator work continues,
-an existing-log review can first identify which measurement terms and temporal
+After I-70, the decision was to keep the live baseline. An existing-log review
+could first identify which measurement terms and temporal
 preferences produce the wrong, unknown and pair outputs. Possible revisions
 include simpler confidence-aware handoffs, better justified transition models,
 or different contact/slip likelihoods. A particle filter could retain richer
 point alternatives, but would still inherit measurement-model and observability
 limits. None is a proven next improvement, and no new solver or hardware work
-is implied by these options.
+is implied by these options. The user then authorized only the bounded stopping
+ablation in Section 15; those earlier options are not adopted or automatically
+continued after its stopping decision.
 
 The [I-70 record, results and reproduction](iterations/2026-11-27/temporal-contact-modes/README.md)
 preserve the protocol, rejected candidate, source snapshots and evidence.
 The opt-in implementations are [contact profile models](../src/spherical_wheel/shadow_contact_models.py)
 and [causal temporal filtering](../src/spherical_wheel/temporal_contact_filter.py).
 
-## 15. Sources, attribution, and how to continue a discussion
+## 15. I-71: the endpoint-pair ablation and stopping decision
+
+The user approved one bounded experiment to distinguish a simultaneous
+two-family endpoint estimate from two families contributing during the previous
+5 ms interval. It replays the same three saved episodes. There is no new
+driving, force fitting, nonnegative least-squares solve, geometry expansion,
+noise-scale search, controller change or solver investigation.
+
+The restricted estimator has **nine endpoint modes**: four singleton families,
+each rolling/slipping, plus unknown. It cannot emit a simultaneous endpoint pair.
+The original two-family **transition-interval edges remain available** when
+switching between singleton endpoints. Thus a recent interval may contain
+exiting shell A and incoming belt A force even when the reported current
+endpoint is only belt A. This does not make that force history directly measured;
+the same endpoint-geometry approximation and likelihood assumptions remain.
+
+All original node/edge costs and complete-fit candidate points are frozen.
+Removing pair modes conditions the prior onto allowed endpoints. Each allowed
+mode keeps its original diagonal holding probability exactly; remaining
+off-diagonal jump probabilities are redistributed proportionally among allowed
+destinations. Dwell-time parameters are not tuned. The smaller graph changes
+expressivity, prior odds and jump destinations, so this is not an isolated
+dwell-time experiment. New beliefs can choose different existing complete fits;
+evaluation therefore copies fresh I-71 point outputs instead of reusing I-70's
+selected HMM points.
+
+The exact I-70 masks, metrics and sixteen adoption gates are reused. A separate
+continuation decision requires the primary restricted edge-HMM to make strictly
+fewer pooled dominant-singleton mistakes than its matching restricted frame
+control, with no phase regression; missed transitions, reverted attempts and
+false support changes must not increase, and absolute latency p95 must be at
+most 50 ms. These eight checks are a stopping rule, not relaxed adoption gates.
+All inference outputs are sealed before evaluation truth is opened.
+
+On the unchanged **23,423 dominant-positive-pressure rows**:
+
+| Restricted I-71 method | Total primary mistakes | Wrong singleton | Unknown | Pair output |
+| --- | ---: | ---: | ---: | ---: |
+| Matching frame evidence | 303 | 62 | 241 | 0 |
+| No-edge temporal control | 492 | 166 | 326 | 0 |
+| Primary transition-edge HMM | **425** | **155** | **270** | **0** |
+
+For comparison, frozen N/F/A still have 412/109/124 mistakes, and I-70's primary
+HMM has 564. Removing endpoint pairs reduces the HMM total by 139, mainly in
+the +0.3-rad episode. It does not make history beneficial against its own frame
+control:
+
+| Starting phase | Restricted frame mistakes | Restricted primary HMM mistakes |
+| --- | ---: | ---: |
+| -1.0 rad | 56 | 83 |
+| +0.3 rad | 110 | 160 |
+| +0.9 rad | 137 | 182 |
+
+The estimator fails **four of eight continuation checks**: pooled improvement
+and all three phase nonregression comparisons. It also fails **seven of sixteen
+adoption gates**. The recorded decision is **STOP THIS HMM VERSION**. There is
+no post-result dwell/weight tuning or live adoption. This stops this candidate,
+not the original momentum observer or gain-scheduled LQR.
+
+All **471 true pair-label rows** remain in the full **23,894 loaded-row** domain.
+The restricted model deliberately cannot match them; it has **896** full-set
+mistakes, equal to 425 dominant-singleton mistakes plus those 471 pair misses,
+versus A's 595. Set Brier is **0.063652**, worse than A's **0.049803**. In the
+unchanged metric schema, `representable` and `unsupported_truth_count` refer to
+the original eleven-support-set evaluation bank: singleton/pair categories are
+representable, while three-or-more-family sets would be out of that bank.
+The restricted model's 471 pair misses are reported separately, not removed
+from the denominator or relabeled as evaluation-unsupported truth.
+
+Unknown remains a primary mistake and never provides confident coverage. At
+reported support confidence at least 0.8, the restricted HMM covers **97.78%**
+of primary rows and makes **76 nonunknown mistakes**. Passing that particular
+confidence check does not rescue its 270 unknown mistakes or establish calibrated
+physical probabilities.
+
+Partial point and timing results retain their comparison conditions:
+
+- On **23,153 exactly matched finite-singleton timestamps**, current A-to-HMM
+  point RMS improves **2.61048→2.32530 mm**, but maximum distance worsens
+  **26.90764→29.45375 mm**. HMM point coverage is **98.847%**; A is available
+  on every matched row. Wrong-family singleton errors remain included. I-70's
+  point comparison used a different set of 22,999 timestamps, so its RMS is
+  not a directly matched before/after result for I-71.
+- All **71 defined pressure transitions** match, with zero misses and absolute
+  latency p95 **40 ms**. The HMM has ten reverted attempts and 85 false support
+  changes versus matching frame evidence's seventeen and 156. A still has
+  thirty false changes and 20 ms p95. This is a limited comparison benefit,
+  not evidence of improved physical tracking or an overall timing solution.
+
+The result supports a narrow conclusion: removing endpoint pair states reduces
+I-70's dominant-mode errors, but is insufficient. Matching frame
+errors barely change, 305 to 303, and temporal inference still regresses in every
+phase. The combined observation model and temporal behavior remain inadequate
+for the registered goals. This experiment does not isolate force likelihood
+from geometry and velocity terms, prove all temporal estimation methods fail,
+or show that a particle filter would solve the ambiguity.
+
+The [I-71 record and reproduction](iterations/2026-11-27/endpoint-pair-ablation/README.md)
+retain the unchanged costs, restricted graph, refreshed point outputs, failed
+gates and stopping decision. These are retrospective pressure-label comparisons,
+not unseen terrain validation, complete force-routing truth or hardware evidence.
+The live LQR/observer/support geometry/feedforward/short preparation pipeline
+remains selected. Solver work stays parked; no hardware or camera additions are
+part of this completed ablation.
+
+## 16. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-70.
+experiment history and common presentation questions through I-71.
 
 ## Current system
 
@@ -71,7 +71,24 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-70 implements temporal contact reasoning, but this version fails adoption.**
+**Latest: I-71 stops this HMM version after the bounded diagnostic.**
+Remove current two-family states while keeping the frozen interval-transfer
+likelihoods and original dwell times. Three saved starts, unchanged costs and
+selected points; no new physics or live controller changes. Restricted frame
+has303dominant-support errors, no-edgehistory492 and primaryhistory425. The old
+primary had564, so the restriction helps, but memory still worsens every phase.
+Four of eight continuation checks fail; seven of sixteen adoption gates fail.
+
+Keep all471true two-family pressure rows as deliberate failures of this
+restricted model. Loadedset errors896 versus guardedA595. Current exactlymatched
+pointRMS improves2.6105→2.3253mm, maximum worsens26.9076→29.4537mm; do not compare
+that RMS directly to I-70's different matched subset. All71defined transitions
+acquired, p9540ms. Independent recurrence/physicalpoint checks and isolated
+NumPy replay agree. Stop this HMM version without a post-result parameter sweep;
+the original live pipeline above remains selected.
+[Full record, three-page PDF, fixed event and replay](iterations/2026-11-27/endpoint-pair-ablation/README.md).
+
+**Previous: I-70 implements temporal contact reasoning, but this version fails adoption.**
 The new opt-in estimator keeps rolling/slipping, singleton/two-family and unknown
 explanations across time using raw momentum-observer load, measured motion and
 known geometry. It has no truth input, future samples or live command connection.

@@ -4334,6 +4334,68 @@ and single-versus-pair evidence independently before integration; this is a
 proposal, not a demonstrated remedy. Solver work remains parked per user.
 [Full record, four-page PDF, plots and portable reproduction](docs/iterations/2026-11-27/temporal-contact-modes/README.md).
 
+## I-71 — 2026-11-27 — remove endpoint pair states; stop this HMM version
+
+**Completed diagnostic; four of eight continuation checks fail.** Approved one
+bounded saved-log test after I-70: retain singleton/unknown current endpoints
+and existing two-family interval-transfer likelihoods; compare frame, no-edge
+history and primary edge-history. Same three I-58 native Gazebo/DART Mars
+figure-eight recordings, shaft−1.0/+.3/+.9rad, yaw45°,44s,control5ms; baseline
+dd4f74b. Live LQR/observer/support/feedforward/120ms preparation and assumed
+1.5/.6/.6Nm,.3/.3mps bounds unchanged. No new physics, NNLS/geometry fitting,
+solver work, parameter sweep or driving/tracking claim.
+
+Preserve original diagonal holding probabilities (known/unknown dwell50/20ms)
+and relative allowed jump odds while removing pair destinations; initial prior
+conditioned onto modes0..7,20. Other modes have exactzero probability. Original
+costs, validity and selected complete-fit candidate IDs copied byte-exact; new
+physical pointlookups use only original currentendpoint IDs. Noise, geometry,
+shortlist, friction, velocity/slip costs, priorratios, affinities, correlation20ms
+and all other I-70 parameters remain fixed. Removing destinations necessarily
+changes jump probabilities; whole-row renormalization was not used.
+
+Protocol SHA65ee9a3a… registered before new extraction/filter arithmetic. All3
+outputs seal (74c29308…) before truth evaluation. All26,403frames processed;
+same23,423dominant and23,894loaded rows, nativeN/rawF/guardedA errors412/109/124
+reproduce. Restricted frame303errors=62wrong-single+241unknown; no-edge492=
+166+326; primary425=155+270. OldI70 frame/noedge/primary305/646/564. Restriction
+helps oldprimary by139, but newprimary is122worse than matchingframe and301
+worse thanA. Phaseframe→primary:56→83,110→160,137→182. Transfer edges help
+no-edgehistory by67errors; they do not rescue the result.
+
+All471true two-family pressure rows remain in the denominator and necessarily
+fail the restricted current-state bank. Loadedset errors896=425+471 versusA595
+andI70primary582; setBrier.063652 versusA.049803. CurrentHMM/A exactlymatched
+23,153finite-singleton rows: RMS2.61048→2.32530mm, maximum26.90764→29.45375mm,
+coverage98.8473%, A-missing0. This is a different matched subset fromI70; no
+direct across-subset RMS gain claimed. Wrong-family point errors retained.
+
+All71defined pressure transitions acquired,0misses,10reverted/85false versus
+frame17/156, absolute latency median0ms/p9540ms. Confidentnonunknown coverage
+97.78% with76errors; unknowns remain errors and provide no confidentcoverage.
+Continuation fails pooled+all3phase error tests; all4timing checks pass.
+Original16adoption gates unchanged:7fail (pooled+3phases,loadedset,Brier,maxpoint).
+
+Verification:27newcontracts across3disjointfiles (4input,14inference,9evaluation)
+pass; earliercomponent reruns overlap and are notadded. Original21metric
+contracts are reused history. Four separate independent-verifier contracts pass
+(31newfocused total; initial3overlapcorrected4, notadded). Independent9-state
+probability-domain recurrence
+matches decisions/points/IDs/prefix101 onall3, maxprobabilitydifference6.66e−16.
+Preserve verifierstage01 boolean-subtraction formatter failure; stage02 fixes
+comparison plumbing only, with addedcontract and no recurrence/parameter change.
+Fresh Python-I portable replay reproduces all81prediction arrays byte-exact from
+2.83MBpackets. All checks are selected subsets, not a fullrepo test run.
+
+**Decision: STOP_THIS_HMM_VERSION**, honoring the predeclared stop rather than
+tuning after the result. Keep selected live baseline and rejected evidence.
+The score itself is already weak without history; currentpair-state restriction
+does not rescue it. This does not prove a unique physical cause or reject all
+temporal/particle methods. Sampled last1ms positive-pressure labels differ from
+the previous5ms observer interval/all force routing; existingqualification stays,
+solver work remains parked. No new estimator is promoted or extra branch begun.
+[Full record, three-page PDF, fixed event and portable reproduction](docs/iterations/2026-11-27/endpoint-pair-ablation/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated
