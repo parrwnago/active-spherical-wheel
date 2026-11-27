@@ -1,0 +1,14 @@
+{
+  "iteration": "I-60",
+  "chronology": "Registered after primary family-ranking results were known (412native vs109fused errors; all12shadowgates pass), before any selected-point distance results were inspected.",
+  "question": "Does better actuator-family classification also justify replacing the contact point used by rolling feedforward?",
+  "scope": "Descriptive post-primary check; no changed score, threshold, confidence gate, candidate bank, trajectory or primary acceptance decision.",
+  "cases": ["m100_B", "p030_B", "p090_B"],
+  "window_s": [1.0, 41.0],
+  "reconstruction": "Use frozen generator geometry and original selected candidate IDs to reconstruct selected candidate points at logged qpos. Private kinematics and own band/rim projection only; no physics or new estimation.",
+  "targets": ["logged truth_equivalent_point_m", "logged dominant-family load-weighted point", "radial-R projection of those points about current wheel centre, explicitly a comparison proxy"],
+  "subsets": ["all dominant-support eligible states with finite matched native/candidate/target points", "same subset and accepted candidate", "same subset and correct selected family", "same subset with exactly one logged physical solver point total"],
+  "methods": ["native exact_estimated_contact_point_m", "geometry selected point", "wrench selected point", "velocity selected point", "fused selected point"],
+  "statistics": ["count and missing coverage", "Euclidean distance mean, RMS, median,95th percentile, maximum", "distance movement from native point"],
+  "qualification": "Load-weighted equivalent/patch means need not be physical contacts. Last1ms truth and current state/filtered wrench use different conventions. Radial normalization is a proxy, not corrected truth. Report strict one-point subset and raw/proxy separately; no blanket point-accuracy or physical-control claim."
+}

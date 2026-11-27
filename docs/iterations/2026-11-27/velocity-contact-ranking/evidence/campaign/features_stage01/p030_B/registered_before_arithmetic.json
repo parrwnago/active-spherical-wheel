@@ -1,0 +1,67 @@
+{
+  "iteration": "I-60",
+  "case": "p030_B",
+  "registered_before_feature_arithmetic_utc": "2026-11-27T05:22:16.538583+00:00",
+  "inputs": [
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/runs/p030_B/precision.npz",
+      "sha256": "89f20c5c25659cf39d4e10e67c3c1856ff964f9d54932feef243a3507d0e5702"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/runs/p030_B/provenance.json",
+      "sha256": "08148d9fc40ef133ad906523e2084c33fcdfe947a176f976ff21746bd99277e7"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/_workspaces/p030_B/worker_474288/mirror/model.xml",
+      "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/runs/p030_B/source_snapshot/config/model.yaml",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_hypotheses.py",
+      "sha256": "c0995d4acb268c73e834c488514aa9f34cd2b3d57aca516c63a394429b93f532"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_sensing.py",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/velocity_contact_rank_20261127/campaign_tools/extract_features.py",
+      "sha256": "722639de1e286ca2672aa8f07838bf4f51d03e6cd07957f29e86fa88cefa85c7"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/velocity_contact_rank_20261127/protocol/protocol.json",
+      "sha256": "a7eaafcd0a31797fddff404264fe9f416f4c689d31828a08efd17743c604ea9c"
+    }
+  ],
+  "allowed_precision_fields": [
+    "time_s",
+    "exact_qpos",
+    "exact_qvel",
+    "exact_previous_applied",
+    "exact_observer_wrench",
+    "exact_observer_generalized",
+    "exact_observer_interval_mean",
+    "exact_estimated_normal",
+    "exact_estimated_support_loads_N",
+    "exact_estimated_contact_point_m"
+  ],
+  "truth_fields_accessed": [],
+  "new_physics_steps": 0,
+  "feature_options": {
+    "cone_rad": 0.17453292519943295,
+    "minimum_force_N": 1.0
+  },
+  "rank_options": {
+    "velocity_scale_m_s": 0.02,
+    "normal_scale_rad": 0.17453292519943295,
+    "minimum_excitation_m_s": 0.02,
+    "minimum_margin": 0.25,
+    "maximum_residual_m_s": 0.02,
+    "minimum_separation_m_s": 0.01
+  },
+  "measurement_boundary": "Exact simulated q/qdot, known prior applied inputs, observer wrench; normal domain is observer-conditioned. No solved contact or true terrain input.",
+  "historical_truth_clock": "Not read here. Evaluator must distinguish latest 1 ms physics truth from preceding 5 ms observer interval and filtering."
+}

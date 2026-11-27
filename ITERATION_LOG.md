@@ -3676,6 +3676,70 @@ corrections and a source-line citation erratum are retained without runtime edit
 
 [Record, scientific plots and portable replay](docs/iterations/2026-11-26/startup-anchor-audit/README.md).
 
+## I-60 / 2026-11-27 / analyzed — measured-velocity contact ranking, shadow only
+
+Question: can the user's measured-velocity idea improve contact inference beyond
+the momentum-observer/geometry locator? Add opt-in contact_hypotheses.py and
+meaningful tests. Existing LQR, observer, feedforward, preview, references, gains,
+limits and defaults remain unchanged. Source base 24f722e; zero new Gazebo
+physics and no compensating commands.
+
+Freeze protocol, old/new source and historical inputs before arithmetic, with
+independent blind review. Use all 26,403 I-58 native B states: Gazebo/DART Mars
+figure-eight, 44 s, shaft -1/+0.3/+0.9 rad, yaw 45°, caps
+[1.5,.6,.6 N m,.3,.3 m/s]. Inputs are exact simulated q/qdot, prior held ideal
+belt speeds, observer wrench and robot geometry. The observer intrinsic normal
+bounds a 10° candidate cone; no desired/new command, terrain truth or future
+state enters ranking. This is observer-conditioned inference, not an independent
+replacement for the observer.
+
+Seventeen normal seeds and six patch/rim kinds form 102 candidate slots. Valid
+points satisfy geometry, cone and 1 N compression. Four family scores compare
+geometry (G), geometry+wrench (WG), geometry+velocity (VG) and all terms (F).
+Scales are 10°, .02 m/s and R*norm(force). Family minima use complete candidates.
+Acceptance requires >=2 families, motion availability >=.02 m/s, margin >=.25,
+residual <=.02 m/s and residual contrast >=.01 m/s. No smoothing or calibrated
+probability. All three feature/rank outputs are sealed before truth is read.
+28 selected core tests pass (22 new + six existing); seven separate evaluator
+contracts pass. Earlier 19/27 core runs overlap and are not additive.
+
+Primary [1,41) has 23,423 dominant-support eligible states: >=1 N total and
+>=90% one family, not strict single physical contact. True-family candidate
+coverage is 100%. Native/G/WG errors are 412 (1.759%); VG/F errors are 109
+(.465%), 73.5% fewer. Per-start errors fall 51→11, 226→51 and 135→47; false
+switches 17→13, 121→27 and 65→37. All 12 registered shadow gates pass. F accepts
+6,902 states with 18 errors (.261%), versus 306 native errors on those same
+states. Coverage is 86.60% of 7,970 ambiguous motion-eligible states, but 29.47%
+of all primary eligible states. Stable ±10 ms truth subset improves 75→3 errors
+in 21,983 states; last-1-ms versus filtered-5-ms clock qualifications remain.
+
+Independent rank/evaluation/kinematic checks agree. VG/F raw labels are identical
+at all 26,403 states, so the added moment score has no demonstrated label benefit.
+Three primary accepted decisions differ; F accepts one additional error. Fixed
+event inspection retains adverse cases: at -1 rad, 35.205 s, true/native support
+is belt B, but a small velocity residual strongly favors wrong shell B. This is
+model consistency, not proof of slip or a unique inverse.
+
+A descriptive post-primary point check is registered before its arithmetic,
+without changing scores/gates. Paired point RMS improves 3.134→2.672 mm, while
+maximum discrepancy worsens 26.91→44.04 mm. Accepted maximum grows
+23.76→29.84 mm; every phase's maximum worsens. Correct-family subset improves
+both RMS and maximum, so enlarged extremes come from remaining wrong-family
+choices. Radial-R proxies and dominant-patch means yield similar conclusions.
+Independent source review corrects a terminology overstatement: logged counts
+include only force >.05 N records. One resolved record does not prove one physical
+point; weaker records still contribute to means. Erratum and original README
+are preserved; frozen statistics/gates are unchanged. A plot-legend overlap is
+corrected separately without changing data.
+
+Decision: retain the useful shadow family-inference signal for further controlled
+tests; no live adoption or tracking claim. Before compensation, investigate
+bounded geometry changes and slip/ambiguous hypotheses. Existing drift, turning
+and saturation issues remain open. Compact full-rate rank/evaluation/point
+projections replay with NumPy; full banks/raw state/model assets remain local
+and hash-bound.
+[Record, plots and reproduction](docs/iterations/2026-11-27/velocity-contact-ranking/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

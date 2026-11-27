@@ -1,0 +1,199 @@
+{
+  "iteration": "I-60",
+  "completed_utc": "2026-11-27T05:25:41.730862+00:00",
+  "scope": "Independent scalar counts, derived labels, all fixed windows/pooled metrics and gate values; no evaluator/ranker import.",
+  "new_physics_runs": 0,
+  "cases": {
+    "m100_B": {
+      "rows": 8801,
+      "windows_exact": [
+        "primary",
+        "full",
+        "goal",
+        "early_handoff",
+        "mid_handoff",
+        "late_handoff",
+        "stable_primary"
+      ],
+      "baseline_truth_eligibility_excitation_and_stable_masks_exact": true,
+      "evaluation_sha256": "c0f3657bf924808cf55201b14cc6efaa55f3111614e2779ce97574ce29de55a9"
+    },
+    "p030_B": {
+      "rows": 8801,
+      "windows_exact": [
+        "primary",
+        "full",
+        "goal",
+        "early_handoff",
+        "mid_handoff",
+        "late_handoff",
+        "stable_primary"
+      ],
+      "baseline_truth_eligibility_excitation_and_stable_masks_exact": true,
+      "evaluation_sha256": "40a2f0b3e40aef3c917fcb1364f1b18009a65c127f150852e6930703af75e402"
+    },
+    "p090_B": {
+      "rows": 8801,
+      "windows_exact": [
+        "primary",
+        "full",
+        "goal",
+        "early_handoff",
+        "mid_handoff",
+        "late_handoff",
+        "stable_primary"
+      ],
+      "baseline_truth_eligibility_excitation_and_stable_masks_exact": true,
+      "evaluation_sha256": "98a5c2b5e349166bef887d7a4525929656d81c58ba3ec0c787df5e7f9a358804"
+    }
+  },
+  "aggregate_primary": {
+    "dominant_eligible_count": 23423,
+    "candidate_true_family_coverage": 1.0,
+    "candidate_true_family_covered_count": 23423,
+    "native_error_count": 412,
+    "native_error_fraction": 0.017589548734150195,
+    "ambiguous_motion_eligible_count": 7970,
+    "motion_eligible_count": 22944,
+    "modes": {
+      "geometry": {
+        "error_count": 412,
+        "error_fraction": 0.017589548734150195,
+        "accepted_count": 4457,
+        "accepted_error_count": 17,
+        "accepted_error_fraction": 0.003814224814897913,
+        "native_same_accepted_error_count": 17,
+        "native_same_accepted_error_fraction": 0.003814224814897913,
+        "confidence_coverage_ambiguous_motion": 0.5592220828105395,
+        "confidence_coverage_all": 0.19028305511676558,
+        "confidence_coverage_motion": 0.19425557880055788
+      },
+      "wrench": {
+        "error_count": 412,
+        "error_fraction": 0.017589548734150195,
+        "accepted_count": 4517,
+        "accepted_error_count": 17,
+        "accepted_error_fraction": 0.003763559884879345,
+        "native_same_accepted_error_count": 17,
+        "native_same_accepted_error_fraction": 0.003763559884879345,
+        "confidence_coverage_ambiguous_motion": 0.566750313676286,
+        "confidence_coverage_all": 0.19284463988387482,
+        "confidence_coverage_motion": 0.19687064156206416
+      },
+      "velocity": {
+        "error_count": 109,
+        "error_fraction": 0.004653545660248473,
+        "accepted_count": 6901,
+        "accepted_error_count": 17,
+        "accepted_error_fraction": 0.002463411099840603,
+        "native_same_accepted_error_count": 306,
+        "native_same_accepted_error_fraction": 0.04434139979713085,
+        "confidence_coverage_ambiguous_motion": 0.8658720200752823,
+        "confidence_coverage_all": 0.2946249412970158,
+        "confidence_coverage_motion": 0.3007758019525802
+      },
+      "fused": {
+        "error_count": 109,
+        "error_fraction": 0.004653545660248473,
+        "accepted_count": 6902,
+        "accepted_error_count": 18,
+        "accepted_error_fraction": 0.002607939727615184,
+        "native_same_accepted_error_count": 306,
+        "native_same_accepted_error_fraction": 0.04433497536945813,
+        "confidence_coverage_ambiguous_motion": 0.8659974905897114,
+        "confidence_coverage_all": 0.2946676343764676,
+        "confidence_coverage_motion": 0.3008193863319386
+      }
+    }
+  },
+  "gates": [
+    {
+      "name": "candidate_true_family_coverage",
+      "actual": 1.0,
+      "threshold": 0.99,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "fused_improves_native",
+      "actual": 0.012936003073901723,
+      "threshold": 0.0017589548734150196,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "velocity_adds_over_wrench",
+      "actual": 0.012936003073901723,
+      "threshold": 0.001,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "m100_B_raw_error_nonregression",
+      "actual": -0.005033979360684621,
+      "threshold": 0.001,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "m100_B_false_switch_nonregression",
+      "actual": -4,
+      "threshold": 2,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "p030_B_raw_error_nonregression",
+      "actual": -0.023317788141239176,
+      "threshold": 0.001,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "p030_B_false_switch_nonregression",
+      "actual": -94,
+      "threshold": 2,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "p090_B_raw_error_nonregression",
+      "actual": -0.011038635223281485,
+      "threshold": 0.001,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "p090_B_false_switch_nonregression",
+      "actual": -28,
+      "threshold": 2,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "confidence_coverage_ambiguous_motion",
+      "actual": 0.8659974905897114,
+      "threshold": 0.5,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "confidence_error",
+      "actual": 0.002607939727615184,
+      "threshold": 0.01,
+      "scorable": true,
+      "passed": true
+    },
+    {
+      "name": "confidence_error_vs_native_same_subset",
+      "actual": -0.04172703564184294,
+      "threshold": 0.001,
+      "scorable": true,
+      "passed": true
+    }
+  ],
+  "failed_gates": [],
+  "all_comparisons_exact": true,
+  "descriptive_timing_source_only_reviewed": true,
+  "canonical_science_sha256": "b643ed96f57d23bdb16a998e2604848d1bb1e0006bbf951c8668bb8746709349"
+}

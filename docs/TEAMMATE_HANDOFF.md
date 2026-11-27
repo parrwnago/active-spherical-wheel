@@ -1,6 +1,6 @@
 # Teammate handoff — control, evidence and current limits
 
-Updated 2026-11-26. Start here, then read the
+Updated 2026-11-27. Start here, then read the
 [dynamics/controller/observer study guide](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf).
 The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
@@ -68,7 +68,27 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-59 does not support the retained startup-gain explanation.**
+**Latest: I-60 supports the measured-velocity idea in shadow evaluation.**
+With the same saved states, wrong/unknown dominant-support labels decrease
+412→109 (1.759%→0.465%) across all three native starts. All 12 registered
+shadow gates pass. The accepted subset has 18 errors in 6,902 states, versus
+306 native errors on those same states; it covers 86.60% of geometrically
+ambiguous motion-eligible states, but only 29.47% of all primary eligible states.
+The method still uses an observer-derived candidate domain. Velocity-only and
+fused raw labels are identical; no extra label benefit from the moment cost is
+shown. This is a useful contact-inference signal, not a new live controller.
+
+Point RMS improves 3.134→2.672 mm, but maximum discrepancy grows
+26.91→44.04 mm because some wrong-family choices remain. Even the accepted
+subset has a worse maximum. The contact-count subset means one resolved record
+above 0.05 N; it does not exclude weaker contacts in point averages. Keep native
+LQR/observer/feedforward/preparation selected. Before any compensation, test
+bounded geometry changes and slip-aware ambiguity handling. Zero new physics;
+no commands, gains or defaults change.
+[Full I-60 record, plots and portable replay](iterations/2026-11-27/velocity-contact-ranking/README.md)
+· [Presentation notes](iterations/2026-11-27/README.md).
+
+**I-59 does not support the retained startup-gain explanation.**
 An offline swap of the three startup shaft rows at identical states/errors in
 all six I-58 traces changes the native torque request by at most 2.52744e-8 N m.
 The equilibrium trim difference is only 5.0397e-13 N m. Both are negligible under
@@ -287,6 +307,7 @@ selected movies are committed. [Portable workspace details](../research/README.m
 | Incoming geometric preview | [synchronization.py](../src/spherical_wheel/synchronization.py) |
 | I-56 experimental measured-contact response and bounded command allocation | [handoff_model.py](../src/spherical_wheel/handoff_model.py), [handoff_control.py](../src/spherical_wheel/handoff_control.py) |
 | I-58 experimental balance-priority allocation, retained after mixed results | [balance_priority_control.py](../src/spherical_wheel/balance_priority_control.py) |
+| I-60 offline measured-velocity contact-family ranking | [contact_hypotheses.py](../src/spherical_wheel/contact_hypotheses.py) |
 | Measured-state mirror, lockstep Gazebo bridge | [gazebo/plant.py](../src/spherical_wheel/gazebo/plant.py), [bridge plugin](../gazebo/plugin/SphericalWheelBridge.cc) |
 | Exact I-52 opt-in experiment sources | [frozen workspace](../research/frozen_workspace/README.md) |
 
@@ -319,6 +340,9 @@ are the shorter current index. Useful checkpoints:
 - I-59: fixed-state swaps find negligible retained startup shaft-gain/trim
   effects. This corrects an earlier practical hypothesis; mechanical and
   current-support/reference-history paths remain unresolved.
+- I-60: measured-velocity candidate ranking improves sampled support labels,
+  but remaining wrong families enlarge point-error extremes. Keep the result
+  as an offline estimator; no compensating command or driving improvement yet.
 
 Historical `results/` links in archived iteration records may refer to ignored
 full datasets. Use this page's tracked media/report links first; a plain clone
@@ -342,6 +366,10 @@ not rerun for this experiment.
 I-59 uses saved arrays only; six traces contain 52,806 correlated states, not
 additional robot trials or integration tests. Independent reconstruction and
 standalone replay validate the negligible command-effect finding.
+I-60 adds 22 new contact-hypothesis tests; its 28 selected passes include six
+existing kinematic tests. Seven separate evaluator contracts and independent
+saved-array rank/evaluation/geometry/point checks have distinct scopes. Portable
+NumPy replay reproduces every frame and gate; zero new physical trials.
 
 AI assistance: Codex helped implement experimental code, analyze logs and draft
 figures/documentation. The team supplied design direction and observations.
