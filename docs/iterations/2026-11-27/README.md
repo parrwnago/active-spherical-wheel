@@ -23,6 +23,10 @@ does not pass robust heading/tracking/command checks.**
 - Keep original N selected and H experimental. Twelve focused runner/telemetry
   and 23 final evaluation functions pass (earlier stage counts included). Media/
   package contracts are largely reused. No solver/camera/HMM revival or retuning.
+- Later user clarification: the desired heading should follow the trajectory
+  tangent. I-74 holds initial yaw and does not test that objective. A moving
+  target, stop/reversal policy and fair initial alignment remain proposed;
+  omnidirectional translation alone does not prove independent planar yaw control.
 
 **I-73: fresh S-path contact-reference intervention completes, with mixed
 tracking and no demonstrated settling improvement.**

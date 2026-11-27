@@ -1395,6 +1395,40 @@ new estimator, solver change, camera or hardware result. All full-hold videos,
 positive results, regressions, command ledgers and reproduction inputs are in
 the [I-74 record](iterations/2026-11-27/heading-hold-control/README.md).
 
+The user subsequently clarifies the intended heading objective: **face the
+direction of desired trajectory travel**, rather than preserve starting yaw.
+I-74 tested the latter; it is not evidence of tangent-heading performance.
+The proposed moving target is `psi_d = atan2(vy_desired, vx_desired)`, using desired motion,
+not the measured drift direction. Keep the last valid direction at a stop,
+unwrap/filter/bound target changes and include a desired turn-rate reference.
+The current helper damps absolute world-z rate; it does not yet track a
+trajectory yaw-rate reference. A reversal needs a declared choice between
+turning around and driving backward. Current S initial tangent is149.24°,
+versus initial body yaw45°, so fair startup alignment is a real design choice.
+No implementation or new experiment follows from this clarification alone.
+
+For presentation terminology, **holonomic constraints** are configuration
+relations such as `f(q,t)=0`. Nonholonomic rolling restrictions constrain
+velocities and cannot in general be integrated into such position relations.
+The mobile-robot shorthand **holonomic/omnidirectional base** concerns available
+chassis velocities: independent planar translation and yaw rather than just
+reaching arbitrary destinations over time. These are different description
+levels. A path-facing heading target does not impose a new physical constraint
+or require a holonomic base; a nonholonomic car also faces its path tangent.
+The author's [Modern Robotics §2.4](https://modernrobotics.northwestern.edu/nu-gm-book-resource/2-4-configuration-and-velocity-constraints/)
+and [§13.1](https://modernrobotics.northwestern.edu/nu-gm-book-resource/13-1-wheeled-mobile-robots/)
+explain the distinction.
+
+For this robot, say **designed for omnidirectional translation, with
+configuration-dependent heading authority**. Current rolling allocation solves
+XY contact equations and handles yaw separately. Neither moving sideways nor
+the I-74 helper failure establishes a complete holonomic/nonholonomic
+classification. A formal claim needs the full rolling/contact constraints and
+coupled kinematic/dynamic authority, including balance and internal motion.
+Do not equate a weak heading controller with a mechanical impossibility, or
+count five actuator commands as proof of three independently controlled chassis
+motions. The selected baseline, prior results and parked work remain unchanged.
+
 ## 19. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)

@@ -4774,6 +4774,33 @@ regressions and identified rolling-reference/LQR request problem. No default
 promotion, solver/HMM/camera/hardware change or post-result parameter sweep.
 [Complete I-74 record, plots, PDF, videos and reproduction](docs/iterations/2026-11-27/heading-hold-control/README.md).
 
+**User clarification / proposed objective, not implemented:** The intended
+platform heading should face the desired trajectory tangent, rather than keep
+its original orientation. I-74 remains a completed fixed-start-heading test;
+its result is not relabeled as tangent-heading tracking. A future target would
+use `atan2(vy_desired, vx_desired)` while moving, or the geometric path tangent,
+with continuous angle handling, bounded target rates and an explicit stop/
+reversal policy. At a stop retain the last valid direction. Desired yaw rate
+should accompany a moving heading target; the existing helper damps absolute
+world-z rate and has no trajectory yaw-rate reference yet.
+
+The S initial geometric tangent is about 149.24°, while the I-74 robot starts
+at 45°: about 104° initial misalignment must be handled explicitly, with matched
+initial conditions or a declared alignment phase in any future paired test.
+Changing this reference does not alter physical holonomy. Current rolling
+allocation solves two translational contact rows, not independent planar
+`(v_x,v_y,yaw_rate)` tracking. Omnidirectional translation does not establish
+full planar independence, and helper failures do not prove a mathematical
+nonholonomic classification. Full contact constraints and coupled balance/
+actuation authority would need analysis before claiming a holonomic chassis.
+Holonomic configuration constraints and the mobile-robot shorthand for a
+holonomic/omnidirectional base are distinct concepts; no new constraint needs
+to be added simply to request path-facing heading. Verified explanatory sources:
+[Modern Robotics §2.4](https://modernrobotics.northwestern.edu/nu-gm-book-resource/2-4-configuration-and-velocity-constraints/)
+and [§13.1](https://modernrobotics.northwestern.edu/nu-gm-book-resource/13-1-wheeled-mobile-robots/).
+No new simulation, controller change or demonstrated path-facing result in
+this clarification; the original selected baseline remains unchanged.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated
