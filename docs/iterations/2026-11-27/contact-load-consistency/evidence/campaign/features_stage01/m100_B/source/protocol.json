@@ -1,0 +1,72 @@
+{
+  "iteration": "I-61",
+  "local_date": "2026-11-27",
+  "base_revision": "92fe995f43d13c0a133d80e67621e87e06d3306d",
+  "question": "Can the additional recorded joint-load residuals reject I60 false overrides while preserving useful contact corrections?",
+  "scope": "Offline single-factor acceptance-veto experiment. Freeze I60 candidates, geometry, score weights, raw rankings and accepted proposals. No point cap, force fitting, temporal smoothing, velocity-zero enforcement, native observer/controller change or default promotion.",
+  "datasets": ["m100_B", "p030_B", "p090_B"],
+  "historical_conditions": "I58 native B, Gazebo/DART Mars figure-eight,44s,yaw45deg,shaft-1/+0.3/+0.9rad,caps1.5/.6/.6Nm/.3/.3m/s,8801states each",
+  "frozen_i60_root": "results/velocity_contact_rank_20261127",
+  "inference_inputs": ["current exact simulated qpos", "I60 stored observer-derived normal hint and frozen selected candidate IDs", "observed total force/world moment", "recorded filtered9-component generalized external-force residual", "native estimated family loads and point"],
+  "forbidden_inference_inputs": ["desired/new motor commands", "solver contacts/labels/points/forces", "true terrain normal", "future state or truth mask"],
+  "candidate_reconstruction": "Reconstruct only frozen I60 selected IDs using unchanged normal seeds/band/rim projection. Proposed F winner and F best valid candidate inside native family may be exported; native-family comparator is diagnostic only. Never relabel the native equivalent point onto an invalid patch.",
+  "prediction": "For world force F at candidate point p on body b, raw generalized load is Jp(q,p,b).T F. Rotate its free-base angular rows3:6 with current fork rotation to compare with stored gamma whose first6 are world-frame; joint rows6:9 remain scalar generalized torques.",
+  "frame_and_clock": "Stored observer force/moment were rotated with interval-midpoint attitude before filtering; current candidate uses current geometry. Observer is filtered preceding5ms, truth is last completed1ms. Validate frame transforms and retain this timing/model qualification, without fitting a delay.",
+  "primary_veto": {
+    "rows": [6, 7, 8],
+    "absolute_tolerance_Nm": 0.03,
+    "relative_force_lever_tolerance": 0.1,
+    "radius_m": 0.12,
+    "tolerance": "Each joint uses0.03Nm+0.10*R*norm(observed_force). All3 absolute residuals must be <=that value.",
+    "invalid_rule": "Nonfinite/missing state, candidate, residual or scale vetoes the proposal and returns native fallback; no new point or new family is selected.",
+    "decision": "Absolute componentwise gate only. No native-relative gate or new soft-score term.",
+    "interpretation": "Fixed engineering tolerance, not a calibrated probability or measured noise covariance. A failing single-resultant model does not prove the candidate is physically wrong."
+  },
+  "information_qualification": "First3 predicted force rows reproduce F by construction; base moment repeats lever/wrench consistency; shaft row largely projects net moment. Additional routing information is mainly two shell-joint rows. Torque-null/pole configurations and multicontact can remain ambiguous.",
+  "policies": {
+    "N": "Native family from dominant positive unique exact_estimated_support_loads_N and native exact_estimated_contact_point_m.",
+    "A": "I60 accepted F proposal family AND point when accepted, otherwise N. Accepted SAME-family point changes are included. This accepted/fallback hybrid, not all raw F rankings, is the primary I60 comparator.",
+    "C": "Use exactly the A proposal family AND point only when I60 accepted AND the extra3 load gate passes; otherwise N. No geometry interpolation, new weight or different candidate search."
+  },
+  "feature_sealing": "Compute all three cases' predicted loads, residuals, load-pass flags and N/A/C outputs, bind source/input hashes and seal them before opening any truth fields. Prior I60 truth-derived targets/masks must never be loaded into inference.",
+  "evaluation": {
+    "primary_window_s": [1.0, 41.0],
+    "window_convention": "Half-open[start,end); all8801rows extracted but unheldterminal44s excluded from interval metrics.",
+    "truth_total_min_N": 1.0,
+    "truth_dominant_fraction_min": 0.9,
+    "eligibility": "Reuse I60 dominant-support eligibility/ties/clock exactly; >=90%onefamily is not strictsinglephysicalcontact. No-candidate/native-unknown retained as errors.",
+    "stable_subset": "Same I60 eligible family unchanged throughout +/-10ms, evaluator only.",
+    "secondary_windows_s": {"full": [0.0, 44.0], "goal": [41.0, 44.0], "early_handoff": [6.4, 7.4], "mid_handoff": [31.4, 32.6], "late_handoff": [35.4, 36.4]},
+    "harmful_override": "Native N is correct on eligible state, but policy A or C is wrong. Count on ALL primary eligible states, not retained-only subsets.",
+    "useful_correction": "Native N is wrong, but A proposal is correct. Retention requires C remains correct on those same states.",
+    "point_targets": "Logged truth_equivalent_point_m primary; dominant-family means and radial-R proxies descriptive. Use same finite native/A/C/target rows for all paired statistics. Missing coverage is explicit.",
+    "point_subsets": ["all primary dominant eligible", "native correct", "I60 A accepted", "C retained accepted", "stable dominant eligible", "one resolved>0.05N contact, not necessarily one physical point"],
+    "no_abstain_all_win": "Report useful retention, proposal/veto/override coverage, errors and point distances on fixed full denominators; returning N everywhere fails benefit/retention gates."
+  },
+  "oracle_geometry_diagnostic": {
+    "timing": "Only after all truth-blind feature/policy outputs are sealed.",
+    "point": "Logged dominant-family truth_patch_points_m at current saved pose, raw and finite; do not project toR or require it lies on a material band.",
+    "force": "Same OBSERVED total force as inference, not a true-force substitute.",
+    "computation": "Export truth-blind per-family joint affine load maps from current q and observedF. Evaluator inserts the raw logged point into Jlinear(centre).T F + Jangular(centre).T cross(point-centre,F).",
+    "denominator": "All primary stable dominant-support eligible states per phase; invalid/missing oracle points/maps count as failed compatibility, with explicit coverage.",
+    "gate": "At least90% pass the same extra3 tolerance per phase.",
+    "qualification": "Oracle-GEOMETRY compatibility of a single total-resultant-force approximation with a filtered residual; not independent9-row force ground truth or noise calibration. Weaker/additional contacts, friction distribution and clock effects remain."
+  },
+  "gates": {
+    "harmful_override_relative_reduction_min": 0.5,
+    "useful_correction_retention_min": 0.9,
+    "pooled_C_error_above_A_allowance": 0.0,
+    "per_phase_C_error_above_A_allowance": 0.001,
+    "C_native_error_reduction_relative_min": 0.1,
+    "C_native_error_reduction_absolute_min": 0.001,
+    "point_C_above_native_RMS_m_allowance": 1e-9,
+    "point_C_above_native_p95_m_allowance": 1e-9,
+    "point_C_above_native_maximum_m_allowance": 1e-9,
+    "per_phase_oracle_geometry_pass_fraction_min": 0.9,
+    "empty_denominator": "Unscorable gate is not a pass.",
+    "interpretation": "All fixed offline gates required to recommend any later controlled integration; no threshold selection or score tuning after outcomes. Primary performance and model-validity gates reported separately as well as combined."
+  },
+  "fixed_adverse_events": "Retain all I60 prespecified event times and all three I60 worst-point times (-1:35.205,+.3:38.380,+.9:17.765s), reporting candidate/native/oracle residuals and veto decisions with missing cases explicit.",
+  "required_controls": ["source and input hashes before arithmetic", "no truth/terrain/reference reads in feature stage", "all three feature seals before truth evaluation", "rotated frame/known-force/virtual-work checks", "carrier contact zero external shell-joint loads", "shell contact and torque-null ambiguity", "linear force superposition", "private kinematics/no physics/no live mutation", "valid candidate separated from arbitrary virtual oracle point", "same-family point-policy tests", "matched-mask N/A/C metrics and abstain-all failure", "pureNumPy rank-gate/evaluation/point replay", "independent arithmetic and geometric spotchecks"],
+  "physics_scope": "No new physical simulation in the offline experiment. A controlled handoff pair is considered only if all offline gates pass and a separate source-bound adapter/physical protocol is ready; no broad trajectory rerun or default adoption follows automatically."
+}

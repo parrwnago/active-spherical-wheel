@@ -3740,6 +3740,71 @@ projections replay with NumPy; full banks/raw state/model assets remain local
 and hash-bound.
 [Record, plots and reproduction](docs/iterations/2026-11-27/velocity-contact-ranking/README.md).
 
+## I-61 / 2026-11-27 / analyzed, rejected — joint-load consistency veto
+
+Question: do the extra observer joint-load channels reject harmful I-60
+overrides without losing useful velocity-based corrections? Source base 92fe995.
+Keep all I-60 candidates, scores, accepted labels/points, native controller,
+observer, references, gains, caps and defaults fixed. Add opt-in
+contact_load_consistency.py and tests. No new Gazebo physics or live commands.
+
+Register protocol, old/new source and 30 historical inputs before residual
+arithmetic. Use three I-58 native B Mars figure-eight histories, all 26,403
+states, 44 s, shaft -1/+0.3/+0.9 rad, yaw 45°, caps
+[1.5,.6,.6 N m,.3,.3 m/s]. Predict J_point.T*F_observed at each frozen proposal;
+rotate base angular rows into world, retain scalar joint rows. Primary veto is
+all extra-joint mismatches <=.03 N m +.10*R*norm(F), R=.12 m. No force fit,
+native-relative gate, rescoring, point cap or temporal smoothing. Force rows
+repeat the supplied force, and shaft is largely redundant with net moment;
+the main added identity cues are the two shell-joint rows.
+
+All three feature/policy outputs are sealed before truth arrays. Compare native
+N; I-60 accepted proposal else native A; and accepted+load-pass proposal else
+native C. SAME-family point changes are included. Primary [1,41) has 23,423
+dominant-support eligible states, >=1 N and >=90% one family, not strict single
+contact. N/A/C errors are 412/124/153; per phase 51/14/16, 226/64/84 and
+135/46/53. A's 124 is the guarded comparator, not raw I-60 F's 109.
+
+The veto removes 46 of 6,902 proposals: 30 useful corrections lost, one harmful
+override prevented, 15 label-neutral point fallbacks. Harmful overrides of
+native-correct labels fall 6→5 (16.7% versus required 50%); useful retention is
+264/294=89.796% (required 90%). Point RMS N/A/C is 3.134/2.757/2.807 mm;
+maximum 26.91/29.84/29.84 mm. The old raw 44.04 mm I-60 outlier was already
+rejected by I-60 acceptance and is not a benefit of this load veto.
+
+Five of 13 fixed gates fail: harmful removal, useful retention, pooled C-vs-A,
++.3-rad C-vs-A and point maximum versus N. Conditional physical trial does not
+run. Stable oracle-GEOMETRY compatibility passes 99.870/99.881/99.352%; this
+uses observed total force and raw dominant-family mean point, not true full
+generalized forces. Post-primary diagnosis finds ALL 30 lost useful corrections
+outside ±10 ms stable truth, and all 30 also fail this oracle compatibility at
+those frames. Shaft contributes 40/46 vetoes, shell A/B six each (overlap).
+This points toward current-geometry/history/force-distribution limitations in
+transfer, not proof that every observer channel or candidate point is wrong.
+
+The -1-rad 35.205 s wrong shell-B proposal still passes (residuals about
+[.173,-.000002,-.105] N m; tolerance.251). Correct shell-A at 7.875 s is vetoed
+([.212,-.301,.272]; tolerance.266). Current fixed residual magnitude is not
+selective enough; no post-result threshold tuning is performed. Native control
+stays selected; I-60 remains a promising shadow signal, not a deployed estimator.
+
+45 selected core tests pass (17 new + same 28 existing), with nine separate
+evaluator contracts and seven replay-adapter contracts. Independent analytic
+loads, all gate/policy flags and point metrics agree. Archive preserves an
+unexecuted schema correction, fixture-alias failure/correction, and a final
+reviewer receipt whose pre-truth wording was clarified (written 16 s after global
+truth phase began, reviewer still outcome-blind; sources/check scripts already
+frozen). Producer NumPy 1.26.4 gives whole-report exact replay; NumPy 1.21.5 gives
+all arrays/window metrics/gates exact with five forensic norm scalars differing
+<=3.56 e-15 mm. A validation-only whitelist reports those differences without
+changing values or scientific gates; initial strict failure is retained.
+
+Decision: reject this instantaneous hard veto; no integration or new physical
+comparison. A time-consistent load/transfer model is the next proposed
+diagnostic, rather than hiding failure with tuning. Compact full-rate replay,
+plots and source/provenance are retained; large original arrays stay local.
+[Record and reproduction](docs/iterations/2026-11-27/contact-load-consistency/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

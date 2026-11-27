@@ -1,5 +1,30 @@
 # Research presentation notes — 2026-11-27
 
+**I-61: adding joint-load consistency does not improve the guarded estimator.**
+[Full record](contact-load-consistency/README.md) and
+[comparison figure](contact-load-consistency/evidence/analysis/plots_stage01/overview.png).
+
+- Keep I-60's velocity ranking fixed; use the three extra observer joint rows
+  only to veto an accepted contact proposal, falling back to the native estimate.
+- Correct comparator: I-60 accepted/fallback has 124 errors, rather than 109
+  for all raw rankings. The new veto increases that to 153.
+- It removes one of six harmful overrides, but also loses 30 of 294 useful
+  corrections. Five of 13 fixed gates fail; the conditional physical trial
+  does not run. Worst guarded point discrepancy stays 29.84 mm.
+- The illustrative bad shell-B proposal at 35.205 s still passes the load
+  tolerance. A useful shell-A correction at 7.875 s fails it instead.
+- All 30 lost useful corrections occur near transfers and fail compatibility
+  even with the logged dominant-family point. Stable-point compatibility >99%
+  therefore does not establish transfer validity. Filtering, timing and force
+  distribution are possible contributors; no unique cause is proven.
+- Preserve the rejected trial. Keep native LQR, momentum observer, feedforward
+  and existing preparation selected; the I-60 velocity signal is still useful
+  offline. Next proposed diagnostic: time-consistent load/transfer hypotheses.
+
+Implementation checks pass (45 selected core tests, nine separate evaluator
+contracts, independent replay); the scientific candidate fails. The archive
+retains fixture/receipt/version-roundoff corrections separately from that result.
+
 **I-60: the user's velocity-consistency idea supplies useful contact evidence.**
 [Full record](velocity-contact-ranking/README.md),
 [classification figure](velocity-contact-ranking/evidence/analysis/plots_stage02/overview.png)

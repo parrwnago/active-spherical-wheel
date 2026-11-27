@@ -1,0 +1,14 @@
+......F..                                                                [100%]
+=================================== FAILURES ===================================
+___________ test_invalid_oracle_rows_stay_in_denominator_as_failures ___________
+
+    def test_invalid_oracle_rows_stay_in_denominator_as_failures():
+        frames=fake_frames();frames['oracle_geometry_valid'][0]=False;frames['oracle_geometry_pass'][0]=False
+        result=E.metrics(frames,np.ones(4,bool))['oracle_geometry']
+>       assert result['denominator']==4 and result['valid_count']==3 and result['pass_fraction']==.75
+E       assert (3 == 4)
+
+results/contact_load_consistency_20261127/analysis/test_evaluation_contracts.py:89: AssertionError
+=========================== short test summary info ============================
+FAILED results/contact_load_consistency_20261127/analysis/test_evaluation_contracts.py::test_invalid_oracle_rows_stay_in_denominator_as_failures
+1 failed, 8 passed in 0.27s

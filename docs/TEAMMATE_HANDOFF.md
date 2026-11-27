@@ -68,7 +68,21 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-60 supports the measured-velocity idea in shadow evaluation.**
+**Latest: I-61 rejects the added joint-load veto.** With I-60 proposals frozen,
+the fixed load check prevents one harmful override but loses 30 useful
+corrections. Errors rise 124→153 versus I-60's accepted/fallback policy; five
+of 13 registered gates fail. The worst guarded point discrepancy stays
+29.84 mm. All lost useful corrections occur near transfers, where even the
+logged-point load hypothesis fails compatibility with the filtered residual.
+Stable compatibility exceeds 99%, which does not validate those transient
+states. No retuning or conditional physical comparison follows.
+
+The original LQR/observer/feedforward/preparation remains selected, and I-60's
+positive offline family-ranking result remains intact. Investigate consistent
+signal timing and transfer-force hypotheses before another hard veto.
+[Full I-61 record, plots and portable replay](iterations/2026-11-27/contact-load-consistency/README.md).
+
+**I-60 supports the measured-velocity idea in shadow evaluation.**
 With the same saved states, wrong/unknown dominant-support labels decrease
 412→109 (1.759%→0.465%) across all three native starts. All 12 registered
 shadow gates pass. The accepted subset has 18 errors in 6,902 states, versus
@@ -308,6 +322,7 @@ selected movies are committed. [Portable workspace details](../research/README.m
 | I-56 experimental measured-contact response and bounded command allocation | [handoff_model.py](../src/spherical_wheel/handoff_model.py), [handoff_control.py](../src/spherical_wheel/handoff_control.py) |
 | I-58 experimental balance-priority allocation, retained after mixed results | [balance_priority_control.py](../src/spherical_wheel/balance_priority_control.py) |
 | I-60 offline measured-velocity contact-family ranking | [contact_hypotheses.py](../src/spherical_wheel/contact_hypotheses.py) |
+| I-61 rejected offline joint-load acceptance check | [contact_load_consistency.py](../src/spherical_wheel/contact_load_consistency.py) |
 | Measured-state mirror, lockstep Gazebo bridge | [gazebo/plant.py](../src/spherical_wheel/gazebo/plant.py), [bridge plugin](../gazebo/plugin/SphericalWheelBridge.cc) |
 | Exact I-52 opt-in experiment sources | [frozen workspace](../research/frozen_workspace/README.md) |
 
@@ -343,6 +358,9 @@ are the shorter current index. Useful checkpoints:
 - I-60: measured-velocity candidate ranking improves sampled support labels,
   but remaining wrong families enlarge point-error extremes. Keep the result
   as an offline estimator; no compensating command or driving improvement yet.
+- I-61: the added load veto loses more useful corrections than harmful
+  overrides removed. Five gates fail; keep it out of live control and examine
+  current-point versus history-filtered load consistency at transfers.
 
 Historical `results/` links in archived iteration records may refer to ignored
 full datasets. Use this page's tracked media/report links first; a plain clone
@@ -370,6 +388,12 @@ I-60 adds 22 new contact-hypothesis tests; its 28 selected passes include six
 existing kinematic tests. Seven separate evaluator contracts and independent
 saved-array rank/evaluation/geometry/point checks have distinct scopes. Portable
 NumPy replay reproduces every frame and gate; zero new physical trials.
+I-61's 45 selected core passes contain 17 new plus the same 28 existing tests;
+nine evaluator contracts and seven replay-adapter contracts are separate
+invocations. Independent arithmetic confirms the candidate's five failed gates.
+Cross-NumPy replay preserves arrays/metrics/gates; only five optional event
+distance scalars vary below 3.56e-15 mm, explicitly reported. No full-suite or
+driving-improvement claim follows.
 
 AI assistance: Codex helped implement experimental code, analyze logs and draft
 figures/documentation. The team supplied design direction and observations.

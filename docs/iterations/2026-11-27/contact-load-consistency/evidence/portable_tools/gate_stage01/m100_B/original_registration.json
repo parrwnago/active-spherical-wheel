@@ -1,0 +1,80 @@
+{
+  "iteration": "I-61",
+  "case": "m100_B",
+  "registered_before_load_arithmetic_utc": "2026-11-27T06:10:56.301119+00:00",
+  "inputs": [
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_load_consistency_20261127/campaign_tools/extract_features.py",
+      "sha256": "d5f73564f224dc998d7f4ff8c5aa9a607fac26248af9f7d4a808a4d7170e3b3a"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_load_consistency_20261127/protocol/protocol.json",
+      "sha256": "102c8bde4e55883aba6b522a28a0a369c7e2eda47c9f7f309b452ef0d80a0a3c"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_load_consistency_20261127/protocol/api_mapping_before_execution.json",
+      "sha256": "4371db36da8264198ca5ef2087568e7e6b160ecb5ea42e925f86c7bfc16c65ca"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_load_consistency.py",
+      "sha256": "af6a1c52a2ac9ce459d2a8b810a82234eddbdda358384742f16047a31902fc9c"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/source/contact_hypotheses.py",
+      "sha256": "c0995d4acb268c73e834c488514aa9f34cd2b3d57aca516c63a394429b93f532"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/_workspaces/m100_B/worker_471546/mirror/model.xml",
+      "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/runs/m100_B/provenance.json",
+      "sha256": "4842e1695776ba873182062845f6fc9649403d861efecb5b0400553be54ad51c"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/measurement_context.npz",
+      "sha256": "fe350974c33f5d62304af8372aa9c1ecb1a57e7aca26fa4ccc369487689f617e"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/scores.npz",
+      "sha256": "e42609c4d8ea036bcfe28cf3365abd12f7f64365112429f73d94c0340725e576"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/artifact_manifest.json",
+      "sha256": "0585974f85263ae654bb66e032530b471e9d9bdfabe2b2c40da4c0493d8732db"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_load_consistency_20261127/protocol/input_source_seal.json",
+      "sha256": "01614bc6fab7bc84724e27336d81b2a8e41df1f80bf4154b47d1793adc82b58c"
+    }
+  ],
+  "allowed_context_fields": [
+    "time_s",
+    "exact_qpos",
+    "exact_qvel",
+    "exact_previous_applied",
+    "exact_observer_wrench",
+    "exact_observer_generalized",
+    "exact_observer_interval_mean",
+    "exact_estimated_support_loads_N",
+    "exact_estimated_contact_point_m",
+    "intrinsic_normal_hint"
+  ],
+  "allowed_score_fields": [
+    "fused__chosen_family",
+    "fused__accepted_family",
+    "fused__confident",
+    "fused__candidate_index",
+    "fused__score_margin"
+  ],
+  "truth_fields_read": [],
+  "gate_options": {
+    "absolute_tolerance_Nm": 0.03,
+    "relative_tolerance": 0.1
+  },
+  "minimum_force_N": 1.0,
+  "native_relative_comparison": "diagnostic only",
+  "new_physics_steps": 0,
+  "live_controller_changed": false,
+  "oracle_map": "Truth-blind per-family affine joint-force maps; future evaluator alone inserts logged truth geometry."
+}

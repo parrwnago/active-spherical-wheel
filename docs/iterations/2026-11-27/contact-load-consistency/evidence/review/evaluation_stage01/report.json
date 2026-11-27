@@ -1,0 +1,224 @@
+{
+  "iteration": "I-61",
+  "completed_utc": "2026-11-27T06:16:34.437319+00:00",
+  "new_physics_runs": 0,
+  "cases": {
+    "m100_B": {
+      "rows": 8801,
+      "all_windows_counts_and_statistics_match": true,
+      "max_absolute_statistic_difference": 4.440892098500626e-15,
+      "derived_truth_stability_oracle_and_confusion_flags_exact": true
+    },
+    "p030_B": {
+      "rows": 8801,
+      "all_windows_counts_and_statistics_match": true,
+      "max_absolute_statistic_difference": 5.773159728050814e-15,
+      "derived_truth_stability_oracle_and_confusion_flags_exact": true
+    },
+    "p090_B": {
+      "rows": 8801,
+      "all_windows_counts_and_statistics_match": true,
+      "max_absolute_statistic_difference": 4.884981308350689e-15,
+      "derived_truth_stability_oracle_and_confusion_flags_exact": true
+    }
+  },
+  "pooled_max_absolute_statistic_difference": 1.0658141036401503e-14,
+  "primary_counts": {
+    "window_rows": 24000,
+    "dominant_eligible": 23423,
+    "loaded": 23894,
+    "loaded_nondominant": 471,
+    "A_proposals": 6902,
+    "C_retained_proposals": 6856,
+    "vetoed_proposals": 46,
+    "unknown_load_proposals": 0,
+    "A_changed_family": 300,
+    "C_changed_family": 269
+  },
+  "primary_policy_metrics": {
+    "N": {
+      "error_count": 412,
+      "error_fraction": 0.017589548734150195,
+      "unknown_count": 0,
+      "sampled_disagreement_equivalent_s": 2.06,
+      "false_switch_count": 203
+    },
+    "A": {
+      "error_count": 124,
+      "error_fraction": 0.005293941852025787,
+      "unknown_count": 0,
+      "sampled_disagreement_equivalent_s": 0.62,
+      "false_switch_count": 80
+    },
+    "C": {
+      "error_count": 153,
+      "error_fraction": 0.0065320411561285915,
+      "unknown_count": 0,
+      "sampled_disagreement_equivalent_s": 0.765,
+      "false_switch_count": 105
+    }
+  },
+  "harmful_overrides": {
+    "A": 6,
+    "C": 5,
+    "relative_reduction": 0.16666666666666666
+  },
+  "useful_corrections": {
+    "A": 294,
+    "C_retained": 264,
+    "retention": 0.8979591836734694
+  },
+  "primary_point_stats": {
+    "eligible_count": 23423,
+    "matched_count": 23423,
+    "matched_fraction": 1.0,
+    "missing_target": 0,
+    "missing_policy": {
+      "N": 0,
+      "A": 0,
+      "C": 0
+    },
+    "policies": {
+      "N": {
+        "count": 23423,
+        "mean_mm": 1.2073889022939726,
+        "RMS_mm": 3.1337508918025034,
+        "median_mm": 0.14053872071524118,
+        "p95_mm": 7.335860821293344,
+        "maximum_mm": 26.907642231578496
+      },
+      "A": {
+        "count": 23423,
+        "mean_mm": 1.035233004794297,
+        "RMS_mm": 2.756927804455768,
+        "median_mm": 0.13890260769962903,
+        "p95_mm": 5.7966951671247795,
+        "maximum_mm": 29.84285874266292
+      },
+      "C": {
+        "count": 23423,
+        "mean_mm": 1.0502859792174988,
+        "RMS_mm": 2.807325614992688,
+        "median_mm": 0.13891179388690011,
+        "p95_mm": 5.902175844017373,
+        "maximum_mm": 29.84285874266292
+      }
+    }
+  },
+  "gates": [
+    {
+      "name": "harmful_override_reduction",
+      "actual": 0.16666666666666666,
+      "threshold": 0.5,
+      "scorable": true,
+      "passed": false,
+      "group": "performance"
+    },
+    {
+      "name": "useful_correction_retention",
+      "actual": 0.8979591836734694,
+      "threshold": 0.9,
+      "scorable": true,
+      "passed": false,
+      "group": "performance"
+    },
+    {
+      "name": "pooled_C_vs_A_error",
+      "actual": 0.0012380993041028049,
+      "threshold": 0.0,
+      "scorable": true,
+      "passed": false,
+      "group": "performance"
+    },
+    {
+      "name": "m100_B_C_vs_A_error",
+      "actual": 0.0002516989680342312,
+      "threshold": 0.001,
+      "scorable": true,
+      "passed": true,
+      "group": "performance"
+    },
+    {
+      "name": "p030_B_C_vs_A_error",
+      "actual": 0.002664890073284477,
+      "threshold": 0.001,
+      "scorable": true,
+      "passed": false,
+      "group": "performance"
+    },
+    {
+      "name": "p090_B_C_vs_A_error",
+      "actual": 0.0008780732563973903,
+      "threshold": 0.001,
+      "scorable": true,
+      "passed": true,
+      "group": "performance"
+    },
+    {
+      "name": "C_improves_native",
+      "actual": 0.011057507578021604,
+      "threshold": 0.0017589548734150196,
+      "scorable": true,
+      "passed": true,
+      "group": "performance"
+    },
+    {
+      "name": "point_RMS_mm_C_vs_native_m",
+      "actual": -0.0003264252768098155,
+      "threshold": 1e-09,
+      "scorable": true,
+      "passed": true,
+      "group": "performance"
+    },
+    {
+      "name": "point_p95_mm_C_vs_native_m",
+      "actual": -0.0014336849772759708,
+      "threshold": 1e-09,
+      "scorable": true,
+      "passed": true,
+      "group": "performance"
+    },
+    {
+      "name": "point_maximum_mm_C_vs_native_m",
+      "actual": 0.0029352165110844235,
+      "threshold": 1e-09,
+      "scorable": true,
+      "passed": false,
+      "group": "performance"
+    },
+    {
+      "name": "m100_B_oracle_geometry_compatibility",
+      "actual": 0.9986975774941391,
+      "threshold": 0.9,
+      "scorable": true,
+      "passed": true,
+      "group": "model_validity"
+    },
+    {
+      "name": "p030_B_oracle_geometry_compatibility",
+      "actual": 0.998814463544754,
+      "threshold": 0.9,
+      "scorable": true,
+      "passed": true,
+      "group": "model_validity"
+    },
+    {
+      "name": "p090_B_oracle_geometry_compatibility",
+      "actual": 0.993515945481011,
+      "threshold": 0.9,
+      "scorable": true,
+      "passed": true,
+      "group": "model_validity"
+    }
+  ],
+  "failed_gates": [
+    "harmful_override_reduction",
+    "useful_correction_retention",
+    "pooled_C_vs_A_error",
+    "p030_B_C_vs_A_error",
+    "point_maximum_mm_C_vs_native_m"
+  ],
+  "all_checks_pass": true,
+  "canonical_sha256": "dfea19648ba8dfeef9c3bde5daa202ee2f100f68be4a33ee7f5d58abe5b2f60c",
+  "scope": "Independent all fixed-window/paired-point/count/gate arithmetic and oracle geometry computation; no evaluator/new load helper import; no force calibration or control-benefit claim."
+}

@@ -1,0 +1,12 @@
+{
+  "iteration": "I-61",
+  "timing": "Before any historical joint-load residual computation",
+  "protocol_sha256": "102c8bde4e55883aba6b522a28a0a369c7e2eda47c9f7f309b452ef0d80a0a3c",
+  "source_api_mapping": {
+    "absolute_tolerance_Nm": "primary_veto.absolute_tolerance_Nm=0.03",
+    "relative_tolerance": "primary_veto.relative_force_lever_tolerance=0.1",
+    "radius_m": "primary_veto.radius_m=0.12",
+    "minimum_force_N": "Frozen I60candidate_search.minimum_compressive_force_N=1.0; require force magnitude>=1N in load-feature validity, already implied for I60 accepted proposals"
+  },
+  "clarification": "The sealed protocol has primary_veto, not load_gate; campaign source must map these explicit keys. No independent override dictionary or post-outcome threshold selection is allowed. Oracle points remain raw finite virtual points and bypass candidate material-surface validation."
+}
