@@ -3634,6 +3634,48 @@ all three starts and scientific plots are retained. Completion and initial
 extension eligibility remain distinct from final all-phase acceptance (false).
 [Record](docs/iterations/2026-11-26/balance-priority/README.md).
 
+## I-59 / 2026-11-26 / analyzed — retained startup-gain audit
+
+Question: do phase-specific ordinary LQR settings retained at startup materially
+explain why the three initial phases produce different trajectories? Source
+inspection alone only establishes a possible path: current terrain feedback
+overwrites its shaft row with the ordinary local design's row.
+
+Freeze protocol, sources and 30 input-file hashes before numerical outcomes.
+Use all six I-58 B/P traces, three starts -1/+0.3/+0.9 rad, 8,801 saved states
+each: saved Gazebo/DART Mars figure-eight, yaw 45°, caps [1.5,.6,.6 N m,.3,.3 m/s],
+source base 4ce407c with exact input/source hashes. Zero new Gazebo physics runs.
+At identical stored state, observer contacts,
+transformed error, references and history, swap only shaft row zero. Keep
+scheduled rows 1–4, feedforward, preparation targets/weights, heading and fade
+fixed. Trim-only and row+trim are separate secondary diagnostics. Propagate
+changes through dependent preparation/fade stages, then original native clipping.
+For P recordings this is a native-policy shadow, not a reoptimized final P input.
+Full/moving/goal and three event windows, 1e-10 numerical closure, absolute
+0.001 N m/0.0001 m/s and cap-normalized .001 resolutions are preregistered.
+
+All rows/trims are constant within traces and same-phase B/P coefficients are
+byte-exact. Across starts, largest shaft-row coefficient difference is
+5.6831e-8 and equilibrium trim difference 5.0397e-13 N m. Maximum row-only
+unfaded shaft-command effect across every state/anchor is 2.52744e-8 N m;
+shaft synchronization is zero, fade ≤1 and clipping cannot enlarge this bound.
+Full native reconstruction confirms only negligible effects under both fixed
+resolutions; maximum native-clipped row-only effect is 1.93331e-9 N m and all
+material counts are zero. Independent arithmetic agrees; zero intervention reproduces native
+request/applied bytes. No trajectory benefit or stability claim follows.
+
+This is a useful null result and corrects the earlier practical attribution:
+the startup design selection exists in source, but its retained shaft row/trim
+does not materially change commands at these recorded states. Do not change it
+as the next fix on this evidence. Initial physical configuration, current
+support scheduling and evolving state/reference history remain different;
+the first divergence among those paths is the next proposed target. Native
+LQR/observer/feedforward/preparation remain selected. Earlier mixed I-58 results
+and all-phase rejection remain unchanged. Source-filename/Python-path setup
+corrections and a source-line citation erratum are retained without runtime edits.
+
+[Record, scientific plots and portable replay](docs/iterations/2026-11-26/startup-anchor-audit/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

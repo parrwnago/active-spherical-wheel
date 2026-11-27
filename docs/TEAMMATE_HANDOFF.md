@@ -68,7 +68,18 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-58 tests balance priority with smoothing kept soft.** The new
+**Latest: I-59 does not support the retained startup-gain explanation.**
+An offline swap of the three startup shaft rows at identical states/errors in
+all six I-58 traces changes the native torque request by at most 2.52744e-8 N m.
+The equilibrium trim difference is only 5.0397e-13 N m. Both are negligible under
+the fixed engineering resolutions. The ordinary startup design is retained in
+source, but we should not use that fact to explain the visible trajectory
+differences. No new physics or runtime/default change. The next proposed target
+is the first divergence in current support, scheduled gains and evolving
+state/reference history, rather than changing the retained startup row.
+[Full I-59 audit and replay](iterations/2026-11-26/startup-anchor-audit/README.md).
+
+**I-58 tests balance priority with smoothing kept soft.** The new
 opt-in `BalancePriorityAllocator` retains total amplitude caps and exact
 native modeled transverse response; yaw/momentum penalties are disabled.
 Seven full 44 s runs complete. At -1 rad it passes the full screen, improving
@@ -144,6 +155,9 @@ hide a violent excursion during the route. Defaults remain unchanged.
 N changes **only the lookup angle in an existing flat-ground gain bank**.
 It does not redesign the dynamics, rotate every error/input frame, or establish
 terrain-wide stability. The ordinary local shaft-gain row remains anchored.
+I-59 subsequently measures that anchor's actual command effect as negligible
+for the three recorded starts; its retention alone is not an explanation of
+the trajectory differences.
 The lookup discards the carrier-frame normal's lateral component, although the
 full normal is still used elsewhere for lean and holding feedforward.
 
@@ -302,6 +316,9 @@ are the shorter current index. Useful checkpoints:
 - I-58: remove the optional hard rate box while keeping the soft costs; one
   lead succeeds but broader endpoint, turn and motion regressions prevent
   adoption. Native goal-hold and drive-reference behavior remain unresolved.
+- I-59: fixed-state swaps find negligible retained startup shaft-gain/trim
+  effects. This corrects an earlier practical hypothesis; mechanical and
+  current-support/reference-history paths remain unresolved.
 
 Historical `results/` links in archived iteration records may refer to ignored
 full datasets. Use this page's tracked media/report links first; a plain clone
@@ -322,6 +339,9 @@ existing allocator/model tests. Sixteen separate harness contracts, eight metric
 contracts and seven full trajectory runs have distinct scopes. Exact NumPy
 replay and independent audits verify the final results; the full repo suite was
 not rerun for this experiment.
+I-59 uses saved arrays only; six traces contain 52,806 correlated states, not
+additional robot trials or integration tests. Independent reconstruction and
+standalone replay validate the negligible command-effect finding.
 
 AI assistance: Codex helped implement experimental code, analyze logs and draft
 figures/documentation. The team supplied design direction and observations.

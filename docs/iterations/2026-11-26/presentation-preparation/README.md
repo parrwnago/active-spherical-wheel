@@ -4,6 +4,13 @@
 
 [Download the study guide PDF](control-and-observer-study-guide.pdf).
 
+For subsequent controller results and corrections, read the
+[current teammate guide](../../../TEAMMATE_HANDOFF.md) and the
+[I-59 startup-setting audit](../startup-anchor-audit/README.md). The PDF retains
+the I-47 explanation and evidence; I-59 finds negligible command differences
+from the three retained startup shaft rows, despite their phase-specific source
+selection.
+
 The user requested a complete explanation of the selected dynamics, LQR,
 feedforward, momentum observer, support estimator and active preview, plus an
 investigation of saturation, weak drive geometry, contact timing and turning.

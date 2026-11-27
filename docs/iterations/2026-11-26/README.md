@@ -1,5 +1,15 @@
 # Research presentation notes — 2026-11-26
 
+- **I-59 startup-feedback explanation tested; negligible effect:**
+  [record](startup-anchor-audit/README.md). Zero new physics runs; swap retained
+  shaft rows at every identical state/error/reference in all six I-58 B/P
+  traces. Maximum unfaded shaft change 2.52744e-8 N m, roughly 40,000 times
+  below the fixed .001 N m resolution; fade/clipping cannot enlarge it.
+  Trim changes are also negligible. Correct the earlier practical attribution
+  to different retained startup gains: source permits that path, actual designs
+  are almost identical. Investigate current support/gain/error/reference history
+  at the first divergence instead; no new cause or controller improvement is
+  established. Native LQR/defaults remain unchanged.
 - **I-58 balance priority before optional smoothing completed:**
   [record](balance-priority/README.md). Seven full 44 s runs; exact control
   reproduction. P restores nominal local balance response everywhere and

@@ -1,0 +1,194 @@
+{
+  "protocol": {
+    "iteration": "I-59",
+    "local_date": "2026-11-26",
+    "question": "At identical recorded states, estimated contacts, references and controller history, does the retained startup shaft-feedback row materially change the native controller request?",
+    "base_revision": "4ce407cb02ac329221bb555139b6b823eaf88485",
+    "new_physics_runs": 0,
+    "datasets": [
+      "m100_B",
+      "m100_P",
+      "p030_B",
+      "p030_P",
+      "p090_B",
+      "p090_P"
+    ],
+    "anchor_cases": [
+      "m100_B",
+      "p030_B",
+      "p090_B"
+    ],
+    "anchor_phases_rad": [
+      -1.0,
+      0.3,
+      0.9
+    ],
+    "primary": "Swap only feedback gain row zero; hold all other rows, stored errors and references fixed.",
+    "secondary": [
+      "Swap equilibrium command only",
+      "Swap shaft gain row and equilibrium command together; label diagnostic"
+    ],
+    "boundary": "Native requested and native amplitude-clipped command only. On B datasets this is the observed motor-input pipeline. On P datasets this is a native-policy shadow at recorded P states, not a reoptimized final P command.",
+    "frozen": [
+      "qpos",
+      "qvel",
+      "estimated contact, normal and load",
+      "reference and exact error",
+      "gain rows 1 through 4",
+      "rolling and support feedforward",
+      "heading command",
+      "synchronization targets and weights",
+      "unload fade factor",
+      "input bounds"
+    ],
+    "mapping": "delta_pre = delta_equilibrium - delta_K0_times_error; delta_request = diag(f,f,f,1,1) * (1-sync_weights) * delta_pre; counterfactual_native_applied = clip(original_native_request + delta_request, -bounds, bounds)",
+    "forbidden_shortcuts": [
+      "No reset or whole-design swap at saved states",
+      "Do not freeze additive transition/fade deltas when their input changes",
+      "Do not call P native-clipped counterfactual its final applied command",
+      "No inference of new trajectories or improved stability from fixed-state command differences"
+    ],
+    "windows_s": {
+      "full": [
+        0.0,
+        44.0
+      ],
+      "moving": [
+        1.0,
+        41.0
+      ],
+      "goal": [
+        41.0,
+        44.0
+      ]
+    },
+    "event_windows_s": {
+      "early_fixed": [
+        4.605,
+        5.105
+      ],
+      "late_fixed": [
+        35.675,
+        36.175
+      ],
+      "endpoint_fixed": [
+        43.75,
+        44.0
+      ]
+    },
+    "numerical_closure_max_abs": 1e-10,
+    "absolute_material_thresholds": [
+      0.001,
+      0.001,
+      0.001,
+      0.0001,
+      0.0001
+    ],
+    "normalized_material_threshold": 0.001,
+    "threshold_interpretation": "Report absolute-unit and cap-normalized engineering resolutions independently. These are not physical benefit or acceptance gates.",
+    "required_controls": [
+      "Hash inputs and source before outcomes",
+      "Validate dimensions, time grid, finite fields and caps",
+      "Check anchor row/trim within-trace constancy and B/P agreement",
+      "Record exact coefficient identity before tolerance comparisons",
+      "Recompose actual native request, clipping, LQR and recorded stages",
+      "Actual-anchor swap must reproduce actual native output",
+      "Use exact_native_clipping_command_delta rather than final P clipping delta",
+      "Handle float32-only fade as below",
+      "Independently reproduce key arithmetic and outcome classifications"
+    ],
+    "fade_handling": "Recover fade from exact pre-fade request, exact fade delta and exact state/reference damping where identifiable; close all torque components and confirm float32 recording consistency. If unidentifiable, retain and propagate the float32 rounding interval; never label rounded telemetry exact. Report counts and counterfactual uncertainty.",
+    "null_result": "A zero or below-resolution anchor effect is a valid result. If found, correct the earlier practical attribution to retained startup gains; the phase dependence of complete physical runs remains real but mechanically/history confounded.",
+    "required_outputs": [
+      "Full-rate compact inputs and counterfactual derivatives",
+      "Coefficient identity/difference table",
+      "Raw and clipped command differences by fixed window",
+      "Clipping exposure and masked changes",
+      "Fixed event contributions",
+      "Scientific plots",
+      "Immutable source and input manifests",
+      "Replay command",
+      "Honest limitation and next diagnostic"
+    ]
+  },
+  "cases": {
+    "m100_B": {
+      "npz": "inputs/m100_B.npz",
+      "json": "inputs/m100_B.json"
+    },
+    "m100_P": {
+      "npz": "inputs/m100_P.npz",
+      "json": "inputs/m100_P.json"
+    },
+    "p030_B": {
+      "npz": "inputs/p030_B.npz",
+      "json": "inputs/p030_B.json"
+    },
+    "p030_P": {
+      "npz": "inputs/p030_P.npz",
+      "json": "inputs/p030_P.json"
+    },
+    "p090_B": {
+      "npz": "inputs/p090_B.npz",
+      "json": "inputs/p090_B.json"
+    },
+    "p090_P": {
+      "npz": "inputs/p090_P.npz",
+      "json": "inputs/p090_P.json"
+    }
+  },
+  "files": [
+    {
+      "path": "inputs/m100_B.npz",
+      "sha256": "becef9b0cc4b95eeda4fcb951eca88a2d30f394d30f4d0851564aa6ed47eb093"
+    },
+    {
+      "path": "inputs/m100_B.json",
+      "sha256": "10f33f6f93f47371661de060ecf6c8004b341eeb86a2b16f17e70227ea1f3cc4"
+    },
+    {
+      "path": "inputs/m100_P.npz",
+      "sha256": "a1a0e9a21a368444f3c41f2e6f206149091d80be115eeb484ddee03fbacbb6db"
+    },
+    {
+      "path": "inputs/m100_P.json",
+      "sha256": "664cf925e58cf28704554c944f0acd1d27fad869b1ac45823356376c71ac70a5"
+    },
+    {
+      "path": "inputs/p030_B.npz",
+      "sha256": "b7cbec544c2dd1e30f31457da3bd76a7b888cdc87bab3e3e4469f80a9e9b0411"
+    },
+    {
+      "path": "inputs/p030_B.json",
+      "sha256": "6b1462b1b951a1a45f38a915b37e1d6d9c829f5256984736030811e824e22864"
+    },
+    {
+      "path": "inputs/p030_P.npz",
+      "sha256": "66ce0349fddff6eb423abc17f68d4db7deee364f6af307b4675ef80f43548443"
+    },
+    {
+      "path": "inputs/p030_P.json",
+      "sha256": "e07c050bde4825327f0a90ca658d8f4fb42cf663343f3f8d87301c7283f5541b"
+    },
+    {
+      "path": "inputs/p090_B.npz",
+      "sha256": "a5538953d46ef0a8dad898debb4e6dece9fee95c7ef3df88a13d0d44be2de1f6"
+    },
+    {
+      "path": "inputs/p090_B.json",
+      "sha256": "1a8620db8836449500fa6759381494994b8f0fa2b4e33d7761aa41857125031f"
+    },
+    {
+      "path": "inputs/p090_P.npz",
+      "sha256": "c2740493a549303fcfc6d73ee9ecd7c7e2f4c956588ec0cb2edeb72190916fef"
+    },
+    {
+      "path": "inputs/p090_P.json",
+      "sha256": "b73460a6c898d51103a8a253592d3af3e10e58cefa5e99b745bf183230769f40"
+    },
+    {
+      "path": "source/native_pipeline.py",
+      "sha256": "d882e93e50d1533015ff0387d8277db572f73d8fbbf5c7ca5cbe3e9a3bc56d73"
+    }
+  ]
+}
