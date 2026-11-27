@@ -1,0 +1,83 @@
+{
+  "iteration": "I-64",
+  "case": "m100_B",
+  "registered_utc": "2026-11-27T08:19:20.908486+00:00",
+  "sources_and_inputs": [
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_load_history_20261127/features/extract_features.py",
+      "sha256": "95e637c94b2906942d95651e017e9070b11d977bce07d61f871b81bc0410f967"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_load_history_20261127/features/history_features.py",
+      "sha256": "50d310f35cc98bb35e3132e8d7705ad6d654fcb5eb82483bcf8c936f58daa67a"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_load_history_20261127/protocol/protocol.json",
+      "sha256": "94b6409225cbccc3c6577f6c93c7916e65b14237064e89d83b86e1b4546e05ca"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_load_history_20261127/protocol/input_source_seal.json",
+      "sha256": "5e50938cda66a7f64a842b481d43804c08da9dd4a2e64a97b5137b79f714c813"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/measurement_context.npz",
+      "sha256": "fe350974c33f5d62304af8372aa9c1ecb1a57e7aca26fa4ccc369487689f617e"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_load_consistency_20261127/campaign/features_stage01/m100_B/load_features_and_policies.npz",
+      "sha256": "6ea4401a55c87b38dec2efa2ae8ba9f2116440f14b26c9a33e1d6dd49da2d329"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/runs/m100_B/provenance.json",
+      "sha256": "4842e1695776ba873182062845f6fc9649403d861efecb5b0400553be54ad51c"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/_workspaces/m100_B/worker_471546/mirror/model.xml",
+      "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/src/spherical_wheel/contact_load_consistency.py",
+      "sha256": "af6a1c52a2ac9ce459d2a8b810a82234eddbdda358384742f16047a31902fc9c"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/source/contact_hypotheses.py",
+      "sha256": "c0995d4acb268c73e834c488514aa9f34cd2b3d57aca516c63a394429b93f532"
+    }
+  ],
+  "allowed_context_fields": [
+    "time_s",
+    "exact_qpos",
+    "exact_observer_generalized",
+    "exact_observer_interval_mean"
+  ],
+  "allowed_i61_fields": [
+    "time_s",
+    "proposed_family",
+    "native_family",
+    "proposed_candidate_index",
+    "native_candidate_index",
+    "i60_accepted",
+    "proposed_point_m",
+    "native_alternative_point_m",
+    "native_point_m",
+    "N_family",
+    "A_family",
+    "A_point_m",
+    "proposed__residual",
+    "proposed__valid",
+    "native_alternative__residual",
+    "native_alternative__valid",
+    "C_uses_proposal"
+  ],
+  "truth_fields_read": [],
+  "constants": {
+    "cutoff_rad_s": 100.0,
+    "warmup_s": 0.2,
+    "sample_period_s": 0.005,
+    "time_tolerance_s": 1e-09
+  },
+  "history": "Frozen inferred A and separate native-equivalent shadow paths. Observed seeds,200ms warmup; current alternatives never modify prior history.",
+  "geometry": "Endpoint only: frozen F and physical native alternative plus unprojected virtual native equivalent.",
+  "new_physics_steps": 0,
+  "live_controller_changed": false
+}

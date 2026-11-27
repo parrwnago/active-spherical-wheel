@@ -3920,6 +3920,76 @@ only; its empty log does not contain the ROS plugin error's original stderr.
 The correction receipt records the failure; README now states that limitation.
 [I-63 record, plots and reproduction](docs/iterations/2026-11-27/contact-condition-diagnostic/README.md).
 
+## I-64 — matching predicted and observed load windows (2026-11-27)
+
+Status: **implemented, replayed, analyzed; model improvement retained as a
+diagnostic, contact veto rejected**. The user approved testing whether timing
+consistency improves the contact-load check. Use the same three native I-58
+Gazebo/DART Mars figure-eight logs, shaft -1/+.3/+.9 rad, yaw 45°, unchanged
+caps/model. Native LQR, momentum observer, rolling/holding feedforward and
+120 ms preparation stay selected. No new physics or threshold optimization.
+
+Before numerical work seal 337 original input/model/source files, protocol
+and eight scientific sources. Extract endpoint joint-force maps at original
+I-61 F, native physical alternative and unprojected native-equivalent points.
+Use raw interval force once, not an already filtered force. M0 is original
+instantaneous H*filteredF; M1 is raw interval H*rawF; primary M2 uses the same
+observer recurrence with one frozen-A predicted history and current branches;
+M3 is native-equivalent history sensitivity only. Current candidates never
+rewrite the past or feed back into the anchor. Seed observed joint load once,
+exclude 200 ms warmup; invalid history/gaps reset. Full9 observer recurrence,
+one-step scaled-raw identity and inherited/current decomposition are controls.
+Endpoint geometry is an interval approximation, not true force/contact history.
+
+All three 8,801-state inference packets sealed before labels. Primary [1,41)
+retains 23,423 dominant-support rows and 6,902 accepted proposals, all scorable;
+all 6 harmful/18 accepted-wrong/worst-point events retained. Episodes already
+examined: retrospective diagnosis, not unseen validation. Truth and past50ms
+family-correct masks are evaluation-only, never inferred history.
+
+Q1 model-consistency PASS on identical 6,884 accepted correct-family frames:
+joint-vector RMS .0582828→.0372067 N m (36.2% lower), p95 .135488→.0714135;
+all three starting-phase RMS values improve. Shaft channel supplies much of
+the gain; shell channels are not uniformly better in every phase. Q2 current
+family discrimination FAIL: useful correct preferences 212→243/294, harmful
+correct preferences 2→1/6, no ties/unknown/near-ties. At 35.205 s wrong F still
+scores below native physical alternative under M0, M1 and M2; raw M1 rejects
+F only because both residuals are high. No unique physical cause established.
+
+Fixed unchanged .03+.10 R norm(filtered F) shadow gates: A has 124 errors,
+6 harmful changes and 294 useful corrections. M0: 153/5/264; M1: 132/3/283
+(maximum point discrepancy 26.908 mm); M2: 128/6/290; M3: 128/6/290.
+M2 point maximum remains 29.843 mm. A post-result row-set check confirms all
+30 old useful rejections are restored, with four different new rejections:
++0.3 rad at 14.415 s; +0.9 rad at 17.530, 17.770 and 24.955 s. This is a net
+26 fewer false rejections, while losing the one old harmful rejection.
+All four shadows fail unchanged I-62 gates; no posthoc M1 promotion,
+no current-controller changes or physical trajectory gain claimed.
+
+Nineteen feature and fourteen separate analysis contracts pass inclusive of
+development stages. Gap reconstruction control corrected before historical
+arithmetic; previous source retained. Producer NumPy 1.26.4 reproduces 228
+feature and 594 analysis arrays exactly. Independent 77407 recurrence/history
+implementation matches masks/counts/preferences/Q1/Q2/shadow metrics; score
+differences <=8.89e-16. System 1.21.5 strict byte comparison fails 84 feature
+float arrays; preserved local full-pointwise audit measures <=1.11e-16 N m
+and <=1.26e-12 auxiliary norm-share difference. Scientific source unchanged.
+
+Separate sealed verification v2 preserves the strict failure, reconstructs
+fresh arrays, checks 36 exact per-frame decision arrays plus structures,
+integer/bool/nonfinite patterns and scientific summaries within preregistered
+units. Archive-isolated system replay passes while reporting nonexact float
+bytes and no portable pointwise floating bounds; hashes cannot prove closeness
+when different. No reported value is replaced. Compact archive keeps 9.97 MB
+cached primitives, bindings, sources, reports and 11 event windows; large
+derived tables and independent duplicate arrays remain local with hashes.
+
+Decision: retain matching filter history for model-consistency diagnosis;
+do not introduce its load veto into the velocity estimator. Remaining current
+contact ambiguity, candidate geometry and within-interval load distribution
+need separate investigation. Preserve the partial success for presentation.
+[Record, plots and reproduction](docs/iterations/2026-11-27/contact-load-history/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

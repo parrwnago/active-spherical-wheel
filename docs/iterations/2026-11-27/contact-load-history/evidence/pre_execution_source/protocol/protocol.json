@@ -1,0 +1,124 @@
+{
+  "iteration": "I-64",
+  "date_local": "2026-11-27",
+  "status": "registered_before_new_history_arithmetic",
+  "source_commit": "31c339097cf82a778bd90321a8033673a7ed79b6",
+  "question": "Does comparing candidate-predicted and observer joint loads over the same causal filtering window improve model consistency and current contact discrimination?",
+  "scope": "Existing-log diagnostic only. No live LQR/observer/feedforward/preparation change, threshold optimization, candidate reranking, new trajectory/physics episode, or automatic estimator adoption.",
+  "prior_inspection": "All three original histories and I60-I63 errors are already known. This is retrospective internal comparison, not unseen validation.",
+  "cases": [
+    "m100_B",
+    "p030_B",
+    "p090_B"
+  ],
+  "original_campaign": "I-58 native gain-scheduled LQR Gazebo/DART Mars figure-eight; initial common shaft -1.0,+0.3,+0.9 rad, yaw 45 deg, command caps [1.5,0.6,0.6 N m,0.3,0.3 m/s]. Existing exact 5 ms state and prior applied input used by I-60/I-61.",
+  "primary_mask": "1 <= time_s < 41, total truth normal load >=1 N, unique dominant family >=90% total load; fixed I-61 eligible mask. Dominant support is not strict single contact.",
+  "point_mask": "Primary mask AND finite N point, finite A point (accepted proposal else N), and finite truth equivalent point. Fixed for every parameter and policy; never restrict distance metrics to retained proposals. Unaccepted raw proposals do not exclude a valid native fallback. Distances in mm to truth equivalent point.",
+  "information_boundary": "Kinematic maps use saved exact simulated q, frozen I61 points/families and known model. Loads are raw interval_mean and filtered observer generalized vectors. No solver contacts, true force, true family/history, terrain or future data enter inference. Solved truth is evaluation only.",
+  "endpoint_maps": {
+    "HF": "J_point(q_t,p_F_t,family_F_t)[:,6:9].T using original I61 physical proposal point/family; no new best-candidate selection.",
+    "HNalt": "Same map for original I61 best physical candidate within native family. Primary paired current alternative.",
+    "HNeq": "Same map assigned to native family at original native equivalent point; arbitrary virtual point allowed, with separate physical-band flag. Used for native fallback/anchor history, not confused with physical Nalt.",
+    "HA": "Frozen I60 accepted? HF : HNeq. This is an offline causal shadow path on native-controller motion, not the historically actuated contact routing.",
+    "validity": "Invalid point, family, pose or map explicit. An invalid alternative branch never resets a valid committed path."
+  },
+  "interval_geometry_assumption": "Hold current endpoint H over preceding5ms for each raw interval prediction. This is causal retrodiction available at interval end, not prediction made at interval start. Rolling contacts may migrate within the interval; no midpoint or half-interval contact-switch assumption is added. Exact HF-force covariance is unavailable from these snapshots.",
+  "observer_recurrence": {
+    "cutoff_rad_s": 100.0,
+    "nominal_dt_s": 0.005,
+    "time_tolerance_s": 1e-09,
+    "lambda": "exp(-100*dt)",
+    "alpha": "1-lambda",
+    "update": "gamma_t = gamma_prev + alpha*(interval_mean_t-gamma_prev)",
+    "frames": "Raw force/world and moment/world use original observer midpoint-frame convention; last3 joint scalar torques remain in joint coordinates. Only last3 are scoring components.",
+    "verification": "Reconstruct filtered9 from same initial observed gamma0 and raw means using the identical operation order, then compare all9 channels. First3 force rows of a point prediction reproduce total force by construction, not independent model evidence."
+  },
+  "history_rules": {
+    "anchors": [
+      "A primary",
+      "N_eq sensitivity only"
+    ],
+    "initialization": "At first valid committed-path state seed predicted joint history once from measured filtered gamma_joint. Ignore that seed interval for model scoring.",
+    "warmup_s": 0.2,
+    "warmup_tolerance_s": 1e-09,
+    "seed_memory": "20 time constants, exp(-20). Track exact elapsed valid history/seed weight, do not treat initialization as model agreement.",
+    "invalid": "Invalid committed H, raw interval force, required observed state or nonadjacent time breaks the history. A gap row is unscorable; next adjacent valid row reseeds once, then requires another200ms contiguous history. Never zero-fill or carry across invalid intervals.",
+    "counterfactual": "At current t use the COMMITTED predicted history from t-1 plus current HF or HNalt raw-force increment. After scoring commit HA for A history or HNeq for N history, regardless of scores/vetoes. Never overwrite the past with todays family, and never let a new diagnostic decision change the anchor path.",
+    "alternative_missing": "A missing HF/HNalt branch only makes that branch/pair unknown; anchor updates continue if its own HA/HNeq is valid.",
+    "observation_valid": "All9 raw and filtered observer components finite, norm(FILTERED_F)>=1N, finite strictly increasing timestamps; low observed load also breaks the history and restarts200mswarmup. Observer recurrence verification itself still covers all finite channels, without this scoring load floor.",
+    "decomposition": "For each branch check eM2=lambda*(observed_gamma_joint_prev-predicted_anchor_prev)+alpha*(raw_interval_joint-Hbranch*raw_interval_F). Report inherited/current terms, normshares and cancellation. Current alternative validity does not reset committed path."
+  },
+  "models": {
+    "M0": "Original instantaneous Hcurrent*FILTERED_F_t compared with filtered_gamma_joint_t; old I61 control.",
+    "M1": "Same Hcurrent*RAW_interval_F_t compared with raw_interval_joint_t; endpoint interval approximation, no extra filtering.",
+    "M2": "Primary matched history. raw_prediction_c=Hc_t*RAW_interval_F_t; filtered_branch_c=predA_prev+alpha*(raw_prediction_c-predA_prev); compare with filtered_gamma_joint_t. Commit frozen HA separately.",
+    "M3": "Identical current branch calculation with native-equivalent committed prior, sensitivity control only; never selected as preferred method after outcomes.",
+    "identity_control": "Observed-prior one-step branch uses observed_gamma_joint_prev+alpha*(Hcurrent*RAW_interval_F_t-observed_gamma_joint_prev). Its residual must equal alpha*M1 residual; smaller magnitude here is algebraic rescaling, not historical inference or improved detection."
+  },
+  "normalization": "Keep old .03 Nm + .10 R*norm(FILTERED_F) as identical fixed scale for every model score/gate. Retain raw Nm vectors. Do not change scale to raw force in M1/M2.",
+  "diagnostic_groups": {
+    "primary": "All original primary states and all6902 accepted proposals; unknown rows remain counted.",
+    "family_correct": "Current accepted I60 F proposal has dominant truth family (known6884 of6902); family correctness is necessary, not proof point/load model is exact.",
+    "history_family_correct": "Evaluation-only secondary subset: every A family matches a valid dominant truth family over previous50ms including current sample. Never used for history initialization or inference.",
+    "useful": "Native wrong, accepted proposal correct (294 knownframes).",
+    "harmful": "Native correct, accepted proposal wrong (6 knownframes).",
+    "accepted_wrong": "All18 accepted wrong proposals, including12 where native also wrong.",
+    "point_outliers": "All A point errors above native pooled maximum, plus per-phase maxima and the old99 useful-witness set.",
+    "contact_qualification": "Dominant>=90% allows weaker contributors; sampled last-substep truth does not identify actual5ms force/contact history."
+  },
+  "model_consistency_qualification": {
+    "primary_contrast": "M2 vs M0 on SAME paired finite warmed current-family-correct accepted frames. Filtering M1 noise is not an independent success criterion.",
+    "coverage_min": 0.99,
+    "coverage_denominators": [
+      "all primary states",
+      "all accepted primary proposals"
+    ],
+    "critical_events": "Every6 harmful,18accepted-wrong and pooled unsafe-point row must be scorable for a qualified positive conclusion. Report unknown coverage separately even if gate fails.",
+    "minimum_pooled_vector_RMS_reduction_fraction": 0.1,
+    "vector_RMS": "sqrt(mean(sum(extra_joint_residual_Nm**2,axis=1)))",
+    "pooled_vector_p95_nonincrease": true,
+    "each_phase_vector_RMS_nonincrease": true,
+    "roundoff_allowance_Nm": 1e-10,
+    "secondary": "Per-joint RMS, maxabs residual percentiles, compatibility at unchanged tolerance, inherited-history term and current-increment decomposition, raw-to-filtered residual identity; report full unknown/fallback counts.",
+    "coverage_definition": "Require paired M0_F_valid AND warmed M2_F_valid, not merely finite prediction or seed residual. Critical-event scorable gate uses F branch; paired-discrimination unknown Nalt is separately reported and counts incorrect in full denominators."
+  },
+  "current_branch_discrimination": {
+    "alternative": "HF vs HNalt from same prior for M2/M3; point alternatives frozen. N_eq is separate virtual anchor.",
+    "score": "max(abs(extra_joint_residual_Nm))/(.03+.10R*norm(FILTERED_F))",
+    "tie_epsilon_dimensionless": 1e-09,
+    "correct": "Useful group prefers F; harmful group prefers Nalt. Other12 accepted-wrong may have neither candidate correct. Ties/unknowns are reported and count as not correctly discriminated on full group denominators.",
+    "promising_criterion": "M2 correctly prefers Nalt on at least3of6 harmful and F on at least90%of294 useful; neither correct count decreases vsM0, and at least one current-branch decision improves. IfM0 already correctly ranks all6harmful, retain all6 and improve useful decisions. This is retrospective diagnostic promise, not deployment qualification.",
+    "count_comparison": "Correct counts must not decrease in either H or U, and their combined correct count must strictly increase. Mere row swaps with unchanged counts do not qualify. If M0 already has all6H correct, retain6 and increase useful correct count."
+  },
+  "shadow_policy_control": {
+    "gate": "Apply unchanged .03+.10R*norm(FILTERED_F) component bound to current F residual for each model; accepted proposal passes else native fallback. Unknown warmed-history score retains A (no extra veto) with explicit unknown counter; invalid current F maps retain original unknown semantics.",
+    "classification_and_points": "All original primary states and fixed common finite point mask, including unknown/native fallbacks; no selection-only metric denominator.",
+    "performance_gates": "Report all unchanged I62 gates, separately from model-consistency and paired discrimination; no residual-only success claim.",
+    "history": "Even shadow-veto outcomes never change committed A/N history.",
+    "unknown_precedence": "Invalid current HF/map =>N fallback with original unknown semantics. Valid current HF but unavailable warmed history =>A (no extra veto). Never silently accept an invalid map or omit unknown rows."
+  },
+  "events": "Report frames and contiguous5ms eventclusters separately. Fixed +/-100ms windows around every harmful cluster, each phase worst A point, old7.875s useful example ifinprimary, and per-phasefirst useful. Future plotted observations are context only; all models causal.",
+  "acceptance_and_next": "Complete model diagnostic regardless of outcome. No threshold tuning or live deployment in this iteration. Reduced model residual without improved discrimination does not establish a better contact estimator or explain trajectory drift. Any fresh episode/integration is future work with a separately frozen model.",
+  "replay": "Preserve source/input hashes before new map/history arithmetic; all3 truth-blind feature packets sealed before labels evaluated. Portable cached H/raw/filtered/prior flags + NumPy replay, independent recurrence/history/ranking check. Record all corrections and version differences without replacing reported values.",
+  "numeric_verification": {
+    "observer_recurrence_force_N_atol": 1e-10,
+    "observer_recurrence_moment_and_joint_Nm_atol": 1e-10,
+    "H_times_force_I61_Nm_atol": 1e-10,
+    "history_algebra_identity_Nm_atol": 1e-10,
+    "independent_joint_predictions_Nm_atol": 1e-09,
+    "score_comparison_atol": 1e-08,
+    "masks_counts_decisions": "Exact except explicit1e-9dimensionless tie classification; report actual floating differences and any near-tie robust counts, never normalize values."
+  },
+  "training_gates": {
+    "harmful_removal_fraction_min": 0.5,
+    "useful_retention_fraction_min": 0.9,
+    "pooled_family_errors_max": "A errors on identical training states",
+    "each_phase_error_rate_excess_over_A_max": 0.001,
+    "each_phase_harmful_count_max": "A harmful count on same phase",
+    "pooled_point_RMS_max": "A",
+    "pooled_point_p95_max": "A",
+    "pooled_point_maximum_max": "N",
+    "point_comparison_roundoff_allowance_mm": 1e-12,
+    "retained_proposal_count_min": 1
+  }
+}

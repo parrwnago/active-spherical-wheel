@@ -68,7 +68,21 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-63 tests observable conditions for a dynamic tolerance.** The
+**Latest: I-64 matches predicted and observed load histories.** Use raw interval
+force once, frozen past contact estimates and the observer's same filter.
+On 6,884 accepted correct-family frames, load-vector RMS falls 36.2%,
+0.05828→0.03721 N m, with improvement at every start. All model-consistency
+gates pass. This is a useful correction to how load hypotheses are compared.
+
+Current-family discrimination still fails: useful correct preferences improve
+212→243/294, but harmful correct preferences drop 2→1/6. The fixed matched
+veto loses four useful corrections instead of 30, yet prevents none of six
+harmful overrides; it has 128 errors versus offline A's 124. No load veto is
+adopted. Keep the live LQR, observer, feedforward and preparation selected.
+[Full I-64 record, comparison and eleven event windows](iterations/2026-11-27/contact-load-history/README.md).
+This is saved-log diagnosis, not improved physical tracking or a new drive run.
+
+**I-63 tests observable conditions for a dynamic tolerance.** The
 new score uses only current/past observer changes and known shell–belt seam
 geometry. It is high on all six harmful overrides as well as many useful
 corrections. The worst bad point itself looks transition-risky. An exact bound

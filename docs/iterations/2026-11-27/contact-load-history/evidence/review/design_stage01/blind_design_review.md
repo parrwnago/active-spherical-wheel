@@ -1,0 +1,17 @@
+# I-64 blind design advice
+
+This advice precedes new I-64 history-feature arithmetic. I-60 through I-63 results are already known. It is not an executed experiment or the final root protocol.
+
+The observer interval_mean at timestamp i estimates the external generalized load over the preceding interval. Its filtered output is gamma_i = exp(-100 dt) gamma_(i-1) + (1-exp(-100 dt)) interval_mean_i. Comparing that output against an instantaneous Jacobian acting on an already filtered force can mix histories. The authorized next step should remain a model/timing diagnostic without threshold fitting or live veto changes.
+
+Use the frozen native N and accepted-proposal-else-native A sequences. Predict each past interval using its raw interval-mean force, an explicit contact-point/family hold, and known geometry. Filter that sequence using exactly the observer recurrence. Never double-filter the force and never apply the current hypothesis across the entire past filter history. A filtered-history fit supports an explanation of past loads, not proof of the current contact.
+
+An endpoint contact hypothesis only becomes available at interval end. Holding its body-frame material point over the preceding 5ms is a causal retrodiction available now, not a forecast made 5ms ago; the actual rolling contact may migrate. State that approximation. Current and midpoint geometry must be separated from temporal matching: a useful primary ablation holds the chosen interval prediction fixed and compares raw versus identically filtered predictions. The old current-geometry/filtered-force I-61 residual remains a baseline. A fixed midpoint-geometry variant may be secondary, so apparent improvement cannot be silently attributed to timing if geometry, force source and history all changed at once.
+
+Gate only extra-joint residual rows6:9. First3 force rows match by construction under identical filtering/initialization; full9 is diagnostic. Point-derived base moments are also correlated with the same observer information, not independent sensors.
+
+Suggested qualification, for root to select before arithmetic: fixed original [1,41) masks; paired valid warmed frames with at least99% coverage, and explicit coverage of all harmful/accepted-wrong/unsafe-point examples. On an evaluation-only family-correct subset, require a fixed meaningful extra3 RMS reduction such as10%, reduced P95, and no per-phase RMS regression. Report the complete eligible subset and harmful/useful overlap regardless. This is a diagnostic quality check and does not qualify a controller or a new veto. The exact final criterion must be chosen before seeing new outcomes.
+
+All variants need the same explicit initialization. Measured gamma initialization can be used only with a predeclared warmup, e.g.5 observer time constants=50ms; report/reset warmup after every invalid interval rather than silently skipping it. Unknown histories remain visible in denominators and event coverage. Do not exclude difficult transitions without reporting coverage loss.
+
+Oracle contact histories/forces must be separate evaluation only and cannot enter the truth-blind features. A last-substep contact record is not a 5ms interval truth history. Unless all contact substeps were archived, describe an oracle endpoint geometry approximation as such; do not claim exact generalized-load calibration or a true-force ceiling. No new physics is authorized by this diagnostic advice.

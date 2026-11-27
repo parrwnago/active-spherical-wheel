@@ -1,5 +1,28 @@
 # Research presentation notes — 2026-11-27
 
+**I-64: matching load history improves model consistency, not the contact veto.**
+[Full record](contact-load-history/README.md),
+[comparison PDF](contact-load-history/evidence/analysis/plots_stage01/load_history_comparison.pdf)
+and [eleven event windows](contact-load-history/evidence/analysis/plots_stage01/event_windows.pdf).
+
+- Predict joint load from the observer's raw interval force and frozen causal
+  contact history, then apply the same 100 rad/s filter. Preserve endpoint
+  geometry as an approximation and exclude 200 ms after a history reset.
+- On 6,884 identical accepted correct-family frames, vector RMS improves
+  0.05828→0.03721 N m (36.2%); p95 0.13549→0.07141. Every starting phase
+  improves and all critical events remain scorable. Model-consistency Q1 passes.
+- Current-family Q2 fails: useful correct preferences 212→243/294, harmful
+  correct preferences 2→1/6. Smaller mismatch does not establish the family.
+- The matched fixed veto yields 128 errors versus A's 124. It discards four
+  useful corrections instead of 30, but prevents none of six harmful changes.
+  All fixed shadow policies fail; native LQR/observer/feedforward remains live.
+- No new driving, threshold fitting or physical tracking improvement. Preserve
+  this partial success and separate load-model validation from contact choice.
+- Nineteen feature and fourteen separate analysis contracts pass. Producer
+  replay is byte-exact; independent computations agree. Cross-version raw float
+  bytes differ by tiny amounts, so portable v2 verifies exact decisions and
+  bounded summary statistics with explicit limits, without replacing values.
+
 **I-63: observable transition conditions do not rescue the tested load check.**
 [Full record](contact-condition-diagnostic/README.md),
 [overview PDF](contact-condition-diagnostic/evidence/analysis/plots_stage01/condition_diagnostic.pdf)
