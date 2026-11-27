@@ -68,7 +68,22 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-62 completes the requested tolerance tuning.** A shared 3,721-pair
+**Latest: I-63 tests observable conditions for a dynamic tolerance.** The
+new score uses only current/past observer changes and known shell–belt seam
+geometry. It is high on all six harmful overrides as well as many useful
+corrections. The worst bad point itself looks transition-risky. An exact bound
+still forces 99 useful losses to reject it for the tested nonnegative affine
+allowance; no adaptive schedule is fitted and no new driving episode runs.
+These are available uncertainty clues, not contact-identity measurements.
+
+All primary risk values are known, independent arithmetic agrees, and the
+archived NumPy replay is exact across the two tested versions. Keep the native
+LQR/observer/feedforward/preparation selected. The next proposed diagnostic is
+to compare candidate load histories with matching observer filtering/timing.
+[Full I-63 record and annotated event plots](iterations/2026-11-27/contact-condition-diagnostic/README.md).
+This excludes the specified rule, not every dynamic threshold or the I-60 idea.
+
+**I-62 completes the requested tolerance tuning.** A shared 3,721-pair
 grid on the same three starts finds no qualified setting in any training fold
 or the full-data fit. The best label-only witness improves 124→123 errors but
 retains the 29.84 mm point peak. Preventing at least half of six harmful changes

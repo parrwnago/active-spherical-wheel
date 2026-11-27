@@ -1,0 +1,149 @@
+{
+  "iteration": "I-63",
+  "date_local": "2026-11-27",
+  "status": "registered_before_condition_feature_arithmetic",
+  "source_commit": "6613e9d8c19f67f3cbb94b7ec8f518b26bd00721",
+  "question": "Can observable causal conditions make a joint-load tolerance more selective than the rejected shared force-scaled rule?",
+  "authorization_scope": "Existing-log condition diagnosis first. A predeclared tiny adaptive schedule is tested offline only if the primary necessary-condition audit does not exclude its class. Live LQR/observer/feedforward/preparation unchanged. No runtime/controller implementation.",
+  "prior_inspection": "All three I58/I60-I62 episodes and previous errors were already inspected. All fitting/folds on these episodes are retrospective internal assessment, not unseen validation.",
+  "cases": [
+    "m100_B",
+    "p030_B",
+    "p090_B"
+  ],
+  "original_campaign": "I-58 native gain-scheduled LQR Gazebo/DART Mars figure-eight; initial common shaft -1.0,+0.3,+0.9 rad, yaw 45 deg, command caps [1.5,0.6,0.6 N m,0.3,0.3 m/s]. Existing exact 5 ms state and prior applied input used by I-60/I-61.",
+  "information_boundary": "Inference features use exact simulated body/joint state, raw observer intrinsic normal, observer filtered/last-interval generalized loads, known patch geometry and past timestamps. No solver contacts, true slip, true load shares/counts, terrain, native support identity, proposed candidate identity, eventual future winner, or future-frame filtering.",
+  "feature_primitive_inputs": [
+    "time_s",
+    "observer_generalized9",
+    "observer_interval_mean9",
+    "raw_intrinsic_normal3",
+    "signed_patch_axes_world4x3 from private current-pose kinematics",
+    "known shell/belt polar seam coordinates4",
+    "radius_m"
+  ],
+  "feature_diagnostics": [
+    "L2 joint/force/moment innovations normalized by R*norm(F) or norm(F)",
+    "four axial seam offsets/distances and past approach rates",
+    "four spherical surface arclength offsets and past rates",
+    "motion diagnostics from saved qdot if exported, not primary-rule inputs"
+  ],
+  "primary_risk": {
+    "force_valid": "Finite observed norm(F)>=1N; same-time interval_mean and filtered vector, all nine finite. These are inferred loads; interval ends at current logged state, not a computation-delay measurement.",
+    "u": "clip(max(abs(interval_mean[6:9]-generalized[6:9])) / (0.03 Nm + 0.10*R*norm(F)), 0, 1)",
+    "geometry": "Normalize raw intrinsic normal; for each known patch k use signed unit body x axis and offset -R*n to compute z_k. Polar seam coordinate is shell upper or belt lower, never the equatorial rim/gap boundary.",
+    "h": "R*(acos(clip(z_k/R,-1,1))-acos(polar_seam_k/R)), signed surface arclength; positive equatorial side, negative polar side.",
+    "hdot": "Backward difference separately for each signed arclength h_k, using only immediately preceding adjacent 5ms (+/-1e-9s) state with valid geometry. First/missing predecessor invalid. Do not differentiate nearest distance or use centered differences.",
+    "s": "max over four seams of clip(1-abs(h_k)/(0.012m+0.12s*abs(hdot_k)),0,1)",
+    "r": "max(u,s); valid only observer signal and all current/preceding seam geometry/rates valid. Unknown stays NaN plus validity flag.",
+    "scales": "Fixed engineering scales from I61 normalization and existing 12mm/120ms preparation. Not fitted noise statistics or calibrated probabilities. Arccos clipping is numerical protection; rate is a causal diagnostic, not predicted touchdown.",
+    "correlation": "u and s share observer information and are not independent sensors. Raw normal motion contributes to seam rate.",
+    "pre_execution_correction": "Before any source/input freeze or historical feature arithmetic, replace proposed axial primary seam distance/rate by spherical arclength. Known polar cap has only about4.35mm axial depth, so a12mm axial scale would flag the entire cap. Retain unexecuted earlier advice/source as superseded, without numeric outcome selection."
+  },
+  "primary_mask": "1 <= time_s < 41, total truth normal load >=1 N, unique dominant family >=90% total load; fixed I-61 eligible mask. Dominant support is not strict single contact.",
+  "point_mask": "Primary mask AND finite N point, finite A point (accepted proposal else N), and finite truth equivalent point. Fixed for every parameter and policy; never restrict distance metrics to retained proposals. Unaccepted raw proposals do not exclude a valid native fallback. Distances in mm to truth equivalent point.",
+  "policies": {
+    "N": "Native contact family and point",
+    "A": "I-60 accepted proposal else native; no additional veto",
+    "I61": "a=0.03,b=0.10; must reproduce I-61 C policy flags and primary metrics"
+  },
+  "diagnostic_groups": {
+    "harmful": "Native family correct and A wrong (known6 frames)",
+    "useful": "Native wrong and A correct (known294 frames)",
+    "accepted_wrong": "A uses accepted proposal and family wrong (known18 frames)",
+    "point_extremes": "Every primary A point above corresponding native pooled maximum; also per-phase maxima and label-neutral point changes",
+    "old_forced": "All99 pooled exact-sign useful witnesses from I62, matched by case/time and also asserted against reconstructed pooled static bound. Per-phase summaries slice this pooled99 mask; optional per-phase-native-max bounds have distinct labels."
+  },
+  "events": "Report phase-wise frames and contiguous event clusters (same case and predicate, neighboring full-rate rows exactly5ms within1e-9). Do not call six frames six independent events. Event figures use fixed +/-0.10s windows around every harmful cluster, each phase worst A point, and the first/largest u/s useful correction; later frames shown only as explanatory plotting context, never as inference input.",
+  "descriptive_statistics": "Complete per-event/frame feature table, per-phase valid/unknown counts, quantiles and overlap of u/s/r/raw innovations/geometry for all groups; no p-value/generalization claim. No fitted risk-only cutoff, no posthoc choice between u-only/s-only/r.",
+  "primary_necessary_condition": {
+    "class": "tau_i=a+(b*R_i)*norm(F_i)+c*r_i with a,b,c>=0 (real affine class on fixed inputs)",
+    "unsafe": "A accepted point error exceeds native pooled max+1e-12mm on fixed common finite point mask. Every such proposal must be rejected to satisfy point maximum gate.",
+    "forced_loss": "For a valid useful proposal i and valid unsafe proposal k, reject k implies reject i if m_i>=m_k AND m_i*L_k>=m_k*L_i AND m_i*r_k>=m_k*r_i, where m=maxabs extra-joint residual, L=R*norm(F). Union rows once; verify strict margins/exact signs for any impossibility conclusion.",
+    "unknown_risk": "Positive-c schedules retain A at unknown-risk frames, so unknown useful frames are not forced losses; an unknown-risk unsafe peak cannot be rejected by positive-c schedules. c=0 remains original gate regardless of risk, already excluded by I62 continuous bound.",
+    "stop": "If full-data forced useful losses>total A harmful opportunities (6), or a positive-c unsafe peak is unrejectable, the combined-risk class cannot meet both pooled errors<=A and pointmax<=N. Stop adaptive fitting and new-episode work; report score-specific limitation, not impossibility for all dynamic rules."
+  },
+  "conditional_schedule": {
+    "only_if": "Primary combined-risk necessary-condition audit does not exclude the class; absence of a bound is inconclusive, not acceptance.",
+    "anchors_aNm_b": [
+      [
+        0.0,
+        0.06
+      ],
+      [
+        0.005,
+        0.075
+      ],
+      [
+        0.03,
+        0.05
+      ]
+    ],
+    "c_Nm": [
+      0.0,
+      0.025,
+      0.05,
+      0.1,
+      0.2,
+      0.4
+    ],
+    "fit_count": 18,
+    "controls": [
+      [
+        0.03,
+        0.1,
+        0.0
+      ],
+      [
+        0.0,
+        0.15,
+        0.0
+      ]
+    ],
+    "off_control": "A",
+    "known_risk": "i60accepted AND loadvalid AND m<=a+(b*R)*norm(F)+c*r",
+    "unknown_risk": "For c>0 disable extra veto and retain A. For c=0 evaluate original force-scaled gate, not NaN*0. Never drop unknown rows from policy/error/point metrics.",
+    "selection": [
+      "All unchanged I62 training gates",
+      "Fewest errors",
+      "Smallest contiguous-row float64 point SSE",
+      "Fewest vetoes",
+      "Smallest anchor index",
+      "Smallest c index"
+    ],
+    "folds": "Three leave-one-start-out folds. Fit on two entire starting-phase episodes, evaluate the third. No random 5 ms sample splits.",
+    "no_feasible": "Failed selection, off/A diagnostic fallback; no nearest miss promoted.",
+    "OOF": "Every fold must have a qualified training fit. Concatenated held-out predictions must pass the same pooled gates plus each-phase error/harm gates. Relative harm reduction is unscorable when a phase has no A harmful examples; retain that flag and use nonincrease for that phase. Pooled opportunities are nonzero.",
+    "full_data": "One fitted full-data (a,b,c), descriptive retrospective only, no per-phase rule. Components never replace frozen combined risk after inspection."
+  },
+  "fresh_episode_condition": {
+    "only_if": "All three training folds qualified AND pooled OOF all gates pass AND full-data fit qualified; otherwise no new physics.",
+    "case": "New native-controller Mars figure-eight, shaft+0.6rad,yaw45deg,44s,same caps/model. Seal episode source/settings and fixed full-data adaptive candidate before run. New native state/observer logs evaluated offline; adaptive policy does not actuate.",
+    "gates": "Apply unchanged I62 harm/useful/error/point gates to new fixed candidate vsA, report zero-opportunity relative metrics unscorable. New episode cannot trigger retuning.",
+    "limitation": "Fresh contact-estimation evaluation, not proof of improved physical tracking or live adoption."
+  },
+  "replay": "Archive source/input SHA256 before new arithmetic. Preserve primitives for NumPy-only condition replay, all masks/metrics and independently checked exact-sign bounds. Kinematic axes regeneration requires original model; explicitly cached. Preserve setup failures/corrections without overwriting. No overlapping test counts.",
+  "training_gates": {
+    "harmful_removal_fraction_min": 0.5,
+    "useful_retention_fraction_min": 0.9,
+    "pooled_family_errors_max": "A errors on identical training states",
+    "each_phase_error_rate_excess_over_A_max": 0.001,
+    "each_phase_harmful_count_max": "A harmful count on same phase",
+    "pooled_point_RMS_max": "A",
+    "pooled_point_p95_max": "A",
+    "pooled_point_maximum_max": "N",
+    "point_comparison_roundoff_allowance_mm": 1e-12,
+    "retained_proposal_count_min": 1
+  },
+  "independent_numeric_validation": {
+    "registered_before_historical_arithmetic": true,
+    "reason": "Independent scalar dot products and producer einsum may round differently; arccos near poles and backward differentiation amplify last-bit errors. These are verification allowances only, not scientific tolerance or value replacement. Report every actual difference.",
+    "axial_m_atol": 1e-12,
+    "arclength_m_atol": 1e-08,
+    "rate_m_s_atol": 4e-06,
+    "width_m_atol": 5e-07,
+    "innovation_u_atol": 1e-12,
+    "seam_and_combined_risk_atol": 0.0001,
+    "masks_counts_decisions": "Must match exactly; independently report robust forced losses with risk margin >=(m_i+m_k)*1e-4 to assess entire registered perturbation envelope."
+  }
+}

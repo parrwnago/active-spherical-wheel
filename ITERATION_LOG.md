@@ -3863,6 +3863,63 @@ time-consistent transfer/load hypotheses before another hard veto. Preserve
 failed attempts and descriptive near-misses for the presentation.
 [Record, figure, protocol and reproduction](docs/iterations/2026-11-27/contact-load-tuning/README.md).
 
+## I-63 — observable conditions for a dynamic load tolerance (2026-11-27)
+
+Status: **implemented, replayed, analyzed; conditional stages stopped**. The
+user proposed changing the tolerance with observable conditions. Keep the
+native LQR, momentum observer, rolling/holding feedforward and 120 ms incoming
+preparation unchanged. Use the three original I-58 Gazebo/DART Mars figure-eight
+recordings, shaft -1/+.3/+.9 rad, yaw 45°, same command caps and 5 ms logs.
+All episodes were previously inspected; assessment is retrospective.
+
+Freeze one candidate-independent risk before arithmetic: u is the largest
+observer interval-versus-filtered extra-joint change normalized by the old
+.03 + .10 R norm(F) scale; s measures known shell/belt seam surface proximity
+and adjacent backward rate using 12 mm/120 ms engineering scales. Combined
+r=max(u,s), not a probability. No candidate/support identity, true contacts,
+terrain, true slip or future samples enter inference. Before execution replace
+axial distance with spherical arclength to avoid flagging the entire 4.35 mm
+axial-depth cap as near a 12 mm seam window; retain the unexecuted design.
+
+Root seals 334 input/source/model-asset files and eight scientific sources.
+Generate all three 8,801-row feature artifacts privately without physics or
+contact queries, then seal before truth evaluation. Primary [1,41) retains
+23,423 dominant-support states and 6,902 A proposals; all have known risk.
+Check exact dominance for tolerance a+bR norm(F)+c*r, all coefficients
+nonnegative, before any fitting. Unknown risk would retain A for positive c;
+c=0 preserves the old gate. The original 99 useful witnesses match case/time.
+
+All six harmful overrides have r=.892–.959. Worst point m100 35.205 s has
+u=.51934, s=r=.93760, so it also looks transition-risky. Useful-correction
+median r=.97080 looks promising in aggregate, but the necessary 99-frame
+subset has median .62673. Combined-risk dominance still forces all 99 useful
+losses, versus six harmful opportunities: errors >=124+99-6=217 if point
+maximum must return to N's 26.908 mm from A's 29.843 mm. The new risk
+inequality minimum margin is .01574 N m; all 99 remain robust to the entire
+registered +/-1e-4 numerical-risk envelope. The observer-only descriptive
+bound forces 59 losses; it does not replace the primary rule.
+
+The registered stop triggers. No 18-schedule fit, leave-one-start-out schedule
+selection, new +.6-rad episode or live adoption runs. This excludes the fixed
+combined-score nonnegative affine rule, not all dynamic thresholds or the
+positive I-60 velocity idea. It does not prove a unique physical cause of
+trajectory deviation. Next proposed diagnostic: matching candidate load
+histories and observer filtering/timing rather than another instantaneous veto.
+
+Twelve feature contracts and fifteen separate evaluator contracts pass;
+neither is a new full controller suite. Independent loops/geometry/Fraction
+audit matches counts, witness identities and decision; max score difference
+2.71e-13. Producer replay and archive-isolated NumPy 1.21.5 replay against
+1.26.4 regenerate 108 feature and 183 analysis arrays byte-exactly, scientific
+JSON equal apart from version metadata. Keep original cached axes/5.3 MB
+primitives; an unexecuted packing option is not used. Preserve 17 event windows,
+protocol, sources, all phase/group statistics and certificates.
+
+Additional I-62 provenance clarification: stage03 pytest redirected stdout
+only; its empty log does not contain the ROS plugin error's original stderr.
+The correction receipt records the failure; README now states that limitation.
+[I-63 record, plots and reproduction](docs/iterations/2026-11-27/contact-condition-diagnostic/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

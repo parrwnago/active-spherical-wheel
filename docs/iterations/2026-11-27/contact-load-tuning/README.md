@@ -180,6 +180,8 @@ nine/ten-check development stages; these are not additional controller tests
 or a full repository suite. An abandoned, unexecuted validation-tolerance draft
 and a ROS plugin collection failure are preserved separately. Disabling pytest
 plugin autoload resolves the environment failure before the final test run.
+The stage03 log captured stdout only and is empty; the correction receipt
+records the ROS failure, but its original stderr traceback was not archived.
 
 Independent evaluation reads the original full I-61 inputs and recomputes every
 grid cell, training gate, selection and out-of-fold fallback without importing

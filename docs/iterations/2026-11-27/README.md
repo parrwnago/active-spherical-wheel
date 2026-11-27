@@ -1,5 +1,30 @@
 # Research presentation notes — 2026-11-27
 
+**I-63: observable transition conditions do not rescue the tested load check.**
+[Full record](contact-condition-diagnostic/README.md),
+[overview PDF](contact-condition-diagnostic/evidence/analysis/plots_stage01/condition_diagnostic.pdf)
+and [17 annotated event windows](contact-condition-diagnostic/evidence/analysis/plots_stage01/event_windows.pdf).
+
+- The user's dynamic-threshold idea is tested with one predeclared causal
+  condition score: observer interval-versus-filtered change and signed
+  shell/belt surface distance/rate, combined by maximum. These are inferred
+  uncertainty clues, not independent true-contact sensors.
+- Surface arclength replaces an unexecuted axial-distance proposal before
+  scoring; a 12 mm axial window would cover the entire 4.35 mm-deep polar cap.
+- Every primary state has known risk. All six harmful overrides have high
+  score, 0.892–0.959; the worst bad point has r=0.938. Loosening the check in
+  those conditions would also protect that mistake.
+- The primary affine allowance still forces 99 useful losses to remove the
+  worst point. Only six harmful changes can be prevented, giving a lower bound
+  of 217 errors versus A's 124. This is a bound, not a new achieved result.
+- The registered stop prevents 18-schedule fitting and a new driving episode.
+  Independent geometry/bounds and exact NumPy replay agree. Preserve twelve
+  feature contracts and fifteen separate evaluator contracts, without calling
+  them a controller/full-suite run.
+- Live LQR, momentum observer, feedforward and existing preparation remain
+  selected. This excludes one rule, not all dynamic adaptation. Matching
+  predicted/observed load history is the next proposed investigation.
+
 **I-62: tolerance tuning cannot resolve the load-check tradeoff.**
 [Full record](contact-load-tuning/README.md) and
 [tradeoff PDF](contact-load-tuning/evidence/analysis/plots_stage02/tolerance_tradeoffs.pdf).

@@ -1,0 +1,29 @@
+{
+  "created_utc": "2026-11-27T07:42:44.611883+00:00",
+  "status": "Final quantity-specific independent numerical comparison guard, registered before any new condition arithmetic/outcomes",
+  "allowances": {
+    "axial_m": 1e-12,
+    "arclength_m": 1e-08,
+    "rate_m_s": 4e-06,
+    "width_m": 5e-07,
+    "seam_or_combined_risk": 0.0001,
+    "innovation_risk": 1e-12,
+    "validity_masks": "exact"
+  },
+  "rationale": "Loop dot and producer einsum last-bit differences can amplify through acos near a pole and backward differencing. Rate allowance=2*arc/.005; seam-risk first-order envelope <4.1e-5 at minimum width .012, conservatively1e-4. These compare independently recomputed numerical features only, not changed scientific thresholds. Actual differences reported, no value normalization/fixups. Scientific masks/counts/decision must crosscheck exactly.",
+  "robustness": "For exact m/R/F and risk perturbations <=1e-4, additionally count witnesses with risk margin >=(m_i+m_k)/10000 using exact Fractions; constant case has no risk uncertainty.",
+  "files": [
+    {
+      "path": "results/contact_condition_diagnostic_20261127/review/independent_condition_audit.py",
+      "sha256": "ff226cfabd5597d83b96c90b466194f04168c104093c1ae0aa398cf4c47e669f"
+    },
+    {
+      "path": "results/contact_condition_diagnostic_20261127/review/pre_arithmetic_source_stage02/independent_condition_audit.py",
+      "sha256": "c3df41cb69a92b063cda4ed2662448208d996292890d3192ceaa10d52dfa5283"
+    },
+    {
+      "path": "results/contact_condition_diagnostic_20261127/protocol/protocol.json",
+      "sha256": "f904e1244e4f0309944949c234d1f3b5c1055f7a266d1fa33d27c05f456beb30"
+    }
+  ]
+}

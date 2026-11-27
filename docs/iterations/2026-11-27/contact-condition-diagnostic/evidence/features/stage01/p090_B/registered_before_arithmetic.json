@@ -1,0 +1,58 @@
+{
+  "iteration": "I-63",
+  "case": "p090_B",
+  "registered_utc": "2026-11-27T07:44:19.458564+00:00",
+  "sources_and_inputs": [
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_condition_diagnostic_20261127/features/extract_features.py",
+      "sha256": "225959a9fc59f652167c80b0e22af34b28a6167775e54f342d4f6606ec857bd5"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_condition_diagnostic_20261127/features/condition_features.py",
+      "sha256": "ee1ccac5690073e63baa964dd88327b2c1b8246840da4304e9e8f4204201d9c9"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_condition_diagnostic_20261127/protocol/protocol.json",
+      "sha256": "f904e1244e4f0309944949c234d1f3b5c1055f7a266d1fa33d27c05f456beb30"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_condition_diagnostic_20261127/protocol/input_source_seal.json",
+      "sha256": "c7775c9c6293c19e90730ff5ae0f0b07381ef3f21975b200c6049bce39e579ce"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/velocity_contact_rank_20261127/campaign/features_stage01/p090_B/measurement_context.npz",
+      "sha256": "ccb1d7101ae91e50b0f37d2c7d56dc7dab192481fccc8f787545b76f2c0c54be"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/runs/p090_B/provenance.json",
+      "sha256": "03a4942641031f299574cf1dd59f7f5146faaa08d356372ccb53ab6669bf637a"
+    },
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/_workspaces/p090_B/worker_476426/mirror/model.xml",
+      "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+    }
+  ],
+  "allowed_context_fields": [
+    "time_s",
+    "exact_qpos",
+    "exact_observer_generalized",
+    "exact_observer_interval_mean",
+    "intrinsic_normal_hint"
+  ],
+  "truth_fields_read": [],
+  "candidate_fields_read": [],
+  "feature_constants": {
+    "minimum_force_N": 1.0,
+    "sample_period_s": 0.005,
+    "time_tolerance_s": 1e-09,
+    "joint_innovation_absolute_scale_Nm": 0.03,
+    "joint_innovation_relative_scale": 0.1,
+    "seam_distance_scale_m": 0.012,
+    "seam_rate_preview_s": 0.12
+  },
+  "seam_definition": "Signed meridional spherical arclength; shellUpper/beltLower seams; positive equatorward, negative poleward.",
+  "frame_definition": "Observer first3 world force, next3 world moment; last3 joint scalars. Interval mean is available at interval end.",
+  "source_state": "Simulator q is used only for known patch axes; no true contacts, terrain or loads are queried.",
+  "new_physics_steps": 0,
+  "live_controller_changed": false
+}
