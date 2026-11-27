@@ -27,6 +27,10 @@ tracking and no demonstrated settling improvement.**
   of earlier 21, 4 graphics inclusive of earlier 3. Not a full repo-suite count.
 - Candidate not adopted. Keep I-72's rejection, original live pipeline and parked
   solver/HMM work. Fresh driving data does not justify a post-result winner switch.
+- Proposed follow-up: inspect native +0.9 versus +0.3 goal-hold command terms
+  in existing logs before one targeted controller change. Heading is free but
+  LQR angular-rate feedback exists; rotation alone is not a balance verdict.
+  This is planning, with no new simulation, tuning or demonstrated correction.
 
 **I-72: geometry-first velocity selection reduces point extremes, with a small
 family/coverage regression; configured candidate not adopted.**

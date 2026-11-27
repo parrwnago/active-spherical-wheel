@@ -4610,6 +4610,25 @@ replay inputs. Six scoped package/restore contracts pass separately. Final
 post-packaging QA is beside the immutable evidence tree; source/gate/data and
 archive contents verify without another simulation or metric run.
 
+**Follow-up planning review / proposed only:** After the user asks whether to
+try another direction, pause further A/C selector changes and return to the
+unresolved native goal-hold question from I-58. Proposed next deliverable:
+annotated native I-73 command decomposition over the existing 35–45 s holds,
+using +0.9 (remaining XY drift/speed) and +0.3 (position/speed/lean pass, rotation
+only) as contrasting cases. Separate position, attitude/angular-rate and drive-rate
+feedback, derived rolling shaft error, support feedforward, preparation, fade
+and clipping. Keep world-vertical rotation distinct from body-axis rates.
+
+Source review confirms exact-zero desired velocity bypasses the A/C rolling
+hook, while native contacts still affect balance gains, support torque, normal
+and preparation. `heading_gain=0` disables the dedicated heading helper, but
+the original LQR still contains angular-rate feedback; do not assume no damping
+or prescribe a new damper before inspecting existing contributions. Algebraic
+decomposition identifies command sources, not a unique physical cause. A later
+matched intervention is needed to test any proposed correction. No new physics,
+controller implementation, estimator tuning or completed command audit is claimed
+by this planning note; the selected baseline and I-73 decision remain unchanged.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated
