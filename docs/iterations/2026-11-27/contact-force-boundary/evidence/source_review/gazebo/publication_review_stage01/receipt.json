@@ -1,0 +1,79 @@
+{
+  "iteration": "I-69",
+  "review_utc": "2026-11-27T11:45:43.647234+00:00",
+  "scope": "Read-only README/scientific-scope/units/count review against primary and independent capture/bench reports, plus manual review of requested overviewPNG. No docs, publication metadata, solver, runtime or source edits.",
+  "inputs": [
+    {
+      "path": "docs/iterations/2026-11-27/contact-force-boundary/README.md",
+      "sha256": "bc9a412febc73449515b281b66c384cc8a63cbeee2a73ec12bb7338aa323fabf"
+    },
+    {
+      "path": "results/contact_force_boundary_20261127/publication/plots_stage01/overview.png",
+      "sha256": "f754c34f373087a2e42bf569579ab6d0cb4336f6152e971db76f394e4ea33e3c"
+    },
+    {
+      "path": "results/contact_force_boundary_20261127/bench/native_capture_stage01/report.json",
+      "sha256": "8fc0f52c031d067efc42386d6e788c6361e6ccff75ad55dca704f81416640bfe"
+    },
+    {
+      "path": "results/contact_force_boundary_20261127/bench/stage01/probe_output.json",
+      "sha256": "23c428a97ae21c63e2e4ba78444bcd1433c256fe66cdbdf5e40daf3e85135a6f"
+    },
+    {
+      "path": "results/contact_force_boundary_20261127/source_review/gazebo/capture_audit_stage01/report.json",
+      "sha256": "2578ee8972422457d03c9cd5c9271b70822adf740f4344d0a06c8ae66660c69a"
+    },
+    {
+      "path": "results/contact_force_boundary_20261127/source_review/gazebo/capture_audit_stage01/actual_bound_witnesses_stage02.json",
+      "sha256": "3051debcd67ed6320108820067312d22ebb32e77bd48855f5141dd3ae84bfd61"
+    }
+  ],
+  "scientific_checks": {
+    "20_solver_calls_not140_solver_calls": true,
+    "all20Dantzig_success_noPGS": true,
+    "59_precision_and36_trace_exact": true,
+    "12_contact_violations_17_component_rows": true,
+    "per_event_violation_counts2_0_5_5": true,
+    "good_control_rim_collision_tags": true,
+    "both35_205shellB_witnesses": true,
+    "25nonzero_unique_tag_matches": true,
+    "force_reconstruction_claim_rounds_consistently": true,
+    "controlled_Dantzig_witness_both_settings": true,
+    "controlled_default_PGS_failed": true,
+    "normalized_probe_units_explicit": true,
+    "pyramid_vs_circle_distinguished": true,
+    "no_all_trajectory_cause_claim": true,
+    "no_tracking_improvement_claim": true,
+    "no_solver_switch_adoption_claim": true,
+    "sampled_scope_not_frequency_claim": true,
+    "pressure_labels_narrowed": true
+  },
+  "scientific_checks_all_pass": true,
+  "counts_interpretation": "20installed solve calls over20selected1ms contexts;140ContactConstraint.applyImpulse records,12contacts violate at leastone final dependent tangent component bound (17component rows). Do not use140as a solver-call count or treat4selected intervals as global incidence.",
+  "formulation_interpretation": "Per-axis square/pyramid friction bounds differ from circular-cone resultant bounds. The zero-normal examples violate even the per-axis final dependent bounds; this is not explained merely by the diagonal factor of a pyramid.",
+  "causal_scope": "Controlled installed-library witness plus actual applied lambda/export association supports localization to installed solver outputs and consistency with documented frozen-bound approximation. It does not quantify tracking improvement, explain all deviation, prove a PGS replacement valid, or certify future solver changes.",
+  "visual_findings": [
+    {
+      "severity": "layout_revision_recommended",
+      "finding": "The left-column third step is long enough to encroach on the right-column third line at the same baseline.",
+      "suggestion": "Wrap left step3 into two lines or narrow its text in a NEW immutable layout stage; keep stage01."
+    },
+    {
+      "severity": "optional_label_clarity",
+      "finding": "Two separate2.97N bars share identical7.875s/step2/rimA labels. They represent two applied contacts, not a repeated frame.",
+      "suggestion": "Distinguish them by packet IDs21/22 or contact#1/#2."
+    }
+  ],
+  "evidence_links": {
+    "missing_pending_packaging": [
+      "evidence/publication/plots_stage02/contact_force_cause.pdf",
+      "evidence/bench/native_capture_stage01/report.json",
+      "evidence/bench/native_result_review.md",
+      "evidence/bench/README.md",
+      "evidence/source_review/dart/REVIEW.md",
+      "evidence/source_review/gazebo/README.md"
+    ],
+    "status": "Root stated evidence archive is pending; verify these targets after copying before final delivery."
+  },
+  "decision": "No material scientific blocker found. Improve the noted figure layout and finish evidence links before final publication."
+}

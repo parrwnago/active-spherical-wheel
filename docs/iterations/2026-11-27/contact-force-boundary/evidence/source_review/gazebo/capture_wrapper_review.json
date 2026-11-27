@@ -1,0 +1,93 @@
+{
+  "iteration": "I-69",
+  "review_utc": "2026-11-27T11:37:00.715748+00:00",
+  "scope": "Read-only PhaseB capture-wrapper/launch ordering and measurement-boundary review; no physics launch, runtime edits or new solver evaluation by reviewer.",
+  "protocol_sha256": "9ebed2eddde678734f9739af35889ae3931bb80285d48b3355ea89514f451e18",
+  "registered_hash_checks": [
+    {
+      "group": "sources",
+      "count": 74,
+      "all_hashes_match": true
+    },
+    {
+      "group": "inputs",
+      "count": 6,
+      "all_hashes_match": true
+    },
+    {
+      "group": "binaries",
+      "count": 5,
+      "all_hashes_match": true
+    }
+  ],
+  "sources": {
+    "wrapper": {
+      "path": "results/contact_force_boundary_20261127/campaign_tools/run_solver_capture.py",
+      "sha256": "3a572bc252eca63b59235e93cef35927f95ca877853fe0c5c22e010ab4d6baa6"
+    },
+    "launcher": {
+      "path": "results/contact_force_boundary_20261127/campaign_tools/launch_capture.py",
+      "sha256": "04868fdde46e06b8cadf9361b0a1f225bab2f8343551e008bd207e336fcd4643"
+    },
+    "probe": {
+      "path": "results/contact_force_boundary_20261127/instrumentation/solver_probe.cc",
+      "sha256": "588c523ea37ab7a4185ded2a7c742882ef424847362449c2d4afe49c0ef68b6e"
+    }
+  },
+  "checks": [
+    {
+      "name": "same original native driver",
+      "passed": true,
+      "reason": "Unchanged I58 module and native m100_B run; copied historical registration is kept distinct from outerI69 protocol."
+    },
+    {
+      "name": "correct run/step wrapper nesting",
+      "passed": true,
+      "reason": "Patch sim.run=observed_run first. Collector captures that run as its delegate, then wraps native step/run. Outer observed_step sets context before collector.step. Every collector run1 invokes observed_run once, updating substep1..5 before original integration."
+    },
+    {
+      "name": "inactive setup/reset context",
+      "passed": true,
+      "reason": "Native reset/setup calls outside physical.step disable probe context. Full-history rawcollector includes native held intervals without extra observer, command, mirror, reset or control loop calls."
+    },
+    {
+      "name": "fixed interval indexing",
+      "passed": true,
+      "reason": "end_index=round(control_start/dt)+1. Frozen targets1575,6422,7011,7041 are observer endpoints7.875,32.110,35.055,35.205; each previous held interval is observed, not a later hold."
+    },
+    {
+      "name": "cross-thread context visibility",
+      "passed": true,
+      "reason": "Probe context uses global atomic enabled/time/substep fields. Python blocking run calls finish before the next context update. No thread-local context mismatch apparent."
+    },
+    {
+      "name": "measurement boundary",
+      "passed": true,
+      "reason": "Hooks delegate installed functions with original arguments, copy pre/post arrays and inspect after-delegate contact data. No solver arguments or native controller commands are changed; empirical capture parity remains required."
+    },
+    {
+      "name": "LD_PRELOAD child boundary",
+      "passed": true,
+      "reason": "Launcher clears inherited preload/all-capture flags and injects the private probe/path only through env within the fresh micromamba child. Parent runtime and installed binaries remain unmodified."
+    },
+    {
+      "name": "failure/cleanup path",
+      "passed": true,
+      "reason": "Context disabled in finally. Full raw trace/counters exported after active hold cleared, while wrapper stack still exists; exceptions retain failure receipt and partial trace. Final successful comparisons require exact59field set and unchanged source/input/binary hashes."
+    },
+    {
+      "name": "full old trace comparison",
+      "passed": true,
+      "reason": "Every original I68 trace key is compared by dtype/shape/bytes; metadata is separately allowed to differ. No numeric array differences are accepted. The collector itself is the unchanged I68 source."
+    }
+  ],
+  "qualifications": [
+    "The standalone3call contract demonstrates solve interception/delegation, not empirical correctness of private ContactConstraint member offsets. Captured lambda/basis/dt must independently reconstruct contact.force.",
+    "Pointer-derived fallback offset/last-solver metadata must be validated using packet order and buffer flag; do not assume parent_solver_id always identifies the primary buffer.",
+    "If concurrent independent constraint groups appear, global last/primary solver association may be ambiguous; this wheel run is expected to contain one reactive assembly, but captured association must be checked rather than presumed.",
+    "Post-capture review should require59whole-history precision fields byte-exact, all old numeric substep arrays identical,20target1ms clocks present, complete packet decoding, force/point/normal matching and dimension-aware tangent reconstruction.",
+    "No conclusion about force-bound failure in the actual scene follows until installed-method packets are captured and validated."
+  ],
+  "material_blockers": [],
+  "decision": "No material wrapper/launcher blocker found. Root may proceed under the already authorized frozen PhaseB protocol; this receipt does not substitute for required post-capture parity and association checks."
+}

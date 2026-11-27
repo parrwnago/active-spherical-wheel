@@ -1,0 +1,110 @@
+{
+  "iteration": "I-69",
+  "completed_utc": "2026-11-27T11:31:45.402206+00:00",
+  "scope": "Read-only Gazebo source and binary-provenance audit. No physics, compilation, source/runtime/library changes, LCP solving, threshold fitting or new historical numerical campaign.",
+  "source_manifest_sha256": "19dc78a7fba8fd3481f5d96c13ea335c1411fc9cbc317db5e551ce42e932b909",
+  "exact_function_comparisons": [
+    {
+      "function": "void Physics::Update(",
+      "exact_bytes_match": true,
+      "upstream_sha256": "27069989ed78595d43685ed8f76d74e3a1e1d5be6488fe3dbca2ce304377292a",
+      "local_sha256": "27069989ed78595d43685ed8f76d74e3a1e1d5be6488fe3dbca2ce304377292a",
+      "lines": 23
+    },
+    {
+      "function": "void PhysicsPrivate::UpdateCollisions(",
+      "exact_bytes_match": true,
+      "upstream_sha256": "ab452d8a3ee44e80902afd85a449b69f482e57fbb553d2c4276fcacddf2ca5ba",
+      "local_sha256": "ab452d8a3ee44e80902afd85a449b69f482e57fbb553d2c4276fcacddf2ca5ba",
+      "lines": 176
+    }
+  ],
+  "installed_header_comparisons": [
+    {
+      "name": "gz-sim Component.hh",
+      "upstream_sha256": "bca50aff7f28c1b2f2c2117344beebf6a2865089c5be206f7034dc817a9d930f",
+      "installed_sha256": "bca50aff7f28c1b2f2c2117344beebf6a2865089c5be206f7034dc817a9d930f",
+      "whole_file_byte_exact": true
+    },
+    {
+      "name": "gz-physics GetContacts.hh",
+      "upstream_sha256": "9c5c2b5f9b67d08f68f6ce728fadc2fa8803cf713a864c9eec00078f3b872d5f",
+      "installed_sha256": "9c5c2b5f9b67d08f68f6ce728fadc2fa8803cf713a864c9eec00078f3b872d5f",
+      "whole_file_byte_exact": true
+    }
+  ],
+  "findings": [
+    {
+      "id": "GZ01",
+      "status": "nominal-source association verified",
+      "topic": "DART to gz-physics conversion",
+      "evidence": "GetContactsFromLastStep iterates one copied last-collision result. convertContact takes original pair IDs, point, force, normal and depth from the same dtContact and immediately stores the extra data by value. It either returns that complete contact or omits it; no independent force/normal index join is used.",
+      "source": "upstream/gz-physics/dartsim/src/SimulationFeatures.cc:223-268",
+      "limit": "Does not establish why DART Contact.force itself has the observed tangent component."
+    },
+    {
+      "id": "GZ02",
+      "status": "nominal-source dangling/stale pointer hypothesis unsupported",
+      "topic": "Physics contact-data lifetime",
+      "evidence": "UpdateCollisions holds allContacts alive through message construction. Each deque entry pairs pointers to its contact point and extra data; no vector mutation occurs after pointers are stored. New message containers are built each call and cleared for entities with no contacts.",
+      "source": "local/gazebo/physics/Physics.cc:3890-4007"
+    },
+    {
+      "id": "GZ03",
+      "status": "force-normal indexing verified for nominal DART path",
+      "topic": "Repeated position/normal/wrench fields",
+      "evidence": "Each point is appended, then normal/wrench/depth together when extra data exists. DART conversion always creates its ExtraContactData. Bridge uses the same contact index for normal and wrench.",
+      "source": "upstream/gz-physics/dartsim/src/SimulationFeatures.cc:256-267; local/gazebo/physics/Physics.cc:3965-3996; local/gazebo/plugin/SphericalWheelBridge.cc:276-309",
+      "limit": "A hypothetical missing-extra-data contact in a different engine could shift positions versus metadata. Normal and force would still move together; it is not a demonstrated explanation of Fdotnormal=0."
+    },
+    {
+      "id": "GZ04",
+      "status": "generic source sign hazard identified; not attributed to I68 anomaly",
+      "topic": "Collision-order reversal",
+      "evidence": "Physics stores each original contact under both collision orders. It relabels message collision1 as the currently visited entity, but writes original first-body force into message body1 without checking whether that entity was original collision1. A consumer of the original second-body message can therefore receive the wrong force sign. Bridge reads the wheel entity message and its body1 force.",
+      "source": "local/gazebo/physics/Physics.cc:3913-3928,3955-3957,3982-3994; local/gazebo/plugin/SphericalWheelBridge.cc:270-274,304-307",
+      "counterexample": "If original pair is A,B with world force F on A, the message for B labels B as body1 while still storing F there; expected force on B is -F.",
+      "anomaly_relevance": "A global force or normal sign flip preserves the magnitude of their dot product and cannot alone convert a nonzero normal projection into zero. Original pair ordering was not saved, so the trigger is not established for these records."
+    },
+    {
+      "id": "GZ05",
+      "status": "simple wheel-ground double-count hypothesis unsupported",
+      "topic": "Duplicated collision messages",
+      "evidence": "The pair is represented once in each entity message. Bridge iterates only wheel-tagged collision entities, not the ground message. Own-own wheel pairs are skipped. Separate coincident shell/belt collision hypotheses can exist and are not automatically duplicate physical contacts.",
+      "source": "local/gazebo/physics/Physics.cc:3925-3928; local/gazebo/plugin/SphericalWheelBridge.cc:264-274,351-368",
+      "limit": "No saved original collision IDs permit a retrospective uniqueness proof for every upstream engine contact."
+    },
+    {
+      "id": "GZ06",
+      "status": "stale contact-force comparator hypothesis ruled out in inspected implementation",
+      "topic": "Contact equality and SetData",
+      "evidence": "contactsEql compares position/counts but ignores force. However installed Component::SetData assigns the entire incoming object unconditionally; the comparator changes only its returned change flag. Bridge reads component Data every PostUpdate without checking that flag.",
+      "source": "local/gazebo/physics/Physics.cc:439-473; local/build/gazebo-env/include/gz/sim8/gz/sim/components/Component.hh:455-462; local/gazebo/plugin/SphericalWheelBridge.cc:264-270"
+    },
+    {
+      "id": "GZ07",
+      "status": "nominal-source phase ordering verified",
+      "topic": "Current-step refresh and blocking reads",
+      "evidence": "Physics::Update steps the world and updates simulation/contact components before bridge PostUpdate copies them. PreUpdate clears admission decisions and PostUpdate clears shared contact rows. asw_state/asw_contacts return copies under a mutex. Python performs blocking run calls then copies returned arrays; readbacks do not drain/reset contacts.",
+      "source": "local/gazebo/physics/Physics.cc:956-979,3828; local/gazebo/plugin/SphericalWheelBridge.cc:160-170,234-264,540-572; local/src/spherical_wheel/gazebo/bridge.py:82-92,116-134",
+      "limit": "No source evidence here proves DART lastCollisionResult internals fresh or identifies solver constraint/impulse indexing; DART audit owns that question."
+    },
+    {
+      "id": "GZ08",
+      "status": "observed pressure/wrench distinction preserved",
+      "topic": "Frame and family semantics",
+      "evidence": "Adapter data are world-frame. Bridge changes only normal sign to point toward the wheel centre and copies full force. Native records retain admitted positive-depth rows with zero pressure. Full force/moment sums preserve them, while family loads and centroids use positive normal projection.",
+      "source": "upstream/gz-physics/include/gz/physics/GetContacts.hh:33-44; local/gazebo/plugin/SphericalWheelBridge.cc:298-309; local/src/spherical_wheel/gazebo/plant.py:208-231",
+      "limit": "Dominant-pressure family labels do not identify every body carrying reported tangential/generalized load. This transport audit does not certify physical validity of zero-pressure tangential forces."
+    }
+  ],
+  "conclusion": "No point-normal-force pairing or current-step copying fault is demonstrated in the nominal DART-to-bridge path. One conditional collision-order force-sign hazard is present in inspected source, but it does not itself explain zero normal projection. The original DART force/impulse/bound calculation and installed binary ABI remain separate unresolved checks.",
+  "missing_capture_fields": [
+    "Original DART collisionObject1/2 and physics shape IDs",
+    "Gazebo message collision1/2 IDs before wheel tagging",
+    "Persistent per-contact/constraint identity",
+    "Solved LCP row index, lambda and original bounds"
+  ],
+  "smallest_future_disambiguation": "If a later experiment is authorized, compare the same individual contact immediately before/after adapter conversion using original pair IDs, point, normal and world force. Separately preserve solver lambda/bounds for that contact. Do not change live controller or force formulas merely to make the observed rows look Coulomb-consistent.",
+  "binary_scope": "SHA256 binds the exact installed files and both project plugins still match I58. No ELF build IDs were present. Exact tagged sources plus matching installed headers are not proof of all loaded ABI/layout choices; no installed-binary root cause is claimed."
+}

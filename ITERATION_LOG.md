@@ -4226,6 +4226,55 @@ otherstarts and improvedtracking remain unproved. Fullrawrolloutlocal; compact
 package,5-pageplots/reports, source/protocol/review/failedstages tracked.
 [Report, comparison, fixed events and clone replay](docs/iterations/2026-11-27/contact-interval-replay/README.md).
 
+## I-69 — 2026-11-27 — installed solver explains the zero-normal forces
+
+Status: source/controlled/native diagnostic completed; no controller or solver
+adoption. Follow I-68's admitted zero-normal tangent-force records. Register
+question/SPD3x3 witness before compile/run, then separately freeze74capture
+sources/6inputs/5binaries before original native I58 m100_B reproduction.
+Preserve LQR/observer/geometry/feedforward/preparation/gains/bounds/plugins.
+
+Official DART6.19.5 source documents tangent boxes fixed once using intermediate
+normal impulses; later pivots can change normals without resetting boxes.
+Installed header/cached/tag match, installed/cached executable.text exact;
+whole-library prefix relocation documented rather than claiming fullhashmatch.
+Standalone installed-library SPD witness returns Dantzig success withx=(0,.7,0)
+for both earlyflags: frozenboxvalid, finalnormal-dependent boundviolated. PGS
+default fails convergence; no solver switching/tuning justified.
+
+Private LD_PRELOAD observation delegates sameinstalled solver/applyImpulse calls,
+logging fourfixed5ms intervals in a full44s Gazebo/DART Mars figure-eight,
+shaft−1rad/yaw45°,5mscontrol/1msphysics. All59precisionarrays andALL36I68substep
+arrays reproduce byte-exact. Newcapture160packets=20Dantzig(successall,PGS0)
++140appliedcontacts. Everyappliedlambda equals original-order parentx exactly;
+normal/basis/lambda/dt reconstructforce within3.55e-15N. All140matchold/newexports,
+25nonzeroforces unique collisionfamilytags, no signreversal needed.
+
+35.205anchor shellB atactual35.203/35.205s: normalrow1 zero,tangentrows2/3
+reference1,applied lambda=(0,.0201248655,-.0172934405)/(0,.0104874728,-.0072003873)
+Ns. Both finalcomponent limitszero, originalcallsuccess; recreate26.5344/12.7213N
+forces. This localizes those records to applied Dantzig approximation before
+export/observer. Acrossselectedanchors12/140contacts violatefinaldependentboxes,
+includingtwo goodcontrol rimAcontacts;32.110hasnone (temporaltransferinstead).
+No claimapproximationexplainsentiredeviation orbadtrackingalone.
+
+Four core andseven separate adapter contracts pass. Preserve initialsynthetic
+exactfloat failure/test-only2e-13correction, prelaunchfallbackbuffer/frictionless-
+basis corrections, independent+infinity serializerfailureandcorrection, layout
+stage01 overlap/stage02fix. Independentdecoder agrees140contacts/12violationIDs,
+59/36parity andall25nonzero same-sign exports. No runtime plugin/library edits.
+Two storagecontracts;28,319bytesofpacket/contextNPZ plusmetadata preserveactive
+mathematicalvalues, omituninitializedpadding andunknownfulltraceareas explicitly.
+NumPy1.26.4replaysall220arrays/reportexact;1.21.5strictfailurepreserved, onlyderived
+roundoff≤1.39e-17arrays/3.55e-15report, allinputs/discreteoutputs exact; separately
+scopedboundedverificationpasses withoutreplacingvalues.
+
+Decision: keepnativecontroller/observer asbaseline; validatecorrectedapplied
+contactsolution(finalbounds+complementarity/convergence) on savedproblems before
+controlledshell/belttransfer andtrajectory comparisons. Do not merelyclipreported
+forces, whichwouldbreakmotion/wrenchconsistency. No correctedsolverimplemented.
+[Report, explanation PDF and cached replay](docs/iterations/2026-11-27/contact-force-boundary/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

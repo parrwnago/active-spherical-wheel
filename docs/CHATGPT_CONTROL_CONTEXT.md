@@ -1,15 +1,16 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 3 — 27 November 2026, through I-68.** Live-source baseline: repository
-commit `c9cece2`; I-68 changes no live control code. This is a study and discussion
+**Revision 4 — 27 November 2026, through I-69.** Live-source baseline: repository
+commit `2f9088c`; I-69 changes no live control code. This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest diagnostic, I-68, substantially narrows how we should interpret old
-contact errors. The observer agrees closely with forces integrated over the
-same 5 ms. The older family labels describe positive normal pressure, which can
-omit other force-bearing solver records. Read Section 12 before recommending
-new estimator weights based on the historical error counts.
+The latest diagnostic, I-69, identifies why the specific zero-normal tangential
+forces in I-68 occur: the installed Dantzig contact solver retains friction
+bounds based on an intermediate normal solution. Native applied impulses already
+contain those forces, which the momentum observer correctly senses. Read
+Sections 12–13 before recommending estimator weights from old pressure labels.
+The controller remains unchanged and no tracking improvement is claimed.
 
 ## Instructions for the ChatGPT reading this file
 
@@ -676,7 +677,8 @@ The numerical detection rule is `abs(Fn) <= 1e-10*max(1,|F|)` with
 rows are admitted, and rejected forces are zero. Presence alone does not prove
 poor tracking. Their zero-normal tangential behavior needs an installed solver/
 contact-reporting audit before treating it as valid Coulomb friction or a proven
-implementation bug. The source inspection does not establish its internal cause.
+implementation bug. At I-68 the source inspection did not establish its internal cause; I-69 below
+now connects the installed solver approximation to these specific records.
 
 The late event also has actual-point rolling mismatch: pressure-weighted slip
 RMS is 0.133 m/s before the solves and 0.139 m/s after. The post-solve values at
@@ -708,7 +710,76 @@ arrays and scientific report values exactly. Full models/rollouts remain local.
 The [I-68 record, comparison and four annotated events](iterations/2026-11-27/contact-interval-replay/README.md)
 include the protocol, failed setup/analysis stages and portable reproduction.
 
-## 13. Sources, attribution, and how to continue a discussion
+## 13. I-69: source of the zero-normal tangential forces
+
+The follow-up separates three levels of evidence: official implementation,
+a controlled test of the installed library, and the actual original episode.
+The contact solver first solves normal constraints, sets tangent impulse bounds
+from those intermediate normal impulses, then continues solving the coupled
+system. Later normal impulses can change while the earlier tangent allowances
+remain fixed. This is a documented approximation in DART's ODE-style Dantzig
+solver; a successful return does not guarantee the final dependent bounds.
+
+For ideal pointwise friction, each tangent component should satisfy
+`abs(lambda_t_i) <= mu_i*abs(lambda_n)`. A two-direction friction pyramid and
+a circular cone differ, but both require zero tangential impulse at zero normal.
+Here the installed solver can retain a sideways impulse even when its final
+pressing impulse becomes zero.
+
+A new standalone executable uses the existing installed library with one
+registered positive-definite3x3 problem. Dantzig returns success with
+`(normal,tangent1,tangent2)=(0,.7,0)`, satisfying its frozen absolute boxes but
+violating the zero tangent allowance implied by the final normal. These are
+normalized test units. Default PGS fails to converge on the same problem, so
+switching to PGS is not an established correction.
+
+Then a private diagnostic hook copies the original native solve inputs,
+outputs and applied contact impulses while delegating the installed functions
+unchanged. Replay the full −1-rad, yaw45° Mars figure-eight. All59 control
+precision arrays and all36 prior1ms trace arrays reproduce byte-for-byte.
+Logging changes no motion, command, observer, plugin or solver method.
+
+Across the20 physics steps preceding the four fixed times, all20 Dantzig calls
+return success; PGS is unused. There are140 applied contacts. Every applied
+impulse matches its solver solution segment exactly; impulse/normal/basis/dt
+reconstruct the reported force within3.55e−15N. All140 contacts match exports,
+with25 nonzero-force contacts unambiguously assigned to material families.
+
+The previously confusing shellB records are directly tied to those solutions:
+
+| Actual physics time | Applied `(normal,t1,t2)` impulse, N s | Tangent limits from final normal |
+|---|---|---|
+| 35.203s | `(0,.0201248655,−.0172934405)` | `(0,0)` |
+| 35.205s | `(0,.0104874728,−.0072003873)` | `(0,0)` |
+
+Their forces26.53N and12.72N already exist in the applied contact solve and
+match the old bridge records. Thus the specific zero-normal tangential-force
+anomaly is localized to the installed friction approximation, and the observer
+is responding to loads that the simulation really applies. This is stronger
+than an unexplained force/normal pairing discrepancy.
+
+Twelve of140 selected applied contacts violate final-dependent tangent-component
+bounds. Two occur in the good7.875s control; none occurs in the32.110s interval,
+where temporal transfer remains the explanation. Five occur at each later
+anchor35.055/35.205s. These selected counts are not trajectory-wide frequencies,
+and the good-control occurrence prevents a claim that this mechanism alone
+causes poor tracking. The specific large trajectory deviation remains incompletely
+explained.
+
+Keep LQR, momentum observer, geometry locator, feedforward and preparation as
+the baseline. Next validate a contact-solver/model correction on the saved
+problems, requiring final friction bounds and convergence/complementarity before
+a controlled shell/belt transfer and a broader trajectory comparison. Changing
+only exported force values would leave the actual simulated dynamics and the
+observer inconsistent. No corrected solver is implemented or adopted by I-69.
+
+The [I-69 record and explanation PDF](iterations/2026-11-27/contact-force-boundary/README.md)
+include source/package provenance, controlled/native evidence, independent
+checks and cached numerical replay. Full new rollouts remain local; the compact
+package retains the solver problems and20 selected contact contexts without
+claiming to restore the entire simulation.
+
+## 14. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

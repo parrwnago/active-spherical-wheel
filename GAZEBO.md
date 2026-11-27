@@ -46,6 +46,16 @@ OffroadController.command()  (unchanged)          SphericalWheelBridge plugin
 
 **Contacts.** MuJoCo's default contact (`analytic_clipped_floor`) uses four concentric spheres, one per shell and belt, and admits a contact on one of them only where the support point lies on that surface's own patch; outside every patch the faceted rim geometry carries the wheel. Gazebo has no collision filter that can change per contact, so the bridge does it in the contact-surface hook: a contact on the wrong patch gets a target separation speed of -1000 m/s along its normal, which makes DART's solver give it zero force and zero friction. The 48-sided equatorial rims are capsules through the same rim vertices. A belt contact gets a target tangential velocity equal to the commanded belt speed along the carrier's y axis, which is the ideal belt servo of the MuJoCo model. Every admitted contact uses the ground friction coefficient of the current control interval (MuJoCo: the floor's friction under the wheel).
 
+**Contact-solver limitation found in I-69.** The installed Dantzig solver can
+retain tangential impulses after a contact's final normal impulse becomes zero,
+because its friction bounds were set from an intermediate normal solution.
+Direct native capture reproduces the specific shell forces and preserves all
+original motion/command arrays. Positive-normal-load labels therefore do not
+capture every force-bearing body in those samples. Default PGS failed a controlled
+probe; no solver replacement is selected. See the [source, native evidence and
+next validation step](docs/iterations/2026-11-27/contact-force-boundary/README.md).
+
+
 **Same controller.** The controller reads `plant.model`/`plant.data` for frames and Jacobians, and the solved contacts for force sensing, the rolling feedforward and the incoming-drive preview. [`GazeboPlant`](src/spherical_wheel/gazebo/plant.py) keeps MuJoCo's model and data only as a *kinematic mirror* of Gazebo's state (written and `mj_forward`-ed after every interval, never integrated), and supplies Gazebo's contacts as records. `measure_contact`, `rolling_feedforward` and the synchronizer use the records whenever a plant provides them; their MuJoCo code paths are untouched. Fed with records built from MuJoCo's own contacts, the records paths reproduce the MuJoCo paths **bit for bit** over 3,600 control steps on three terrains (`tests/test_gazebo.py`). The original branch and this branch produce bit-identical MuJoCo runs (hills and the 9,101-step course). The gain library is the MuJoCo design, loaded from the same fingerprinted cache.
 
 **Terrain.** The analytic test terrains go to Gazebo as triangle meshes sampled on a 1 cm grid (vertices exact to 5e-8 m). The plant checks at start-up that Gazebo collides with the surface the terrain model describes, by pressing the wheel 0.5 mm into it at several points; a wrong ground raises an error.
@@ -232,7 +242,7 @@ Cells give largest / final tracking error.
 ## Limits
 
 * **Simulation of a provisional model**, as in OFFROAD.md: assumed masses, inertias, friction and torque bounds, ideal belt speed servos, no motor curves, ground-truth state and contact wrench (`momentum_observer` estimates the wrench but keeps the rest), no sensor noise or delay.
-* **Two contact models, neither exact.** MuJoCo's is soft with an elliptic friction cone; DART's is rigid with a box friction pyramid, a 50 µm allowance and DART's default 1 mm/s penetration correction. Agreement between them is evidence that the results are not an artefact of one solver; it is not a hardware prediction.
+* **Two contact models, neither exact.** MuJoCo's is soft with an elliptic friction cone; DART's is rigid with a box friction pyramid, a 50 µm allowance and DART's default 1 mm/s penetration correction. Agreement between them describes shared behavior; it does not rule out solver-specific force artifacts. I-69 documents one such Dantzig approximation. It is not a hardware prediction.
 * **The yard's DEM is the surface.** At 9.4 cm resolution with linear facets, the wheel rolls over facet edges; the real yard is softer and has detail below that scale. Rocks and lava are the meshes Leo's world uses. Gazebo keeps at most 20 contacts per collision pair (SDF default), which a 12 cm sphere on a 9.4 cm-faceted surface does not approach at rest.
 * **Heading is unregulated by default.** On the yard the platform can turn several full revolutions while the wheel follows its path; the existing heading hold is evaluated separately above.
 * **Sampled runs.** Four starts per route for the contact-aware controller and one for the other settings; finishing these routes is not a guarantee for others.

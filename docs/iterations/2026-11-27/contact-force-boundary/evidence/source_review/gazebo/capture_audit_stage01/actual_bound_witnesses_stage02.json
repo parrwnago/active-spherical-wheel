@@ -1,0 +1,1061 @@
+{
+  "iteration": "I-69",
+  "audit_utc": "2026-11-27T11:42:43.706603+00:00",
+  "scope": "Independent additional actual-capture bound/row witness audit using the sealed independent binary decoder and PhaseB registered detection rule. No solve, physics, source change or weight fitting.",
+  "source_sha256": "302fe506b250d246bab6367a02736052d299328d6c5241a962fd38633f8d160f",
+  "binary_sha256": "7755bc1088260320af4ef269d5bf7e712612513020bb5753052ed9a32f51bfee",
+  "method": "Use original pre-solve findex/coefficients and final unpermuted x at the applied lambda row. Compare each tangent impulse to mu*abs(final normal impulse). Never align post-mutated lo/hi/findex to original x. Raw trace byte identity links the independent joins to original I68 rows.",
+  "nonfinite_metadata_encoding": "Infinity and -Infinity strings denote original unbounded coefficient values only; finite values are unchanged.",
+  "counts": {
+    "solver_calls": 20,
+    "Dantzig_calls": 20,
+    "PGS_calls": 0,
+    "solver_successes": 20,
+    "applied_contact_packets": 140,
+    "nonzero_force_contacts": 25,
+    "nonzero_force_unique_tag_contacts": 25,
+    "violating_contacts": 12,
+    "violating_tangent_rows": 17
+  },
+  "specific_shell_B_witnesses": [
+    {
+      "packet_id": 140,
+      "parent_solver_id": 138,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.199999999999555,
+      "substep": 3,
+      "physics_end_time_s": 35.202999999999555,
+      "lambda_original_offset": 1,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.0,
+        0.02012486545552847,
+        -0.017293440462972064
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.0,
+        0.0
+      ],
+      "violation_Ns": [
+        0.02012486545552847,
+        0.017293440462972064
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        1,
+        1
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.0,
+        0.02012486545552847,
+        -0.017293440462972064
+      ],
+      "force_N": [
+        -12.9988596206674,
+        23.02300136494946,
+        -2.245962902899368
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "point_m": [
+        -1.7055131424310344,
+        9.45005642228488,
+        1.1161928884378074
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 0.0,
+      "force_norm_N": 26.534379447228122,
+      "trace_matching_tags": [
+        1
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 1.7763568394002505e-15,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 154,
+      "parent_solver_id": 152,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.199999999999555,
+      "substep": 5,
+      "physics_end_time_s": 35.20499999999956,
+      "lambda_original_offset": 1,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.0,
+        0.010487472819239797,
+        -0.007200387284482586
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.0,
+        0.0
+      ],
+      "violation_Ns": [
+        0.010487472819239797,
+        0.007200387284482586
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        1,
+        1
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.0,
+        0.010487472819239797,
+        -0.007200387284482586
+      ],
+      "force_N": [
+        -4.99814148249318,
+        11.639646475840442,
+        -1.1704165152919035
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "point_m": [
+        -1.7053749983197213,
+        9.450051739269341,
+        1.1161903372429496
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 0.0,
+      "force_norm_N": 12.721346751851078,
+      "trace_matching_tags": [
+        1
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 1.7763568394002505e-15,
+      "lambda_parent_error": 0.0
+    }
+  ],
+  "all_violating_contacts": [
+    {
+      "packet_id": 21,
+      "parent_solver_id": 14,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 7.8699999999998544,
+      "substep": 2,
+      "physics_end_time_s": 7.871999999999854,
+      "lambda_original_offset": 14,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.0,
+        -0.001992191166446031,
+        0.002203538535621843
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.0,
+        0.0
+      ],
+      "violation_Ns": [
+        0.001992191166446031,
+        0.002203538535621843
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        14,
+        14
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.0,
+        -0.001992191166446031,
+        0.002203538535621843
+      ],
+      "force_N": [
+        -2.33112710758382,
+        -1.7778923972884464,
+        0.478907875888347
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "point_m": [
+        -1.5143481876475975,
+        9.719920482451549,
+        1.123028097616723
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": -1.6653345369377348e-16,
+      "force_norm_N": 2.970590466832487,
+      "trace_matching_tags": [
+        4
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 0.0,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 22,
+      "parent_solver_id": 14,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 7.8699999999998544,
+      "substep": 2,
+      "physics_end_time_s": 7.871999999999854,
+      "lambda_original_offset": 17,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.0,
+        -0.0019921913141550014,
+        0.0022035436007007015
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.0,
+        0.0
+      ],
+      "violation_Ns": [
+        0.0019921913141550014,
+        0.0022035436007007015
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        17,
+        17
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.0,
+        -0.0019921913141550014,
+        0.0022035436007007015
+      ],
+      "force_N": [
+        -2.3311282491741374,
+        -1.7778973341247313,
+        0.4789079113964802
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "point_m": [
+        -1.514348187647468,
+        9.719920482451537,
+        1.1230280976169114
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": -1.1102230246251565e-16,
+      "force_norm_N": 2.9705943230915333,
+      "trace_matching_tags": [
+        4
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 0.0,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 102,
+      "parent_solver_id": 99,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.04999999999948,
+      "substep": 1,
+      "physics_end_time_s": 35.050999999999476,
+      "lambda_original_offset": 2,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.01614138033449441,
+        -0.012545756348646735,
+        -0.0014081135515068058
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.011298966234146087,
+        0.011298966234146087
+      ],
+      "violation_Ns": [
+        0.001246790114500648,
+        0.0
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        2,
+        2
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.01614138033449441,
+        -0.012545756348646735,
+        -0.0014081135515068058
+      ],
+      "force_N": [
+        4.336373828503993,
+        -14.316713192719456,
+        14.005375061497931
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "point_m": [
+        -1.7139438732423353,
+        9.481758602326867,
+        1.1171086786814508
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 16.14138033449441,
+      "force_norm_N": 20.49202150194924,
+      "trace_matching_tags": [
+        3
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 8.881784197001252e-16,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 107,
+      "parent_solver_id": 104,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.04999999999948,
+      "substep": 2,
+      "physics_end_time_s": 35.05199999999948,
+      "lambda_original_offset": 2,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.016149076303557955,
+        -0.012550664048123751,
+        -0.001408120660772063
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.011304353412490567,
+        0.011304353412490567
+      ],
+      "violation_Ns": [
+        0.0012463106356331837,
+        0.0
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        2,
+        2
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.016149076303557955,
+        -0.012550664048123751,
+        -0.001408120660772063
+      ],
+      "force_N": [
+        4.34171524371432,
+        -14.321263402494282,
+        14.012336015139407
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "point_m": [
+        -1.7138840932280033,
+        9.48177845471677,
+        1.1171104577820843
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 16.149076303557955,
+      "force_norm_N": 20.50108868578194,
+      "trace_matching_tags": [
+        3
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 1.7763568394002505e-15,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 112,
+      "parent_solver_id": 109,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.04999999999948,
+      "substep": 3,
+      "physics_end_time_s": 35.05299999999948,
+      "lambda_original_offset": 2,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.016148096260191154,
+        -0.012550987523084783,
+        -0.0014073800186907683
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.011303667382133807,
+        0.011303667382133807
+      ],
+      "violation_Ns": [
+        0.0012473201409509763,
+        0.0
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        2,
+        2
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.016148096260191154,
+        -0.012550987523084783,
+        -0.0014073800186907683
+      ],
+      "force_N": [
+        4.345833032263693,
+        -14.319984384276413,
+        14.011452517130584
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "point_m": [
+        -1.7138191005591035,
+        9.481776665159371,
+        1.1171087349740256
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 16.148096260191153,
+      "force_norm_N": 20.500463876459953,
+      "trace_matching_tags": [
+        3
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 8.881784197001252e-16,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 117,
+      "parent_solver_id": 114,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.04999999999948,
+      "substep": 4,
+      "physics_end_time_s": 35.053999999999476,
+      "lambda_original_offset": 2,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.01613842334972348,
+        -0.012546711879850478,
+        -0.0014059022904627228
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.011296896344806434,
+        0.011296896344806434
+      ],
+      "violation_Ns": [
+        0.0012498155350440434,
+        0.0
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        2,
+        2
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.01613842334972348,
+        -0.012546711879850478,
+        -0.0014059022904627228
+      ],
+      "force_N": [
+        4.34870694728577,
+        -14.312865536809092,
+        14.002709611823724
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "point_m": [
+        -1.7137488874617604,
+        9.481753236149387,
+        1.1171035104750326
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 16.138423349723478,
+      "force_norm_N": 20.4901256331241,
+      "trace_matching_tags": [
+        3
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 1.7763568394002505e-15,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 121,
+      "parent_solver_id": 119,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.04999999999948,
+      "substep": 5,
+      "physics_end_time_s": 35.05499999999948,
+      "lambda_original_offset": 1,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.0,
+        0.027304492089843233,
+        -0.026486621066019417
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.0,
+        0.0
+      ],
+      "violation_Ns": [
+        0.027304492089843233,
+        0.026486621066019417
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        1,
+        1
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.0,
+        0.027304492089843233,
+        -0.026486621066019417
+      ],
+      "force_N": [
+        -20.60026667461627,
+        31.834255950006078,
+        -3.047219195169858
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "point_m": [
+        -1.7136893931443309,
+        9.450037147696777,
+        1.1163765191990205
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 0.0,
+      "force_norm_N": 38.04045719729476,
+      "trace_matching_tags": [
+        1
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 0.0,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 131,
+      "parent_solver_id": 128,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.199999999999555,
+      "substep": 1,
+      "physics_end_time_s": 35.20099999999955,
+      "lambda_original_offset": 2,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.016047784574767913,
+        -0.012525179057228731,
+        -0.0011566522411712808
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.011233449202337539,
+        0.011233449202337539
+      ],
+      "violation_Ns": [
+        0.0012917298548911927,
+        0.0
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        2,
+        2
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.016047784574767913,
+        -0.012525179057228731,
+        -0.0011566522411712808
+      ],
+      "force_N": [
+        5.370251165412303,
+        -13.857985550001388,
+        13.959440658462906
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "point_m": [
+        -1.7056648861899402,
+        9.481755007504983,
+        1.1169243266414712
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 16.047784574767913,
+      "force_norm_N": 20.389932431982377,
+      "trace_matching_tags": [
+        3
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 1.7763568394002505e-15,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 136,
+      "parent_solver_id": 133,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.199999999999555,
+      "substep": 2,
+      "physics_end_time_s": 35.20199999999956,
+      "lambda_original_offset": 2,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.016047002288564673,
+        -0.012525626258538895,
+        -0.0011539122385400978
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.011232901601995271,
+        0.011232901601995271
+      ],
+      "violation_Ns": [
+        0.0012927246565436236,
+        0.0
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        2,
+        2
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.016047002288564673,
+        -0.012525626258538895,
+        -0.0011539122385400978
+      ],
+      "force_N": [
+        5.3769117294191675,
+        -13.855176442688432,
+        13.958940327548422
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "point_m": [
+        -1.7055844977315031,
+        9.48175256790724,
+        1.1169221603461497
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 16.047002288564673,
+      "force_norm_N": 20.389436212707096,
+      "trace_matching_tags": [
+        3
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 1.7763568394002505e-15,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 140,
+      "parent_solver_id": 138,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.199999999999555,
+      "substep": 3,
+      "physics_end_time_s": 35.202999999999555,
+      "lambda_original_offset": 1,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.0,
+        0.02012486545552847,
+        -0.017293440462972064
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.0,
+        0.0
+      ],
+      "violation_Ns": [
+        0.02012486545552847,
+        0.017293440462972064
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        1,
+        1
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.0,
+        0.02012486545552847,
+        -0.017293440462972064
+      ],
+      "force_N": [
+        -12.9988596206674,
+        23.02300136494946,
+        -2.245962902899368
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "point_m": [
+        -1.7055131424310344,
+        9.45005642228488,
+        1.1161928884378074
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 0.0,
+      "force_norm_N": 26.534379447228122,
+      "trace_matching_tags": [
+        1
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 1.7763568394002505e-15,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 150,
+      "parent_solver_id": 147,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.199999999999555,
+      "substep": 4,
+      "physics_end_time_s": 35.20399999999955,
+      "lambda_original_offset": 2,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.016037488725831304,
+        -0.012527118416114248,
+        -0.0021666183335982184
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.011226242108081912,
+        0.011226242108081912
+      ],
+      "violation_Ns": [
+        0.0013008763080323352,
+        0.0
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        2,
+        2
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.016037488725831304,
+        -0.012527118416114248,
+        -0.0021666183335982184
+      ],
+      "force_N": [
+        4.499407421750183,
+        -14.337129704122658,
+        13.89338044344363
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "point_m": [
+        -1.7054309568813428,
+        9.48173759616536,
+        1.1169164092704271
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 16.037488725831302,
+      "force_norm_N": 20.465189357687333,
+      "trace_matching_tags": [
+        3
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 8.881784197001252e-16,
+      "lambda_parent_error": 0.0
+    },
+    {
+      "packet_id": 154,
+      "parent_solver_id": 152,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.199999999999555,
+      "substep": 5,
+      "physics_end_time_s": 35.20499999999956,
+      "lambda_original_offset": 1,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.0,
+        0.010487472819239797,
+        -0.007200387284482586
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.0,
+        0.0
+      ],
+      "violation_Ns": [
+        0.010487472819239797,
+        0.007200387284482586
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        1,
+        1
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": [
+        "Infinity",
+        0.7,
+        0.7
+      ],
+      "final_unpermuted_solver_x": [
+        0.0,
+        0.010487472819239797,
+        -0.007200387284482586
+      ],
+      "force_N": [
+        -4.99814148249318,
+        11.639646475840442,
+        -1.1704165152919035
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "point_m": [
+        -1.7053749983197213,
+        9.450051739269341,
+        1.1161903372429496
+      ],
+      "dt_s": 0.001,
+      "normal_projection_N": 0.0,
+      "force_norm_N": 12.721346751851078,
+      "trace_matching_tags": [
+        1
+      ],
+      "trace_positive_force_matches": 1,
+      "trace_negative_force_matches": 0,
+      "force_reconstruction_error_N": 1.7763568394002505e-15,
+      "lambda_parent_error": 0.0
+    }
+  ],
+  "conclusion": "The native scene itself applies nonzero tangent impulses with zero final normal impulse in the two observed shellB records. Installed Dantzig reports success, no fallback occurs, and force reconstruction/export association agrees. This localizes this pattern upstream of Gazebo force-normal transport; separate source/bench work addresses mechanism. No controller or tracking improvement is tested."
+}

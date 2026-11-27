@@ -1,0 +1,88 @@
+{
+  "iteration": "I-69",
+  "registered_utc": "2026-11-27T11:29:25.594918+00:00",
+  "base_commit": "2f9088c9c1025648579db5d747914d5b8391a1f7",
+  "question": "Why does the installed contact solver report a force with zero normal projection and nonzero tangential projection? Establish source convention and installed-library mechanism before changing control.",
+  "boundary": "No native controller, observer, estimator, model, runtime plugin or installed solver binary changes. New private diagnostics only.",
+  "known_historical_evidence": {
+    "I68_trace": "results/contact_interval_replay_20261127/campaign/native_substeps/substeps.npz",
+    "sha256": "00a0e9ce0dde64ca1ab044f685e0708f2c409d508b4d013276815f6935e831ec",
+    "events_s": [
+      7.875,
+      32.11,
+      35.055,
+      35.205
+    ],
+    "status": "Previously inspected retrospective evidence, not unseen validation."
+  },
+  "phase_A": {
+    "status": "Registered before new compiled probe/execution.",
+    "test": "Standalone prescribed positive-definite3x3 LCP linked to existing libdart.",
+    "A": [
+      [
+        1,
+        1.5,
+        0
+      ],
+      [
+        1.5,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        2
+      ]
+    ],
+    "b": [
+      1,
+      4,
+      0
+    ],
+    "x_initial": [
+      0,
+      0,
+      0
+    ],
+    "lo": [
+      0,
+      -0.7,
+      -0.7
+    ],
+    "hi": [
+      "inf",
+      0.7,
+      0.7
+    ],
+    "findex": [
+      -1,
+      0,
+      0
+    ],
+    "nub": 0,
+    "stride": 4,
+    "cases": [
+      "Dantzig earlyTermination=true",
+      "Dantzig earlyTermination=false",
+      "PGS default earlyTermination=false"
+    ],
+    "source_hypothesis": "ODE-style Dantzig converts friction coefficients into absolute bounds once, before tangent pivots; final normals may differ.",
+    "controls": "Report returned status, original-system residual and final-dependent bounds; no solver tuning or default adoption. Analytical coupled reference xN=1/2.05,xT=.7/2.05,xT2=0.",
+    "seal": "Probe source, inputs and installed library/header hashes must be frozen before compile/first arithmetic."
+  },
+  "phase_B": {
+    "status": "Conditional additional native replay, registration/source seal required before execution.",
+    "trigger": "If source/library result leaves actual-episode association unresolved.",
+    "method": "Private LD_PRELOAD observer delegates actual installed Dantzig/PGS/applyImpulse calls unchanged, records all pre/post problem arrays and actual impulse/force for four frozen intervals; no native plugin rebuild.",
+    "conditions": "Full original I58 m100_B 0\u201344s Mars history, original initial conditions,5mscontrol/1msphysics, all59precisionfields must reproduce byte-exact before interpretation.",
+    "metrics": [
+      "Original-order final-dependent friction bound violations using originalfindex and unpermutedfinalx",
+      "Primary/fallback return status and which impulse is applied",
+      "Paired contact lambda,point,normal,force mapping and comparison to I68 raw rows",
+      "Force-law interpretation separated from real-robot claims"
+    ],
+    "stop": "Preserve any preflight/probe/parity failure. No silent source edits or retuning between comparable cases. No controller/estimator adoption from this diagnostic alone."
+  },
+  "publication": "Record I69, including failed tests/corrections, in ITERATION_LOG, dated notes, handoff and ChatGPT context; compact evidence tracked, full rollout local."
+}

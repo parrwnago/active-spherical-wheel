@@ -1,0 +1,40 @@
+{
+  "iteration": "I-69",
+  "completed_utc": "2026-11-27T11:31:27.875712+00:00",
+  "status": "Read-only official-source and installed-binding audit complete; no native cause established by source alone.",
+  "official_tag": "v6.19.5",
+  "official_tag_object": "563dff7707bc878e52793cbe794d9c5bb910a8c1",
+  "official_commit": "ce5c6526035ccc9a22d895670b2579052a2b8903",
+  "established": [
+    "ContactConstraint encodes each tangential impulse bound as a coefficient dependent on its normal impulse index.",
+    "Dantzig/ODE converts all dependent bounds only once at the first friction row, using normal values at that time.",
+    "Later pivoting can alter normal values without recomputing those frozen boxes.",
+    "ContactConstraint applies and reports returned normal/tangent impulses directly; no final friction reprojection.",
+    "BoxedLcpConstraintSolver checks NaNs and solver returns, not final dependent-bound compliance or complementarity.",
+    "Default public construction is Dantzig with PGS fallback; actual native configured calls require observation.",
+    "Five public headers match official tag, installed environment, and cached package byte-for-byte.",
+    "Installed external ODE solver matches cached binary; DART executable text matches cached package, with binary prefix relocation explicitly declared for its differing rodata."
+  ],
+  "proposed_causal_hypothesis": "The once-only bound approximation may explain a final zero normal impulse with substantial tangential impulse in I68; actual native terms/calls have not been observed in this source audit.",
+  "proposed_confirmation": [
+    "Prespecified isolated installed-solver witness on a coupled SPD matrix.",
+    "Delegating native solver entry interposer with original terms, returned solution, return flags, primary/fallback calls and exact prior precision parity."
+  ],
+  "storage_notes": [
+    "A stride is dPAD(n), rounded up to four except n<=1.",
+    "Release padding need not be initialized.",
+    "Only x and w are unpermuted by Dantzig; original terms are mandatory for correct independent validation."
+  ],
+  "scope": {
+    "runtime_edited": false,
+    "physics_launched": false,
+    "probe_compiled": false,
+    "controller_changed": false
+  },
+  "limitations": [
+    "No logged native LCP terms were inspected in this audit.",
+    "Official source is bound by tag/commit and installed API/package/code-section comparisons, not a fresh reproducible binary rebuild.",
+    "The box friction approximation is distinct from a circular cone.",
+    "Mapping an observed anomaly to a source mechanism requires the proposed empirical connection."
+  ]
+}

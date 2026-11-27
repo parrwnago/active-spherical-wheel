@@ -1,0 +1,54 @@
+{
+  "iteration": "I-69",
+  "review_utc": "2026-11-27T11:46:27.813740+00:00",
+  "scope": "Final read-only scientific publication and new immutable stage02 figure review; no changes to docs, publication metadata, runtime or audit sources.",
+  "prior_scientific_review": {
+    "path": "results/contact_force_boundary_20261127/source_review/gazebo/publication_review_stage01/receipt.json",
+    "sha256": "03a0fe1335ff8002e49c2836f5e4d8676a67afbc5615717ceaacf8f735c68983",
+    "all_checks_pass": true
+  },
+  "inputs": [
+    {
+      "path": "docs/iterations/2026-11-27/contact-force-boundary/README.md",
+      "sha256": "bc9a412febc73449515b281b66c384cc8a63cbeee2a73ec12bb7338aa323fabf"
+    },
+    {
+      "path": "results/contact_force_boundary_20261127/publication/plots_stage02/overview.png",
+      "sha256": "e4ed2a8bbd68a9b226eae942fddd8e055b5046c7ac5a7ff483df60bfac7f61e1"
+    },
+    {
+      "path": "GAZEBO.md",
+      "sha256": "5cda3dbb7a21af95f04b2236ea58d60f000da3114fcf3a9988fa9576d5ee38b7"
+    },
+    {
+      "path": "docs/CHATGPT_CONTROL_CONTEXT.md",
+      "sha256": "becdb9d4a6846737109f8e8582318a3bfbc9d6bb315d4138a09ef664459dac05"
+    }
+  ],
+  "visual_recheck": {
+    "stage01_preserved": true,
+    "step3_now_wraps_inside_left_column": true,
+    "duplicate_goodcase_bars_now_distinct_1_2": true,
+    "no_clipping_or_column_overlap_seen": true,
+    "normalized_bench_and_native_force_units_distinct": true,
+    "20solve_calls_vs140applies_clear": true,
+    "PGS_not_promoted_and_no_tracking_improvement_clear": true
+  },
+  "current_doc_recheck": {
+    "links_target_new_stage02": true,
+    "causal_scope_unchanged": true,
+    "no_solver_adoption_claim": true,
+    "pyramid_circle_distinction_kept": true
+  },
+  "cross_document_scope": "New I69 portions of GAZEBO.md and CHATGPT_CONTROL_CONTEXT.md keep native controller/observer unchanged, identify normalized controlled witness and actual captured impulse evidence, scope selected contacts rather than whole-trajectory incidence, and avoid a tracking-improvement or validated-PGS claim.",
+  "optional_precision_note": "The25 nonzero matches establish unique raw collision-family tags within the captured20steps. Collision tag/family should not be silently generalized to an independently exported DART body identity; zero-force slots retain ambiguity.",
+  "missing_links_pending_evidence_copy": [
+    "evidence/publication/plots_stage02/contact_force_cause.pdf",
+    "evidence/bench/native_capture_stage01/report.json",
+    "evidence/bench/native_result_review.md",
+    "evidence/bench/README.md",
+    "evidence/source_review/dart/REVIEW.md",
+    "evidence/source_review/gazebo/README.md"
+  ],
+  "decision": "Final stage02 layout and scientific narrative accepted. Root may snapshot all agent files now; evidence-copy/link validation is the remaining publication step."
+}

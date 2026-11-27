@@ -1,0 +1,48 @@
+{
+  "iteration": "I-69",
+  "success": true,
+  "completed_utc": "2026-11-27T11:39:15.515537+00:00",
+  "counts": {
+    "Dantzig": 43740,
+    "PGS": 0,
+    "applyImpulse": 199162
+  },
+  "trace": [
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_force_boundary_20261127/campaign/native_solver_capture/substeps.npz",
+      "bytes": 32879317,
+      "sha256": "00a0e9ce0dde64ca1ab044f685e0708f2c409d508b4d013276815f6935e831ec",
+      "substep_rows": 44000,
+      "contact_rows": 198938,
+      "metadata": {
+        "schema_version": 2,
+        "helper_sha256": "45d554a67c7746894a065e4932053c0e96d3620619143d56e111ef715eabc442",
+        "window_start_s": 0.0,
+        "window_end_s": 44.0,
+        "clock_tolerance_s": 1e-09,
+        "control_dt_s": 0.005,
+        "physics_dt_s": 0.001,
+        "substeps": 5,
+        "completed_holds": 8800,
+        "failed_holds": 0,
+        "unsplit_run_calls": 4,
+        "input_timing": "Actual plant.last_input after original command issuance; same held command for all five solves.",
+        "state_timing": "Raw bridge state immediately before/after each completed1ms solve. Plugin clock is separate from relative control time.",
+        "contact_timing": "Full native last-solve contact rows16 after every1ms; force samples are not labeled exact solver impulse records.",
+        "pre_contact_timing": "Before rows are the preceding reported solve snapshot, copied once before the hold and carried from each post-step copy; not a continuous force measurement.",
+        "force_convention": "Columns7:10 are the published force on the wheel/body in world N, not an impulse to divide by dt again. Normal points ground-to-wheel; no normalization/filtering is applied here.",
+        "couple_coverage": "Current bridge does not export per-contact torque/couple or total solver constraint wrench. Reserved columns13:16 are zero-filled ABI padding, not measured couples.",
+        "per_contact_couple_available": false,
+        "total_constraint_wrench_available": false,
+        "mapping_convention": "Logical bridge tag names plus known mirror geom/body mapping; mirror IDs are not Gazebo entity IDs.",
+        "mirror_mapping_available": true,
+        "qvel_convention": "Offline-derived from cached raw24: base linear velocity world, free-joint angular velocity body, joint rates scalar; no extra pull/forward.",
+        "dt_convention": "step_dt_s is the bridge reported actual physics step. Native-relative after-step time_s and separate raw before/after bridge clocks are retained.",
+        "disturbance_convention": "Applied world input wrench is passed to fork AddWorldWrench at configured fork COM; it is not a contact-couple measurement.",
+        "stepping_scope": "Only registered physical.step holds splitrun5 into five run1. No extra command/observer/pull/forward/reset.",
+        "parity_status": "Caller must verify unchanged prefix/control and physical evolution before causal interpretation."
+      }
+    }
+  ],
+  "measurement_boundary": "Solver/contact hooks copy inputs/output and delegate installed functions unchanged. No new commands or estimator updates."
+}

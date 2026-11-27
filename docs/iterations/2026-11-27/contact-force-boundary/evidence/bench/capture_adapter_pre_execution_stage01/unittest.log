@@ -1,0 +1,20 @@
+test_applied_lambda_and_force_reconstruction (test_analyse_capture.AdapterContracts) ... FAIL
+test_body_order_sign_and_ambiguous_nonzero_family (test_analyse_capture.AdapterContracts) ... ok
+test_missing_force_match_is_reported_not_selected_away (test_analyse_capture.AdapterContracts) ... ok
+test_coupled_reference_and_zero_width_friction (test_captured_lcp_checks.CapturedContracts) ... ok
+test_final_normal_not_initial_or_postmutated_box (test_captured_lcp_checks.CapturedContracts) ... ok
+test_nonfinite_solution_is_unknown_not_success (test_captured_lcp_checks.CapturedContracts) ... ok
+test_original_indices_and_layout_are_required (test_captured_lcp_checks.CapturedContracts) ... ok
+
+======================================================================
+FAIL: test_applied_lambda_and_force_reconstruction (test_analyse_capture.AdapterContracts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/results/contact_force_boundary_20261127/bench/test_analyse_capture.py", line 33, in test_applied_lambda_and_force_reconstruction
+    self.assertEqual(report['checks']['maximum_impulse_to_force_difference_N'], 0)
+AssertionError: 1.1368683772161603e-13 != 0
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.011s
+
+FAILED (failures=1)

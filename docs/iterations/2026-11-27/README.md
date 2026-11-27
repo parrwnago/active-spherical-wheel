@@ -1,5 +1,22 @@
 # Research presentation notes — 2026-11-27
 
+**I-69: native solver impulses explain the unusual zero-normal shell forces.**
+[Full record](contact-force-boundary/README.md) and
+[one-page explanation PDF](contact-force-boundary/evidence/publication/plots_stage02/contact_force_cause.pdf).
+
+- Installed Dantzig freezes tangent bounds using an intermediate normal solve;
+  later pivots can change normals. A controlled SPD problem reproduces final
+  normal0/tangent.7 with success. Default PGS fails; no solver switch adopted.
+- A private delegate capture preserves all59precision and36substep arrays
+  byte-exact on the original44s native Mars replay. Actual shellB impulses at
+  35.203/35.205s have zero normal, nonzero tangent, and recreate the old forces.
+- All20native calls return success,0PGS;12/140applied contacts exceed final
+  component bounds. All140match exports,25nonzero contacts have unique families.
+- The good control also contains the effect. Specific force anomaly explained;
+  whole trajectory deviation and a corrected solver remain unresolved.
+- Keep LQR/observer/feedforward/preparation as baseline. Validate friction bounds
+  and convergence on saved problems before controlled transfer/trajectory tests.
+
 **I-68: matching the observer interval changes our interpretation of contact errors.**
 [Full record](contact-interval-replay/README.md),
 [comparison PDF](contact-interval-replay/evidence/publication/plots_stage02/interval_comparison.pdf)

@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-68.
+experiment history and common presentation questions through I-69.
 
 ## Current system
 
@@ -71,7 +71,22 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-68 resolves much of the apparent observer-load error.**
+**Latest: I-69 identifies the source of the zero-normal shell forces.**
+The installed Dantzig solver sets friction bounds using intermediate normal
+impulses, then retains them while normals can change. A registered installed-
+library probe reproduces zero final normal with nonzero tangent impulse and a
+successful return. Default PGS fails that probe; a solver switch is not validated.
+
+A private read-only hook confirms the actual35.203/35.205s shellB impulses
+already contain the effect and reproduce the I-68 force records. All59precision
+and36substep arrays remain byte-exact. All20captured calls succeed, noPGS;
+12/140applied contacts exceed final-dependent component bounds, including good
+control. This localizes the specific force anomaly, not all trajectory error.
+Keep live LQR/observer/feedforward/preparation. Validate a friction-consistent
+applied contact solution before fitting weights around these artifacts.
+[Report, one-page PDF and cached replay](iterations/2026-11-27/contact-force-boundary/README.md).
+
+**Previous: I-68 resolves much of the apparent observer-load error.**
 One unchanged native −1rad Mars replay records every1ms solve; all59 old
 precision fields match byte-for-byte. Joint-load discrepancy falls from0.1163Nm
 (last1ms comparison) to0.0000866Nm (matched5ms forces). This validates interval
@@ -82,8 +97,8 @@ records have tangential force but zero normal-pressure weight. They explain
 the observer's shell torque, while dominant-positive-pressure labels miss that
 force routing. Thus old family-error labels need careful interpretation.
 A posthoc screen finds the pattern in290/8,000primaryintervals, including good
-control. Its solver/reporting cause is unproved. Audit that boundary before
-adding weights or replacing the observer; high later slip remains relevant.
+control. At I-68 its solver/reporting cause was unproved; I-69 above resolves the
+specific force records. High later slip remains a separate limitation.
 [Report, comparison PDF, fixed events and portable replay](iterations/2026-11-27/contact-interval-replay/README.md).
 The14.13MB lossless input package reproduces the numerical analysis without
 Gazebo. Full rollout/assets remain local. Live code and limits are unchanged.

@@ -1,0 +1,6003 @@
+{
+  "iteration": "I-69",
+  "completed_utc": "2026-11-27T11:40:26.415220+00:00",
+  "checks": {
+    "precision_exact59": true,
+    "trace_numeric_fields_exact": true,
+    "identical_trace_field_sets": true,
+    "raw_rows44000": true,
+    "binary_fully_decoded": true,
+    "unique_increasing_packet_ids": true,
+    "exact20_target_contexts": true,
+    "every_contact_force_reconstructed": true,
+    "every_contact_has_export_match": true,
+    "every_contact_parent_context_offset_valid": true,
+    "every_contact_lambda_matches_parent_solution": true
+  },
+  "all_checks_pass": true,
+  "precision_fields": {
+    "cap_m_s": true,
+    "exact_allocation_drive_reference": true,
+    "exact_applied": true,
+    "exact_clipping_command_delta": true,
+    "exact_effective_phase_rad": true,
+    "exact_equilibrium_command": true,
+    "exact_error": true,
+    "exact_estimated_contact_point_m": true,
+    "exact_estimated_normal": true,
+    "exact_estimated_normal_carrier": true,
+    "exact_estimated_support_loads_N": true,
+    "exact_fade_command_delta": true,
+    "exact_feedback_error": true,
+    "exact_feedback_gain": true,
+    "exact_feedback_reference_qvel": true,
+    "exact_guarded_joint_reference": true,
+    "exact_handoff_command_delta": true,
+    "exact_handoff_request_delta": true,
+    "exact_heading_command": true,
+    "exact_input_bounds": true,
+    "exact_lqr_command": true,
+    "exact_native_applied": true,
+    "exact_native_clipping_command_delta": true,
+    "exact_native_joint_reference": true,
+    "exact_native_requested": true,
+    "exact_native_saturation_mask": true,
+    "exact_nominal_joints_before": true,
+    "exact_observer_generalized": true,
+    "exact_observer_interval_mean": true,
+    "exact_observer_wrench": true,
+    "exact_phase_estimated_normal_rad": true,
+    "exact_phase_normal_xz_norm": true,
+    "exact_phase_world_vertical_rad": true,
+    "exact_phase_world_xz_norm": true,
+    "exact_previous_applied": true,
+    "exact_qpos": true,
+    "exact_qvel": true,
+    "exact_reference_acceleration_m_s2": true,
+    "exact_reference_guard_delta": true,
+    "exact_reference_guard_enabled": true,
+    "exact_reference_qpos": true,
+    "exact_reference_quat": true,
+    "exact_reference_qvel": true,
+    "exact_reference_velocity_m_s": true,
+    "exact_reference_xy": true,
+    "exact_requested": true,
+    "exact_rolling_feedforward": true,
+    "exact_schedule_on_ground_normal": true,
+    "exact_support_command": true,
+    "exact_sync_weights": true,
+    "exact_transition_command_delta": true,
+    "exact_world_vertical_carrier": true,
+    "mirror_previous_applied_matches_physical": true,
+    "time_s": true,
+    "truth_equivalent_point_m": true,
+    "truth_patch_contact_counts": true,
+    "truth_patch_loads_N": true,
+    "truth_patch_points_m": true,
+    "truth_time_s": true
+  },
+  "trace_fields": {
+    "bridge_iterations": true,
+    "bridge_state": true,
+    "bridge_state_before": true,
+    "bridge_time_after_s": true,
+    "bridge_time_before_s": true,
+    "bridge_time_s": true,
+    "contact_admitted": true,
+    "contact_fields": true,
+    "contact_mirror_body_ids": true,
+    "contact_offsets": true,
+    "contact_offsets_before": true,
+    "contact_rows": true,
+    "contact_rows_before": true,
+    "contact_tag_names": true,
+    "contact_tags": true,
+    "control_end_index": true,
+    "control_end_time_s": true,
+    "control_start_time_s": true,
+    "disturbance_world": true,
+    "friction": true,
+    "held_input": true,
+    "hold_completed": true,
+    "hold_index": true,
+    "metadata_json": true,
+    "qpos_after": true,
+    "qpos_before": true,
+    "qvel_after": true,
+    "qvel_before": true,
+    "state_fields": true,
+    "step_dt_s": true,
+    "substep_index": true,
+    "tag_mirror_body_ids": true,
+    "tag_mirror_body_names": true,
+    "tag_mirror_geom_ids": true,
+    "tag_mirror_geom_names": true,
+    "time_s": true
+  },
+  "packets": 160,
+  "solver_packets": 20,
+  "contact_packets": 140,
+  "fixed_contexts": [
+    [
+      1575,
+      1
+    ],
+    [
+      1575,
+      2
+    ],
+    [
+      1575,
+      3
+    ],
+    [
+      1575,
+      4
+    ],
+    [
+      1575,
+      5
+    ],
+    [
+      6422,
+      1
+    ],
+    [
+      6422,
+      2
+    ],
+    [
+      6422,
+      3
+    ],
+    [
+      6422,
+      4
+    ],
+    [
+      6422,
+      5
+    ],
+    [
+      7011,
+      1
+    ],
+    [
+      7011,
+      2
+    ],
+    [
+      7011,
+      3
+    ],
+    [
+      7011,
+      4
+    ],
+    [
+      7011,
+      5
+    ],
+    [
+      7041,
+      1
+    ],
+    [
+      7041,
+      2
+    ],
+    [
+      7041,
+      3
+    ],
+    [
+      7041,
+      4
+    ],
+    [
+      7041,
+      5
+    ]
+  ],
+  "maximum_force_reconstruction_abs_gap_N": 3.552713678800501e-15,
+  "maximum_applied_lambda_parent_gap": 0.0,
+  "contacts": [
+    {
+      "packet_id": 2,
+      "parent_solver_id": 1,
+      "dimension": 3,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        5
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 1,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5038481768532888,
+        9.698133043384086,
+        1.1194148604248653
+      ],
+      "normal": [
+        0.21972279945331558,
+        -0.06424602833099231,
+        0.9734445743051278
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 3,
+      "parent_solver_id": 1,
+      "dimension": 3,
+      "lambda_offset": 3,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        5
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 1,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5033991453166249,
+        9.69806581042005,
+        1.1193090691760266
+      ],
+      "normal": [
+        0.21972279945331558,
+        -0.06424602833099231,
+        0.9734445743051278
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 4,
+      "parent_solver_id": 1,
+      "dimension": 3,
+      "lambda_offset": 6,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 1.1102230246251565e-16,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        5
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 17.29856589020553,
+      "point": [
+        -1.5040175378007958,
+        9.698158401599631,
+        1.1194547616448873
+      ],
+      "normal": [
+        0.21972279945331558,
+        -0.06424602833099231,
+        0.9734445743051278
+      ],
+      "force_N": [
+        0.10992026983612513,
+        0.9291909766227615,
+        17.806982737546264
+      ],
+      "impulse": [
+        0.01729856589020553,
+        -0.004227571539424549,
+        -0.0009226969021807424
+      ]
+    },
+    {
+      "packet_id": 5,
+      "parent_solver_id": 1,
+      "dimension": 3,
+      "lambda_offset": 9,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        5
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 1,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.503604623178393,
+        9.698096576378703,
+        1.119357479494301
+      ],
+      "normal": [
+        0.21972279945331558,
+        -0.06424602833099231,
+        0.9734445743051278
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 6,
+      "parent_solver_id": 1,
+      "dimension": 1,
+      "lambda_offset": 12,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093802315813958,
+        9.708091326187429,
+        1.1212518006676917
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 7,
+      "parent_solver_id": 1,
+      "dimension": 1,
+      "lambda_offset": 13,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.51148262960103,
+        9.705871723132793,
+        1.1216535602634048
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 8,
+      "parent_solver_id": 1,
+      "dimension": 1,
+      "lambda_offset": 14,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093802315813958,
+        9.708091326187429,
+        1.1212518006676917
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 9,
+      "parent_solver_id": 1,
+      "dimension": 1,
+      "lambda_offset": 15,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.51148262960103,
+        9.705871723132793,
+        1.1216535602634048
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 10,
+      "parent_solver_id": 1,
+      "dimension": 1,
+      "lambda_offset": 16,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093802315813958,
+        9.708091326187429,
+        1.1212518006676917
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 11,
+      "parent_solver_id": 1,
+      "dimension": 1,
+      "lambda_offset": 17,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.51148262960103,
+        9.705871723132793,
+        1.1216535602634048
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 12,
+      "parent_solver_id": 1,
+      "dimension": 1,
+      "lambda_offset": 18,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093802315813958,
+        9.708091326187429,
+        1.1212518006676917
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 13,
+      "parent_solver_id": 1,
+      "dimension": 1,
+      "lambda_offset": 19,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 1,
+      "trace_index": 7870,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.51148262960103,
+        9.705871723132793,
+        1.1216535602634048
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 15,
+      "parent_solver_id": 14,
+      "dimension": 3,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        5
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 1,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5038487532344391,
+        9.698133635129256,
+        1.11941511345379
+      ],
+      "normal": [
+        0.21967756698970292,
+        -0.06429332794775024,
+        0.9734516600956042
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 16,
+      "parent_solver_id": 14,
+      "dimension": 3,
+      "lambda_offset": 3,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        5
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 1,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5034065389886637,
+        9.69806722541522,
+        1.1193109333950557
+      ],
+      "normal": [
+        0.21967756698970292,
+        -0.06429332794775024,
+        0.9734516600956042
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 17,
+      "parent_solver_id": 14,
+      "dimension": 3,
+      "lambda_offset": 6,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        5
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 1,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5040134602533672,
+        9.698158370076472,
+        1.1194539163351303
+      ],
+      "normal": [
+        0.21967756698970292,
+        -0.06429332794775024,
+        0.9734516600956042
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 18,
+      "parent_solver_id": 14,
+      "dimension": 3,
+      "lambda_offset": 9,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        5
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 1,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5036050768874356,
+        9.698097040929326,
+        1.1193577064019242
+      ],
+      "normal": [
+        0.21967756698970292,
+        -0.06429332794775024,
+        0.9734516600956042
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 19,
+      "parent_solver_id": 14,
+      "dimension": 1,
+      "lambda_offset": 12,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093596084213616,
+        9.708223977804257,
+        1.1212532866777873
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 20,
+      "parent_solver_id": 14,
+      "dimension": 1,
+      "lambda_offset": 13,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5115365656252346,
+        9.705925659020469,
+        1.1216692942262843
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 21,
+      "parent_solver_id": 14,
+      "dimension": 3,
+      "lambda_offset": 14,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": -1.8041124150158794e-16,
+      "point": [
+        -1.5143481876475975,
+        9.719920482451549,
+        1.123028097616723
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        -2.33112710758382,
+        -1.7778923972884464,
+        0.478907875888347
+      ],
+      "impulse": [
+        0.0,
+        -0.001992191166446031,
+        0.002203538535621843
+      ]
+    },
+    {
+      "packet_id": 22,
+      "parent_solver_id": 14,
+      "dimension": 3,
+      "lambda_offset": 17,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": -1.1102230246251565e-16,
+      "point": [
+        -1.514348187647468,
+        9.719920482451537,
+        1.1230280976169114
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        -2.3311282491741374,
+        -1.7778973341247313,
+        0.4789079113964802
+      ],
+      "impulse": [
+        0.0,
+        -0.0019921913141550014,
+        0.0022035436007007015
+      ]
+    },
+    {
+      "packet_id": 23,
+      "parent_solver_id": 14,
+      "dimension": 3,
+      "lambda_offset": 20,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 49.94235090878464,
+      "point": [
+        -1.5132562129497653,
+        9.719756627470714,
+        1.1227637359818734
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        11.76896058781515,
+        -2.3727694325036537,
+        48.47782942953213
+      ],
+      "impulse": [
+        0.049942350908784634,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 24,
+      "parent_solver_id": 14,
+      "dimension": 1,
+      "lambda_offset": 23,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093596084213616,
+        9.708223977804257,
+        1.1212532866777873
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 25,
+      "parent_solver_id": 14,
+      "dimension": 1,
+      "lambda_offset": 24,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5115365656252346,
+        9.705925659020469,
+        1.1216692942262843
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 26,
+      "parent_solver_id": 14,
+      "dimension": 1,
+      "lambda_offset": 25,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093596084213616,
+        9.708223977804257,
+        1.1212532866777873
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 27,
+      "parent_solver_id": 14,
+      "dimension": 1,
+      "lambda_offset": 26,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5115365656252346,
+        9.705925659020469,
+        1.1216692942262843
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 28,
+      "parent_solver_id": 14,
+      "dimension": 1,
+      "lambda_offset": 27,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093596084213616,
+        9.708223977804257,
+        1.1212532866777873
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 29,
+      "parent_solver_id": 14,
+      "dimension": 1,
+      "lambda_offset": 28,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 2,
+      "trace_index": 7871,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5115365656252346,
+        9.705925659020469,
+        1.1216692942262843
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 31,
+      "parent_solver_id": 30,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093323348904677,
+        9.708348489264267,
+        1.121252759753951
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 32,
+      "parent_solver_id": 30,
+      "dimension": 1,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5115831265767004,
+        9.705972219854075,
+        1.1216828767676894
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 33,
+      "parent_solver_id": 30,
+      "dimension": 3,
+      "lambda_offset": 2,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 2,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 2,
+      "negative_force_match_count": 2,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5143480284328155,
+        9.71992100078014,
+        1.1230282825228584
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 34,
+      "parent_solver_id": 30,
+      "dimension": 3,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 2,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 2,
+      "negative_force_match_count": 2,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5143480284326858,
+        9.719921000780127,
+        1.1230282825230467
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 35,
+      "parent_solver_id": 30,
+      "dimension": 3,
+      "lambda_offset": 8,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 4.440892098500626e-16,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 15.129013154251782,
+      "point": [
+        -1.5132651312714969,
+        9.719758031974742,
+        1.1227659698265497
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        3.5856846814967174,
+        -1.3375623401671883,
+        14.65009847757186
+      ],
+      "impulse": [
+        0.015129013154251778,
+        0.00014670948968396769,
+        0.0006025200043320837
+      ]
+    },
+    {
+      "packet_id": 36,
+      "parent_solver_id": 30,
+      "dimension": 1,
+      "lambda_offset": 11,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093323348904677,
+        9.708348489264267,
+        1.121252759753951
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 37,
+      "parent_solver_id": 30,
+      "dimension": 1,
+      "lambda_offset": 12,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5115831265767004,
+        9.705972219854075,
+        1.1216828767676894
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 38,
+      "parent_solver_id": 30,
+      "dimension": 1,
+      "lambda_offset": 13,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093323348904677,
+        9.708348489264267,
+        1.121252759753951
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 39,
+      "parent_solver_id": 30,
+      "dimension": 1,
+      "lambda_offset": 14,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5115831265767004,
+        9.705972219854075,
+        1.1216828767676894
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 40,
+      "parent_solver_id": 30,
+      "dimension": 1,
+      "lambda_offset": 15,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093323348904677,
+        9.708348489264267,
+        1.121252759753951
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 41,
+      "parent_solver_id": 30,
+      "dimension": 1,
+      "lambda_offset": 16,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 3,
+      "trace_index": 7872,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5115831265767004,
+        9.705972219854075,
+        1.1216828767676894
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 43,
+      "parent_solver_id": 42,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093012372816481,
+        9.708471124523294,
+        1.1212512126273677
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 44,
+      "parent_solver_id": 42,
+      "dimension": 1,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5116268109736775,
+        9.706015904140472,
+        1.1216956201741712
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 45,
+      "parent_solver_id": 42,
+      "dimension": 3,
+      "lambda_offset": 2,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 2,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 2,
+      "negative_force_match_count": 2,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5143477751895125,
+        9.719921970469947,
+        1.1230285035484462
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 46,
+      "parent_solver_id": 42,
+      "dimension": 3,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 2,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 2,
+      "negative_force_match_count": 2,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5143477751893828,
+        9.719921970469933,
+        1.123028503548634
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 47,
+      "parent_solver_id": 42,
+      "dimension": 3,
+      "lambda_offset": 8,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 4.440892098500626e-16,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 15.172949335613403,
+      "point": [
+        -1.513273999572219,
+        9.719759909921166,
+        1.1227682147004814
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        3.5812877781213914,
+        -1.4547711101728455,
+        14.690692576073248
+      ],
+      "impulse": [
+        0.0151729493356134,
+        0.00015525254937373692,
+        0.0007182858777886738
+      ]
+    },
+    {
+      "packet_id": 48,
+      "parent_solver_id": 42,
+      "dimension": 1,
+      "lambda_offset": 11,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093012372816481,
+        9.708471124523294,
+        1.1212512126273677
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 49,
+      "parent_solver_id": 42,
+      "dimension": 1,
+      "lambda_offset": 12,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5116268109736775,
+        9.706015904140472,
+        1.1216956201741712
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 50,
+      "parent_solver_id": 42,
+      "dimension": 1,
+      "lambda_offset": 13,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093012372816481,
+        9.708471124523294,
+        1.1212512126273677
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 51,
+      "parent_solver_id": 42,
+      "dimension": 1,
+      "lambda_offset": 14,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5116268109736775,
+        9.706015904140472,
+        1.1216956201741712
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 52,
+      "parent_solver_id": 42,
+      "dimension": 1,
+      "lambda_offset": 15,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5093012372816481,
+        9.708471124523294,
+        1.1212512126273677
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 53,
+      "parent_solver_id": 42,
+      "dimension": 1,
+      "lambda_offset": 16,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 4,
+      "trace_index": 7873,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5116268109736775,
+        9.706015904140472,
+        1.1216956201741712
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 55,
+      "parent_solver_id": 54,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5092663255328536,
+        9.708591731822871,
+        1.1212486402827866
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 56,
+      "parent_solver_id": 54,
+      "dimension": 1,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5116675500982861,
+        9.706056643161958,
+        1.1217075043996734
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 57,
+      "parent_solver_id": 54,
+      "dimension": 3,
+      "lambda_offset": 2,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 2,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 2,
+      "negative_force_match_count": 2,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5143474983575125,
+        9.719922923318103,
+        1.1230287547466444
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 58,
+      "parent_solver_id": 54,
+      "dimension": 3,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 2,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 2,
+      "negative_force_match_count": 2,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5143474983573828,
+        9.71992292331809,
+        1.1230287547468325
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 59,
+      "parent_solver_id": 54,
+      "dimension": 3,
+      "lambda_offset": 8,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 1.7763568394002505e-15,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        4
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 15.178579085114809,
+      "point": [
+        -1.5132829686830864,
+        9.719761804018495,
+        1.122770484838601
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        3.5864821970903633,
+        -1.4488465147415686,
+        14.695521334181837
+      ],
+      "impulse": [
+        0.015178579085114807,
+        0.00015789781986670932,
+        0.0007114515388381088
+      ]
+    },
+    {
+      "packet_id": 60,
+      "parent_solver_id": 54,
+      "dimension": 1,
+      "lambda_offset": 11,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5092663255328536,
+        9.708591731822871,
+        1.1212486402827866
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 61,
+      "parent_solver_id": 54,
+      "dimension": 1,
+      "lambda_offset": 12,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5116675500982861,
+        9.706056643161958,
+        1.1217075043996734
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 62,
+      "parent_solver_id": 54,
+      "dimension": 1,
+      "lambda_offset": 13,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5092663255328536,
+        9.708591731822871,
+        1.1212486402827866
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 63,
+      "parent_solver_id": 54,
+      "dimension": 1,
+      "lambda_offset": 14,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5116675500982861,
+        9.706056643161958,
+        1.1217075043996734
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 64,
+      "parent_solver_id": 54,
+      "dimension": 1,
+      "lambda_offset": 15,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5092663255328536,
+        9.708591731822871,
+        1.1212486402827866
+      ],
+      "normal": [
+        0.23565091297584556,
+        -0.047510167009104376,
+        0.9706757600993329
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 65,
+      "parent_solver_id": 54,
+      "dimension": 1,
+      "lambda_offset": 16,
+      "buffer": 0,
+      "context_end_index": 1575,
+      "substep": 5,
+      "trace_index": 7874,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.5116675500982861,
+        9.706056643161958,
+        1.1217075043996734
+      ],
+      "normal": [
+        0.20167619496854974,
+        -0.08301704705472226,
+        0.9759277034090802
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 67,
+      "parent_solver_id": 66,
+      "dimension": 3,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 1,
+      "trace_index": 32105,
+      "force_reconstruction_max_abs_N": 4.163336342344337e-17,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        1
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 17.901854649282832,
+      "point": [
+        -1.8087555627568714,
+        9.379620778617973,
+        1.127315829635597
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        -0.3278510102132558,
+        0.0766799026904596,
+        17.915295382696375
+      ],
+      "impulse": [
+        0.01790185464928283,
+        -0.0006958667877737969,
+        -0.00033248198637001944
+      ]
+    },
+    {
+      "packet_id": 68,
+      "parent_solver_id": 66,
+      "dimension": 1,
+      "lambda_offset": 3,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 1,
+      "trace_index": 32105,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8087555627568714,
+        9.379620778617973,
+        1.127315829635597
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 69,
+      "parent_solver_id": 66,
+      "dimension": 1,
+      "lambda_offset": 4,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 1,
+      "trace_index": 32105,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8087555627568714,
+        9.379620778617973,
+        1.127315829635597
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 70,
+      "parent_solver_id": 66,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 1,
+      "trace_index": 32105,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8087555627568714,
+        9.379620778617973,
+        1.127315829635597
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 72,
+      "parent_solver_id": 71,
+      "dimension": 3,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 2,
+      "trace_index": 32106,
+      "force_reconstruction_max_abs_N": 5.551115123125783e-17,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        1
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 17.907851024285307,
+      "point": [
+        -1.8086642493706235,
+        9.379581225014352,
+        1.1273159031443443
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        -0.32767703592442776,
+        0.07869402848716653,
+        17.921226325905455
+      ],
+      "impulse": [
+        0.01790785102428531,
+        -0.0006941507068381154,
+        -0.0003330833266890843
+      ]
+    },
+    {
+      "packet_id": 73,
+      "parent_solver_id": 71,
+      "dimension": 1,
+      "lambda_offset": 3,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 2,
+      "trace_index": 32106,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8086642493706235,
+        9.379581225014352,
+        1.1273159031443443
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 74,
+      "parent_solver_id": 71,
+      "dimension": 1,
+      "lambda_offset": 4,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 2,
+      "trace_index": 32106,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8086642493706235,
+        9.379581225014352,
+        1.1273159031443443
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 75,
+      "parent_solver_id": 71,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 2,
+      "trace_index": 32106,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8086642493706235,
+        9.379581225014352,
+        1.1273159031443443
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 77,
+      "parent_solver_id": 76,
+      "dimension": 3,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 3,
+      "trace_index": 32107,
+      "force_reconstruction_max_abs_N": 5.551115123125783e-17,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        1
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 17.91373856769152,
+      "point": [
+        -1.8085731523705597,
+        9.379542711505266,
+        1.127315945030529
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        -0.3275025046075722,
+        0.08068495270841894,
+        17.927049130837258
+      ],
+      "impulse": [
+        0.017913738567691517,
+        -0.0006924519967892691,
+        -0.0003336753693557114
+      ]
+    },
+    {
+      "packet_id": 78,
+      "parent_solver_id": 76,
+      "dimension": 1,
+      "lambda_offset": 3,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 3,
+      "trace_index": 32107,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8085731523705597,
+        9.379542711505266,
+        1.127315945030529
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 79,
+      "parent_solver_id": 76,
+      "dimension": 1,
+      "lambda_offset": 4,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 3,
+      "trace_index": 32107,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8085731523705597,
+        9.379542711505266,
+        1.127315945030529
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 80,
+      "parent_solver_id": 76,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 3,
+      "trace_index": 32107,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8085731523705597,
+        9.379542711505266,
+        1.127315945030529
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 82,
+      "parent_solver_id": 81,
+      "dimension": 3,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 4,
+      "trace_index": 32108,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084822721497829,
+        9.379505230816449,
+        1.1273159555412224
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 83,
+      "parent_solver_id": 81,
+      "dimension": 1,
+      "lambda_offset": 3,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 4,
+      "trace_index": 32108,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084621302276784,
+        9.364218226000602,
+        1.1287981436296994
+      ],
+      "normal": [
+        0.01341168064581084,
+        0.16060081669960358,
+        0.9869283178112153
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 84,
+      "parent_solver_id": 81,
+      "dimension": 1,
+      "lambda_offset": 4,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 4,
+      "trace_index": 32108,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084822721497829,
+        9.379505230816449,
+        1.1273159555412224
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 85,
+      "parent_solver_id": 81,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 4,
+      "trace_index": 32108,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084621302276784,
+        9.364218226000602,
+        1.1287981436296994
+      ],
+      "normal": [
+        0.01341168064581084,
+        0.16060081669960358,
+        0.9869283178112153
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 86,
+      "parent_solver_id": 81,
+      "dimension": 1,
+      "lambda_offset": 6,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 4,
+      "trace_index": 32108,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084822721497829,
+        9.379505230816449,
+        1.1273159555412224
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 87,
+      "parent_solver_id": 81,
+      "dimension": 3,
+      "lambda_offset": 7,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 4,
+      "trace_index": 32108,
+      "force_reconstruction_max_abs_N": 3.552713678800501e-15,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 27.10053802712357,
+      "point": [
+        -1.8084621302276784,
+        9.364218226000602,
+        1.1287981436296994
+      ],
+      "normal": [
+        0.01341168064581084,
+        0.16060081669960358,
+        0.9869283178112153
+      ],
+      "force_N": [
+        -9.637848140412293,
+        -0.035896949335965544,
+        27.59629281717068
+      ],
+      "impulse": [
+        0.02710053802712357,
+        -0.00976294145730089,
+        0.004968963207892704
+      ]
+    },
+    {
+      "packet_id": 88,
+      "parent_solver_id": 81,
+      "dimension": 1,
+      "lambda_offset": 10,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 4,
+      "trace_index": 32108,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084822721497829,
+        9.379505230816449,
+        1.1273159555412224
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 89,
+      "parent_solver_id": 81,
+      "dimension": 1,
+      "lambda_offset": 11,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 4,
+      "trace_index": 32108,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084621302276784,
+        9.364218226000602,
+        1.1287981436296994
+      ],
+      "normal": [
+        0.01341168064581084,
+        0.16060081669960358,
+        0.9869283178112153
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 91,
+      "parent_solver_id": 90,
+      "dimension": 3,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 5,
+      "trace_index": 32109,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084063379051636,
+        9.379469181647512,
+        1.1273161215870537
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 92,
+      "parent_solver_id": 90,
+      "dimension": 1,
+      "lambda_offset": 3,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 5,
+      "trace_index": 32109,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8083861328973407,
+        9.364182331118974,
+        1.128802951978285
+      ],
+      "normal": [
+        0.01341168064581084,
+        0.16060081669960358,
+        0.9869283178112153
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 93,
+      "parent_solver_id": 90,
+      "dimension": 1,
+      "lambda_offset": 4,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 5,
+      "trace_index": 32109,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084063379051636,
+        9.379469181647512,
+        1.1273161215870537
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 94,
+      "parent_solver_id": 90,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 5,
+      "trace_index": 32109,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8083861328973407,
+        9.364182331118974,
+        1.128802951978285
+      ],
+      "normal": [
+        0.01341168064581084,
+        0.16060081669960358,
+        0.9869283178112153
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 95,
+      "parent_solver_id": 90,
+      "dimension": 1,
+      "lambda_offset": 6,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 5,
+      "trace_index": 32109,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084063379051636,
+        9.379469181647512,
+        1.1273161215870537
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 96,
+      "parent_solver_id": 90,
+      "dimension": 3,
+      "lambda_offset": 7,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 5,
+      "trace_index": 32109,
+      "force_reconstruction_max_abs_N": 3.552713678800501e-15,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 16.96222764582622,
+      "point": [
+        -1.8083861328973407,
+        9.364182331118974,
+        1.128802951978285
+      ],
+      "normal": [
+        0.01341168064581084,
+        0.16060081669960358,
+        0.9869283178112153
+      ],
+      "force_N": [
+        -0.08264527763948967,
+        1.5949920530199109,
+        16.92846251347331
+      ],
+      "impulse": [
+        0.016962227645826222,
+        -0.0002524724299119068,
+        0.0011587769088512766
+      ]
+    },
+    {
+      "packet_id": 97,
+      "parent_solver_id": 90,
+      "dimension": 1,
+      "lambda_offset": 10,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 5,
+      "trace_index": 32109,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 4,
+      "matching_tags": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "positive_force_match_count": 4,
+      "negative_force_match_count": 4,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8084063379051636,
+        9.379469181647512,
+        1.1273161215870537
+      ],
+      "normal": [
+        0.013580566339881145,
+        0.03320933613364713,
+        0.9993561468322745
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 98,
+      "parent_solver_id": 90,
+      "dimension": 1,
+      "lambda_offset": 11,
+      "buffer": 0,
+      "context_end_index": 6422,
+      "substep": 5,
+      "trace_index": 32109,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.8083861328973407,
+        9.364182331118974,
+        1.128802951978285
+      ],
+      "normal": [
+        0.01341168064581084,
+        0.16060081669960358,
+        0.9869283178112153
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 100,
+      "parent_solver_id": 99,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 1,
+      "trace_index": 35050,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7139438732423353,
+        9.481758602326867,
+        1.1171086786814508
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 101,
+      "parent_solver_id": 99,
+      "dimension": 1,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 1,
+      "trace_index": 35050,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7139438732423353,
+        9.481758602326867,
+        1.1171086786814508
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 102,
+      "parent_solver_id": 99,
+      "dimension": 3,
+      "lambda_offset": 2,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 1,
+      "trace_index": 35050,
+      "force_reconstruction_max_abs_N": 8.881784197001252e-16,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 16.14138033449441,
+      "point": [
+        -1.7139438732423353,
+        9.481758602326867,
+        1.1171086786814508
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        4.336373828503993,
+        -14.316713192719456,
+        14.005375061497931
+      ],
+      "impulse": [
+        0.01614138033449441,
+        -0.012545756348646735,
+        -0.0014081135515068058
+      ]
+    },
+    {
+      "packet_id": 103,
+      "parent_solver_id": 99,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 1,
+      "trace_index": 35050,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7139438732423353,
+        9.481758602326867,
+        1.1171086786814508
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 105,
+      "parent_solver_id": 104,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 2,
+      "trace_index": 35051,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7138840932280033,
+        9.48177845471677,
+        1.1171104577820843
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 106,
+      "parent_solver_id": 104,
+      "dimension": 1,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 2,
+      "trace_index": 35051,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7138840932280033,
+        9.48177845471677,
+        1.1171104577820843
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 107,
+      "parent_solver_id": 104,
+      "dimension": 3,
+      "lambda_offset": 2,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 2,
+      "trace_index": 35051,
+      "force_reconstruction_max_abs_N": 1.7763568394002505e-15,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 16.149076303557955,
+      "point": [
+        -1.7138840932280033,
+        9.48177845471677,
+        1.1171104577820843
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        4.34171524371432,
+        -14.321263402494282,
+        14.012336015139407
+      ],
+      "impulse": [
+        0.016149076303557955,
+        -0.012550664048123751,
+        -0.001408120660772063
+      ]
+    },
+    {
+      "packet_id": 108,
+      "parent_solver_id": 104,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 2,
+      "trace_index": 35051,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7138840932280033,
+        9.48177845471677,
+        1.1171104577820843
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 110,
+      "parent_solver_id": 109,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 3,
+      "trace_index": 35052,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7138191005591035,
+        9.481776665159371,
+        1.1171087349740256
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 111,
+      "parent_solver_id": 109,
+      "dimension": 1,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 3,
+      "trace_index": 35052,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7138191005591035,
+        9.481776665159371,
+        1.1171087349740256
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 112,
+      "parent_solver_id": 109,
+      "dimension": 3,
+      "lambda_offset": 2,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 3,
+      "trace_index": 35052,
+      "force_reconstruction_max_abs_N": 8.881784197001252e-16,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 16.148096260191153,
+      "point": [
+        -1.7138191005591035,
+        9.481776665159371,
+        1.1171087349740256
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        4.345833032263693,
+        -14.319984384276413,
+        14.011452517130584
+      ],
+      "impulse": [
+        0.016148096260191154,
+        -0.012550987523084783,
+        -0.0014073800186907683
+      ]
+    },
+    {
+      "packet_id": 113,
+      "parent_solver_id": 109,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 3,
+      "trace_index": 35052,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7138191005591035,
+        9.481776665159371,
+        1.1171087349740256
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 115,
+      "parent_solver_id": 114,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 4,
+      "trace_index": 35053,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7137488874617604,
+        9.481753236149387,
+        1.1171035104750326
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 116,
+      "parent_solver_id": 114,
+      "dimension": 1,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 4,
+      "trace_index": 35053,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7137488874617604,
+        9.481753236149387,
+        1.1171035104750326
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 117,
+      "parent_solver_id": 114,
+      "dimension": 3,
+      "lambda_offset": 2,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 4,
+      "trace_index": 35053,
+      "force_reconstruction_max_abs_N": 1.7763568394002505e-15,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 16.138423349723478,
+      "point": [
+        -1.7137488874617604,
+        9.481753236149387,
+        1.1171035104750326
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        4.34870694728577,
+        -14.312865536809092,
+        14.002709611823724
+      ],
+      "impulse": [
+        0.01613842334972348,
+        -0.012546711879850478,
+        -0.0014059022904627228
+      ]
+    },
+    {
+      "packet_id": 118,
+      "parent_solver_id": 114,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 4,
+      "trace_index": 35053,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7137488874617604,
+        9.481753236149387,
+        1.1171035104750326
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 120,
+      "parent_solver_id": 119,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 5,
+      "trace_index": 35054,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7136734479725733,
+        9.481708176626487,
+        1.1170947855514584
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 121,
+      "parent_solver_id": 119,
+      "dimension": 3,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 5,
+      "trace_index": 35054,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        1
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7136893931443309,
+        9.450037147696777,
+        1.1163765191990205
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        -20.60026667461627,
+        31.834255950006078,
+        -3.047219195169858
+      ],
+      "impulse": [
+        0.0,
+        0.027304492089843233,
+        -0.026486621066019417
+      ]
+    },
+    {
+      "packet_id": 122,
+      "parent_solver_id": 119,
+      "dimension": 1,
+      "lambda_offset": 4,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 5,
+      "trace_index": 35054,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7136734479725733,
+        9.481708176626487,
+        1.1170947855514584
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 123,
+      "parent_solver_id": 119,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 5,
+      "trace_index": 35054,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7136893931443309,
+        9.450037147696777,
+        1.1163765191990205
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 124,
+      "parent_solver_id": 119,
+      "dimension": 3,
+      "lambda_offset": 6,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 5,
+      "trace_index": 35054,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 31.503886486130114,
+      "point": [
+        -1.7136734479725733,
+        9.481708176626487,
+        1.1170947855514584
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.6907985492749712,
+        -4.868809196851333,
+        31.117717752109442
+      ],
+      "impulse": [
+        0.03150388648613012,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 125,
+      "parent_solver_id": 119,
+      "dimension": 1,
+      "lambda_offset": 9,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 5,
+      "trace_index": 35054,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7136893931443309,
+        9.450037147696777,
+        1.1163765191990205
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 126,
+      "parent_solver_id": 119,
+      "dimension": 1,
+      "lambda_offset": 10,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 5,
+      "trace_index": 35054,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7136734479725733,
+        9.481708176626487,
+        1.1170947855514584
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 127,
+      "parent_solver_id": 119,
+      "dimension": 1,
+      "lambda_offset": 11,
+      "buffer": 0,
+      "context_end_index": 7011,
+      "substep": 5,
+      "trace_index": 35054,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7136893931443309,
+        9.450037147696777,
+        1.1163765191990205
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 129,
+      "parent_solver_id": 128,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 1,
+      "trace_index": 35200,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7056648861899402,
+        9.481755007504983,
+        1.1169243266414712
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 130,
+      "parent_solver_id": 128,
+      "dimension": 1,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 1,
+      "trace_index": 35200,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7056648861899402,
+        9.481755007504983,
+        1.1169243266414712
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 131,
+      "parent_solver_id": 128,
+      "dimension": 3,
+      "lambda_offset": 2,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 1,
+      "trace_index": 35200,
+      "force_reconstruction_max_abs_N": 1.7763568394002505e-15,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 16.047784574767913,
+      "point": [
+        -1.7056648861899402,
+        9.481755007504983,
+        1.1169243266414712
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        5.370251165412303,
+        -13.857985550001388,
+        13.959440658462906
+      ],
+      "impulse": [
+        0.016047784574767913,
+        -0.012525179057228731,
+        -0.0011566522411712808
+      ]
+    },
+    {
+      "packet_id": 132,
+      "parent_solver_id": 128,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 1,
+      "trace_index": 35200,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7056648861899402,
+        9.481755007504983,
+        1.1169243266414712
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 134,
+      "parent_solver_id": 133,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 2,
+      "trace_index": 35201,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7055844977315031,
+        9.48175256790724,
+        1.1169221603461497
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 135,
+      "parent_solver_id": 133,
+      "dimension": 1,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 2,
+      "trace_index": 35201,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7055844977315031,
+        9.48175256790724,
+        1.1169221603461497
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 136,
+      "parent_solver_id": 133,
+      "dimension": 3,
+      "lambda_offset": 2,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 2,
+      "trace_index": 35201,
+      "force_reconstruction_max_abs_N": 1.7763568394002505e-15,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 16.047002288564673,
+      "point": [
+        -1.7055844977315031,
+        9.48175256790724,
+        1.1169221603461497
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        5.3769117294191675,
+        -13.855176442688432,
+        13.958940327548422
+      ],
+      "impulse": [
+        0.016047002288564673,
+        -0.012525626258538895,
+        -0.0011539122385400978
+      ]
+    },
+    {
+      "packet_id": 137,
+      "parent_solver_id": 133,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 2,
+      "trace_index": 35201,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7055844977315031,
+        9.48175256790724,
+        1.1169221603461497
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 139,
+      "parent_solver_id": 138,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 3,
+      "trace_index": 35202,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7054970770314166,
+        9.481729245816128,
+        1.1169165705755284
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 140,
+      "parent_solver_id": 138,
+      "dimension": 3,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 3,
+      "trace_index": 35202,
+      "force_reconstruction_max_abs_N": 1.7763568394002505e-15,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        1
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7055131424310344,
+        9.45005642228488,
+        1.1161928884378074
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        -12.9988596206674,
+        23.02300136494946,
+        -2.245962902899368
+      ],
+      "impulse": [
+        0.0,
+        0.02012486545552847,
+        -0.017293440462972064
+      ]
+    },
+    {
+      "packet_id": 141,
+      "parent_solver_id": 138,
+      "dimension": 1,
+      "lambda_offset": 4,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 3,
+      "trace_index": 35202,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7054970770314166,
+        9.481729245816128,
+        1.1169165705755284
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 142,
+      "parent_solver_id": 138,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 3,
+      "trace_index": 35202,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7055131424310344,
+        9.45005642228488,
+        1.1161928884378074
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 143,
+      "parent_solver_id": 138,
+      "dimension": 3,
+      "lambda_offset": 6,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 3,
+      "trace_index": 35202,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 27.726643561118415,
+      "point": [
+        -1.7054970770314166,
+        9.481729245816128,
+        1.1169165705755284
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.6079734053357938,
+        -4.285050266024329,
+        27.38677556269373
+      ],
+      "impulse": [
+        0.027726643561118414,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 144,
+      "parent_solver_id": 138,
+      "dimension": 1,
+      "lambda_offset": 9,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 3,
+      "trace_index": 35202,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7055131424310344,
+        9.45005642228488,
+        1.1161928884378074
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 145,
+      "parent_solver_id": 138,
+      "dimension": 1,
+      "lambda_offset": 10,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 3,
+      "trace_index": 35202,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7054970770314166,
+        9.481729245816128,
+        1.1169165705755284
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 146,
+      "parent_solver_id": 138,
+      "dimension": 1,
+      "lambda_offset": 11,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 3,
+      "trace_index": 35202,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7055131424310344,
+        9.45005642228488,
+        1.1161928884378074
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 148,
+      "parent_solver_id": 147,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 4,
+      "trace_index": 35203,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7054309568813428,
+        9.48173759616536,
+        1.1169164092704271
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 149,
+      "parent_solver_id": 147,
+      "dimension": 1,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 4,
+      "trace_index": 35203,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7054309568813428,
+        9.48173759616536,
+        1.1169164092704271
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 150,
+      "parent_solver_id": 147,
+      "dimension": 3,
+      "lambda_offset": 2,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 4,
+      "trace_index": 35203,
+      "force_reconstruction_max_abs_N": 8.881784197001252e-16,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 16.037488725831302,
+      "point": [
+        -1.7054309568813428,
+        9.48173759616536,
+        1.1169164092704271
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        4.499407421750183,
+        -14.337129704122658,
+        13.89338044344363
+      ],
+      "impulse": [
+        0.016037488725831304,
+        -0.012527118416114248,
+        -0.0021666183335982184
+      ]
+    },
+    {
+      "packet_id": 151,
+      "parent_solver_id": 147,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 4,
+      "trace_index": 35203,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7054309568813428,
+        9.48173759616536,
+        1.1169164092704271
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 153,
+      "parent_solver_id": 152,
+      "dimension": 1,
+      "lambda_offset": 0,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 5,
+      "trace_index": 35204,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7053589611027151,
+        9.481724422981376,
+        1.1169127498664928
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 154,
+      "parent_solver_id": 152,
+      "dimension": 3,
+      "lambda_offset": 1,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 5,
+      "trace_index": 35204,
+      "force_reconstruction_max_abs_N": 1.7763568394002505e-15,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        1
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7053749983197213,
+        9.450051739269341,
+        1.1161903372429496
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        -4.99814148249318,
+        11.639646475840442,
+        -1.1704165152919035
+      ],
+      "impulse": [
+        0.0,
+        0.010487472819239797,
+        -0.007200387284482586
+      ]
+    },
+    {
+      "packet_id": 155,
+      "parent_solver_id": 152,
+      "dimension": 1,
+      "lambda_offset": 4,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 5,
+      "trace_index": 35204,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7053589611027151,
+        9.481724422981376,
+        1.1169127498664928
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 156,
+      "parent_solver_id": 152,
+      "dimension": 1,
+      "lambda_offset": 5,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 5,
+      "trace_index": 35204,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7053749983197213,
+        9.450051739269341,
+        1.1161903372429496
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 157,
+      "parent_solver_id": 152,
+      "dimension": 3,
+      "lambda_offset": 6,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 5,
+      "trace_index": 35204,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 1,
+      "matching_tags": [
+        3
+      ],
+      "positive_force_match_count": 1,
+      "negative_force_match_count": 0,
+      "nonzero_force": true,
+      "logged_normal_projection_N": 22.773430735076232,
+      "point": [
+        -1.7053589611027151,
+        9.481724422981376,
+        1.1169127498664928
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.4993622904504432,
+        -3.519549534169751,
+        22.494278290816897
+      ],
+      "impulse": [
+        0.022773430735076233,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "packet_id": 158,
+      "parent_solver_id": 152,
+      "dimension": 1,
+      "lambda_offset": 9,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 5,
+      "trace_index": 35204,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7053749983197213,
+        9.450051739269341,
+        1.1161903372429496
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 159,
+      "parent_solver_id": 152,
+      "dimension": 1,
+      "lambda_offset": 10,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 5,
+      "trace_index": 35204,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        1,
+        2
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7053589611027151,
+        9.481724422981376,
+        1.1169127498664928
+      ],
+      "normal": [
+        0.021927407260659785,
+        -0.1545463033265712,
+        0.9877421874856397
+      ],
+      "force_N": [
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    },
+    {
+      "packet_id": 160,
+      "parent_solver_id": 152,
+      "dimension": 1,
+      "lambda_offset": 11,
+      "buffer": 0,
+      "context_end_index": 7041,
+      "substep": 5,
+      "trace_index": 35204,
+      "force_reconstruction_max_abs_N": 0.0,
+      "parent_context_and_offset_valid": true,
+      "parent_lambda_max_abs_gap": 0.0,
+      "trace_match_count": 3,
+      "matching_tags": [
+        0,
+        2,
+        3
+      ],
+      "positive_force_match_count": 3,
+      "negative_force_match_count": 3,
+      "nonzero_force": false,
+      "logged_normal_projection_N": 0.0,
+      "point": [
+        -1.7053749983197213,
+        9.450051739269341,
+        1.1161903372429496
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "impulse": [
+        0.0
+      ]
+    }
+  ],
+  "qualifications": [
+    "Force sign is checked both ways because original collision order was not exported; match counts preserve ambiguity.",
+    "Zero-force coincident collision slots may have several matching tags. They are not silently assigned a unique material family.",
+    "This audit validates observed interception/export association, not Coulomb physical validity or a control improvement."
+  ]
+}

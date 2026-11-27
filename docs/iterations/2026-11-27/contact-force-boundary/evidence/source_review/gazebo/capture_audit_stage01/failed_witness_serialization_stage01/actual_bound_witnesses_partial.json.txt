@@ -1,0 +1,58 @@
+{
+  "iteration": "I-69",
+  "audit_utc": "2026-11-27T11:41:57.935824+00:00",
+  "scope": "Independent additional actual-capture bound/row witness audit using the already sealed independent binary decoder and the PhaseB numerical detection rule. No solve, physics, source change or weight fitting.",
+  "source_sha256": "302fe506b250d246bab6367a02736052d299328d6c5241a962fd38633f8d160f",
+  "binary_sha256": "7755bc1088260320af4ef269d5bf7e712612513020bb5753052ed9a32f51bfee",
+  "method": "Use original pre-solve findex/coefficients and final unpermuted x at the applied lambda row; compare each tangent impulse to mu*abs(final normal impulse). Do not align mutated post-call lo/hi/findex to unpermuted x. Associate contacts through independent point/normal/force trace joins; rawtrace byte identity joins these to original I68 rows.",
+  "counts": {
+    "solver_calls": 20,
+    "Dantzig_calls": 20,
+    "PGS_calls": 0,
+    "solver_successes": 20,
+    "applied_contact_packets": 140,
+    "nonzero_force_contacts": 25,
+    "nonzero_force_unique_tag_contacts": 25,
+    "violating_contacts": 12,
+    "violating_tangent_rows": 17
+  },
+  "specific_shell_B_witnesses": [
+    {
+      "packet_id": 140,
+      "parent_solver_id": 138,
+      "solver": "Dantzig",
+      "parent_success": true,
+      "control_start_time_s": 35.199999999999555,
+      "substep": 3,
+      "physics_end_time_s": 35.202999999999555,
+      "lambda_original_offset": 1,
+      "buffer": 0,
+      "applied_impulse_Ns": [
+        0.0,
+        0.02012486545552847,
+        -0.017293440462972064
+      ],
+      "mu": [
+        0.7,
+        0.7
+      ],
+      "final_normal_dependent_limits_Ns": [
+        0.0,
+        0.0
+      ],
+      "violation_Ns": [
+        0.02012486545552847,
+        0.017293440462972064
+      ],
+      "registered_numerical_tolerance_Ns": 1e-10,
+      "original_input_findex_for_contact": [
+        -1,
+        1,
+        1
+      ],
+      "original_input_lo_coefficients": [
+        0.0,
+        -0.7,
+        -0.7
+      ],
+      "original_input_hi_coefficients": 

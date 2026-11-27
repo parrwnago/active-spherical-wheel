@@ -1,0 +1,18 @@
+{
+  "reviewed_utc": "2026-11-27T11:32:33.197301+00:00",
+  "source_path": "results/contact_force_boundary_20261127/instrumentation/solver_probe.cc",
+  "source_sha256": "a3c4e354c292362788ba7bb5d1cd3e0a99834b1d5bf3e2924cb739e3513d5e86",
+  "checked": [
+    "Installed ABI and mangled signatures for Dantzig/Pgs solve and ContactConstraint::applyImpulse.",
+    "All solver arrays copied before delegation; solver arguments not modified.",
+    "Matrix padded stride and copy lengths.",
+    "Installed-header private member access inside the member definition.",
+    "Eigen tangent basis is column-major3x2."
+  ],
+  "material_findings": [
+    "Fallback applied lambda allocation is original primary mX after mX=mXBackup; pointer mapping must account for both primary and fallback allocations.",
+    "Dim1 frictionless contacts do not initialize tangent basis; numeric validity/reconstruction must ignore it unless dim3."
+  ],
+  "qualification": "Public signatures and headers match; capture must independently reproduce contact force from lambda/normal/basis/dt to validate private-field interpretation.",
+  "approval": "Conditional on preserving valid fallback row mapping and dimension-aware basis validity; no argument mutation or delegation ABI blocker found."
+}
