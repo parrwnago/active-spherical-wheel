@@ -1,0 +1,33 @@
+{
+  "scope": "Read-only actual import/settings/allocator-constructor compatibility. No create/apply(model), controller, observer, dynamics, solver, or physics evaluation.",
+  "passed": true,
+  "allocator_type": "BalancePriorityAllocator",
+  "settings": {
+    "horizon_s": 0.02,
+    "slew_limits": [
+      60.0,
+      60.0,
+      60.0,
+      6.0,
+      6.0
+    ],
+    "travel_scale_m_s": 0.1,
+    "yaw_scale_rad_s": 1.0,
+    "rotor_reference_limit_rad_s": 20.0,
+    "travel_weight": 1.0,
+    "yaw_weight": 0.0,
+    "momentum_weight": 0.0,
+    "native_weight": 0.2,
+    "change_weight": 0.2,
+    "effort_weight": 0.01,
+    "readiness_multiplier": 4.0,
+    "unloaded_fraction": 0.05,
+    "equality_tolerance": 1e-08,
+    "rank_relative_cutoff": 1e-10
+  },
+  "source_sha256": {
+    "results/balance_priority_20261126/campaign_tools/adapter.py": "9a9aa5217d649d54b6a76f8386051250d480c6904e27d64ecf92702ab79072fe",
+    "src/spherical_wheel/balance_priority_control.py": "11e5320580f2a1ed007df9447bfaf2e1c6008fc8e679f01535f383e784a6d925",
+    "results/constrained_handoff_20261126/campaign_tools/adapter.py": "d6bdcf77062b5c6dd060bd4c00f2cea3d9aa2bc773dda0e326313f4524e9ab84"
+  }
+}

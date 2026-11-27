@@ -1,0 +1,71 @@
+{
+  "iteration": "I-58",
+  "registered_utc": "2026-11-27T01:30:09.242551+00:00",
+  "user_local_date": "2026-11-26 America/New_York",
+  "selection": "Fixed before reading any I58 campaign outcomes",
+  "cases": [
+    {
+      "key": "B",
+      "path": "campaign/runs/m100_B",
+      "label": "B: native LQR + observer"
+    },
+    {
+      "key": "A",
+      "path": "campaign/runs/m100_A",
+      "label": "A: old hard-rate allocator"
+    },
+    {
+      "key": "P",
+      "path": "campaign/runs/m100_P",
+      "label": "P: balance-priority + soft change"
+    }
+  ],
+  "route": "plain_figure8",
+  "start_phase_rad": -1.0,
+  "overview": {
+    "recorded_window_s": [
+      0.0,
+      44.0
+    ],
+    "playback_speed": 4.0,
+    "fps": 20
+  },
+  "slow_event": {
+    "recorded_window_s": [
+      28.0,
+      36.0
+    ],
+    "playback_speed": 0.5,
+    "fps": 20,
+    "eligibility": "Every case must have observed coverage of the entire fixed window; otherwise skip and record the reason"
+  },
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "preview_recorded_times_s": [
+    0.0,
+    18.0,
+    28.0,
+    32.0,
+    36.0,
+    44.0
+  ],
+  "cards": {
+    "intro_frames": 40,
+    "outro_frames": 60
+  },
+  "camera": {
+    "azimuth_deg": 112.0,
+    "elevation_deg": -27.0,
+    "distance_m": 2.2
+  },
+  "ended_case_policy": "Hold only the final saved pose, show ENDED / NO LATER OBSERVATION and exact coverage on its panel; stop its scientific trace at the final observation",
+  "measurement_labels": {
+    "absolute_tilt_deg": "Angle between the actual platform up axis and world up",
+    "raw_target_error_deg": "Angle between actual and unchanged raw-target platform up axes; yaw is excluded",
+    "world_wz_rad_s": "Actual free-body angular velocity rotated from its local qvel angular coordinates into world Z"
+  },
+  "rendering_boundary": "Saved native Gazebo states; display-only MuJoCo scene; mj_kinematics/comPos/camlight only, with no controller, observer, contact solve or physics integration",
+  "inference_boundary": "Neutral descriptive comparison. Candidate acceptance is determined by the sealed registered balance-priority and trajectory analysis, separately from completion."
+}

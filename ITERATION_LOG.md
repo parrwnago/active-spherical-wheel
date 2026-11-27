@@ -3570,6 +3570,70 @@ yaw/momentum disabled first. Investigate the cost's velocity baseline separately
 Neither proposed controller change is executed in I-57.
 [Experiment record](docs/iterations/2026-11-26/loaded-contact-validation/README.md).
 
+## I-58 — balance priority before optional smoothing / 2026-11-26 / analyzed, experimental
+
+Question: does removing I-56 A's hard command-rate feasibility box, while
+retaining its exact soft objective and zero yaw/momentum weights, restore native
+balance response without a whole-route regression? Add only an opt-in allocator
+module/tests plus result-owned harness/analysis; existing runtime files, observer,
+model, raw references, gain bank and defaults remain unchanged at base d19cacb.
+P retains hard total amplitude caps [1.5, .6, .6 N m, .3, .3 m/s] and exact clipped-
+native G20 body-x/y response; previous command enters soft smoothing. Old 60/6
+rates are diagnostic only. Row-normalized equality and verified native fallback
+are numerical protections; the equality is not a stability/friction guarantee.
+
+Freeze 7dfe9c9 protocol/68 sources before new physics. Initial fresh serial B/A/P
+are same 44 s Mars figure-eight, shaft -1 rad, yaw 45°. B/A must reproduce all shared historical
+precision fields byte-for-byte. Primary benefit is total first+secondary modeled
+priority restoration, max≤1e-8 and held RMS ≤10% old A with nontrivial old A loss.
+Retain native B tracking/attitude/turn/settling nonregression, 5% late yaw/heading
+tolerances and added full speed/50 ms 3D acceleration guards. Continuity RMS/p99/max
+is fixed secondary information, not an alternative benefit chosen after results.
+Only all-gate lead success permits four +.3/+.9 B/P runs; no default promotion.
+
+Pre-execution verification: 31 new allocator tests; 72 combined passes include the
+same 41 existing tests, not additional counts. Sixteen separate runner/adapter
+contracts and eight saved-metric contracts pass. Initial ROS pytest-plugin
+collection failure is retained, then autoload disabled. An unexecuted metric
+draft's missing-short-window review issue is corrected before freezing. Thirty
+independent synthetic comparisons agree with old A when its rate box is inactive.
+Static same-state I-57 regression restores late shaft -1.5 versus A +.897503 and
+modeled loss 3.7405 rad/s→numerical zero; this is not a new physical paired trial.
+
+All seven fresh jobs complete 44 s. Lead B/A reproduce all 59 shared historical
+precision fields byte-for-byte; additional B controls reproduce all 56 shared
+fields. Initial P passes all 26 gates, then the four conditional runs execute
+unchanged. Lead moving RMS improves 51.08→33.43 mm, peak 116.26→72.16 mm,
+final 42.65→6.29 mm and late yaw peak 2.443→1.349 rad/s. However its 50 ms
+3D acceleration peak increases 8.078→8.955 m/s², narrowly inside the fixed
+8.985 allowance. It still rotates at the goal and fails actual settling.
+
+Broader results fail the full screen. At +.30, moving RMS 56.96→54.37 mm
+improves slightly but final error 20.82→52.62 mm and turn-six overshoot
++12.903 mm fail. At +.90, RMS 50.49→48.37 mm and final 190.19→63.85 mm
+improve, but yaw peak 1.835→3.084 rad/s, speed peak .319→.502 m/s, and turn
+three/four overshoot +65.644/+26.167 mm fail. All P amplitude/equality gates
+pass, max priority discrepancy≤9.991e-16, zero fallback and reduced command-
+step RMS at every start. None of the seven runs passes actual final settling.
+Numerical priority restoration and favorable average tracking do not establish
+robust closed-loop improvement. Keep native LQR selected; no retuning/adoption.
+
+A separately registered post-primary goal-hold audit reads fixed 41–44 s for all
+six B/P runs, without new physics. +.30 P moves outward after 41.54 s then nearly
+stalls 52.6 mm away; +.90 P still moves away at 44 s (mean final-half-second radial
+velocity -20.09 mm/s), despite its smaller endpoint error than B. Last-half-second
+modeled allocator radial adjustments are tiny/below prior model resolution;
+no native clipping/rate/label issue alone explains that interval. +.30 support
+disagreement begins after the outward trend. This does not establish a unique
+cause or clear earlier state-history effects. Next diagnostic target is native
+goal-hold pose/velocity/drive references at actual P states and turn response.
+
+Frozen-source pure NumPy replay and independent formulas reproduce every final
+metric/gate; full-rate projections, both initial/final reports, fixed videos for
+all three starts and scientific plots are retained. Completion and initial
+extension eligibility remain distinct from final all-phase acceptance (false).
+[Record](docs/iterations/2026-11-26/balance-priority/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

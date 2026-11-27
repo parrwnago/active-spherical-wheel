@@ -1,5 +1,14 @@
 # Research presentation notes — 2026-11-26
 
+- **I-58 balance priority before optional smoothing completed:**
+  [record](balance-priority/README.md). Seven full 44 s runs; exact control
+  reproduction. P restores nominal local balance response everywhere and
+  improves tracking RMS at all three starts. The -1 rad lead passes all gates
+  (RMS 51.08→33.43 mm, final 42.65→6.29), but +.30 fails endpoint/turn checks
+  and +.90 fails yaw/speed/turn checks. All actual settling tests fail. Keep P
+  experimental and native LQR selected. Goal-hold audit shows +.30 nearly
+  stalled 52.6 mm away and +.90 still moving outward at44; inspect native
+  goal-hold/reference dynamics next. No post-outcome tuning or default change.
 - **I-57 loaded-contact response validation completed:**
   [record](loaded-contact-validation/README.md). All 30 fresh-prefix Gazebo
   probes and exact controls complete. Dominant response errors are ~1–2%; five

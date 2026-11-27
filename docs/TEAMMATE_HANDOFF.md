@@ -68,7 +68,21 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-57 tests the model before another controller change.** All 30
+**Latest: I-58 tests balance priority with smoothing kept soft.** The new
+opt-in `BalancePriorityAllocator` retains total amplitude caps and exact
+native modeled transverse response; yaw/momentum penalties are disabled.
+Seven full 44 s runs complete. At -1 rad it passes the full screen, improving
+RMS 51.08→33.43 mm and final error 42.65→6.29 mm. At +.30, final error worsens
+20.82→52.62 mm and a turn regresses. At +.90, average tracking improves but
+yaw/speed peaks and two turns regress. The final all-phase screen fails, and
+none of the runs passes actual settling. Native LQR remains selected; P stays
+experimental. The small modeled priority residual is not proof of stability.
+[Full I-58 record](iterations/2026-11-26/balance-priority/README.md)
+· [Lead video](handoff/media/i58-overview.mp4)
+· [Slow event](handoff/media/i58-handoff-event.mp4)
+· [Both additional starts](handoff/media/i58-other-starts.mp4).
+
+**I-57 tests the model before that controller change.** All 30
 fresh-prefix Gazebo diagnostics reproduce their starting histories exactly.
 The dominant native-to-governed physical responses match the frozen contact
 model closely at both selected states; five small 20 ms cross-coupling scores
@@ -258,6 +272,7 @@ selected movies are committed. [Portable workspace details](../research/README.m
 | Native rolling references and belt feedforward | [experiments.py](../src/spherical_wheel/experiments.py) |
 | Incoming geometric preview | [synchronization.py](../src/spherical_wheel/synchronization.py) |
 | I-56 experimental measured-contact response and bounded command allocation | [handoff_model.py](../src/spherical_wheel/handoff_model.py), [handoff_control.py](../src/spherical_wheel/handoff_control.py) |
+| I-58 experimental balance-priority allocation, retained after mixed results | [balance_priority_control.py](../src/spherical_wheel/balance_priority_control.py) |
 | Measured-state mirror, lockstep Gazebo bridge | [gazebo/plant.py](../src/spherical_wheel/gazebo/plant.py), [bridge plugin](../gazebo/plugin/SphericalWheelBridge.cc) |
 | Exact I-52 opt-in experiment sources | [frozen workspace](../research/frozen_workspace/README.md) |
 
@@ -284,6 +299,9 @@ are the shorter current index. Useful checkpoints:
 - I-57: matched-state model validation and separate baseline diagnostics;
   dominant local response is accurate, optional smoothing can prevent the
   native balance action, and a velocity-correction model needs a valid baseline.
+- I-58: remove the optional hard rate box while keeping the soft costs; one
+  lead succeeds but broader endpoint, turn and motion regressions prevent
+  adoption. Native goal-hold and drive-reference behavior remain unresolved.
 
 Historical `results/` links in archived iteration records may refer to ignored
 full datasets. Use this page's tracked media/report links first; a plain clone
@@ -299,6 +317,11 @@ array replay reproduces the published metrics and gates without simulation.
 I-57 adds 30 short held-input diagnostics after exact prefixes, eight pure replay
 contracts and eight separate arithmetic checks. Its portable NumPy replay
 reproduces all paired scores; output-group counts are not independent tests.
+I-58 adds 31 new allocator tests; its 72 selected passes include the same 41
+existing allocator/model tests. Sixteen separate harness contracts, eight metric
+contracts and seven full trajectory runs have distinct scopes. Exact NumPy
+replay and independent audits verify the final results; the full repo suite was
+not rerun for this experiment.
 
 AI assistance: Codex helped implement experimental code, analyze logs and draft
 figures/documentation. The team supplied design direction and observations.

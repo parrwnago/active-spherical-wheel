@@ -1,0 +1,1544 @@
+{
+  "iteration": "I-58",
+  "cases": {
+    "m100_B": {
+      "available": true,
+      "completed": false,
+      "failure": "SYNTHETIC early termination fixture",
+      "observed_duration_s": 0.04,
+      "samples": 9,
+      "full44_coverage": false,
+      "moving_coverage": false,
+      "timed_tracking": {
+        "moving_rms_m": null,
+        "moving_p95_m": null,
+        "moving_samples": 0,
+        "full_peak_m": 0.0,
+        "final_m": 0.0,
+        "full_rms_m": 0.0,
+        "moving_window_complete": false,
+        "full_44_coverage": false,
+        "moving_coverage": false,
+        "final_at44_m": null,
+        "full_peak_at44_m": null,
+        "semantics": "Observed-prefix metrics retained, but full44s/final gate values are unavailable if the trace terminates early."
+      },
+      "attitude": {
+        "peak_absolute_deg": 0.0,
+        "peak_raw_reference_error_deg": 0.0,
+        "rms_raw_reference_error_deg": 0.0,
+        "rms_scope": "All measured states0\u2013observedend, including terminal state, matching legacyI52 attitude convention.",
+        "final_raw_reference_error_deg": 0.0
+      },
+      "original_settling": {
+        "passed": false,
+        "checks": {
+          "completed": false,
+          "relative_lean_below1deg": true,
+          "planar_speed_below030": true,
+          "angular_rate_below080": true
+        },
+        "tail_s": [
+          0.0,
+          0.04
+        ],
+        "max_relative_lean_deg": 0.0,
+        "max_planar_speed_m_s": 0.0,
+        "max_angular_rate_rad_s": 0.0
+      },
+      "original_route_gates": null,
+      "motion": {
+        "full": {
+          "available": true,
+          "complete": false,
+          "window_s": [
+            0.0,
+            44.0
+          ],
+          "samples": 9,
+          "all_heading_samples_valid": true,
+          "minimum_heading_projection_norm": 1.0,
+          "heading_absolute_travel_rad": 0.0,
+          "heading_absolute_travel_turns": 0.0,
+          "heading_net_travel_rad": 0.0,
+          "world_z_peak_abs_rad_s": 0.0,
+          "world_z_rms_rad_s": 0.0,
+          "world_z_end_rad_s": 0.0,
+          "planar_speed_peak_m_s": 0.0,
+          "world_angular_rate": {
+            "available": true,
+            "samples": 9,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "actual_joint_rate": {
+            "available": true,
+            "samples": 9,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "linear_acceleration5ms": {
+            "available": true,
+            "samples": 8,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "linear_acceleration50ms": {
+            "available": false,
+            "samples": 0
+          },
+          "angular_acceleration_world5ms": {
+            "available": true,
+            "samples": 8,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "encoder_acceleration5ms": {
+            "available": true,
+            "samples": 8,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "interpretation": "Measured5ms endpoint velocities and interval-average backward differences. Heading increments never bridge an invalid projection. Command bounds do not bound actual acceleration."
+        },
+        "moving": {
+          "available": false,
+          "complete": false,
+          "window_s": [
+            1.0,
+            41.0
+          ],
+          "samples": 0
+        },
+        "late": {
+          "available": false,
+          "complete": false,
+          "window_s": [
+            28.0,
+            44.0
+          ],
+          "samples": 0
+        }
+      },
+      "commands": {
+        "emitted_samples": 9,
+        "held_samples": 8,
+        "all_finite": true,
+        "actual_previous_input_matches": true,
+        "applied_box_max_violation": 0.0,
+        "requested_box_max_violation": 0.0,
+        "slew_max_violation": 0.0,
+        "applied_box_pass": true,
+        "requested_box_pass": true,
+        "actual_slew_pass": true,
+        "applied_max_abs_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_emitted_step_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_emitted_rate_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_held_rate_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_held_step_normalized": 0.0,
+        "native_infeasible_held_fraction": 0.0,
+        "native_infeasible_held_duration_by_input_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final_requested_outside_held_fraction": 0.0,
+        "scope": "Amplitude checks apply to every emitted total command. Rate comparisons use the old 60/6 diagnostic thresholds; they are hard constraints only for A, optional diagnostics for P and B. Held exposure excludes terminal command."
+      },
+      "optimizer": {
+        "available": false,
+        "reason": "No optional governor in the native arm"
+      },
+      "turns": [
+        {
+          "event_id": "turn_01_y",
+          "reference_time_s": 11.775142746922178,
+          "axis": "y",
+          "window_s": [
+            10.775142746922178,
+            13.775142746922178
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_02_x",
+          "reference_time_s": 15.377446019513739,
+          "axis": "x",
+          "window_s": [
+            14.377446019513739,
+            17.37744601951374
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_03_y",
+          "reference_time_s": 18.30073407696684,
+          "axis": "y",
+          "window_s": [
+            17.30073407696684,
+            20.30073407696684
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_04_y",
+          "reference_time_s": 23.69926592303316,
+          "axis": "y",
+          "window_s": [
+            22.69926592303316,
+            25.69926592303316
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_05_x",
+          "reference_time_s": 26.622553980486252,
+          "axis": "x",
+          "window_s": [
+            25.622553980486252,
+            28.622553980486252
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_06_y",
+          "reference_time_s": 30.224857253077822,
+          "axis": "y",
+          "window_s": [
+            29.224857253077822,
+            32.22485725307782
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        }
+      ],
+      "local_path": {
+        "rms_m": 0.0,
+        "peak_m": 0.0,
+        "artificial_projection_boundary_samples": 0,
+        "scope": "Exact polyline projection restricted to\u00b12s nominal-time branch; not globally unique cross-track distance."
+      },
+      "fixed_bank_numeric_sha256": "SYNTHETIC-FIXTURE-NOT-A-RUN",
+      "raw_target_scope": "Original current-state observer-derived formula unchanged. Target histories can differ naturally between policies after states diverge; no easier shaped target is substituted.",
+      "priority": {
+        "available": false,
+        "reason": "Native clipped command is its own nominal anchor; no optional model evaluation."
+      },
+      "continuity": {
+        "held_samples": 8,
+        "normalized_step_norm_RMS": 0.0,
+        "normalized_step_norm_p99": 0.0,
+        "normalized_step_norm_max": 0.0,
+        "definition": "Caps-normalized five-input applied step L2 norm; first actual prior included, final unheld emission excluded. Secondary diagnostic, not a selectable benefit gate."
+      },
+      "metric_adapter": "Only a copied native/governor label and metric settings were supplied to frozen I56 pure math; actual I58 identity/metadata were not mutated.",
+      "case_id": "m100_B",
+      "phase_rad": -1.0,
+      "variant": "native",
+      "case_source": "results/balance_priority_20261126/analysis/synthetic_fixture_stage01",
+      "historical_parity": {
+        "all_shared_fields_exact": true,
+        "scope": "SYNTHETIC flag for metric branch coverage, not a parity measurement."
+      }
+    },
+    "m100_A": {
+      "available": true,
+      "completed": false,
+      "failure": "SYNTHETIC early termination fixture",
+      "observed_duration_s": 0.04,
+      "samples": 9,
+      "full44_coverage": false,
+      "moving_coverage": false,
+      "timed_tracking": {
+        "moving_rms_m": null,
+        "moving_p95_m": null,
+        "moving_samples": 0,
+        "full_peak_m": 0.0,
+        "final_m": 0.0,
+        "full_rms_m": 0.0,
+        "moving_window_complete": false,
+        "full_44_coverage": false,
+        "moving_coverage": false,
+        "final_at44_m": null,
+        "full_peak_at44_m": null,
+        "semantics": "Observed-prefix metrics retained, but full44s/final gate values are unavailable if the trace terminates early."
+      },
+      "attitude": {
+        "peak_absolute_deg": 0.0,
+        "peak_raw_reference_error_deg": 0.0,
+        "rms_raw_reference_error_deg": 0.0,
+        "rms_scope": "All measured states0\u2013observedend, including terminal state, matching legacyI52 attitude convention.",
+        "final_raw_reference_error_deg": 0.0
+      },
+      "original_settling": {
+        "passed": false,
+        "checks": {
+          "completed": false,
+          "relative_lean_below1deg": true,
+          "planar_speed_below030": true,
+          "angular_rate_below080": true
+        },
+        "tail_s": [
+          0.0,
+          0.04
+        ],
+        "max_relative_lean_deg": 0.0,
+        "max_planar_speed_m_s": 0.0,
+        "max_angular_rate_rad_s": 0.0
+      },
+      "original_route_gates": null,
+      "motion": {
+        "full": {
+          "available": true,
+          "complete": false,
+          "window_s": [
+            0.0,
+            44.0
+          ],
+          "samples": 9,
+          "all_heading_samples_valid": true,
+          "minimum_heading_projection_norm": 1.0,
+          "heading_absolute_travel_rad": 0.0,
+          "heading_absolute_travel_turns": 0.0,
+          "heading_net_travel_rad": 0.0,
+          "world_z_peak_abs_rad_s": 0.0,
+          "world_z_rms_rad_s": 0.0,
+          "world_z_end_rad_s": 0.0,
+          "planar_speed_peak_m_s": 0.0,
+          "world_angular_rate": {
+            "available": true,
+            "samples": 9,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "actual_joint_rate": {
+            "available": true,
+            "samples": 9,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "linear_acceleration5ms": {
+            "available": true,
+            "samples": 8,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "linear_acceleration50ms": {
+            "available": false,
+            "samples": 0
+          },
+          "angular_acceleration_world5ms": {
+            "available": true,
+            "samples": 8,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "encoder_acceleration5ms": {
+            "available": true,
+            "samples": 8,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "interpretation": "Measured5ms endpoint velocities and interval-average backward differences. Heading increments never bridge an invalid projection. Command bounds do not bound actual acceleration."
+        },
+        "moving": {
+          "available": false,
+          "complete": false,
+          "window_s": [
+            1.0,
+            41.0
+          ],
+          "samples": 0
+        },
+        "late": {
+          "available": false,
+          "complete": false,
+          "window_s": [
+            28.0,
+            44.0
+          ],
+          "samples": 0
+        }
+      },
+      "commands": {
+        "emitted_samples": 9,
+        "held_samples": 8,
+        "all_finite": true,
+        "actual_previous_input_matches": true,
+        "applied_box_max_violation": 0.0,
+        "requested_box_max_violation": 0.0,
+        "slew_max_violation": 0.0,
+        "applied_box_pass": true,
+        "requested_box_pass": true,
+        "actual_slew_pass": true,
+        "applied_max_abs_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_emitted_step_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_emitted_rate_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_held_rate_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_held_step_normalized": 0.0,
+        "native_infeasible_held_fraction": 0.0,
+        "native_infeasible_held_duration_by_input_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final_requested_outside_held_fraction": 0.0,
+        "scope": "Amplitude checks apply to every emitted total command. Rate comparisons use the old 60/6 diagnostic thresholds; they are hard constraints only for A, optional diagnostics for P and B. Held exposure excludes terminal command."
+      },
+      "optimizer": {
+        "available": true,
+        "emitted_samples": 9,
+        "equality_residual_max": 0.0,
+        "equality_all_finite": true,
+        "secondary_balance_extra_max": 0.0,
+        "secondary_balance_extra_all_finite": true,
+        "primary_balance_change": {
+          "available": true,
+          "samples": 9,
+          "max_abs_by_component": [
+            0.0,
+            0.0
+          ],
+          "rms_by_component": [
+            0.0,
+            0.0
+          ],
+          "peak_norm": 0.0,
+          "rms_norm": 0.0,
+          "p95_norm": 0.0
+        },
+        "secondary_recovery_samples": 0,
+        "primary_restore_samples": 0,
+        "solver_warning_samples": 0,
+        "active_amplitude_held_fraction_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "active_slew_held_fraction_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "model_confidence_and_cost": {
+          "tangent_confidence_proxy": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 1.0,
+            "median": 1.0,
+            "p95": 1.0,
+            "maximum": 1.0,
+            "rms": 1.0
+          },
+          "estimated_material_velocity_mismatch_m_s": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          },
+          "native_contact_velocity_residual_norm_m_s": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          },
+          "governed_contact_velocity_residual_norm_m_s": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          },
+          "model_seconds": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          },
+          "allocation_seconds": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          },
+          "total_seconds": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          }
+        },
+        "optimizer_wall_total_above5ms_samples": 0,
+        "relative_hinge_momentum_error_proxy": {
+          "available": true,
+          "samples": 9,
+          "max_abs_by_component": [
+            0.0,
+            0.0
+          ],
+          "rms_by_component": [
+            0.0,
+            0.0
+          ],
+          "peak_norm": 0.0,
+          "rms_norm": 0.0,
+          "p95_norm": 0.0
+        },
+        "projected_relative_hinge_momentum_error_proxy": {
+          "available": true,
+          "samples": 9,
+          "max_abs_by_component": [
+            0.0,
+            0.0
+          ],
+          "rms_by_component": [
+            0.0,
+            0.0
+          ],
+          "peak_norm": 0.0,
+          "rms_norm": 0.0,
+          "p95_norm": 0.0
+        },
+        "definitions": "Momentum fields are relative-hinge vertical error proxies, not complete rotor/body angular momentum. Confidence is a declared slip-mismatch proxy, not a calibrated probability. Walltimes are instrumented implementation costs in lockstep, not demonstrated real-time hardware performance."
+      },
+      "turns": [
+        {
+          "event_id": "turn_01_y",
+          "reference_time_s": 11.775142746922178,
+          "axis": "y",
+          "window_s": [
+            10.775142746922178,
+            13.775142746922178
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_02_x",
+          "reference_time_s": 15.377446019513739,
+          "axis": "x",
+          "window_s": [
+            14.377446019513739,
+            17.37744601951374
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_03_y",
+          "reference_time_s": 18.30073407696684,
+          "axis": "y",
+          "window_s": [
+            17.30073407696684,
+            20.30073407696684
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_04_y",
+          "reference_time_s": 23.69926592303316,
+          "axis": "y",
+          "window_s": [
+            22.69926592303316,
+            25.69926592303316
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_05_x",
+          "reference_time_s": 26.622553980486252,
+          "axis": "x",
+          "window_s": [
+            25.622553980486252,
+            28.622553980486252
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_06_y",
+          "reference_time_s": 30.224857253077822,
+          "axis": "y",
+          "window_s": [
+            29.224857253077822,
+            32.22485725307782
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        }
+      ],
+      "local_path": {
+        "rms_m": 0.0,
+        "peak_m": 0.0,
+        "artificial_projection_boundary_samples": 0,
+        "scope": "Exact polyline projection restricted to\u00b12s nominal-time branch; not globally unique cross-track distance."
+      },
+      "fixed_bank_numeric_sha256": "SYNTHETIC-FIXTURE-NOT-A-RUN",
+      "raw_target_scope": "Original current-state observer-derived formula unchanged. Target histories can differ naturally between policies after states diverge; no easier shaped target is substituted.",
+      "priority": {
+        "available": true,
+        "all_finite": true,
+        "total_response_max_abs": 0.0,
+        "total_response_peak_norm": 0.0,
+        "total_response_held_RMS_norm": 0.0,
+        "scope": "G20[3:5]*(final_applied-clipped_native_total). First-stage and secondary deltas SUMMED. Max includes all emissions; RMS excludes terminal unheld command. Local estimated response, not stability proof."
+      },
+      "continuity": {
+        "held_samples": 8,
+        "normalized_step_norm_RMS": 0.0,
+        "normalized_step_norm_p99": 0.0,
+        "normalized_step_norm_max": 0.0,
+        "definition": "Caps-normalized five-input applied step L2 norm; first actual prior included, final unheld emission excluded. Secondary diagnostic, not a selectable benefit gate."
+      },
+      "metric_adapter": "Only a copied native/governor label and metric settings were supplied to frozen I56 pure math; actual I58 identity/metadata were not mutated.",
+      "case_id": "m100_A",
+      "phase_rad": -1.0,
+      "variant": "hard_slew",
+      "case_source": "results/balance_priority_20261126/analysis/synthetic_fixture_stage01",
+      "historical_parity": {
+        "all_shared_fields_exact": true,
+        "scope": "SYNTHETIC flag for metric branch coverage, not a parity measurement."
+      }
+    },
+    "m100_P": {
+      "available": true,
+      "completed": false,
+      "failure": "SYNTHETIC early termination fixture",
+      "observed_duration_s": 0.04,
+      "samples": 9,
+      "full44_coverage": false,
+      "moving_coverage": false,
+      "timed_tracking": {
+        "moving_rms_m": null,
+        "moving_p95_m": null,
+        "moving_samples": 0,
+        "full_peak_m": 0.0,
+        "final_m": 0.0,
+        "full_rms_m": 0.0,
+        "moving_window_complete": false,
+        "full_44_coverage": false,
+        "moving_coverage": false,
+        "final_at44_m": null,
+        "full_peak_at44_m": null,
+        "semantics": "Observed-prefix metrics retained, but full44s/final gate values are unavailable if the trace terminates early."
+      },
+      "attitude": {
+        "peak_absolute_deg": 0.0,
+        "peak_raw_reference_error_deg": 0.0,
+        "rms_raw_reference_error_deg": 0.0,
+        "rms_scope": "All measured states0\u2013observedend, including terminal state, matching legacyI52 attitude convention.",
+        "final_raw_reference_error_deg": 0.0
+      },
+      "original_settling": {
+        "passed": false,
+        "checks": {
+          "completed": false,
+          "relative_lean_below1deg": true,
+          "planar_speed_below030": true,
+          "angular_rate_below080": true
+        },
+        "tail_s": [
+          0.0,
+          0.04
+        ],
+        "max_relative_lean_deg": 0.0,
+        "max_planar_speed_m_s": 0.0,
+        "max_angular_rate_rad_s": 0.0
+      },
+      "original_route_gates": null,
+      "motion": {
+        "full": {
+          "available": true,
+          "complete": false,
+          "window_s": [
+            0.0,
+            44.0
+          ],
+          "samples": 9,
+          "all_heading_samples_valid": true,
+          "minimum_heading_projection_norm": 1.0,
+          "heading_absolute_travel_rad": 0.0,
+          "heading_absolute_travel_turns": 0.0,
+          "heading_net_travel_rad": 0.0,
+          "world_z_peak_abs_rad_s": 0.0,
+          "world_z_rms_rad_s": 0.0,
+          "world_z_end_rad_s": 0.0,
+          "planar_speed_peak_m_s": 0.0,
+          "world_angular_rate": {
+            "available": true,
+            "samples": 9,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "actual_joint_rate": {
+            "available": true,
+            "samples": 9,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "linear_acceleration5ms": {
+            "available": true,
+            "samples": 8,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "linear_acceleration50ms": {
+            "available": false,
+            "samples": 0
+          },
+          "angular_acceleration_world5ms": {
+            "available": true,
+            "samples": 8,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "encoder_acceleration5ms": {
+            "available": true,
+            "samples": 8,
+            "max_abs_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rms_by_component": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_norm": 0.0,
+            "rms_norm": 0.0,
+            "p95_norm": 0.0
+          },
+          "interpretation": "Measured5ms endpoint velocities and interval-average backward differences. Heading increments never bridge an invalid projection. Command bounds do not bound actual acceleration."
+        },
+        "moving": {
+          "available": false,
+          "complete": false,
+          "window_s": [
+            1.0,
+            41.0
+          ],
+          "samples": 0
+        },
+        "late": {
+          "available": false,
+          "complete": false,
+          "window_s": [
+            28.0,
+            44.0
+          ],
+          "samples": 0
+        }
+      },
+      "commands": {
+        "emitted_samples": 9,
+        "held_samples": 8,
+        "all_finite": true,
+        "actual_previous_input_matches": true,
+        "applied_box_max_violation": 0.0,
+        "requested_box_max_violation": 0.0,
+        "slew_max_violation": 0.0,
+        "applied_box_pass": true,
+        "requested_box_pass": true,
+        "actual_slew_pass": true,
+        "applied_max_abs_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_emitted_step_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_emitted_rate_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_held_rate_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_held_step_normalized": 0.0,
+        "native_infeasible_held_fraction": 0.0,
+        "native_infeasible_held_duration_by_input_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final_requested_outside_held_fraction": 0.0,
+        "scope": "Amplitude checks apply to every emitted total command. Rate comparisons use the old 60/6 diagnostic thresholds; they are hard constraints only for A, optional diagnostics for P and B. Held exposure excludes terminal command."
+      },
+      "optimizer": {
+        "available": true,
+        "emitted_samples": 9,
+        "equality_residual_max": 0.0,
+        "equality_all_finite": true,
+        "secondary_balance_extra_max": 0.0,
+        "secondary_balance_extra_all_finite": true,
+        "primary_balance_change": {
+          "available": true,
+          "samples": 9,
+          "max_abs_by_component": [
+            0.0,
+            0.0
+          ],
+          "rms_by_component": [
+            0.0,
+            0.0
+          ],
+          "peak_norm": 0.0,
+          "rms_norm": 0.0,
+          "p95_norm": 0.0
+        },
+        "secondary_recovery_samples": 0,
+        "primary_restore_samples": 0,
+        "solver_warning_samples": 0,
+        "active_amplitude_held_fraction_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "active_slew_held_fraction_by_input": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "model_confidence_and_cost": {
+          "tangent_confidence_proxy": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 1.0,
+            "median": 1.0,
+            "p95": 1.0,
+            "maximum": 1.0,
+            "rms": 1.0
+          },
+          "estimated_material_velocity_mismatch_m_s": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          },
+          "native_contact_velocity_residual_norm_m_s": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          },
+          "governed_contact_velocity_residual_norm_m_s": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          },
+          "model_seconds": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          },
+          "allocation_seconds": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          },
+          "total_seconds": {
+            "available": true,
+            "samples": 9,
+            "nonfinite_samples": 0,
+            "minimum": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 0.0,
+            "rms": 0.0
+          }
+        },
+        "optimizer_wall_total_above5ms_samples": 0,
+        "relative_hinge_momentum_error_proxy": {
+          "available": true,
+          "samples": 9,
+          "max_abs_by_component": [
+            0.0,
+            0.0
+          ],
+          "rms_by_component": [
+            0.0,
+            0.0
+          ],
+          "peak_norm": 0.0,
+          "rms_norm": 0.0,
+          "p95_norm": 0.0
+        },
+        "projected_relative_hinge_momentum_error_proxy": {
+          "available": true,
+          "samples": 9,
+          "max_abs_by_component": [
+            0.0,
+            0.0
+          ],
+          "rms_by_component": [
+            0.0,
+            0.0
+          ],
+          "peak_norm": 0.0,
+          "rms_norm": 0.0,
+          "p95_norm": 0.0
+        },
+        "definitions": "Momentum fields are relative-hinge vertical error proxies, not complete rotor/body angular momentum. Confidence is a declared slip-mismatch proxy, not a calibrated probability. Walltimes are instrumented implementation costs in lockstep, not demonstrated real-time hardware performance."
+      },
+      "turns": [
+        {
+          "event_id": "turn_01_y",
+          "reference_time_s": 11.775142746922178,
+          "axis": "y",
+          "window_s": [
+            10.775142746922178,
+            13.775142746922178
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_02_x",
+          "reference_time_s": 15.377446019513739,
+          "axis": "x",
+          "window_s": [
+            14.377446019513739,
+            17.37744601951374
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_03_y",
+          "reference_time_s": 18.30073407696684,
+          "axis": "y",
+          "window_s": [
+            17.30073407696684,
+            20.30073407696684
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_04_y",
+          "reference_time_s": 23.69926592303316,
+          "axis": "y",
+          "window_s": [
+            22.69926592303316,
+            25.69926592303316
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_05_x",
+          "reference_time_s": 26.622553980486252,
+          "axis": "x",
+          "window_s": [
+            25.622553980486252,
+            28.622553980486252
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        },
+        {
+          "event_id": "turn_06_y",
+          "reference_time_s": 30.224857253077822,
+          "axis": "y",
+          "window_s": [
+            29.224857253077822,
+            32.22485725307782
+          ],
+          "window_complete": false,
+          "geometric_component_overshoot_m": null,
+          "post_event_geometric_overshoot_m": null,
+          "actual_reversal_lag_s": null,
+          "actual_reversal_missing_in_window": true,
+          "actual_reversal_multiple_in_window": false,
+          "actual_reversal_candidates": [],
+          "projection_boundary_samples": 0
+        }
+      ],
+      "local_path": {
+        "rms_m": 0.0,
+        "peak_m": 0.0,
+        "artificial_projection_boundary_samples": 0,
+        "scope": "Exact polyline projection restricted to\u00b12s nominal-time branch; not globally unique cross-track distance."
+      },
+      "fixed_bank_numeric_sha256": "SYNTHETIC-FIXTURE-NOT-A-RUN",
+      "raw_target_scope": "Original current-state observer-derived formula unchanged. Target histories can differ naturally between policies after states diverge; no easier shaped target is substituted.",
+      "priority": {
+        "available": true,
+        "all_finite": true,
+        "total_response_max_abs": 0.0,
+        "total_response_peak_norm": 0.0,
+        "total_response_held_RMS_norm": 0.0,
+        "scope": "G20[3:5]*(final_applied-clipped_native_total). First-stage and secondary deltas SUMMED. Max includes all emissions; RMS excludes terminal unheld command. Local estimated response, not stability proof."
+      },
+      "continuity": {
+        "held_samples": 8,
+        "normalized_step_norm_RMS": 0.0,
+        "normalized_step_norm_p99": 0.0,
+        "normalized_step_norm_max": 0.0,
+        "definition": "Caps-normalized five-input applied step L2 norm; first actual prior included, final unheld emission excluded. Secondary diagnostic, not a selectable benefit gate."
+      },
+      "metric_adapter": "Only a copied native/governor label and metric settings were supplied to frozen I56 pure math; actual I58 identity/metadata were not mutated.",
+      "case_id": "m100_P",
+      "phase_rad": -1.0,
+      "variant": "balance_priority",
+      "case_source": "results/balance_priority_20261126/analysis/synthetic_fixture_stage01",
+      "historical_parity": null
+    },
+    "p030_B": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_id": "p030_B",
+      "phase_rad": 0.3,
+      "variant": "native",
+      "case_source": "results/balance_priority_20261126/analysis/synthetic_fixture_stage01"
+    },
+    "p030_P": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_id": "p030_P",
+      "phase_rad": 0.3,
+      "variant": "balance_priority",
+      "case_source": "results/balance_priority_20261126/analysis/synthetic_fixture_stage01"
+    },
+    "p090_B": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_id": "p090_B",
+      "phase_rad": 0.9,
+      "variant": "native",
+      "case_source": "results/balance_priority_20261126/analysis/synthetic_fixture_stage01"
+    },
+    "p090_P": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_id": "p090_P",
+      "phase_rad": 0.9,
+      "variant": "balance_priority",
+      "case_source": "results/balance_priority_20261126/analysis/synthetic_fixture_stage01"
+    }
+  },
+  "comparisons": {
+    "m100_P_vs_m100_B": {
+      "available": true,
+      "passes_all_conditions": false,
+      "checks": {
+        "full44_no_failure": false,
+        "baseline_full44_no_failure": false,
+        "baseline_historical_exact": true,
+        "moving_and_late_coverage": false,
+        "late_heading_valid": false,
+        "same_frozen_bank": true,
+        "finite_actual_history": true,
+        "hard_total_amplitude": true,
+        "exact_nominal_transverse_response": true,
+        "secondary_equality": true,
+        "moving_timed_XY_RMS": false,
+        "full_timed_XY_peak": false,
+        "final_timed_XY": false,
+        "raw_lean_peak": true,
+        "raw_lean_RMS": true,
+        "absolute_tilt_peak": true,
+        "late_yaw_peak": false,
+        "late_absolute_heading_travel": false,
+        "full_planar_speed_peak": true,
+        "full_50ms_linear_acceleration_peak": false,
+        "all_six_turn_overshoots": false,
+        "conditional_original_settling": true,
+        "hard_slew_comparator_available_and_exact": false,
+        "hard_slew_comparator_rate_box": true,
+        "nontrivial_old_priority_loss": false,
+        "primary_priority_restoration_vs_A": true
+      },
+      "failed_checks": [
+        "full44_no_failure",
+        "baseline_full44_no_failure",
+        "moving_and_late_coverage",
+        "late_heading_valid",
+        "moving_timed_XY_RMS",
+        "full_timed_XY_peak",
+        "final_timed_XY",
+        "late_yaw_peak",
+        "late_absolute_heading_travel",
+        "full_50ms_linear_acceleration_peak",
+        "all_six_turn_overshoots",
+        "hard_slew_comparator_available_and_exact",
+        "nontrivial_old_priority_loss"
+      ],
+      "turn_changes": [
+        {
+          "event_id": "turn_01_y",
+          "passed": false,
+          "geometric_overshoot_change_m": null,
+          "candidate_reversal_lag_s": null,
+          "baseline_reversal_lag_s": null
+        },
+        {
+          "event_id": "turn_02_x",
+          "passed": false,
+          "geometric_overshoot_change_m": null,
+          "candidate_reversal_lag_s": null,
+          "baseline_reversal_lag_s": null
+        },
+        {
+          "event_id": "turn_03_y",
+          "passed": false,
+          "geometric_overshoot_change_m": null,
+          "candidate_reversal_lag_s": null,
+          "baseline_reversal_lag_s": null
+        },
+        {
+          "event_id": "turn_04_y",
+          "passed": false,
+          "geometric_overshoot_change_m": null,
+          "candidate_reversal_lag_s": null,
+          "baseline_reversal_lag_s": null
+        },
+        {
+          "event_id": "turn_05_x",
+          "passed": false,
+          "geometric_overshoot_change_m": null,
+          "candidate_reversal_lag_s": null,
+          "baseline_reversal_lag_s": null
+        },
+        {
+          "event_id": "turn_06_y",
+          "passed": false,
+          "geometric_overshoot_change_m": null,
+          "candidate_reversal_lag_s": null,
+          "baseline_reversal_lag_s": null
+        }
+      ],
+      "continuity_is_secondary_only": true,
+      "scope": "Prespecified deterministic screen. Primary benefit is local response priority restoration versus A, not physical stability proof. Motion nonregression is against B; no automatic default adoption.",
+      "candidate": "m100_P",
+      "baseline": "m100_B",
+      "old_hard_slew": "m100_A"
+    },
+    "p030_P_vs_p030_B": {
+      "available": false,
+      "passes_all_conditions": false,
+      "reason": "Required sealed case unavailable",
+      "candidate": "p030_P",
+      "baseline": "p030_B",
+      "old_hard_slew": null
+    },
+    "p090_P_vs_p090_B": {
+      "available": false,
+      "passes_all_conditions": false,
+      "reason": "Required sealed case unavailable",
+      "candidate": "p090_P",
+      "baseline": "p090_B",
+      "old_hard_slew": null
+    }
+  },
+  "definitions": {
+    "attitude_RMS_scope": "All measured0\u2013observedend states, including terminal; same legacy convention.",
+    "XY_moving_window_s": [
+      1.0,
+      41.0
+    ],
+    "yaw_window_s": [
+      28.0,
+      44.0
+    ],
+    "commands": "All emitted amplitude/priority checks. Held exposure and continuity omit terminal. First emission uses actual prior input.",
+    "priority": "Sum first-stage+secondary estimated transverse deltas; not secondary-only equality.",
+    "rates": "60/6old assumed rates are hard constraints only for A. P/B rate comparisons are diagnostics.",
+    "events": "Exactly six immutable corrected reference turns, excluding their stored old outcomes.",
+    "motion": "World-angular rates from endpoint quaternion and local qvel; acceleration5/50ms interval-average differences."
+  },
+  "raw_target_unmodified": true,
+  "no_new_physics_model_controller_or_observer_calls": true,
+  "default_adoption": false,
+  "broader_campaign_eligible": false,
+  "all_three_phase_screens_pass": false,
+  "all_registered_cases_available": false
+}

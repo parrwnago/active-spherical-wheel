@@ -1,0 +1,26 @@
+{
+  "status": "Independent reviewer recommendations; root must select/freeze executionprotocol beforeoutcomes",
+  "primary_benefit": "Fixedbalancepriorityrestoration, not posthocORwithsmoothness",
+  "exact_total_balance_response_infinity_tolerance": 1e-08,
+  "held_primary_loss_RMS_ratio_to_A_max": 0.1,
+  "A_nontrivial_primary_loss_peak_rad_s_min": 0.01,
+  "continuity": "Secondaryreportedcaps-normalizedactualappliedstepRMS,p99,max; actualprior includedfirst,terminalunheldexcluded",
+  "optional_continuity_gate_ifselected_asprimary_beforeoutcomes": {
+    "step_RMS_ratio_to_B_max": 0.95,
+    "step_p99_ratio_to_B_max": 1.05,
+    "step_peak_ratio_to_B_max": 1.05
+  },
+  "motion_gates": {
+    "moving_timed_xy_RMS_max": "1.1*B+.001m",
+    "full_timed_xy_peak_max": "B+.01m",
+    "final_timed_xy_max": "B+.01m",
+    "raw_reference_lean_peak_max": "B+1deg",
+    "raw_reference_lean_RMS_max": "1.1*B+.1deg",
+    "absolute_tilt_peak_max": "B+1deg",
+    "each_turn_overshoot_max": "B+.01m",
+    "late_world_yaw_peak_max": "1.05*B+.01rad/s",
+    "late_heading_absolute_travel_max": "1.05*B+.01rad",
+    "settling": "IfBpassesoriginalsettlingPmustpass; reportbothalways"
+  },
+  "limits": "Engineeringcomparisonmarginsnotcalibratedsafetybounds; localGpreservationnotstabilityproof"
+}
