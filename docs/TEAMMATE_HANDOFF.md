@@ -4,6 +4,9 @@ Updated 2026-11-27. Start here, then read the
 [dynamics/controller/observer study guide](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf).
 The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
+The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
+without the repository; it explains the selected pipeline, equations, boundaries,
+experiment history and common presentation questions through I-67.
 
 ## Current system
 
@@ -68,7 +71,24 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-66 separates candidate-point sensitivity from remaining load-model
+**Latest: I-67 finds the targeted useful points already exist in the bank.**
+All29 I-66 reference-point repairs can be reproduced by an originally usable
+correct-family candidate. On41 lost useful frames, median selected distance
+is6.26mm versus0.81mm for the nearest usable point. The admission mask is not
+excluding a closer original projection on those focus/harmful rows.
+
+This is truth-assisted capacity, not a new selector: conditional any-point
+counts are27/41 focus,280/294 useful,5/6 harmful. Fourteen focus cases remain
+unresolved. The original fused argmin is correct for its objective; the normal
+prior dominates the selected-versus-nearest penalty in26/41 focus rows, velocity
+in15/41 and allsix harmful rows. Minimum joint-load score can choose a distant
+point, so it is not a validated replacement. Keep live settings unchanged.
+[I-67 report, point clouds, capacity and clone replay](iterations/2026-11-27/contact-bank-audit/README.md).
+The next proposed experiment targets within-family point selection and its
+velocity/normal assumptions, with full regression checks; bank expansion and
+weight changes are not automatically justified by this capacity audit.
+
+**I-66 separates candidate-point sensitivity from remaining load-model
 disagreement.** With the same recorded pose and observer force, replace only
 the correct-family physical candidate with its sampled contact centroid.
 Joint-vector RMS on the 41 I-65 lost useful corrections falls 24.1%,

@@ -1,0 +1,57 @@
+{
+  "iteration": "I-67",
+  "date_local": "2026-11-27",
+  "status": "specified_before_new_candidate_bank_or_capacity_arithmetic",
+  "source_commit": "4d6086b7572f14db6f86419a340540466d154532",
+  "question": "Can the original valid102-slot candidate bank reproduce the I66 sampled-point ranking benefits, or do point coverage/admission or point selection limit it?",
+  "scope": "Offline diagnostic only on existing I58 histories. Reconstruct ORIGINAL candidates; no expanded search, changed score weights, validity/confidence gates, estimator/controller/observer/feedforward settings, new physics or model fitting. Truth-assisted geometry/capacity comparisons are evaluation only.",
+  "cases": [
+    "m100_B",
+    "p030_B",
+    "p090_B"
+  ],
+  "campaign": "Original native gainscheduledLQR+momentumobserver+supportgeometry+rolling/holdingfeedforward+120msincomingpreparation; Gazebo/DART Mars figure-eight44s,5ms,8801rows/case,shaft-1,+.3,+.9rad,yaw45deg,caps[1.5,.6,.6Nm,.3,.3m/s]. Already inspected episodes, retrospective internal evidence, no physicaltracking claim.",
+  "dependencies": {
+    "i60": "docs/iterations/2026-11-27/velocity-contact-ranking/evidence",
+    "i64": "docs/iterations/2026-11-27/contact-load-history/evidence",
+    "i65": "docs/iterations/2026-11-27/contact-covariance-ranking/evidence",
+    "i66": "docs/iterations/2026-11-27/contact-geometry-load-audit/evidence"
+  },
+  "prior_result": "I66 sampled-correct-family centroid substitution restored27/41 lostuseful preferences and2 additionalharmful rejections, butworsened4 previouslycorrect useful decisions. The registereduniformphasecriterion failed. Endpoint centroid is not exact5ms truth or a guaranteed model-error floor.",
+  "ROI": "Union of ALL294useful+6harmful primary opportunities from frozenI66cohorts (includesALL41lostuseful), plus every fixed14I66event anchor +/-100ms inclusive at5ms. Preserveoriginalfulltimeindices; no filteringonnewerror/rank/distance. Features mayverifyselectedpoints overfull8801 histories, but compactpublished bank packets needonlyROI. Geometry metrics mainly300opportunities;14eventwindows descriptive. CaseswhereneitheroriginalF/Naltfamilycorrect remainexplicit, no inventedcounterfactual.",
+  "bank": {
+    "layout": "17normal seeds:central plus8azimuthsat5degand8at10deg, centredonoriginalcachedintrinsic_normal_hint. Sixslots/seed:shellA,shellB,beltA,beltB,rimA,rimB; families[0,1,2,3,0,1],kind[0,0,0,0,1,1]; originalID=6*seed+slot,0..101.",
+    "coordinates": "Originalnormalization,tangentbasis,normal_seeds and sphericalbandprojection operation order. ReuseI66centre/signedpatchaxes/R/bands, not newkinematics. Rim upper=lower. No newseed,projection,normal,timestep orgeometry assumption.",
+    "usable": "EXACT original I60 rank-active set:storedvalid AND finite nonnegativeangle/speed/wrenchnorm andfinitevelocityvector AND frame_valid AND finiteexcitation. Do not relax cone<=10deg or compressiveforce>=1N; compareoriginalframe/maskreconstruction beforeinterpretingcapacity.",
+    "pre_admission_secondary": "All finite original projectedslots beforecone/compressive admission. Reportnearestpoint separately; neverdescribean excludedslot as a usable bank member oritsfitasachievedunderoriginalrules.",
+    "selection": "Originalfamilywise argmin TOTAL fusedcost=(angle/10deg)^2+moment_residual_norm^2+(velocity_residual_norm/.02)^2. FrozenF andNalt IDs are the fusedbest points in their respectivefamilies. Reproducing argmins is animplementationinvariant; finding better geometry/extra-load fit elsewheredoesnotitselfshowa selectorbug."
+  },
+  "reconstruction_checks": "Reconstructall8801originalselectedF/Nalt coordinates andcompareI64points, includingexactIDs/families. AtROI, restoreall102coordinates includingpre-admissionpositions; verifyoldvalidity/angles/compression whereavailable; recomputefusedcostonlywitholdcomponents andfixedscales, reproduceoriginalper-familybestIDs/scores. No changesafterseeingcapacity exceptpreservedbug-correctionstages.",
+  "primary_geometry": "Withintruthfamily only, compareselectedphysicalcorrectpoint(F-firstelseNalt)distance tosampledrawnormal-loadweightedfamilycentroidwith nearestUSABLEandnearestPRE-ADMISSIONprojection distances. Reportmm distributions andper-event values,selectiongap=d_selected-d_minusable, admissiongap=d_minusable-d_minpre. No arbitrary1mmorothergoodpoint cutoff. Truecentroidcanlieinsidesphere; neverprojectittomaterial, do notcallnearestgeometrycandidatebestloadcandidate. Also report sampled-reference radial deviation fromR and unavoidable radialdistance tosurface; nearestbankdistance includes centroidinteriority, notonlyangular sampling error.",
+  "load_capacity": {
+    "model": "For each usablecorrectfamilycandidate use SAMEI66endpointpose,rawintervalF andrawjointtarget:tau=LkF+Akcross(p-c,F). Normalizebyunchanged.03+.10R||filteredF||; usefrozenheldoutI65M1sharedmu/covariance. No refitting or candidate-specificnormalization. Wrongfamilybranch staysoriginalF/Naltphysicalpoint.",
+    "continuous": "Reportselected,minusable,and sampled-referenceMahalanobis scores; nonnegative selected-minus-minusable gap, signed minusable-minus-sampledreference gap. Also minimumoverusablecandidates||tau_candidate-tau_sampledreference||Nm. Minimumscorepointneednotbeclosestgeometryortruthcorrectunderinaccurateloadmodel.",
+    "decision": "ApplyunchangedI65patternambiguity<=.01 normalizedvector distance andrelative1e-9scoreties to EACHcorrectcandidate vsfixedwrongbranch. ReportwhetherANY usablecorrectfamilycandidate givescorrectpreference; minscorealoneisnotsufficientbecausepatternambiguitycanpreventadecision. Originalselectedpointisamember, so existencecorrectcountscannotdecrease; thisisaninclusionQAinvariant,notanestimatorimprovement.",
+    "only_pairs": "Decisioncapacity onlyon294useful+6harmful distinctfamilyopportunities. Extraeventwindowswithneitheroriginalfamilycorrect getgeometryauditonly. No oraclepolicy fedtocontroller, no newallframeerrorrate."
+  },
+  "primary_capacity_question": {
+    "target": "The27focususeful and2harmful frames newlycorrectafterI66sampled-pointsubstitution.",
+    "success_statement": "All29 I66reference-repaired decisions are reproducible by at leastone usableexistingcorrectfamilycandidate under frozencomparison; otherwise reportEXACTsupported/unsupportedcounts,IDs,times. Thisestablishesconditionalcapacityonly,notanimplementableselector orproofpointtruthaccuracy.",
+    "matrix": "Forfocus41andharmful6, report2x2:sampledreferencecorrect vsANYexistingusablecandidatecorrect. Bank-onlysuccessmayindicatepointcompensatingmodelbias; reference-onlysuccessindicatesa testedfinite-bank/admissiongap undercurrentloadmodel. Neither-repairsleavesgeometry/load/score ambiguity. Reportnearestgeometrycandidate'sactualclassificationseparately.",
+    "selection_attribution": "Atselected,nearestgeometry,andminload candidates reportfrozenangle,moment,velocitycostcomponents andfusedtotal. Explainwhichtermfavorsselectedwithoutsweepingweightsorclaimingwhyphysicalrollingassumptionfails."
+  },
+  "truth_boundary": "Truthfamily/centroid/cohortmasks selectevaluationreferencesonly. Candidate generationusesknowncachedpose,originalintrinsicnormalhintandoriginalobserverforce. Centroids/normalshareslastreported1ms; rawobserverloadpreceding5ms; no exactintervalcontacttruth orcausalCPU-delayconclusion. Allhypotheses are singlefamilypoint-force models; multicontact routing remainsunresolved.",
+  "report": "Fullsame300denominators andperphase/focus41/retained253/harmful6 breakdowns, all14fixedanchors withgaps/unknowns, continuousgeometryandloadgaps, exactoriginalselectionreproduction. SmalloverviewPDF/eventappendixforpresentation. Recordnegative/inconclusiveresults,donotpromoteorautomaticallyexpandbank. StandaloneCHATGPT_CONTROL_CONTEXT.mdmustdistinguishselectedlivepipelinefromI60-I67offlineexperiments.",
+  "verification": {
+    "before": "Sealprotocol,source,inputpackets andROIindices beforenewbankcoordinate/distance/capacity arithmetic. Preservepre-change/failedstages. CacheonlyROI neededforportableNumPyreplay, largeduplicatebank/replayarraysstaylocal.",
+    "contracts": "Syntheticexactoriginalseed/band/rimparity,forceparallelpointshift,active-maskfiniteanddedupcriteria,minscorevsambiguity counterexample,selectedmembershipandcapacitynonregression,fullROI/cohortdenominators andwrongbranchheldfixed.",
+    "selected_point_atol_m": 1e-12,
+    "original_cost_atol": 1e-10,
+    "load_prediction_atol_Nm": 1e-10,
+    "score_atol": 1e-07,
+    "score_rtol": 1e-10,
+    "discrete_decisions": "Exact; report unknowns/ties andanynear-boundaryfloatingdiffs withoutreplacingvalues.",
+    "replay": "Independentcoordinate/hingeload/capacity arithmetic andcachedNumPyreplay; no physics/fullcontrollersuiterun required."
+  },
+  "ties_and_duplicates": "Minima use originalascendingID order and np.argmin:lowestID wins anEXACTnumeric tie. Recordexactmin multiplicity andnear-min multiplicity (distanceatol1e-12m;scoreatol1e-9*max(1,abs(minscore))) separately, without changingchoice. Duplicate/numericallytiedslotsarenotdistinctcontacts orindependentsamples. Originalfusedargmins mustreproduce theiroriginalexactIDs."
+}

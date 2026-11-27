@@ -1,5 +1,31 @@
 # Research presentation notes — 2026-11-27
 
+**I-67: the original bank reproduces all targeted reference-point repairs.**
+[Full record](contact-bank-audit/README.md),
+[comparison PDF](contact-bank-audit/evidence/publication/plots_stage02/bank_capacity_comparison.pdf)
+and [eight-page candidate-cloud appendix](contact-bank-audit/evidence/publication/plots_stage02/event_windows.pdf).
+The [standalone ChatGPT brief](../../CHATGPT_CONTROL_CONTEXT.md) includes the
+whole dynamics/controller/observer pipeline and this latest result.
+
+- Freeze original102slots, admission masks, fused objective, I-65 calibration
+  and comparison gates. Audit705 saved rows, including all300 useful/harmful
+  opportunities and the14 fixed I-66 event windows; no new physics.
+- All29 I-66 newly repaired decisions have an existing usable point that
+  reproduces the correct preference. The bank supports27/41 focus cases;
+  14 remain unresolved under both sampled reference and existing-bank comparison.
+- Focus median selected distance6.26mm versus nearest usable0.81mm; nearest
+  pre-admission distance is identical. Conditional all-useful capacity280/294
+  and harmful5/6 are oracle-assisted existence counts, not achieved control gains.
+- Original fused IDs reproduce correctly. Normal-prior penalty favors the
+  farther selected point in26/41 focus cases, velocity in15/41 and allsix
+  harmful cases. This explains the objective tradeoff, not physical slip.
+- Minimum load score is not closest geometry: harmful median point distance
+  remains19.50mm under that choice. Keep original live controller/observer/
+  feedforward/preparation; next proposed target is point selection, not bank size.
+- Fourteen inclusive geometry plus12 separate evaluator tests pass. Independent
+  hinge/eigen comparisons and cached177-array replay agree. Preserve the helper
+  admission-offset clarification, independent scope correction and figure layouts.
+
 **I-66: candidate geometry explains part of the load-ranking failure;
 current single-family load representation remains limited.**
 [Full record](contact-geometry-load-audit/README.md),

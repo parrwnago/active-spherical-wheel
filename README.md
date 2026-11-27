@@ -11,6 +11,9 @@ the comparison video, and fresh-clone reproduction. Selected videos and reports
 are committed under `docs/handoff/`; the frozen workspace recipe restores the
 recent experimental runners and required inputs without changing old snapshots.
 
+For a self-contained explanation to upload into another ChatGPT conversation,
+use [the dynamics/controller/observer context brief](docs/CHATGPT_CONTROL_CONTEXT.md).
+
 The [iteration log](ITERATION_LOG.md) records hypotheses, experiments, unsuccessful
 trials, and the decisions they informed. [Presentation notes and evidence snapshots](docs/iterations/2026-11-25/README.md)
 preserve the development sequence alongside measured results.

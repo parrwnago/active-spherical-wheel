@@ -4104,6 +4104,74 @@ model/actuation error if needed. Neither follow-up runs here. Preserve progress
 for presentation, including the failed primary criterion and remaining ambiguity.
 [Report, plots, events and clone replay](docs/iterations/2026-11-27/contact-geometry-load-audit/README.md).
 
+## I-67 / 2026-11-27 / implemented, run, analyzed; conditional bank capacity met
+
+Question: are useful point alternatives missing from the original bank, or does
+its fused objective select a different point? Preserve all102 slots, validity,
+weights, I-65 calibration and comparison gates. Same I-58 native Gazebo/DART
+Mars figure-eight logs: -1/+0.3/+0.9rad, yaw45deg,44s,5ms, existing caps. No new
+physics, candidate, online selector, controller, observer or feedforward change.
+
+Use705 fixed ROI states: all294 useful/six harmful opportunities (including all41
+I-65 lost useful frames), plus14 I-66 event windows ±100ms. Freeze18 feature
+source/inputs before coordinate reconstruction;10 source/cache inputs before
+capacity arithmetic. Generator reads a blind allowlist, not truth/covariance.
+Original F/Nalt coordinates byte-exact over all26403 states; ROI batch points
+within2.22e-16m, exact finite patterns/masks,1e-12m declared tolerance.
+
+Compare original selected, nearest usable, nearest pre-admission and minimum
+frozen I-65 load-score points within truth family (evaluation only). Keep wrong
+branch fixed; apply original ambiguity/tie rules to every candidate before ANY
+reduction. Existing selected membership guarantees baseline nonregression by
+inclusion; that invariant is not a new estimator improvement.
+
+Primary target MET: all29 newly correct I-66 reference-point decisions have a
+usable original-bank alternative (27 focus useful +two harmful), none unsupported.
+Focus conditional capacity27/41 equals sampled reference27; nearest-geometry25.
+All-useful ANY capacity280/294 versus253 original/276 reference; harmful5/6
+versus2 original/4 reference. These oracle-assisted counts do not actuate or
+supply a new achieved error rate. Fourteen focus cases fail both reference and
+all usable correct-family options; one harmful case remains unresolved.
+
+Focus median distance selected6.257mm→nearest usable0.813mm (p95 10.579→3.401).
+Nearest pre-admission equals usable on every focus/harmful row, so nearest
+projection is not lost to admission there. This does not show all excluded
+points lack better load score or that bank expansion can never matter.
+Minimum-load point distance median3.813mm on focus and19.495mm on harmful,
+maximum33.532mm: low residual is not proof of accurate contact localization.
+
+Original per-family fused argmins and all300 original full I-65 codes reproduce.
+A separately registered component summary finds nearer-point extra fused cost
+normal-prior dominated in26/41 focus rows, velocity in15/41 and allsix harmful;
+wrench never the largest positive term. Every nearer point costs more under
+the unchanged objective. At35.205s, closer4.696mm versus selected26.036mm has
+cost changes (-.1375,-.00407,+5.5402), so velocity outweighs the other terms.
+At13.470s normal prior outweighs a tiny velocity benefit. No bug, physical slip
+cause or universal replacement weight is established.
+
+Fourteen inclusive helper and twelve separate analysis contracts pass (26
+focused tests, not full controller suite). Preserve the initial13-test helper
+and pre-data offset/admission clarification without adding repeated counts.
+Independent scalar minima/hinge/eigen review confirms all indices, masks,
+cohort matrices and29/29 targets; max score difference1.82e-12. Its first review
+mismatched nine geometry-only rows because of an out-of-scope load-minimum mask;
+corrected review and original failed stage retained, no primary source change.
+Producer NumPy1.26.4 replays177 arrays byte-exact; NumPy1.21.5 retains exact
+indices/decisions and bounded values with nonexact float bytes. Final one-page
+comparison and eight-page atlas retain14 anchors; initial layout retained.
+
+Also authored docs/CHATGPT_CONTROL_CONTEXT.md, a standalone study/context upload
+covering mechanism, dynamics, actual LQR/observer/feedforward/preview, inputs,
+clipping, timing, live-vs-offline boundaries, I-60–I-67 and presentation FAQ.
+It supplies equations and results without requiring the repository; links identify
+optional evidence. Independent boundary review and local-link checks completed.
+
+Decision: next target is within-family point selection and velocity/normal-model
+assumptions, evaluated on the full cohorts before any integration. No automatic
+bank expansion, pure load argmin, new weights or new physics. Interval force
+routing remains limited by absent substep truth. Keep live baseline unchanged.
+[Report, point clouds, fixed events and clone replay](docs/iterations/2026-11-27/contact-bank-audit/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated
