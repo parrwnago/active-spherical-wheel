@@ -4042,6 +4042,68 @@ cutoff search. Covariance cannot recover a missing hypothesis or unmodeled load
 sharing; this experiment does not decide which assumption is responsible.
 [Report, comparison, events, sources and clone replay](docs/iterations/2026-11-27/contact-covariance-ranking/README.md).
 
+## I-66 / 2026-11-27 / implemented, run, analyzed; diagnostic only
+
+Question: do I-65 load-ranking failures arise from candidate geometry, or does
+assigning the interval force to one current family remain inadequate? Reuse
+I-58 native Gazebo/DART Mars figure-eight logs: shaft -1/+0.3/+0.9 rad, yaw45°,
+44s,5ms, caps [1.5,.6,.6 N m,.3,.3 m/s]. No new physics, controller, observer,
+feedforward, preparation, score, threshold or calibration change.
+
+Source/schema audit establishes last-reported1ms normal-load-weighted contact
+centroids versus preceding5ms observer load. The intervening per-contact force
+history and true generalized loads are absent. The sampled centroid is not an
+exact interval oracle, and CPU latency is not measured. Counts above .05N do
+not establish strict single contact. Older substep archives describe other runs.
+
+Feature sources/338inputs (306 original model/asset paths) sealed before private
+kinematics;24 analysis source/cache/dependency files sealed before residuals.
+All26403 poses valid, no dynamics/collision/contact query. Maps match I-64 within
+3.47e-17; I-61 centre/angular/load maps exact. Retain raw finite centroid with
+separate material flags. Four fixed diagnostic routes: correct physical F-first/
+Nalt C; sampled centroid T; full inferred single-family wrench W; normal-share
+common-direction force proxy S. Same pose/raw force/target; no true-force fitting.
+
+All41 lost useful frames known. C→T vector RMS .139264→.105682 N m (24.1%lower),
+p95 .318014→.258432;37 improve/four worsen. Registered geometric criterion fails
+because the sole -1rad focus frame at32.110s worsens .112722→.164060. Both C/T
+have39/41 compatible under the old component bound (one pass gained, one lost).
+W RMS .068932,41/41 compatible; S=T there. Controls are not deployed estimators.
+
+Frozen I-65 counterfactual on294 useful +six harmful distinct-family cases only:
+useful253→276/294 (27 newly correct, four newly wrong); correct harmful rejection
+2→4/6. No ties/unknowns;27/41 lost preferences restored. At35.205s the correct
+belt candidate is26.04mm from its sampled centroid; replacement cuts error norm
+.42181→.20759 N m and score137.81→43.08 below wrong F132.65. At32.110s a2.79mm
+point replacement worsens fit, while W error is .01621 N m. Remaining harmful
+misranks31.095/31.175 have active-joint/free-couple discrepancies; lower W error
+is not evidence that a wrench classifier would fix them. No tracking gain claimed.
+
+A separately registered post-result ancestry audit bounds single-family C/T/W
+error by raw observer loads on structurally inactive joints. Floor RMS is
+.03904 N m (13.6%of T squared error) on41focus, .13518 N m (72.7%) on six harmful,
+and .00213 N m on stable correct pairs. These are coordinate-energy bounds,
+not causal shares. At35.205s shellB floor .20663 remains below the old .25106
+allowance; geometry already fixes its rank. Do not attribute all remaining errors
+to this floor or proven lag. All300 useful/harmful endpoints have one positive
+sampled family load; S=T does not exclude multiple points or interval transfers.
+
+Fifteen geometry/extraction and seventeen separate analysis tests pass, not the
+full controller suite. A pre-data statistic-label correction and repeated17-test
+stage are retained without inflating counts. Independent hinge loads agree within
+4.44e-16 N m; eigen scores within1.82e-12; masks/cohorts/counterfactual codes exact.
+Independent structural bounds match exactly. Producer NumPy1.26.4 reproduces177
+arrays byte-for-byte. NumPy1.21.5 differs in floating bytes but preserves decisions
+and bounded summaries; canonical values retained. Figure layout iterations are
+preserved; final one-page overview and eight-page appendix contain14fixed anchors.
+
+Decision: geometry matters but is an incomplete explanation; keep live baseline.
+Next proposed: bank coverage versus selected-point quality at these events before
+changing search, then matched substep logging to separate temporal transfer from
+model/actuation error if needed. Neither follow-up runs here. Preserve progress
+for presentation, including the failed primary criterion and remaining ambiguity.
+[Report, plots, events and clone replay](docs/iterations/2026-11-27/contact-geometry-load-audit/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

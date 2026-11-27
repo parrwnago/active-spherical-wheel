@@ -1,0 +1,1832 @@
+{
+  "created_utc": "2026-11-27T09:38:41.323963+00:00",
+  "scope": "Read-only schema/header/provenance inspection; no new residual arithmetic, model fitting, physics or contact query",
+  "packets": {
+    "m100_B": {
+      "case": {
+        "case_id": "m100_B",
+        "variant": "native",
+        "terrain": "marsyard2021",
+        "phase_rad": -1.0,
+        "yaw_deg": 45.0,
+        "duration_s": 44.0,
+        "path": {
+          "kind": "mars_route",
+          "route": "plain_figure8"
+        }
+      },
+      "versions": {
+        "numpy": "1.26.4",
+        "scipy": "1.15.3",
+        "mujoco": "3.16.0"
+      },
+      "models": {
+        "mirror_xml": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/_workspaces/m100_B/worker_471546/mirror/model.xml",
+        "physical_sdf": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/_workspaces/m100_B/worker_471546/gazebo/world/models/active_spherical_wheel/model.sdf"
+      },
+      "measurement_boundary": "Exact simulated body/joint state and known prior actual applied input. Control contact records come only from momentum observer and support geometry; solver contacts are evaluation-only.",
+      "packets": {
+        "I58_precision": {
+          "path": "results/balance_priority_20261126/campaign/runs/m100_B/precision.npz",
+          "sha256": "010ff6e3fa4d7c47a18f7dc3982e9ed4bee7ea26ff6e873ba12fd6c692315cf0",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qpos": {
+              "shape": [
+                8801,
+                10
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qvel": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_applied": {
+              "shape": [
+                8801,
+                5
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_previous_applied": {
+              "shape": [
+                8801,
+                5
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_wrench": {
+              "shape": [
+                8801,
+                6
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_generalized": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_interval_mean": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_support_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_points_m": {
+              "shape": [
+                8801,
+                4,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_contact_counts": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "truth_equivalent_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        },
+        "I58_rollout": {
+          "path": "results/balance_priority_20261126/campaign/runs/m100_B/rollout.npz",
+          "sha256": "c96b71c6d56a62049df86b05532fb924ebc63e88d79f71c804277ec0269e26bc",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "qpos": {
+              "shape": [
+                8801,
+                10
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "qvel": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "push_N": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "ground_normal": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "contact_force_N": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "normal_force_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "tangential_force_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "support_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "fork_load_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "contact_moment_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "observer_force_N": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "observer_moment_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "estimated_contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "estimated_contact_points_m": {
+              "shape": [
+                8801,
+                4,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            }
+          }
+        },
+        "I60_context": {
+          "path": "results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/measurement_context.npz",
+          "sha256": "fe350974c33f5d62304af8372aa9c1ecb1a57e7aca26fa4ccc369487689f617e",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qpos": {
+              "shape": [
+                8801,
+                10
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qvel": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_previous_applied": {
+              "shape": [
+                8801,
+                5
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_wrench": {
+              "shape": [
+                8801,
+                6
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_generalized": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_interval_mean": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_support_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "intrinsic_normal_hint": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        },
+        "I61_features": {
+          "path": "results/contact_load_consistency_20261127/campaign/features_stage01/m100_B/load_features_and_policies.npz",
+          "sha256": "6ea4401a55c87b38dec2efa2ae8ba9f2116440f14b26c9a33e1d6dd49da2d329",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "native_family": {
+              "shape": [
+                8801
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "proposed_family": {
+              "shape": [
+                8801
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "proposed_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "native_alternative_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "native_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "observer_generalized": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "observer_wrench": {
+              "shape": [
+                8801,
+                6
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "observer_interval_mean": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__valid": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "map__centre_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__joint_at_centre": {
+              "shape": [
+                8801,
+                4,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__joint_moment_map": {
+              "shape": [
+                8801,
+                4,
+                3,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__force_norm_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__radius_m": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        },
+        "I61_evaluation": {
+          "path": "results/contact_load_consistency_20261127/analysis/stage01/m100_B_evaluation.npz",
+          "sha256": "5820c459a9277a0908b42f4c4ca46590cd50cb8de8908e9248c716a29dd41686",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_family": {
+              "shape": [
+                8801
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "truth_eligible": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "truth_loaded": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "truth_dominant_fraction": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_resolved_contact_counts_gt005N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "truth_equivalent_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_dominant_patch_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "stable_truth_mask": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "oracle_geometry_pass": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "oracle_joint_prediction_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "oracle_joint_residual_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        }
+      }
+    },
+    "p030_B": {
+      "case": {
+        "case_id": "p030_B",
+        "variant": "native",
+        "terrain": "marsyard2021",
+        "phase_rad": 0.3,
+        "yaw_deg": 45.0,
+        "duration_s": 44.0,
+        "path": {
+          "kind": "mars_route",
+          "route": "plain_figure8"
+        }
+      },
+      "versions": {
+        "numpy": "1.26.4",
+        "scipy": "1.15.3",
+        "mujoco": "3.16.0"
+      },
+      "models": {
+        "mirror_xml": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/_workspaces/p030_B/worker_474288/mirror/model.xml",
+        "physical_sdf": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/_workspaces/p030_B/worker_474288/gazebo/world/models/active_spherical_wheel/model.sdf"
+      },
+      "measurement_boundary": "Exact simulated body/joint state and known prior actual applied input. Control contact records come only from momentum observer and support geometry; solver contacts are evaluation-only.",
+      "packets": {
+        "I58_precision": {
+          "path": "results/balance_priority_20261126/campaign/runs/p030_B/precision.npz",
+          "sha256": "89f20c5c25659cf39d4e10e67c3c1856ff964f9d54932feef243a3507d0e5702",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qpos": {
+              "shape": [
+                8801,
+                10
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qvel": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_applied": {
+              "shape": [
+                8801,
+                5
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_previous_applied": {
+              "shape": [
+                8801,
+                5
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_wrench": {
+              "shape": [
+                8801,
+                6
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_generalized": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_interval_mean": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_support_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_points_m": {
+              "shape": [
+                8801,
+                4,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_contact_counts": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "truth_equivalent_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        },
+        "I58_rollout": {
+          "path": "results/balance_priority_20261126/campaign/runs/p030_B/rollout.npz",
+          "sha256": "c102a25b4de327316fed5d9399d02e0a0582538aff4dd5774b7fbd22d0426761",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "qpos": {
+              "shape": [
+                8801,
+                10
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "qvel": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "push_N": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "ground_normal": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "contact_force_N": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "normal_force_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "tangential_force_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "support_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "fork_load_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "contact_moment_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "observer_force_N": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "observer_moment_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "estimated_contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "estimated_contact_points_m": {
+              "shape": [
+                8801,
+                4,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            }
+          }
+        },
+        "I60_context": {
+          "path": "results/velocity_contact_rank_20261127/campaign/features_stage01/p030_B/measurement_context.npz",
+          "sha256": "9d24f5663f50697151beaddcb78f28a332cdd7f35fbef811d7e9958a9bc74960",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qpos": {
+              "shape": [
+                8801,
+                10
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qvel": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_previous_applied": {
+              "shape": [
+                8801,
+                5
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_wrench": {
+              "shape": [
+                8801,
+                6
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_generalized": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_interval_mean": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_support_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "intrinsic_normal_hint": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        },
+        "I61_features": {
+          "path": "results/contact_load_consistency_20261127/campaign/features_stage01/p030_B/load_features_and_policies.npz",
+          "sha256": "48cebdf86d28c72551c352b6b333bd1703a65597b9bd39a55b5140943325541b",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "native_family": {
+              "shape": [
+                8801
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "proposed_family": {
+              "shape": [
+                8801
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "proposed_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "native_alternative_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "native_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "observer_generalized": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "observer_wrench": {
+              "shape": [
+                8801,
+                6
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "observer_interval_mean": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__valid": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "map__centre_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__joint_at_centre": {
+              "shape": [
+                8801,
+                4,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__joint_moment_map": {
+              "shape": [
+                8801,
+                4,
+                3,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__force_norm_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__radius_m": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        },
+        "I61_evaluation": {
+          "path": "results/contact_load_consistency_20261127/analysis/stage01/p030_B_evaluation.npz",
+          "sha256": "0fef63923f04abaee7cdb12eb84cf2b60e5e8249aba2fee206dd261ac1d4dd85",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_family": {
+              "shape": [
+                8801
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "truth_eligible": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "truth_loaded": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "truth_dominant_fraction": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_resolved_contact_counts_gt005N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "truth_equivalent_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_dominant_patch_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "stable_truth_mask": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "oracle_geometry_pass": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "oracle_joint_prediction_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "oracle_joint_residual_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        }
+      }
+    },
+    "p090_B": {
+      "case": {
+        "case_id": "p090_B",
+        "variant": "native",
+        "terrain": "marsyard2021",
+        "phase_rad": 0.9,
+        "yaw_deg": 45.0,
+        "duration_s": 44.0,
+        "path": {
+          "kind": "mars_route",
+          "route": "plain_figure8"
+        }
+      },
+      "versions": {
+        "numpy": "1.26.4",
+        "scipy": "1.15.3",
+        "mujoco": "3.16.0"
+      },
+      "models": {
+        "mirror_xml": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/_workspaces/p090_B/worker_476426/mirror/model.xml",
+        "physical_sdf": "/home/parrwnago/active-spherical-wheel/results/balance_priority_20261126/campaign/_workspaces/p090_B/worker_476426/gazebo/world/models/active_spherical_wheel/model.sdf"
+      },
+      "measurement_boundary": "Exact simulated body/joint state and known prior actual applied input. Control contact records come only from momentum observer and support geometry; solver contacts are evaluation-only.",
+      "packets": {
+        "I58_precision": {
+          "path": "results/balance_priority_20261126/campaign/runs/p090_B/precision.npz",
+          "sha256": "38826bcc2747e2a57b331f08161b3ba7636cd3ea642e7917c470576942e1798e",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qpos": {
+              "shape": [
+                8801,
+                10
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qvel": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_applied": {
+              "shape": [
+                8801,
+                5
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_previous_applied": {
+              "shape": [
+                8801,
+                5
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_wrench": {
+              "shape": [
+                8801,
+                6
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_generalized": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_interval_mean": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_support_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_points_m": {
+              "shape": [
+                8801,
+                4,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_contact_counts": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "truth_equivalent_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        },
+        "I58_rollout": {
+          "path": "results/balance_priority_20261126/campaign/runs/p090_B/rollout.npz",
+          "sha256": "768c8c58fb241fe56176fb7dca1e7c7d31ccdf19e78bf129ee94d4eebc1d7a71",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "qpos": {
+              "shape": [
+                8801,
+                10
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "qvel": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "push_N": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "ground_normal": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "contact_force_N": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "normal_force_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "tangential_force_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "support_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "fork_load_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "contact_moment_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "observer_force_N": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "observer_moment_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "estimated_contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            },
+            "estimated_contact_points_m": {
+              "shape": [
+                8801,
+                4,
+                3
+              ],
+              "dtype": "float32",
+              "fortran_order": false
+            }
+          }
+        },
+        "I60_context": {
+          "path": "results/velocity_contact_rank_20261127/campaign/features_stage01/p090_B/measurement_context.npz",
+          "sha256": "ccb1d7101ae91e50b0f37d2c7d56dc7dab192481fccc8f787545b76f2c0c54be",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qpos": {
+              "shape": [
+                8801,
+                10
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_qvel": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_previous_applied": {
+              "shape": [
+                8801,
+                5
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_wrench": {
+              "shape": [
+                8801,
+                6
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_generalized": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_observer_interval_mean": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_support_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "exact_estimated_contact_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "intrinsic_normal_hint": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        },
+        "I61_features": {
+          "path": "results/contact_load_consistency_20261127/campaign/features_stage01/p090_B/load_features_and_policies.npz",
+          "sha256": "737d6d0c7604b60bde215549ce96462dea56ba1f5cdd42c8c9fea58c423c1199",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "native_family": {
+              "shape": [
+                8801
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "proposed_family": {
+              "shape": [
+                8801
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "proposed_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "native_alternative_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "native_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "observer_generalized": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "observer_wrench": {
+              "shape": [
+                8801,
+                6
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "observer_interval_mean": {
+              "shape": [
+                8801,
+                9
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__valid": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "map__centre_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__joint_at_centre": {
+              "shape": [
+                8801,
+                4,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__joint_moment_map": {
+              "shape": [
+                8801,
+                4,
+                3,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__force_norm_N": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "map__radius_m": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        },
+        "I61_evaluation": {
+          "path": "results/contact_load_consistency_20261127/analysis/stage01/p090_B_evaluation.npz",
+          "sha256": "80ea4d51b82f446055bdb18987c22f10d988757b74890b56aa980b1656bfceec",
+          "selected_array_headers": {
+            "time_s": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_family": {
+              "shape": [
+                8801
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "truth_eligible": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "truth_loaded": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "truth_dominant_fraction": {
+              "shape": [
+                8801
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_patch_loads_N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_resolved_contact_counts_gt005N": {
+              "shape": [
+                8801,
+                4
+              ],
+              "dtype": "int64",
+              "fortran_order": false
+            },
+            "truth_equivalent_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "truth_dominant_patch_point_m": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "stable_truth_mask": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "oracle_geometry_pass": {
+              "shape": [
+                8801
+              ],
+              "dtype": "bool",
+              "fortran_order": false
+            },
+            "oracle_joint_prediction_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            },
+            "oracle_joint_residual_Nm": {
+              "shape": [
+                8801,
+                3
+              ],
+              "dtype": "float64",
+              "fortran_order": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "I58_archived_source_references": [
+    {
+      "path": "results/balance_priority_20261126/campaign/runs/m100_B/source_snapshot/results/balance_priority_20261126/campaign_tools/run_case.py",
+      "sha256": "b714ac14a059f159f47b2259a83e2f6cca3262ee604cc001cb4a789f8ab70767",
+      "qualification": "Archived I58 producer/config source used to establish schema and semantics"
+    },
+    {
+      "path": "results/balance_priority_20261126/campaign/runs/m100_B/source_snapshot/scripts/run-lqr-contact-forecast.py",
+      "sha256": "4e4d590037801f178bb05e779ddb49fb093f5cae830212b9f90d57ddce1790cf",
+      "qualification": "Archived I58 producer/config source used to establish schema and semantics"
+    },
+    {
+      "path": "results/balance_priority_20261126/campaign/runs/m100_B/source_snapshot/src/spherical_wheel/gazebo/plant.py",
+      "sha256": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d",
+      "qualification": "Archived I58 producer/config source used to establish schema and semantics"
+    },
+    {
+      "path": "results/balance_priority_20261126/campaign/runs/m100_B/source_snapshot/gazebo/plugin/SphericalWheelBridge.cc",
+      "sha256": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e",
+      "qualification": "Archived I58 producer/config source used to establish schema and semantics"
+    },
+    {
+      "path": "results/balance_priority_20261126/campaign/runs/m100_B/source_snapshot/src/spherical_wheel/contact_sensing.py",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+      "qualification": "Archived I58 producer/config source used to establish schema and semantics"
+    },
+    {
+      "path": "results/balance_priority_20261126/campaign/runs/m100_B/source_snapshot/src/spherical_wheel/offroad_experiments.py",
+      "sha256": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b",
+      "qualification": "Archived I58 producer/config source used to establish schema and semantics"
+    },
+    {
+      "path": "results/balance_priority_20261126/campaign/runs/m100_B/source_snapshot/src/spherical_wheel/sim.py",
+      "sha256": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975",
+      "qualification": "Archived I58 producer/config source used to establish schema and semantics"
+    },
+    {
+      "path": "results/balance_priority_20261126/campaign/runs/m100_B/source_snapshot/config/model.yaml",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+      "qualification": "Archived I58 producer/config source used to establish schema and semantics"
+    },
+    {
+      "path": "results/balance_priority_20261126/campaign/runs/m100_B/source_snapshot/src/spherical_wheel/support_routing_audit.py",
+      "sha256": "c7436cab44467f51d0110041aa7c132889d74ba397c0b36c21d409408b2169ba",
+      "qualification": "Archived source snapshot; IntervalTruthSampler module was not attached by the native I58 runner"
+    }
+  ]
+}

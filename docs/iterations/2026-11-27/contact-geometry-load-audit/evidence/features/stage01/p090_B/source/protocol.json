@@ -1,0 +1,60 @@
+{
+  "iteration": "I-66",
+  "date_local": "2026-11-27",
+  "status": "specified_before_new_pose_map_or_residual_arithmetic",
+  "source_commit": "7ff7f3d5672400b4db16264e4d4298a75dbf7647",
+  "question": "Do frozen candidate-point errors account for the I65 load-ranking failures, or does a sampled-contact geometry replacement leave substantial load-model disagreement?",
+  "scope": "Offline analysis of saved I58 native Gazebo/DART Mars figure-eight logs only. Private model kinematics are allowed; zero physics steps or new contact queries. No live controller, observer, feedforward, candidate bank, score, calibration, limit or camera change. No new estimator/adoption or new trajectory runs.",
+  "cases": ["m100_B", "p030_B", "p090_B"],
+  "original_campaign": "I58 native gain-scheduled LQR+momentumobserver+supportgeometry+rolling/holdingfeedforward+120msincomingpreparation; shaft -1,+0.3,+0.9rad,yaw45deg,44s,5ms,8801states/case; commands [1.5,.6,.6Nm,.3,.3m/s]. Exact simulated q allowed. All episodes previously inspected; retrospective diagnosis only.",
+  "dependencies": {
+    "i61": "docs/iterations/2026-11-27/contact-load-consistency/evidence",
+    "i64": "docs/iterations/2026-11-27/contact-load-history/evidence",
+    "i65": "docs/iterations/2026-11-27/contact-covariance-ranking/evidence"
+  },
+  "pose_inputs": "Recorded exact q and the same mirrored model/patch metadata as I61/I64. Cache force-independent centre c, linear-at-centre Lk and world angular Ak for last3joint rows, all4families. Run mj_kinematics,mj_comPos,mj_jac only; forbid mj_step/step1/step2/forward/collision/contactForce. Verify original F/Nalt maps against I64 and angular/base maps against I61. Portable analysis uses cached maps, not local original model assets.",
+  "truth_boundary": "Truth is evaluation-only throughout this diagnostic, including reference-point choice, share proxy and counterfactual branch selection. No true contact enters inference or commands. Per-family saved truth points are normal-load-weighted centroids from last reported1ms step, including all positive normal loads; counts only include individual contacts>.05N. Means can lie inside the sphere or outside a material band; retain raw finite means, report geometry flags, never project onto a material surface or discard merely for being interior.",
+  "time_limit": "Observer interval_mean is previous5ms generalized-load average; geometry/state and truth records are interval-end samples. Exact contact/force history within those5ms is not logged. Neither sampled means nor normal shares are exact interval truth. The raw moment3:6 is already world-frame under observer midpoint convention; do not rotate it again. This audit cannot identify CPU computation delay or uniquely separate timing, friction/routing and dynamics error.",
+  "missing_truth": "No per-family/per-contact vector forces, separate contact couples or true generalized joint loads were saved. FLOAT32 rollout net contact force/moment are last-sample aggregates, not interval averages. Do not reconstruct unknown tangential force routing, interpolate an invented interval truth, or call the sampled reference a guaranteed geometry ceiling.",
+  "primary_mask": "Unchanged I61 primary_eligible:1<=time<41s,total truth normal load>=1N,unique dominant family>=90%. Same23423states. Secondary weak contacts remain possible.",
+  "cohorts": {
+    "focus": "All41 I65 primary M1 shared-covariance lost useful frames, fixed by original OOF keep mask; no event-based exclusions.",
+    "useful": "All294 primary I60 useful family corrections.",
+    "harmful": "All6 primary I60 harmful overrides.",
+    "retained_useful": "All253 useful corrections retained by I65 M1 covariance.",
+    "correct_pair": "Primary AND I60accepted AND at least one finite valid physical F/Nalt candidate has truth family; F-first deterministic choice, else Nalt. Expected6890rows, no truth-distance/residual minimization.",
+    "stable_correct_pair": "correct_pair AND original I61 +/-10ms dominant-family stable mask. One>.05N resolved-contact flag is descriptive, not strict single contact.",
+    "full_reference": "All primary states for sampled-truth reference, full-wrench and share-proxy residual context. Missing physical correct candidate remains explicit."
+  },
+  "routes": {
+    "C_candidate": "Correct-family physical F-first else Nalt. tauC=Lk Fraw + Ak cross(pC-c,Fraw). Exactly original M1 point model, same q_t,Fraw and target rawjoint.",
+    "T_sampled_point": "Change ONLY pC to raw logged dominant-family normal-weighted centroid pT. tauT=Lk Fraw + Ak cross(pT-c,Fraw). No trueforce or calibration fit. Assigned-family virtual point reference, not exact contact physics.",
+    "W_single_family_wrench": "tauW=Lk Fraw + Ak Mraw_world, assigning full observed net wrench to dominant family. Point-independent rigid-body load representation including a free couple. F,M,jointtarget share the same observer/model; endpoint axes versus midpoint-moment convention remains. Descriptive ablation, not independent contact truth.",
+    "S_normal_share_proxy": "tauS=sum_k[Lk*(wk Fraw)+Ak*cross(pk-c,wk Fraw)], wk=logged instantaneous normal_load_k/sum(loads). Uses all4families' own raw centroids. Assumes each force vector shares the same total-force direction and its instantaneous normal-load fraction. Positive share with missing point =>unknown; zero-share missing point harmless; never renormalize away an unknown contributor. This is NOT true5ms force allocation or a validated multicontact estimator."
+  },
+  "residuals": "Raw interval targetjoint - predictedjoint for every route, inNm. Identical force and endpoint pose across routes. Keep unchanged .03+.10 R*norm(FILTEREDobserverF) only for descriptive old component compatibility. No newthresholds/refits/modelselection.",
+  "primary_comparison": {
+    "cohort": "focus41lostuseful",
+    "contrast": "C_candidate vs T_sampled_point on identical finite paired rows; full denominator/unknown counts retained.",
+    "coverage_min": 0.99,
+    "minimum_vector_RMS_reduction_fraction": 0.1,
+    "requirements": "For a qualified geometric-improvement observation require >=10%pooledvectorRMS fall,p95 nonincrease,and no per-phase vectorRMS increase; focusall41scorable and all6harmfulscorable. This is retrospective evidence under sampled-reference assumptions, NOT causal proof or deployment success.",
+    "roundoff_Nm": 1e-10,
+    "remaining_disagreement": "Always report absolute remaining Nm residual and unchanged component-pass count. Improvement without resolving incompatibility is not a complete geometric explanation. All four routes reported side-by-side; no selecting a favorable control after results."
+  },
+  "geometry_decomposition": "deltaGeo=tauT-tauC; eC-eT=deltaGeo; SSEgain=2*eC dot deltaGeo-||deltaGeo||^2. Report pointdistance mm,perjoint lever effectNm,projection along/perpendicular rawforce and exact decomposition errors. For nonzero||eC|| report||deltaGeo||/||eC|| as a descriptive sensitivity ratio, not causal fraction. Freecouple=Mraw-cross(pT-c,Fraw); eT-eW=Ak freecouple. No arbitrary post-result subgroup fitting.",
+  "counterfactual_ranking": "Only on the fixed294useful+6harmful distinct-family opportunities: replace ONLY truth-correct physical branch point with sampled dominant-family mean, keep wrong branch and frozen held-out I65 M1 mean/covariance/force scale/ambiguity/tie rules unchanged. No refit. Report corrected/worsened/tied/unknown preferences with full denominators. Do not score same-family duplicate alternatives after artificially changing just one. This is truth-assisted explanatory counterfactual, not a deployable classifier or optimism guarantee.",
+  "descriptive_outputs": "Perphase/pooled/cohort vectorRMS,p95,max,perjointRMS,old compatibility counts,coverage,pointdistance/radial-bandflags,geometrylever effect andfreecouple. Record old sampledlaststep totalwheel force/moment vsrawobserver differences, forkload andpushexternal flags as context only, never5ms observer-accuracy groundtruth. Counts of pointreplacement improves/worsens and originalfail->referencepass/fail. Preserve all14fixedI65events with+/-100ms windows, no new favorable anchors.",
+  "events_source": "Exactly I65 science.json events list (14unique anchors,including good7.875,bad35.205,all6harmful,firstlostuseful perphase andworstApoint). Futureplotobservations contextual only.",
+  "decision": "Complete audit regardless of outcome. Keep live baseline fixed. If pointreplacement leaves failure, investigate interval/contact-force model before more acceptance heuristics; state unresolved ambiguity honestly. No automatic implementation/newphysics in this iteration.",
+  "verification": {
+    "seal": "Hash protocol,sources,inputpackets and relevant original model assets before historical arithmetic; preserve stages/corrections. Feature map extraction and evaluation stages distinct; truth inputs never read by pose-map extractor.",
+    "contracts": "Synthetic moment-arm/sign/frame,independentforce/couple cases,zero-shareNaN handling,missingpositive unknown,F-first choice,paired denominator/counterfactual no-refit anddecomposition identities; privatekinematic guards and originalmap parity.",
+    "map_absolute_tolerance": 1e-10,
+    "load_identity_absolute_tolerance_Nm": 1e-10,
+    "independent_raw_load_absolute_tolerance_Nm": 1e-9,
+    "counterfactual_score_atol": 1e-7,
+    "counterfactual_score_rtol": 1e-10,
+    "replay": "NumPy-only cached-posemap analysis with tracked I61/I64/I65 dependencies. Independent analytic/eigen orcross-product load checks, exact group/decision counts,actualfloatdifferences. Producer replay; ifcrossversionreplayed,reportreal byte differences, don't normalize canonical values."
+  }
+}

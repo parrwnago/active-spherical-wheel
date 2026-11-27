@@ -68,7 +68,31 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-65 tests a genuinely different joint-error scoring calculation.**
+**Latest: I-66 separates candidate-point sensitivity from remaining load-model
+disagreement.** With the same recorded pose and observer force, replace only
+the correct-family physical candidate with its sampled contact centroid.
+Joint-vector RMS on the 41 I-65 lost useful corrections falls 24.1%,
+0.13926→0.10568 N m; 27 of those preferences are restored. Four other previously
+correct useful preferences worsen. The registered criterion still fails because
+the sole -1 rad focus case gets worse.
+
+At 35.205 s, the correct belt point is misplaced by 26.04 mm relative to the
+sampled centroid; correcting it fixes that relative decision. At 32.110 s,
+correcting a 2.79 mm point displacement worsens the fit, while the full inferred
+wrench helps. Point selection and interval-load representation are distinct
+limitations. Structurally inactive joint rows also impose a point-independent
+error floor; this does not prove contact lag or explain every remaining error.
+
+The recorded centroid is from the last reported 1 ms step, whereas the raw
+observer load spans 5 ms. These logs lack the intervening per-contact forces,
+so no exact temporal cause is established. No new controller, physics run or
+truth input to live estimation is introduced.
+[I-66 report, comparison, events and portable replay](iterations/2026-11-27/contact-geometry-load-audit/README.md).
+Next proposed: inspect whether the candidate bank contains a better point at
+the same events before changing its search; later instrument substep loads if
+needed to separate temporal transfer from model error.
+
+**I-65 tests a different joint-error scoring calculation.**
 Fit one shared bias/covariance model of the three joint-load residuals on two
 whole recordings, then rank frozen contacts in the third. Fixed regularization
 and ambiguity rules are declared before fitting. Training uses simulator family

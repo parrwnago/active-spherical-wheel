@@ -1,5 +1,38 @@
 # Research presentation notes — 2026-11-27
 
+**I-66: candidate geometry explains part of the load-ranking failure;
+current single-family load representation remains limited.**
+[Full record](contact-geometry-load-audit/README.md),
+[comparison PDF](contact-geometry-load-audit/evidence/publication/plots_stage03/geometry_load_comparison.pdf)
+and [eight-page event appendix](contact-geometry-load-audit/evidence/publication/plots_stage03/event_windows.pdf).
+
+- Replace only the known-correct physical candidate point with the recorded
+  family centroid, keeping pose, raw observer force and I-65 calibration fixed.
+  This is evaluation-only; the centroid is a last-reported 1 ms sample while
+  the observer describes the preceding 5 ms. Exact interval truth is absent.
+- On all 41 lost useful corrections, raw joint-vector RMS falls 24.1%,
+  0.13926→0.10568 N m. Thirty-seven improve, four worsen. The registered
+  criterion fails because the sole -1 rad focus frame worsens.
+- Truth-assisted point replacement restores 27/41 lost useful preferences;
+  all useful preferences rise 253→276/294 with four new losses, harmful
+  rejection improves 2→4/6. No deployed error rate is claimed.
+- At 35.205 s the correct belt candidate is 26.04 mm from the sampled centroid;
+  replacement fixes its relative ranking. At 32.110 s a 2.79 mm replacement
+  worsens error, while allowing the full inferred wrench reduces it strongly.
+- Some joint-load rows cannot be produced by any point/wrench on the current
+  material body. Their structural error floor is real in the model but cannot
+  identify interval contact transfer versus model/actuation error. Do not
+  attribute the remaining two harmful preferences entirely to that floor.
+- Every useful/harmful endpoint has one positive sampled family normal load;
+  the normal-share proxy therefore equals the single-centroid model there.
+  This does not establish strict single contact or exclude hidden transfers.
+- Fifteen geometry and seventeen separate evaluator tests pass. Independent
+  hinge/eigen arithmetic and a separate structural check agree. Producer
+  replay reproduces 177 arrays exactly; cross-version decisions also agree.
+- Keep live LQR/observer/feedforward/preparation unchanged. Next proposed:
+  candidate-bank coverage versus selected-point quality, followed by matched
+  substep logging if needed to isolate remaining timing/load routing.
+
 **I-65: a different joint-error pattern score improves relative ranking but
 still rejects too many useful corrections.**
 [Full record](contact-covariance-ranking/README.md),
