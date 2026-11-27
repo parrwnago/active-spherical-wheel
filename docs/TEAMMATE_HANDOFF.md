@@ -68,6 +68,22 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
+**Latest: I-56 is a rejected experimental command allocator.** It adds hard
+total-command amplitude and slew boxes after native LQR, prioritizes a local
+balance-response match, then penalizes travel changes, yaw and unloaded-shell
+momentum. Three new 44 s runs complete, and native B exactly reproduces the
+old B trace. The full candidate worsens peak tracking 116.26→136.16 mm, final
+error 42.65→76.72 mm and absolute tilt 13.72→18.96°. Completion and bounded
+commands do not establish improved balance. Conditional later phases do not
+run; defaults remain unchanged. Read the
+[full I-56 record](iterations/2026-11-26/constrained-handoff/README.md) for
+the model assumptions, ablation, failed fixtures, comparison and reproduction.
+The new `handoff_model.py`/`handoff_control.py` modules are opt-in experiment
+components; the selected research loop above still uses native LQR.
+[I-56 overview, 4×](handoff/media/i56-overview.mp4)
+· [Handoff replay, 0.5×](handoff/media/i56-handoff-event.mp4)
+· [Comparison plot](iterations/2026-11-26/constrained-handoff/evidence/analysis/plots_stage01/comparison.pdf).
+
 I-52 compares four full-run variants at three initial common-shaft angles,
 using the same 44 s Mars figure-eight and 0.30 m/s belt caps:
 
@@ -225,6 +241,7 @@ selected movies are committed. [Portable workspace details](../research/README.m
 | Momentum observer, support locator and normal filtering | [contact_sensing.py](../src/spherical_wheel/contact_sensing.py) |
 | Native rolling references and belt feedforward | [experiments.py](../src/spherical_wheel/experiments.py) |
 | Incoming geometric preview | [synchronization.py](../src/spherical_wheel/synchronization.py) |
+| I-56 experimental measured-contact response and bounded command allocation | [handoff_model.py](../src/spherical_wheel/handoff_model.py), [handoff_control.py](../src/spherical_wheel/handoff_control.py) |
 | Measured-state mirror, lockstep Gazebo bridge | [gazebo/plant.py](../src/spherical_wheel/gazebo/plant.py), [bridge plugin](../gazebo/plugin/SphericalWheelBridge.cc) |
 | Exact I-52 opt-in experiment sources | [frozen workspace](../research/frozen_workspace/README.md) |
 
@@ -245,15 +262,21 @@ are the shorter current index. Useful checkpoints:
   by filtered estimates in lockstep simulation.
 - I-51–I-53: isolated reference/handoff changes, three-configuration factorial,
   and the violent-acceleration investigation above.
+- I-54–I-56: saved momentum audit, matched-prefix causal diagnostics, then a
+  bounded allocator that satisfies its numerical constraints but regresses
+  physical balance/tracking. Defaults remain unchanged.
 
 Historical `results/` links in archived iteration records may refer to ignored
 full datasets. Use this page's tracked media/report links first; a plain clone
 does not contain every old raw rollout. Old snapshots are historical source,
 not automatically the current implementation.
 
-Validation for this handoff: 579 existing tests passed and 6 skipped; the new
+Validation for the original I-53 publication: 579 existing tests passed and 6 skipped; the new
 workspace tools have their own 21 passing tests. These are separate invocations,
 not new robot trials. Default settings and older evidence were preserved.
+I-56 separately adds 41 passing model/allocator tests and a three-run Gazebo
+screen; this is not a repeat of the full repository suite. Its portable saved-
+array replay reproduces the published metrics and gates without simulation.
 
 AI assistance: Codex helped implement experimental code, analyze logs and draft
 figures/documentation. The team supplied design direction and observations.

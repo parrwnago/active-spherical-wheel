@@ -1,0 +1,20 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_incoming_belt_can_reach_preparation_speed_within_existing_preview ____
+
+    def test_incoming_belt_can_reach_preparation_speed_within_existing_preview():
+        # The null-authority incoming belt should retain its preparation command,
+        # not be suppressed by an accidental dt-dependent change-cost scale.
+        previous = np.zeros(5)
+        ready = np.array([0., 0., 0., 1., 0.])
+        nominal = np.array([0., 0., 0., .3, 0.])
+        for _ in range(24):  # Existing preview horizon .12 s, controller step .005.
+            previous = solve(native_requested=nominal, previous_applied=previous,
+                             readiness=ready).command.copy()
+>       assert previous[3] >= .99*.3
+E       assert 0.2059766485230425 >= (0.99 * 0.3)
+
+tests/test_handoff_control.py:120: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_handoff_control.py::test_incoming_belt_can_reach_preparation_speed_within_existing_preview
+1 failed, 19 deselected in 0.33s

@@ -1,0 +1,92 @@
+{
+  "scope": "I56privatekineticprojectionmodelandtestscompleted; no livecontrollerchangesorGazeborunsbythisagent",
+  "utc": "2026-11-27T00:20:28.384385+00:00",
+  "source_sha256": {
+    "src/spherical_wheel/handoff_model.py": "663a13b553c402adf3e1d795c34bfba7c5bd886471ef9c3cc36135e9ac08a559",
+    "tests/test_handoff_model.py": "6105d8b485c17875c9592058de7b585c7f77ff2e8ec66f722b6272c840bc50fa"
+  },
+  "model_check_stage": "model_checks_stage02/report.json",
+  "model_tests_passed": 21,
+  "full_repo_suite": false,
+  "known_case_sensitivity": {
+    "measured_time_s": 32.249999999998046,
+    "estimated_slip_m_s": 0.0026875645209626427,
+    "estimated_supports": [
+      "shell_B_smooth"
+    ],
+    "estimated_loads_N": [
+      17.93336898582449
+    ],
+    "results": {
+      "actual_confidence": {
+        "tangent_confidence": 0.9822627823080677,
+        "predicted_world_wz_delta_rad_s": -0.2718554581355923,
+        "observed_world_wz_delta_rad_s": -0.2708335994728328,
+        "absolute_relative_error": 0.0037730128933356464,
+        "sanity_gate_passed": true,
+        "contact_rank": 3,
+        "shell_axis_world": [
+          0.2776804415559636,
+          -0.002681330340187804,
+          0.9606697574322263
+        ],
+        "shell_axial_inertias_kg_m2": [
+          0.0013135150602,
+          0.0013135150602
+        ]
+      },
+      "full_tangent_confidence": {
+        "tangent_confidence": 1.0,
+        "predicted_world_wz_delta_rad_s": -0.2718555883468713,
+        "observed_world_wz_delta_rad_s": -0.2708335994728328,
+        "absolute_relative_error": 0.0037734936729702075,
+        "sanity_gate_passed": true,
+        "contact_rank": 3,
+        "shell_axis_world": [
+          0.2776804415559636,
+          -0.002681330340187804,
+          0.9606697574322263
+        ],
+        "shell_axial_inertias_kg_m2": [
+          0.0013135150602,
+          0.0013135150602
+        ]
+      },
+      "normal_only": {
+        "tangent_confidence": 0.0,
+        "predicted_world_wz_delta_rad_s": -0.27141266561030425,
+        "observed_world_wz_delta_rad_s": -0.2708335994728328,
+        "absolute_relative_error": 0.0021380882527078254,
+        "sanity_gate_passed": true,
+        "contact_rank": 1,
+        "shell_axis_world": [
+          0.2776804415559636,
+          -0.002681330340187804,
+          0.9606697574322263
+        ],
+        "shell_axial_inertias_kg_m2": [
+          0.0013135150602,
+          0.0013135150602
+        ]
+      }
+    },
+    "primary_gate_passed": true,
+    "limitations": [
+      "The known historical response is a singlefixedstate sanityscreen, not a validationcampaign.",
+      "Soft no-slip penalty is a local differential approximation; finitefriction/unilateral constraints are not guaranteed.",
+      "No offset/contactforecastaccuracy or closed-loopimprovementclaim."
+    ]
+  },
+  "preserved_stages": [
+    "model_checks_stage01",
+    "model_checks_stage02",
+    "model_sensitivity_stage01",
+    "model_sensitivity_stage02"
+  ],
+  "setup_correction": "Initialscreenassigned3linearvalues to6-componentgeom_surfacevelrow; newstage02assignsonly[:3]. No modelsourcechangedandnocriterionchanged.",
+  "limitations": [
+    "Softcontactpenaltydoesnotguaranteefriction/unilateralityoractualcontactimpulsefeasibility",
+    "DifferentialGscreenusesalreadyknownI55singlepose, notunseenmodelvalidation",
+    "No modeloffset/wholetrajectoryaccuracyorcontrollerimprovementclaim"
+  ]
+}

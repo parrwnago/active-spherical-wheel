@@ -1,0 +1,248 @@
+"""Fine contact forecasts preserve the native policy and measured-data boundary."""
+import copy
+from contextlib import ExitStack
+from unittest.mock import patch
+
+import mujoco
+import numpy as np
+import pytest
+
+import spherical_wheel.contact_prediction as forecast_module
+from spherical_wheel.contact_prediction import PATCH_LABELS, forecast_native_contacts
+from spherical_wheel.model import REPO_ROOT
+from spherical_wheel.offroad_control import OffroadController, OffroadParams
+from spherical_wheel.offroad_experiments import Workspace
+from spherical_wheel.predictive_model import EstimatedPlanePredictor
+from spherical_wheel.predictive_seed import clone_native_controller, generate_native_rollout_seed
+
+
+@pytest.fixture(scope='module')
+def ready(tmp_path_factory):
+    workspace = Workspace(directory=tmp_path_factory.mktemp('contact_forecast'),
+        seed_cache=REPO_ROOT / 'generated/offroad/flat/control_schedule.npz')
+    mirror = workspace.mirror()
+    controller = OffroadController(mirror, workspace.design,
+        OffroadParams(mode='hardware', rolling_allocation='least_squares', track_contact_point=False),
+        phase=.3, record_diagnostics=True)
+    equilibrium = controller.ordinary['equilibrium']
+    mirror.set_state(equilibrium['qpos'], np.zeros(9), 0., equilibrium['u'])
+    controller.reset(.3)
+    controller.nominal_joints = mirror.data.qpos[7:10].copy()
+    goal = mirror.data.qpos[:2].copy()
+    path = lambda t: (goal.copy(), np.zeros(2), np.zeros(2))
+    current, info = controller.command(*path(0.))
+    predictor = EstimatedPlanePredictor(mirror)
+    predictor.update(mirror.data.qpos, mirror.data.qvel, info['estimate']['normal'],
+        info['measurement']['point_m'], sum(info['measurement']['loads_N'].values()),
+        friction=info['estimate']['friction'], command=mirror.last_input)
+    return controller, predictor, path, current
+
+
+def freeze(controller):
+    plant = controller.plant
+    return copy.deepcopy({
+        'qpos': plant.data.qpos, 'qvel': plant.data.qvel, 'time': plant.data.time,
+        'ctrl': plant.data.ctrl, 'qacc_warmstart': plant.data.qacc_warmstart,
+        'surfacevel': plant.model.geom_surfacevel,
+        'last_input': plant.last_input, 'last_command': plant.last_command,
+        'observer_previous': controller.observer._previous,
+        'observer_generalized': controller.observer.generalized,
+        'observer_mean': controller.observer.interval_mean,
+        'estimator': controller.estimator.__dict__, 'nominal_joints': controller.nominal_joints,
+        'held': controller._held, 'sync': controller._sync, 'vref': controller._vref,
+        'sync_qpos': controller.synchronizer._data.qpos,
+        'design_cache_keys': tuple(controller.design._local)})
+
+
+def equal_nested(a, b):
+    if isinstance(a, dict):
+        assert a.keys() == b.keys()
+        for key in a:
+            equal_nested(a[key], b[key])
+    elif isinstance(a, (tuple, list)):
+        assert len(a) == len(b)
+        for x, y in zip(a, b):
+            equal_nested(x, y)
+    elif isinstance(a, np.ndarray):
+        np.testing.assert_array_equal(a, b)
+    else:
+        assert a == b
+
+
+def test_fine_forecast_matches_existing_native_policy_without_averaging(ready):
+    controller, predictor, path, current = ready
+    before = freeze(controller)
+    result = forecast_native_contacts(controller, predictor, path, 0., .06,
+                                     current_command=current)
+    commands, detail = generate_native_rollout_seed(controller, predictor, path, 0., 12, .005,
+                                                    current_command=current)
+    np.testing.assert_array_equal(result['commands'], commands)
+    np.testing.assert_array_equal(result['qpos'][-1], detail['fine_rollout_terminal_qpos'])
+    np.testing.assert_array_equal(result['qvel'][-1], detail['fine_rollout_terminal_qvel'])
+    assert result['qpos'].shape == (13, 10)
+    assert result['qvel'].shape == (13, 9)
+    np.testing.assert_array_equal(result['time_s'], np.arange(13) * .005)
+    assert result['metadata']['command_averaging'] is False
+    equal_nested(before, freeze(controller))
+
+
+def test_contact_forces_are_private_and_consistent_with_model_reaction(ready, monkeypatch):
+    controller, predictor, path, current = ready
+    real = forecast_module._PRIVATE_CONTACT_FORCE
+    seen = []
+    def private_only(model, data, number, force):
+        assert model is predictor.model and data is predictor.data
+        assert model is not controller.plant.model
+        seen.append(number)
+        return real(model, data, number, force)
+    monkeypatch.setattr(forecast_module, '_PRIVATE_CONTACT_FORCE', private_only)
+    result = forecast_native_contacts(controller, predictor, path, 0., .02,
+                                     current_command=current)
+    assert seen
+    row = result['contacts'][-1]
+    expected_normal_force = float(predictor.normal @ predictor.data.qfrc_constraint[:3])
+    assert row['total_wheel_load_N'] + row['total_nonwheel_load_N'] == pytest.approx(expected_normal_force, abs=1e-7)
+    assert result['patch_loads_N'].shape == (5, 4)
+    assert result['patch_points_m'].shape == (5, 4, 3)
+    assert result['patch_labels'] == list(PATCH_LABELS)
+    for i, sample in enumerate(result['contacts']):
+        assert set(sample['loads_N']) == set(PATCH_LABELS)
+        assert np.isfinite(list(sample['loads_N'].values())).all()
+        assert min(sample['loads_N'].values()) >= 0
+        assert sample['total_wheel_load_N'] == pytest.approx(sum(sample['loads_N'].values()))
+        for j, name in enumerate(PATCH_LABELS):
+            assert result['patch_loads_N'][i, j] == sample['loads_N'][name]
+            if sample['points_m'][name] is None:
+                assert np.isnan(result['patch_points_m'][i, j]).all()
+            else:
+                np.testing.assert_array_equal(result['patch_points_m'][i, j], sample['points_m'][name])
+
+
+def test_threshold_only_classifies_loads_and_does_not_erase_them(ready):
+    controller, predictor, path, current = ready
+    low = forecast_native_contacts(controller, predictor, path, 0., .01,
+        current_command=current, load_threshold_N=.05)
+    high = forecast_native_contacts(controller, predictor, path, 0., .01,
+        current_command=current, load_threshold_N=1e6)
+    np.testing.assert_array_equal(low['patch_loads_N'], high['patch_loads_N'])
+    assert any(row['loaded_patches'] for row in low['contacts'])
+    assert all(row['dominant_patch'] == 'none' and row['loaded_patches'] == []
+               for row in high['contacts'])
+
+
+def test_determinism_frozen_plane_and_anchor_preview_are_isolated(ready):
+    controller, predictor, path, current = ready
+    before = freeze(controller)
+    plane, normal = predictor._plane_point.copy(), predictor.normal.copy()
+    first = forecast_native_contacts(controller, predictor, path, 0., .02,
+                                     current_command=current)
+    second = forecast_native_contacts(controller, predictor, path, 0., .02,
+                                      current_command=current)
+    for key in ('time_s', 'qpos', 'qvel', 'commands', 'patch_loads_N', 'patch_points_m'):
+        np.testing.assert_array_equal(first[key], second[key])
+    equal_nested(first['contacts'], second['contacts'])
+    equal_nested(first['anchor_kinematic_preview'], controller._sync)
+    first['anchor_kinematic_preview']['blend_weights'][0] = 123.
+    first['metadata']['frozen_plane']['normal'][0] = 123.
+    np.testing.assert_array_equal(predictor._plane_point, plane)
+    np.testing.assert_array_equal(predictor.normal, normal)
+    equal_nested(before, freeze(controller))
+
+
+def test_current_command_bypasses_wrapper_and_preserves_native_history_cadence(ready, monkeypatch):
+    controller, predictor, path, current = ready
+    original, after_step = OffroadController.command, OffroadController.after_step
+    times, ends = [], []
+    def callback(clone, *args):
+        assert clone is not controller
+        times.append(clone.plant.data.time)
+        return original(clone, *args)
+    def after(clone):
+        assert clone is not controller
+        ends.append(clone.plant.data.time)
+        return after_step(clone)
+    def live_wrapper(*args):
+        raise AssertionError('Forecast entered the live wrapper')
+    monkeypatch.setattr(OffroadController, 'command', live_wrapper)
+    monkeypatch.setattr(OffroadController, 'after_step', after)
+    result = forecast_native_contacts(controller, predictor, path, 0., .02,
+        current_command=current, command_function=callback)
+    np.testing.assert_allclose(times, [.005, .010, .015], atol=1e-14)
+    np.testing.assert_allclose(ends, [.005, .010, .015, .020], atol=1e-14)
+    np.testing.assert_array_equal(result['commands'][0], current)
+    assert result['contacts'][0]['force_sample_offset_from_state_s'] == 0.
+    assert all(row['force_sample_offset_from_state_s'] == -.001 for row in result['contacts'][1:])
+
+
+def test_native_feedback_cannot_read_solved_contacts_or_ground(ready):
+    controller, predictor, path, current = ready
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Native policy read a solved contact')
+    moving = lambda t: (path(t)[0], np.array([.001, 0.]), np.zeros(2))
+    with ExitStack() as stack:
+        for target in ('mujoco.mj_contactForce',
+                       'spherical_wheel.offroad_control.measure_contact',
+                       'spherical_wheel.offroad_control.records_from_mujoco',
+                       'spherical_wheel.offroad_control.rolling_feedforward',
+                       'spherical_wheel.synchronization.ContactSynchronizer._normal_loads'):
+            stack.enter_context(patch(target, forbidden))
+        result = forecast_native_contacts(controller, predictor, moving, 0., .02,
+                                         current_command=current)
+    assert np.isfinite(result['commands']).all()
+    assert controller.plant.data.ncon == 0
+    assert controller.plant.ground is None and controller.plant.terrain is None
+
+
+def test_before_command_anchor_updates_clone_only(ready):
+    controller, predictor, path, current = ready
+    before_command = clone_native_controller(controller)
+    plant = before_command.plant
+    plant.set_state(plant.data.qpos.copy(), plant.data.qvel.copy(), .005, current)
+    before = freeze(before_command)
+    original = OffroadController.command
+    def mark_anchor(clone, *args):
+        output = original(clone, *args)
+        clone._sync['diagnostic_anchor_time_s'] = float(clone.plant.data.time)
+        return output
+    result = forecast_native_contacts(before_command, predictor, path, .005, .01,
+                                     command_function=mark_anchor)
+    assert result['metadata']['first_command_source'] == 'computed_on_clone'
+    assert result['anchor_kinematic_preview']['diagnostic_anchor_time_s'] == .005
+    equal_nested(before, freeze(before_command))
+
+
+def test_path_failure_leaves_live_state_unchanged(ready):
+    controller, predictor, path, current = ready
+    before = freeze(controller)
+    def fails(t):
+        if t >= .01:
+            raise RuntimeError('Intentional future reference failure')
+        return path(t)
+    with pytest.raises(RuntimeError, match='Intentional future'):
+        forecast_native_contacts(controller, predictor, fails, 0., .02,
+                                 current_command=current)
+    equal_nested(before, freeze(controller))
+
+
+@pytest.mark.parametrize('horizon', [0., -.1, .007, np.nan, True])
+def test_invalid_horizon_is_rejected(ready, horizon):
+    controller, predictor, path, current = ready
+    with pytest.raises(ValueError, match='horizon_s'):
+        forecast_native_contacts(controller, predictor, path, 0., horizon,
+                                 current_command=current)
+
+
+def test_anchor_and_command_contracts_are_checked(ready):
+    controller, predictor, path, current = ready
+    with pytest.raises(ValueError, match='current_command'):
+        forecast_native_contacts(controller, predictor, path, 0., .01)
+    with pytest.raises(ValueError, match='state time'):
+        forecast_native_contacts(controller, predictor, path, .005, .01,
+                                 current_command=current)
+    for bad in (np.full(5, np.nan), np.full(5, 100.), np.zeros(4)):
+        with pytest.raises(ValueError, match='bounded'):
+            forecast_native_contacts(controller, predictor, path, 0., .01,
+                                     current_command=bad)
+    with pytest.raises(ValueError, match='load_threshold'):
+        forecast_native_contacts(controller, predictor, path, 0., .01,
+                                 current_command=current, load_threshold_N=0.)

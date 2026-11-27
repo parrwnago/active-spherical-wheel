@@ -1,0 +1,162 @@
+{
+  "iteration": "I-56",
+  "scope": "I56 registered saved-array comparison; no controller/model/physics calls.\n\nReuses only the immutable I49 metric functions and corrected I41 reference\nEVENT DEFINITIONS, not their old outcomes, retries or per-policy histories.\nNew command, yaw and optimizer diagnostics remain separate from performance.\n",
+  "interpretation": "Deterministic policy comparisons, one trajectory per registered cell; no statistical significance. Ablation cannot be promoted after outcomes.",
+  "main_acceptance": {
+    "completion": "Full44sobservedwithnofall/1mdeparture/70degfailure",
+    "technical": "Baselinebitwisehistoricalequality; noobserver/reference/plantmutationbyadapter; finiteoutputs; all amplitude+actualpriorrateboxes within1e-10; secondarybalanceextra\u22641e-8.",
+    "moving_window_s": [
+      1.0,
+      41.0
+    ],
+    "yaw_window_s": [
+      28.0,
+      44.0
+    ],
+    "yaw_peak_abs_ratio_max": 0.9,
+    "heading_absolute_travel_ratio_max": 0.8,
+    "timed_xy_rms_ratio_max": 1.1,
+    "timed_xy_rms_add_m": 0.001,
+    "timed_xy_peak_add_m": 0.01,
+    "final_xy_add_m": 0.01,
+    "relative_lean_peak_add_deg": 1.0,
+    "relative_lean_rms_ratio_max": 1.1,
+    "relative_lean_rms_add_deg": 0.1,
+    "absolute_tilt_peak_add_deg": 1.0,
+    "each_turn_overshoot_add_m": 0.01,
+    "settling": "Ifbaselinepassesexistingrawtargetsettlinggate,candidatemustalsopass; alwaysreportboth.",
+    "all_required": true,
+    "broader_rule": "Onlyifm100_Hpassesallinitialgatesrunp030_B/Handp090_B/H. Ifleadfails,stopbroadercampaign; retainbothablationandfullfailures,noautomaticretuneorpromoteablation.",
+    "adoption": "Noautomaticdefaultpromotion; evidence-basedexperimentalresultonly.",
+    "cost_vs_motion": "Boundedcommandchangesdonotboundactualrobotjoint/bodyaccelerations; evaluateactualmotionandrawtargets."
+  },
+  "availability_before_reading": {
+    "m100_B": {
+      "available": true,
+      "reason": null,
+      "case_source": "results/constrained_handoff_20261126",
+      "planned_phase_rad": -1.0,
+      "variant": "native"
+    },
+    "m100_H": {
+      "available": true,
+      "reason": null,
+      "case_source": "results/constrained_handoff_20261126",
+      "planned_phase_rad": -1.0,
+      "variant": "handoff"
+    },
+    "p030_B": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_source": "results/constrained_handoff_20261126",
+      "planned_phase_rad": 0.3,
+      "variant": "native"
+    },
+    "p030_H": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_source": "results/constrained_handoff_20261126",
+      "planned_phase_rad": 0.3,
+      "variant": "handoff"
+    },
+    "p090_B": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_source": "results/constrained_handoff_20261126",
+      "planned_phase_rad": 0.9,
+      "variant": "native"
+    },
+    "p090_H": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_source": "results/constrained_handoff_20261126",
+      "planned_phase_rad": 0.9,
+      "variant": "handoff"
+    },
+    "m100_A": {
+      "available": true,
+      "reason": null,
+      "case_source": "results/constrained_handoff_20261126/ablation",
+      "planned_phase_rad": -1.0,
+      "variant": "handoff"
+    }
+  },
+  "metric_conventions": {
+    "attitude_RMS_window_s": [
+      0.0,
+      44.0
+    ],
+    "yaw_window_s": [
+      28.0,
+      44.0
+    ],
+    "command_constraints": "All emitted including first/terminal; held exposure excludes terminal.",
+    "acceleration": "Backward differences of world velocities at5ms/50ms; not instant/contactsolver acceleration.",
+    "reference_events": "Only corrected six event definitions, not their stored old actual outcomes/retry metadata."
+  },
+  "registered_utc": "2026-11-27T00:38:13.145902+00:00",
+  "sources": [
+    {
+      "origin": "results/constrained_handoff_20261126/analysis/reduce_handoff.py",
+      "snapshot": "source_snapshot/results/constrained_handoff_20261126/analysis/reduce_handoff.py",
+      "sha256": "036f805e4dd2944f4be5f85bf811065afb3e00cf08f9d870c33351d69826493c"
+    },
+    {
+      "origin": "results/constrained_handoff_20261126/analysis/replay_projection.py",
+      "snapshot": "source_snapshot/results/constrained_handoff_20261126/analysis/replay_projection.py",
+      "sha256": "2909fbfcd525a79a52b80938e3b854fcb9eee8848e11bbc1c4e781dbd35077a5"
+    },
+    {
+      "origin": "results/belt_capacity_sweep_20261126/analyze_capacity.py",
+      "snapshot": "source_snapshot/results/belt_capacity_sweep_20261126/analyze_capacity.py",
+      "sha256": "cbaf7ae18989e1a07e9dfaf4167dd2eaa75fd59d064c4259a7b75f79d05c3a6d"
+    },
+    {
+      "origin": "results/figure8_event_audit_20261125/events/selection_stage02_corrected/selection_source/event_metrics.py",
+      "snapshot": "source_snapshot/results/figure8_event_audit_20261125/events/selection_stage02_corrected/selection_source/event_metrics.py",
+      "sha256": "144068d7b6d9d1ad1734308df564011e0d5f9799b88ac5a3de8f68d091970283"
+    },
+    {
+      "origin": "results/figure8_event_audit_20261125/events/selection_stage02_corrected/turn_events.json",
+      "snapshot": "source_snapshot/results/figure8_event_audit_20261125/events/selection_stage02_corrected/turn_events.json",
+      "sha256": "9a5a5293f93c8e8e630796793ceb6fac16362f5759e7562c95b1141171a0789b"
+    },
+    {
+      "origin": "results/contact_scheduling_joint_tracking_20261126/protocol.json",
+      "snapshot": "source_snapshot/results/contact_scheduling_joint_tracking_20261126/protocol.json",
+      "sha256": "fd33439c9db9a6bc31183409df9f00d13e82c3393581d4c66bab7878d59767bf"
+    },
+    {
+      "origin": "results/constrained_handoff_20261126/protocol.json",
+      "snapshot": "source_snapshot/results/constrained_handoff_20261126/protocol.json",
+      "sha256": "26db2ac2ba7a1baa6ff9b75497a0f7ffc6fa32c89b9744587709804c2270ff5c"
+    },
+    {
+      "origin": "results/constrained_handoff_20261126/ablation/protocol.json",
+      "snapshot": "source_snapshot/results/constrained_handoff_20261126/ablation/protocol.json",
+      "sha256": "bcdbff8b6dba42835685d21fb7d8f425ba6410a9ec922e33ed1be0556e154d7a"
+    }
+  ],
+  "input_sha256": {
+    "results/contact_scheduling_joint_tracking_20261126/campaign/runs/m100_B/precision.npz": "c614f8d1c2abaf91f4628f63ba9dc1e83e0f5a4fdc348540923988fca5b92fac",
+    "results/constrained_handoff_20261126/campaign/runs/m100_B/precision.npz": "010ff6e3fa4d7c47a18f7dc3982e9ed4bee7ea26ff6e873ba12fd6c692315cf0",
+    "results/constrained_handoff_20261126/campaign/runs/m100_B/rollout.npz": "c96b71c6d56a62049df86b05532fb924ebc63e88d79f71c804277ec0269e26bc",
+    "results/constrained_handoff_20261126/campaign/runs/m100_B/summary.json": "916c7c7332457afdbae7e6eb397b23dabbcc0446fe78ab176153c5bfe3d2a0c4",
+    "results/constrained_handoff_20261126/campaign/runs/m100_B/provenance.json": "ba30b4da846ad7331d2bb91f232a198737f83aa219d7eab955afd27f84440c8d",
+    "results/constrained_handoff_20261126/campaign/runs/m100_B/governor_diagnostics.json": "8bce10bdc3834b3c290acad3aeaf6b864ac88cd768513b68cfe1ee2a54a7ff38",
+    "results/constrained_handoff_20261126/campaign/runs/m100_B/artifact_manifest.json": "97641bce410e480aab06f240dc6adf5565c39eafbf82b3d0c5d838fc1167ee49",
+    "results/constrained_handoff_20261126/campaign/runs/m100_B/historical_precision_comparison.json": "914558f1fed6478a42c7850cf476f62e1759b3950efc75bec6070935b9441596",
+    "results/constrained_handoff_20261126/campaign/runs/m100_H/precision.npz": "d33ca65d7ed4f72fa49bd0115621aac771600c502989f33d39e939687ee88104",
+    "results/constrained_handoff_20261126/campaign/runs/m100_H/rollout.npz": "7ccad9d0fe898b335c5697beaedb76d5ac5b086da81f51556bfdf2ce55c92841",
+    "results/constrained_handoff_20261126/campaign/runs/m100_H/summary.json": "9874d18670915e6d0833fa81550ae828e5763aec5ea029e43842af73e9ffd630",
+    "results/constrained_handoff_20261126/campaign/runs/m100_H/provenance.json": "e34a00d2326db68ce7d9cd56f9ebb54c877742cd8c9367dd22568a1c9815759a",
+    "results/constrained_handoff_20261126/campaign/runs/m100_H/governor_diagnostics.json": "7105b294dfbef77d87f70f57b327f86f4be9841ec25f5eacee8b14777da77cce",
+    "results/constrained_handoff_20261126/campaign/runs/m100_H/artifact_manifest.json": "0019d2ade2ef6375cff6669c9b4182da67090cb93556a2278c9f659aafd16d91",
+    "results/constrained_handoff_20261126/ablation/campaign/runs/m100_A/precision.npz": "fed7c554319c4fbb416a07b6a4bb4ad2d1aedb30cff8fbe634dcc7039b6ae54d",
+    "results/constrained_handoff_20261126/ablation/campaign/runs/m100_A/rollout.npz": "ca462bacf1a0d6533b7440d476fea8658aa5296e47c15cb1cd79260431da2706",
+    "results/constrained_handoff_20261126/ablation/campaign/runs/m100_A/summary.json": "c512287d6698a5ccd86e44e21d33dcdd161d731e34ff73fcb7453e284da4bbb5",
+    "results/constrained_handoff_20261126/ablation/campaign/runs/m100_A/provenance.json": "8e24f4b49a43cc674b8fca854a16439170f36bd2855d58984b75584af081c190",
+    "results/constrained_handoff_20261126/ablation/campaign/runs/m100_A/governor_diagnostics.json": "2b68e9d46f0f2562447fba6ce215f0fc5174b4521b41f4e8ebbc6596af914b68",
+    "results/constrained_handoff_20261126/ablation/campaign/runs/m100_A/artifact_manifest.json": "80763b24706403e093b029ca91c34041a251ff12d9e626b6117eaf81d680b6fb"
+  }
+}

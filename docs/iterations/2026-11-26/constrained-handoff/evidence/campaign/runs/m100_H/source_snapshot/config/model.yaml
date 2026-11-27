@@ -1,0 +1,63 @@
+# SI units. These masses and fork dimensions are design assumptions, not CAD measurements.
+provenance:
+  status: approximate_design_study
+  sphere_radius_source: "120 mm outer radius fit to 1009 vertices from native CAD saved body meshes; 110 mm inner radius."
+  shell_openings_source: "CAD mesh polar aperture radius 32 mm (15.466 degrees); shell axial truncation 10 mm each side."
+  masses_source: "Illustrative masses from the supplied handoff; native CAD materials/mass properties unavailable."
+  confirmed_topology: "Motors and polar modules fixed to carrier; shells rotate independently; carrier rotates relative to fork."
+  geometry_scope: "Native CAD shell/carrier visuals, analytical collision wedges and exposed belt caps; no gear or bearing dynamics."
+
+visual:
+  native_cad_meshes: true
+  include_carrier_details: true
+
+geometry:
+  sphere_radius_m: 0.12
+  shell_thickness_m: 0.010
+  polar_cap_angle_deg: 15.46600995
+  equatorial_gap_half_m: 0.010
+  collision_azimuth_sectors: 48
+  collision_meridian_samples: 24
+  shaft_radius_m: 0.008
+  shaft_length_m: 0.308
+  fork:
+    mass_kg: 0.20
+    arm_offset_y_m: 0.145
+    arm_size_xyz_m: [0.022, 0.018, 0.185]
+    arm_center_z_m: 0.0925
+    bridge_size_xyz_m: [0.032, 0.308, 0.024]
+    bridge_center_z_m: 0.18
+  platform:
+    mass_kg: 1.0
+    size_xyz_m: [0.18, 0.24, 0.020]
+    center_xyz_m: [0.0, 0.0, 0.20]
+    com_offset_xyz_m: [0.0, 0.0, 0.0]
+  carrier:
+    mass_kg: 0.20
+    size_xyz_m: [0.100, 0.080, 0.080]
+  shell_mass_each_kg: 0.15
+  polar_module_mass_each_kg: 0.08
+  polar_module_internal_depth_m: 0.035
+
+simulation:
+  timestep_s: 0.001
+  control_interval_s: 0.005
+  gravity_m_s2: [0.0, 0.0, -9.81]
+  initial_clearance_m: 0.0003
+  initial_shaft_phase_rad: 0.30
+  joint_damping_Nms: 0.0001
+
+contact:
+  mode: analytic_clipped_floor
+  friction: [0.70, 0.005, 0.0001]
+  solref: [0.005, 1.0]
+  solimp: [0.95, 0.99, 0.001]
+  contact_dimension: 3
+
+actuation:
+  order: [shaft, shell_A, shell_B, belt_A, belt_B]
+  torque_limits_Nm: [1.5, 0.6, 0.6]
+  belt_speed_limit_m_s: 0.30
+  belt_mode: ideal_surface_speed
+  belt_motor_load_dynamics: false
+  motor_gear_ratios: null

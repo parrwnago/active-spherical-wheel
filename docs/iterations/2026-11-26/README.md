@@ -1,5 +1,14 @@
 # Research presentation notes — 2026-11-26
 
+- **I-56 bounded handoff candidate:** [record](constrained-handoff/README.md).
+  Three fresh 44 s Gazebo comparisons use native B, a bounds/continuity ablation
+  and a full yaw/momentum-aware total-command allocator. Existing LQR, observer,
+  references, gain bank and defaults remain unchanged. Native B reproduces all
+  56 original precision fields exactly. The full candidate regresses peak
+  tracking 116.26→136.16 mm, final error 42.65→76.72 mm and absolute tilt
+  13.72→18.96°. It fails the registered screen, so the conditional broader
+  campaign stops and no candidate is adopted. The failed preparation-cost
+  fixture, correction and exact source/protocol history are retained.
 - **I-55 matched-prefix causal diagnostics:** [record](causal-replay/README.md).
   Four short 32.5 s Gazebo runs. Unchanged batch and 1 ms-read versions match
   all 56 original precision fields at 6,501 samples exactly. Removing only

@@ -1,0 +1,532 @@
+{
+  "iteration": "I-56",
+  "captured_before_execution_utc": "2026-11-27T00:31:37.353123+00:00",
+  "git_head": "cbaf7d4c62bb02d2ea481cc9c17bb90397021ea5",
+  "case": {
+    "case_id": "m100_A",
+    "variant": "handoff",
+    "terrain": "marsyard2021",
+    "phase_rad": -1.0,
+    "yaw_deg": 45.0,
+    "duration_s": 44.0,
+    "path": {
+      "kind": "mars_route",
+      "route": "plain_figure8"
+    }
+  },
+  "process": {
+    "pid": 449607,
+    "one_case_per_fresh_process": true
+  },
+  "sources": [
+    {
+      "origin": "config/model.yaml",
+      "snapshot": "source_snapshot/config/model.yaml",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e"
+    },
+    {
+      "origin": "gazebo/plugin/SphericalWheelBridge.cc",
+      "snapshot": "source_snapshot/gazebo/plugin/SphericalWheelBridge.cc",
+      "sha256": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e"
+    },
+    {
+      "origin": "generated/offroad/flat/control_schedule.npz",
+      "snapshot": "source_snapshot/generated/offroad/flat/control_schedule.npz",
+      "sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1"
+    },
+    {
+      "origin": "results/constrained_handoff_20261126/ablation/protocol.json",
+      "snapshot": "source_snapshot/results/constrained_handoff_20261126/ablation/protocol.json",
+      "sha256": "bcdbff8b6dba42835685d21fb7d8f425ba6410a9ec922e33ed1be0556e154d7a"
+    },
+    {
+      "origin": "results/constrained_handoff_20261126/campaign_tools/adapter.py",
+      "snapshot": "source_snapshot/results/constrained_handoff_20261126/campaign_tools/adapter.py",
+      "sha256": "d6bdcf77062b5c6dd060bd4c00f2cea3d9aa2bc773dda0e326313f4524e9ab84"
+    },
+    {
+      "origin": "results/constrained_handoff_20261126/campaign_tools/run_case.py",
+      "snapshot": "source_snapshot/results/constrained_handoff_20261126/campaign_tools/run_case.py",
+      "sha256": "bbe10f40a3a9d6f9dac0c36380aee42bfc15cedc74ca85d6f76a7f7c352a4298"
+    },
+    {
+      "origin": "scripts/run-lqr-contact-forecast.py",
+      "snapshot": "source_snapshot/scripts/run-lqr-contact-forecast.py",
+      "sha256": "4e4d590037801f178bb05e779ddb49fb093f5cae830212b9f90d57ddce1790cf"
+    },
+    {
+      "origin": "src/spherical_wheel/__init__.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/__init__.py",
+      "sha256": "3ec9d9b209172f8b735dba797aee9e1b7850bd28129d86083636525edbdb4d47"
+    },
+    {
+      "origin": "src/spherical_wheel/__main__.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/__main__.py",
+      "sha256": "b0694f2035697f7295db710bca58167353174c77a7d92c8b620a2c150f464888"
+    },
+    {
+      "origin": "src/spherical_wheel/cli.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/cli.py",
+      "sha256": "8f808e8ec874b0e2bbb8d1ccc9d9fd96c6612ab655a12adebda7e4bfe9232406"
+    },
+    {
+      "origin": "src/spherical_wheel/contact.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact.py",
+      "sha256": "a534156e7b304d60efd3e44911477ff5b89dedd076a90eb47e0c46fb2068fb84"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_diagnostics.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_diagnostics.py",
+      "sha256": "f0a927e4c230b4f181f4d72cf5216f38d34de26573dcd511027047ff5a36cbcb"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_kinematics.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_kinematics.py",
+      "sha256": "678eff4f9792e86dd3b9dece83edaaf2517b8416df3b736352cb0a0142b98351"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_pose_diagnostic.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_pose_diagnostic.py",
+      "sha256": "6cb83937e643a1536b7242101670e4661e4cfe1b6d4173e32a741477eb953edb"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_prediction.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_prediction.py",
+      "sha256": "cb9deeee1e254ea2b1eb9b88511a68eb07b1b55233fc6ac3de808b849e978f3f"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_sensing.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_sensing.py",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833"
+    },
+    {
+      "origin": "src/spherical_wheel/control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/control.py",
+      "sha256": "e0c4107601e07cafe29b726341de4c32bb8151506a539e913b0d6eec2e0c8e6f"
+    },
+    {
+      "origin": "src/spherical_wheel/experiments.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/experiments.py",
+      "sha256": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638"
+    },
+    {
+      "origin": "src/spherical_wheel/feasible_reference.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/feasible_reference.py",
+      "sha256": "c044a48fdd00efa35d1ed1094183806c10d6329748eae5eedac713b0710438aa"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/__init__.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/__init__.py",
+      "sha256": "3d8aa250141d5f840b41a5a4bd1cd7b5d115942165f5b64567c72b883a1410c9"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/__main__.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/__main__.py",
+      "sha256": "e6fd3883bc41a08c518f4f24c4a72ff5de9a94cff725e7959ea115c38bd2105e"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/bridge.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/bridge.py",
+      "sha256": "6b1f7e2ec860e6d21a6a025d1581952836aef3515da66f60a2314d15776c18a4"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/experiments.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/experiments.py",
+      "sha256": "4fd2fa15833b724a027de054261698829b87c0667a14d2821c1684f989d6308b"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars.py",
+      "sha256": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars_compare.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars_compare.py",
+      "sha256": "11cd6b314bae383f150c48bfc864672878a1f109757476713ecfcee90f966ceb"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars_observer.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars_observer.py",
+      "sha256": "f420a80f2fbd5a45f3ca926e3c76c3959e65114d65226c02c76ed24ceb49b67a"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars_shapes.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars_shapes.py",
+      "sha256": "f5205692cdeda87e1487d6f4d27f63d5fc0adf15e35682a9e11602d02791a107"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/model_sdf.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/model_sdf.py",
+      "sha256": "34abc16930ebe04f3f8333aa8d57803c9c33c12e9eea7a12f668fb6a2da05d49"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/parity.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/parity.py",
+      "sha256": "35140f72c13af341731e8b260e2e3f80458b3876c5db04f18f78cf7840cc68b6"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/plant.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/plant.py",
+      "sha256": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/worlds.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/worlds.py",
+      "sha256": "ad8b8133fb57b2bcab729ce6eb215f931ac04128b925c496710d8176ef0b39d4"
+    },
+    {
+      "origin": "src/spherical_wheel/handoff_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/handoff_control.py",
+      "sha256": "6d9ee4e7d94db6e364b3d916770c326bafbc12e8c8bc38aeb3169f7f6ff1f9b8"
+    },
+    {
+      "origin": "src/spherical_wheel/handoff_model.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/handoff_model.py",
+      "sha256": "663a13b553c402adf3e1d795c34bfba7c5bd886471ef9c3cc36135e9ac08a559"
+    },
+    {
+      "origin": "src/spherical_wheel/lab_runtime.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/lab_runtime.py",
+      "sha256": "64bf8c70fae337553e35a55202bb626b15abe5a23f28a6d6cf02177034bfb096"
+    },
+    {
+      "origin": "src/spherical_wheel/lab_server.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/lab_server.py",
+      "sha256": "d5af071ce3c3aeabe5a02c3e9e31ab5c9c087f9bd1076c9905318d0f2a6cf311"
+    },
+    {
+      "origin": "src/spherical_wheel/mirror.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/mirror.py",
+      "sha256": "8e6325a9c44f79516c32c2af079718c3355f447d0d2751c44a684b6b8cf7b038"
+    },
+    {
+      "origin": "src/spherical_wheel/mobility.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/mobility.py",
+      "sha256": "92c08f5fe4001065128f8b9fe7b6821c8a63d9d4b7622da961778d1fd3adbab8"
+    },
+    {
+      "origin": "src/spherical_wheel/model.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/model.py",
+      "sha256": "d41d35b283ef4732cd2b7c321539491054a8070c86a2109a577d470a8c406e72"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad.py",
+      "sha256": "bb87ec5d188cc51acdc2591b8629dc94785b2c3aaff2e402947f911b993f5070"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_analysis.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_analysis.py",
+      "sha256": "c212949b09147b91aead5fee473594d6dc1c775f5f95860d0f189d5a0dfe10ac"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_cli.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_cli.py",
+      "sha256": "a41ce3e8974862fd11006a3bf72be80602eb7d172adaf4b1c19b70f5701e8331"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_control.py",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_experiments.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_experiments.py",
+      "sha256": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_geometry.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_geometry.py",
+      "sha256": "b843181c5537050d544118df534a0f53e2e2905054fef32fe66d702395afc4ae"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_suite.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_suite.py",
+      "sha256": "2e201f4fea2110fe6539385b0763b6eacc7bf0028683765acc45d9d030187d5c"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_view.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_view.py",
+      "sha256": "631370d0c5ee29417cb2e8531ced3139464f4ffa6bd8d6d33d12a4ae3b3c479f"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_control.py",
+      "sha256": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_equilibrium.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_equilibrium.py",
+      "sha256": "c8a5c340a7ce9f52c8334f9f8a7fa0491f21ea63fd1125cb0dbabc2f58b15ad2"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_model.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_model.py",
+      "sha256": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_seed.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_seed.py",
+      "sha256": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca"
+    },
+    {
+      "origin": "src/spherical_wheel/recovery_control.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/recovery_control.py",
+      "sha256": "b3a6bad0870c22ada4c926a7659befb756e31f8ed5defb5506786dc466f5b17d"
+    },
+    {
+      "origin": "src/spherical_wheel/rolling_allocation.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/rolling_allocation.py",
+      "sha256": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092"
+    },
+    {
+      "origin": "src/spherical_wheel/sensitivity.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/sensitivity.py",
+      "sha256": "4555fc809dab22aa2629148700fc8b8464076603a2be9377b3bd0c7af2d607be"
+    },
+    {
+      "origin": "src/spherical_wheel/sim.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/sim.py",
+      "sha256": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975"
+    },
+    {
+      "origin": "src/spherical_wheel/support_routing_audit.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/support_routing_audit.py",
+      "sha256": "c7436cab44467f51d0110041aa7c132889d74ba397c0b36c21d409408b2169ba"
+    },
+    {
+      "origin": "src/spherical_wheel/synchronization.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/synchronization.py",
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+    },
+    {
+      "origin": "src/spherical_wheel/terrain.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/terrain.py",
+      "sha256": "43ff7b6bf2d53fd3cfccfaa9d02841195f78e0d7e6cc2181b01c0589176751eb"
+    },
+    {
+      "origin": "src/spherical_wheel/terrain_depth.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/terrain_depth.py",
+      "sha256": "476f87cc8f4a9b1081d7ea2be4c6b15e89ebb2efade31f9c3516a5d6dd24a549"
+    },
+    {
+      "origin": "src/spherical_wheel/terrain_memory.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/terrain_memory.py",
+      "sha256": "938752c4a3c4e402191cbf75c464860ae5082f1750368c8342c65635552a7388"
+    },
+    {
+      "origin": "src/spherical_wheel/tilt_reference.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/tilt_reference.py",
+      "sha256": "598fe7e5f4a20d2933daf00f95526949fe0e73fb1eebc56b73b712de35dffa7d"
+    },
+    {
+      "origin": "src/spherical_wheel/transition.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/transition.py",
+      "sha256": "6330b2d0bfc832167105fb44354f00731e54b6a510c2ed96a4d45482652d13f3"
+    },
+    {
+      "origin": "src/spherical_wheel/validation.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/validation.py",
+      "sha256": "f66410a457be404a5934b08d0bee5c4812cc3fea5e5bdf5fa6a9d16b188fd171"
+    },
+    {
+      "origin": "src/spherical_wheel/visualize.py",
+      "snapshot": "source_snapshot/src/spherical_wheel/visualize.py",
+      "sha256": "cfa603e710fe63d7ff0e63e5d2057748b6758efcb304e8f79d1a0318ef736b51"
+    },
+    {
+      "origin": "tests/test_handoff_control.py",
+      "snapshot": "source_snapshot/tests/test_handoff_control.py",
+      "sha256": "ef41273127034a72db748a89a84bc1a0713dedc28ad906ea9ac56f7b1f17886f"
+    },
+    {
+      "origin": "tests/test_handoff_model.py",
+      "snapshot": "source_snapshot/tests/test_handoff_model.py",
+      "sha256": "6105d8b485c17875c9592058de7b585c7f77ff2e8ec66f722b6272c840bc50fa"
+    }
+  ],
+  "preflight": {
+    "passed": true,
+    "scope": "Read-only protocol, sources, plugin and frozen-bank checks; no physics or gain design.",
+    "protocol_sha256": "bcdbff8b6dba42835685d21fb7d8f425ba6410a9ec922e33ed1be0556e154d7a",
+    "frozen_bank_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+    "verified_source_count": 63,
+    "verified_input_count": 5,
+    "resolved_parameters": {
+      "mode": "hardware",
+      "synchronize": true,
+      "normal_source": "intrinsic",
+      "observer_cutoff_rad_s": 100.0,
+      "support_min_load_fraction": 0.05,
+      "normal_time_constant_s": 0.02,
+      "rim_aware": true,
+      "rim_time_constant_s": 0.2,
+      "rim_hold_speed_m_s": 0.02,
+      "gap_margin_m": 0.002,
+      "lean_gain": 1.0,
+      "support_feedforward": 1.0,
+      "schedule_on_ground_normal": false,
+      "shaft_error": "rolling",
+      "rolling_allocation": "least_squares",
+      "rolling_damping_m_s": 0.01,
+      "rolling_speed_limits": [
+        20.0,
+        20.0,
+        20.0,
+        0.3,
+        0.3
+      ],
+      "rolling_acceleration_limits": [
+        100.0,
+        100.0,
+        100.0,
+        3.0,
+        3.0
+      ],
+      "rolling_effort_m_s": 0.001,
+      "rolling_change_m_s": 0.001,
+      "rolling_adaptive_effort": false,
+      "rolling_weak_effort_m_s": 0.005,
+      "rolling_authority_m_s": 0.02,
+      "rolling_reference_catchup_gain_s_inv": 1.0,
+      "rolling_reference_catchup_speed_m_s": 0.06,
+      "rolling_reference_position_limit_m": 0.05,
+      "rolling_reference_balance_guard": false,
+      "rolling_reference_lean_scale_deg": 3.0,
+      "rolling_reference_rate_horizon_s": 0.1,
+      "track_contact_point": false,
+      "slip_threshold_m_s": 0.02,
+      "friction_recovery_s": 1.5,
+      "heading_gain": 0.0,
+      "heading_damping": 0.06,
+      "heading_torque_limit_Nm": 0.15,
+      "heading_min_lever": 0.12,
+      "unload_fraction": 0.3,
+      "airborne_damping_Nms": 0.01,
+      "max_lean_deg": 28.0,
+      "lqr_weights": "flat",
+      "heading_reference": "none",
+      "heading_actuation": "shells",
+      "heading_roll_budget_Nm": 0.0,
+      "fall_line_slope_deg": [
+        6.0,
+        12.0
+      ],
+      "heading_normal_time_constant_s": 0.5,
+      "heading_error_limit_rad": 0.5,
+      "fall_line_hysteresis_deg": 20.0
+    }
+  },
+  "candidate_settings": {
+    "allocator": {
+      "horizon_s": 0.02,
+      "slew_limits": [
+        60.0,
+        60.0,
+        60.0,
+        6.0,
+        6.0
+      ],
+      "travel_scale_m_s": 0.1,
+      "yaw_scale_rad_s": 1.0,
+      "rotor_reference_limit_rad_s": 20.0,
+      "travel_weight": 1.0,
+      "yaw_weight": 0.0,
+      "momentum_weight": 0.0,
+      "native_weight": 0.2,
+      "change_weight": 0.2,
+      "effort_weight": 0.01,
+      "readiness_multiplier": 4.0,
+      "unloaded_fraction": 0.05,
+      "equality_tolerance": 1e-08,
+      "rank_relative_cutoff": 1e-10
+    },
+    "contact_strength": 10.0,
+    "slip_confidence_scale_m_s": 0.02
+  },
+  "measurement_boundary": "Exact simulated body/joint state and known prior actual applied input. Control contact records come only from momentum observer and support geometry; solver contacts are evaluation-only.",
+  "scope": "New total-command handoff experiment. Same raw target, native LQR bank/phase, observer, preview, mechanics and input caps; no R reference guard or controller-default adoption.",
+  "completed": true,
+  "failure": null,
+  "actual_duration_s": 44.00000000000406,
+  "elapsed_s": 169.8803714960086,
+  "guarded_calls": 8801,
+  "parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "rolling_allocation": "least_squares",
+    "rolling_damping_m_s": 0.01,
+    "rolling_speed_limits": [
+      20.0,
+      20.0,
+      20.0,
+      0.3,
+      0.3
+    ],
+    "rolling_acceleration_limits": [
+      100.0,
+      100.0,
+      100.0,
+      3.0,
+      3.0
+    ],
+    "rolling_effort_m_s": 0.001,
+    "rolling_change_m_s": 0.001,
+    "rolling_adaptive_effort": false,
+    "rolling_weak_effort_m_s": 0.005,
+    "rolling_authority_m_s": 0.02,
+    "rolling_reference_catchup_gain_s_inv": 1.0,
+    "rolling_reference_catchup_speed_m_s": 0.06,
+    "rolling_reference_position_limit_m": 0.05,
+    "rolling_reference_balance_guard": false,
+    "rolling_reference_lean_scale_deg": 3.0,
+    "rolling_reference_rate_horizon_s": 0.1,
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "ordinary_design_sha256": "de60eb69db9125facf01d9430ded300b98c048b52ed06dc244aece401b497c45",
+  "fixed_bank_numeric_sha256": "4799fc67825651033a93ec989bc8f08c558ae8e2b92fef0cbd3a932dfa75a5bf",
+  "fixed_bank_bytes_sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1",
+  "frozen_bank_loaded": true,
+  "models": {
+    "mirror_xml": "/home/parrwnago/active-spherical-wheel/results/constrained_handoff_20261126/ablation/campaign/_workspaces/m100_A/worker_449607/mirror/model.xml",
+    "physical_sdf": "/home/parrwnago/active-spherical-wheel/results/constrained_handoff_20261126/ablation/campaign/_workspaces/m100_A/worker_449607/gazebo/world/models/active_spherical_wheel/model.sdf"
+  },
+  "versions": {
+    "numpy": "1.26.4",
+    "scipy": "1.15.3",
+    "mujoco": "3.16.0"
+  },
+  "source_hashes_unchanged_after": true
+}

@@ -1,0 +1,71 @@
+{
+  "iteration": "I-56",
+  "timestamps": "All measured5ms states, without downsampling.",
+  "sources": {
+    "reducer": "source_snapshot/results/constrained_handoff_20261126/analysis/reduce_handoff.py",
+    "legacy_metrics": "source_snapshot/results/belt_capacity_sweep_20261126/analyze_capacity.py",
+    "event_helper": "source_snapshot/results/figure8_event_audit_20261125/events/selection_stage02_corrected/selection_source/event_metrics.py"
+  },
+  "reference_program": "portable_inputs/reference_program.npz",
+  "events": "portable_inputs/events.json",
+  "reference_program_original_precision_sha256": "c614f8d1c2abaf91f4628f63ba9dc1e83e0f5a4fdc348540923988fca5b92fac",
+  "cases": {
+    "m100_B": {
+      "projection": "portable_inputs/m100_B_precision_projection.npz",
+      "projection_sha256": "478962d35e40f425c79dc99761b8664a82bf358b91b2cea9ace9be744f974e44",
+      "diagnostics": "portable_inputs/m100_B_diagnostics.json.gz",
+      "diagnostics_sha256": "20d4cd05df2c53fe7e0c0a3294ee9a8e7afe4e4d0f10baa697b81aeb6d72ca50",
+      "metadata": "portable_inputs/m100_B_metadata.json",
+      "metadata_sha256": "198ec85c73f067ed8197eebb017b375b9b901c5b7774f496e4b6428aeb6e0ddc",
+      "original_precision_sha256": "010ff6e3fa4d7c47a18f7dc3982e9ed4bee7ea26ff6e873ba12fd6c692315cf0"
+    },
+    "m100_H": {
+      "projection": "portable_inputs/m100_H_precision_projection.npz",
+      "projection_sha256": "617623e902497dc535b4cc76df047e2e3e7abfd8170e04ded7c70cd3067b3524",
+      "diagnostics": "portable_inputs/m100_H_diagnostics.json.gz",
+      "diagnostics_sha256": "ef43a1f3b51ad0246a116bf49db8d95e3b3f27d1a9eea555dfcf676cec900c25",
+      "metadata": "portable_inputs/m100_H_metadata.json",
+      "metadata_sha256": "ed377449884484caaecefe4288ba49c585a2094813aa4ffbbe022909ba650c09",
+      "original_precision_sha256": "d33ca65d7ed4f72fa49bd0115621aac771600c502989f33d39e939687ee88104"
+    },
+    "m100_A": {
+      "projection": "portable_inputs/m100_A_precision_projection.npz",
+      "projection_sha256": "b7d2f13b66f65eaeecd92f1abdcd3594ada30388e676ffd832e47942e24d1dc8",
+      "diagnostics": "portable_inputs/m100_A_diagnostics.json.gz",
+      "diagnostics_sha256": "0f09d703886b928cde7597ad97e0bac972f13c065e9cfdd962d8466e08f5c49b",
+      "metadata": "portable_inputs/m100_A_metadata.json",
+      "metadata_sha256": "4507a7b7fc336d30c259e4a96e0d3c735d4495ad3cc61b0c1d5ae60756436971",
+      "original_precision_sha256": "fed7c554319c4fbb416a07b6a4bb4ad2d1aedb30cff8fbe634dcc7039b6ae54d"
+    }
+  },
+  "unavailable_cases": {
+    "p030_B": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_source": "results/constrained_handoff_20261126",
+      "planned_phase_rad": 0.3,
+      "variant": "native"
+    },
+    "p030_H": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_source": "results/constrained_handoff_20261126",
+      "planned_phase_rad": 0.3,
+      "variant": "handoff"
+    },
+    "p090_B": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_source": "results/constrained_handoff_20261126",
+      "planned_phase_rad": 0.9,
+      "variant": "native"
+    },
+    "p090_H": {
+      "available": false,
+      "reason": "not_run_or_not_sealed",
+      "case_source": "results/constrained_handoff_20261126",
+      "planned_phase_rad": 0.9,
+      "variant": "handoff"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "captured_utc": "2026-11-27T00:40:04.430388+00:00",
+  "scope": "Synthetic saved-array contracts only; no simulated policy outcomes used by checks.",
+  "first_attempt": {
+    "command": ".venv/bin/python -m pytest -q results/constrained_handoff_20261126/analysis/check_metrics.py",
+    "outcome": "Pytest failed before collection because auto-loaded ROS launch_testing depends on missing lark; no tests ran."
+  },
+  "corrected_attempt": {
+    "command": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -q results/constrained_handoff_20261126/analysis/check_metrics.py",
+    "outcome": "8 passed in0.18s",
+    "passed": 8
+  },
+  "source_sha256": {
+    "reduce_handoff.py": "036f805e4dd2944f4be5f85bf811065afb3e00cf08f9d870c33351d69826493c",
+    "check_metrics.py": "aa3b6cd09749e291880ce122c8e2e7abbb8a7d236ff0c75bda038d250dcf45fe",
+    "replay_projection.py": "2909fbfcd525a79a52b80938e3b854fcb9eee8848e11bbc1c4e781dbd35077a5"
+  },
+  "timing": "Reducer source prepared before root sent initial summary; fixtures and frozen before first saved-array reducer execution. The separately dated numeric registration precedes arithmetic, not physics or knowledge of outcomes."
+}

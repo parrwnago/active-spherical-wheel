@@ -3447,6 +3447,53 @@ Preserve compact source/protocol/report/plots plus exact 1 ms data and exact
 with momentum and total-command limits, not blanket torque removal/reference
 holding. [Record and evidence](docs/iterations/2026-11-26/causal-replay/README.md).
 
+## I-56 — bounded total-command handoff / 2026-11-26 / run, rejected
+
+Question: after I-55 confirmed an unloaded-shell yaw contribution and the cost
+of freezing balance targets, can a continuous feasible command handoff reduce
+rotation without compromising the native LQR's balance and trajectory response?
+Implement two new opt-in modules plus a result-owned adapter; original runtime,
+observer, reference generator, preparation, gain bank and defaults are unchanged.
+Use current simulated state and observer-derived contacts only. A private soft
+contact model supplies a 20 ms differential input-response matrix. Stage one
+minimizes transverse body angular-response discrepancy relative to the clipped
+native command within total amplitude and actual previous input slew boxes;
+stage two preserves that attained response while trading travel, yaw, unloaded
+relative shell momentum, readiness/native proximity, change and effort.
+Command slew assumptions are [60, 60, 60 N m/s, 6, 6 m/s²]; these do not bound
+actual robot acceleration. The response equality is local, not a stability or
+friction-feasibility proof, and no future contact onset is predicted.
+
+Freeze source/protocol/settings before outcomes at base cbaf7d4. Compare against
+native B, not rejected R: same 44 s Mars figure-eight, shaft −1 rad, yaw 45°,
+caps [1.5,.6,.6 N m,.3,.3 m/s]. Three fresh serial jobs B, A (yaw/momentum
+weights zero), H (full) all complete. B reproduces 56 historical precision
+fields exactly. Registered yaw benefit and full-route nonregression gates
+control whether +.3/+.9 pairs run; no automatic promotion or retuning.
+
+The full candidate fails: peak XY error 116.26→136.16 mm, final 42.65→76.72 mm,
+absolute tilt 13.72→18.96°, raw-reference lean 7.40→13.85°. Moving RMS changes
+51.08→55.14 mm. The ablation's final error improves to 15.47 mm, but peak error
+rises to 183.97 mm and raw-reference lean 13.43°. Neither favorable endpoint nor
+bounded commands supports adoption. Stop conditional broader experiments and
+retain all three histories. Canonical detailed metrics/media are in the record.
+
+Preserve the initial six-component surface-velocity assignment setup error and
+its translational-slice correction. One same-state I-55 unloaded-shell torque
+sensitivity matches first-5-ms yaw response within 0.377%; loaded-contact response
+is not validated by that single check. A new readiness fixture fails under the
+original excessive soft change cost (belt reaches 0.20598 m/s in 120 ms toward 0.30).
+Normalize the soft cost by input bounds while retaining the hard slew box; the
+corrected fixture reaches ≥0.297. Preserve both exact source versions before
+physics. Final focused tests are 21 model + 20 allocator = 41 unique; nine separate
+read-only preflight contracts, not a full repository suite. Older synthetic
+review counts/subsets/replays are nonadditive and apply to superseded source.
+
+Decision: rejected for default use. Test local-model fidelity and quantify
+the balance-response loss imposed by rate bounds before another controller
+variant; do not blame these regressions on estimator delay without evidence.
+[Record, evidence and reproduction](docs/iterations/2026-11-26/constrained-handoff/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated
