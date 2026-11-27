@@ -1,0 +1,279 @@
+{
+  "iteration": "I-62",
+  "completed_utc": "2026-11-27T07:14:47.453898+00:00",
+  "numpy_version": "1.26.4",
+  "protocol_sha256": "498220cd16b3aae7210d53bf1af162577f7cc6a258f43a8d9922d6390d68ccaa",
+  "new_physics_runs": 0,
+  "groups": {
+    "train_without_m100_B": {
+      "training_cases": [
+        "p030_B",
+        "p090_B"
+      ],
+      "feasible_count": 0,
+      "selected_index": null,
+      "qualified": false,
+      "selected_parameters": null,
+      "best_metrics": null
+    },
+    "train_without_p030_B": {
+      "training_cases": [
+        "m100_B",
+        "p090_B"
+      ],
+      "feasible_count": 0,
+      "selected_index": null,
+      "qualified": false,
+      "selected_parameters": null,
+      "best_metrics": null
+    },
+    "train_without_p090_B": {
+      "training_cases": [
+        "m100_B",
+        "p030_B"
+      ],
+      "feasible_count": 0,
+      "selected_index": null,
+      "qualified": false,
+      "selected_parameters": null,
+      "best_metrics": null
+    },
+    "full": {
+      "training_cases": [
+        "m100_B",
+        "p030_B",
+        "p090_B"
+      ],
+      "feasible_count": 0,
+      "selected_index": null,
+      "qualified": false,
+      "selected_parameters": null,
+      "best_metrics": null
+    }
+  },
+  "folds": {
+    "m100_B": {
+      "training_group": "train_without_m100_B",
+      "qualified": false,
+      "selected_index": null,
+      "diagnostic_fallback": "off/A",
+      "heldout_metrics": {
+        "count": 7946,
+        "point_count": 7946,
+        "errors": 14,
+        "harmful": 2,
+        "useful_retained": 39,
+        "retained": 2291,
+        "vetoes": 0,
+        "SSE_mm2": 48133.01309068186,
+        "RMS_mm": 2.4612019140353723,
+        "p95_mm": 4.782588189208275,
+        "maximum_mm": 29.84285874266292
+      },
+      "relative_harm_removal": 0.0,
+      "harm_relative_scorable": true
+    },
+    "p030_B": {
+      "training_group": "train_without_p030_B",
+      "qualified": false,
+      "selected_index": null,
+      "diagnostic_fallback": "off/A",
+      "heldout_metrics": {
+        "count": 7505,
+        "point_count": 7505,
+        "errors": 64,
+        "harmful": 0,
+        "useful_retained": 162,
+        "retained": 2158,
+        "vetoes": 0,
+        "SSE_mm2": 58211.91946639021,
+        "RMS_mm": 2.785034706541542,
+        "p95_mm": 6.045741282332057,
+        "maximum_mm": 22.844562060658617
+      },
+      "relative_harm_removal": null,
+      "harm_relative_scorable": false
+    },
+    "p090_B": {
+      "training_group": "train_without_p090_B",
+      "qualified": false,
+      "selected_index": null,
+      "diagnostic_fallback": "off/A",
+      "heldout_metrics": {
+        "count": 7972,
+        "point_count": 7972,
+        "errors": 46,
+        "harmful": 4,
+        "useful_retained": 93,
+        "retained": 2453,
+        "vetoes": 0,
+        "SSE_mm2": 71685.1139182272,
+        "RMS_mm": 2.998684983536133,
+        "p95_mm": 6.5542517675363765,
+        "maximum_mm": 25.226673206812258
+      },
+      "relative_harm_removal": 0.0,
+      "harm_relative_scorable": true
+    }
+  },
+  "benchmark_I61_all_row_policies_exact": true,
+  "baselines": {
+    "train_without_m100_B": {
+      "N": {
+        "count": 15477,
+        "point_count": 15477,
+        "errors": 361,
+        "harmful": 0,
+        "useful_retained": 0,
+        "retained": 0,
+        "vetoes": 4611,
+        "SSE_mm2": 165800.5451347272,
+        "RMS_mm": 3.273026983758402,
+        "p95_mm": 8.00288835832983,
+        "maximum_mm": 25.226673206812258
+      },
+      "A": {
+        "count": 15477,
+        "point_count": 15477,
+        "errors": 110,
+        "harmful": 4,
+        "useful_retained": 255,
+        "retained": 4611,
+        "vetoes": 0,
+        "SSE_mm2": 129897.03338461742,
+        "RMS_mm": 2.897051563039203,
+        "p95_mm": 6.285027435080274,
+        "maximum_mm": 25.226673206812258
+      }
+    },
+    "train_without_p030_B": {
+      "N": {
+        "count": 15918,
+        "point_count": 15918,
+        "errors": 186,
+        "harmful": 0,
+        "useful_retained": 0,
+        "retained": 0,
+        "vetoes": 4744,
+        "SSE_mm2": 146305.11336875203,
+        "RMS_mm": 3.03169496389591,
+        "p95_mm": 6.847078620765359,
+        "maximum_mm": 26.907642231578496
+      },
+      "A": {
+        "count": 15918,
+        "point_count": 15918,
+        "errors": 60,
+        "harmful": 6,
+        "useful_retained": 132,
+        "retained": 4744,
+        "vetoes": 0,
+        "SSE_mm2": 119818.12700890907,
+        "RMS_mm": 2.74357611316628,
+        "p95_mm": 5.591520817598999,
+        "maximum_mm": 29.84285874266292
+      }
+    },
+    "train_without_p090_B": {
+      "N": {
+        "count": 15451,
+        "point_count": 15451,
+        "errors": 277,
+        "harmful": 0,
+        "useful_retained": 0,
+        "retained": 0,
+        "vetoes": 4449,
+        "SSE_mm2": 147940.54935816408,
+        "RMS_mm": 3.0943206618632826,
+        "p95_mm": 7.257100102819205,
+        "maximum_mm": 26.907642231578496
+      },
+      "A": {
+        "count": 15451,
+        "point_count": 15451,
+        "errors": 78,
+        "harmful": 2,
+        "useful_retained": 201,
+        "retained": 4449,
+        "vetoes": 0,
+        "SSE_mm2": 106344.93255707207,
+        "RMS_mm": 2.6234941723194596,
+        "p95_mm": 5.485997905709729,
+        "maximum_mm": 29.84285874266292
+      }
+    },
+    "full": {
+      "N": {
+        "count": 23423,
+        "point_count": 23423,
+        "errors": 412,
+        "harmful": 0,
+        "useful_retained": 0,
+        "retained": 0,
+        "vetoes": 6902,
+        "SSE_mm2": 230023.10393082164,
+        "RMS_mm": 3.1337508918025083,
+        "p95_mm": 7.335860821293344,
+        "maximum_mm": 26.907642231578496
+      },
+      "A": {
+        "count": 23423,
+        "point_count": 23423,
+        "errors": 124,
+        "harmful": 6,
+        "useful_retained": 294,
+        "retained": 6902,
+        "vetoes": 0,
+        "SSE_mm2": 178030.04647529926,
+        "RMS_mm": 2.7569278044557697,
+        "p95_mm": 5.7966951671247795,
+        "maximum_mm": 29.84285874266292
+      }
+    }
+  },
+  "classification": "Retrospective internal leave-one-start-out assessment; earlier cases known, no unseen validation or physical-control claim.",
+  "OOF": {
+    "metrics": {
+      "count": 23423,
+      "point_count": 23423,
+      "errors": 124,
+      "harmful": 6,
+      "useful_retained": 294,
+      "retained": 6902,
+      "vetoes": 0,
+      "SSE_mm2": 178030.04647529926,
+      "RMS_mm": 2.7569278044557697,
+      "p95_mm": 5.7966951671247795,
+      "maximum_mm": 29.84285874266292
+    },
+    "gates": {
+      "harmful_removal": false,
+      "useful_retention": true,
+      "pooled_error": true,
+      "point_RMS": true,
+      "point_p95": true,
+      "point_maximum": false,
+      "retained_nonempty": true,
+      "m100_B_error": true,
+      "m100_B_harmful": true,
+      "p030_B_error": true,
+      "p030_B_harmful": true,
+      "p090_B_error": true,
+      "p090_B_harmful": true
+    },
+    "every_fold_qualified": false,
+    "success": false
+  },
+  "full_data_fit_descriptive_only": {
+    "training_cases": [
+      "m100_B",
+      "p030_B",
+      "p090_B"
+    ],
+    "feasible_count": 0,
+    "selected_index": null,
+    "qualified": false,
+    "selected_parameters": null,
+    "best_metrics": null
+  }
+}

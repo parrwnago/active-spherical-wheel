@@ -1,0 +1,81 @@
+{
+  "iteration": "I-62",
+  "date_local": "2026-11-27",
+  "status": "registered_before_new_sweep_arithmetic",
+  "question": "Can a bounded shared two-parameter joint-load tolerance improve I-60 accepted/fallback proposals without sacrificing useful corrections or point-error tails?",
+  "source_commit": "92c8254948ae4ba66ffe5c71a9123cffd17ddda9",
+  "information_boundary": "Offline saved-state replay only. Live LQR, momentum observer, feedforward and incoming-drive preparation remain unchanged. Solver truth is used only for retrospective selection/evaluation, never as an inference input.",
+  "prior_inspection": "All three episodes and I-61 failures were previously examined. Leave-one-start-out assessment is retrospective internal validation, not an unseen holdout or independent physical trial.",
+  "cases": [
+    "m100_B",
+    "p030_B",
+    "p090_B"
+  ],
+  "original_campaign": "I-58 native gain-scheduled LQR Gazebo/DART Mars figure-eight; initial common shaft -1.0,+0.3,+0.9 rad, yaw 45 deg, command caps [1.5,0.6,0.6 N m,0.3,0.3 m/s]. Existing exact 5 ms state and prior applied input used by I-60/I-61.",
+  "candidate_source": "Frozen I-60 proposals, acceptance flags and I-61 extra-joint residual/validity/force/radius. No proposal reranking or geometry regeneration.",
+  "gate_equation": "keep = i60_accepted AND proposed_valid AND max(abs(extra_joint_residual_Nm)) <= a + (b * radius_m) * force_norm_N",
+  "zero_boundary": "a=0 is an explicit offline extension; exact zero threshold admits only exact zero residual at valid rows. Direct comparison avoids division by zero. The runtime load_compatibility API and its a>0 requirement are unchanged.",
+  "grid": {
+    "a_unit": "N m",
+    "b_unit": "dimensionless",
+    "a_indices": [
+      0,
+      60
+    ],
+    "b_indices": [
+      0,
+      60
+    ],
+    "step": 0.005,
+    "a_min": 0,
+    "a_max": 0.3,
+    "b_min": 0,
+    "b_max": 0.3,
+    "count": 3721,
+    "construction": "integer_index * 0.005; same a,b for all three joint residual rows and all phases"
+  },
+  "baselines": {
+    "N": "Native contact family and point",
+    "A": "I-60 accepted proposal else native; no additional veto",
+    "I61": "a=0.03,b=0.10; must reproduce I-61 C policy flags and primary metrics"
+  },
+  "primary_mask": "1 <= time_s < 41, total truth normal load >=1 N, unique dominant family >=90% total load; fixed I-61 eligible mask. Dominant support is not strict single contact.",
+  "point_mask": "Primary mask AND finite N point, finite A point (accepted proposal else N), and finite truth equivalent point. Fixed for every parameter and policy; never restrict distance metrics to retained proposals. Unaccepted raw proposals do not exclude a valid native fallback. Distances in mm to truth equivalent point.",
+  "metrics": [
+    "family errors",
+    "harmful overrides (native right, policy wrong)",
+    "useful corrections retained (native wrong, A right, tuned right)",
+    "proposal retention and veto counts",
+    "equivalent-point SSE, RMS, exact p95 and maximum",
+    "stable oracle geometry compatibility as diagnostic only"
+  ],
+  "training_gates": {
+    "harmful_removal_fraction_min": 0.5,
+    "useful_retention_fraction_min": 0.9,
+    "pooled_family_errors_max": "A errors on identical training states",
+    "each_phase_error_rate_excess_over_A_max": 0.001,
+    "each_phase_harmful_count_max": "A harmful count on same phase",
+    "pooled_point_RMS_max": "A",
+    "pooled_point_p95_max": "A",
+    "pooled_point_maximum_max": "N",
+    "point_comparison_roundoff_allowance_mm": 1e-12,
+    "retained_proposal_count_min": 1
+  },
+  "folds": "Three leave-one-start-out folds. Fit on two entire starting-phase episodes, evaluate the third. No random 5 ms sample splits.",
+  "selection_rule": [
+    "Filter by every training gate",
+    "Fewest training family errors",
+    "Smallest training point SSE",
+    "Fewest training proposal vetoes",
+    "Smallest integer a index",
+    "Smallest integer b index"
+  ],
+  "no_feasible_training_candidate": "Record failed selection and use explicit off/A as diagnostic held-out fallback. Do not promote a nearest miss or count fallback as a successful fit.",
+  "OOF_success": "Every fold must have a qualified training fit. Concatenated held-out predictions must pass the same pooled gates plus each-phase error/harm gates. Relative harm reduction is unscorable when a phase has no A harmful examples; retain that flag and use nonincrease for that phase. Pooled opportunities are nonzero.",
+  "full_data_fit": "Apply identical feasibility/selection rule to all three episodes only as descriptive retrospective fit. Never label it held-out performance or select held-out metrics for fold tie-breaking.",
+  "tradeoff_reports": "Publish all grid counts and point metrics, feasible counts by fold/full data, and descriptive conditional minima/frontier tradeoffs even if no setting qualifies. Do not change criteria after inspection.",
+  "oracle_scope": "Stored oracle geometry uses observed total force and truth dominant-family point. Diagnostic only; not full true generalized force or a tuning acceptance gate.",
+  "new_simulation": "None in this offline tuning iteration. Any promising candidate still requires a fresh episode before live adoption.",
+  "replay": "Preserve source and input SHA256 before sweep. Compact NumPy inputs plus exact integer count/policy replay and point-metric comparison; record NumPy version and numeric tolerances. Cross-version floating point metrics may differ by roundoff; do not replace reported values.",
+  "pre_execution_design_clarification": "Before source/input freeze or new data arithmetic, point mask clarified from raw-proposed-point finite to actual fixed A-policy point finite; unaccepted invalid proposals must not remove native-fallback rows. No numeric outcomes were consumed."
+}

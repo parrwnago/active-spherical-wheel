@@ -1,0 +1,182 @@
+{
+  "status": "independent necessary-constraint audit, not controller validation",
+  "scope": "registered nonnegative shared two-parameter grid; frozen feature radii",
+  "numpy_version": "1.21.5",
+  "source_sha256": "2f5d5d17849ac4505e05350ac0dd5b779b96333c5f0873b4c00c8310b882f741",
+  "input_sha256": {
+    "results/contact_load_consistency_20261127/analysis/stage01/m100_B_evaluation.npz": "5820c459a9277a0908b42f4c4ca46590cd50cb8de8908e9248c716a29dd41686",
+    "results/contact_load_consistency_20261127/analysis/stage01/p030_B_evaluation.npz": "0fef63923f04abaee7cdb12eb84cf2b60e5e8249aba2fee206dd261ac1d4dd85",
+    "results/contact_load_consistency_20261127/analysis/stage01/p090_B_evaluation.npz": "80ea4d51b82f446055bdb18987c22f10d988757b74890b56aa980b1656bfceec",
+    "results/contact_load_consistency_20261127/campaign/features_stage01/m100_B/load_features_and_policies.npz": "6ea4401a55c87b38dec2efa2ae8ba9f2116440f14b26c9a33e1d6dd49da2d329",
+    "results/contact_load_consistency_20261127/campaign/features_stage01/p030_B/load_features_and_policies.npz": "48cebdf86d28c72551c352b6b333bd1703a65597b9bd39a55b5140943325541b",
+    "results/contact_load_consistency_20261127/campaign/features_stage01/p090_B/load_features_and_policies.npz": "737d6d0c7604b60bde215549ce96462dea56ba1f5cdd42c8c9fea58c423c1199"
+  },
+  "subsets": {
+    "full": {
+      "primary_count": 23423,
+      "point_count": 23423,
+      "useful_A": 294,
+      "harmful_A": 6,
+      "family_errors_N": 412,
+      "family_errors_A": 124,
+      "native_max_mm": 26.907642231578496,
+      "unsafe_A_peak_rows": [
+        {
+          "case": "m100_B",
+          "time_s": 35.20499999999956,
+          "dA_mm": 29.84285874266292,
+          "dN_mm": 15.155053906250474,
+          "m_Nm": 0.1727067408402148,
+          "L_Nm": 2.2105652663277815,
+          "valid": true
+        }
+      ],
+      "continuously_forced_useful_loss_lower_bound": 99,
+      "peak_feasible_grid_count": 296,
+      "grid_minimum_useful_loss_given_peak": 99,
+      "grid_minimum_errors_given_peak": 221,
+      "grid_maximum_harmful_removal_given_peak": 6,
+      "grid_point_peak_label_frontier": [
+        {
+          "useful_lost": 99,
+          "harmful_remaining": 4
+        },
+        {
+          "useful_lost": 111,
+          "harmful_remaining": 3
+        },
+        {
+          "useful_lost": 125,
+          "harmful_remaining": 2
+        },
+        {
+          "useful_lost": 135,
+          "harmful_remaining": 1
+        },
+        {
+          "useful_lost": 149,
+          "harmful_remaining": 0
+        }
+      ],
+      "pooled_error_nonregression_impossible_on_grid_given_peak": true
+    },
+    "train_without_m100_B": {
+      "primary_count": 15477,
+      "point_count": 15477,
+      "useful_A": 255,
+      "harmful_A": 4,
+      "family_errors_N": 361,
+      "family_errors_A": 110,
+      "native_max_mm": 25.226673206812258,
+      "unsafe_A_peak_rows": [],
+      "continuously_forced_useful_loss_lower_bound": 0,
+      "peak_feasible_grid_count": 3721,
+      "grid_minimum_useful_loss_given_peak": 0,
+      "grid_minimum_errors_given_peak": 109,
+      "grid_maximum_harmful_removal_given_peak": 4,
+      "grid_point_peak_label_frontier": [
+        {
+          "useful_lost": 0,
+          "harmful_remaining": 3
+        },
+        {
+          "useful_lost": 115,
+          "harmful_remaining": 2
+        },
+        {
+          "useful_lost": 120,
+          "harmful_remaining": 1
+        },
+        {
+          "useful_lost": 130,
+          "harmful_remaining": 0
+        }
+      ],
+      "pooled_error_nonregression_impossible_on_grid_given_peak": false
+    },
+    "train_without_p030_B": {
+      "primary_count": 15918,
+      "point_count": 15918,
+      "useful_A": 132,
+      "harmful_A": 6,
+      "family_errors_N": 186,
+      "family_errors_A": 60,
+      "native_max_mm": 26.907642231578496,
+      "unsafe_A_peak_rows": [
+        {
+          "case": "m100_B",
+          "time_s": 35.20499999999956,
+          "dA_mm": 29.84285874266292,
+          "dN_mm": 15.155053906250474,
+          "m_Nm": 0.1727067408402148,
+          "L_Nm": 2.2105652663277815,
+          "valid": true
+        }
+      ],
+      "continuously_forced_useful_loss_lower_bound": 31,
+      "peak_feasible_grid_count": 296,
+      "grid_minimum_useful_loss_given_peak": 31,
+      "grid_minimum_errors_given_peak": 89,
+      "grid_maximum_harmful_removal_given_peak": 6,
+      "grid_point_peak_label_frontier": [
+        {
+          "useful_lost": 31,
+          "harmful_remaining": 4
+        },
+        {
+          "useful_lost": 35,
+          "harmful_remaining": 3
+        },
+        {
+          "useful_lost": 43,
+          "harmful_remaining": 2
+        },
+        {
+          "useful_lost": 51,
+          "harmful_remaining": 1
+        },
+        {
+          "useful_lost": 59,
+          "harmful_remaining": 0
+        }
+      ],
+      "pooled_error_nonregression_impossible_on_grid_given_peak": true
+    },
+    "train_without_p090_B": {
+      "primary_count": 15451,
+      "point_count": 15451,
+      "useful_A": 201,
+      "harmful_A": 2,
+      "family_errors_N": 277,
+      "family_errors_A": 78,
+      "native_max_mm": 26.907642231578496,
+      "unsafe_A_peak_rows": [
+        {
+          "case": "m100_B",
+          "time_s": 35.20499999999956,
+          "dA_mm": 29.84285874266292,
+          "dN_mm": 15.155053906250474,
+          "m_Nm": 0.1727067408402148,
+          "L_Nm": 2.2105652663277815,
+          "valid": true
+        }
+      ],
+      "continuously_forced_useful_loss_lower_bound": 72,
+      "peak_feasible_grid_count": 296,
+      "grid_minimum_useful_loss_given_peak": 72,
+      "grid_minimum_errors_given_peak": 149,
+      "grid_maximum_harmful_removal_given_peak": 2,
+      "grid_point_peak_label_frontier": [
+        {
+          "useful_lost": 72,
+          "harmful_remaining": 1
+        },
+        {
+          "useful_lost": 82,
+          "harmful_remaining": 0
+        }
+      ],
+      "pooled_error_nonregression_impossible_on_grid_given_peak": true
+    }
+  }
+}

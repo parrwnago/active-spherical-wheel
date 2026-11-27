@@ -1,0 +1,11 @@
+--- stage01_failed_source
++++ stage02_corrected_source
+@@ -56,7 +56,7 @@
+     corrected=Nwrong&~Awrong;harmful=~Nwrong&Awrong
+     wrong=np.where(keep,Awrong[None,:],Nwrong[None,:])
+     point_mask=data['point_mask']
+-    distances=np.where(keep[:,point_mask],data['proposed_distance_m'][None,point_mask],data['native_distance_m'][None,point_mask])*1000.
++    distances=np.ascontiguousarray(np.where(keep[:,point_mask],data['proposed_distance_m'][None,point_mask],data['native_distance_m'][None,point_mask])*1000.,dtype=np.float64)
+     npoint=int(point_mask.sum());count=len(truth)
+     if npoint:
+         SSE=np.sum(distances*distances,axis=1,dtype=np.float64)

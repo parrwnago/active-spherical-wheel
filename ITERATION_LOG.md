@@ -3805,6 +3805,64 @@ diagnostic, rather than hiding failure with tuning. Compact full-rate replay,
 plots and source/provenance are retained; large original arrays stay local.
 [Record and reproduction](docs/iterations/2026-11-27/contact-load-consistency/README.md).
 
+## I-62 — bounded tuning of the joint-load veto (2026-11-27)
+
+Status: **implemented, replayed, analyzed, rejected for adoption**. The user
+asked whether I-61's tolerance numbers could be tuned. Freeze I-60 proposals
+and I-61 residuals; sweep shared a,b = 0,.005,...,.300 (3,721 pairs), with
+explicit off/A control and original (.03,.10) benchmark. Direct comparison
+defines zero tolerance without changing the runtime helper. No live controller
+change or new physics. Use the same I-58 native Gazebo/DART Mars figure-eight
+starts -1/+.3/+.9 rad, yaw 45°, caps [1.5,.6,.6 N m,.3,.3 m/s], 5 ms logs.
+
+Register gates, source/input hashes and whole-start folds before arithmetic.
+Primary [1,41), dominant support >=1 N and >=90% retains 23,423 states, all
+with matched finite N/A/truth points. Before execution clarify the point mask
+to actual A fallback rather than invalid declined raw proposals. Fit on two
+starts, evaluate the third; qualification requires >=50% harmful removal,
+>=90% useful retention, pooled errors <=A, per-phase error/harm limits,
+RMS/p95 <=A, point maximum <=N, nonempty retention. Select fewest errors,
+SSE, vetoes, then integer a,b; no qualified fit means failed selection and
+off/A. All three episodes were examined previously: retrospective internal
+assessment, no unseen-validation claim.
+
+Every fold and the full-data fit has 0/3,721 qualified settings. Out-of-fold
+fallback reproduces A's 124 errors; fitting fails. Best unrestricted pooled
+witness (0,.15) has 123 errors, five harmful changes and 294 useful corrections,
+RMS 2.752 mm, maximum 29.843 mm. This one-sample gain fails harm/point gates.
+Best with >=50% harmful removal (0,.06) has 232 errors, three harmful changes,
+183 useful corrections (62.24%). Best with point maximum <=N (.005,.075) has
+221 errors, four harmful changes, 195 useful corrections. No grid pair meets
+even harmful/useful gates together. N: 412 errors, maximum 26.908 mm;
+A: 124/29.843 mm; old I-61 C: 153/29.843 mm.
+
+An independent original-input grid evaluation checks all settings and folds.
+A separate dominance audit shows rejecting the 29.843 mm m100 35.205 s point
+forces at least 99 useful losses for any nonnegative shared affine tolerance
+on these fixed inputs. Only six harmful changes exist, implying at least
+217 errors; grid minimum 221 is tighter and separate. A supplementary 99-witness
+exact-sign certificate confirms margins. It is explicitly post-result: first
+execution preceded its own receipt, then identical source was sealed/replayed.
+No broader estimator impossibility or unique physical cause is claimed.
+
+Initial stage01 stopped at the I-61 benchmark: policies, families, distances
+and counts exact, but batched/scalar SSE differed <=2.26e-10 mm² (RMS
+<=5.33e-15 mm) due to NumPy indexing memory layout. Make candidate rows
+contiguous, retain guard/gates/ranges/selection, seal corrected source before
+canonical stage02. Benchmark differences are now zero; old C's 16/84/53 errors
+are exact. Eleven synthetic contracts pass inclusive, including an 8,003-point
+chunk-invariance check. Preserve the abandoned unexecuted guard-relaxation
+draft and ROS plugin missing-lark collection failure; disable pytest autoload
+for the final check. Independent arithmetic, portable replay and archive
+receipts have separate scopes; no controller/full-suite test count is claimed.
+
+Decision: keep native LQR, momentum observer, rolling/holding feedforward and
+120 ms preparation selected; retain I-60 velocity ranking offline. Threshold
+tuning alone cannot meet the demonstrated point/label tradeoff. Investigate
+time-consistent transfer/load hypotheses before another hard veto. Preserve
+failed attempts and descriptive near-misses for the presentation.
+[Record, figure, protocol and reproduction](docs/iterations/2026-11-27/contact-load-tuning/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

@@ -1,0 +1,31 @@
+{
+  "registered_utc": "2026-11-27T07:16:12.849081+00:00",
+  "prior_failed_campaign": "analysis/stage01",
+  "prior_log": "analysis/stage01_run.log",
+  "first_failure": "I61 batched-versus-single SSE abs1e-10mm2 benchmark guard; all policy flags/families/distances/counts exact",
+  "prior_SSE_batched_minus_single_mm2": {
+    "m100_B": -1.382431946694851e-10,
+    "p030_B": 2.255546860396862e-10,
+    "p090_B": -1.1641532182693481e-10
+  },
+  "prior_RMS_absmax_difference_mm": 5.329070518200751e-15,
+  "correction": "Make candidate-major point distances C contiguous before fixed row-wise float64 sum; original validation guard and all gates/weights/selection rules retained. Chunk-size invariance synthetic added.",
+  "abandoned_stage03": "Prepared unit-aware validation guard, never campaign-executed; restored original guard before stage04. First pytest invocation failed during ROS plugin auto-load (missing lark), before test collection; final tests disable auto plugins.",
+  "tests": "11 passed inclusive",
+  "source_files": [
+    {
+      "path": "results/contact_load_tuning_20261127/analysis/tolerance_sweep.py",
+      "sha256": "81514c09b7e49153d0eb73090722818062e5acad026cf2974afa665e22e2bd6f"
+    },
+    {
+      "path": "results/contact_load_tuning_20261127/analysis/prepare_inputs.py",
+      "sha256": "9c2ecf55fc36db08e0d7d8975e09da8f656c63d2dc997f2ce9396d3dc5573646"
+    },
+    {
+      "path": "results/contact_load_tuning_20261127/analysis/test_sweep_contracts.py",
+      "sha256": "6b71eccaac118d56421cf76edcf23fce06cc24b11865aa37dde2c0339b37f73d"
+    }
+  ],
+  "protocol_sha256": "498220cd16b3aae7210d53bf1af162577f7cc6a258f43a8d9922d6390d68ccaa",
+  "compact_manifest_sha256": "37615c5957178b007f1af957e9ac8f512044b1603edf030d273dd8807b61c88d"
+}

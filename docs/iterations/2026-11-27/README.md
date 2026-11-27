@@ -1,5 +1,29 @@
 # Research presentation notes — 2026-11-27
 
+**I-62: tolerance tuning cannot resolve the load-check tradeoff.**
+[Full record](contact-load-tuning/README.md) and
+[tradeoff PDF](contact-load-tuning/evidence/analysis/plots_stage02/tolerance_tradeoffs.pdf).
+
+- The user's tuning suggestion is tested with 3,721 shared `(a,b)` pairs on
+  the same three saved starts, using whole-start training/evaluation splits.
+  Every training fold and the full-data fit have zero qualified settings.
+- The best pooled label-only witness changes 124→123 errors and retains all
+  294 useful corrections, but removes only one of six harmful changes and
+  leaves the worst point discrepancy at 29.84 mm. It is not adopted.
+- Removing half the harmful changes costs at least 111 useful corrections on
+  the grid (best error count 232). Meeting the native point maximum costs at
+  least 99 useful corrections (grid-best error count 221).
+- An independent dominance proof extends that 99-loss point requirement to
+  any nonnegative shared affine tolerance on these fixed inputs: even removing
+  all six harmful changes gives at least 217 errors, versus A's 124.
+- These are correlated historical states and previously inspected episodes,
+  not unseen validation or new driving evidence. The live LQR, momentum
+  observer, feedforward and existing preparation stay selected.
+- Preserve the failed numerical benchmark attempt and its summation-layout
+  correction, all grid results and 11 inclusive replay/selection contracts.
+  Continue investigating the load model's timing/transfer assumptions rather
+  than interpreting a smaller residual as guaranteed correct contact.
+
 **I-61: adding joint-load consistency does not improve the guarded estimator.**
 [Full record](contact-load-consistency/README.md) and
 [comparison figure](contact-load-consistency/evidence/analysis/plots_stage01/overview.png).

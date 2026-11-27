@@ -68,14 +68,30 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-61 rejects the added joint-load veto.** With I-60 proposals frozen,
+**Latest: I-62 completes the requested tolerance tuning.** A shared 3,721-pair
+grid on the same three starts finds no qualified setting in any training fold
+or the full-data fit. The best label-only witness improves 124→123 errors but
+retains the 29.84 mm point peak. Preventing at least half of six harmful changes
+costs at least 111 of 294 useful corrections on this grid. An independent bound
+shows that removing the worst point necessarily loses at least 99 useful
+corrections for any nonnegative shared affine tolerance on these fixed inputs.
+This explains why changing just these numbers cannot meet the joint goals.
+
+No new physics or live change follows. Keep the native controller selected;
+I-60 remains a promising offline velocity signal. The next diagnostic should
+address time/force-distribution assumptions before another hard load gate.
+[Full I-62 record, tradeoff PDF and compact replay](iterations/2026-11-27/contact-load-tuning/README.md).
+All episodes were previously examined; this is retrospective assessment.
+
+**I-61 rejects the added joint-load veto.** With I-60 proposals frozen,
 the fixed load check prevents one harmful override but loses 30 useful
 corrections. Errors rise 124→153 versus I-60's accepted/fallback policy; five
 of 13 registered gates fail. The worst guarded point discrepancy stays
 29.84 mm. All lost useful corrections occur near transfers, where even the
 logged-point load hypothesis fails compatibility with the filtered residual.
 Stable compatibility exceeds 99%, which does not validate those transient
-states. No retuning or conditional physical comparison follows.
+states. No conditional physical comparison follows in I-61; I-62 separately
+tests the subsequently proposed tuning experiment.
 
 The original LQR/observer/feedforward/preparation remains selected, and I-60's
 positive offline family-ranking result remains intact. Investigate consistent
