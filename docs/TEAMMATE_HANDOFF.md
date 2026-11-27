@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-71.
+experiment history and common presentation questions through I-72.
 
 ## Current system
 
@@ -71,7 +71,24 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-71 stops this HMM version after the bounded diagnostic.**
+**Latest: I-72 geometry-first velocity selection improves point extremes but
+does not pass its combined screen.**
+Choose one original physical candidate per family nearest the native observer
+equivalent point, then reuse the unchanged I-60 scores/confidence. Primary C
+uses its accepted fused point/family or exactnative fallback. New optin module
+has no live-control import. Same three saved starts; no new physics or tuning.
+
+C has127family errors versus earlierguardedA124 (phase14/67/46vs14/64/46),
+and accepts6848versus6902samples on unchanged domains. Full23423pointrows:
+N/A/C RMS3.1361/2.7591/2.9100mm, p957.3885/5.7970/6.3428mm,
+maximum26.9076/29.8429/25.5659mm. Cpassesallpointguards againstN andlowersA's
+worstpoint, butworsensA'sRMS/p95. At35.205s thewrong shellB assignment remains;
+onlyitsdistance decreases. Four of ten gate rows fail, includingtworedundant
+coveragechecks. Keep configuredselectoroutoflivecontrol; all471pair rowsremain
+inloaded evaluation. The HMMstaysstopped andoriginalpipelineaboveremainsselected.
+[Full record, PDF, physical candidates and replay](iterations/2026-11-27/geometry-first-contact/README.md).
+
+**Previous: I-71 stops this HMM version after the bounded diagnostic.**
 Remove current two-family states while keeping the frozen interval-transfer
 likelihoods and original dwell times. Three saved starts, unchanged costs and
 selected points; no new physics or live controller changes. Restricted frame

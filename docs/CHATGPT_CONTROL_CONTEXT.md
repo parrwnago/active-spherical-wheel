@@ -1,21 +1,21 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 6 — 27 November 2026, through I-71.** Baseline: repository commit
-`dd4f74b`; the selected live controller remains unchanged. I-71 completes a
-bounded saved-log ablation of I-70's opt-in estimator, with no active-code,
-default or live-control change. This is a study and discussion
+**Revision 7 — 27 November 2026, through I-72.** Baseline: repository commit
+`0bfca57`; the selected live controller remains unchanged. I-72 adds only an
+opt-in geometry-first ranking module and saved-log research tools, with no
+active-controller or default change. This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest experiment, I-71, removes simultaneous endpoint pair states while
-retaining two-family evidence for the preceding transition interval. It reduces
-I-70's 564 primary mistakes to **425**, but its matching memory-free control has
-**303**, the frozen accepted/fallback comparison A has **124**, and original
-native N has **412**. All three phases regress against the matching frame
-control. It fails four of eight continuation checks and seven of sixteen
-adoption gates. The registered decision is **STOP THIS HMM VERSION**, with no
-subsequent tuning or adoption. Read Sections 14–15 for both retained iterations.
-No new driving improvement is claimed.
+The latest experiment, I-72, chooses a physical point near the native observer's
+equivalent point before applying the existing velocity/fused ranking. Its primary
+accepted/fallback policy **C** makes **127** mistakes versus old policy A's
+**124** and native N's **412**. On the same full primary rows, C improves point
+RMS, p95 and maximum against N, but worsens RMS/p95 against A despite a smaller
+maximum. It fails four of ten gates, including a small identity regression and
+lower acceptance coverage, and is **not adopted**. Read Section 16 for the
+spatial tradeoff. I-71's **STOP THIS HMM VERSION** decision remains in force;
+I-72 does not restart HMM tuning. No new driving improvement is claimed.
 The I-68/I-69 force-boundary findings remain relevant qualifications on the
 recorded pressure labels, but the user has **stopped the solver-investigation
 direction**. Preserve that history without treating it as the next work item.
@@ -39,8 +39,9 @@ No MPC, iLQR, particle filter, camera, LiDAR, SLAM, or live dynamic-contact
 forecast currently commands the selected robot. There is a limited **kinematic
 preview**, explained below. The code also contains alternative modes and
 rejected candidates, so finding a module does not establish that it is active.
-The new temporal estimator is one such opt-in, shadow-only experiment. It is
-not a particle filter and does not replace the live support locator.
+The temporal estimator and geometry-first selector are opt-in, shadow-only
+experiments. Neither is a particle filter or a replacement for the live support
+locator.
 
 ## 1. Mechanism, state, and simulator
 
@@ -383,7 +384,7 @@ particle filter and it has not replaced the live locator.
 
 ### Common evidence and notation
 
-I-60–I-67 and I-70–I-71 reuse three I-58 **native** 44-second Gazebo/DART Mars figure-eight
+I-60–I-67 and I-70–I-72 reuse three I-58 **native** 44-second Gazebo/DART Mars figure-eight
 recordings: shaft starts **-1.0, +0.3, +0.9 rad**, initial yaw 45 degrees,
 unchanged input bounds. Each has 8,801 saved states. The primary `[1,41)`-second
 evaluation mask has **23,423** states with at least 1 N total normal load and
@@ -405,6 +406,11 @@ useful and six harmful opportunities are small, correlated row sets, not
 not N's original equivalent point. Family correctness is also not proof that
 the candidate point or force representation is correct.
 
+`C` is introduced in I-72: accept that experiment's new geometry-first fused
+family/physical point, otherwise keep N's family/equivalent point. It differs
+from A, which retains the old I-60 proposal and acceptance. Neither policy is
+the selected live controller's adopted replacement.
+
 | Iteration | Question and result | Decision |
 | --- | --- | --- |
 | [I-60: velocity ranking](iterations/2026-11-27/velocity-contact-ranking/README.md) | Raw wrong/unknown labels 412→109; all 12 shadow gates pass. Accepted F has 18/6,902 errors versus N's 306 on the same rows. Velocity-only and fused labels are identical. Raw point RMS 3.134→2.672 mm, but maximum 26.91→44.04 mm; A's maximum is 29.843 mm. | Useful offline identity evidence, unsafe to assume improved feedforward geometry. No adoption. |
@@ -417,6 +423,7 @@ the candidate point or force representation is correct.
 | [I-67: original-bank capacity](iterations/2026-11-27/contact-bank-audit/README.md) | Existing usable candidates reproduce all 29 newly correct I-66 reference-point decisions. On the 41 focus rows, selected median distance is 6.26 mm versus 0.81 mm for the nearest usable candidate. Known-correct-family any-point capacity is 27/41 focus, 280/294 useful and 5/6 harmful. | Selection opportunity within the existing bank; no deployable selector or live improvement. |
 | [I-70: hybrid temporal modes](iterations/2026-11-27/temporal-contact-modes/README.md) | Implements a causal 21-mode rolling/slip, single/pair/unknown estimator. Primary mistakes A124→564; frame evidence305 and no-edge temporal control646. Matched point RMS improves but maximum worsens; six of sixteen gates fail. | Completed shadow experiment, not adopted. Section 14 separates identity errors, abstention, multi-contact and timing results. |
 | [I-71: endpoint-pair stopping ablation](iterations/2026-11-27/endpoint-pair-ablation/README.md) | Keep nine singleton/unknown endpoint modes and preceding-interval pair edges, using frozen I-70 costs. Primary mistakes fall to425 but matching frame has303; every phase regresses. Four of eight continuation checks and seven of sixteen adoption gates fail. | Stop this HMM version without tuning. All471 true pair-label rows remain errors in the full loaded-set comparison; Section 15 gives the scope. |
+| [I-72: geometry-first velocity selection](iterations/2026-11-27/geometry-first-contact/README.md) | Choose one physical candidate per family nearest native N's equivalent point, then reuse fixed I-60 ranking/acceptance. Primary C has127 errors versus A124; acceptance6848 versus6902. Full-primary point RMS/p95/max improve against N, but RMS/p95 worsen against A despite a better maximum. Four of ten gates fail. | Mixed spatial benefit, configured selector rejected; no tuning or live adoption. Section 16 retains the complete comparisons. |
 
 Every row is offline saved-log work, not a new driving improvement. Episodes
 were inspected before these later analyses; whole-episode holdouts reduce
@@ -1036,7 +1043,137 @@ The live LQR/observer/support geometry/feedforward/short preparation pipeline
 remains selected. Solver work stays parked; no hardware or camera additions are
 part of this completed ablation.
 
-## 16. Sources, attribution, and how to continue a discussion
+## 16. I-72: geometry-first point selection, with a mixed spatial benefit
+
+After stopping the HMM version, the user authorized one simpler selector. I-60's
+measured-velocity evidence helped identify families, but freely selecting a point
+to fit that evidence produced point-distance peaks. I-67 showed nearby usable
+physical points already existed in the bank. I-72 asks whether geometry can
+choose the representative point first, leaving velocity to compare families.
+
+For each of the four families, choose the original eligible physical candidate
+closest in squared 3D distance to the **native observer equivalent point**.
+Equal-distance ties use the smallest original candidate ID. This anchor comes
+from the existing momentum-observer/support-geometry result, not a true contact,
+Nalt or terrain map. Native family identity is not provided to point selection
+or ranking; it is used only by the separate native fallback. The equivalent point
+can itself be biased or interior during multiple contacts, so nearest-to-anchor
+does not mean nearest-to-truth.
+
+Then call the exact frozen I-60 ranker on those representatives, using all old
+normal, moment and measured-velocity terms, scales and acceptance rules. The
+primary score is fused; VG, normal plus velocity, is secondary. A physical point
+is selected as a complete candidate, rather than choosing score terms from
+different points. There is no HMM, new force fit, NNLS solve, threshold search,
+new candidate geometry or physics rollout. The small NumPy-only
+[geometry-first module](../src/spherical_wheel/geometry_first_contact.py) is
+retained as opt-in research code and is never imported by the live controller.
+
+The primary policy **C** accepts the new fused family and its physical point
+only when the unchanged I-60 rules accept it. Otherwise it retains **both** N's
+original family and N's equivalent point. It does not move N's point onto another
+body by relabeling it, substitute a physical Nalt point, or reuse an old HMM's
+point output. A same-family accepted update still uses the newly selected
+physical point. All three inference outputs are sealed before evaluation truth
+is read.
+
+On the same **23,423 dominant-positive-pressure primary rows**:
+
+| Policy | Family mistakes |
+| --- | ---: |
+| Native N | 412 |
+| Old raw fused F | 109 |
+| Old accepted/fallback A | 124 |
+| New geometry-first raw fused | 118 |
+| New geometry-first raw VG, secondary | 117 |
+| Primary C: new fused accepted, else N | **127** |
+| New VG accepted, else N, secondary | 126 |
+
+C's phase counts are **14/67/46** at starts -1.0/+0.3/+0.9 rad; A's are
+**14/64/46**. C gains six correct decisions and loses nine relative to A.
+It preserves **286 of 294** old useful corrections, losing eight, and repairs
+**one of six** old harmful overrides and one of eighteen old accepted-wrong
+rows. New accepted fused proposals contain sixteen wrong-family rows out of
+6,848, versus N's 301 errors on exactly those rows. These subset counts do not
+replace C's full-domain result or establish calibrated confidence.
+
+New acceptance drops by **54**, from 6,902 to **6,848**. The ambiguity/motion
+denominator stays fixed to the old I-60 eligibility rules: original at least two
+valid families, measured excitation at least 0.02 m/s and primary truth. On those
+**7,970 rows**, acceptance falls **86.5997%→85.9222%**; on all primary rows it
+falls **29.4668%→29.2362%**. Both acceptance gate lines fail, but they share a
+numerator and are explicitly redundant constraints, not independent evidence.
+No new domain is selected after seeing which representatives are accepted.
+
+The full-primary point result is the useful spatial finding. Every policy below
+has a finite point on exactly the same **23,423 rows**, with wrong-family points
+and native fallback rows retained:
+
+| Policy | RMS, mm | p95, mm | Maximum, mm |
+| --- | ---: | ---: | ---: |
+| Native N | 3.136094 | 7.388477 | 26.907642 |
+| Old A | 2.759063 | 5.797002 | 29.842859 |
+| Primary C | **2.909967** | **6.342826** | **25.565903** |
+
+C passes all registered point gates against N, including **100% coverage**.
+Against A, however, it has worse RMS and p95 while improving the maximum. Thus
+“better point estimation” must identify the statistic and comparison. These
+distances use the raw sampled **dominant-family pressure centroid**, not I-60's
+raw equivalent-point truth target; do not substitute the older approximately
+3.134 mm native RMS from that other target. Missing C on a fixed N reference
+row would fail comparison rather than shrink the point denominator.
+
+At the fixed bad **35.205 s** event, C still assigns shell B while pressure
+supports belt B. Its point distance falls from A's 29.84286 to **25.56590 mm**,
+but N is **15.15505 mm**. The smaller peak does not repair identity. At the
+repaired old harmful row, **+0.9 rad, 12.555 s**, raw new fused still chooses
+shell A instead of pressure-labeled belt A despite a point just **0.22978 mm**
+from the reference. The unchanged acceptance rule abstains, so C correctly
+retains native belt A and its 0.54945 mm equivalent-point distance. A very close
+point can still identify the wrong material surface.
+
+All **471 mixed-pressure pair rows** remain in the full **23,894 loaded-row**
+metric. This single-family selector cannot match them: C has **598** full-set
+mistakes, equal to 127 primary mistakes plus those 471 pair misses, versus
+A's 595. It is not a general multicontact estimator. The five fixed anchors
+and every old harmful row are retained in the evidence. Descriptive timing
+matches all 71 pressure transitions, with zero misses, p95 absolute latency
+20 ms, 22 reverted attempts and thirty false switches; A has twenty reverted
+attempts and thirty false switches. Timing is not a new acceptance gate.
+
+The configured selector fails **four of ten gates**: pooled identity, the
++0.3-rad identity comparison and the two redundant acceptance-coverage checks.
+The decision is to **reject this fixed selector without tuning or secondary
+winner substitution**. The point findings are retained as progress; they do
+not override the registered decision. Passing all ten would only have qualified
+a later validation proposal, not live adoption.
+
+There are **39 selected new component contract tests**: sixteen core, six
+consumer, four input and thirteen evaluation tests. The thirteen include the
+earlier twelve evaluation contracts plus the final consumer-alias checks;
+stage counts and nested subchecks must not be added. Frozen I-70 helper tests
+are reused evidence, not new tests or the full repository suite. Reported
+isolated replay reproduces 237 arrays across all 26,403 saved frames; this is
+numerical reproducibility, not additional physical trials. Independent checks
+are documented separately in the iteration evidence.
+
+Four separate independent-verifier contracts also pass, giving **43 new focused
+contract functions** in total. Independent choices, masks, IDs, flags, physical
+points and fallback match all 79 fields per case; the largest numeric difference
+is 2.22e−16. Its initial reference used infinity for an unavailable distance
+where the production API uses NaN. Both stages are retained; correcting that
+diagnostic sentinel changes no selector, score, threshold or scientific output.
+
+The [I-72 record and reproduction](iterations/2026-11-27/geometry-first-contact/README.md)
+retain both the geometry gains and the failed identity/coverage conditions.
+These are three previously inspected trajectories, with last-1ms pressure labels
+sampled every 5 ms. There is no demonstrated new balance/tracking improvement,
+unseen validation or independent sensing. The selected live LQR, momentum
+observer, support geometry, feedforward and short preparation remain unchanged.
+I-71's HMM stopping decision remains in force; solver investigation is parked,
+and this result adds no camera, hardware or new controller direction.
+
+## 17. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

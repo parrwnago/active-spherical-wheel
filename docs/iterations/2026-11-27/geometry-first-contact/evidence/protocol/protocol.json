@@ -1,0 +1,120 @@
+{
+  "iteration": "I-72",
+  "registered_utc": "2026-11-27T21:47:03.975137+00:00",
+  "base_commit": "0bfca57c346d475edadb9ee84abf3413346fc5ca",
+  "status": "Registered before any new saved-data geometry-first selection/evaluation. Implement/test one fixed shadow selector; no tuning/adoption/new physics.",
+  "question": "Does choosing one physical candidate per family nearest the native observer equivalent point BEFORE frozen I60 velocity/fused ranking preserve useful identity corrections without contact-point spikes?",
+  "cases": [
+    "m100_B",
+    "p030_B",
+    "p090_B"
+  ],
+  "recording": "Original I58 native Gazebo/DART Mars figure-eight:44s,control5ms,8801frames/case;shaft-1.0,+.3,+.9rad,yaw45deg,unchangedLQR/momentumobserver/support/feedforward/120mspreparation,caps1.5/.6/.6Nm,.3/.3mps.",
+  "anchor": {
+    "source": "I60measurement_context exact_estimated_contact_point_m copiedfromguardedI58controller diagnostics estimated_contact_point_m = measure_records(locator.records(observer.wrench())).point_m",
+    "scope": "Native load-weighted equivalent point N, not physical bank Nalt, no truth contact. May lie between true contacts in multi-support.",
+    "missing": "Nonfiniteanchor =>no raw/accepted newfamily; nativefallback retained and failure/coverage counted."
+  },
+  "candidates": "Original102physicalslots,17normal seeds\u00d76shell/belt/rim kinds,4families,10degcone,1Ncompressive admission. No geometry generation, new seeds, force fit, NNLS or domain widening.",
+  "geometry_choice": "Within each original rank-active family, choose minimum EXACT squared3Ddistance to nativeanchor. Equal-distance ties smallest ORIGINALcandidateID. No velocity/moment/normal cost magnitude enters this choice; eligibility stays frozen I60finite/nonnegative/frame rules. Missing activepoint is an explicit error, not an extra admission gate.",
+  "compact_projection": "Originalvalid/ID/mask/feature arrays retained; copyphysicalpoint coordinates byte-exact where originalI60valid=True; store sparsely/decodeinvalid=False coordinatesNaN. No closest-point selection inextractor. Invalidcoordinates are never used by ranker.",
+  "ranking": "Mask all other candidates and call EXACT frozenI60rank_hypotheses withall original default scales, fourmodes G/WG/VG/F and confidence rules. Evaluate each completecandidate, never mix score terms acrossdifferentpoints.",
+  "settings": {
+    "normal_scale_deg": 10.0,
+    "velocity_scale_m_s": 0.02,
+    "minimum_excitation_m_s": 0.02,
+    "minimum_margin": 0.25,
+    "maximum_residual_m_s": 0.02,
+    "minimum_vector_separation_m_s": 0.01,
+    "minimum_distinct_families": 2
+  },
+  "primary": "C: geometry-first FUSED acceptedfamily+itsphysicalpoint; if notaccepted, EXACTnativeNfamily and equivalentpointN. Nativefamily fromuniquepositive maximum of observerestimatedsupportloads; it is never available to the geometry/ranking callable.",
+  "secondary": [
+    "Geometry-firstrawF",
+    "Geometry-firstrawVG(normal+velocity)",
+    "Geometry-firstVGaccepted+Nfallback",
+    "Accepted-only point and family metrics; descriptive only",
+    "OldN,F,A comparators"
+  ],
+  "forbidden_inference_inputs": [
+    "Solvercontacts/forces/points/normals",
+    "Truecontactfamily/load/point",
+    "True terrain or future state",
+    "Desiredvelocity/trajectory/next requestedcommand",
+    "Nativefamily identity inpointchoice orranking",
+    "HMM/recentbelief/temporalhistory"
+  ],
+  "inference_whitelist": [
+    "Recordedtime",
+    "Originalprojectedcandidatefeatures/IDs/validity",
+    "Frozenphysicalcandidatepoints",
+    "Nativeobserverequivalentpointanchor",
+    "Nativeestimatedloads ONLY for fallbackoutside ranking"
+  ],
+  "evaluation": "Exact I70dominantpressure labels/masks [1,41),>=1N,unique>=90% =>same23423states. Pointtargetrawdominant-familypositive-pressurecentroid, notI60equivalent-rawtarget. FallbackNpoint notNalt. Unknown and missing outputs remain failures. All23894loaded rows including471pairpressure sets reported; single-familyselector not generalmulti-contact estimator.",
+  "coverage": "Freeze OLDI60ambiguous+motioneligible primary domain before newselector: original>=2validfamilies andexcitation>=.02 plusoldtruthprimary. Newacceptance counts dividedbyTHATsame mask; reportfullprimary andperphase too. Do not rebuilddomainfromnewmask.",
+  "gates": {
+    "primary_pooled_errors": "C<=oldAcount124 on23423dominantrows",
+    "per_phase_errors": "Each of3Ccounts<=oldAcount exact, no tolerance",
+    "acceptance_coverage_ambiguous": "Poolednewaccepted coverage>=oldAaccepted coverage onFIXEDoldambiguousmotioneligible primary mask",
+    "acceptance_coverage_primary": "Newaccepted/allprimary>=oldAaccepted/allprimary (same numerator/fixeddenominators; explicitly redundant engineering constraints)",
+    "point_coverage": "Cfinitepointcoverage>=nativeN onfixedprimarytarget/Nfinite rows; missingC failscomparison ratherthanshrinkingdomain",
+    "point_rms": "C<=N+1e-6m onfixedprimarytarget/Nfinite rows includingwrongfamilies/fallback",
+    "point_p95": "C<=N+1e-6m, samefixedrows",
+    "point_max": "C<=N+1e-6m, samefixedrows"
+  },
+  "gates_count": 10,
+  "decision": "All10gates required to qualify this singlefixed selector for a later validation proposal, not live adoption. Failure=>record/rejectthisselector, no post-resultparameter sweep, no HMM restart. Preserveall outcomes. Passing does not prove tracking/balance gain or unseen robustness.",
+  "fixed_events": [
+    {
+      "case": "m100_B",
+      "time_s": 7.875
+    },
+    {
+      "case": "m100_B",
+      "time_s": 32.11
+    },
+    {
+      "case": "m100_B",
+      "time_s": 35.055
+    },
+    {
+      "case": "m100_B",
+      "time_s": 35.205
+    },
+    {
+      "case": "p030_B",
+      "time_s": 13.47
+    }
+  ],
+  "cohorts": "Report old294useful/6harmful/18acceptedwrong opportunities mechanically fromfrozenI60comparison, no cohort used tofit/select.",
+  "limitations": [
+    "Three alreadyinspectedhistoricalepisodes, not unseen validation.",
+    "Preparatoryfile/schema/provenance/packingsize inspections performed, no newselector/evaluation outputs calculated beforethisprotocol.",
+    "Pressuretruthfinal1mssample vsobserverfilteredpreceding5ms; not allforce routing orfirsttouch.",
+    "Nativeequivalentpointmay bewrong/interior; anchoringcanlosecorrectvelocityhypotheses.",
+    "No-slipvelocitycanfitwrongunloadedbody during actualslip; no guarantee geometry-first fixes it.",
+    "Force/velocity cues sharestate andobserver-domain inputs; no independentmeasurement/calibration claim."
+  ],
+  "staging": "Projectonlytruthfreewhitelistedinputs underseal; freezeactualcore/runner/tests/source beforeexperimental arithmetic; inferall3andsealbefore newoutputtruthscoring. Preserve source versions, contract failures/setupcorrections, compactevidence andportable replay.",
+  "source_input_bindings": {
+    "src/spherical_wheel/contact_hypotheses.py": "c0995d4acb268c73e834c488514aa9f34cd2b3d57aca516c63a394429b93f532",
+    "docs/iterations/2026-11-27/velocity-contact-ranking/evidence/protocol/protocol.json": "a7eaafcd0a31797fddff404264fe9f416f4c689d31828a08efd17743c604ea9c",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/stage01/science.json": "c4a8476393506e9479ac5f0d7c5aa2d542d0da52f185f3b5af24b3f25dc5138d",
+    "src/spherical_wheel/offroad_control.py": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+    "src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "src/spherical_wheel/synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/measurement_context.npz": "fe350974c33f5d62304af8372aa9c1ecb1a57e7aca26fa4ccc369487689f617e",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/projected_features.npz": "8e7f9527e87c40cdd02149624534c386ce74c3b55973ceee6079fee579b37782",
+    "results/temporal_contact_modes_20261127/inputs/stage01/m100_B/features.npz": "47acaa1af2990919fbbc860177de28010b024bfe0994d5ed7b4df56a0904bd18",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/packets_stage01/m100_B/evaluation_packet.npz": "f8d1f0e9240a90b53c684d59d5d14d89315a12140d55902fe0f1cfb2fb41e5b3",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p030_B/measurement_context.npz": "9d24f5663f50697151beaddcb78f28a332cdd7f35fbef811d7e9958a9bc74960",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p030_B/projected_features.npz": "6363dd2704fe92d428ad3c20a80d9af125fc4133909299ef7bec8969975a9b77",
+    "results/temporal_contact_modes_20261127/inputs/stage01/p030_B/features.npz": "372e078248c70c6ac78b96beb08e234d70d1a68f2038370e775f3fe611eeecb5",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/packets_stage01/p030_B/evaluation_packet.npz": "5d16d9da1225d9d35847d5d3adb0af986463991b2bd556251476c87234319293",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p090_B/measurement_context.npz": "ccb1d7101ae91e50b0f37d2c7d56dc7dab192481fccc8f787545b76f2c0c54be",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p090_B/projected_features.npz": "fe0a04b2f1def543f77326047f0fe8e5a27598e73e828a71b9311063b25afa65",
+    "results/temporal_contact_modes_20261127/inputs/stage01/p090_B/features.npz": "8d2ec6bf53ae6e9d43d0dc339cc220bb27ecba81bfd4280edb35d0b48bd66e4c",
+    "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/packets_stage01/p090_B/evaluation_packet.npz": "c778f307a64534f9175c68547c344e8450ee0b5146bcee778360b63d94d08afb"
+  }
+}

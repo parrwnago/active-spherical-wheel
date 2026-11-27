@@ -4396,6 +4396,64 @@ the previous5ms observer interval/all force routing; existingqualification stays
 solver work remains parked. No new estimator is promoted or extra branch begun.
 [Full record, three-page PDF, fixed event and portable reproduction](docs/iterations/2026-11-27/endpoint-pair-ablation/README.md).
 
+## I-72 — 2026-11-27 — geometry-first velocity selector; mixed, not adopted
+
+**Implemented/tested; four of ten gate rows fail.** Choose one original
+rank-active physicalpoint per family nearest observer equivalentpointN, with
+exact squared3D-distance/IDties, before unchanged I-60 fused/velocity ranking.
+PrimaryC uses accepted fused physicalpoint/family elseexactnativeNfamily/point.
+Nativeidentity/loads remain separate forfallback, neverranking. Newoptin
+geometry_first_contact.py andtests; no liveimport/default changes, newgeometry,
+NNLS, HMM, forcescore, threshold sweep or physics. I-71HMM remainsstopped.
+Base0bfca57; same3I58nativeGazebo/DARTMarsfigure8,shaft−1/+.3/+.9,yaw45°,
+44s,5ms,26403frames; selectedLQR/observer/support/rolling-holdingFF/120msprep,
+caps1.5/.6/.6Nm,.3/.3mps unchanged. Allthree episodes previouslyinspected.
+
+Protocol0ed9c46b… before newselection; source/inputseal73debf3d…; all3outputs
+955f3bd7… seal before new-outputtruth scoring. Original9projectedarrays/case,
+directNanchor exact; originalVALIDcoordinates copied byte-exact fromfrozenI70
+bank, notclaimingunstoredI60fullgeometryidentity. SparseinvalidcoordsNaN,102IDs
+andmasks retained. Fullpackets41.01MB. Missingactivepoint errors; missinganchor
+abstains+nativefallback. AlloldI60eligibility/scales/confidence rules fixed.
+
+Same23423dominant/23894loaded rows: N/oldF/A errors412/109/124 reproduce.
+NewrawF118,VG117, primaryC127, secondaryVG/native126 (no winner switch).
+A→Cphaseerrors14→14,64→67,46→46. Acceptance6902→6848 (54fewer): oldfixed
+ambiguous-motion7970 coverage86.5997→85.9222%, fullprimary29.4668→29.2362%.
+Bothcoverage failures shareanumerator, notindependent evidence. Cgains6/loses9
+againstA, retains286/294usefulcorrections, repairs1/6harmful and1/18acceptedwrong.
+Newaccepted16/6848wrong versusN301onexactrows; accepted-onlyprecision notCgate.
+
+All23423pointrows finite,wrongfamilies+fallbackretained; targetrawdominant-family
+pressurecentroid, notI60equiv-raw. N/A/C RMS3.13609/2.75906/2.90997mm,
+p957.38848/5.79700/6.34283mm, max26.90764/29.84286/25.56590mm. Allpointguards
+againstN pass. CbettersAmax butworsensAmean/RMS/p95: no all-objective win.
+At35.205 CstillwronglyshellB vspressurebeltB, point29.84→25.57mm; native15.16mm.
+At7.875 bothA/CcorrectshellA, point6.47→8.00mm. Atp09012.555 newabstention
+repairsoldharmfuloverride20.56→.55mm. Fivefixedanchors/all6harmful retained.
+
+All471pair-pressure rows remain errors forsinglesC; loadedset598versusA595.
+Timing71matched/0miss,p9520ms,22reverted/30false versusA20/30, diagnosticonly.
+Failedgates: pooledC<=A,+.3phaseC<=A,bothredundantcoverage constraints. Other
+phase/pointcoverage/RMS/p95/max guards pass. Globalpoint guards do not imply
+everyindividualpoint improves. No post-result threshold/weight adjustment.
+
+Verification:39newcontractfunctions (16core+6consumer+4input+13evaluation),
+5includedsubtests notadded; earlier12eval overlaps13final, preliminaryinput4
+overlapsfinal4. Fourseparateindependentfunctions (43newfocusedtotal) matchall79
+fields/case; choices/IDs/masks/flags/families/physicalpoints/fallback exact,
+maxnumericdifference2.22e−16. Preserve firstreference unavailable-distance
+infinity-vs-NaN sentinel mismatch; correctedreference changes diagnostic only,
+no selector/gate change. Prefix/batch/inputimmutability checks pass. FreshPython-I
+NumPyreplay237arrays exact,17decodedinputarrays/caseunchanged. Notfullreposuite.
+
+**Decision:** configuredselector notadopted; retainoptinimplementation/spatial
+tradeoff andoriginallivebaseline. No secondarywinnerpromotion/controller or
+trajectorygain. Nearestestimatedanchor isnotnearesttruth; actualslip canfavor
+anunloaded body'svelocity. Sampledlast1mspressure versusfilteredpreceding5ms
+observer/allforceroutingqualification remains; parkedsolver/camera/hardware work
+notresumed. [Full record, PDF, physical candidate plots and reproduction](docs/iterations/2026-11-27/geometry-first-contact/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

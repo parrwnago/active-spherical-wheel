@@ -1,0 +1,48 @@
+{
+  "belt_convention": "Held previous applied speed is actual surface speed only under existing ideal prescribed-belt simulation model.",
+  "case": "p090_B",
+  "force_map_convention": "Endpoint native J(q_t,p)^T worldforce; rotateangularrows with observerRmid(q_previous,q_current). Approximation, not substep contact history.",
+  "frame0": "No preceding interval; candidates invalid and method must chooseunknown.",
+  "input_sha256": {
+    "results/contact_geometry_load_audit_20261127/features/stage01/p090_B/pose_maps.npz": "ac2795ee1eceb135ffc2dd437b5b04af6a125722b9bc96719bee7423c0bf0fe7",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p090_B/measurement_context.npz": "ccb1d7101ae91e50b0f37d2c7d56dc7dab192481fccc8f787545b76f2c0c54be",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p090_B/projected_features.npz": "fe0a04b2f1def543f77326047f0fe8e5a27598e73e828a71b9311063b25afa65"
+  },
+  "no_native_family_prior": true,
+  "no_truth_fields_read": true,
+  "parity": {
+    "candidates_per_frame": 102,
+    "frame0_all_candidates_invalid": true,
+    "frames": 8801,
+    "maximum_original_feature_difference": {
+      "moment_residual_norm": 8.493206138382448e-15,
+      "normal_angle_rad": 7.216449660063518e-15,
+      "velocity_residual_m_s": 1.2753686995381486e-14
+    },
+    "original_feature_tolerance": 1e-12,
+    "original_valid_exact": true
+  },
+  "read_measurement_fields": [
+    "time_s",
+    "exact_qpos",
+    "exact_qvel",
+    "exact_previous_applied",
+    "exact_observer_interval_mean",
+    "exact_observer_generalized",
+    "intrinsic_normal_hint"
+  ],
+  "read_pose_fields": [
+    "centre_m",
+    "patch_axis_world",
+    "valid",
+    "radius_m",
+    "patch_lower_m",
+    "patch_upper_m"
+  ],
+  "source_sha256": {
+    "bank_points.py": "bbf95df6b204e2102cf4b6c8e4555ac23ec6398221350422ea3f27dcca2805b3",
+    "input_features.py": "9b579ea1168d8d72ca0029e1bb24c8670bb7d34b595d755ab3ec5fffed8f4d24",
+    "prepare.py": "d7c62c2f42779758d98f94a40abe8a36b321b16f418f061bb168c1132ec9bdb0"
+  },
+  "status": "truth-free endpoint feature generation; no physics"
+}

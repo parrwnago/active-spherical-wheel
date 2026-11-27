@@ -1,0 +1,79 @@
+{
+  "anchor": "Direct native observer/locator load-weighted equivalent N; not Nalt or truth; no projection/normalization.",
+  "case": "p030_B",
+  "context_whitelist": [
+    "time_s",
+    "exact_estimated_contact_point_m",
+    "exact_estimated_support_loads_N"
+  ],
+  "fallback_family": "Original unique positive maximum of finite nonnegative estimated loads; ties/missing unknown(-1).",
+  "forbidden_ranking_inputs": [
+    "native_family",
+    "native_support_loads_N",
+    "native_fallback"
+  ],
+  "historical_i70_geometry_feature_parity": {
+    "candidates_per_frame": 102,
+    "frame0_all_candidates_invalid": true,
+    "frames": 8801,
+    "maximum_original_feature_difference": {
+      "moment_residual_norm": 7.93809462606987e-15,
+      "normal_angle_rad": 5.2735593669694936e-15,
+      "velocity_residual_m_s": 8.996275946415722e-15
+    },
+    "original_feature_tolerance": 1e-12,
+    "original_valid_exact": true
+  },
+  "no_baseline_comparison_read": true,
+  "no_new_geometry_or_fits": true,
+  "no_truth_fields_read": true,
+  "parity": {
+    "candidate_slots": 102,
+    "direct_native_anchor_byte_exact": true,
+    "fallback_family_exact_frozen_i60_rule": true,
+    "fallback_point_and_loads_byte_exact": true,
+    "frames": 8801,
+    "i70_cached_original_valid_point_coordinates_byte_exact": true,
+    "invalid_coordinates_decoded_nan": true,
+    "masks_and_ids_unmodified": true,
+    "no_distance_selection": true,
+    "no_geometry_generation": true,
+    "no_selector_or_nnls": true,
+    "original_valid_point_count": 239102,
+    "projected_arrays_byte_exact": [
+      "excitation_m_s",
+      "family_index",
+      "frame_valid",
+      "moment_residual_norm",
+      "normal_angle_rad",
+      "valid",
+      "velocity_residual_m_s",
+      "velocity_residual_norm_m_s",
+      "kind"
+    ]
+  },
+  "point_byte_parity_source": "Frozen I70 features.points_m, not unstored original I60 full geometry.",
+  "point_whitelist": [
+    "points_m"
+  ],
+  "projected_whitelist": [
+    "excitation_m_s",
+    "family_index",
+    "frame_valid",
+    "moment_residual_norm",
+    "normal_angle_rad",
+    "valid",
+    "velocity_residual_m_s",
+    "velocity_residual_norm_m_s",
+    "kind"
+  ],
+  "source_files": {
+    "/home/parrwnago/active-spherical-wheel/results/geometry_first_contact_20261127/inputs/source/bank_points.py": "bbf95df6b204e2102cf4b6c8e4555ac23ec6398221350422ea3f27dcca2805b3",
+    "results/temporal_contact_modes_20261127/inputs/stage01/p030_B/features.npz": "372e078248c70c6ac78b96beb08e234d70d1a68f2038370e775f3fe611eeecb5",
+    "results/temporal_contact_modes_20261127/inputs/stage01/p030_B/metadata.json": "da51ca247fbed709be955b096cd5c5d704b9a7c8e17a7496b6ee71b389fdd136",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p030_B/measurement_context.npz": "9d24f5663f50697151beaddcb78f28a332cdd7f35fbef811d7e9958a9bc74960",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p030_B/projected_features.npz": "6363dd2704fe92d428ad3c20a80d9af125fc4133909299ef7bec8969975a9b77"
+  },
+  "source_input_seal_sha256": "e42f559f69462823967f8248719974150924d21ccb58af7cba088235f1ca41a3",
+  "sparse_scope": "Exactly original valid=True coordinates retained; invalid coordinates decodeNaN. No new eligibility gate."
+}

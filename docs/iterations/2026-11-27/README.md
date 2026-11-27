@@ -1,5 +1,29 @@
 # Research presentation notes — 2026-11-27
 
+**I-72: geometry-first velocity selection reduces point extremes, with a small
+family/coverage regression; configured candidate not adopted.**
+[Full record and replay](geometry-first-contact/README.md),
+[three-page PDF](geometry-first-contact/evidence/publication/plots_stage02/geometry_first_contact_report.pdf)
+and [physical candidate clouds](geometry-first-contact/evidence/publication/plots_stage02/physical_candidates.png).
+
+- Geometry first: nearest original valid physicalpoint per family to native
+  equivalentpointN; then exactI60fused/velocity scores andconfidence. No HMM,
+  refit, threshold change, newphysics or livecontroller import.
+- Same23423primaryrows: C127familyerrors versusA124; phases14/67/46 versus
+  14/64/46. Acceptance6848vs6902, fixedoldambiguous-motion7970 coverage
+  85.9222%vs86.5997%. Four of ten gates fail; two coverages shareanumerator.
+- Samefullpointrows,100%coverage: N/A/C RMS3.1361/2.7591/2.9100mm,
+  p957.3885/5.7970/6.3428mm, max26.9076/29.8429/25.5659mm. CbeatsallNpoint
+  guards andAmax, butworsensA RMS/p95. Global guards do not imply everyrowbetter.
+- At35.205s shellBwrongidentitypersists, point29.84→25.57mm; at7.875s both
+  correctshellA butCpoint8.00mmvsA6.47mm. Oneof6oldharmful overrides repaired;
+  usefulcorrections286/294retained. All471pair-pressure rowsremain counted.
+- Thirty-nine componentcontractfunctions pass,5includedsubtests notadded;
+  fourseparateindependentcontracts andall79fields/case agree. Sentinel-only
+  verifiercorrection preserved. Isolated replay237arrays exact. No trackinggain.
+- Preserve configuredrejection/spatialtradeoff. Keep originalLQR, observer,
+  supportlocator, feedforward andpreparation; no post-result tuning orHMMrestart.
+
 **I-71: endpoint-pair restriction does not rescue this HMM; stop the version.**
 [Full record and portable replay](endpoint-pair-ablation/README.md),
 [three-page explanation/results PDF](endpoint-pair-ablation/evidence/publication/plots_stage01/endpoint_pair_ablation_report.pdf)
