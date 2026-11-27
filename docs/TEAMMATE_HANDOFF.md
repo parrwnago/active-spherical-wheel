@@ -68,7 +68,24 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-64 matches predicted and observed load histories.** Use raw interval
+**Latest: I-65 tests a genuinely different joint-error scoring calculation.**
+Fit one shared bias/covariance model of the three joint-load residuals on two
+whole recordings, then rank frozen contacts in the third. Fixed regularization
+and ambiguity rules are declared before fitting. Training uses simulator family
+labels; held-out scoring does not. All three runs were inspected previously.
+
+Relative raw-interval ranking improves useful preferences 244→253/294 and
+harmful preferences 1→2/6. It still fails: the offline shadow loses 41 useful
+corrections to prevent two harmful changes, increasing A's 124 family errors
+to 163. The +0.3 rad phase supplies 37 useful losses. Worst point discrepancy
+stays 29.84 mm; matched-history control also fails. Keep the live system above.
+This experiment changes no controller and demonstrates no tracking improvement.
+[I-65 report, plots, event appendix and clone replay](iterations/2026-11-27/contact-covariance-ranking/README.md).
+Next proposed diagnostic: distinguish candidate-point errors from an inadequate
+interval/single-point load model at these same failures before adding estimation
+complexity. A bad outcome does not establish which physical assumption failed.
+
+**I-64 matches predicted and observed load histories.** Use raw interval
 force once, frozen past contact estimates and the observer's same filter.
 On 6,884 accepted correct-family frames, load-vector RMS falls 36.2%,
 0.05828→0.03721 N m, with improvement at every start. All model-consistency

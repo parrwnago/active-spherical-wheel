@@ -1,0 +1,4198 @@
+{
+  "iteration": "I-65",
+  "protocol_sha256": "da3ec112923b9cd743a810a6f730214003a3b4275b5ae6de7a4fcdf87a0585c6",
+  "numpy_version": "1.26.4",
+  "qualification": "Retrospective three previously inspected whole episodes; no unseen validation, new driving or live adoption.",
+  "benchmarks": {
+    "m100_B": {
+      "I61_gate_exact": true,
+      "I60_A_exact": true,
+      "M0_residual_difference_Nm": {
+        "F": 1.1102230246251565e-16,
+        "Nalt": 1.1102230246251565e-16
+      },
+      "same_family_count": 8751,
+      "same_family_different_candidate_count": 0
+    },
+    "p030_B": {
+      "I61_gate_exact": true,
+      "I60_A_exact": true,
+      "M0_residual_difference_Nm": {
+        "F": 1.1102230246251565e-16,
+        "Nalt": 1.1102230246251565e-16
+      },
+      "same_family_count": 8614,
+      "same_family_different_candidate_count": 0
+    },
+    "p090_B": {
+      "I61_gate_exact": true,
+      "I60_A_exact": true,
+      "M0_residual_difference_Nm": {
+        "F": 1.1102230246251565e-16,
+        "Nalt": 1.1102230246251565e-16
+      },
+      "same_family_count": 8542,
+      "same_family_different_candidate_count": 0
+    }
+  },
+  "models": {
+    "m100_B": {
+      "M1": {
+        "training": [
+          "p030_B",
+          "p090_B"
+        ],
+        "training_counts": {
+          "p030_B": {
+            "rows": 2151,
+            "F": 2151,
+            "Nalt": 0
+          },
+          "p090_B": {
+            "rows": 2448,
+            "F": 2444,
+            "Nalt": 4
+          }
+        },
+        "calibration_failed": false,
+        "fitted": {
+          "mean": [
+            0.013683174896311677,
+            0.003097034801154265,
+            -0.0005193585666151784
+          ],
+          "population_covariance": [
+            [
+              0.019398105673207048,
+              0.0001521342625654393,
+              -0.00111927319378565
+            ],
+            [
+              0.0001521342625654393,
+              0.009417583434916695,
+              -0.005410677322542652
+            ],
+            [
+              -0.00111927319378565,
+              -0.005410677322542652,
+              0.014745585423639927
+            ]
+          ],
+          "covariance": [
+            [
+              0.020922569507349886,
+              0.00012170741005235145,
+              -0.0008954185550285199
+            ],
+            [
+              0.00012170741005235145,
+              0.012938151716717602,
+              -0.004328541858034122
+            ],
+            [
+              -0.0008954185550285199,
+              -0.004328541858034122,
+              0.01720055330769619
+            ]
+          ],
+          "cholesky": [
+            [
+              0.14464636015935514,
+              0.0,
+              0.0
+            ],
+            [
+              0.0008414135683626458,
+              0.11374288434853662,
+              0.0
+            ],
+            [
+              -0.006190398113316147,
+              -0.038009702302081935,
+              0.12536943331530995
+            ]
+          ],
+          "rho": 0.2,
+          "floor_std": 0.05,
+          "training_weighted_p95_score": 9.560686812678158
+        }
+      },
+      "M2": {
+        "training": [
+          "p030_B",
+          "p090_B"
+        ],
+        "training_counts": {
+          "p030_B": {
+            "rows": 2151,
+            "F": 2151,
+            "Nalt": 0
+          },
+          "p090_B": {
+            "rows": 2448,
+            "F": 2444,
+            "Nalt": 4
+          }
+        },
+        "calibration_failed": false,
+        "fitted": {
+          "mean": [
+            0.02053668238801647,
+            0.00366992155169607,
+            -1.2365225468169569e-05
+          ],
+          "population_covariance": [
+            [
+              0.008928343650855689,
+              -0.00052228759251391,
+              0.0007982001829829275
+            ],
+            [
+              -0.00052228759251391,
+              0.008378461489115748,
+              -0.006591210712722747
+            ],
+            [
+              0.0007982001829829275,
+              -0.006591210712722747,
+              0.01061643439141658
+            ]
+          ],
+          "covariance": [
+            [
+              0.011504224222777087,
+              -0.000417830074011128,
+              0.0006385601463863421
+            ],
+            [
+              -0.000417830074011128,
+              0.011064318493385133,
+              -0.005272968570178198
+            ],
+            [
+              0.0006385601463863421,
+              -0.005272968570178198,
+              0.0128546968152258
+            ]
+          ],
+          "cholesky": [
+            [
+              0.10725774667956198,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0038955701284627653,
+              0.10511490392308487,
+              0.0
+            ],
+            [
+              0.005953510736096976,
+              -0.04994321505004243,
+              0.101611651869292
+            ]
+          ],
+          "rho": 0.2,
+          "floor_std": 0.05,
+          "training_weighted_p95_score": 9.252026929744527
+        }
+      }
+    },
+    "p030_B": {
+      "M1": {
+        "training": [
+          "m100_B",
+          "p090_B"
+        ],
+        "training_counts": {
+          "m100_B": {
+            "rows": 2291,
+            "F": 2289,
+            "Nalt": 2
+          },
+          "p090_B": {
+            "rows": 2448,
+            "F": 2444,
+            "Nalt": 4
+          }
+        },
+        "calibration_failed": false,
+        "fitted": {
+          "mean": [
+            0.003949825801613794,
+            0.0025033411029445245,
+            -0.002618190214879145
+          ],
+          "population_covariance": [
+            [
+              0.013461151544207843,
+              0.0003504255067332548,
+              -0.0011043732297475496
+            ],
+            [
+              0.0003504255067332548,
+              0.0027485857568320675,
+              -0.0009478215834497632
+            ],
+            [
+              -0.0011043732297475496,
+              -0.0009478215834497632,
+              0.004272387361025209
+            ]
+          ],
+          "covariance": [
+            [
+              0.014634396212837285,
+              0.00028034040538660386,
+              -0.0008834985837980398
+            ],
+            [
+              0.00028034040538660386,
+              0.006064343582936662,
+              -0.0007582572667598106
+            ],
+            [
+              -0.0008834985837980398,
+              -0.0007582572667598106,
+              0.0072833848662911755
+            ]
+          ],
+          "cholesky": [
+            [
+              0.12097270854551156,
+              0.0,
+              0.0
+            ],
+            [
+              0.0023173855389138124,
+              0.07783940716115903,
+              0.0
+            ],
+            [
+              -0.007303288439356185,
+              -0.009523874330248582,
+              0.08449463096554936
+            ]
+          ],
+          "rho": 0.2,
+          "floor_std": 0.05,
+          "training_weighted_p95_score": 7.365030193839809
+        }
+      },
+      "M2": {
+        "training": [
+          "m100_B",
+          "p090_B"
+        ],
+        "training_counts": {
+          "m100_B": {
+            "rows": 2291,
+            "F": 2289,
+            "Nalt": 2
+          },
+          "p090_B": {
+            "rows": 2448,
+            "F": 2444,
+            "Nalt": 4
+          }
+        },
+        "calibration_failed": false,
+        "fitted": {
+          "mean": [
+            0.007872649279397266,
+            0.006692243208363108,
+            -0.00799323234188298
+          ],
+          "population_covariance": [
+            [
+              0.00604368316672102,
+              -3.8762882304240755e-05,
+              -0.00016466758243904167
+            ],
+            [
+              -3.8762882304240755e-05,
+              0.004724939756255074,
+              -0.0034982479677745553
+            ],
+            [
+              -0.00016466758243904167,
+              -0.0034982479677745553,
+              0.005493243207021691
+            ]
+          ],
+          "covariance": [
+            [
+              0.008419070942043336,
+              -3.101030584339261e-05,
+              -0.00013173406595123335
+            ],
+            [
+              -3.101030584339261e-05,
+              0.007364076213670579,
+              -0.0027985983742196442
+            ],
+            [
+              -0.00013173406595123335,
+              -0.0027985983742196442,
+              0.007978718974283872
+            ]
+          ],
+          "cholesky": [
+            [
+              0.09175549543238996,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0003379667419074921,
+              0.08581353035595228,
+              0.0
+            ],
+            [
+              -0.001435707641601713,
+              -0.0326182081548572,
+              0.0831427099306856
+            ]
+          ],
+          "rho": 0.2,
+          "floor_std": 0.05,
+          "training_weighted_p95_score": 6.9178714391989615
+        }
+      }
+    },
+    "p090_B": {
+      "M1": {
+        "training": [
+          "m100_B",
+          "p030_B"
+        ],
+        "training_counts": {
+          "m100_B": {
+            "rows": 2291,
+            "F": 2289,
+            "Nalt": 2
+          },
+          "p030_B": {
+            "rows": 2151,
+            "F": 2151,
+            "Nalt": 0
+          }
+        },
+        "calibration_failed": false,
+        "fitted": {
+          "mean": [
+            0.010428809449760029,
+            0.0005016078937330818,
+            0.0011800231949767748
+          ],
+          "population_covariance": [
+            [
+              0.02202522991999026,
+              -3.5862597404409074e-05,
+              -0.002211865678589788
+            ],
+            [
+              -3.5862597404409074e-05,
+              0.007267635964777147,
+              -0.0046595979783250726
+            ],
+            [
+              -0.002211865678589788,
+              -0.0046595979783250726,
+              0.013019750142531926
+            ]
+          ],
+          "covariance": [
+            [
+              0.02294102500447883,
+              -2.869007792352726e-05,
+              -0.0017694925428718305
+            ],
+            [
+              -2.869007792352726e-05,
+              0.01113494984030834,
+              -0.003727678382660058
+            ],
+            [
+              -0.0017694925428718305,
+              -0.003727678382660058,
+              0.015736641182512164
+            ]
+          ],
+          "cholesky": [
+            [
+              0.1514629492796137,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0001894197759913079,
+              0.10552210176288569,
+              0.0
+            ],
+            [
+              -0.011682675870817715,
+              -0.03534701498732246,
+              0.11979459419562963
+            ]
+          ],
+          "rho": 0.2,
+          "floor_std": 0.05,
+          "training_weighted_p95_score": 8.967825628194902
+        }
+      },
+      "M2": {
+        "training": [
+          "m100_B",
+          "p030_B"
+        ],
+        "training_counts": {
+          "m100_B": {
+            "rows": 2291,
+            "F": 2289,
+            "Nalt": 2
+          },
+          "p030_B": {
+            "rows": 2151,
+            "F": 2151,
+            "Nalt": 0
+          }
+        },
+        "calibration_failed": false,
+        "fitted": {
+          "mean": [
+            0.014936471696923715,
+            -0.0019120207695217735,
+            0.002805234779376323
+          ],
+          "population_covariance": [
+            [
+              0.009181918043538429,
+              -0.0005321571917245501,
+              0.00014710912316131928
+            ],
+            [
+              -0.0005321571917245501,
+              0.004742590017706245,
+              -0.003999894363801643
+            ],
+            [
+              0.00014710912316131928,
+              -0.003999894363801643,
+              0.0075345559489252345
+            ]
+          ],
+          "covariance": [
+            [
+              0.011276138702175404,
+              -0.0004257257533796401,
+              0.00011768729852905543
+            ],
+            [
+              -0.0004257257533796401,
+              0.007724676281509657,
+              -0.0031999154910413146
+            ],
+            [
+              0.00011768729852905543,
+              -0.0031999154910413146,
+              0.009958249026484848
+            ]
+          ],
+          "cholesky": [
+            [
+              0.10618916471173226,
+              0.0,
+              0.0
+            ],
+            [
+              -0.004009126115035765,
+              0.08779865140936617,
+              0.0
+            ],
+            [
+              0.001108279727489492,
+              -0.036395459458073015,
+              0.09291066286151578
+            ]
+          ],
+          "rho": 0.2,
+          "floor_std": 0.05,
+          "training_weighted_p95_score": 8.465683165881039
+        }
+      }
+    }
+  },
+  "discrimination": {
+    "M1": {
+      "ranking": {
+        "maxabs": {
+          "primary": {
+            "denominator": 23423,
+            "known": 23423,
+            "unknown": 0,
+            "F_preferred": 292,
+            "Nalt_preferred": 77,
+            "tied": 0,
+            "ambiguous": 23054,
+            "coverage": 1.0
+          },
+          "accepted": {
+            "denominator": 6902,
+            "known": 6902,
+            "unknown": 0,
+            "F_preferred": 249,
+            "Nalt_preferred": 51,
+            "tied": 0,
+            "ambiguous": 6602,
+            "coverage": 1.0
+          },
+          "useful": {
+            "denominator": 294,
+            "known": 294,
+            "unknown": 0,
+            "F_preferred": 244,
+            "Nalt_preferred": 50,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 244,
+            "correct_fraction": 0.8299319727891157
+          },
+          "harmful": {
+            "denominator": 6,
+            "known": 6,
+            "unknown": 0,
+            "F_preferred": 5,
+            "Nalt_preferred": 1,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 1,
+            "correct_fraction": 0.16666666666666666
+          },
+          "accepted_wrong": {
+            "denominator": 18,
+            "known": 18,
+            "unknown": 0,
+            "F_preferred": 5,
+            "Nalt_preferred": 1,
+            "tied": 0,
+            "ambiguous": 12,
+            "coverage": 1.0
+          }
+        },
+        "euclidean": {
+          "primary": {
+            "denominator": 23423,
+            "known": 23423,
+            "unknown": 0,
+            "F_preferred": 291,
+            "Nalt_preferred": 78,
+            "tied": 0,
+            "ambiguous": 23054,
+            "coverage": 1.0
+          },
+          "accepted": {
+            "denominator": 6902,
+            "known": 6902,
+            "unknown": 0,
+            "F_preferred": 248,
+            "Nalt_preferred": 52,
+            "tied": 0,
+            "ambiguous": 6602,
+            "coverage": 1.0
+          },
+          "useful": {
+            "denominator": 294,
+            "known": 294,
+            "unknown": 0,
+            "F_preferred": 244,
+            "Nalt_preferred": 50,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 244,
+            "correct_fraction": 0.8299319727891157
+          },
+          "harmful": {
+            "denominator": 6,
+            "known": 6,
+            "unknown": 0,
+            "F_preferred": 4,
+            "Nalt_preferred": 2,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 2,
+            "correct_fraction": 0.3333333333333333
+          },
+          "accepted_wrong": {
+            "denominator": 18,
+            "known": 18,
+            "unknown": 0,
+            "F_preferred": 4,
+            "Nalt_preferred": 2,
+            "tied": 0,
+            "ambiguous": 12,
+            "coverage": 1.0
+          }
+        },
+        "shared_covariance": {
+          "primary": {
+            "denominator": 23423,
+            "known": 23423,
+            "unknown": 0,
+            "F_preferred": 300,
+            "Nalt_preferred": 69,
+            "tied": 0,
+            "ambiguous": 23054,
+            "coverage": 1.0
+          },
+          "accepted": {
+            "denominator": 6902,
+            "known": 6902,
+            "unknown": 0,
+            "F_preferred": 257,
+            "Nalt_preferred": 43,
+            "tied": 0,
+            "ambiguous": 6602,
+            "coverage": 1.0
+          },
+          "useful": {
+            "denominator": 294,
+            "known": 294,
+            "unknown": 0,
+            "F_preferred": 253,
+            "Nalt_preferred": 41,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 253,
+            "correct_fraction": 0.8605442176870748
+          },
+          "harmful": {
+            "denominator": 6,
+            "known": 6,
+            "unknown": 0,
+            "F_preferred": 4,
+            "Nalt_preferred": 2,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 2,
+            "correct_fraction": 0.3333333333333333
+          },
+          "accepted_wrong": {
+            "denominator": 18,
+            "known": 18,
+            "unknown": 0,
+            "F_preferred": 4,
+            "Nalt_preferred": 2,
+            "tied": 0,
+            "ambiguous": 12,
+            "coverage": 1.0
+          }
+        }
+      },
+      "gates": {
+        "accepted_pair_coverage": true,
+        "critical_scorable": true,
+        "half_harmful_correct": false,
+        "useful_90pct_correct": false,
+        "harmful_nonregression": true,
+        "useful_nonregression": true,
+        "strict_improvement": true
+      },
+      "promising": false,
+      "critical_denominator": 18,
+      "critical_unknown": 0
+    },
+    "M2": {
+      "ranking": {
+        "maxabs": {
+          "primary": {
+            "denominator": 23423,
+            "known": 23423,
+            "unknown": 0,
+            "F_preferred": 287,
+            "Nalt_preferred": 82,
+            "tied": 0,
+            "ambiguous": 23054,
+            "coverage": 1.0
+          },
+          "accepted": {
+            "denominator": 6902,
+            "known": 6902,
+            "unknown": 0,
+            "F_preferred": 248,
+            "Nalt_preferred": 52,
+            "tied": 0,
+            "ambiguous": 6602,
+            "coverage": 1.0
+          },
+          "useful": {
+            "denominator": 294,
+            "known": 294,
+            "unknown": 0,
+            "F_preferred": 243,
+            "Nalt_preferred": 51,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 243,
+            "correct_fraction": 0.826530612244898
+          },
+          "harmful": {
+            "denominator": 6,
+            "known": 6,
+            "unknown": 0,
+            "F_preferred": 5,
+            "Nalt_preferred": 1,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 1,
+            "correct_fraction": 0.16666666666666666
+          },
+          "accepted_wrong": {
+            "denominator": 18,
+            "known": 18,
+            "unknown": 0,
+            "F_preferred": 5,
+            "Nalt_preferred": 1,
+            "tied": 0,
+            "ambiguous": 12,
+            "coverage": 1.0
+          }
+        },
+        "euclidean": {
+          "primary": {
+            "denominator": 23423,
+            "known": 23423,
+            "unknown": 0,
+            "F_preferred": 288,
+            "Nalt_preferred": 81,
+            "tied": 0,
+            "ambiguous": 23054,
+            "coverage": 1.0
+          },
+          "accepted": {
+            "denominator": 6902,
+            "known": 6902,
+            "unknown": 0,
+            "F_preferred": 248,
+            "Nalt_preferred": 52,
+            "tied": 0,
+            "ambiguous": 6602,
+            "coverage": 1.0
+          },
+          "useful": {
+            "denominator": 294,
+            "known": 294,
+            "unknown": 0,
+            "F_preferred": 244,
+            "Nalt_preferred": 50,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 244,
+            "correct_fraction": 0.8299319727891157
+          },
+          "harmful": {
+            "denominator": 6,
+            "known": 6,
+            "unknown": 0,
+            "F_preferred": 4,
+            "Nalt_preferred": 2,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 2,
+            "correct_fraction": 0.3333333333333333
+          },
+          "accepted_wrong": {
+            "denominator": 18,
+            "known": 18,
+            "unknown": 0,
+            "F_preferred": 4,
+            "Nalt_preferred": 2,
+            "tied": 0,
+            "ambiguous": 12,
+            "coverage": 1.0
+          }
+        },
+        "shared_covariance": {
+          "primary": {
+            "denominator": 23423,
+            "known": 23423,
+            "unknown": 0,
+            "F_preferred": 289,
+            "Nalt_preferred": 80,
+            "tied": 0,
+            "ambiguous": 23054,
+            "coverage": 1.0
+          },
+          "accepted": {
+            "denominator": 6902,
+            "known": 6902,
+            "unknown": 0,
+            "F_preferred": 249,
+            "Nalt_preferred": 51,
+            "tied": 0,
+            "ambiguous": 6602,
+            "coverage": 1.0
+          },
+          "useful": {
+            "denominator": 294,
+            "known": 294,
+            "unknown": 0,
+            "F_preferred": 245,
+            "Nalt_preferred": 49,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 245,
+            "correct_fraction": 0.8333333333333334
+          },
+          "harmful": {
+            "denominator": 6,
+            "known": 6,
+            "unknown": 0,
+            "F_preferred": 4,
+            "Nalt_preferred": 2,
+            "tied": 0,
+            "ambiguous": 0,
+            "coverage": 1.0,
+            "correct": 2,
+            "correct_fraction": 0.3333333333333333
+          },
+          "accepted_wrong": {
+            "denominator": 18,
+            "known": 18,
+            "unknown": 0,
+            "F_preferred": 4,
+            "Nalt_preferred": 2,
+            "tied": 0,
+            "ambiguous": 12,
+            "coverage": 1.0
+          }
+        }
+      },
+      "gates": {
+        "accepted_pair_coverage": true,
+        "critical_scorable": true,
+        "half_harmful_correct": false,
+        "useful_90pct_correct": false,
+        "harmful_nonregression": true,
+        "useful_nonregression": true,
+        "strict_improvement": true
+      },
+      "promising": false,
+      "critical_denominator": 18,
+      "critical_unknown": 0
+    }
+  },
+  "shadows": {
+    "M1": {
+      "maxabs": {
+        "metrics": {
+          "error_count": 173,
+          "harmful_count": 5,
+          "useful_retained_count": 244,
+          "retained_proposal_count": 6851,
+          "veto_count": 51,
+          "point_SSE_mm2": 180089.85667715583,
+          "point_RMS_mm": 2.7728307845205493,
+          "point_p95_mm": 5.793624531346217,
+          "point_maximum_mm": 29.84285874266292
+        },
+        "baseline": {
+          "eligible_count": 23423,
+          "point_count": 23423,
+          "A_harmful_count": 6,
+          "A_useful_count": 294,
+          "A_proposal_count": 6902,
+          "oracle_count": 21983,
+          "N": {
+            "error_count": 412,
+            "harmful_count": 0,
+            "useful_retained_count": 0,
+            "retained_proposal_count": 0,
+            "veto_count": 6902,
+            "point_SSE_mm2": 230023.10393082164,
+            "point_RMS_mm": 3.1337508918025083,
+            "point_p95_mm": 7.335860821293344,
+            "point_maximum_mm": 26.907642231578496
+          },
+          "A": {
+            "error_count": 124,
+            "harmful_count": 6,
+            "useful_retained_count": 294,
+            "retained_proposal_count": 6902,
+            "veto_count": 0,
+            "point_SSE_mm2": 178030.04647529926,
+            "point_RMS_mm": 2.7569278044557697,
+            "point_p95_mm": 5.7966951671247795,
+            "point_maximum_mm": 29.84285874266292
+          }
+        },
+        "gates": {
+          "harmful_removal": false,
+          "useful_retention": false,
+          "pooled_errors": false,
+          "m100_B_error_rate": true,
+          "m100_B_harmful_nonincrease": true,
+          "p030_B_error_rate": false,
+          "p030_B_harmful_nonincrease": true,
+          "p090_B_error_rate": true,
+          "p090_B_harmful_nonincrease": true,
+          "point_RMS": false,
+          "point_p95": true,
+          "point_maximum": false,
+          "nonempty_retention": true
+        },
+        "all_gates_pass": false,
+        "per_case": {
+          "m100_B": {
+            "metrics": {
+              "error_count": 14,
+              "harmful_count": 1,
+              "useful_retained_count": 38,
+              "retained_proposal_count": 2289,
+              "veto_count": 2,
+              "point_SSE_mm2": 48090.963611087784,
+              "point_RMS_mm": 2.4601266138841873,
+              "point_p95_mm": 4.783140121716501,
+              "point_maximum_mm": 29.84285874266292
+            },
+            "baseline": {
+              "eligible_count": 7946,
+              "point_count": 7946,
+              "A_harmful_count": 2,
+              "A_useful_count": 39,
+              "A_proposal_count": 2291,
+              "oracle_count": 7678,
+              "N": {
+                "error_count": 51,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2291,
+                "point_SSE_mm2": 64222.55879609448,
+                "point_RMS_mm": 2.842951967013751,
+                "point_p95_mm": 5.908566520898447,
+                "point_maximum_mm": 26.907642231578496
+              },
+              "A": {
+                "error_count": 14,
+                "harmful_count": 2,
+                "useful_retained_count": 39,
+                "retained_proposal_count": 2291,
+                "veto_count": 0,
+                "point_SSE_mm2": 48133.01309068186,
+                "point_RMS_mm": 2.4612019140353723,
+                "point_p95_mm": 4.782588189208275,
+                "point_maximum_mm": 29.84285874266292
+              }
+            },
+            "harmful_accuracy_scorable": true
+          },
+          "p030_B": {
+            "metrics": {
+              "error_count": 111,
+              "harmful_count": 0,
+              "useful_retained_count": 115,
+              "retained_proposal_count": 2111,
+              "veto_count": 47,
+              "point_SSE_mm2": 60400.20693823285,
+              "point_RMS_mm": 2.836898939811083,
+              "point_p95_mm": 6.076699221582736,
+              "point_maximum_mm": 22.844562060658617
+            },
+            "baseline": {
+              "eligible_count": 7505,
+              "point_count": 7505,
+              "A_harmful_count": 0,
+              "A_useful_count": 162,
+              "A_proposal_count": 2158,
+              "oracle_count": 6748,
+              "N": {
+                "error_count": 226,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2158,
+                "point_SSE_mm2": 83717.99056206962,
+                "point_RMS_mm": 3.339904504654159,
+                "point_p95_mm": 8.456741024183572,
+                "point_maximum_mm": 22.72277605440519
+              },
+              "A": {
+                "error_count": 64,
+                "harmful_count": 0,
+                "useful_retained_count": 162,
+                "retained_proposal_count": 2158,
+                "veto_count": 0,
+                "point_SSE_mm2": 58211.91946639021,
+                "point_RMS_mm": 2.785034706541542,
+                "point_p95_mm": 6.045741282332057,
+                "point_maximum_mm": 22.844562060658617
+              }
+            },
+            "harmful_accuracy_scorable": false
+          },
+          "p090_B": {
+            "metrics": {
+              "error_count": 48,
+              "harmful_count": 4,
+              "useful_retained_count": 91,
+              "retained_proposal_count": 2451,
+              "veto_count": 2,
+              "point_SSE_mm2": 71598.68612783519,
+              "point_RMS_mm": 2.9968767428308456,
+              "point_p95_mm": 6.550265114795263,
+              "point_maximum_mm": 25.226673206812258
+            },
+            "baseline": {
+              "eligible_count": 7972,
+              "point_count": 7972,
+              "A_harmful_count": 4,
+              "A_useful_count": 93,
+              "A_proposal_count": 2453,
+              "oracle_count": 7557,
+              "N": {
+                "error_count": 135,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2453,
+                "point_SSE_mm2": 82082.55457265757,
+                "point_RMS_mm": 3.2087936315032337,
+                "point_p95_mm": 7.618631001608613,
+                "point_maximum_mm": 25.226673206812258
+              },
+              "A": {
+                "error_count": 46,
+                "harmful_count": 4,
+                "useful_retained_count": 93,
+                "retained_proposal_count": 2453,
+                "veto_count": 0,
+                "point_SSE_mm2": 71685.1139182272,
+                "point_RMS_mm": 2.998684983536133,
+                "point_p95_mm": 6.5542517675363765,
+                "point_maximum_mm": 25.226673206812258
+              }
+            },
+            "harmful_accuracy_scorable": true
+          }
+        }
+      },
+      "euclidean": {
+        "metrics": {
+          "error_count": 172,
+          "harmful_count": 4,
+          "useful_retained_count": 244,
+          "retained_proposal_count": 6850,
+          "veto_count": 52,
+          "point_SSE_mm2": 179972.1616659277,
+          "point_RMS_mm": 2.7719245655535794,
+          "point_p95_mm": 5.7966951671247795,
+          "point_maximum_mm": 29.84285874266292
+        },
+        "baseline": {
+          "eligible_count": 23423,
+          "point_count": 23423,
+          "A_harmful_count": 6,
+          "A_useful_count": 294,
+          "A_proposal_count": 6902,
+          "oracle_count": 21983,
+          "N": {
+            "error_count": 412,
+            "harmful_count": 0,
+            "useful_retained_count": 0,
+            "retained_proposal_count": 0,
+            "veto_count": 6902,
+            "point_SSE_mm2": 230023.10393082164,
+            "point_RMS_mm": 3.1337508918025083,
+            "point_p95_mm": 7.335860821293344,
+            "point_maximum_mm": 26.907642231578496
+          },
+          "A": {
+            "error_count": 124,
+            "harmful_count": 6,
+            "useful_retained_count": 294,
+            "retained_proposal_count": 6902,
+            "veto_count": 0,
+            "point_SSE_mm2": 178030.04647529926,
+            "point_RMS_mm": 2.7569278044557697,
+            "point_p95_mm": 5.7966951671247795,
+            "point_maximum_mm": 29.84285874266292
+          }
+        },
+        "gates": {
+          "harmful_removal": false,
+          "useful_retention": false,
+          "pooled_errors": false,
+          "m100_B_error_rate": true,
+          "m100_B_harmful_nonincrease": true,
+          "p030_B_error_rate": false,
+          "p030_B_harmful_nonincrease": true,
+          "p090_B_error_rate": true,
+          "p090_B_harmful_nonincrease": true,
+          "point_RMS": false,
+          "point_p95": true,
+          "point_maximum": false,
+          "nonempty_retention": true
+        },
+        "all_gates_pass": false,
+        "per_case": {
+          "m100_B": {
+            "metrics": {
+              "error_count": 15,
+              "harmful_count": 1,
+              "useful_retained_count": 37,
+              "retained_proposal_count": 2288,
+              "veto_count": 3,
+              "point_SSE_mm2": 48152.21498013789,
+              "point_RMS_mm": 2.461692793492229,
+              "point_p95_mm": 4.783140121716501,
+              "point_maximum_mm": 29.84285874266292
+            },
+            "baseline": {
+              "eligible_count": 7946,
+              "point_count": 7946,
+              "A_harmful_count": 2,
+              "A_useful_count": 39,
+              "A_proposal_count": 2291,
+              "oracle_count": 7678,
+              "N": {
+                "error_count": 51,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2291,
+                "point_SSE_mm2": 64222.55879609448,
+                "point_RMS_mm": 2.842951967013751,
+                "point_p95_mm": 5.908566520898447,
+                "point_maximum_mm": 26.907642231578496
+              },
+              "A": {
+                "error_count": 14,
+                "harmful_count": 2,
+                "useful_retained_count": 39,
+                "retained_proposal_count": 2291,
+                "veto_count": 0,
+                "point_SSE_mm2": 48133.01309068186,
+                "point_RMS_mm": 2.4612019140353723,
+                "point_p95_mm": 4.782588189208275,
+                "point_maximum_mm": 29.84285874266292
+              }
+            },
+            "harmful_accuracy_scorable": true
+          },
+          "p030_B": {
+            "metrics": {
+              "error_count": 109,
+              "harmful_count": 0,
+              "useful_retained_count": 117,
+              "retained_proposal_count": 2113,
+              "veto_count": 45,
+              "point_SSE_mm2": 60642.17670076478,
+              "point_RMS_mm": 2.842575722054131,
+              "point_p95_mm": 6.097001062983647,
+              "point_maximum_mm": 22.844562060658617
+            },
+            "baseline": {
+              "eligible_count": 7505,
+              "point_count": 7505,
+              "A_harmful_count": 0,
+              "A_useful_count": 162,
+              "A_proposal_count": 2158,
+              "oracle_count": 6748,
+              "N": {
+                "error_count": 226,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2158,
+                "point_SSE_mm2": 83717.99056206962,
+                "point_RMS_mm": 3.339904504654159,
+                "point_p95_mm": 8.456741024183572,
+                "point_maximum_mm": 22.72277605440519
+              },
+              "A": {
+                "error_count": 64,
+                "harmful_count": 0,
+                "useful_retained_count": 162,
+                "retained_proposal_count": 2158,
+                "veto_count": 0,
+                "point_SSE_mm2": 58211.91946639021,
+                "point_RMS_mm": 2.785034706541542,
+                "point_p95_mm": 6.045741282332057,
+                "point_maximum_mm": 22.844562060658617
+              }
+            },
+            "harmful_accuracy_scorable": false
+          },
+          "p090_B": {
+            "metrics": {
+              "error_count": 48,
+              "harmful_count": 3,
+              "useful_retained_count": 90,
+              "retained_proposal_count": 2449,
+              "veto_count": 4,
+              "point_SSE_mm2": 71177.76998502505,
+              "point_RMS_mm": 2.9880547010162077,
+              "point_p95_mm": 6.541338139573333,
+              "point_maximum_mm": 25.226673206812258
+            },
+            "baseline": {
+              "eligible_count": 7972,
+              "point_count": 7972,
+              "A_harmful_count": 4,
+              "A_useful_count": 93,
+              "A_proposal_count": 2453,
+              "oracle_count": 7557,
+              "N": {
+                "error_count": 135,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2453,
+                "point_SSE_mm2": 82082.55457265757,
+                "point_RMS_mm": 3.2087936315032337,
+                "point_p95_mm": 7.618631001608613,
+                "point_maximum_mm": 25.226673206812258
+              },
+              "A": {
+                "error_count": 46,
+                "harmful_count": 4,
+                "useful_retained_count": 93,
+                "retained_proposal_count": 2453,
+                "veto_count": 0,
+                "point_SSE_mm2": 71685.1139182272,
+                "point_RMS_mm": 2.998684983536133,
+                "point_p95_mm": 6.5542517675363765,
+                "point_maximum_mm": 25.226673206812258
+              }
+            },
+            "harmful_accuracy_scorable": true
+          }
+        }
+      },
+      "shared_covariance": {
+        "metrics": {
+          "error_count": 163,
+          "harmful_count": 4,
+          "useful_retained_count": 253,
+          "retained_proposal_count": 6859,
+          "veto_count": 43,
+          "point_SSE_mm2": 178938.17255232937,
+          "point_RMS_mm": 2.763950364557987,
+          "point_p95_mm": 5.784485135806448,
+          "point_maximum_mm": 29.84285874266292
+        },
+        "baseline": {
+          "eligible_count": 23423,
+          "point_count": 23423,
+          "A_harmful_count": 6,
+          "A_useful_count": 294,
+          "A_proposal_count": 6902,
+          "oracle_count": 21983,
+          "N": {
+            "error_count": 412,
+            "harmful_count": 0,
+            "useful_retained_count": 0,
+            "retained_proposal_count": 0,
+            "veto_count": 6902,
+            "point_SSE_mm2": 230023.10393082164,
+            "point_RMS_mm": 3.1337508918025083,
+            "point_p95_mm": 7.335860821293344,
+            "point_maximum_mm": 26.907642231578496
+          },
+          "A": {
+            "error_count": 124,
+            "harmful_count": 6,
+            "useful_retained_count": 294,
+            "retained_proposal_count": 6902,
+            "veto_count": 0,
+            "point_SSE_mm2": 178030.04647529926,
+            "point_RMS_mm": 2.7569278044557697,
+            "point_p95_mm": 5.7966951671247795,
+            "point_maximum_mm": 29.84285874266292
+          }
+        },
+        "gates": {
+          "harmful_removal": false,
+          "useful_retention": false,
+          "pooled_errors": false,
+          "m100_B_error_rate": true,
+          "m100_B_harmful_nonincrease": true,
+          "p030_B_error_rate": false,
+          "p030_B_harmful_nonincrease": true,
+          "p090_B_error_rate": true,
+          "p090_B_harmful_nonincrease": true,
+          "point_RMS": false,
+          "point_p95": true,
+          "point_maximum": false,
+          "nonempty_retention": true
+        },
+        "all_gates_pass": false,
+        "per_case": {
+          "m100_B": {
+            "metrics": {
+              "error_count": 14,
+              "harmful_count": 1,
+              "useful_retained_count": 38,
+              "retained_proposal_count": 2289,
+              "veto_count": 2,
+              "point_SSE_mm2": 48090.963611087784,
+              "point_RMS_mm": 2.4601266138841873,
+              "point_p95_mm": 4.783140121716501,
+              "point_maximum_mm": 29.84285874266292
+            },
+            "baseline": {
+              "eligible_count": 7946,
+              "point_count": 7946,
+              "A_harmful_count": 2,
+              "A_useful_count": 39,
+              "A_proposal_count": 2291,
+              "oracle_count": 7678,
+              "N": {
+                "error_count": 51,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2291,
+                "point_SSE_mm2": 64222.55879609448,
+                "point_RMS_mm": 2.842951967013751,
+                "point_p95_mm": 5.908566520898447,
+                "point_maximum_mm": 26.907642231578496
+              },
+              "A": {
+                "error_count": 14,
+                "harmful_count": 2,
+                "useful_retained_count": 39,
+                "retained_proposal_count": 2291,
+                "veto_count": 0,
+                "point_SSE_mm2": 48133.01309068186,
+                "point_RMS_mm": 2.4612019140353723,
+                "point_p95_mm": 4.782588189208275,
+                "point_maximum_mm": 29.84285874266292
+              }
+            },
+            "harmful_accuracy_scorable": true
+          },
+          "p030_B": {
+            "metrics": {
+              "error_count": 101,
+              "harmful_count": 0,
+              "useful_retained_count": 125,
+              "retained_proposal_count": 2121,
+              "veto_count": 37,
+              "point_SSE_mm2": 59669.438956216545,
+              "point_RMS_mm": 2.819685226695309,
+              "point_p95_mm": 6.063668474973716,
+              "point_maximum_mm": 22.844562060658617
+            },
+            "baseline": {
+              "eligible_count": 7505,
+              "point_count": 7505,
+              "A_harmful_count": 0,
+              "A_useful_count": 162,
+              "A_proposal_count": 2158,
+              "oracle_count": 6748,
+              "N": {
+                "error_count": 226,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2158,
+                "point_SSE_mm2": 83717.99056206962,
+                "point_RMS_mm": 3.339904504654159,
+                "point_p95_mm": 8.456741024183572,
+                "point_maximum_mm": 22.72277605440519
+              },
+              "A": {
+                "error_count": 64,
+                "harmful_count": 0,
+                "useful_retained_count": 162,
+                "retained_proposal_count": 2158,
+                "veto_count": 0,
+                "point_SSE_mm2": 58211.91946639021,
+                "point_RMS_mm": 2.785034706541542,
+                "point_p95_mm": 6.045741282332057,
+                "point_maximum_mm": 22.844562060658617
+              }
+            },
+            "harmful_accuracy_scorable": false
+          },
+          "p090_B": {
+            "metrics": {
+              "error_count": 48,
+              "harmful_count": 3,
+              "useful_retained_count": 90,
+              "retained_proposal_count": 2449,
+              "veto_count": 4,
+              "point_SSE_mm2": 71177.76998502505,
+              "point_RMS_mm": 2.9880547010162077,
+              "point_p95_mm": 6.541338139573333,
+              "point_maximum_mm": 25.226673206812258
+            },
+            "baseline": {
+              "eligible_count": 7972,
+              "point_count": 7972,
+              "A_harmful_count": 4,
+              "A_useful_count": 93,
+              "A_proposal_count": 2453,
+              "oracle_count": 7557,
+              "N": {
+                "error_count": 135,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2453,
+                "point_SSE_mm2": 82082.55457265757,
+                "point_RMS_mm": 3.2087936315032337,
+                "point_p95_mm": 7.618631001608613,
+                "point_maximum_mm": 25.226673206812258
+              },
+              "A": {
+                "error_count": 46,
+                "harmful_count": 4,
+                "useful_retained_count": 93,
+                "retained_proposal_count": 2453,
+                "veto_count": 0,
+                "point_SSE_mm2": 71685.1139182272,
+                "point_RMS_mm": 2.998684983536133,
+                "point_p95_mm": 6.5542517675363765,
+                "point_maximum_mm": 25.226673206812258
+              }
+            },
+            "harmful_accuracy_scorable": true
+          }
+        }
+      }
+    },
+    "M2": {
+      "maxabs": {
+        "metrics": {
+          "error_count": 174,
+          "harmful_count": 5,
+          "useful_retained_count": 243,
+          "retained_proposal_count": 6850,
+          "veto_count": 52,
+          "point_SSE_mm2": 179055.2162507063,
+          "point_RMS_mm": 2.764854168605348,
+          "point_p95_mm": 5.806443727365798,
+          "point_maximum_mm": 29.84285874266292
+        },
+        "baseline": {
+          "eligible_count": 23423,
+          "point_count": 23423,
+          "A_harmful_count": 6,
+          "A_useful_count": 294,
+          "A_proposal_count": 6902,
+          "oracle_count": 21983,
+          "N": {
+            "error_count": 412,
+            "harmful_count": 0,
+            "useful_retained_count": 0,
+            "retained_proposal_count": 0,
+            "veto_count": 6902,
+            "point_SSE_mm2": 230023.10393082164,
+            "point_RMS_mm": 3.1337508918025083,
+            "point_p95_mm": 7.335860821293344,
+            "point_maximum_mm": 26.907642231578496
+          },
+          "A": {
+            "error_count": 124,
+            "harmful_count": 6,
+            "useful_retained_count": 294,
+            "retained_proposal_count": 6902,
+            "veto_count": 0,
+            "point_SSE_mm2": 178030.04647529926,
+            "point_RMS_mm": 2.7569278044557697,
+            "point_p95_mm": 5.7966951671247795,
+            "point_maximum_mm": 29.84285874266292
+          }
+        },
+        "gates": {
+          "harmful_removal": false,
+          "useful_retention": false,
+          "pooled_errors": false,
+          "m100_B_error_rate": true,
+          "m100_B_harmful_nonincrease": true,
+          "p030_B_error_rate": false,
+          "p030_B_harmful_nonincrease": true,
+          "p090_B_error_rate": true,
+          "p090_B_harmful_nonincrease": true,
+          "point_RMS": false,
+          "point_p95": false,
+          "point_maximum": false,
+          "nonempty_retention": true
+        },
+        "all_gates_pass": false,
+        "per_case": {
+          "m100_B": {
+            "metrics": {
+              "error_count": 18,
+              "harmful_count": 1,
+              "useful_retained_count": 34,
+              "retained_proposal_count": 2285,
+              "veto_count": 6,
+              "point_SSE_mm2": 48228.59851669659,
+              "point_RMS_mm": 2.4636445032096024,
+              "point_p95_mm": 4.7893847658268545,
+              "point_maximum_mm": 29.84285874266292
+            },
+            "baseline": {
+              "eligible_count": 7946,
+              "point_count": 7946,
+              "A_harmful_count": 2,
+              "A_useful_count": 39,
+              "A_proposal_count": 2291,
+              "oracle_count": 7678,
+              "N": {
+                "error_count": 51,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2291,
+                "point_SSE_mm2": 64222.55879609448,
+                "point_RMS_mm": 2.842951967013751,
+                "point_p95_mm": 5.908566520898447,
+                "point_maximum_mm": 26.907642231578496
+              },
+              "A": {
+                "error_count": 14,
+                "harmful_count": 2,
+                "useful_retained_count": 39,
+                "retained_proposal_count": 2291,
+                "veto_count": 0,
+                "point_SSE_mm2": 48133.01309068186,
+                "point_RMS_mm": 2.4612019140353723,
+                "point_p95_mm": 4.782588189208275,
+                "point_maximum_mm": 29.84285874266292
+              }
+            },
+            "harmful_accuracy_scorable": true
+          },
+          "p030_B": {
+            "metrics": {
+              "error_count": 104,
+              "harmful_count": 0,
+              "useful_retained_count": 122,
+              "retained_proposal_count": 2118,
+              "veto_count": 40,
+              "point_SSE_mm2": 59281.33274348629,
+              "point_RMS_mm": 2.8105002682724534,
+              "point_p95_mm": 6.082473276239028,
+              "point_maximum_mm": 22.844562060658617
+            },
+            "baseline": {
+              "eligible_count": 7505,
+              "point_count": 7505,
+              "A_harmful_count": 0,
+              "A_useful_count": 162,
+              "A_proposal_count": 2158,
+              "oracle_count": 6748,
+              "N": {
+                "error_count": 226,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2158,
+                "point_SSE_mm2": 83717.99056206962,
+                "point_RMS_mm": 3.339904504654159,
+                "point_p95_mm": 8.456741024183572,
+                "point_maximum_mm": 22.72277605440519
+              },
+              "A": {
+                "error_count": 64,
+                "harmful_count": 0,
+                "useful_retained_count": 162,
+                "retained_proposal_count": 2158,
+                "veto_count": 0,
+                "point_SSE_mm2": 58211.91946639021,
+                "point_RMS_mm": 2.785034706541542,
+                "point_p95_mm": 6.045741282332057,
+                "point_maximum_mm": 22.844562060658617
+              }
+            },
+            "harmful_accuracy_scorable": false
+          },
+          "p090_B": {
+            "metrics": {
+              "error_count": 52,
+              "harmful_count": 4,
+              "useful_retained_count": 87,
+              "retained_proposal_count": 2447,
+              "veto_count": 6,
+              "point_SSE_mm2": 71545.2849905234,
+              "point_RMS_mm": 2.995758939651383,
+              "point_p95_mm": 6.541338139573333,
+              "point_maximum_mm": 25.226673206812258
+            },
+            "baseline": {
+              "eligible_count": 7972,
+              "point_count": 7972,
+              "A_harmful_count": 4,
+              "A_useful_count": 93,
+              "A_proposal_count": 2453,
+              "oracle_count": 7557,
+              "N": {
+                "error_count": 135,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2453,
+                "point_SSE_mm2": 82082.55457265757,
+                "point_RMS_mm": 3.2087936315032337,
+                "point_p95_mm": 7.618631001608613,
+                "point_maximum_mm": 25.226673206812258
+              },
+              "A": {
+                "error_count": 46,
+                "harmful_count": 4,
+                "useful_retained_count": 93,
+                "retained_proposal_count": 2453,
+                "veto_count": 0,
+                "point_SSE_mm2": 71685.1139182272,
+                "point_RMS_mm": 2.998684983536133,
+                "point_p95_mm": 6.5542517675363765,
+                "point_maximum_mm": 25.226673206812258
+              }
+            },
+            "harmful_accuracy_scorable": true
+          }
+        }
+      },
+      "euclidean": {
+        "metrics": {
+          "error_count": 172,
+          "harmful_count": 4,
+          "useful_retained_count": 244,
+          "retained_proposal_count": 6850,
+          "veto_count": 52,
+          "point_SSE_mm2": 179231.35962830822,
+          "point_RMS_mm": 2.7662137800374795,
+          "point_p95_mm": 5.806443727365798,
+          "point_maximum_mm": 29.84285874266292
+        },
+        "baseline": {
+          "eligible_count": 23423,
+          "point_count": 23423,
+          "A_harmful_count": 6,
+          "A_useful_count": 294,
+          "A_proposal_count": 6902,
+          "oracle_count": 21983,
+          "N": {
+            "error_count": 412,
+            "harmful_count": 0,
+            "useful_retained_count": 0,
+            "retained_proposal_count": 0,
+            "veto_count": 6902,
+            "point_SSE_mm2": 230023.10393082164,
+            "point_RMS_mm": 3.1337508918025083,
+            "point_p95_mm": 7.335860821293344,
+            "point_maximum_mm": 26.907642231578496
+          },
+          "A": {
+            "error_count": 124,
+            "harmful_count": 6,
+            "useful_retained_count": 294,
+            "retained_proposal_count": 6902,
+            "veto_count": 0,
+            "point_SSE_mm2": 178030.04647529926,
+            "point_RMS_mm": 2.7569278044557697,
+            "point_p95_mm": 5.7966951671247795,
+            "point_maximum_mm": 29.84285874266292
+          }
+        },
+        "gates": {
+          "harmful_removal": false,
+          "useful_retention": false,
+          "pooled_errors": false,
+          "m100_B_error_rate": true,
+          "m100_B_harmful_nonincrease": true,
+          "p030_B_error_rate": false,
+          "p030_B_harmful_nonincrease": true,
+          "p090_B_error_rate": true,
+          "p090_B_harmful_nonincrease": true,
+          "point_RMS": false,
+          "point_p95": false,
+          "point_maximum": false,
+          "nonempty_retention": true
+        },
+        "all_gates_pass": false,
+        "per_case": {
+          "m100_B": {
+            "metrics": {
+              "error_count": 18,
+              "harmful_count": 1,
+              "useful_retained_count": 34,
+              "retained_proposal_count": 2285,
+              "veto_count": 6,
+              "point_SSE_mm2": 48288.77017969604,
+              "point_RMS_mm": 2.465180888076131,
+              "point_p95_mm": 4.7893847658268545,
+              "point_maximum_mm": 29.84285874266292
+            },
+            "baseline": {
+              "eligible_count": 7946,
+              "point_count": 7946,
+              "A_harmful_count": 2,
+              "A_useful_count": 39,
+              "A_proposal_count": 2291,
+              "oracle_count": 7678,
+              "N": {
+                "error_count": 51,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2291,
+                "point_SSE_mm2": 64222.55879609448,
+                "point_RMS_mm": 2.842951967013751,
+                "point_p95_mm": 5.908566520898447,
+                "point_maximum_mm": 26.907642231578496
+              },
+              "A": {
+                "error_count": 14,
+                "harmful_count": 2,
+                "useful_retained_count": 39,
+                "retained_proposal_count": 2291,
+                "veto_count": 0,
+                "point_SSE_mm2": 48133.01309068186,
+                "point_RMS_mm": 2.4612019140353723,
+                "point_p95_mm": 4.782588189208275,
+                "point_maximum_mm": 29.84285874266292
+              }
+            },
+            "harmful_accuracy_scorable": true
+          },
+          "p030_B": {
+            "metrics": {
+              "error_count": 106,
+              "harmful_count": 0,
+              "useful_retained_count": 120,
+              "retained_proposal_count": 2116,
+              "veto_count": 42,
+              "point_SSE_mm2": 59822.66799627553,
+              "point_RMS_mm": 2.823303332097595,
+              "point_p95_mm": 6.114727776819427,
+              "point_maximum_mm": 22.844562060658617
+            },
+            "baseline": {
+              "eligible_count": 7505,
+              "point_count": 7505,
+              "A_harmful_count": 0,
+              "A_useful_count": 162,
+              "A_proposal_count": 2158,
+              "oracle_count": 6748,
+              "N": {
+                "error_count": 226,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2158,
+                "point_SSE_mm2": 83717.99056206962,
+                "point_RMS_mm": 3.339904504654159,
+                "point_p95_mm": 8.456741024183572,
+                "point_maximum_mm": 22.72277605440519
+              },
+              "A": {
+                "error_count": 64,
+                "harmful_count": 0,
+                "useful_retained_count": 162,
+                "retained_proposal_count": 2158,
+                "veto_count": 0,
+                "point_SSE_mm2": 58211.91946639021,
+                "point_RMS_mm": 2.785034706541542,
+                "point_p95_mm": 6.045741282332057,
+                "point_maximum_mm": 22.844562060658617
+              }
+            },
+            "harmful_accuracy_scorable": false
+          },
+          "p090_B": {
+            "metrics": {
+              "error_count": 48,
+              "harmful_count": 3,
+              "useful_retained_count": 90,
+              "retained_proposal_count": 2449,
+              "veto_count": 4,
+              "point_SSE_mm2": 71119.92145233662,
+              "point_RMS_mm": 2.9868402086576826,
+              "point_p95_mm": 6.516576586204818,
+              "point_maximum_mm": 25.226673206812258
+            },
+            "baseline": {
+              "eligible_count": 7972,
+              "point_count": 7972,
+              "A_harmful_count": 4,
+              "A_useful_count": 93,
+              "A_proposal_count": 2453,
+              "oracle_count": 7557,
+              "N": {
+                "error_count": 135,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2453,
+                "point_SSE_mm2": 82082.55457265757,
+                "point_RMS_mm": 3.2087936315032337,
+                "point_p95_mm": 7.618631001608613,
+                "point_maximum_mm": 25.226673206812258
+              },
+              "A": {
+                "error_count": 46,
+                "harmful_count": 4,
+                "useful_retained_count": 93,
+                "retained_proposal_count": 2453,
+                "veto_count": 0,
+                "point_SSE_mm2": 71685.1139182272,
+                "point_RMS_mm": 2.998684983536133,
+                "point_p95_mm": 6.5542517675363765,
+                "point_maximum_mm": 25.226673206812258
+              }
+            },
+            "harmful_accuracy_scorable": true
+          }
+        }
+      },
+      "shared_covariance": {
+        "metrics": {
+          "error_count": 171,
+          "harmful_count": 4,
+          "useful_retained_count": 245,
+          "retained_proposal_count": 6851,
+          "veto_count": 51,
+          "point_SSE_mm2": 178800.54793603998,
+          "point_RMS_mm": 2.7628872577545502,
+          "point_p95_mm": 5.797001847041632,
+          "point_maximum_mm": 29.84285874266292
+        },
+        "baseline": {
+          "eligible_count": 23423,
+          "point_count": 23423,
+          "A_harmful_count": 6,
+          "A_useful_count": 294,
+          "A_proposal_count": 6902,
+          "oracle_count": 21983,
+          "N": {
+            "error_count": 412,
+            "harmful_count": 0,
+            "useful_retained_count": 0,
+            "retained_proposal_count": 0,
+            "veto_count": 6902,
+            "point_SSE_mm2": 230023.10393082164,
+            "point_RMS_mm": 3.1337508918025083,
+            "point_p95_mm": 7.335860821293344,
+            "point_maximum_mm": 26.907642231578496
+          },
+          "A": {
+            "error_count": 124,
+            "harmful_count": 6,
+            "useful_retained_count": 294,
+            "retained_proposal_count": 6902,
+            "veto_count": 0,
+            "point_SSE_mm2": 178030.04647529926,
+            "point_RMS_mm": 2.7569278044557697,
+            "point_p95_mm": 5.7966951671247795,
+            "point_maximum_mm": 29.84285874266292
+          }
+        },
+        "gates": {
+          "harmful_removal": false,
+          "useful_retention": false,
+          "pooled_errors": false,
+          "m100_B_error_rate": true,
+          "m100_B_harmful_nonincrease": true,
+          "p030_B_error_rate": false,
+          "p030_B_harmful_nonincrease": true,
+          "p090_B_error_rate": true,
+          "p090_B_harmful_nonincrease": true,
+          "point_RMS": false,
+          "point_p95": false,
+          "point_maximum": false,
+          "nonempty_retention": true
+        },
+        "all_gates_pass": false,
+        "per_case": {
+          "m100_B": {
+            "metrics": {
+              "error_count": 19,
+              "harmful_count": 1,
+              "useful_retained_count": 33,
+              "retained_proposal_count": 2284,
+              "veto_count": 7,
+              "point_SSE_mm2": 48294.78993354225,
+              "point_RMS_mm": 2.465334539946106,
+              "point_p95_mm": 4.7893847658268545,
+              "point_maximum_mm": 29.84285874266292
+            },
+            "baseline": {
+              "eligible_count": 7946,
+              "point_count": 7946,
+              "A_harmful_count": 2,
+              "A_useful_count": 39,
+              "A_proposal_count": 2291,
+              "oracle_count": 7678,
+              "N": {
+                "error_count": 51,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2291,
+                "point_SSE_mm2": 64222.55879609448,
+                "point_RMS_mm": 2.842951967013751,
+                "point_p95_mm": 5.908566520898447,
+                "point_maximum_mm": 26.907642231578496
+              },
+              "A": {
+                "error_count": 14,
+                "harmful_count": 2,
+                "useful_retained_count": 39,
+                "retained_proposal_count": 2291,
+                "veto_count": 0,
+                "point_SSE_mm2": 48133.01309068186,
+                "point_RMS_mm": 2.4612019140353723,
+                "point_p95_mm": 4.782588189208275,
+                "point_maximum_mm": 29.84285874266292
+              }
+            },
+            "harmful_accuracy_scorable": true
+          },
+          "p030_B": {
+            "metrics": {
+              "error_count": 103,
+              "harmful_count": 0,
+              "useful_retained_count": 123,
+              "retained_proposal_count": 2119,
+              "veto_count": 39,
+              "point_SSE_mm2": 59384.193569031966,
+              "point_RMS_mm": 2.812937503323858,
+              "point_p95_mm": 6.082473276239028,
+              "point_maximum_mm": 22.844562060658617
+            },
+            "baseline": {
+              "eligible_count": 7505,
+              "point_count": 7505,
+              "A_harmful_count": 0,
+              "A_useful_count": 162,
+              "A_proposal_count": 2158,
+              "oracle_count": 6748,
+              "N": {
+                "error_count": 226,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2158,
+                "point_SSE_mm2": 83717.99056206962,
+                "point_RMS_mm": 3.339904504654159,
+                "point_p95_mm": 8.456741024183572,
+                "point_maximum_mm": 22.72277605440519
+              },
+              "A": {
+                "error_count": 64,
+                "harmful_count": 0,
+                "useful_retained_count": 162,
+                "retained_proposal_count": 2158,
+                "veto_count": 0,
+                "point_SSE_mm2": 58211.91946639021,
+                "point_RMS_mm": 2.785034706541542,
+                "point_p95_mm": 6.045741282332057,
+                "point_maximum_mm": 22.844562060658617
+              }
+            },
+            "harmful_accuracy_scorable": false
+          },
+          "p090_B": {
+            "metrics": {
+              "error_count": 49,
+              "harmful_count": 3,
+              "useful_retained_count": 89,
+              "retained_proposal_count": 2448,
+              "veto_count": 5,
+              "point_SSE_mm2": 71121.56443346573,
+              "point_RMS_mm": 2.986874708792503,
+              "point_p95_mm": 6.516576586204818,
+              "point_maximum_mm": 25.226673206812258
+            },
+            "baseline": {
+              "eligible_count": 7972,
+              "point_count": 7972,
+              "A_harmful_count": 4,
+              "A_useful_count": 93,
+              "A_proposal_count": 2453,
+              "oracle_count": 7557,
+              "N": {
+                "error_count": 135,
+                "harmful_count": 0,
+                "useful_retained_count": 0,
+                "retained_proposal_count": 0,
+                "veto_count": 2453,
+                "point_SSE_mm2": 82082.55457265757,
+                "point_RMS_mm": 3.2087936315032337,
+                "point_p95_mm": 7.618631001608613,
+                "point_maximum_mm": 25.226673206812258
+              },
+              "A": {
+                "error_count": 46,
+                "harmful_count": 4,
+                "useful_retained_count": 93,
+                "retained_proposal_count": 2453,
+                "veto_count": 0,
+                "point_SSE_mm2": 71685.1139182272,
+                "point_RMS_mm": 2.998684983536133,
+                "point_p95_mm": 6.5542517675363765,
+                "point_maximum_mm": 25.226673206812258
+              }
+            },
+            "harmful_accuracy_scorable": true
+          }
+        }
+      }
+    }
+  },
+  "per_case": {
+    "m100_B": {
+      "M1": {
+        "ranking": {
+          "maxabs": {
+            "primary": {
+              "denominator": 7946,
+              "known": 7946,
+              "unknown": 0,
+              "F_preferred": 44,
+              "Nalt_preferred": 6,
+              "tied": 0,
+              "ambiguous": 7896,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2291,
+              "known": 2291,
+              "unknown": 0,
+              "F_preferred": 39,
+              "Nalt_preferred": 2,
+              "tied": 0,
+              "ambiguous": 2250,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 39,
+              "known": 39,
+              "unknown": 0,
+              "F_preferred": 38,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 38,
+              "correct_fraction": 0.9743589743589743
+            },
+            "harmful": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 1,
+              "correct_fraction": 0.5
+            },
+            "accepted_wrong": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0
+            }
+          },
+          "euclidean": {
+            "primary": {
+              "denominator": 7946,
+              "known": 7946,
+              "unknown": 0,
+              "F_preferred": 43,
+              "Nalt_preferred": 7,
+              "tied": 0,
+              "ambiguous": 7896,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2291,
+              "known": 2291,
+              "unknown": 0,
+              "F_preferred": 38,
+              "Nalt_preferred": 3,
+              "tied": 0,
+              "ambiguous": 2250,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 39,
+              "known": 39,
+              "unknown": 0,
+              "F_preferred": 37,
+              "Nalt_preferred": 2,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 37,
+              "correct_fraction": 0.9487179487179487
+            },
+            "harmful": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 1,
+              "correct_fraction": 0.5
+            },
+            "accepted_wrong": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0
+            }
+          },
+          "shared_covariance": {
+            "primary": {
+              "denominator": 7946,
+              "known": 7946,
+              "unknown": 0,
+              "F_preferred": 44,
+              "Nalt_preferred": 6,
+              "tied": 0,
+              "ambiguous": 7896,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2291,
+              "known": 2291,
+              "unknown": 0,
+              "F_preferred": 39,
+              "Nalt_preferred": 2,
+              "tied": 0,
+              "ambiguous": 2250,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 39,
+              "known": 39,
+              "unknown": 0,
+              "F_preferred": 38,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 38,
+              "correct_fraction": 0.9743589743589743
+            },
+            "harmful": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 1,
+              "correct_fraction": 0.5
+            },
+            "accepted_wrong": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0
+            }
+          }
+        },
+        "both_above_training_p95_accepted": 47
+      },
+      "M2": {
+        "ranking": {
+          "maxabs": {
+            "primary": {
+              "denominator": 7946,
+              "known": 7946,
+              "unknown": 0,
+              "F_preferred": 40,
+              "Nalt_preferred": 10,
+              "tied": 0,
+              "ambiguous": 7896,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2291,
+              "known": 2291,
+              "unknown": 0,
+              "F_preferred": 35,
+              "Nalt_preferred": 6,
+              "tied": 0,
+              "ambiguous": 2250,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 39,
+              "known": 39,
+              "unknown": 0,
+              "F_preferred": 34,
+              "Nalt_preferred": 5,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 34,
+              "correct_fraction": 0.8717948717948718
+            },
+            "harmful": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 1,
+              "correct_fraction": 0.5
+            },
+            "accepted_wrong": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0
+            }
+          },
+          "euclidean": {
+            "primary": {
+              "denominator": 7946,
+              "known": 7946,
+              "unknown": 0,
+              "F_preferred": 40,
+              "Nalt_preferred": 10,
+              "tied": 0,
+              "ambiguous": 7896,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2291,
+              "known": 2291,
+              "unknown": 0,
+              "F_preferred": 35,
+              "Nalt_preferred": 6,
+              "tied": 0,
+              "ambiguous": 2250,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 39,
+              "known": 39,
+              "unknown": 0,
+              "F_preferred": 34,
+              "Nalt_preferred": 5,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 34,
+              "correct_fraction": 0.8717948717948718
+            },
+            "harmful": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 1,
+              "correct_fraction": 0.5
+            },
+            "accepted_wrong": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0
+            }
+          },
+          "shared_covariance": {
+            "primary": {
+              "denominator": 7946,
+              "known": 7946,
+              "unknown": 0,
+              "F_preferred": 39,
+              "Nalt_preferred": 11,
+              "tied": 0,
+              "ambiguous": 7896,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2291,
+              "known": 2291,
+              "unknown": 0,
+              "F_preferred": 34,
+              "Nalt_preferred": 7,
+              "tied": 0,
+              "ambiguous": 2250,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 39,
+              "known": 39,
+              "unknown": 0,
+              "F_preferred": 33,
+              "Nalt_preferred": 6,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 33,
+              "correct_fraction": 0.8461538461538461
+            },
+            "harmful": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 1,
+              "correct_fraction": 0.5
+            },
+            "accepted_wrong": {
+              "denominator": 2,
+              "known": 2,
+              "unknown": 0,
+              "F_preferred": 1,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0
+            }
+          }
+        },
+        "both_above_training_p95_accepted": 33
+      },
+      "M0_I64_original_rank": {
+        "useful_correct": 33,
+        "harmful_correct": 1
+      },
+      "M1_I64_original_rank": {
+        "useful_correct": 38,
+        "harmful_correct": 1
+      },
+      "M2_I64_original_rank": {
+        "useful_correct": 34,
+        "harmful_correct": 1
+      }
+    },
+    "p030_B": {
+      "M1": {
+        "ranking": {
+          "maxabs": {
+            "primary": {
+              "denominator": 7505,
+              "known": 7505,
+              "unknown": 0,
+              "F_preferred": 125,
+              "Nalt_preferred": 54,
+              "tied": 0,
+              "ambiguous": 7326,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2158,
+              "known": 2158,
+              "unknown": 0,
+              "F_preferred": 115,
+              "Nalt_preferred": 47,
+              "tied": 0,
+              "ambiguous": 1996,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 162,
+              "known": 162,
+              "unknown": 0,
+              "F_preferred": 115,
+              "Nalt_preferred": 47,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 115,
+              "correct_fraction": 0.7098765432098766
+            },
+            "harmful": {
+              "denominator": 0,
+              "known": 0,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": null,
+              "correct": 0,
+              "correct_fraction": null
+            },
+            "accepted_wrong": {
+              "denominator": 7,
+              "known": 7,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 7,
+              "coverage": 1.0
+            }
+          },
+          "euclidean": {
+            "primary": {
+              "denominator": 7505,
+              "known": 7505,
+              "unknown": 0,
+              "F_preferred": 127,
+              "Nalt_preferred": 52,
+              "tied": 0,
+              "ambiguous": 7326,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2158,
+              "known": 2158,
+              "unknown": 0,
+              "F_preferred": 117,
+              "Nalt_preferred": 45,
+              "tied": 0,
+              "ambiguous": 1996,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 162,
+              "known": 162,
+              "unknown": 0,
+              "F_preferred": 117,
+              "Nalt_preferred": 45,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 117,
+              "correct_fraction": 0.7222222222222222
+            },
+            "harmful": {
+              "denominator": 0,
+              "known": 0,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": null,
+              "correct": 0,
+              "correct_fraction": null
+            },
+            "accepted_wrong": {
+              "denominator": 7,
+              "known": 7,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 7,
+              "coverage": 1.0
+            }
+          },
+          "shared_covariance": {
+            "primary": {
+              "denominator": 7505,
+              "known": 7505,
+              "unknown": 0,
+              "F_preferred": 135,
+              "Nalt_preferred": 44,
+              "tied": 0,
+              "ambiguous": 7326,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2158,
+              "known": 2158,
+              "unknown": 0,
+              "F_preferred": 125,
+              "Nalt_preferred": 37,
+              "tied": 0,
+              "ambiguous": 1996,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 162,
+              "known": 162,
+              "unknown": 0,
+              "F_preferred": 125,
+              "Nalt_preferred": 37,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 125,
+              "correct_fraction": 0.7716049382716049
+            },
+            "harmful": {
+              "denominator": 0,
+              "known": 0,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": null,
+              "correct": 0,
+              "correct_fraction": null
+            },
+            "accepted_wrong": {
+              "denominator": 7,
+              "known": 7,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 7,
+              "coverage": 1.0
+            }
+          }
+        },
+        "both_above_training_p95_accepted": 282
+      },
+      "M2": {
+        "ranking": {
+          "maxabs": {
+            "primary": {
+              "denominator": 7505,
+              "known": 7505,
+              "unknown": 0,
+              "F_preferred": 131,
+              "Nalt_preferred": 48,
+              "tied": 0,
+              "ambiguous": 7326,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2158,
+              "known": 2158,
+              "unknown": 0,
+              "F_preferred": 122,
+              "Nalt_preferred": 40,
+              "tied": 0,
+              "ambiguous": 1996,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 162,
+              "known": 162,
+              "unknown": 0,
+              "F_preferred": 122,
+              "Nalt_preferred": 40,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 122,
+              "correct_fraction": 0.7530864197530864
+            },
+            "harmful": {
+              "denominator": 0,
+              "known": 0,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": null,
+              "correct": 0,
+              "correct_fraction": null
+            },
+            "accepted_wrong": {
+              "denominator": 7,
+              "known": 7,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 7,
+              "coverage": 1.0
+            }
+          },
+          "euclidean": {
+            "primary": {
+              "denominator": 7505,
+              "known": 7505,
+              "unknown": 0,
+              "F_preferred": 129,
+              "Nalt_preferred": 50,
+              "tied": 0,
+              "ambiguous": 7326,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2158,
+              "known": 2158,
+              "unknown": 0,
+              "F_preferred": 120,
+              "Nalt_preferred": 42,
+              "tied": 0,
+              "ambiguous": 1996,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 162,
+              "known": 162,
+              "unknown": 0,
+              "F_preferred": 120,
+              "Nalt_preferred": 42,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 120,
+              "correct_fraction": 0.7407407407407407
+            },
+            "harmful": {
+              "denominator": 0,
+              "known": 0,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": null,
+              "correct": 0,
+              "correct_fraction": null
+            },
+            "accepted_wrong": {
+              "denominator": 7,
+              "known": 7,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 7,
+              "coverage": 1.0
+            }
+          },
+          "shared_covariance": {
+            "primary": {
+              "denominator": 7505,
+              "known": 7505,
+              "unknown": 0,
+              "F_preferred": 132,
+              "Nalt_preferred": 47,
+              "tied": 0,
+              "ambiguous": 7326,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2158,
+              "known": 2158,
+              "unknown": 0,
+              "F_preferred": 123,
+              "Nalt_preferred": 39,
+              "tied": 0,
+              "ambiguous": 1996,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 162,
+              "known": 162,
+              "unknown": 0,
+              "F_preferred": 123,
+              "Nalt_preferred": 39,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 123,
+              "correct_fraction": 0.7592592592592593
+            },
+            "harmful": {
+              "denominator": 0,
+              "known": 0,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": null,
+              "correct": 0,
+              "correct_fraction": null
+            },
+            "accepted_wrong": {
+              "denominator": 7,
+              "known": 7,
+              "unknown": 0,
+              "F_preferred": 0,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 7,
+              "coverage": 1.0
+            }
+          }
+        },
+        "both_above_training_p95_accepted": 270
+      },
+      "M0_I64_original_rank": {
+        "useful_correct": 100,
+        "harmful_correct": 0
+      },
+      "M1_I64_original_rank": {
+        "useful_correct": 115,
+        "harmful_correct": 0
+      },
+      "M2_I64_original_rank": {
+        "useful_correct": 122,
+        "harmful_correct": 0
+      }
+    },
+    "p090_B": {
+      "M1": {
+        "ranking": {
+          "maxabs": {
+            "primary": {
+              "denominator": 7972,
+              "known": 7972,
+              "unknown": 0,
+              "F_preferred": 123,
+              "Nalt_preferred": 17,
+              "tied": 0,
+              "ambiguous": 7832,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2453,
+              "known": 2453,
+              "unknown": 0,
+              "F_preferred": 95,
+              "Nalt_preferred": 2,
+              "tied": 0,
+              "ambiguous": 2356,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 93,
+              "known": 93,
+              "unknown": 0,
+              "F_preferred": 91,
+              "Nalt_preferred": 2,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 91,
+              "correct_fraction": 0.978494623655914
+            },
+            "harmful": {
+              "denominator": 4,
+              "known": 4,
+              "unknown": 0,
+              "F_preferred": 4,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 0,
+              "correct_fraction": 0.0
+            },
+            "accepted_wrong": {
+              "denominator": 9,
+              "known": 9,
+              "unknown": 0,
+              "F_preferred": 4,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 5,
+              "coverage": 1.0
+            }
+          },
+          "euclidean": {
+            "primary": {
+              "denominator": 7972,
+              "known": 7972,
+              "unknown": 0,
+              "F_preferred": 121,
+              "Nalt_preferred": 19,
+              "tied": 0,
+              "ambiguous": 7832,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2453,
+              "known": 2453,
+              "unknown": 0,
+              "F_preferred": 93,
+              "Nalt_preferred": 4,
+              "tied": 0,
+              "ambiguous": 2356,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 93,
+              "known": 93,
+              "unknown": 0,
+              "F_preferred": 90,
+              "Nalt_preferred": 3,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 90,
+              "correct_fraction": 0.967741935483871
+            },
+            "harmful": {
+              "denominator": 4,
+              "known": 4,
+              "unknown": 0,
+              "F_preferred": 3,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 1,
+              "correct_fraction": 0.25
+            },
+            "accepted_wrong": {
+              "denominator": 9,
+              "known": 9,
+              "unknown": 0,
+              "F_preferred": 3,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 5,
+              "coverage": 1.0
+            }
+          },
+          "shared_covariance": {
+            "primary": {
+              "denominator": 7972,
+              "known": 7972,
+              "unknown": 0,
+              "F_preferred": 121,
+              "Nalt_preferred": 19,
+              "tied": 0,
+              "ambiguous": 7832,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2453,
+              "known": 2453,
+              "unknown": 0,
+              "F_preferred": 93,
+              "Nalt_preferred": 4,
+              "tied": 0,
+              "ambiguous": 2356,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 93,
+              "known": 93,
+              "unknown": 0,
+              "F_preferred": 90,
+              "Nalt_preferred": 3,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 90,
+              "correct_fraction": 0.967741935483871
+            },
+            "harmful": {
+              "denominator": 4,
+              "known": 4,
+              "unknown": 0,
+              "F_preferred": 3,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 1,
+              "correct_fraction": 0.25
+            },
+            "accepted_wrong": {
+              "denominator": 9,
+              "known": 9,
+              "unknown": 0,
+              "F_preferred": 3,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 5,
+              "coverage": 1.0
+            }
+          }
+        },
+        "both_above_training_p95_accepted": 78
+      },
+      "M2": {
+        "ranking": {
+          "maxabs": {
+            "primary": {
+              "denominator": 7972,
+              "known": 7972,
+              "unknown": 0,
+              "F_preferred": 116,
+              "Nalt_preferred": 24,
+              "tied": 0,
+              "ambiguous": 7832,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2453,
+              "known": 2453,
+              "unknown": 0,
+              "F_preferred": 91,
+              "Nalt_preferred": 6,
+              "tied": 0,
+              "ambiguous": 2356,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 93,
+              "known": 93,
+              "unknown": 0,
+              "F_preferred": 87,
+              "Nalt_preferred": 6,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 87,
+              "correct_fraction": 0.9354838709677419
+            },
+            "harmful": {
+              "denominator": 4,
+              "known": 4,
+              "unknown": 0,
+              "F_preferred": 4,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 0,
+              "correct_fraction": 0.0
+            },
+            "accepted_wrong": {
+              "denominator": 9,
+              "known": 9,
+              "unknown": 0,
+              "F_preferred": 4,
+              "Nalt_preferred": 0,
+              "tied": 0,
+              "ambiguous": 5,
+              "coverage": 1.0
+            }
+          },
+          "euclidean": {
+            "primary": {
+              "denominator": 7972,
+              "known": 7972,
+              "unknown": 0,
+              "F_preferred": 119,
+              "Nalt_preferred": 21,
+              "tied": 0,
+              "ambiguous": 7832,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2453,
+              "known": 2453,
+              "unknown": 0,
+              "F_preferred": 93,
+              "Nalt_preferred": 4,
+              "tied": 0,
+              "ambiguous": 2356,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 93,
+              "known": 93,
+              "unknown": 0,
+              "F_preferred": 90,
+              "Nalt_preferred": 3,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 90,
+              "correct_fraction": 0.967741935483871
+            },
+            "harmful": {
+              "denominator": 4,
+              "known": 4,
+              "unknown": 0,
+              "F_preferred": 3,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 1,
+              "correct_fraction": 0.25
+            },
+            "accepted_wrong": {
+              "denominator": 9,
+              "known": 9,
+              "unknown": 0,
+              "F_preferred": 3,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 5,
+              "coverage": 1.0
+            }
+          },
+          "shared_covariance": {
+            "primary": {
+              "denominator": 7972,
+              "known": 7972,
+              "unknown": 0,
+              "F_preferred": 118,
+              "Nalt_preferred": 22,
+              "tied": 0,
+              "ambiguous": 7832,
+              "coverage": 1.0
+            },
+            "accepted": {
+              "denominator": 2453,
+              "known": 2453,
+              "unknown": 0,
+              "F_preferred": 92,
+              "Nalt_preferred": 5,
+              "tied": 0,
+              "ambiguous": 2356,
+              "coverage": 1.0
+            },
+            "useful": {
+              "denominator": 93,
+              "known": 93,
+              "unknown": 0,
+              "F_preferred": 89,
+              "Nalt_preferred": 4,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 89,
+              "correct_fraction": 0.956989247311828
+            },
+            "harmful": {
+              "denominator": 4,
+              "known": 4,
+              "unknown": 0,
+              "F_preferred": 3,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 0,
+              "coverage": 1.0,
+              "correct": 1,
+              "correct_fraction": 0.25
+            },
+            "accepted_wrong": {
+              "denominator": 9,
+              "known": 9,
+              "unknown": 0,
+              "F_preferred": 3,
+              "Nalt_preferred": 1,
+              "tied": 0,
+              "ambiguous": 5,
+              "coverage": 1.0
+            }
+          }
+        },
+        "both_above_training_p95_accepted": 117
+      },
+      "M0_I64_original_rank": {
+        "useful_correct": 79,
+        "harmful_correct": 1
+      },
+      "M1_I64_original_rank": {
+        "useful_correct": 91,
+        "harmful_correct": 0
+      },
+      "M2_I64_original_rank": {
+        "useful_correct": 87,
+        "harmful_correct": 0
+      }
+    }
+  },
+  "events": [
+    {
+      "case": "m100_B",
+      "index": 1575,
+      "time_s": 7.874999999999854,
+      "reasons": [
+        "first_useful",
+        "known_useful_7.875"
+      ],
+      "N_family": 1,
+      "F_family": 0,
+      "truth_family": 0,
+      "native_point_mm": 13.669441712215978,
+      "proposal_point_mm": 6.467536216405645,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 0.29502808818385073,
+            "Nalt": 1.9690333662329276,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.13798802064794521,
+            "Nalt": 6.149523479318499,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 9.184046573816111,
+            "Nalt": 314.69417472751167,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.21150459426106,
+            0.07881785607964481,
+            0.29502808818385073
+          ],
+          "normalized_Nalt_residual": [
+            -1.9690333662329276,
+            0.7595322329203672,
+            -1.302129743587376
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.11645883986576427,
+            "Nalt": 0.7867537037966611,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.019597263917812052,
+            "Nalt": 0.9704151629718717,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 1.8755398488219224,
+            "Nalt": 74.29862376681336,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.07122112899045405,
+            0.0310185963618187,
+            0.11645883986576427
+          ],
+          "normalized_Nalt_residual": [
+            -0.7867537037966611,
+            0.2988588331414592,
+            -0.5119737985360509
+          ]
+        }
+      }
+    },
+    {
+      "case": "m100_B",
+      "index": 6422,
+      "time_s": 32.109999999997974,
+      "reasons": [
+        "first_lost_useful_primary"
+      ],
+      "N_family": 1,
+      "F_family": 3,
+      "truth_family": 3,
+      "native_point_mm": 12.452146619167948,
+      "proposal_point_mm": 2.789085513218944,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 0.4387883876872064,
+            "Nalt": 0.22706212864516678,
+            "code": 1,
+            "keep": false
+          },
+          "euclidean": {
+            "F": 0.19659215275750438,
+            "Nalt": 0.05653699934516666,
+            "code": 1,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 9.911997833272112,
+            "Nalt": 3.187472839177872,
+            "code": 1,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            -0.4387883876872064,
+            -0.00014186139295964227,
+            0.06369366894528404
+          ],
+          "normalized_Nalt_residual": [
+            -0.22706212864516678,
+            -0.00014186139295964227,
+            -0.07056747803087184
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.17170626128799546,
+            "Nalt": 0.08839846982117926,
+            "code": 1,
+            "keep": false
+          },
+          "euclidean": {
+            "F": 0.030113369051570697,
+            "Nalt": 0.008582767711357839,
+            "code": 1,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 3.314167388636533,
+            "Nalt": 1.0989432040839369,
+            "code": 1,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            -0.17170626128799546,
+            -6.218162526605331e-05,
+            0.025106274504888365
+          ],
+          "normalized_Nalt_residual": [
+            -0.08839846982117926,
+            -6.218162526605331e-05,
+            -0.027721370422065676
+          ]
+        }
+      }
+    },
+    {
+      "case": "m100_B",
+      "index": 7011,
+      "time_s": 35.05499999999948,
+      "reasons": [
+        "every_harmful"
+      ],
+      "N_family": 3,
+      "F_family": 1,
+      "truth_family": 3,
+      "native_point_mm": 15.209479802977349,
+      "proposal_point_mm": 20.509868670873175,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 1.4923527266132168,
+            "Nalt": 0.9958957618829352,
+            "code": 1,
+            "keep": false
+          },
+          "euclidean": {
+            "F": 3.182351178092401,
+            "Nalt": 1.8790263900737154,
+            "code": 1,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 178.8077128478389,
+            "Nalt": 99.63901912593667,
+            "code": 1,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            0.9773609963578369,
+            -1.6152851742258985e-05,
+            -1.4923527266132168
+          ],
+          "normalized_Nalt_residual": [
+            0.941922513414139,
+            -1.6152851742258985e-05,
+            -0.9958957618829352
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.5685330860926651,
+            "Nalt": 0.45110498341313515,
+            "code": 1,
+            "keep": false
+          },
+          "euclidean": {
+            "F": 0.5395003870504834,
+            "Nalt": 0.342768342470525,
+            "code": 1,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 50.59372899862144,
+            "Nalt": 30.965390888563917,
+            "code": 1,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            0.46504893991778257,
+            -2.3447395643602418e-05,
+            -0.5685330860926651
+          ],
+          "normalized_Nalt_residual": [
+            0.45110498341313515,
+            -2.3447395643602418e-05,
+            -0.3731924916990958
+          ]
+        }
+      }
+    },
+    {
+      "case": "m100_B",
+      "index": 7041,
+      "time_s": 35.20499999999956,
+      "reasons": [
+        "every_harmful",
+        "worst_A_point"
+      ],
+      "N_family": 3,
+      "F_family": 1,
+      "truth_family": 3,
+      "native_point_mm": 15.155053906250474,
+      "proposal_point_mm": 29.84285874266292,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 1.2448454444642743,
+            "Nalt": 1.4647513561059435,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 2.595140636763742,
+            "Nalt": 2.822873883006326,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 132.65387716944952,
+            "Nalt": 137.81087815031313,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            1.2448454444642743,
+            -1.3691885593574273e-05,
+            -1.0224971667309488
+          ],
+          "normalized_Nalt_residual": [
+            1.4647513561059435,
+            -1.3691885593574273e-05,
+            -0.8230293722611953
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.5682126183362648,
+            "Nalt": 0.6547388523152385,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.4800386889766912,
+            "Nalt": 0.5297854549205302,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 43.111246755875996,
+            "Nalt": 46.454557217020486,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.5682126183362648,
+            -8.089070763755078e-06,
+            -0.39645063914023954
+          ],
+          "normalized_Nalt_residual": [
+            0.6547388523152385,
+            -8.089070763755078e-06,
+            -0.31796617764161866
+          ]
+        }
+      }
+    },
+    {
+      "case": "p030_B",
+      "index": 1529,
+      "time_s": 7.644999999999859,
+      "reasons": [
+        "first_useful"
+      ],
+      "N_family": 2,
+      "F_family": 0,
+      "truth_family": 0,
+      "native_point_mm": 1.0412133717086236,
+      "proposal_point_mm": 0.9797367450425228,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 0.045642722166282124,
+            "Nalt": 0.1762141321938623,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.0021045670673281577,
+            "Nalt": 0.031056670295958273,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 0.13156218170663703,
+            "Nalt": 2.2282300954955536,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.045642722166282124,
+            -0.004616165031917623,
+            9.88856480846836e-07
+          ],
+          "normalized_Nalt_residual": [
+            -0.1762141321938623,
+            -0.002291268239306848,
+            9.88856480846836e-07
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.039178848221457604,
+            "Nalt": 0.04811502190185738,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.0015480778080046312,
+            "Nalt": 0.0023223670444331387,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 0.13360444774689267,
+            "Nalt": 0.38658809136733424,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.039178848221457604,
+            -0.003618790546544868,
+            3.8761910304531255e-06
+          ],
+          "normalized_Nalt_residual": [
+            -0.04811502190185738,
+            -0.002704014939320109,
+            3.8761910304531255e-06
+          ]
+        }
+      }
+    },
+    {
+      "case": "p030_B",
+      "index": 2694,
+      "time_s": 13.470000000000706,
+      "reasons": [
+        "first_lost_useful_primary"
+      ],
+      "N_family": 0,
+      "F_family": 1,
+      "truth_family": 1,
+      "native_point_mm": 15.036670498556083,
+      "proposal_point_mm": 4.832536335770738,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 0.8227301445678008,
+            "Nalt": 0.781103250137319,
+            "code": 1,
+            "keep": false
+          },
+          "euclidean": {
+            "F": 0.7531985375439577,
+            "Nalt": 0.6662711707007395,
+            "code": 1,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 55.257164031713785,
+            "Nalt": 47.769640394517054,
+            "code": 1,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            0.8227301445678008,
+            0.2566577281753321,
+            -0.1021785561225089
+          ],
+          "normalized_Nalt_residual": [
+            -0.781103250137319,
+            -0.1765211489350383,
+            0.15807962330518902
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.311040762521428,
+            "Nalt": 0.3200185052241192,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.12438241685379381,
+            "Nalt": 0.10455021846143021,
+            "code": 1,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 13.989788510716746,
+            "Nalt": 13.049343410616588,
+            "code": 1,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            0.311040762521428,
+            0.1555625046548123,
+            -0.05862054289584798
+          ],
+          "normalized_Nalt_residual": [
+            -0.3200185052241192,
+            -0.014880102348247888,
+            0.043783071267971735
+          ]
+        }
+      }
+    },
+    {
+      "case": "p030_B",
+      "index": 7439,
+      "time_s": 37.195000000000576,
+      "reasons": [
+        "worst_A_point"
+      ],
+      "N_family": 1,
+      "F_family": 1,
+      "truth_family": 0,
+      "native_point_mm": 16.30220507133989,
+      "proposal_point_mm": 22.844562060658617,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 0.5839647468977044,
+            "Nalt": 0.5839647468977044,
+            "code": 2,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.7948224768100668,
+            "Nalt": 0.7948224768100668,
+            "code": 2,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 90.64596664134186,
+            "Nalt": 90.64596664134186,
+            "code": 2,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.5839647468977044,
+            -0.42100997892004355,
+            0.525888057328279
+          ],
+          "normalized_Nalt_residual": [
+            0.5839647468977044,
+            -0.42100997892004355,
+            0.525888057328279
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.4662363858197032,
+            "Nalt": 0.4662363858197032,
+            "code": 2,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.46112687837568045,
+            "Nalt": 0.46112687837568045,
+            "code": 2,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 49.59237934532916,
+            "Nalt": 49.59237934532916,
+            "code": 2,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.4662363858197032,
+            -0.34153299784119046,
+            0.35651889472939674
+          ],
+          "normalized_Nalt_residual": [
+            0.4662363858197032,
+            -0.34153299784119046,
+            0.35651889472939674
+          ]
+        }
+      }
+    },
+    {
+      "case": "p090_B",
+      "index": 1345,
+      "time_s": 6.724999999999879,
+      "reasons": [
+        "first_useful"
+      ],
+      "N_family": 2,
+      "F_family": 0,
+      "truth_family": 0,
+      "native_point_mm": 0.46200595267316225,
+      "proposal_point_mm": 0.4515444025960619,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 0.005225138068852833,
+            "Nalt": 0.22050074547504017,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 2.8256545996988255e-05,
+            "Nalt": 0.052493586109578695,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 0.0013407580660620823,
+            "Nalt": 2.2765640607864803,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.005225138068852833,
+            0.000976967747154097,
+            3.4899045527522265e-06
+          ],
+          "normalized_Nalt_residual": [
+            0.22050074547504017,
+            -0.06223349052038471,
+            3.4899045527522265e-06
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.01560972690238749,
+            "Nalt": 0.09025244928202689,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.00027445041387329553,
+            "Nalt": 0.00823128821761557,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 0.04822602787444684,
+            "Nalt": 0.5092336336481899,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.005548098055953657,
+            0.01560972690238749,
+            -7.38096721241903e-05
+          ],
+          "normalized_Nalt_residual": [
+            0.09025244928202689,
+            -0.009261650411402715,
+            -7.38096721241903e-05
+          ]
+        }
+      }
+    },
+    {
+      "case": "p090_B",
+      "index": 1370,
+      "time_s": 6.849999999999876,
+      "reasons": [
+        "first_lost_useful_primary"
+      ],
+      "N_family": 2,
+      "F_family": 0,
+      "truth_family": 0,
+      "native_point_mm": 0.3668033328022578,
+      "proposal_point_mm": 10.210917837358013,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 0.8888449082900087,
+            "Nalt": 0.5000894428856921,
+            "code": 1,
+            "keep": false
+          },
+          "euclidean": {
+            "F": 0.9142195688464931,
+            "Nalt": 0.46647701619264403,
+            "code": 1,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 47.204278592102554,
+            "Nalt": 34.30741387856177,
+            "code": 1,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            0.8888449082900087,
+            0.35238373661452643,
+            -4.796172984374477e-06
+          ],
+          "normalized_Nalt_residual": [
+            0.4651747685375023,
+            0.5000894428856921,
+            -4.796172984374477e-06
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.3472083677547599,
+            "Nalt": 0.21806425282949676,
+            "code": 1,
+            "keep": false
+          },
+          "euclidean": {
+            "F": 0.1461365610705695,
+            "Nalt": 0.08013485227293646,
+            "code": 1,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 14.241639114311441,
+            "Nalt": 9.992812904980903,
+            "code": 1,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            0.3472083677547599,
+            0.1599465860263026,
+            -7.0834671459652844e-06
+          ],
+          "normalized_Nalt_residual": [
+            0.18050715736688747,
+            0.21806425282949676,
+            -7.0834671459652844e-06
+          ]
+        }
+      }
+    },
+    {
+      "case": "p090_B",
+      "index": 2511,
+      "time_s": 12.555000000000563,
+      "reasons": [
+        "every_harmful"
+      ],
+      "N_family": 2,
+      "F_family": 0,
+      "truth_family": 2,
+      "native_point_mm": 0.5494512098646304,
+      "proposal_point_mm": 20.563584818101816,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 1.428546507539469,
+            "Nalt": 1.4592664774945094,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 2.4973385030522164,
+            "Nalt": 2.1335547179095484,
+            "code": 1,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 136.6448191957327,
+            "Nalt": 95.10930412742441,
+            "code": 1,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            1.428546507539469,
+            0.6757169323398899,
+            7.872846251331901e-05
+          ],
+          "normalized_Nalt_residual": [
+            -1.4592664774945094,
+            0.06400046384319204,
+            7.872846251331901e-05
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.5607665240417221,
+            "Nalt": 0.575499346053025,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.4375515037270935,
+            "Nalt": 0.3433333139242504,
+            "code": 1,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 46.98443482692706,
+            "Nalt": 32.15252606789488,
+            "code": 1,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            0.5607665240417221,
+            0.3508452774117854,
+            2.3645412758493723e-05
+          ],
+          "normalized_Nalt_residual": [
+            -0.575499346053025,
+            0.11015360210944301,
+            2.3645412758493723e-05
+          ]
+        }
+      }
+    },
+    {
+      "case": "p090_B",
+      "index": 3553,
+      "time_s": 17.76500000000075,
+      "reasons": [
+        "worst_A_point"
+      ],
+      "N_family": 1,
+      "F_family": 1,
+      "truth_family": 0,
+      "native_point_mm": 25.226673206812258,
+      "proposal_point_mm": 44.03825413745319,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 4.915541013541162,
+            "Nalt": 4.915541013541162,
+            "code": 2,
+            "keep": false
+          },
+          "euclidean": {
+            "F": 32.065296816282384,
+            "Nalt": 32.065296816282384,
+            "code": 2,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 2262.9359270348896,
+            "Nalt": 2262.9359270348896,
+            "code": 2,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            0.5965454182804838,
+            4.915541013541162,
+            -2.747159792295613
+          ],
+          "normalized_Nalt_residual": [
+            0.5965454182804838,
+            4.915541013541162,
+            -2.747159792295613
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 1.9341165618037823,
+            "Nalt": 1.9341165618037823,
+            "code": 2,
+            "keep": false
+          },
+          "euclidean": {
+            "F": 5.002254152707362,
+            "Nalt": 5.002254152707362,
+            "code": 2,
+            "keep": false
+          },
+          "shared_covariance": {
+            "F": 505.0139956240004,
+            "Nalt": 505.0139956240004,
+            "code": 2,
+            "keep": false
+          },
+          "normalized_F_residual": [
+            0.2362739052477138,
+            1.9341165618037823,
+            -1.0980081601530436
+          ],
+          "normalized_Nalt_residual": [
+            0.2362739052477138,
+            1.9341165618037823,
+            -1.0980081601530436
+          ]
+        }
+      }
+    },
+    {
+      "case": "p090_B",
+      "index": 6219,
+      "time_s": 31.094999999998098,
+      "reasons": [
+        "every_harmful"
+      ],
+      "N_family": 1,
+      "F_family": 3,
+      "truth_family": 1,
+      "native_point_mm": 3.981360427774032,
+      "proposal_point_mm": 6.036686357794702,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 0.5292927678051452,
+            "Nalt": 0.7740880232391579,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.28074222628707673,
+            "Nalt": 0.8584922779380274,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 19.55074420664795,
+            "Nalt": 58.139222506861856,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.024318544033554042,
+            -2.554081930306153e-05,
+            -0.5292927678051452
+          ],
+          "normalized_Nalt_residual": [
+            -0.5091954532037642,
+            -2.554081930306153e-05,
+            -0.7740880232391579
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.32722303231446426,
+            "Nalt": 0.4235424599755479,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.10707520937323324,
+            "Nalt": 0.22368405666043062,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 12.584154800327847,
+            "Nalt": 25.605567921048653,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            -0.0005443712797647922,
+            1.2492801083409651e-05,
+            -0.32722303231446426
+          ],
+          "normalized_Nalt_residual": [
+            -0.21046577180677611,
+            1.2492801083409651e-05,
+            -0.4235424599755479
+          ]
+        }
+      }
+    },
+    {
+      "case": "p090_B",
+      "index": 6232,
+      "time_s": 31.159999999998085,
+      "reasons": [
+        "every_harmful"
+      ],
+      "N_family": 3,
+      "F_family": 1,
+      "truth_family": 3,
+      "native_point_mm": 18.391885502096645,
+      "proposal_point_mm": 22.819901375224596,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 0.20753764488639903,
+            "Nalt": 1.5354891908833157,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.07635147918329943,
+            "Nalt": 2.3789304443862203,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 3.9537372095274135,
+            "Nalt": 109.13619218826764,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.18242698092921777,
+            4.203994729854347e-05,
+            -0.20753764488639903
+          ],
+          "normalized_Nalt_residual": [
+            -1.5354891908833157,
+            4.203994729854347e-05,
+            -0.1456138293547826
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.31908671177054515,
+            "Nalt": 0.5711645047005731,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.11279577294041232,
+            "Nalt": 0.41308970656185845,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 12.62828640387555,
+            "Nalt": 40.92767862200212,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.10478283809139903,
+            1.2384870863669581e-05,
+            -0.31908671177054515
+          ],
+          "normalized_Nalt_residual": [
+            -0.5711645047005731,
+            1.2384870863669581e-05,
+            -0.29472158892524725
+          ]
+        }
+      }
+    },
+    {
+      "case": "p090_B",
+      "index": 6235,
+      "time_s": 31.174999999998082,
+      "reasons": [
+        "every_harmful"
+      ],
+      "N_family": 3,
+      "F_family": 1,
+      "truth_family": 3,
+      "native_point_mm": 20.598907142586395,
+      "proposal_point_mm": 21.625524010037655,
+      "scores": {
+        "M1": {
+          "maxabs": {
+            "F": 0.29374764833053696,
+            "Nalt": 0.9386933569420443,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.08657573737154795,
+            "Nalt": 0.8819980289462291,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 3.5974536774289345,
+            "Nalt": 40.02353168405501,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.29374764833053696,
+            3.315423673888088e-06,
+            0.01697222616026214
+          ],
+          "normalized_Nalt_residual": [
+            -0.9386933569420443,
+            3.315423673888088e-06,
+            -0.02920292054081253
+          ]
+        },
+        "M2": {
+          "maxabs": {
+            "F": 0.1530194830575433,
+            "Nalt": 0.33190826623008374,
+            "code": -1,
+            "keep": true
+          },
+          "euclidean": {
+            "F": 0.028320531928159504,
+            "Nalt": 0.11794379732527677,
+            "code": -1,
+            "keep": true
+          },
+          "shared_covariance": {
+            "F": 2.28692983985942,
+            "Nalt": 11.665974434815233,
+            "code": -1,
+            "keep": true
+          },
+          "normalized_F_residual": [
+            0.1530194830575433,
+            2.0396074661385527e-06,
+            -0.07003977247822646
+          ],
+          "normalized_Nalt_residual": [
+            -0.33190826623008374,
+            2.0396074661385527e-06,
+            -0.0882082769883679
+          ]
+        }
+      }
+    }
+  ],
+  "primary_qualified": false,
+  "decision": "Rejected for integration; retain live baseline and investigate candidate/load assumptions."
+}

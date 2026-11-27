@@ -3990,6 +3990,58 @@ contact ambiguity, candidate geometry and within-interval load distribution
 need separate investigation. Preserve the partial success for presentation.
 [Record, plots and reproduction](docs/iterations/2026-11-27/contact-load-history/README.md).
 
+## I-65 / 2026-11-27 / implemented, run, analyzed; rejected for integration
+
+Question: does a shared empirical bias/covariance score of the full three-joint
+residual distinguish frozen contact alternatives better than maximum absolute
+error? This is a different calculation from prior scalar-threshold tuning.
+Keep the native LQR, momentum observer, feedforward and 120ms preparation live.
+
+Reuse the I-58 Gazebo/DART Mars figure-eight starts -1/+0.3/+0.9rad, yaw45deg,
+44s,5ms, caps [1.5,.6,.6Nm,.3,.3m/s]. No new physics or controller change.
+Seal13 source/input files before calibration. Same23423 primary states,
+6902 accepted proposals, fixed point domain. Fit on two whole episodes, evaluate
+the third; all runs previously inspected, so retrospective internal comparison.
+Simulator family labels choose training rows only, not held-out scoring inputs.
+
+One physical correct-family branch/time, F-first then native-family Nalt, with
+half total weight per training episode. Same normalized residual scale
+.03+.10R||filteredF|| for both candidates. Shared pooled mean/population covariance,
+fixed .2 isotropic shrinkage + .05^2 identity floor; squared Cholesky distance.
+Raw preceding-interval model M1 primary; separate matched-history M2 control,
+never promoted post-result. Pattern distance<=.01 and relative score ties1e-9
+abstain. Only clearly preferred Nalt vetoes an accepted proposal, falling back
+to ORIGINAL native equivalent point, not Nalt physical point. No history feedback.
+
+M1 relative maxabs→covariance: useful correct preferences244→253/294, harmful
+1→2/6. Actual method gain relative to this control, but both minimum targets fail.
+A124errors/H6/U294 → covariance163errors/H4/U253:41 useful losses to prevent2
+harmful changes, net39 more errors. Phase errors14→14,64→101,46→48; +.3 has
+no harmful examples (unscorable safety), accounts37/41 useful losses. All6902
+are scorable;6602 are ambiguous same-family alternatives, while all300 useful/
+harmful opportunities are known/distinguishable. No denominator exclusions.
+
+Point RMS2.75693→2.76395mm, maximum29.84286mm unchanged above native26.90764mm.
+M2 covariance also fails,171errors/H4/U245. All unchanged shadow gates checked;
+M1 fails harmful/useful/pooled/+.3rate/RMS/max gates. Good7.875s kept, wrongF
+at35.205s still preferred (132.65 vsNalt137.81; both above trainingp95=9.56).
+No unique physical cause or improved physical tracking established.
+
+Fourteen method and ten separate evaluator contracts pass, not fullrepo suite.
+Initial test launch exited127 before Python because relative venv path crossed
+one extra parent; preserved and corrected without science changes. Producer
+NumPy1.26.4 replay reproduces129 arrays byte-exact; NumPy1.21.5 differs in float
+bytes but keeps discrete decisions and bounded results, no value replacement.
+Independent verification and publication evidence are archived with this record;
+its initial review schema mismatch and corrected stage are preserved separately.
+
+Decision: reject integration; retain velocity evidence and unchanged live baseline.
+Next proposed investigation is frozen physical candidate geometry versus endpoint/
+interval single-point load-sharing adequacy at these saved events, not another
+cutoff search. Covariance cannot recover a missing hypothesis or unmodeled load
+sharing; this experiment does not decide which assumption is responsible.
+[Report, comparison, events, sources and clone replay](docs/iterations/2026-11-27/contact-covariance-ranking/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

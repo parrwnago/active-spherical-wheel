@@ -1,5 +1,34 @@
 # Research presentation notes — 2026-11-27
 
+**I-65: a different joint-error pattern score improves relative ranking but
+still rejects too many useful corrections.**
+[Full record](contact-covariance-ranking/README.md),
+[comparison PDF](contact-covariance-ranking/evidence/publication/plots_stage02/covariance_comparison.pdf)
+and [event appendix](contact-covariance-ranking/evidence/publication/plots_stage02/event_windows.pdf).
+
+- Replace largest-component scoring with a shared empirical bias/covariance
+  score of all three joint-load errors. Fixed shrinkage, variance floor and
+  ambiguity rules; fit on two whole episodes and evaluate the third.
+- This is an actual change of calculation, not another scalar-threshold
+  coefficient sweep. Simulator family labels select training examples only;
+  held-out labels evaluate. The three episodes remain previously seen data.
+- Useful correct preferences improve 244→253/294 and harmful correct
+  preferences 1→2/6 against the same raw-interval maximum-error ranking.
+  Both minimum discrimination targets still fail.
+- The shadow estimator loses 41 useful corrections to prevent two harmful
+  changes: 124→163 family-error frames. Most losses, 37, occur at +0.3 rad.
+  Worst point discrepancy remains 29.84 mm. Matched-history control also fails.
+- All proposals are scorable. Ambiguous pairs retain the original estimate;
+  all 300 useful/harmful opportunities remain distinguishable, so abstentions
+  do not hide the failed result. Only six harmful frames exist across runs.
+- Keep the live LQR, momentum observer, feedforward and incoming preparation.
+  No new driving/video or tracking gain is claimed. Next proposed question is
+  candidate-point versus interval load-sharing adequacy at these same events.
+- Fourteen method and ten separate evaluator contracts pass. Producer replay
+  reproduces all 129 arrays exactly; cross-version replay preserves discrete
+  decisions within registered numerical limits. Failed launch/review attempts
+  and their corrections remain separate evidence.
+
 **I-64: matching load history improves model consistency, not the contact veto.**
 [Full record](contact-load-history/README.md),
 [comparison PDF](contact-load-history/evidence/analysis/plots_stage01/load_history_comparison.pdf)

@@ -1,0 +1,78 @@
+{
+  "iteration": "I-65",
+  "date_local": "2026-11-27",
+  "status": "registered_before_calibration_or_historical_scoring",
+  "source_commit": "a67acb1facb90d48a72e49c4f51512d24d73cda2",
+  "question": "Does retaining the full three-joint residual pattern, calibrated by a shared empirical bias/covariance, distinguish frozen contact alternatives better than max-absolute residual scoring?",
+  "scope": "Existing-log offline experiment only. No live estimator/controller changes, new physics, trajectory claims, coefficient sweep or candidate selection changes. No deployment model fit on all episodes in this iteration.",
+  "cases": ["m100_B", "p030_B", "p090_B"],
+  "campaign": "Original I-58 native gain-scheduled LQR, momentum observer, geometry locator, rolling/holding feedforward and 120ms incoming-drive preparation; Gazebo/DART Mars figure-eight, initial shaft -1,+0.3,+0.9rad, yaw45deg,44s,5ms,8801states each; command caps [1.5,0.6,0.6Nm,0.3,0.3m/s]. Exact simulated body/joint state allowed. No camera/new contact forecast.",
+  "previous_package": "docs/iterations/2026-11-27/contact-load-history/evidence",
+  "inputs": "Three I-64 portable primitive packets and three I-62 base packets archived inside I-64, plus sealed I-64 derive_history and I-62 metric source. Reconstruct fixed M0/M1/M2 residuals; no new geometry/contact queries.",
+  "prior_inspection": "All three episodes and the six harmful frames were inspected in prior iterations. Leave-one-whole-episode-out is retrospective internal evaluation, not unseen validation. Do not tune on fold results. A positive finding needs a frozen calibration and a fresh episode in later work.",
+  "information_boundary": "Known model/maps, simulated body/joint measurements, raw and filtered observer generalized loads and frozen candidate hypotheses enter scoring. Simulator family truth is used ONLY to choose calibration rows in the two training episodes and to evaluate the held-out episode. No held-out labels, true point, load shares, terrain, future data or desired velocity enters scoring. Offline supervised error calibration is explicitly new; it is not a truth-free calibration method.",
+  "primary_mask": "Unchanged I-61 primary_eligible:1<=t<41s,total truth normal load>=1N,unique dominant family>=90%; possible secondary contacts remain. Point metrics use unchanged common finite point_mask on ALL primary rows including fallback/unknowns.",
+  "alternatives": "F is original I-61 physical proposal; Nalt is original physical candidate within native family. Both points/families/maps frozen. N_eq is the separate virtual native equivalent point, used only for original fallback and fixed A-history; never silently substitute it for physical Nalt.",
+  "models": {
+    "primary": "M1 raw preceding5ms interval joint load minus H_current*raw interval force; endpoint geometry held over interval is an approximation. This is interval-end explanation, not prediction of future contact.",
+    "control": "M2 raw predictions passed through I-64 100rad/s filter with shared frozen A-history prior,200ms warmup; current ranking never changes committed history. Control only; no promotion if M1 fails.",
+    "descriptive_reference": "M0 original filtered-force/current-geometry maxabs; no calibration or adoption.",
+    "scores": ["maxabs", "euclidean", "shared_covariance"],
+    "score_interpretation": "Squared Mahalanobis consistency distance is an empirical model-error score, not a probability or independent-sensor contact likelihood. Correct family does not prove exact point or single-contact model. Force and joint loads come from the same observer.",
+    "absolute_fit_diagnostic": "Report candidate scores and frames where BOTH exceed the training correct-family weighted95th-percentile score (left cumulative nearest quantile). Descriptive only; no additional absolute-fit acceptance gate or cutoff optimization."
+  },
+  "normalization": "e=residual_Nm/(.03+.10*R*norm(FILTERED_force)); identical fixed scalar for both candidates and every model. Never normalize a candidate by its own current fitting error, or by candidate-specific variance.",
+  "calibration": {
+    "folds": "For each held-out case fit only the other two cases. Fit a separate shared error model for M1 and M2; M2 remains control. No all-data fit or training hyperparameter selection.",
+    "eligible": "primary_eligible AND i60_accepted AND valid/materially physical candidate and valid finite model residual. At each timestamp prefer F if its family matches training truth; otherwise take Nalt if its native family matches truth. If neither matches or is valid, skip. At most one row/timestamp even if families or candidates coincide. Never select a point by true point distance or by residual magnitude.",
+    "weighting": "Each of the two training episodes has total weight1/2; uniform weight within its selected rows. Population weighted mean and covariance (no unbiased/sample-count correction). Temporal frames are correlated; row counts are not independent trial counts.",
+    "minimum_selected_rows_per_episode": 200,
+    "shrinkage_rho": 0.2,
+    "floor_std_dimensionless": 0.05,
+    "formula": "mu=sum(w*e); S=sum(w*(e-mu)*(e-mu)^T); C=(1-rho)*S+rho*trace(S)/3*I+floor_std^2*I; score=(e-mu)^T*C^-1*(e-mu), evaluated by Cholesky. Same mu,C for F and Nalt. Floor is a frozen regularization assumption, not measured sensor noise.",
+    "invalid_fit": "Insufficient rows/nonfinite/non-positive-definite fit marks fold unknown and retains A, counts toward failure; no alternate fit or parameter relaxation."
+  },
+  "comparison": {
+    "maxabs": "max(abs(e)) using no learned parameters; I-64 score preserved separately from new ambiguity classification.",
+    "euclidean": "sum(e^2),zero bias/identity covariance; descriptive vector-only control, not selectable winner.",
+    "pattern_epsilon_dimensionless": 0.01,
+    "ambiguity": "If either candidate invalid mark unknown; otherwise if norm(eF-eN)<=.01 mark pattern-ambiguous before comparing scores. This is1%of old force-scaled bound, an explicit unvalidated distinguishability assumption. Do not claim physical identifiability beyond it.",
+    "relative_score_tie_epsilon": 1e-9,
+    "tie": "abs(sF-sN)<=1e-9*max(1,abs(sF),abs(sN)); applies to every score. No adjustable evidence-margin sweep.",
+    "outcomes": "Fpreferred,Naltpreferred,tied,pattern-ambiguous,unknown mutually exclusive. Full-denominator useful/harmful counts retain every ambiguous/unknown/tied frame as not correctly discriminated."
+  },
+  "shadow_policy": "Start from original I-60 accepted/fallback A. For accepted proposal, clearly preferred Nalt vetoes F and falls back to ORIGINAL native equivalent point/family N. Fpreferred,tied,ambiguous,unknown retain A; invalid F map falls back to N explicitly. Never use Nalt point as output, never force acceptance of unaccepted F, never feed decisions into history or actuation.",
+  "discrimination_gates": {
+    "coverage_min": 0.99,
+    "coverage": "Both valid finite candidate scores on all original accepted primary proposals; report resolved coverage separately. Every6harmful,18acceptedwrong and worstpoint frame must be scorable; ambiguity is scorable but never correct.",
+    "harmful_correct_fraction_min": 0.5,
+    "useful_correct_fraction_min": 0.9,
+    "relative_to": "Same M1 maxabs classifier with identical ambiguity/tie/validity conventions on all held-out episodes. Both useful and harmful correct counts nondecreasing, at least one strictly increases. M0 original and M2 results descriptive only.",
+    "whole_folds": "Aggregate out-of-fold predictions exactly once per episode; per-case counts include zero-harmful case as unscorable for harmful accuracy, never perfect safety. No per-frame confidence intervals."
+  },
+  "training_gates": {
+    "harmful_removal_fraction_min": 0.5,
+    "useful_retention_fraction_min": 0.9,
+    "pooled_family_errors_max": "A on identical primary rows",
+    "each_phase_error_rate_excess_over_A_max": 0.001,
+    "each_phase_harmful_count_max": "A on same phase",
+    "pooled_point_RMS_max": "A",
+    "pooled_point_p95_max": "A",
+    "pooled_point_maximum_max": "N",
+    "point_comparison_roundoff_allowance_mm": 1e-12,
+    "retained_proposal_count_min": 1
+  },
+  "acceptance": "Primary M1 shared-covariance must pass BOTH discrimination and all unchanged I-62 shadow gates. No new driving/integration automatically authorized by a positive retrospective result; first freeze final calibration and fresh-episode validation as separate followup. If failed, complete documentation and investigate candidate/load assumptions rather than more cutoff reshaping. No selecting a favorable M2/euclidean control after results.",
+  "events": "Publish all6harmful frames, useful7.875s, each phase first useful, each phase worst Apoint, and first useful lost by new shadow (if any). Preserve selected/all-frame numeric outputs and model calibration row masks. Event windows are explanatory, not additional tuning.",
+  "verification": {
+    "source_inputs": "Seal protocol/source/input SHA256 before any historical fit or new scores; preserve failures/corrections as separate stages.",
+    "contracts": "Synthetic weighting/correlation/regularization/translation/swap/tie/invalid tests; calibration deduplication/held-out exclusion and policy fallback/evaluation denominators. These are focused scientific-method tests, not full controller suite.",
+    "independent": "Independent per-episode training selection, weighted mean/cov, eigen/inverse scores rather than Cholesky, preference/keep/family/point summaries; exact masks/counts/decisions, report actual floating differences.",
+    "cross_version": "Producer NumPy1.26.4 canonical run and compact archive replay; system NumPy1.21.5 comparison records exact decisions and bounded scientific/model differences without replacing values or claiming byte equality.",
+    "normalized_residual_atol": 1e-10,
+    "mean_covariance_atol": 1e-10,
+    "score_atol": 1e-7,
+    "score_rtol": 1e-10,
+    "point_metric_atol_mm": 1e-9
+  }
+}
