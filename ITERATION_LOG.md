@@ -4629,6 +4629,151 @@ matched intervention is needed to test any proposed correction. No new physics,
 controller implementation, estimator tuning or completed command audit is claimed
 by this planning note; the selected baseline and I-73 decision remain unchanged.
 
+## I-74 / 2026-11-27 / analyzed, experimental not adopted: bounded starting-heading hold
+
+**Final outcome:** All six matched 45 s runs complete and all 95 setup checks
+pass. H improves stopping at −1.0/+0.3, but only −1.0 also meets the added
+heading tolerance. Twelve of 66 fixed checks fail; original native N remains
+selected. Both the gains and regressions are retained below.
+
+**Question / authorization:** The user approves comparing the unchanged native
+baseline N with native plus bounded heading hold H on the same three I-73 S-path
+starts. Can the existing heading helper reduce rotation without worse tracking,
+balance or saturation? This is a separate experiment, not a change to I-73's
+failed contact-selector result or the selected defaults.
+
+**Fixed change:** Keep `mode='hardware'` (simulation information boundary),
+least-squares rolling, `track_contact_point=False`, original flat LQR/gain cache,
+momentum observer, native support locator/load/normal/gain routing, rolling and
+holding feedforward, 120 ms preparation and final actuator bounds. H enables
+existing `heading_reference='start'`, `heading_actuation='shells'`, heading gain
+0.2 N m/rad, damping 0.06 N m s/rad, helper torque cap 0.15 N m and horizontal
+reaction budget 0.05 N m. This fixed combination is a new trial, not a claim of
+prior validation. Original eligibility, lever cutoff and error clamp remain.
+The target is actual initial heading throughout the full episode; it does not
+switch at the goal. Current baseline already has LQR angular-rate feedback.
+
+**Comparison:** Six new Gazebo/DART runs, N/H × requested ground-relative start
+phase −1.0/+0.3/+0.9 rad, yaw 45°. Exact I-73 S bytes: origin (−2.4, 10.0) m,
+3 s initial hold +32 s smooth motion +10 s final hold, 5 ms control /1 ms physics,
+caps 1.5/.6/.6 N m and .3/.3 m/s. Reuse the registered moderate faceted Mars site,
+assets/plugins and seven ground-verification points; no site search or relaxed
+terrain screen. Fresh N common full-precision arrays must reproduce I-73 N;
+preserve any replay/setup mismatch. All six outputs seal before analysis.
+
+**Predeclared screen:** Each H phase must reduce wrapped heading-error RMS over
+3–45 s and integral of absolute physical world-vertical angular speed over
+29–45 s by at least 20% versus matched fresh N. Retain I-73 tracking, attitude,
+speed, acceleration and late-motion nonregression margins; add full-world-z
+speed, command-step and saturation/clipping guards. Original simultaneous
+settling and settling plus ≤10° heading error are descriptive, not the sole
+adoption criterion. Require at least .10 s held heading-helper activity per H
+phase (torque norm ≥1e−4 N m); this is before fade/clipping, not an applied-command
+counterfactual. Evaluate every phase, preserve failures, no post-result tuning.
+
+**Status:** Result-owned runner/telemetry, focused checks and frozen protocol
+are being prepared. No new physics, result or demonstrated heading improvement
+yet. The previous saved-log command audit remains an unexecuted proposal; this
+user-approved heading experiment is the next intervention.
+
+Evidence will be preserved at
+[heading-hold-control](docs/iterations/2026-11-27/heading-hold-control/README.md);
+large data/media remain under `results/heading_hold_control_20261127/` or its
+explicitly named shareable bundle. Sources/gates/inputs freeze before physics;
+pure evaluation code seals and passes focused contracts before outcome reads.
+
+**Implemented / launched:** Twelve focused runner/telemetry functions pass
+(eight existing-helper telemetry, three parameter/registration guards, one
+full native N/H command/info/history identity function with four included
+moving/stationary subtests). No production source/default changes. Fixed route,
+original terrain assets/plugin/gain bytes and fixture receipts verify. Original
+I-73 N precision/metadata and protocol/output seal are copied byte-exact into
+the dedicated I-74 input subtree for portable reproduction; no old scoring is
+changed. Before physics, protocol
+`aa3d290f3278f515ffdc47042ae8725c69166f28cecf819d26f2541eac4e82a8`
+binds 80 control/runtime/runner sources and 22 input files, with unchanged
+gain/plugin hashes. Read-only N/H preflight passes; six fresh processes launched
+three at a time. At launch, experimental completion and acceptance were pending.
+
+**Completed experiment:** Six new Gazebo/DART episodes, 54,006 actual state rows,
+no declared physical failure; all 80 sources, 22 inputs, gain/plugins and 48
+sealed artifacts verify unchanged. Output seal:
+`40e9b4ccbfe7d5bd268828e60a3478c1175180bd38416e7f2270ef94f6054424`.
+All 95 setup checks pass. Fresh N matches 46 shared I-73 numerical arrays per
+phase byte-exactly (21 required core fields). H helper activity is
+43.110/42.120/29.215 s before fade/clipping, not a complete applied-command
+counterfactual. No parameter retuning or contact-estimator change.
+
+Moving timed XY RMS N→H in mm: **47.31→24.38**, **22.85→24.00**,
+**23.37→33.69**. Final XY errors: **4.863→.155**, **7.018→2.868**,
+**41.410→53.460** mm. H−1.0 peak XY error improves179.59→50.05mm. Heading
+RMS over 3–45 s is 47.09→46.55°,116.24→34.09°,104.04→82.12°. Physical late
+absolute world-z rotation over 29–45 s falls 68.88→65.79°,202.21→65.52°,
+356.28→37.71°. Full heading error and physical rotation are distinct metrics.
+
+H−1.0/+0.3 satisfy the original simultaneous final-2 s position/speed/rotation/
+lean criteria; first sustained 2 s entries start 35.480/35.455 s. Only H−1.0 also
+meets the added≤10° heading criterion. H final heading errors are
+**2.67/56.40/91.42°**. H+0.9 is nearly motionless at the wrong position/heading.
+All native final settling outcomes reproduce I-73. Settling is descriptive and
+cannot substitute for the fixed heading/nonregression gates.
+
+**Screen / regressions:** Twelve of 66 checks fail. −1.0 fails both 20% heading
+benefits, peak absolute tilt/late world-z speed and normalized command-excess
+RMS (five). +0.3 fails raw-reference lean peak, full/late world-z peaks and
+normalized command-step peak (four). +0.9 fails moving/full-peak/final tracking
+margins (three). All saturation-frequency margins and actual input caps pass;
+frequency alone misses a huge request-magnitude outlier. In−1.0, normalized
+clipping excess RMS is 34.8845 versusN.192865, despite clipping fractions only
+.733% versus.556%. No actual applied command equals those enormous requests.
+
+**Posthoc fixed-time availability:** At35/45 s in H+0.9 the helper is ineligible:
+neither estimated shell satisfies≤5% unloaded share and the shell-axis vertical
+lever magnitude.0653 is below.12. Heading command is zero despite −91.4° raw
+error. This identifies the existing helper's eligibility dead zone, not an
+absolute absence of every possible yaw strategy. At+0.3 45 s the helper remains
+eligible and commands about.05074 N m per shell despite −56.4° error; inactivity
+is not a universal explanation. No physical intervention in this diagnostic.
+
+**Posthoc command spike / bounded ledger:** At16.670 s in−1.0 H, original
+rolling joint-speed references shaft/shellA are −6554.839/−23638.338 rad/s,
+versus actual+.322/−6.999. LQR joint-velocity-error blocks create approximately
+−1498.263/−1892.688 N m. Total request
+`[−1498.545,−1892.619,−61.216,0,0]` clips to
+`[−1.5,−.6,−.6,0,0]`. Heading adds only −.070819 N m on shellB; rolling FF,
+preparation and fade deltas are zero. The algebraic source is the rolling
+joint-speed reference entering LQR, not a giant direct heading torque. One5ms
+row in the fixed±25ms context; ordinary refs return 16.675 s. Jacobian conditioning
+was not logged, so near-singularity and the whole physical cause remain hypotheses.
+All six maxima/contexts and 42 algebraic ledger identities are retained separately;
+maximum residual2.274e−13. These are not additional software tests or new gates.
+
+**Verification / media / archive:** Twelve scoped runner/telemetry and 23 final
+evaluation functions pass, inclusive of the earlier 21 evaluation execution.
+Source review corrects an evaluator alias and distinguishes raw versus clipped
+heading error before data/media reads; no physical setup failed. Four media
+orientation and six package contracts are reused, one new heading-wrap/target
+media function added. All three full N/H videos preserve saved 0–45 s,901 frames
+at 20 fps,45.05 s encoded, with decoded first/middle/final frame QA. Full raw data
+stays local/in a named lossless bundle; tracked 50 ms projections are plot-only.
+
+The first archive curation captures its own active stdout log, invalidating that
+log's input binding after completion. Preserve the first packet/bundle/source/log
+hashes locally; corrected second curation avoids self-scanned output. No physics,
+scientific output or media changes. Final immutable compact record:404 bound files,
+22.69 MB including manifest; raw/media bundle135.73 MB, SHA256
+`77ace8b016a40bc75190bebeaf1ece53a656b0dde4e3dfee23408bd8d387ddde`.
+All 32 members match. Actual isolated restore verifies404 compact/30 raw files and
+gain cache, preserves unrelated sentinel, installs no live code/plugins. Final
+QA sits beside the immutable evidence tree.
+
+**Decision:** Keep original N selected and H experimental. Improved stopping is
+material progress but not robust all-phase heading control. Preserve the
+configuration-dependent availability, remaining heading offsets, transient
+regressions and identified rolling-reference/LQR request problem. No default
+promotion, solver/HMM/camera/hardware change or post-result parameter sweep.
+[Complete I-74 record, plots, PDF, videos and reproduction](docs/iterations/2026-11-27/heading-hold-control/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

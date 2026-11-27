@@ -1,5 +1,29 @@
 # Research presentation notes — 2026-11-27
 
+**I-74: existing bounded heading hold improves stopping in two starts, but
+does not pass robust heading/tracking/command checks.**
+[Full record and videos](heading-hold-control/README.md),
+[motion/heading plot](heading-hold-control/evidence/publication/plots_stage01/motion_comparison.png),
+[two-page PDF](heading-hold-control/evidence/publication/plots_stage01/heading_hold_comparison.pdf).
+
+- Six matched N/H runs complete; all 95 setup checks pass, native46 shared arrays
+  per phase replay I-73 exactly. Same S/site/phases, gains/observer/contact
+  feedforward and bounds; only existing heading-helper settings change.
+- Moving XY RMS N→H: **47.31→24.38**, **22.85→24.00**, **23.37→33.69 mm**.
+  H−1.0/+0.3 settle under the four original criteria. Only−1.0 also meets ≤10°
+  heading error; final H errors2.67/56.40/91.42°. Spinning less is not the same
+  as pointing correctly. +0.9 helper is unavailable at hold entry/end.
+- H fails12/66 fixed checks. Keep the positives and regressions: −1.0 transient
+  tilt/rotation peaks and a huge unclipped request; +0.3 rotation/command-step
+  peaks and lean margin; +0.9 tracking errors. Actual input caps always hold.
+- At16.670 s −1.0H, the recorded rolling joint-speed references enter LQR
+  feedback and produce −1499/−1893 N m demands while heading adds only −.071 N m.
+  One5ms row, ordinary refs resume next row; ledgers verify. This localizes the
+  command source; no Jacobian conditioning was logged, so singularity is unproven.
+- Keep original N selected and H experimental. Twelve focused runner/telemetry
+  and 23 final evaluation functions pass (earlier stage counts included). Media/
+  package contracts are largely reused. No solver/camera/HMM revival or retuning.
+
 **I-73: fresh S-path contact-reference intervention completes, with mixed
 tracking and no demonstrated settling improvement.**
 [Full record and media](contact-reference-control/README.md),

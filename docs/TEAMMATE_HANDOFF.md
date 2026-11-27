@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-73.
+experiment history and common presentation questions through I-74.
 
 ## Current system
 
@@ -71,7 +71,30 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-73 tests N/A/C in fresh closed-loop motion; no consistent gain.**
+**Latest: I-74 bounded heading hold improves two stops, with important regressions.**
+Six fresh matched N/H S-path runs all complete. H keeps the same LQR/observer/
+contact feedforward and enables the existing starting-heading helper, gain .2,
+rate damping .06, torque cap .15 N m and horizontal reaction budget .05 N m.
+Native recordings reproduce all 46 shared I-73 numerical arrays per phase exactly;
+all 95 setup checks pass. H fails 12/66 fixed checks and is not adopted.
+
+Moving XY RMS N→H: −1.0 **47.31→24.38 mm**, +0.3 **22.85→24.00 mm**,
++0.9 **23.37→33.69 mm**. H−1.0/+0.3 pass the original final four-condition
+settling test; only −1.0 also points within 10° of the target. Final H position
+errors are .155/2.868/53.460 mm, heading errors 2.67/56.40/91.42°. Reduced spin
+does not imply the correct final heading. At +0.9 hold entry/end, the existing
+helper is disabled by its load and lever eligibility conditions.
+
+A bounded posthoc ledger identifies a concrete regression at 16.670 s in −1.0H:
+rolling joint references reach approximately −6555/−23638 rad/s, entering LQR
+velocity errors and producing −1499/−1893 N m requests. Actual inputs remain
+clipped to original caps; the heading term itself is only −.071 N m. This is
+an algebraic source, not proof of contact-Jacobian singularity or the whole
+physical cause. Keep H experimental and original N selected; preserve both the
+improved stopping and the failed command/tracking/rotation guards.
+[Full record, plots, two-page PDF, videos and reproduction](iterations/2026-11-27/heading-hold-control/README.md).
+
+**Previous: I-73 tests N/A/C in fresh closed-loop motion; no consistent gain.**
 Nine new 45 s Gazebo/DART S-shaped runs, three starting phases and a 10 s goal
 hold, all complete without a declared physical failure. Change only the rolling
 reference/feedforward records; the native observer, load/normal/gain routing,

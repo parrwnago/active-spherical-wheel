@@ -1,13 +1,24 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 8 — 27 November 2026, through I-73.** Latest experiment baseline:
-repository commit `87a17cb`; the selected live controller remains unchanged.
-I-73 adds a result-owned closed-loop rolling-reference test of fixed contact
-selectors, with no active-controller or default change. This is a study and discussion
+**Revision 9 — 27 November 2026, through I-74.** Latest experiment baseline:
+repository commit `45c29e8`; the selected live controller remains unchanged.
+I-74 tests an existing bounded starting-heading helper with the original LQR/
+observer/contact feedforward, with no active-controller or default change.
+This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest experiment, **I-73**, runs nine fresh 45-second Gazebo/DART S-shaped
+The latest experiment, **I-74**, compares native N with native plus bounded
+starting-heading hold H in six fresh S-path episodes. All complete and native
+data reproduce I-73 exactly. H improves final stopping in two phases, but fails
+12 of 66 fixed checks. At −1.0 rad moving XY RMS falls 47.31→24.38 mm and H
+settles, ending 2.67° from its target; +0.3 settles near the goal but56.40° off
+heading, and +0.9 ends53.46 mm and 91.42° off. A rare −1.0 unclipped request
+spike is traced to enormous rolling joint-speed references entering LQR,
+while the heading torque itself is small. Keep H experimental. Section18
+separates the stopping benefit, heading authority limits and command regression.
+
+The preceding experiment, **I-73**, runs nine fresh 45-second Gazebo/DART S-shaped
 episodes: native N, guarded velocity A and geometry-plus-velocity C, at three
 starting phases, with a ten-second final hold. Only rolling-reference routing
 changes. All runs complete, but C fails 12 of 36 fixed control checks: tracking
@@ -435,8 +446,9 @@ the selected live controller's adopted replacement.
 | [I-67: original-bank capacity](iterations/2026-11-27/contact-bank-audit/README.md) | Existing usable candidates reproduce all 29 newly correct I-66 reference-point decisions. On the 41 focus rows, selected median distance is 6.26 mm versus 0.81 mm for the nearest usable candidate. Known-correct-family any-point capacity is 27/41 focus, 280/294 useful and 5/6 harmful. | Selection opportunity within the existing bank; no deployable selector or live improvement. |
 | [I-70: hybrid temporal modes](iterations/2026-11-27/temporal-contact-modes/README.md) | Implements a causal 21-mode rolling/slip, single/pair/unknown estimator. Primary mistakes A124→564; frame evidence305 and no-edge temporal control646. Matched point RMS improves but maximum worsens; six of sixteen gates fail. | Completed shadow experiment, not adopted. Section 14 separates identity errors, abstention, multi-contact and timing results. |
 | [I-71: endpoint-pair stopping ablation](iterations/2026-11-27/endpoint-pair-ablation/README.md) | Keep nine singleton/unknown endpoint modes and preceding-interval pair edges, using frozen I-70 costs. Primary mistakes fall to425 but matching frame has303; every phase regresses. Four of eight continuation checks and seven of sixteen adoption gates fail. | Stop this HMM version without tuning. All471 true pair-label rows remain errors in the full loaded-set comparison; Section 15 gives the scope. |
-| [I-72: geometry-first velocity selection](iterations/2026-11-27/geometry-first-contact/README.md) | Choose one physical candidate per family nearest native N's equivalent point, then reuse fixed I-60 ranking/acceptance. Primary C has127 errors versus A124; acceptance6848 versus6902. Full-primary point RMS/p95/max improve against N, but RMS/p95 worsen against A despite a better maximum. Four of ten gates fail. | Mixed spatial benefit, configured selector rejected; no tuning or live adoption. Section 16 retains the complete comparisons. |
-| [I-73: fresh S-path rolling-reference comparison](iterations/2026-11-27/contact-reference-control/README.md) | Nine new45s Gazebo/DART episodes, N/A/C ×threephases. Only rolling reference/feedforward records change. Allcomplete; C fails12/36controlchecks and noneof9fullysettles. −1.0tracking improves, +.3regresses, +.9littlechange. | No consistent motion gain; original pipeline retained. Section17 distinguishes positionreturn, motion and freeheading. |
+| [I-72: geometry-first velocity selection](iterations/2026-11-27/geometry-first-contact/README.md) | Choose one physical candidate per family nearest native N's equivalent point, then reuse fixed I-60 ranking/acceptance. Primary C has127 errors versus A124; acceptance6848 versus 6902. Full-primary point RMS/p95/max improve against N, but RMS/p95 worsen against A despite a better maximum. Four of ten gates fail. | Mixed spatial benefit, configured selector rejected; no tuning or live adoption. Section 16 retains the complete comparisons. |
+| [I-73: fresh S-path rolling-reference comparison](iterations/2026-11-27/contact-reference-control/README.md) | Nine new45s Gazebo/DART episodes, N/A/C ×three phases. Only rolling reference/feedforward records change. Allcomplete; C fails12/36controlchecks and noneof9fullysettles. −1.0tracking improves, +.3regresses, +.9littlechange. | No consistent motion gain; original pipeline retained. Section17 distinguishes positionreturn, motion and freeheading. |
+| [I-74: bounded starting-heading hold](iterations/2026-11-27/heading-hold-control/README.md) | Six new matched N/H S episodes, exact native replay. H improves stopping in two phases; only −1.0 meets the additional heading tolerance. Twelve of 66 fixed checks fail, including command magnitude/rotation peaks and+.9tracking. | H remains experimental. Section18 explains configuration-dependent helper availability and the rolling-reference/LQR demand spike. |
 
 Every row is offline saved-log work, not a new driving improvement. Episodes
 were inspected before these later analyses; whole-episode holdouts reduce
@@ -770,13 +782,13 @@ switching to PGS is not an established correction.
 Then a private diagnostic hook copies the original native solve inputs,
 outputs and applied contact impulses while delegating the installed functions
 unchanged. Replay the full −1-rad, yaw45° Mars figure-eight. All59 control
-precision arrays and all36 prior1ms trace arrays reproduce byte-for-byte.
+precision arrays and all 36 prior1ms trace arrays reproduce byte-for-byte.
 Logging changes no motion, command, observer, plugin or solver method.
 
-Across the20 physics steps preceding the four fixed times, all20 Dantzig calls
-return success; PGS is unused. There are140 applied contacts. Every applied
+Across the 20 physics steps preceding the four fixed times, all 20 Dantzig calls
+return success; PGS is unused. There are 140 applied contacts. Every applied
 impulse matches its solver solution segment exactly; impulse/normal/basis/dt
-reconstruct the reported force within3.55e−15N. All140 contacts match exports,
+reconstruct the reported force within 3.55e−15N. All140 contacts match exports,
 with25 nonzero-force contacts unambiguously assigned to material families.
 
 The previously confusing shellB records are directly tied to those solutions:
@@ -786,14 +798,14 @@ The previously confusing shellB records are directly tied to those solutions:
 | 35.203s | `(0,.0201248655,−.0172934405)` | `(0,0)` |
 | 35.205s | `(0,.0104874728,−.0072003873)` | `(0,0)` |
 
-Their forces26.53N and12.72N already exist in the applied contact solve and
+Their forces26.53N and 12.72N already exist in the applied contact solve and
 match the old bridge records. Thus the specific zero-normal tangential-force
 anomaly is localized to the installed friction approximation, and the observer
 is responding to loads that the simulation really applies. This is stronger
 than an unexplained force/normal pairing discrepancy.
 
-Twelve of140 selected applied contacts violate final-dependent tangent-component
-bounds. Two occur in the good7.875s control; none occurs in the32.110s interval,
+Twelve of 140 selected applied contacts violate final-dependent tangent-component
+bounds. Two occur in the good7.875s control; none occurs in the 32.110s interval,
 where temporal transfer remains the explanation. Five occur at each later
 anchor35.055/35.205s. These selected counts are not trajectory-wide frequencies,
 and the good-control occurrence prevents a claim that this mechanism alone
@@ -810,7 +822,7 @@ the baseline and tested the separate shadow estimator described next.
 The [I-69 record and explanation PDF](iterations/2026-11-27/contact-force-boundary/README.md)
 include source/package provenance, controlled/native evidence, independent
 checks and cached numerical replay. Full new rollouts remain local; the compact
-package retains the solver problems and20 selected contact contexts without
+package retains the solver problems and 20 selected contact contexts without
 claiming to restore the entire simulation.
 
 ## 14. I-70: an implemented hybrid estimator, not an adopted replacement
@@ -1287,7 +1299,103 @@ The [I-73 record, PDF, full-hold videos and reproduction](iterations/2026-11-27/
 contain the evidence. Solver investigation, HMM tuning and camera work remain
 outside the selected next step; no hardware result is claimed.
 
-## 18. Sources, attribution, and how to continue a discussion
+## 18. I-74: heading hold helps some stops but exposes important limits
+
+The user explicitly approved baseline versus baseline plus bounded heading
+hold on the same three S-path starts. This tests an **existing option**, not
+a new controller family or estimator. Native N retains the selected defaults.
+H sets `heading_reference='start'`, `heading_actuation='shells'`, heading gain
+0.2 N m/rad, rate damping0.06 N m s/rad, helper motor-torque cap0.15 N m and
+horizontal reaction budget0.05 N m. The actual initial yaw is latched once and
+is the target throughout the entire45 s, including motion and final hold.
+Heading error used by the helper is clamped to±0.5 rad. Raw pointing error
+is not clamped in evaluation or on-screen displays.
+
+All other selected components remain: original flat LQR/gain bytes, momentum
+observer and geometry support locator, inferred contact loads/normal/gain
+routing, rolling and holding feedforward,120 ms incoming preparation, fade,
+and final caps `[1.5,.6,.6 N m,.3,.3 m/s]`. Exact I-73 S/site/timing are reused;
+no new terrain search, simulator-force control input, gain design or contact
+selector is added. Six fresh Gazebo/DART runs complete; all 95 setup checks pass.
+Each native recording reproduces46 shared original numerical arrays byte-exactly.
+
+| Requested phase | Moving XY RMS N→H mm | Final XY error N→H mm | H final absolute heading error |
+|---|---:|---:|---:|
+| −1.0 rad | 47.31→24.38 | 4.863→0.155 | 2.67° |
+| +0.3 rad | 22.85→24.00 | 7.018→2.868 | 56.40° |
+| +0.9 rad | 23.37→33.69 | 41.410→53.460 | 91.42° |
+
+H−1.0 and H+0.3 pass the final two-second simultaneous position/speed/world-z
+rotation/up-vector attitude criteria. Their first sustained two-second entries
+start at 35.480 and 35.455 s. Only−1.0 also meets the added≤10° heading tolerance.
+Thus **stopping near the goal and holding the correct heading are separate
+achievements**. H+0.9 is nearly motionless at the wrong goal offset/heading.
+The three native runs retain their original incomplete settling.
+
+Heading-error RMS over 3–45 s, N→H, is 47.09→46.55°,116.24→34.09° and
+104.04→82.12°. Late physical absolute rotation over 29–45 s falls
+68.88→65.79°,202.21→65.52° and 356.28→37.71°. This integral uses
+`∫|[R(q) ω_body]_z| dt` with actual timestamps. It is not an Euler-yaw derivative,
+nor does it guarantee a smaller instantaneous rotation peak. Wrapped pointing
+error also cannot reveal all extra full turns; unwrapped yaw is shown separately.
+
+The fixed screen requires20% improvements in both heading metrics at every
+phase and nonregression in tracking, lean/tilt, speed,50 ms acceleration,
+rotation peaks, saturation fractions, normalized request excess and command
+steps. Twelve of 66 checks fail. −1.0 does not achieve either20% heading benefit,
+and worsens peak absolute tilt/late rotation speed/unclipped request excess.
++0.3 improves total rotation but regresses lean/rotation-speed/command-step
+peaks. +0.9 improves heading metrics but worsens tracking. All actual applied
+inputs respect their caps. The four/five-condition settling measures are
+descriptive and cannot replace the predeclared all-phase comparison.
+
+Why can the helper stop acting while heading remains wrong? It spins a
+sufficiently unloaded shell so the motor's reaction has a world-vertical
+component. Its authority changes with carrier phase and inferred support.
+At both 35 and 45 s in H+0.9, neither estimated shell is ≤5% of total load, and
+the shell-axis vertical lever magnitude is 0.0653, below the existing0.12 cutoff.
+The helper therefore commands zero despite approximately −91.4° raw heading
+error. This is a concrete limit of **this helper's policy**, not proof the robot
+has no possible yaw strategy in that configuration. At +0.3 the helper stays
+eligible and commands about 0.05074 N m to each shell at 45 s despite −56.4° error;
+not every offset is caused by that eligibility switch. The full physical
+reasons need a separate matched investigation.
+
+A bounded posthoc command ledger finds the large −1.0 H demand at 16.670 s.
+The recorded rolling joint-speed references are about −6555/−23638 rad/s for
+shaft/shell A, versus actual+.322/−6.999 rad/s. LQR joint-velocity error terms
+produce roughly−1498/−1893 N m. Total request is approximately
+`[−1498.545,−1892.619,−61.216,0,0]`; final applied input is
+`[−1.5,−.6,−.6,0,0]`. Heading's own contribution is only −0.070819 N m on shell B.
+Rolling feedforward/preparation/fade deltas are zero in that row. Therefore
+the enormous algebraic demand enters through **rolling joint-speed references
+and LQR velocity feedback**, not direct heading torque. The huge reference is
+one 5 ms row in the fixed context; ordinary references return at 16.675 s.
+
+Clipping fraction alone hides that severity: −1.0 N/H clip on0.556%/0.733% of
+held intervals, yet normalized request-excess RMS grows0.1929→34.8845. The
+separate magnitude guard catches it. The giant values are **requests**, not
+actual motor torques. Ledger/block reconstruction residuals are ≤2.274e−13.
+Contact-Jacobian/authority conditioning was not logged; a near-singular rolling
+map is a hypothesis, not a proved physical explanation from this audit.
+
+Twelve focused runner/telemetry functions pass, including exact instrumented
+versus original N/H commands, diagnostics and history. Twenty-three final
+evaluation functions pass, inclusive of an earlier 21-stage execution. Existing
+media/package contracts are reused; one new heading-target/wrap media check
+is added. Source review corrects an evaluator field alias and preserves the
+raw-versus-used-error media distinction before outcome/pose reads. These are
+not physical failures or full-repository-suite counts. The posthoc algebraic
+identities are checks of saved equations, not additional unit tests.
+
+**Decision:** keep original N selected and H as an experimental option. The
+improved stopping is real progress; it does not establish robust all-phase
+heading regulation. There is no post-result parameter sweep, default promotion,
+new estimator, solver change, camera or hardware result. All full-hold videos,
+positive results, regressions, command ledgers and reproduction inputs are in
+the [I-74 record](iterations/2026-11-27/heading-hold-control/README.md).
+
+## 19. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

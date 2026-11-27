@@ -1,0 +1,66 @@
+{
+  "iteration": "I-74",
+  "scope": "Fresh native N versus existing bounded starting-heading hold H on the same three I73 S-path starts. Gates fixed before physics; no tuning or automatic adoption.",
+  "clock": {
+    "dt_s": 0.005, "start_s": 0.0, "total_s": 45.0,
+    "moving_s": [3.0, 35.0], "heading_s": [3.0, 45.0],
+    "hold_s": [35.0, 45.0], "late_s": [29.0, 45.0], "final_settling_s": [43.0, 45.0],
+    "moving_interval": "Half-open [3,35); all physical-state windows otherwise include actual terminal state.",
+    "command_interval": "Exclude final emitted but unheld command; include actual prior input for command-step metrics."
+  },
+  "heading_benefit": {
+    "heading_error_rms_ratio": 0.80,
+    "late_physical_world_z_absolute_rotation_ratio": 0.80,
+    "full_world_z_peak_nonregression": {"ratio": 1.05, "add_rad_s": 0.01},
+    "definition": "Each H phase must reduce wrapped heading-error RMS over [3,45] and trapezoid integral of absolute physical world-z angular velocity over [29,45] by at least20percent versus fresh same-phase N. Heading target is the exact actual initial yaw latched by the original controller, fixed for both arms. Euler heading travel is separately descriptive/nonregression, not the primary physical rotation integral."
+  },
+  "helper_activity": {
+    "minimum_held_seconds_per_H_phase": 0.10,
+    "motor_torque_norm_threshold_Nm": 0.0001,
+    "definition": "Count actual held intervals with norm of recorded native heading_command[:3] at least threshold. Record original helper eligibility and lever/load masks separately.",
+    "limitation": "This is helper activity before fade/clipping, not a full applied-command counterfactual. Actual clipping and fade are reported separately."
+  },
+  "per_phase_H_vs_N_nonregression": {
+    "moving_timed_xy_rms": {"ratio": 1.10, "add_m": 0.001},
+    "full_timed_xy_peak": {"ratio": 1.0, "add_m": 0.010},
+    "final_timed_xy": {"ratio": 1.0, "add_m": 0.010},
+    "raw_reference_up_error_peak": {"ratio": 1.0, "add_deg": 1.0},
+    "raw_reference_up_error_rms": {"ratio": 1.10, "add_deg": 0.1},
+    "absolute_tilt_peak": {"ratio": 1.0, "add_deg": 1.0},
+    "late_world_z_angular_speed_peak": {"ratio": 1.05, "add_rad_s": 0.010},
+    "late_absolute_heading_travel": {"ratio": 1.05, "add_rad": 0.010},
+    "full_body_xy_speed_peak": {"ratio": 1.10, "add_m_s": 0.010},
+    "full_50ms_body3D_linear_acceleration_peak": {"ratio": 1.10, "add_m_s2": 0.100},
+    "held_any_channel_clipping_fraction": {"ratio": 1.0, "add_fraction": 0.020},
+    "held_each_channel_clipping_fraction": {"ratio": 1.0, "add_fraction": 0.020},
+    "held_normalized_clipping_excess_rms": {"ratio": 1.10, "add": 0.010},
+    "held_normalized_command_step_peak": {"ratio": 1.10, "add": 0.050}
+  },
+  "settling": {
+    "sustained_s": 2.0, "goal_radius_m": 0.020, "body_xy_speed_m_s": 0.020,
+    "world_z_angular_speed_rad_s": 0.050, "raw_reference_up_error_deg": 2.0,
+    "heading_error_deg": 10.0,
+    "scope": "Descriptive. Report final2s and first sustained2s for the original four simultaneous criteria, and separately those four plus heading error<=10degrees. Settling is not the sole primary heading-hold gate."
+  },
+  "hard_contracts": [
+    "All six runs complete registered45s with finite actual q/v and held command histories, no physical failure, applied caps respected and applied=clip(requested).",
+    "Same-phase N/H initial physical q/v, prior input and latched heading target match exactly. No observer/goal/phase reset after launch.",
+    "All raw world XY/V/A clocks match exactly and match the frozen full route. Fixed world goal and full path used even after an early stop.",
+    "Original observer count, native load/normal/gain/support/raw-reference/preparation algorithms verified. Actual values may diverge after different physical trajectories.",
+    "Expected helper formula matches recorded native heading_command; all6 use frozen flat gain bytes and actual bounds.",
+    "Fresh N precision arrays match the corresponding I73 N common numerical fields byte-exactly; classify failed replay as setup/reproduction issue, retain it without tuning."
+  ],
+  "diagnostic_only": [
+    "Full fixed-path geometric error, hold position/speed/lean, first sustained entry and later exits.",
+    "Heading error is wrapped; report unwrapped actual heading and Euler heading travel separately to reveal extra turns.",
+    "Physical world-z angular speed is R(q)*omega_body z component; it is not Euler yaw derivative.",
+    "Helper eligibility: original inferred free-shell masks, vertical/horizontal levers, torque limit, requested yaw torque, actual helper torque; no solved contacts enter control.",
+    "Current raw attitude targets can differ between N/H after state trajectories diverge; their generating algorithm is unchanged."
+  ],
+  "status_precedence": [
+    "INVALID_SETUP for source/schema/seal/reference/initial/invariant/frozen-gain/baseline-replay violations; retain physical completion separately.",
+    "FAIL_HEADING_SCREEN if any H/N physical condition, any per-phase heading-benefit check or nonregression check fails.",
+    "INCONCLUSIVE if all physical/benefit/nonregression conditions pass but any H phase has less than0.10s helper activity.",
+    "PASS_HEADING_SCREEN only if all three H phases pass physical conditions, both heading benefits, all nonregression margins and activity. No automatic default adoption."
+  ]
+}
