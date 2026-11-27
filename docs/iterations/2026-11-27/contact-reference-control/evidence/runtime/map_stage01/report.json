@@ -1,0 +1,111 @@
+{
+  "corridor_height_range_m": [
+    1.1778360111994544,
+    1.2871362825107477
+  ],
+  "corridor_relief_m": 0.10930027131129338,
+  "corridor_slope_deg": {
+    "maximum": 14.088116268877883,
+    "p95": 10.734358921813058
+  },
+  "dem": {
+    "bounds_xy_m": [
+      -23.5,
+      23.5,
+      -23.5,
+      23.5
+    ],
+    "cell_m": 0.09418837675350701,
+    "full_height_range_m": [
+      -0.9838429689407349,
+      5.5913987159729
+    ],
+    "path": "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/dem/marsyard_terrain_hm.tif",
+    "sha256": "d9c143fa8af44c8719770e53499dcab7c23054cc1e4c333f4ccbe7ff8d942eba",
+    "shape": [
+      500,
+      500
+    ]
+  },
+  "features": {
+    "lava": {
+      "exact_below_one_m": false,
+      "lower_bound_m": 1.0,
+      "minimum_sampled_route_xy_clearance_m": 1.0,
+      "nearby_triangles": 0,
+      "total_triangles": 13836
+    },
+    "rocks_big": {
+      "exact_below_one_m": true,
+      "lower_bound_m": 0.6700920397127299,
+      "minimum_sampled_route_xy_clearance_m": 0.6700920397127299,
+      "nearby_triangles": 143,
+      "total_triangles": 6510
+    },
+    "rocks_medium": {
+      "exact_below_one_m": true,
+      "lower_bound_m": 0.6618110454502854,
+      "minimum_sampled_route_xy_clearance_m": 0.6618110454502854,
+      "nearby_triangles": 174,
+      "total_triangles": 70318
+    }
+  },
+  "fixture_only": true,
+  "gates": {
+    "corridor_height_range": false,
+    "corridor_within_dem": true,
+    "feature_xy_clearance": true,
+    "max_corridor_facet_slope": false
+  },
+  "iteration": "I-73",
+  "limitations": [
+    "Sampled route/circumference corridor, not a continuous safety certificate.",
+    "Feature clearance is a conservative 2D projection, capped at a 1m lower bound.",
+    "Known terrain is used only to select an offline experiment fixture; control gets no map.",
+    "No simulator outcome or actuator feasibility is implied by these geometric screens."
+  ],
+  "maximum_sampled_reference_acceleration_m_s2": 0.016099062974069447,
+  "maximum_sampled_reference_speed_m_s": 0.08718027363114111,
+  "no_physics": true,
+  "passed": false,
+  "route": {
+    "duration_s": 32.0,
+    "endpoint_policy": "Exactly zero velocity and acceleration before and after motion.",
+    "forward_m": 1.2,
+    "geometry": "origin + R113deg @ [1.2*u, 0.14*sin(2*pi*u)]",
+    "geometry_heading_deg": 113.0,
+    "goal_hold_s": 10.0,
+    "initial_heading_deg": 149.2428430702093,
+    "kind": "i73_smooth_s",
+    "lateral_m": 0.14,
+    "origin": [
+      -1.79,
+      7.22
+    ],
+    "origin_policy": "Fixed original world origin, no measured-state reanchor or reset.",
+    "progress": "u = 10*r^3 - 15*r^4 + 6*r^5; r=(t-3)/32 clipped to [0,1]",
+    "start_s": 3.0,
+    "total_duration_s": 45.0
+  },
+  "route_height_range_m": [
+    1.1910586306418156,
+    1.2607977180785324
+  ],
+  "route_slope_deg": {
+    "maximum": 11.18404454091056,
+    "p95": 11.18404454091056
+  },
+  "route_xy_bounds_m": [
+    -2.2588773541871285,
+    -1.79,
+    7.22,
+    8.324605824142928
+  ],
+  "sampled_polyline_length_m": 1.3477946954599704,
+  "world_visual_bounds_m": [
+    -3.7588773541871285,
+    -0.29000000000000004,
+    5.72,
+    9.824605824142928
+  ]
+}

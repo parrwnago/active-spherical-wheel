@@ -1,13 +1,23 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 7 — 27 November 2026, through I-72.** Baseline: repository commit
-`0bfca57`; the selected live controller remains unchanged. I-72 adds only an
-opt-in geometry-first ranking module and saved-log research tools, with no
-active-controller or default change. This is a study and discussion
+**Revision 8 — 27 November 2026, through I-73.** Latest experiment baseline:
+repository commit `87a17cb`; the selected live controller remains unchanged.
+I-73 adds a result-owned closed-loop rolling-reference test of fixed contact
+selectors, with no active-controller or default change. This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest experiment, I-72, chooses a physical point near the native observer's
+The latest experiment, **I-73**, runs nine fresh 45-second Gazebo/DART S-shaped
+episodes: native N, guarded velocity A and geometry-plus-velocity C, at three
+starting phases, with a ten-second final hold. Only rolling-reference routing
+changes. All runs complete, but C fails 12 of 36 fixed control checks: tracking
+improves at −1.0 rad, worsens at +0.3 rad and changes little at +0.9 rad. None
+fully settles under the simultaneous position/speed/rotation/attitude criteria;
+several return close to the goal but keep moving or rotating. Original heading
+is free. Keep the original selected pipeline; neither A nor C is adopted.
+Read Section 17 for the fresh motion evidence and its limited intervention scope.
+
+The preceding experiment, I-72, chooses a physical point near the native observer's
 equivalent point before applying the existing velocity/fused ranking. Its primary
 accepted/fallback policy **C** makes **127** mistakes versus old policy A's
 **124** and native N's **412**. On the same full primary rows, C improves point
@@ -15,7 +25,8 @@ RMS, p95 and maximum against N, but worsens RMS/p95 against A despite a smaller
 maximum. It fails four of ten gates, including a small identity regression and
 lower acceptance coverage, and is **not adopted**. Read Section 16 for the
 spatial tradeoff. I-71's **STOP THIS HMM VERSION** decision remains in force;
-I-72 does not restart HMM tuning. No new driving improvement is claimed.
+I-72 does not restart HMM tuning. Its offline acceptance failure is not erased
+by the later mixed driving comparison.
 The I-68/I-69 force-boundary findings remain relevant qualifications on the
 recorded pressure labels, but the user has **stopped the solver-investigation
 direction**. Preserve that history without treating it as the next work item.
@@ -39,9 +50,10 @@ No MPC, iLQR, particle filter, camera, LiDAR, SLAM, or live dynamic-contact
 forecast currently commands the selected robot. There is a limited **kinematic
 preview**, explained below. The code also contains alternative modes and
 rejected candidates, so finding a module does not establish that it is active.
-The temporal estimator and geometry-first selector are opt-in, shadow-only
-experiments. Neither is a particle filter or a replacement for the live support
-locator.
+The temporal estimator remains an opt-in offline experiment. The geometry-first
+selector is also opt-in: I-73 tests it only in rolling-reference generation,
+while native support loads, gain routing, normal and support torque remain in
+use. Neither is a particle filter or an adopted replacement for the support locator.
 
 ## 1. Mechanism, state, and simulator
 
@@ -424,6 +436,7 @@ the selected live controller's adopted replacement.
 | [I-70: hybrid temporal modes](iterations/2026-11-27/temporal-contact-modes/README.md) | Implements a causal 21-mode rolling/slip, single/pair/unknown estimator. Primary mistakes A124→564; frame evidence305 and no-edge temporal control646. Matched point RMS improves but maximum worsens; six of sixteen gates fail. | Completed shadow experiment, not adopted. Section 14 separates identity errors, abstention, multi-contact and timing results. |
 | [I-71: endpoint-pair stopping ablation](iterations/2026-11-27/endpoint-pair-ablation/README.md) | Keep nine singleton/unknown endpoint modes and preceding-interval pair edges, using frozen I-70 costs. Primary mistakes fall to425 but matching frame has303; every phase regresses. Four of eight continuation checks and seven of sixteen adoption gates fail. | Stop this HMM version without tuning. All471 true pair-label rows remain errors in the full loaded-set comparison; Section 15 gives the scope. |
 | [I-72: geometry-first velocity selection](iterations/2026-11-27/geometry-first-contact/README.md) | Choose one physical candidate per family nearest native N's equivalent point, then reuse fixed I-60 ranking/acceptance. Primary C has127 errors versus A124; acceptance6848 versus6902. Full-primary point RMS/p95/max improve against N, but RMS/p95 worsen against A despite a better maximum. Four of ten gates fail. | Mixed spatial benefit, configured selector rejected; no tuning or live adoption. Section 16 retains the complete comparisons. |
+| [I-73: fresh S-path rolling-reference comparison](iterations/2026-11-27/contact-reference-control/README.md) | Nine new45s Gazebo/DART episodes, N/A/C ×threephases. Only rolling reference/feedforward records change. Allcomplete; C fails12/36controlchecks and noneof9fullysettles. −1.0tracking improves, +.3regresses, +.9littlechange. | No consistent motion gain; original pipeline retained. Section17 distinguishes positionreturn, motion and freeheading. |
 
 Every row is offline saved-log work, not a new driving improvement. Episodes
 were inspected before these later analyses; whole-episode holdouts reduce
@@ -1173,7 +1186,108 @@ observer, support geometry, feedforward and short preparation remain unchanged.
 I-71's HMM stopping decision remains in force; solver investigation is parked,
 and this result adds no camera, hardware or new controller direction.
 
-## 17. Sources, attribution, and how to continue a discussion
+## 17. I-73: fresh S-path motion, with mixed effects and incomplete settling
+
+The user approved an S-shaped or earlier figure-eight route. I-73 deliberately
+uses a **new S** with three seconds initial hold, 32 seconds of smooth quintic
+progress, and ten seconds at the final fixed goal. Geometry is
+`origin + R(113°) [1.2u, 0.14 sin(2πu)]` metres. Start origin is
+`[−2.4, 10.0]` m; initial robot yaw is 45°. Requested initial ground-relative
+phases are −1.0, +0.3 and +0.9 rad; the common placement routine adjusts the
+literal shaft angle for the local normal. No per-method reference reanchor,
+gain tuning, threshold tuning or reset occurs after placement.
+
+The original LQR, momentum observer, native support-force/load/normal estimates,
+gain routing, holding torque, 120 ms incoming preparation, fade and final caps
+remain. N uses native inferred records. A uses the original I-60 accepted fused
+physical point/family, otherwise exact native fallback. C uses the frozen I-72
+geometry-first fused point/family, otherwise native fallback. The selected
+record contains geometry only, **no invented force or load shares**. It replaces
+only the argument to the stateless rolling least-squares calculation.
+
+This intervention changes joint velocity references **and** rolling belt
+feedforward. Joint references enter LQR feedback errors, so it is not a pure
+additive feedforward test. Native load/gain routing remains a possible source
+of limitation; this is not a full estimator replacement. At exactly zero
+desired velocity, the original branch bypasses rolling selection. Final hold
+therefore tests arrival and retained history, not new contact-selector commands.
+
+All nine fresh Gazebo/DART runs complete 45 seconds with no declared physical
+failure. The same flat gain-cache bytes, five-millisecond feedback, one-millisecond
+physics, and `[1.5, .6, .6 N m, .3, .3 m/s]` caps are retained. The method sees
+exact simulated q/v and previous actual held command, plus observer outputs and
+known robot geometry. Terrain truth is used for offline site choice/common
+balanced placement and evaluation, never read during the guarded command.
+
+| Requested start phase | Native N moving timed XY RMS | Velocity A | Geometry + velocity C |
+|---|---:|---:|---:|
+| −1.0 rad | 47.31 mm | 44.39 mm | 45.38 mm |
+| +0.3 rad | 22.85 mm | 27.05 mm | 27.53 mm |
+| +0.9 rad | 23.37 mm | 23.53 mm | 23.47 mm |
+
+C improves −1.0 tracking, regresses at +0.3, and changes little at +0.9.
+At −1.0 its late `[29,45]` s world-vertical angular speed peak grows from
+0.1515 to 0.9714 rad/s. At +0.3 its final position error grows 7.02→28.42 mm;
+at +0.9 it is 44.12 versus 41.41 mm. No method has a uniform win.
+Native −1.0 has the largest moving RMS on this S, unlike some earlier favorable
+figure-eight results. Phase ranking depends on the tested task; this experiment
+changes both route and site and cannot isolate which caused the ranking change.
+
+The strict settling condition requires all of the following at **every actual
+state sample in final `[43,45]` s**: distance from the fixed goal ≤20 mm,
+XY speed ≤0.02 m/s, absolute physical world-vertical angular speed ≤0.05 rad/s,
+and angle between actual/reference up vectors ≤2°. The whole ten-second hold
+is also searched for a simultaneous sustained two-second entry and later exit.
+None of the nine achieves either settling measure. All nine exceed the rotation
+criterion. The selected controller has **free heading**, so residual yaw is not
+proof of a fall or a bad lean reference.
+
+Do not confuse this with failure to return. At −1.0, final position errors
+N/A/C are **4.86/1.93/1.79 mm**, but all retain excess translational speed and
+rotation. At +0.3, N and A meet the other three final-window criteria and fail
+only rotation. Position, balance, yaw and velocity are separate observations.
+World-vertical angular speed is `R(q) ω_body`; it is not an Euler yaw derivative.
+Absolute body tilt and body-to-reference up-vector error are also different.
+
+All 101 setup/initial-state/reference contracts pass. C has **1.040/1.525/0.100 s**
+of direct reference intervention, meeting the predeclared minimum; +0.9 exposure
+is especially sparse. This compares native/selected rolling references on the
+same current state, not a complete native command after preparation/clipping.
+Twelve of 36 primary C checks fail, including all three settling checks and late
+rotation regressions, with additional +0.3 tracking/attitude regressions.
+
+The site-selection history matters. An original proposal and two fixed 25-site
+grids fail the initial 8° maximum-facet screen. Before physics, that map-only
+screen is explicitly revised to 12°, selecting the already inspected least-steep
+site: 11.288° corridor maximum, 75.69 mm relief and at least 1 m projected rock/
+lava clearance. It is **moderate faceted Mars ground**, not flat or a passed
+8° screen. All failed proposals remain in the record; no controller outcome
+was used to pick the site or relax the screen.
+
+Verification includes eighteen adapter/runner contract functions and exact native
+moving/stationary command/history identity; four unique route contracts; limited
+feature/ranker parity on 39 old states; and 22 final evaluation contracts
+(inclusive of the earlier 21). A verifier source/input-map lookup is corrected
+before the first outcome evaluation. Media previews initially fail because
+native saved rollouts encode float32 while precision files retain float64;
+all 36 cast checks match, and corrected videos render the full-precision
+recorded poses. These setup stages, the fixed source/gate seals, all nine cases,
+comparison plots and unsuccessful decisions are preserved. Counts are scoped,
+not the full repository suite.
+
+**Decision:** keep the original selected controller/observer/feedforward and
+retain A/C as experimental tools. Do not promote secondary A after seeing the
+outcomes or reverse I-72's failed estimator screen. One deterministic new S
+per method/phase is not general multi-contact validation or a statistical
+replication study. The experiment does not establish the complete physical
+cause of every correction. It shows that this rolling-contact change alone
+has not produced a robust gain across the tested configurations.
+
+The [I-73 record, PDF, full-hold videos and reproduction](iterations/2026-11-27/contact-reference-control/README.md)
+contain the evidence. Solver investigation, HMM tuning and camera work remain
+outside the selected next step; no hardware result is claimed.
+
+## 18. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

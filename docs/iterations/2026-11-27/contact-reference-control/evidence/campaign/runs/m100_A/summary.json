@@ -1,0 +1,214 @@
+{
+  "sensing": {
+    "observer_force_error_median_N": 0.012636656882481924,
+    "observer_force_error_p95_N": 1.5101539177896075,
+    "observer_moment_error_median_Nm": 0.001884886629124278,
+    "observer_moment_error_p95_Nm": 0.15006581889919832
+  },
+  "terrain": "marsyard2021",
+  "controller": "hardware",
+  "parameters": {
+    "mode": "hardware",
+    "synchronize": true,
+    "normal_source": "intrinsic",
+    "observer_cutoff_rad_s": 100.0,
+    "support_min_load_fraction": 0.05,
+    "normal_time_constant_s": 0.02,
+    "rim_aware": true,
+    "rim_time_constant_s": 0.2,
+    "rim_hold_speed_m_s": 0.02,
+    "gap_margin_m": 0.002,
+    "lean_gain": 1.0,
+    "support_feedforward": 1.0,
+    "schedule_on_ground_normal": false,
+    "shaft_error": "rolling",
+    "rolling_allocation": "least_squares",
+    "rolling_damping_m_s": 0.01,
+    "rolling_speed_limits": [
+      20.0,
+      20.0,
+      20.0,
+      0.3,
+      0.3
+    ],
+    "rolling_acceleration_limits": [
+      100.0,
+      100.0,
+      100.0,
+      3.0,
+      3.0
+    ],
+    "rolling_effort_m_s": 0.001,
+    "rolling_change_m_s": 0.001,
+    "rolling_adaptive_effort": false,
+    "rolling_weak_effort_m_s": 0.005,
+    "rolling_authority_m_s": 0.02,
+    "rolling_reference_catchup_gain_s_inv": 1.0,
+    "rolling_reference_catchup_speed_m_s": 0.06,
+    "rolling_reference_position_limit_m": 0.05,
+    "rolling_reference_balance_guard": false,
+    "rolling_reference_lean_scale_deg": 3.0,
+    "rolling_reference_rate_horizon_s": 0.1,
+    "track_contact_point": false,
+    "slip_threshold_m_s": 0.02,
+    "friction_recovery_s": 1.5,
+    "heading_gain": 0.0,
+    "heading_damping": 0.06,
+    "heading_torque_limit_Nm": 0.15,
+    "heading_min_lever": 0.12,
+    "unload_fraction": 0.3,
+    "airborne_damping_Nms": 0.01,
+    "max_lean_deg": 28.0,
+    "lqr_weights": "flat",
+    "heading_reference": "none",
+    "heading_actuation": "shells",
+    "heading_roll_budget_Nm": 0.0,
+    "fall_line_slope_deg": [
+      6.0,
+      12.0
+    ],
+    "heading_normal_time_constant_s": 0.5,
+    "heading_error_limit_rad": 0.5,
+    "fall_line_hysteresis_deg": 20.0
+  },
+  "engine_version": "Gazebo Harmonic (gz-sim 8.10.0)",
+  "contact_mode": "analytic_clipped_floor",
+  "ground_model": "Gazebo collision with the marsyard2021_dem (grid 0.0942 m); contacts solved by DART. The MuJoCo mirror only evaluates kinematics.",
+  "path": {
+    "kind": "i73_smooth_s",
+    "origin": [
+      -2.4,
+      10.0
+    ],
+    "geometry": "origin + R113deg @ [1.2*u, 0.14*sin(2*pi*u)]",
+    "progress": "u = 10*r^3 - 15*r^4 + 6*r^5; r=(t-3)/32 clipped to [0,1]",
+    "start_s": 3.0,
+    "duration_s": 32.0,
+    "goal_hold_s": 10.0,
+    "total_duration_s": 45.0,
+    "forward_m": 1.2,
+    "lateral_m": 0.14,
+    "geometry_heading_deg": 113.0,
+    "initial_heading_deg": 149.2428430702093,
+    "origin_policy": "Fixed original world origin, no measured-state reanchor or reset.",
+    "endpoint_policy": "Exactly zero velocity and acceleration before and after motion."
+  },
+  "completed": true,
+  "failure": null,
+  "completed_duration_s": 45.00000000000457,
+  "requested_duration_s": 45.0,
+  "distance_along_path_m": 0.9696542492237833,
+  "final_cross_track_m": -0.7088313272913832,
+  "tracking": {
+    "rms_error_m": 0.037513533967158834,
+    "max_error_m": 0.1510823560062461,
+    "final_error_m": 0.0019339579105424748,
+    "rms_error_while_moving_m": 0.04438781975586769
+  },
+  "attitude": {
+    "max_tilt_deg": 10.197807519716546,
+    "max_error_from_reference_deg": 3.98243092860006,
+    "rms_error_from_reference_deg": 0.7776616834854208,
+    "final_error_from_reference_deg": 0.4652681090354764,
+    "heading_change_deg": 54.72838136798139
+  },
+  "ground": {
+    "max_slope_under_wheel_deg": 10.667808102803676,
+    "height_range_m": [
+      1.178765986151752,
+      1.2130187096435423
+    ],
+    "friction_range": [
+      0.7,
+      0.7
+    ]
+  },
+  "contact": {
+    "normal_load_fraction_min": 0.0,
+    "normal_load_fraction_max": 2.9656767807728888,
+    "normal_load_fraction_std": 0.062311547252243873,
+    "unloaded_time_s": 0.035,
+    "utilization_mean": 0.3128444636932909,
+    "utilization_p95": 0.26885003681882885,
+    "utilization_max": 1141.2104775551222,
+    "time_above_90pct_cone_s": 0.32,
+    "max_slip_speed_m_s": 0.3587234473719635,
+    "slip_distance_m": 0.008444853314891941,
+    "sliding_time_s": 0.05,
+    "friction_loss_J": 0.09806448951570915,
+    "estimated_friction_min": 0.3805632839585692,
+    "normal_estimate_error_rms_deg": 1.8799277831063388,
+    "normal_estimate_error_max_deg": 8.193115605818173,
+    "normal_estimate_error_median_deg": 0.5142999226703926,
+    "normal_estimate_error_p95_deg": 3.8209640654298163,
+    "support_time_share": {
+      "shell_A": 0.33633533466755616,
+      "shell_B": 0.360796086279742,
+      "belt_A": 0.28741383144318433,
+      "belt_B": 0.015454747609517457
+    },
+    "support_handovers": 50,
+    "fork_ground_contact": false
+  },
+  "actuation": {
+    "max_input_fraction": [
+      1.0,
+      1.0,
+      0.8599508262888865,
+      1.0,
+      0.17698454075746897
+    ],
+    "saturated_time_fraction": 0.0014444444444444444,
+    "rms_torque_Nm": [
+      0.16490414892057778,
+      0.08149756257476326,
+      0.08639053385867515
+    ],
+    "max_joint_speed_rad_s": [
+      3.968492178759744,
+      10.419535527981159,
+      13.479368383753712
+    ],
+    "joint_work_J": 3.9968540779757196,
+    "unloaded_fade_time_s": 0.0
+  },
+  "settled_at_end": false,
+  "engine": {
+    "simulator": "Gazebo Harmonic (gz-sim 8.10.0)",
+    "physics": "DART 6.19.5 via gz-physics 7.5.0",
+    "collision_detector": "ode",
+    "step_s": 0.001,
+    "ground": "marsyard2021_dem",
+    "world_info": {
+      "ground": "marsyard2021",
+      "collision_detector": "ode",
+      "dem_mesh": "/home/parrwnago/active-spherical-wheel/results/contact_reference_control_20261127/campaign/_workspaces/m100_A/gazebo/world/marsyard2021_dem.obj",
+      "source": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain",
+      "cell_m": 0.09418837675350701,
+      "features": [
+        "lava",
+        "rocks_big",
+        "rocks_medium"
+      ]
+    }
+  },
+  "wall_time_s": 111.85967493057251,
+  "bridge_counters": {
+    "admitted": 67306,
+    "rejected": 170690,
+    "unmatched": 0
+  },
+  "contact_reference_experiment": {
+    "iteration": "I-73",
+    "case": {
+      "case_id": "m100_A",
+      "duration_s": 45.0,
+      "phase_rad": -1.0,
+      "policy": "A",
+      "yaw_deg": 45.0
+    },
+    "source_boundary": "Current exact simulated q/v and last actual held input; observer/known-geometry selection only. Physical contacts/terrain prohibited during command.",
+    "counterfactual_scope": "Native rolling least-squares vref/FF on same CURRENT controller state only; not a full prepared native command.",
+    "default_changed": false
+  }
+}

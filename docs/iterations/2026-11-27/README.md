@@ -1,5 +1,33 @@
 # Research presentation notes — 2026-11-27
 
+**I-73: fresh S-path contact-reference intervention completes, with mixed
+tracking and no demonstrated settling improvement.**
+[Full record and media](contact-reference-control/README.md),
+[motion comparison](contact-reference-control/evidence/publication/plots_stage01/motion_comparison.png),
+[two-page PDF](contact-reference-control/evidence/publication/plots_stage01/control_comparison.pdf).
+
+- Nine new 45 s Gazebo/DART runs: N/native, A/guarded velocity, C/geometry-first,
+  at −1.0/+0.3/+0.9 rad; fixed S, 3 s initial hold +32 s motion +10 s final hold.
+  Original LQR/observer/gains/load routing/support/preparation/caps remain selected.
+- Only rolling reference/feedforward records change. Native force/load/gain
+  routes remain in use; this is not a complete estimator replacement. The final
+  zero-speed hold bypasses new rolling selection and tests arrival/history effects.
+- Moving timed XY RMS N/A/C: **47.31/44.39/45.38 mm**, **22.85/27.05/27.53 mm**,
+  **23.37/23.53/23.47 mm**. No uniform improvement. C worsens late rotation at
+  −1.0 and +0.3, and +0.3 final error grows 7.02→28.42 mm.
+- All nine complete without physical failure; all 101 setup checks pass.
+  C has 1.040/1.525/0.100 s of reference intervention. Twelve of 36 primary
+  control checks fail. Keep exposure separate from applied-command causality.
+- No case meets all four settling criteria for sustained 2 s. All fail rotation;
+  several return close to goal. Free heading means this is not proof of a fall
+  or failure to lean correctly. Show the full goal hold and body/reference tilt.
+- Preserve failed map sites and revised facet screen (8°→12°) before physics;
+  preserve the verifier schema correction and float32 media-loader failures.
+  Final focused functions: 18 adapter/runner, 4 route, 22 evaluation inclusive
+  of earlier 21, 4 graphics inclusive of earlier 3. Not a full repo-suite count.
+- Candidate not adopted. Keep I-72's rejection, original live pipeline and parked
+  solver/HMM work. Fresh driving data does not justify a post-result winner switch.
+
 **I-72: geometry-first velocity selection reduces point extremes, with a small
 family/coverage regression; configured candidate not adopted.**
 [Full record and replay](geometry-first-contact/README.md),

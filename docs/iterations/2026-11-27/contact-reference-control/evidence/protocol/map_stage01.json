@@ -1,0 +1,31 @@
+{
+  "iteration": "I-73",
+  "status": "registered map-only site inspection before arithmetic",
+  "date": "2026-11-27",
+  "question": "Can the fixed gentle S-shaped route provide a clear new rolling-reference intervention and stop test?",
+  "base_revision": "87a17cb36bc8026dea605c43a9268cc8c6a58190",
+  "route": {
+    "kind": "i73_smooth_s",
+    "origin_m": [-1.79, 7.22],
+    "geometry": "origin + R(113 degrees) @ [1.2*u, 0.14*sin(2*pi*u)]",
+    "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/32, clipped [0,1]",
+    "start_hold_s": 3.0,
+    "motion_duration_s": 32.0,
+    "final_hold_s": 10.0,
+    "total_duration_s": 45.0,
+    "initial_robot_yaw_deg": 45.0,
+    "starting_shaft_phases_rad": [-1.0, 0.3, 0.9],
+    "reference_policy": "Identical fixed global origin and clock in all arms; no reanchor or reset. Exactly zero reference velocity and acceleration in both holds. Geometry heading differs intentionally from initial robot yaw."
+  },
+  "sampling": {"route_times": 1601, "corridor_radius_m": 0.15, "circumference_offsets": 25, "include_center": true},
+  "screens": {
+    "corridor_within_dem": true,
+    "maximum_corridor_facet_slope_deg": 8.0,
+    "maximum_corridor_total_height_relief_m": 0.08,
+    "minimum_route_feature_xy_clearance_m": 0.25,
+    "features": "All original rock/lava projected triangles, including buried triangles; clearances at least 1 m may be reported as lower bounds."
+  },
+  "input_policy": "Freeze this protocol, map-preflight source, route source, DEM and all three feature OBJ hashes before new terrain arithmetic. Preserve all failed screens. No simulator or controller execution in this stage.",
+  "decision_policy": "If screens fail, retain the failed proposal and register any new site geometry before inspecting it. No route selection based on controller outcomes.",
+  "limitations": "Sampled site screening is neither continuous clearance certification nor actuator feasibility. Terrain information selects the offline fixture only and never enters the live controller/contact selector."
+}

@@ -4454,6 +4454,162 @@ anunloaded body'svelocity. Sampledlast1mspressure versusfilteredpreceding5ms
 observer/allforceroutingqualification remains; parkedsolver/camera/hardware work
 notresumed. [Full record, PDF, physical candidate plots and reproduction](docs/iterations/2026-11-27/geometry-first-contact/README.md).
 
+## I-73 / 2026-11-27 / analyzed, not adopted: fresh S-path rolling-reference comparison
+
+**Final outcome:** All nine fresh 45 s Gazebo/DART runs complete without declared
+physical failure. Fixed geometry-plus-velocity C improves tracking at −1.0 rad,
+regresses at +0.3 and changes little at +0.9. It fails 12/36 control checks;
+all 101 setup checks pass. Retain the original selected pipeline and keep A/C
+experimental. Proposal, failed site screens and setup chronology follow.
+
+**Question:** Does the fixed I-72 geometry-first candidate improve actual motion
+over native observer contacts, despite its mixed offline classification result?
+The user approved a new S-shaped or figure-eight test. Use a new gentle S and
+final stop, comparing native (N), guarded I-60 velocity (A), and geometry-first
+I-72 (C), at shaft phases −1.0, +0.3, +0.9 rad and robot yaw 45°.
+
+**Proposed change:** Override only rolling joint/belt reference velocities and
+rolling feedforward when the fixed candidate is accepted. Retain the original
+LQR, momentum observer, native force/load/normal/gain routing, holding torque,
+120 ms preparation and final limits. This changes LQR velocity errors as well
+as feedforward; it is not an isolated additive-torque test. The zero-velocity
+hold bypasses direct rolling selection, so settling tests arrival/history effects.
+No adoption or retroactive acceptance of I-72 is implied.
+
+**Registered site inspection:** Fixed global S origin (−1.79, 7.22) m,
+`R113° [1.2u, .14 sin(2πu)]`, quintic progress, 3 s initial hold, 32 s motion,
+10 s final hold. Before any new terrain arithmetic, freeze source/DEM/feature
+hashes and inspect 1601 times plus a 0.15 m sampled corridor. Screens: within
+DEM, maximum facet slope 8°, total corridor relief 0.08 m, and 0.25 m clearance
+from projected rock/lava triangles. These select an offline fixture only;
+the controller receives no map. Failures and setup corrections will be retained.
+
+**Baseline:** revision `87a17cb`, selected Gazebo/DART native LQR/observer and
+flat gain bank, 5 ms feedback / 1 ms physics, caps 1.5/.6/.6 N m and .3/.3 m/s.
+No controller or gain tuning. Closed-loop acceptance and source/input seals must
+be registered before physics. Implementation, site checks and new experiments
+are pending; this entry records a proposal, not a completed result.
+
+Evidence will be archived at
+[contact-reference-control](docs/iterations/2026-11-27/contact-reference-control/README.md).
+Local protocol: `results/contact_reference_control_20261127/protocol/map_stage01.json`.
+
+**Site stage 01 completed, rejected before physics:** Original proposed S center
+reaches 11.18° facet slope; 0.15 m corridor reaches 14.09° and 109.3 mm total
+relief. It fails the fixed 8° / 80 mm screens despite passing feature clearance
+(nearest projected rock about 0.662 m). Four synthetic route contracts pass.
+Retain the rejected site. Register stage 02: same shape, orientation, timing and
+screens, finite ordered 5×5 origin grid around the earlier figure-eight region
+(−1.6, 9.6) m, offsets −.8/−.4/0/.4/.8 m. Inspect nearest offset first, deterministic
+ties by dx then dy, stop at first passing site. This is map-only selection;
+no controller outcome exists and no threshold is relaxed.
+
+**Site stage 02 completed, rejected before physics:** None of the 25 registered
+origins passes the unchanged 8° corridor facet-slope screen. The smallest
+maximum is 11.288° at (−2.4, 10.0) m, with 75.69 mm relief. DEM bounds and
+projected feature clearance pass at every site. Stage 03 registers the same
+ordered 5×5 offsets around the source-documented gentle-circle region
+(12.41, −1.85) m, retaining all geometry, timing, screens and first-pass policy.
+
+**Site stage 03 completed, rejected before physics:** All 25 further sites also
+fail the 8° facet screen (minimum maximum 13.709°, with other screen failures at
+that site). The source's broader descriptions of gentle ground do not establish
+small slopes on every unsmoothed 9.4 cm DEM triangle. No physics has run.
+Stage 04 explicitly revises the offline maximum-facet screen from 8° to 12°,
+selecting the already inspected stage-02 least-steep site (−2.4, 10.0) m,
+11.288° corridor maximum and 75.69 mm relief. Keep the 80 mm relief/0.25 m
+feature-clearance screens and all shape/timing/controller settings. This is a
+documented fixture-screen revision before any controller outcome, not a passed
+original screen or a controller improvement. No further site search is planned;
+describe this fixture as moderate faceted Mars ground, not flat/gentle ≤8°.
+
+**Implemented / launched:** Selected-site final map check passes revised
+screens: 11.28809° maximum corridor facet slope, 75.69265 mm relief, projected
+rock/lava clearance ≥1 m. Route contracts: four unique functions pass at both
+origins (repeated execution is not eight tests). Adapter/runner: 18 disjoint
+focused functions pass (13 adapter, 4 runner, 1 native-identity with two included
+subtests). Native wrapped/original moving and stationary commands, diagnostics
+and controller/observer history are byte-exact. Limited implementation parity
+at 39 fixed old states reproduces A/C masks, IDs and accepted labels; numeric
+features/points/scores meet 1e−12 absolute+relative tolerance. This is not a new
+accuracy test or the full repository suite.
+
+Before physics, protocol `30f37fabc23b76dab3caf9eca50fa9221c2cfefcae29385978303c57e550fbdf`
+binds 86 control/runtime/runner source files, 14 input/report/gate files, both
+plugin binaries and the original gain-cache bytes. Acceptance definitions are
+fixed before runs. Pure evaluation code is separately sealed and tested before
+new outcome analysis; it cannot affect control. Nine new cases launched with
+three isolated processes at a time. All outputs must be sealed before campaign
+evaluation. At launch, execution/acceptance were pending and no gain was claimed.
+
+**Completed experiment / evidence:** Nine cases, 81,009 physical-state frames,
+same-phase initial state/prior commands and fixed world XY/V/A clocks exact;
+all complete 45 s, no declared failure, finite state/held commands, applied caps
+and actual prior-input history pass. All 86 sources, 14 inputs, both binaries,
+original gain bytes and 72 output artifacts verify. All-nine output seal:
+`54da1644bfd407e955e7f08a064315eb24e4a2405c51d139c25045ad885474ba`.
+Canonical evaluation runs once, after all outputs and evaluation sources seal;
+all 101 setup contracts pass. Twenty-two final evaluation contract functions
+pass, inclusive of the earlier 21, not additive or the full repository suite.
+
+Moving timed XY RMS N/A/C in mm: −1.0 **47.31/44.39/45.38**;
++0.3 **22.85/27.05/27.53**; +0.9 **23.37/23.53/23.47**.
+Final XY error N/A/C: **4.86/1.93/1.79**, **7.02/5.57/28.42**,
+**41.41/26.31/44.12** mm. C's −1.0 peak error improves 179.59→151.08 mm,
+but late world-vertical angular-speed peak grows .1515→.9714 rad/s. +0.3 also
+regresses tracking, final position, lean peak and late rotation. +0.9 mostly
+matches moving tracking but fails the late rotation nonregression margin.
+
+All three C reference-exposure gates pass: 1.040/1.525/.100 s, measured only
+against same-current-state native rolling vref/FF, not a complete prepared/clipped
+native command. The last phase has sparse intervention. Twelve of 36 primary
+control checks fail: −1.0 three, +0.3 seven, +0.9 two. A remains secondary;
+no post-result winner switch or threshold tuning.
+
+**Settling qualification:** None of nine meets the simultaneous final-2 s goal
+radius ≤20 mm, XY speed ≤.02 m/s, |world vertical ω| ≤.05 rad/s, raw-reference
+up error ≤2° conditions, or a sustained 2 s entry anywhere in the 10 s hold.
+All fail rotation. At −1.0, all return within 6 mm over the final 2 s but retain
+excess speed/rotation; +0.3 native/A meet the other three criteria and fail only
+rotation. Do not call these all position
+return failures. Heading is free in the original selected controller. The final
+stationary branch bypasses new rolling selection, so this tests arrival/history,
+not a new selector-based hold law. Absolute tilt differs from reference-up error.
+
+**Setup corrections retained:** Before outcome analysis, source review finds the
+metric-fragment hash is an input binding, not a source binding. Preserve initial
+21-contract stage; corrected verifier and actual-schema test pass 22 inclusive.
+No physics or gate changes. Three first media-preview invocations fail before
+drawing due to float32 native rollouts versus float64 precision arrays. All 36
+encoding-cast checks match; corrected media uses exact saved poses. Preserve
+failed sources/logs, corrected previews, four inclusive media contracts and all
+three full comparison videos (901 frames, 20 fps, 45.05 s encoded, saved time 0–45 s).
+Decoded first/middle/final frames for every phase pass manual/machine QA.
+
+**Decision / limitation:** Not adopted; selected LQR, momentum observer, native
+support locator, rolling/holding feedforward and 120 ms preparation remain.
+This is rolling-reference routing, not full support-force/gain estimation;
+it establishes neither the physical cause of every correction nor general
+multi-contact performance. I-72's failed offline screen stays failed. One fixed
+new S per method/phase is not a statistical replication study. Native −1.0 now
+has the largest moving RMS, so its favorable ranking on some earlier figure-eight
+cases is not universal; route and site both change and are not isolated here.
+Solver/HMM/camera
+directions stay parked. Full record, plots, two-page PDF, all videos, original
+sources/tests, failed setups and reproduction are at
+[I-73 evidence](docs/iterations/2026-11-27/contact-reference-control/README.md).
+
+**Archive / teammate transfer verified:** 501 bound compact files, 28.23 MB
+including manifest; the separately identified local raw/media bundle is
+155.01 MB, SHA256 `e9931ad3d650cdb94291f834c784e5ea2deb25e376f53bcdeb7fe84bed8cb5ff`.
+All 32 members match original bytes. An isolated actual restore verifies all
+compact files, 30 raw result/media files and the frozen gain cache, preserving
+an unrelated sentinel and installing no live code/plugins. Nine 50 ms plot-only
+projections retain exact indexed bytes and terminal states; they are not metric
+replay inputs. Six scoped package/restore contracts pass separately. Final
+post-packaging QA is beside the immutable evidence tree; source/gate/data and
+archive contents verify without another simulation or metric run.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

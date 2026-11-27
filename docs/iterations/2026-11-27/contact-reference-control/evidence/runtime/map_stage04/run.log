@@ -1,0 +1,117 @@
+{
+  "iteration": "I-73",
+  "no_physics": true,
+  "fixture_only": true,
+  "fixture_classification": "Moderate faceted Mars ground; not flat or certified 8degree gentle.",
+  "fixed_screen": {
+    "max_corridor_facet_slope_deg": 12,
+    "max_corridor_height_range_m": 0.08,
+    "min_route_feature_xy_clearance_m": 0.25
+  },
+  "route": {
+    "kind": "i73_smooth_s",
+    "origin": [
+      -2.4,
+      10.0
+    ],
+    "geometry": "origin + R113deg @ [1.2*u, 0.14*sin(2*pi*u)]",
+    "progress": "u = 10*r^3 - 15*r^4 + 6*r^5; r=(t-3)/32 clipped to [0,1]",
+    "start_s": 3.0,
+    "duration_s": 32.0,
+    "goal_hold_s": 10.0,
+    "total_duration_s": 45.0,
+    "forward_m": 1.2,
+    "lateral_m": 0.14,
+    "geometry_heading_deg": 113.0,
+    "initial_heading_deg": 149.2428430702093,
+    "origin_policy": "Fixed original world origin, no measured-state reanchor or reset.",
+    "endpoint_policy": "Exactly zero velocity and acceleration before and after motion."
+  },
+  "passed": true,
+  "gates": {
+    "corridor_within_dem": true,
+    "max_corridor_facet_slope": true,
+    "corridor_height_range": true,
+    "feature_xy_clearance": true
+  },
+  "dem": {
+    "path": "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/dem/marsyard_terrain_hm.tif",
+    "sha256": "d9c143fa8af44c8719770e53499dcab7c23054cc1e4c333f4ccbe7ff8d942eba",
+    "shape": [
+      500,
+      500
+    ],
+    "bounds_xy_m": [
+      -23.5,
+      23.5,
+      -23.5,
+      23.5
+    ],
+    "cell_m": 0.09418837675350701,
+    "full_height_range_m": [
+      -0.9838429689407349,
+      5.5913987159729
+    ]
+  },
+  "route_xy_bounds_m": [
+    -2.8688773541871284,
+    -2.4,
+    10.0,
+    11.104605824142928
+  ],
+  "world_visual_bounds_m": [
+    -4.368877354187129,
+    -0.8999999999999999,
+    8.5,
+    12.604605824142928
+  ],
+  "route_height_range_m": [
+    1.1782085396801711,
+    1.2175953047949377
+  ],
+  "corridor_height_range_m": [
+    1.1634130751079135,
+    1.2391057292710643
+  ],
+  "corridor_relief_m": 0.07569265416315085,
+  "route_slope_deg": {
+    "maximum": 10.66780810280365,
+    "p95": 10.0913252998611
+  },
+  "corridor_slope_deg": {
+    "maximum": 11.288089859185273,
+    "p95": 9.865023370785964
+  },
+  "maximum_sampled_reference_speed_m_s": 0.08718027363114111,
+  "maximum_sampled_reference_acceleration_m_s2": 0.016099062974069447,
+  "sampled_polyline_length_m": 1.3477946954599698,
+  "features": {
+    "lava": {
+      "total_triangles": 13836,
+      "nearby_triangles": 0,
+      "minimum_sampled_route_xy_clearance_m": 1.0,
+      "lower_bound_m": 1.0,
+      "exact_below_one_m": false
+    },
+    "rocks_big": {
+      "total_triangles": 6510,
+      "nearby_triangles": 0,
+      "minimum_sampled_route_xy_clearance_m": 1.0,
+      "lower_bound_m": 1.0,
+      "exact_below_one_m": false
+    },
+    "rocks_medium": {
+      "total_triangles": 70318,
+      "nearby_triangles": 0,
+      "minimum_sampled_route_xy_clearance_m": 1.0,
+      "lower_bound_m": 1.0,
+      "exact_below_one_m": false
+    }
+  },
+  "limitations": [
+    "Sampled route/circumference corridor, not a continuous safety certificate.",
+    "Feature clearance is a conservative 2D projection, capped at a 1m lower bound.",
+    "Known terrain is used only to select an offline experiment fixture; control gets no map.",
+    "No simulator outcome or actuator feasibility is implied by these geometric screens."
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "iteration": "I-73",
+  "scope": "Fresh closed-loop rolling-reference experiment. Primary C versus N across three phases; A is a fixed secondary comparator. No parameter tuning or automatic adoption.",
+  "clock": {
+    "dt_s": 0.005,
+    "start_s": 0.0,
+    "total_s": 45.0,
+    "moving_s": [3.0, 35.0],
+    "hold_s": [35.0, 45.0],
+    "late_s": [29.0, 45.0],
+    "final_settling_s": [43.0, 45.0],
+    "moving_interval": "Half-open [3,35); physical-state windows otherwise include the actual terminal state.",
+    "command_interval": "Every command except the final emitted but unheld command is held to the next physical state. Include actual prior input in command-step metrics."
+  },
+  "settling": {
+    "sustained_s": 2.0,
+    "goal_radius_m": 0.020,
+    "body_xy_speed_m_s": 0.020,
+    "world_z_angular_speed_rad_s": 0.050,
+    "raw_reference_up_error_deg": 2.0,
+    "primary": "All four conditions hold simultaneously at every actual-state sample in final [43,45] s; all three C phases must pass. Report first fully observed sustained2s entry and subsequent exits separately."
+  },
+  "nontrivial_native_failure": {
+    "goal_radius_m": 0.030,
+    "body_xy_speed_m_s": 0.030,
+    "world_z_angular_speed_rad_s": 0.060,
+    "raw_reference_up_error_deg": 2.5,
+    "comparison": "At least one N phase fails settling and its final2s maximum strictly exceeds at least one listed threshold; no marginal threshold-crossing benefit claim."
+  },
+  "reference_exposure": {
+    "joint_reference_delta_rad_s": 0.010,
+    "belt_reference_delta_m_s": 0.001,
+    "rolling_torque_feedforward_delta_Nm": 0.001,
+    "minimum_held_moving_seconds_per_C_phase": 0.100,
+    "condition": "Norm of selected-native jointvref[6:9] OR rollingFF[3:5] OR rollingFF[:3] reaches its threshold, on held moving intervals. Count only actual rolling-boundary intervention records.",
+    "limitation": "Reference-boundary exposure only; not a complete native-command counterfactual or proof the change survives preparation/clipping. Report actual preparation and clipping separately."
+  },
+  "per_phase_C_vs_N_nonregression": {
+    "moving_timed_xy_rms": {"ratio": 1.10, "add_m": 0.001},
+    "full_timed_xy_peak": {"ratio": 1.0, "add_m": 0.010},
+    "final_timed_xy": {"ratio": 1.0, "add_m": 0.010},
+    "raw_reference_up_error_peak": {"ratio": 1.0, "add_deg": 1.0},
+    "raw_reference_up_error_rms": {"ratio": 1.10, "add_deg": 0.1},
+    "absolute_tilt_peak": {"ratio": 1.0, "add_deg": 1.0},
+    "late_world_z_angular_speed_peak": {"ratio": 1.05, "add_rad_s": 0.010},
+    "late_absolute_heading_travel": {"ratio": 1.05, "add_rad": 0.010},
+    "full_body_xy_speed_peak": {"ratio": 1.10, "add_m_s": 0.010},
+    "full_50ms_body3D_linear_acceleration_peak": {"ratio": 1.10, "add_m_s2": 0.100},
+    "geometric_cross_track": "Descriptive only; no new S-specific turn/geometry gate."
+  },
+  "hard_contracts": [
+    "N/C complete registered45s physics with finite physical-state and held-input histories, no declared physical failure, applied caps respected and applied=clip(requested).",
+    "Same-phase N/A/C initial physical q/v and actual prior input equal exactly; no phase or observer reset after launch.",
+    "All cases use identical exact raw world XY/V/A reference clocks and fixed world goal; no per-arm reanchor.",
+    "Same-current-state invariance flags confirm unchanged observer update count, native normal/load routing, gain/support torque, body/attitude/XY references and preparation algorithm. Across diverged trajectories those quantities need not have equal values."
+  ],
+  "diagnostic_only": [
+    "Geometric path distance from shared raw moving-reference polyline, distinct from timedtracking.",
+    "Full10s goalhold position/speed/yaw/referencelean distributions, first sustained2s entry and later exit.",
+    "Absolute platform tilt, transverse body angular speed/upvector rate, actual preparation blend and deltas.",
+    "Held command steps normalized by actual caps, requested clipping fractions; requested commands need not lie inside caps.",
+    "Sampled actual support events and estimator proposals do not form primary label-accuracy gates."
+  ],
+  "status_precedence": [
+    "INVALID_SETUP for schema/source/reference/initial-condition/invariance violations; retain execution completion and cause separately.",
+    "FAIL_CONTROL_SCREEN if any primary C settling, physical or per-phase nonregression check fails.",
+    "INCONCLUSIVE if C otherwise passes but any C phase has insufficient reference-boundary exposure or no N phase has the declared nontrivial settling failure.",
+    "PASS_CONTROL_SCREEN only if all primary checks, exposure and nontrivial N failure hold. This does not adopt C or erase I72's failed estimator gates. A cannot replace C after outcomes."
+  ]
+}

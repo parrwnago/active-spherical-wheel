@@ -1,0 +1,38 @@
+{
+  "recorded_utc": "2026-11-27T22:43:49.858403+00:00",
+  "failed_preview_invocations": 3,
+  "unique_setup_cause": 1,
+  "cause": "Media loader required float32 rollout arrays to equal float64 precision directly. Exact original-dtype casts match across all9 runs.",
+  "correction": "Verify exact original-dtype cast relation, then render the unmodified full-precision recorded states and clock.",
+  "root_authorized_media_only_fix": true,
+  "physics_metrics_and_recordings_changed": false,
+  "retained_attempts": [
+    {
+      "phase": "m100",
+      "log": "publication/video_tools/preview_m100_stage01.log",
+      "log_sha256": "36a2dbe636ffb4f7acddaf6ce650fe8d594e04f4e8e34b51fb64f4c0c6ee316a",
+      "source_and_input_snapshot": "publication/video_preview_stage01/m100/registered_before_render.json",
+      "root_seal_verified_before_failure": true,
+      "failure": "ValueError: Pose/reference clocks differ",
+      "images_or_videos_created": false
+    },
+    {
+      "phase": "p030",
+      "log": "publication/video_tools/preview_p030_stage01.log",
+      "log_sha256": "36a2dbe636ffb4f7acddaf6ce650fe8d594e04f4e8e34b51fb64f4c0c6ee316a",
+      "source_and_input_snapshot": "publication/video_preview_stage01/p030/registered_before_render.json",
+      "root_seal_verified_before_failure": true,
+      "failure": "ValueError: Pose/reference clocks differ",
+      "images_or_videos_created": false
+    },
+    {
+      "phase": "p090",
+      "log": "publication/video_tools/preview_p090_stage01.log",
+      "log_sha256": "36a2dbe636ffb4f7acddaf6ce650fe8d594e04f4e8e34b51fb64f4c0c6ee316a",
+      "source_and_input_snapshot": "publication/video_preview_stage01/p090/registered_before_render.json",
+      "root_seal_verified_before_failure": true,
+      "failure": "ValueError: Pose/reference clocks differ",
+      "images_or_videos_created": false
+    }
+  ]
+}

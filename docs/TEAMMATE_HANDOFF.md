@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-72.
+experiment history and common presentation questions through I-73.
 
 ## Current system
 
@@ -71,7 +71,35 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-72 geometry-first velocity selection improves point extremes but
+**Latest: I-73 tests N/A/C in fresh closed-loop motion; no consistent gain.**
+Nine new 45 s Gazebo/DART S-shaped runs, three starting phases and a 10 s goal
+hold, all complete without a declared physical failure. Change only the rolling
+reference/feedforward records; the native observer, load/normal/gain routing,
+support torque, preparation and limits stay in place. Candidate references also
+enter LQR velocity feedback, so this is not merely an additive feedforward test.
+
+Moving timed XY RMS for native N / velocity A / geometry-plus-velocity C:
+−1.0 rad **47.31 / 44.39 / 45.38 mm**; +0.3 **22.85 / 27.05 / 27.53 mm**;
++0.9 **23.37 / 23.53 / 23.47 mm**. C improves one configuration, regresses
+another and barely changes the third. Its late rotation increases at −1.0 and
++0.3; 12/36 fixed control checks fail despite all 101 setup checks passing.
+
+None of the nine satisfies the final-2 s simultaneous position/speed/rotation/
+reference-attitude criteria. This does not mean none returns: −1.0 ends within
+5 mm, but retains motion; +0.3 native/A meet the other three criteria and fail
+only rotation. Heading is free in this selected controller. Keep position return,
+balance and rotation separate. Exposure is measured at the reference boundary,
+not as a complete prepared/clipped-command counterfactual. Especially +0.9 has
+only 0.10 s of direct reference intervention.
+
+Retain the original selected pipeline and I-72's failed estimator screen. A/C
+are experimental tools; neither is adopted. This is not a full native load/gain
+estimator replacement or proof of general multi-contact performance. The map-only
+site failures, explicit 8°→12° facet-screen revision before physics, source/gate
+freeze, media encoding correction and unsuccessful control results are preserved.
+[Full record, plots, two-page PDF, videos and reproduction](iterations/2026-11-27/contact-reference-control/README.md).
+
+**Previous: I-72 geometry-first velocity selection improves point extremes but
 does not pass its combined screen.**
 Choose one original physical candidate per family nearest the native observer
 equivalent point, then reuse the unchanged I-60 scores/confidence. Primary C
