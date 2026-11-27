@@ -1,0 +1,90 @@
+{
+  "iteration": "I-68",
+  "started_utc": "2026-11-27T11:03:32.915346+00:00",
+  "git_head": "c9cece297b7c78f562f4018cd08f4800198adbcd",
+  "protocol_sha256": "01f65e72b3fa879a05e57b40cd3b00a42d8e1845c3368f6729fb5c2f1e1cab61",
+  "inherited_i58_protocol_sha256": "7dfe9c9188a691c9ebd6d6bb45248b0e4c6b160ef2e327f4186533af2539e952",
+  "process": {
+    "pid": 645398,
+    "python": "3.12.16 (main, Oct 26 2026, 11:37:43) [GCC 15.3.0]",
+    "numpy": "1.26.4"
+  },
+  "invocation": [
+    "/home/parrwnago/active-spherical-wheel/results/contact_interval_replay_20261127/campaign_tools/run_interval_replay.py",
+    "--run"
+  ],
+  "boundary": "Solver contacts are read only for evaluation; native commands and observer updates remain 5 ms.",
+  "generated_model_snapshot_timing": "After native GazeboPlant construction/ground verification/reset, before the native control loop. Not before first setup physics.",
+  "source_semantics": "Imported original I58 runner and its inner I58 metadata are unchanged. This outer receipt identifies a new I68 reproduction.",
+  "success": true,
+  "completed_utc": "2026-11-27T11:05:09.204848+00:00",
+  "traces": [
+    {
+      "path": "/home/parrwnago/active-spherical-wheel/results/contact_interval_replay_20261127/campaign/native_substeps/substeps.npz",
+      "bytes": 32879317,
+      "sha256": "00a0e9ce0dde64ca1ab044f685e0708f2c409d508b4d013276815f6935e831ec",
+      "substep_rows": 44000,
+      "contact_rows": 198938,
+      "metadata": {
+        "schema_version": 2,
+        "helper_sha256": "45d554a67c7746894a065e4932053c0e96d3620619143d56e111ef715eabc442",
+        "window_start_s": 0.0,
+        "window_end_s": 44.0,
+        "clock_tolerance_s": 1e-09,
+        "control_dt_s": 0.005,
+        "physics_dt_s": 0.001,
+        "substeps": 5,
+        "completed_holds": 8800,
+        "failed_holds": 0,
+        "unsplit_run_calls": 4,
+        "input_timing": "Actual plant.last_input after original command issuance; same held command for all five solves.",
+        "state_timing": "Raw bridge state immediately before/after each completed1ms solve. Plugin clock is separate from relative control time.",
+        "contact_timing": "Full native last-solve contact rows16 after every1ms; force samples are not labeled exact solver impulse records.",
+        "pre_contact_timing": "Before rows are the preceding reported solve snapshot, copied once before the hold and carried from each post-step copy; not a continuous force measurement.",
+        "force_convention": "Columns7:10 are the published force on the wheel/body in world N, not an impulse to divide by dt again. Normal points ground-to-wheel; no normalization/filtering is applied here.",
+        "couple_coverage": "Current bridge does not export per-contact torque/couple or total solver constraint wrench. Reserved columns13:16 are zero-filled ABI padding, not measured couples.",
+        "per_contact_couple_available": false,
+        "total_constraint_wrench_available": false,
+        "mapping_convention": "Logical bridge tag names plus known mirror geom/body mapping; mirror IDs are not Gazebo entity IDs.",
+        "mirror_mapping_available": true,
+        "qvel_convention": "Offline-derived from cached raw24: base linear velocity world, free-joint angular velocity body, joint rates scalar; no extra pull/forward.",
+        "dt_convention": "step_dt_s is the bridge reported actual physics step. Native-relative after-step time_s and separate raw before/after bridge clocks are retained.",
+        "disturbance_convention": "Applied world input wrench is passed to fork AddWorldWrench at configured fork COM; it is not a contact-couple measurement.",
+        "stepping_scope": "Only registered physical.step holds splitrun5 into five run1. No extra command/observer/pull/forward/reset.",
+        "parity_status": "Caller must verify unchanged prefix/control and physical evolution before causal interpretation."
+      }
+    }
+  ],
+  "models": [
+    {
+      "name": "physical_mirror_xml",
+      "origin": "results/contact_interval_replay_20261127/campaign/native_substeps/campaign/_workspaces/m100_B/worker_645398/gazebo/mirror/model_offroad.xml",
+      "snapshot": "i68_models/physical_mirror_xml/model_offroad.xml",
+      "sha256": "383b9e757420bd6eb7b6366aa71b763b6f8a14624d1bb261b9b11000b6c2d4ec"
+    },
+    {
+      "name": "control_mirror_xml",
+      "origin": "results/contact_interval_replay_20261127/campaign/native_substeps/campaign/_workspaces/m100_B/worker_645398/mirror/model.xml",
+      "snapshot": "i68_models/control_mirror_xml/model.xml",
+      "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+    },
+    {
+      "name": "physical_sdf",
+      "origin": "results/contact_interval_replay_20261127/campaign/native_substeps/campaign/_workspaces/m100_B/worker_645398/gazebo/world/models/active_spherical_wheel/model.sdf",
+      "snapshot": "i68_models/physical_sdf/model.sdf",
+      "sha256": "65272036dd09a357fc58d6782f691a698592dcedaed592d4ade1f4a4c979f36f"
+    },
+    {
+      "name": "world",
+      "origin": "results/contact_interval_replay_20261127/campaign/native_substeps/campaign/_workspaces/m100_B/worker_645398/gazebo/world/asw_marsyard2021.sdf",
+      "snapshot": "i68_models/world/asw_marsyard2021.sdf",
+      "sha256": "c2f6111ab5770e1fbf652fa930fb90680f9f2218da23532fa585693a6198237a"
+    },
+    {
+      "name": "world_info",
+      "origin": "results/contact_interval_replay_20261127/campaign/native_substeps/campaign/_workspaces/m100_B/worker_645398/gazebo/world/world_info.json",
+      "snapshot": "i68_models/world_info/world_info.json",
+      "sha256": "4c88ba7bd398d7c712e869f57d3b9addb611ecbb854b293fc5d322983731ef5d"
+    }
+  ]
+}

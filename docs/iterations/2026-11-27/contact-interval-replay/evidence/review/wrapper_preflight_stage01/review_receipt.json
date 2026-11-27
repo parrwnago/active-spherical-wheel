@@ -1,0 +1,59 @@
+{
+  "iteration": "I-68",
+  "review_utc": "2026-11-27T11:01:59.333427+00:00",
+  "physics_launched_by_reviewer": false,
+  "source_frozen_at_first_review": false,
+  "initial_review": {
+    "source_snapshot": "results/contact_interval_replay_20261127/review/wrapper_preflight_stage01/run_interval_replay_before_corrections_RECONSTRUCTED.py",
+    "sha256": "604711b3b1eebe1651fa10062f643f99ce1569e3ca3238407b29ab15fc53f448",
+    "provenance": "Reconstructed AFTER correction by reversing the two exact inserted blocks against the fully reviewed initial source. This is not a timestamp-before-edit archive. No initial physics run occurred.",
+    "findings": [
+      {
+        "severity": "prelaunch blocker",
+        "finding": "I58 evaluates workspace.plant before workspace.mirror. The initial callback required a control-mirror XML that had not yet been generated.",
+        "correction": "Create workspace.mirror() in the callback; this is the same cached object the following original runner expression obtains. It creates no extra physical state/control update."
+      },
+      {
+        "severity": "parity coverage safeguard",
+        "finding": "All-shared-fields equality alone could pass after omitted fields or truncated output.",
+        "correction": "Require identical old/new field sets,8801precision rows,8800completedholds,zero failed holds."
+      }
+    ]
+  },
+  "corrected_review": {
+    "source_snapshot": "results/contact_interval_replay_20261127/review/wrapper_preflight_stage01/run_interval_replay_reviewed.py",
+    "sha256": "093a48470d99e36feebbfe83c84e57da5dea87aff9e8591a9089a8f5ef565dae",
+    "status": "No remaining wrapper/launcher material blocker found; instrument contracts and root source/input freeze remain prerequisites to launch.",
+    "checks": [
+      "Original I58 module imported from its original file; copied I58 protocol is unchanged and explicitly nested under outer I68 provenance.",
+      "One cached physical plant and one installed tracer; physical state is replayed from native initialization through44s.",
+      "Control mirror constructed at the exact native next-object creation point and cached; model snapshot timing truthfully follows native setup/reset checks.",
+      "Only physical step/run wrappers installed; no command/observer/after_step changes, controller candidate or source mutation.",
+      "Trace exported in finally after active hold is cleared, before installed wrappers are restored; failures preserved.",
+      "Expected field sets, row count, full precision byte identity and completed/failed hold counters are required before success manifest.",
+      "Launcher uses the I58 sanitized environment, fresh micromamba process, immutable case/output paths and explicit --run.",
+      "Register tool binds inherited68sources plus new wrapper/launcher/register/collector/tests/design, original precision/cache/protocol and both existing compiled plugin bytes. It requires collector tests present before registration."
+    ]
+  },
+  "reviewed_current_tools": {
+    "run_interval_replay.py": {
+      "sha256": "093a48470d99e36feebbfe83c84e57da5dea87aff9e8591a9089a8f5ef565dae",
+      "source_compiles": true
+    },
+    "launch_replay.py": {
+      "sha256": "c550c4f20710e7e989d41fbff4ac6698fdb45df278943ba448f8262d4dc245aa",
+      "source_compiles": true
+    },
+    "register_protocol.py": {
+      "sha256": "3944b1ac7c986f316edba86aac0e2599e981030e78c94ab7a86ec7b67a1a79bc",
+      "source_compiles": true
+    }
+  },
+  "remaining_launch_dependencies": [
+    "Collector synthetic contracts complete and passing.",
+    "Root-generated protocol/source/input/binary seal before launch.",
+    "All44s precision/substep identity and trace integrity checked after data; preflight is not empirical split-run parity proof."
+  ],
+  "handoff": "docs/TEAMMATE_HANDOFF.md",
+  "no_documentation_edits": true
+}

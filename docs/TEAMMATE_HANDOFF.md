@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-67.
+experiment history and common presentation questions through I-68.
 
 ## Current system
 
@@ -71,7 +71,24 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-67 finds the targeted useful points already exist in the bank.**
+**Latest: I-68 resolves much of the apparent observer-load error.**
+One unchanged native −1rad Mars replay records every1ms solve; all59 old
+precision fields match byte-for-byte. Joint-load discrepancy falls from0.1163Nm
+(last1ms comparison) to0.0000866Nm (matched5ms forces). This validates interval
+consistency in this simulation; it does not improve tracking.
+
+At32.110s earlier shell contact explains the load. At35.205s admitted shell
+records have tangential force but zero normal-pressure weight. They explain
+the observer's shell torque, while dominant-positive-pressure labels miss that
+force routing. Thus old family-error labels need careful interpretation.
+A posthoc screen finds the pattern in290/8,000primaryintervals, including good
+control. Its solver/reporting cause is unproved. Audit that boundary before
+adding weights or replacing the observer; high later slip remains relevant.
+[Report, comparison PDF, fixed events and portable replay](iterations/2026-11-27/contact-interval-replay/README.md).
+The14.13MB lossless input package reproduces the numerical analysis without
+Gazebo. Full rollout/assets remain local. Live code and limits are unchanged.
+
+**Previous: I-67 finds the targeted useful points already exist in the bank.**
 All29 I-66 reference-point repairs can be reproduced by an originally usable
 correct-family candidate. On41 lost useful frames, median selected distance
 is6.26mm versus0.81mm for the nearest usable point. The admission mask is not
@@ -84,9 +101,9 @@ prior dominates the selected-versus-nearest penalty in26/41 focus rows, velocity
 in15/41 and allsix harmful rows. Minimum joint-load score can choose a distant
 point, so it is not a validated replacement. Keep live settings unchanged.
 [I-67 report, point clouds, capacity and clone replay](iterations/2026-11-27/contact-bank-audit/README.md).
-The next proposed experiment targets within-family point selection and its
-velocity/normal assumptions, with full regression checks; bank expansion and
-weight changes are not automatically justified by this capacity audit.
+At I-67 the proposed target was within-family point selection and its
+velocity/normal assumptions. I-68 now adds the interval/force-label qualification
+above; bank expansion and weight changes are still not automatically justified.
 
 **I-66 separates candidate-point sensitivity from remaining load-model
 disagreement.** With the same recorded pose and observer force, replace only

@@ -1,0 +1,7 @@
+# I-68 clarification: pressure support versus reported force routing
+
+This post-primary source/raw-packet audit preserves the earlier pressure-load report. At 35.205 s, “belt B in all five samples” is a statement about **positive normal pressure**, not the only body carrying a reported force. Two admitted, positive-depth shell-B records have nonzero world-force norms (26.53 and 12.72 N) and zero exported normal projection. The native record filter retains them. Full-force/moment sums include them, while pressure-based family loads, centroids and resolved-contact counts give them zero weight.
+
+Thus a dominant-pressure label can hide a dynamically relevant force on another body. This explains how pressure labels and observed joint-load consistency can disagree without establishing observer lag. It does not establish that the exported zero-pressure tangent force is physically correct.
+
+The [DART6.19.5 constraint source](https://raw.githubusercontent.com/dartsim/dart/v6.19.5/dart/constraint/ContactConstraint.cpp) links friction bounds to normal impulse and builds force from the solved components. The [gz-physics7.5.0 adapter](https://raw.githubusercontent.com/gazebosim/gz-physics/gz-physics7_7.5.0/dartsim/src/SimulationFeatures.cc) forwards those contact fields. Their installed internal numerical/ABI cause has not been proved. No new physics or runtime edit was made. Exact rows, hashes and source boundaries are in report.json.

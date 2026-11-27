@@ -1,0 +1,969 @@
+{
+  "iteration": "I-68",
+  "audit_utc": "2026-11-27T11:11:56.076003+00:00",
+  "scope": "Post-primary explanatory correction to pressure-only fixed-event description. No new physics, source change, fit, threshold, gate or score.",
+  "inputs": {
+    "trace_path": "results/contact_interval_replay_20261127/campaign/native_substeps/substeps.npz",
+    "trace_sha256": "00a0e9ce0dde64ca1ab044f685e0708f2c409d508b4d013276815f6935e831ec",
+    "earlier_pressure_report_path": "results/contact_interval_replay_20261127/review/trace_audit_stage01/fixed_event_contact_loads.json",
+    "earlier_pressure_report_sha256": "035f4ce69e7469c041746050d27b5236efa1eee2813ab881c93145adbd9eae2e"
+  },
+  "clarification": "Earlier all-five-steps belt B statements describe positive compressive-pressure support only. They must not be read as all-force routing or absence of shell B force. Earlier JSON already retains mean_world_force_N; its pressure numbers were correct.",
+  "verified_facts": [
+    "At35.205 endpoint, the preceding five1ms samples contain2admitted shellB records with positive depth and nonzero worldforce but exactlyzeroFdotnormal under double-precision dot arithmetic.",
+    "Their nonzero force norms are26.534379447228122N and12.721346751851078N. They are present in substeps3and5.",
+    "Both normals are unit length within floating precision and point toward the wheel centre: dot(normal,centre\u2212point)>0.11999m. No simple exported normal flip or tensile-normal interpretation is supported.",
+    "Rejected shellB records carry zero force. The complete independent trace audit found rejectedforce maximum0N.",
+    "Native contact_records includes admitted records when depth>0 OR normal projection>0. Both shellB force records are retained by this condition.",
+    "measure_records adds retained records full worldforce and moment, but familyloads, pressure-weighted centroids and normals use max(0,Fdotnormal). The truth helper also pressure-weights per-family point/load and counts only pressure>.05N.",
+    "Therefore the pressure-based support label/centroid cannot represent every body carrying reported generalized load. A dominant-belt-pressure label does not imply a belt-only external generalized load."
+  ],
+  "source_trace": [
+    {
+      "path": "src/spherical_wheel/gazebo/plant.py",
+      "lines": "contact_records: admission/depth filter and full-force preservation"
+    },
+    {
+      "path": "src/spherical_wheel/contact_sensing.py",
+      "lines": "measure_records: force/moment sum versus nonnegative-pressure loads/points"
+    },
+    {
+      "path": "scripts/run-lqr-contact-forecast.py",
+      "lines": "truth_contact_row: normal-load-weighted family centroids and>.05N count"
+    },
+    {
+      "path": "gazebo/plugin/SphericalWheelBridge.cc",
+      "lines": "PostUpdate234\u2013314: read normal, orient toward centre, read body1/body2 worldforce; asw_contacts550\u2013571copies fields"
+    },
+    {
+      "path": "gazebo/physics/Physics.cc",
+      "lines": "UpdateContacts3890\u20134000: forward GetContactsFromLastStep point/normal/force into per-collision ContactSensorData messages"
+    }
+  ],
+  "external_primary_sources": [
+    {
+      "url": "https://raw.githubusercontent.com/dartsim/dart/v6.19.5/dart/constraint/ContactConstraint.cpp",
+      "finding": "getInformation links tangential bounds to the local normal impulse via findex; applyImpulse constructs contact.force from normal plus tangent impulses divided by timestep. This makes zero reported normal with substantial tangent force a solver/contact-boundary consistency question, not established physical friction."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/gazebosim/gz-physics/gz-physics7_7.5.0/dartsim/src/SimulationFeatures.cc",
+      "finding": "convertContact forwards DART Contact.force, normal and penetration depth; contact-surface callbacks map parameter fields and invert upstream DART tangent velocity signs. Source does not establish the installed binary internal numerical cause."
+    }
+  ],
+  "local_source_and_binary_bindings": [
+    {
+      "path": "src/spherical_wheel/gazebo/plant.py",
+      "sha256": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d"
+    },
+    {
+      "path": "src/spherical_wheel/contact_sensing.py",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833"
+    },
+    {
+      "path": "scripts/run-lqr-contact-forecast.py",
+      "sha256": "4e4d590037801f178bb05e779ddb49fb093f5cae830212b9f90d57ddce1790cf"
+    },
+    {
+      "path": "gazebo/plugin/SphericalWheelBridge.cc",
+      "sha256": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e"
+    },
+    {
+      "path": "gazebo/physics/Physics.cc",
+      "sha256": "46e5cd00159ab406d198da71feaa6d38da7fe2186bbff5537168c212e2332809"
+    },
+    {
+      "path": "build/gazebo-env/include/dart/constraint/ContactConstraint.hpp",
+      "sha256": "e105fc5363fd8bbfb85786d7db7bfbde94f9ed67df0d4251ee39922788b9f6e3"
+    },
+    {
+      "path": "build/gazebo-env/include/dart/constraint/ContactSurface.hpp",
+      "sha256": "029b9dafa0f7ef79a8cc20d10a26ff6172be869c027112966d852fd2df6e59ac"
+    },
+    {
+      "path": "build/gazebo-env/lib/libdart.so.6.19.5",
+      "sha256": "f33b2486a69d75b6837885e188c036d6e856affb8c69ad08ec6a74cfa4c653fd"
+    },
+    {
+      "path": "build/gazebo-env/lib/gz-physics-7/engine-plugins/libgz-physics7-dartsim-plugin.so.7.5.0",
+      "sha256": "1e7f1aa985e7e437c092b2e61ac87c25a12cae3d3f3c66690837419566bb3fa4"
+    }
+  ],
+  "interpretation_limits": [
+    "No exact installed DART solver/ABI or Coulomb-bound failure cause is proved by this audit. Package version, header/source correspondence and same-history precision replay are not a complete ABI proof.",
+    "No claim of physically valid tension, friction without compression, or specific engine bug. Only the exported point-force/normal relationship and downstream weighting semantics are established.",
+    "I60labels remain dominantpositivepressure labels; their measured improvement is not automatically improvement at identifying all-force routing or general multi-contact.",
+    "Do not attribute the35.205 shelljoint load purely to lag or missing contactpoint while an admitted shell force is exported.",
+    "No earlier sealed result or report is rewritten; this new audit narrows the earlier pressure-only language."
+  ],
+  "admitted_nonzero_shell_B_zero_projection_records": [
+    {
+      "substep_index": 3,
+      "record_index_in_sample": 7,
+      "tag": 1,
+      "admitted": true,
+      "depth_m": 1.00729204907668e-06,
+      "point_m": [
+        -1.7055131424310344,
+        9.45005642228488,
+        1.1161928884378074
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "normal_norm": 1.0,
+      "world_force_N": [
+        -12.9988596206674,
+        23.02300136494946,
+        -2.245962902899368
+      ],
+      "force_norm_N": 26.534379447228122,
+      "normal_projection_N": 0.0,
+      "positive_pressure_N": 0.0,
+      "normal_dot_centre_minus_point_m": 0.119998992707951,
+      "retained_by_native_contact_records": true
+    },
+    {
+      "substep_index": 5,
+      "record_index_in_sample": 7,
+      "tag": 1,
+      "admitted": true,
+      "depth_m": 2.2850218770603665e-06,
+      "point_m": [
+        -1.7053749983197213,
+        9.450051739269341,
+        1.1161903372429496
+      ],
+      "normal": [
+        0.02206084561937294,
+        0.1093992172044162,
+        0.9937530530094583
+      ],
+      "normal_norm": 1.0,
+      "world_force_N": [
+        -4.99814148249318,
+        11.639646475840442,
+        -1.1704165152919035
+      ],
+      "force_norm_N": 12.721346751851078,
+      "normal_projection_N": 0.0,
+      "positive_pressure_N": 0.0,
+      "normal_dot_centre_minus_point_m": 0.11999771497812309,
+      "retained_by_native_contact_records": true
+    }
+  ],
+  "all_five_sample_records": [
+    {
+      "substep_index": 1,
+      "end_time_s": 35.20099999999955,
+      "before_centre_m": [
+        -1.703033672333142,
+        9.463209979814483,
+        1.2354500100367465
+      ],
+      "records": [
+        {
+          "record_index_in_sample": 0,
+          "tag": 2,
+          "admitted": false,
+          "depth_m": 3.4210374370985397e-06,
+          "point_m": [
+            -1.7056648861899402,
+            9.481755007504983,
+            1.1169243266414712
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999657896256315,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 1,
+          "tag": 3,
+          "admitted": true,
+          "depth_m": 3.4210374370985397e-06,
+          "point_m": [
+            -1.7056648861899402,
+            9.481755007504983,
+            1.1169243266414712
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            5.370251165412303,
+            -13.857985550001388,
+            13.959440658462906
+          ],
+          "force_norm_N": 20.389932431982377,
+          "normal_projection_N": 16.047784574767913,
+          "positive_pressure_N": 16.047784574767913,
+          "normal_dot_centre_minus_point_m": 0.11999657896256315,
+          "retained_by_native_contact_records": true
+        },
+        {
+          "record_index_in_sample": 2,
+          "tag": 0,
+          "admitted": false,
+          "depth_m": 3.4210374370985397e-06,
+          "point_m": [
+            -1.7056648861899402,
+            9.481755007504983,
+            1.1169243266414712
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999657896256315,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 3,
+          "tag": 1,
+          "admitted": false,
+          "depth_m": 3.4210374370985397e-06,
+          "point_m": [
+            -1.7056648861899402,
+            9.481755007504983,
+            1.1169243266414712
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999657896256315,
+          "retained_by_native_contact_records": false
+        }
+      ]
+    },
+    {
+      "substep_index": 2,
+      "end_time_s": 35.20199999999956,
+      "before_centre_m": [
+        -1.7029532838766077,
+        9.463207540230151,
+        1.235447843655718
+      ],
+      "records": [
+        {
+          "record_index_in_sample": 0,
+          "tag": 2,
+          "admitted": false,
+          "depth_m": 3.4211242075504744e-06,
+          "point_m": [
+            -1.7055844977315031,
+            9.48175256790724,
+            1.1169221603461497
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.1199965788757923,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 1,
+          "tag": 3,
+          "admitted": true,
+          "depth_m": 3.4211242075504744e-06,
+          "point_m": [
+            -1.7055844977315031,
+            9.48175256790724,
+            1.1169221603461497
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            5.3769117294191675,
+            -13.855176442688432,
+            13.958940327548422
+          ],
+          "force_norm_N": 20.389436212707096,
+          "normal_projection_N": 16.047002288564673,
+          "positive_pressure_N": 16.047002288564673,
+          "normal_dot_centre_minus_point_m": 0.1199965788757923,
+          "retained_by_native_contact_records": true
+        },
+        {
+          "record_index_in_sample": 2,
+          "tag": 0,
+          "admitted": false,
+          "depth_m": 3.4211242075504744e-06,
+          "point_m": [
+            -1.7055844977315031,
+            9.48175256790724,
+            1.1169221603461497
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.1199965788757923,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 3,
+          "tag": 1,
+          "admitted": false,
+          "depth_m": 3.4211242075504744e-06,
+          "point_m": [
+            -1.7055844977315031,
+            9.48175256790724,
+            1.1169221603461497
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.1199965788757923,
+          "retained_by_native_contact_records": false
+        }
+      ]
+    },
+    {
+      "substep_index": 3,
+      "end_time_s": 35.202999999999555,
+      "before_centre_m": [
+        -1.702865863178424,
+        9.463184218152449,
+        1.2354422537993934
+      ],
+      "records": [
+        {
+          "record_index_in_sample": 0,
+          "tag": 2,
+          "admitted": false,
+          "depth_m": 3.421210974408062e-06,
+          "point_m": [
+            -1.7054970770314166,
+            9.481729245816128,
+            1.1169165705755284
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999657878902548,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 1,
+          "tag": 2,
+          "admitted": false,
+          "depth_m": 1.00729204907668e-06,
+          "point_m": [
+            -1.7055131424310344,
+            9.45005642228488,
+            1.1161928884378074
+          ],
+          "normal": [
+            0.02206084561937294,
+            0.1093992172044162,
+            0.9937530530094583
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.119998992707951,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 2,
+          "tag": 3,
+          "admitted": true,
+          "depth_m": 3.421210974408062e-06,
+          "point_m": [
+            -1.7054970770314166,
+            9.481729245816128,
+            1.1169165705755284
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.6079734053357938,
+            -4.285050266024329,
+            27.38677556269373
+          ],
+          "force_norm_N": 27.72664356111842,
+          "normal_projection_N": 27.726643561118415,
+          "positive_pressure_N": 27.726643561118415,
+          "normal_dot_centre_minus_point_m": 0.11999657878902548,
+          "retained_by_native_contact_records": true
+        },
+        {
+          "record_index_in_sample": 3,
+          "tag": 3,
+          "admitted": false,
+          "depth_m": 1.00729204907668e-06,
+          "point_m": [
+            -1.7055131424310344,
+            9.45005642228488,
+            1.1161928884378074
+          ],
+          "normal": [
+            0.02206084561937294,
+            0.1093992172044162,
+            0.9937530530094583
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.119998992707951,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 4,
+          "tag": 0,
+          "admitted": false,
+          "depth_m": 3.421210974408062e-06,
+          "point_m": [
+            -1.7054970770314166,
+            9.481729245816128,
+            1.1169165705755284
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999657878902548,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 5,
+          "tag": 0,
+          "admitted": false,
+          "depth_m": 1.00729204907668e-06,
+          "point_m": [
+            -1.7055131424310344,
+            9.45005642228488,
+            1.1161928884378074
+          ],
+          "normal": [
+            0.02206084561937294,
+            0.1093992172044162,
+            0.9937530530094583
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.119998992707951,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 6,
+          "tag": 1,
+          "admitted": false,
+          "depth_m": 3.421210974408062e-06,
+          "point_m": [
+            -1.7054970770314166,
+            9.481729245816128,
+            1.1169165705755284
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999657878902548,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 7,
+          "tag": 1,
+          "admitted": true,
+          "depth_m": 1.00729204907668e-06,
+          "point_m": [
+            -1.7055131424310344,
+            9.45005642228488,
+            1.1161928884378074
+          ],
+          "normal": [
+            0.02206084561937294,
+            0.1093992172044162,
+            0.9937530530094583
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            -12.9988596206674,
+            23.02300136494946,
+            -2.245962902899368
+          ],
+          "force_norm_N": 26.534379447228122,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.119998992707951,
+          "retained_by_native_contact_records": true
+        }
+      ]
+    },
+    {
+      "substep_index": 4,
+      "end_time_s": 35.20399999999955,
+      "before_centre_m": [
+        -1.7027997430316373,
+        9.46319256852485,
+        1.2354420923462066
+      ],
+      "records": [
+        {
+          "record_index_in_sample": 0,
+          "tag": 2,
+          "admitted": false,
+          "depth_m": 3.4213608975236505e-06,
+          "point_m": [
+            -1.7054309568813428,
+            9.48173759616536,
+            1.1169164092704271
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999657863910236,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 1,
+          "tag": 3,
+          "admitted": true,
+          "depth_m": 3.4213608975236505e-06,
+          "point_m": [
+            -1.7054309568813428,
+            9.48173759616536,
+            1.1169164092704271
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            4.499407421750183,
+            -14.337129704122658,
+            13.89338044344363
+          ],
+          "force_norm_N": 20.465189357687333,
+          "normal_projection_N": 16.037488725831302,
+          "positive_pressure_N": 16.037488725831302,
+          "normal_dot_centre_minus_point_m": 0.11999657863910236,
+          "retained_by_native_contact_records": true
+        },
+        {
+          "record_index_in_sample": 2,
+          "tag": 0,
+          "admitted": false,
+          "depth_m": 3.4213608975236505e-06,
+          "point_m": [
+            -1.7054309568813428,
+            9.48173759616536,
+            1.1169164092704271
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999657863910236,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 3,
+          "tag": 1,
+          "admitted": false,
+          "depth_m": 3.4213608975236505e-06,
+          "point_m": [
+            -1.7054309568813428,
+            9.48173759616536,
+            1.1169164092704271
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999657863910236,
+          "retained_by_native_contact_records": false
+        }
+      ]
+    },
+    {
+      "substep_index": 5,
+      "end_time_s": 35.20499999999956,
+      "before_centre_m": [
+        -1.7027277472549114,
+        9.463179395354267,
+        1.2354384328566181
+      ],
+      "records": [
+        {
+          "record_index_in_sample": 0,
+          "tag": 2,
+          "admitted": false,
+          "depth_m": 3.4214476147403916e-06,
+          "point_m": [
+            -1.7053589611027151,
+            9.481724422981376,
+            1.1169127498664928
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.1199965785523854,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 1,
+          "tag": 2,
+          "admitted": false,
+          "depth_m": 2.2850218770603665e-06,
+          "point_m": [
+            -1.7053749983197213,
+            9.450051739269341,
+            1.1161903372429496
+          ],
+          "normal": [
+            0.02206084561937294,
+            0.1093992172044162,
+            0.9937530530094583
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999771497812309,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 2,
+          "tag": 3,
+          "admitted": true,
+          "depth_m": 3.4214476147403916e-06,
+          "point_m": [
+            -1.7053589611027151,
+            9.481724422981376,
+            1.1169127498664928
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.4993622904504432,
+            -3.519549534169751,
+            22.494278290816897
+          ],
+          "force_norm_N": 22.773430735076232,
+          "normal_projection_N": 22.773430735076232,
+          "positive_pressure_N": 22.773430735076232,
+          "normal_dot_centre_minus_point_m": 0.1199965785523854,
+          "retained_by_native_contact_records": true
+        },
+        {
+          "record_index_in_sample": 3,
+          "tag": 3,
+          "admitted": false,
+          "depth_m": 2.2850218770603665e-06,
+          "point_m": [
+            -1.7053749983197213,
+            9.450051739269341,
+            1.1161903372429496
+          ],
+          "normal": [
+            0.02206084561937294,
+            0.1093992172044162,
+            0.9937530530094583
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999771497812309,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 4,
+          "tag": 0,
+          "admitted": false,
+          "depth_m": 3.4214476147403916e-06,
+          "point_m": [
+            -1.7053589611027151,
+            9.481724422981376,
+            1.1169127498664928
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.1199965785523854,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 5,
+          "tag": 0,
+          "admitted": false,
+          "depth_m": 2.2850218770603665e-06,
+          "point_m": [
+            -1.7053749983197213,
+            9.450051739269341,
+            1.1161903372429496
+          ],
+          "normal": [
+            0.02206084561937294,
+            0.1093992172044162,
+            0.9937530530094583
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999771497812309,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 6,
+          "tag": 1,
+          "admitted": false,
+          "depth_m": 3.4214476147403916e-06,
+          "point_m": [
+            -1.7053589611027151,
+            9.481724422981376,
+            1.1169127498664928
+          ],
+          "normal": [
+            0.021927407260659785,
+            -0.1545463033265712,
+            0.9877421874856397
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            0.0,
+            -0.0,
+            0.0
+          ],
+          "force_norm_N": 0.0,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.1199965785523854,
+          "retained_by_native_contact_records": false
+        },
+        {
+          "record_index_in_sample": 7,
+          "tag": 1,
+          "admitted": true,
+          "depth_m": 2.2850218770603665e-06,
+          "point_m": [
+            -1.7053749983197213,
+            9.450051739269341,
+            1.1161903372429496
+          ],
+          "normal": [
+            0.02206084561937294,
+            0.1093992172044162,
+            0.9937530530094583
+          ],
+          "normal_norm": 1.0,
+          "world_force_N": [
+            -4.99814148249318,
+            11.639646475840442,
+            -1.1704165152919035
+          ],
+          "force_norm_N": 12.721346751851078,
+          "normal_projection_N": 0.0,
+          "positive_pressure_N": 0.0,
+          "normal_dot_centre_minus_point_m": 0.11999771497812309,
+          "retained_by_native_contact_records": true
+        }
+      ]
+    }
+  ]
+}

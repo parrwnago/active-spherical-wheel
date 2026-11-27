@@ -1,5 +1,28 @@
 # Research presentation notes — 2026-11-27
 
+**I-68: matching the observer interval changes our interpretation of contact errors.**
+[Full record](contact-interval-replay/README.md),
+[comparison PDF](contact-interval-replay/evidence/publication/plots_stage02/interval_comparison.pdf)
+and [four event pages](contact-interval-replay/evidence/publication/plots_stage02/event_windows.pdf).
+
+- One unchanged native −1rad Mars replay captures44,000physics steps. All59
+  original precision fields reproduce byte-exactly; live controller is unchanged.
+- Joint-load discrepancy is0.0000866Nm with integrated5ms point forces versus
+  0.1163Nm with only the last1ms solve. Post-pose control also improves.
+- At32.110s shell-to-belt transfer occurs inside the observer interval; prior
+  shell impulse explains its apparently inactive shell joint load.
+- At35.205s, zero shell normal pressure hides admitted tangential shell forces;
+  their torque matches the observer. Native wrench sums include them, whereas
+  pressure-based family labels do not. Earlier “belt-only” statements need that
+  qualification; historical error counts are not relabeled in this iteration.
+- Posthoc screen finds this pattern in290/8,000primaryintervals, including good
+  control. Its installed solver/contact-boundary cause is unresolved. Postsolve
+  slip0.139m/s at the later event also limits the strict rolling assumption.
+- Keep LQR/observer/feedforward/preparation; audit contact-force/normal reporting
+  and label semantics before tuning around this behavior. No tracking gain yet.
+- Independent trace/Jacobian checks and lossless cached replay pass. Preserve
+  failed setup/analysis stages and figure layouts; portable capture14.13MB.
+
 **I-67: the original bank reproduces all targeted reference-point repairs.**
 [Full record](contact-bank-audit/README.md),
 [comparison PDF](contact-bank-audit/evidence/publication/plots_stage02/bank_capacity_comparison.pdf)

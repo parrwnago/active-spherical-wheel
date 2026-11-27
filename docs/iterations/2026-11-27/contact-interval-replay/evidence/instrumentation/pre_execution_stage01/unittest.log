@@ -1,0 +1,40 @@
+test_all_body_and_rejected_records_are_preserved_without_force_filtering (__main__.TraceContracts) ... ok
+test_arrays_are_independent_and_save_is_pickle_free_and_nonoverwriting (__main__.TraceContracts) ... ok
+test_before_after_state_and_contact_snapshots_are_coherent (__main__.TraceContracts) ... ok
+test_empty_recording_has_fixed_shapes_and_no_capture_reads (__main__.TraceContracts) ... ok
+test_failed_hold_preserves_partial_rows_and_restores_hooks (__main__.TraceContracts) ... ok
+test_native_and_bridge_clocks_actual_dt_and_end_index_are_distinct (__main__.TraceContracts) ... ok
+test_nested_install_and_invalid_cadence_are_refused (__main__.TraceContracts) ... ok
+test_one_native_command_and_pull_with_five_held_solves (__main__.TraceContracts) ... ok
+test_qvel_world_to_body_conversion_matches_native_quaternion_matrix (__main__.TraceContracts) ... FAIL
+test_reset_and_mid_hold_command_mutation_are_rejected (__main__.TraceContracts) ... ok
+test_setup_and_outside_window_runs_stay_batched_without_truth_queries (__main__.TraceContracts) ... ok
+test_state_schema_matches_native_bridge_literal_without_gazebo_import (__main__.TraceContracts) ... ok
+test_static_tag_mapping_labels_mirror_bodies_without_gazebo_entity_claim (__main__.TraceContracts) ... ok
+test_wrong_batch_is_rejected_before_any_extra_physics (__main__.TraceContracts) ... ok
+
+======================================================================
+FAIL: test_qvel_world_to_body_conversion_matches_native_quaternion_matrix (__main__.TraceContracts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/results/contact_interval_replay_20261127/instrumentation/test_substep_trace.py", line 137, in test_qvel_world_to_body_conversion_matches_native_quaternion_matrix
+    np.testing.assert_array_equal(q[i,3:7],quat)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/testing/_private/utils.py", line 920, in assert_array_equal
+    assert_array_compare(operator.__eq__, x, y, err_msg=err_msg,
+  File "/usr/lib/python3.10/contextlib.py", line 79, in inner
+    return func(*args, **kwds)
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/testing/_private/utils.py", line 797, in assert_array_compare
+    raise AssertionError(msg)
+AssertionError: 
+Arrays are not equal
+
+Mismatched elements: 4 / 4 (100%)
+Max absolute difference: 1.11022302e-16
+Max relative difference: 1.7532473e-16
+ x: array([ 0.222194, -0.316619,  0.181733,  0.904077])
+ y: array([ 0.222194, -0.316619,  0.181733,  0.904077])
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.109s
+
+FAILED (failures=1)

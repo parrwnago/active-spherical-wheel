@@ -1,0 +1,833 @@
+{
+  "iteration": "I-68",
+  "audit_utc": "2026-11-27T11:05:20.027992+00:00",
+  "checks": {
+    "precision_field_sets_identical": true,
+    "all_precision_fields_byte_exact": true,
+    "precision_rows_8801": true,
+    "trace_rows_44000": true,
+    "five_rows_per_hold": true,
+    "hold_index_exact": true,
+    "substep_index_exact": true,
+    "all_holds_completed": true,
+    "metadata_completed_8800_failed_zero": true,
+    "state_shape24": true,
+    "finite_bridge_state": true,
+    "held_input_matches_every_native_command": true,
+    "held_input_constant_in_hold": true,
+    "disturbance_constant_in_hold": true,
+    "native_disturbance_zero": true,
+    "bridge_iterations_increment_one": true,
+    "bridge_iteration_chain_continuous": true,
+    "bridge_state_chain_byte_exact": true,
+    "no_reset_during_hold": true,
+    "bridge_step_duration_tolerance_1e8": true,
+    "reported_step_size_tolerance_1e12": true,
+    "hold_start_clock_exact": true,
+    "hold_end_clock_exact": true,
+    "relative_sample_clock_exact": true,
+    "contact_offsets_shape": true,
+    "contact_offsets_monotone_complete": true,
+    "contact_stride16_finite": true,
+    "contact_tags_known_integer": true,
+    "saved_tag_column_exact": true,
+    "saved_admitted_column_exact": true,
+    "before_hold_qpos_tolerance_1e12": true,
+    "before_hold_direct_velocity_exact": true,
+    "before_hold_angular_tolerance_1e12": true,
+    "after_hold_qpos_tolerance_1e12": true,
+    "after_hold_direct_velocity_exact": true,
+    "after_hold_angular_tolerance_1e12": true,
+    "endpoint_contact_load_join_tolerance_1e10N": true,
+    "endpoint_contact_point_join_tolerance_1e12m": true,
+    "endpoint_contact_point_finite_masks_exact": true,
+    "endpoint_resolved_contact_counts_exact": true
+  },
+  "all_checks_pass": true,
+  "precision_field_count": 59,
+  "old_only_fields": [],
+  "new_only_fields": [],
+  "precision_fields": {
+    "cap_m_s": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_allocation_drive_reference": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_applied": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_clipping_command_delta": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_effective_phase_rad": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_equilibrium_command": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_error": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        18
+      ],
+      "old_shape": [
+        8801,
+        18
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_estimated_contact_point_m": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        3
+      ],
+      "old_shape": [
+        8801,
+        3
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_estimated_normal": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        3
+      ],
+      "old_shape": [
+        8801,
+        3
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_estimated_normal_carrier": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        3
+      ],
+      "old_shape": [
+        8801,
+        3
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_estimated_support_loads_N": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        4
+      ],
+      "old_shape": [
+        8801,
+        4
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_fade_command_delta": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_feedback_error": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        18
+      ],
+      "old_shape": [
+        8801,
+        18
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_feedback_gain": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5,
+        18
+      ],
+      "old_shape": [
+        8801,
+        5,
+        18
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_feedback_reference_qvel": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        9
+      ],
+      "old_shape": [
+        8801,
+        9
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_guarded_joint_reference": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        3
+      ],
+      "old_shape": [
+        8801,
+        3
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_handoff_command_delta": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_handoff_request_delta": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_heading_command": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_input_bounds": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_lqr_command": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_native_applied": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_native_clipping_command_delta": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_native_joint_reference": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        3
+      ],
+      "old_shape": [
+        8801,
+        3
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_native_requested": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_native_saturation_mask": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "|b1",
+      "old_dtype": "|b1"
+    },
+    "exact_nominal_joints_before": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        3
+      ],
+      "old_shape": [
+        8801,
+        3
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_observer_generalized": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        9
+      ],
+      "old_shape": [
+        8801,
+        9
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_observer_interval_mean": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        9
+      ],
+      "old_shape": [
+        8801,
+        9
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_observer_wrench": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        6
+      ],
+      "old_shape": [
+        8801,
+        6
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_phase_estimated_normal_rad": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_phase_normal_xz_norm": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_phase_world_vertical_rad": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_phase_world_xz_norm": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_previous_applied": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_qpos": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        10
+      ],
+      "old_shape": [
+        8801,
+        10
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_qvel": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        9
+      ],
+      "old_shape": [
+        8801,
+        9
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_reference_acceleration_m_s2": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        2
+      ],
+      "old_shape": [
+        8801,
+        2
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_reference_guard_delta": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        3
+      ],
+      "old_shape": [
+        8801,
+        3
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_reference_guard_enabled": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "|b1",
+      "old_dtype": "|b1"
+    },
+    "exact_reference_qpos": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        10
+      ],
+      "old_shape": [
+        8801,
+        10
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_reference_quat": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        4
+      ],
+      "old_shape": [
+        8801,
+        4
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_reference_qvel": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        9
+      ],
+      "old_shape": [
+        8801,
+        9
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_reference_velocity_m_s": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        2
+      ],
+      "old_shape": [
+        8801,
+        2
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_reference_xy": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        2
+      ],
+      "old_shape": [
+        8801,
+        2
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_requested": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_rolling_feedforward": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_schedule_on_ground_normal": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "|b1",
+      "old_dtype": "|b1"
+    },
+    "exact_support_command": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_sync_weights": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_transition_command_delta": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        5
+      ],
+      "old_shape": [
+        8801,
+        5
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "exact_world_vertical_carrier": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        3
+      ],
+      "old_shape": [
+        8801,
+        3
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "mirror_previous_applied_matches_physical": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "|b1",
+      "old_dtype": "|b1"
+    },
+    "time_s": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "truth_equivalent_point_m": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        3
+      ],
+      "old_shape": [
+        8801,
+        3
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "truth_patch_contact_counts": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        4
+      ],
+      "old_shape": [
+        8801,
+        4
+      ],
+      "new_dtype": "<i8",
+      "old_dtype": "<i8"
+    },
+    "truth_patch_loads_N": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        4
+      ],
+      "old_shape": [
+        8801,
+        4
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "truth_patch_points_m": {
+      "byte_exact": true,
+      "new_shape": [
+        8801,
+        4,
+        3
+      ],
+      "old_shape": [
+        8801,
+        4,
+        3
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    },
+    "truth_time_s": {
+      "byte_exact": true,
+      "new_shape": [
+        8801
+      ],
+      "old_shape": [
+        8801
+      ],
+      "new_dtype": "<f8",
+      "old_dtype": "<f8"
+    }
+  },
+  "summary": {
+    "trace_rows": 44000,
+    "completed_holds": 8800,
+    "contact_rows": 198938,
+    "admitted_rows": 50511,
+    "rejected_rows": 148427,
+    "rejected_force_maximum_N": 0.0,
+    "maximum_bridge_duration_gap_s": 4.7748263676261615e-15,
+    "maximum_reported_step_size_gap_s": 0.0,
+    "initial_bridge_to_relative_clock_offset_s": 0.013012,
+    "maximum_clock_offset_drift_s": 4.053844065987633e-12,
+    "joins": {
+      "before_hold": {
+        "qpos_maximum_absolute_gap": 2.220446049250313e-16,
+        "linear_joint_velocity_byte_exact": true,
+        "angular_world_maximum_absolute_gap": 1.3322676295501878e-15
+      },
+      "after_hold": {
+        "qpos_maximum_absolute_gap": 2.220446049250313e-16,
+        "linear_joint_velocity_byte_exact": true,
+        "angular_world_maximum_absolute_gap": 1.3322676295501878e-15
+      }
+    },
+    "endpoint_contact_joins": {
+      "load_maximum_absolute_gap_N": 0.0,
+      "point_maximum_absolute_gap_m": 0.0,
+      "point_finite_masks_exact": true,
+      "resolved_counts_exact": true,
+      "count_definition": "Compressive normal force >0.05N only for counts; every nonnegative normal load enters centroids. Original admission/depth handling preserved."
+    }
+  },
+  "limitation": "Packet and measured evolution validation only. No claim that the bridge exports every generalized constraint force or contact couple."
+}

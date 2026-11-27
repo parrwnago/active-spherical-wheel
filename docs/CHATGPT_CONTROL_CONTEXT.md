@@ -1,9 +1,15 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 2 — 27 November 2026, through I-67.** Live-source baseline: repository
-commit `4d6086b`; I-67 changes no live control code. This is a study and discussion
+**Revision 3 — 27 November 2026, through I-68.** Live-source baseline: repository
+commit `c9cece2`; I-68 changes no live control code. This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
+
+The latest diagnostic, I-68, substantially narrows how we should interpret old
+contact errors. The observer agrees closely with forces integrated over the
+same 5 ms. The older family labels describe positive normal pressure, which can
+omit other force-bearing solver records. Read Section 12 before recommending
+new estimator weights based on the historical error counts.
 
 ## Instructions for the ChatGPT reading this file
 
@@ -619,13 +625,90 @@ Ambiguous lever directions and model mismatch can favor a low-residual point
 that is poorly localized. Choosing the nearest recorded point requires truth;
 choosing the minimum load score alone is not a validated solution either.
 
-The justified next target is point selection within the existing family bank,
-with velocity and load-model assumptions examined explicitly. Candidate
-expansion and new weights remain proposals. Exact temporal load routing still
-needs matched substep force records in a later instrumented replay. None of
-these diagnostic results changes the selected live LQR/observer/feedforward.
+At I-67, the proposed next target was point selection within the existing bank,
+with velocity and load-model assumptions examined explicitly. I-68 below now
+provides matched substep records for one starting phase. Candidate expansion
+and new weights remain proposals; no live control upgrade is adopted.
 
-## 12. Sources, attribution, and how to continue a discussion
+## 12. I-68: the observer interval and hidden force routing
+
+One new **unchanged native LQR replay** reproduced I-58's −1-rad, yaw45° Mars
+figure-eight over the full 44 seconds. Control and observer still update every
+5 ms; an evaluation-only recorder copies state and all contact rows after each
+1 ms physics solve. There is no intermediate command or observer call. All
+59 old precision fields and all 8,801 control rows reproduce byte-for-byte.
+This is stronger logging of identical motion, not improved tracking.
+
+At time t, the observer's raw load describes the preceding `[t−5ms,t]`, while
+the old contact summary described only the final 1 ms solve. For each solve,
+map the reported force with the point Jacobian at its pre-solve pose. Average
+native generalized loads over all five solves, then apply the observer's one
+interval-midpoint rotation to its base angular rows. Repeating at post-solve
+poses is a sensitivity control, not an accuracy-confidence interval.
+
+On 8,000 primary rows, `1 <= t < 41 s`, joint-vector RMS discrepancy is
+**0.0000866 N m** with this integrated reference versus **0.1163 N m** using
+only the final solve. Post-pose mapping gives 0.00164 N m and still improves
+on the final-solve comparison. All fixed windows pass both controls. The
+observer is therefore closely consistent with this simulation's reported
+force history. The reference does not export contact couples or independently
+measure every solver constraint load; this is not a hardware accuracy claim.
+
+Two events explain why that distinction matters:
+
+- **32.110 s:** three shell-B positive-pressure samples precede two belt-B
+  samples. The endpoint looks belt-only, but the observer's shell-B load
+  `+0.016193 N m` matches the integrated shell contribution `+0.016228 N m`.
+  This is temporal contact transfer within the observation interval. It does
+  not establish CPU delay or simultaneous two-contact support.
+- **35.205 s:** belt B has all the positive normal pressure, yet two admitted
+  shell-B records carry tangential force of 26.53 N and 12.72 N with zero normal
+  projection. Their integrated shell-B torque is `−0.206606 N m`, matching the
+  observer's `−0.206627 N m`. Their positive depth retains them in native wrench
+  sums, but normal-load weights exclude them from family loads/centroids/counts.
+  Thus “belt-only” was a pressure label, not a statement that no shell force
+  existed. The original observer did not invent this shell torque.
+
+A separately sealed **posthoc** screen finds near-zero-normal, nonzero-tangent
+records in 290 of the 8,000 primary intervals, including the good control.
+The numerical detection rule is `abs(Fn) <= 1e-10*max(1,|F|)` with
+`|Ft| > 1e-8 N`; it is not a learned physical uncertainty threshold. All selected
+rows are admitted, and rejected forces are zero. Presence alone does not prove
+poor tracking. Their zero-normal tangential behavior needs an installed solver/
+contact-reporting audit before treating it as valid Coulomb friction or a proven
+implementation bug. The source inspection does not establish its internal cause.
+
+The late event also has actual-point rolling mismatch: pressure-weighted slip
+RMS is 0.133 m/s before the solves and 0.139 m/s after. The post-solve values at
+32.110 s and the good 7.875 s control are only 0.000281 and 0.000329 m/s. Thus
+not every pre-solve contact velocity is persistent slip, but the later event
+really limits the strict zero-slip model. Its intrinsic-normal discrepancy is
+7.24 degrees; that does not identify a universally better normal-prior weight.
+These slip diagnostics use positive-load solver contacts and omit zero-pressure
+rows from their pressure weighting.
+
+The old I-60–I-67 counts remain historical comparisons against **dominant
+positive-normal-load labels**. They were not rerun or relabeled here; one phase
+cannot establish corrected rates across three phases. A family that is “wrong”
+against that pressure label can still be a body carrying reported tangential
+force. The conditional bank-capacity results also remain offline existence
+counts, not deployed improvements.
+
+Keep LQR, momentum observer, geometry support locator, feedforward and incoming
+preparation. The next target is the contact-force/normal boundary and evaluation
+labels, followed by an interval-consistent contact model. Understand the
+unusual forces before fitting another threshold, likelihood weight or particle
+filter around them. No new selector or controller is deployed.
+
+Fourteen recorder and thirteen numerical contracts pass; independent real-model
+Jacobian checks agree near floating-point precision. The compact 14.13 MB input
+package restores all 36 trace arrays and both ten-field precision bindings
+byte-exactly on two NumPy versions. Its cached replay reproduces 58 analysis
+arrays and scientific report values exactly. Full models/rollouts remain local.
+The [I-68 record, comparison and four annotated events](iterations/2026-11-27/contact-interval-replay/README.md)
+include the protocol, failed setup/analysis stages and portable reproduction.
+
+## 13. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

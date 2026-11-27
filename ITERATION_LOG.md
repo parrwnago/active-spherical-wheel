@@ -4172,6 +4172,60 @@ bank expansion, pure load argmin, new weights or new physics. Interval force
 routing remains limited by absent substep truth. Keep live baseline unchanged.
 [Report, point clouds, fixed events and clone replay](docs/iterations/2026-11-27/contact-bank-audit/README.md).
 
+## I-68 — 2026-11-27 — matched interval replay exposes hidden force routing
+
+Status: completed instrumented diagnostic, not adopted control improvement.
+Reproduce unchanged I-58 native m100_B on Gazebo8.10/DART6.19.5 Mars figure-eight,
+shaft−1rad,yaw45°,44s,5ms control/1ms physics, original limits and gains.
+Only physical run(5) becomes five run(1) calls; all solver contact data remains
+evaluation-only. Freeze74sources/8inputs/two plugin binaries before physics.
+Capture44,000solves/8,800holds; all59precisionfields, identical fieldsets and
+8,801rows match old native history byte-exact. No new trajectory gain claimed.
+
+Predeclare primary[1,41), broad[32,36), and fixed±100ms windows around7.875,
+32.110,35.055,35.205. Integrate every reported point force at its pre-solve
+Jacobian in native coordinates, then apply exact observer midpoint angular
+rotation. Repeat post-pose sensitivity. Raw observer joint-vector RMS versus
+integrated reference is.0000866Nm versus.116254Nm for final-solve-only;
+broad.0001227 versus.100878. Both pose controls improve every fixed group.
+These are consistency comparisons, not a calibrated sensor error bound.
+
+32.110: three shellB positive-pressure samples then two beltB; raw shellB
+load+.016193Nm agrees integrated+.016228, lastsolve0. This establishes interval
+transfer here, not CPU latency. 35.205: pressure appears beltB-only, yet two
+ADMITTED shellB rows carry26.53/12.72N tangent force with zero normalprojection.
+They contribute−.206606Nm versus observer−.206627. Positive depths keep them
+in native full-wrench sums, while positive-pressure family labels/centroids/
+counts give zero weight. Earlier belt-only inference was pressure-only;
+correction preserved. Do not read historical dominant-normal labels as all-force
+routing or assert a physically valid zero-normal friction law / proven solverbug.
+
+Separately sealed POSTHOC numerical screen detects1,119near-zero-normal force-
+bearing rows in290/8,000primaryintervals; rejectedforcezero, maxFt38.04N.
+Pattern also occurs in goodcontrol, so presencealone doesnotcausebadtracking.
+Postsolve pressure-weighted slipRMS at35.205 remains.1392m/s versus.000281at
+32.110 and.000329at7.875. Intrinsic-normal mismatch7.24°atlater event; these
+support model-assumption investigation but do not establish replacementweights.
+
+Fourteen recorder and13separate numerical contracts pass. Preserve initial
+roundoff-exact testfailure, wrapper syntax error and lazyNPZ interrupted launch;
+corrected5e-16offline tolerance and sealed eager adapter leave arithmetic and
+native parity unchanged. Independent40-check traceaudit passes; actualmodel
+Jacobian/force map within8.88e-16 and slip1.53e-16m/s overfourfixedintervals.
+Three storage contracts; lossless14.13MB package restores36tracearrays and
+both10fieldprecisionbindings byteexact onNumPy1.26.4/1.21.5. Cached producer
+replay reproduces58scientificarrays byteexact and report values exactly.
+Retain layoutstages and narrow earlier pressure interpretation transparently.
+Preserve publication reseal failure/correction separately; final19.44MBarchive
+omits redundantnativecommandJSON while14.13MBlosslessinputs remaincomplete.
+
+Decision: retain nativeLQR/momentumobserver/feedforward/preparation. Audit the
+installed contact/friction force-normal boundary and reference-label semantics
+before another selector/weight/particlefilter. Onephase only; exactsolvercause,
+otherstarts and improvedtracking remain unproved. Fullrawrolloutlocal; compact
+package,5-pageplots/reports, source/protocol/review/failedstages tracked.
+[Report, comparison, fixed events and clone replay](docs/iterations/2026-11-27/contact-interval-replay/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

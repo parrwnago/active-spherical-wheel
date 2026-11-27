@@ -1,0 +1,25 @@
+{
+  "recorded_utc": "2026-11-27T11:17:53.599220+00:00",
+  "scope": "Publication packaging only; scientific sources, physics, capture and analysis outputs unchanged.",
+  "stages": [
+    {
+      "stage": "stage01",
+      "result": "Export and hash/link QA passed. Full redundant governor JSON made packet25.83MB; retained local archive before compacting."
+    },
+    {
+      "stage": "stage02_failed",
+      "result": "Assertion during export: previous export-plan file entered its own planned source list and was then rewritten. Partial export retained locally; no result values changed.",
+      "correction": "Exclude the output export-plan from automatic source collection, then add it explicitly after creation."
+    },
+    {
+      "stage": "stage03",
+      "result": "Fresh export succeeds,202files19,440,782bytes; redundant governor JSON stays local and omission is explicit."
+    }
+  ],
+  "files": {
+    "stage02_failed_export_plan_before_copy.json": "27033d1c2f66ecbf66851629efa6c1991c4715c7bd3eac1f4652a44c201d3413",
+    "stage01_publish_compact.py": "55a16042732ce613717d4b5a615795e99381f4a0c6751ca3640cd065f3d3a9fe",
+    "stage01_export_plan_before_copy.json": "13cc85ca4025fdc7fc7197e4f3d31a18fff3e1f833313b1d183a3559db47223d",
+    "stage02_failed_publish_compact.py": "15ddd66cdb927b47510d72335886bb9d929c6c827b37b0b21b7174c3fba6a2ce"
+  }
+}

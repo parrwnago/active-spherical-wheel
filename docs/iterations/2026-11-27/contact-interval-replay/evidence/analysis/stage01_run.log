@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/home/parrwnago/active-spherical-wheel/results/contact_interval_replay_20261127/analysis/analyse_interval.py", line 305, in <module>
+    main()
+  File "/home/parrwnago/active-spherical-wheel/results/contact_interval_replay_20261127/analysis/analyse_interval.py", line 289, in main
+    a, step, report = analyse(trace, precision, radius_m=args.radius_m, old_precision=old)
+  File "/home/parrwnago/active-spherical-wheel/results/contact_interval_replay_20261127/analysis/analyse_interval.py", line 123, in analyse
+    z = contact_frame(trace[f'qpos_{p}'][i], trace[f'qvel_{p}'][i], r, trace['held_input'][i])
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/lib/npyio.py", line 256, in __getitem__
+    return format.read_array(bytes,
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/lib/format.py", line 831, in read_array
+    data = _read_bytes(fp, read_size, "array data")
+  File "/home/parrwnago/active-spherical-wheel/.venv/lib/python3.10/site-packages/numpy/lib/format.py", line 966, in _read_bytes
+    r = fp.read(size - len(data))
+  File "/usr/lib/python3.10/zipfile.py", line 946, in read
+    data = self._read1(n)
+  File "/usr/lib/python3.10/zipfile.py", line 1022, in _read1
+    data = self._decompressor.decompress(data, n)
+KeyboardInterrupt
