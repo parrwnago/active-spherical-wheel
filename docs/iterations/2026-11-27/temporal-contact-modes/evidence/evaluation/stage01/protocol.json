@@ -1,0 +1,136 @@
+{
+  "iteration": "I-70",
+  "registered_utc": "2026-11-27T18:21:06.290434+00:00",
+  "base_commit": "cdb85d562cbdca35363ade58ff04ce275192252b",
+  "status": "Registered before new feature/model arithmetic. Implement/test/evaluate shadow only; no controller adoption.",
+  "question": "Does persistent hybrid contact-set inference improve saved-log contact decisions without hiding errors in unknown states or delaying true pressure-mode changes?",
+  "scope": "New opt-in code and offline3episode comparison; no new dynamics, solver work, cameras, live import or actuation.",
+  "cases": [
+    "m100_B",
+    "p030_B",
+    "p090_B"
+  ],
+  "recording": "Original I58 native Gazebo/DART Marsfigure8,44s,shaft\u22121/+.3/+.9,yaw45\u00b0,5ms,8801rows each; LQR/observer/feedforward/120msprep and1.5/.6/.6Nm/.3/.3mps caps.",
+  "mode_bank": {
+    "groups": "4singletons+6lexicographic2familysets+unknown=11supportgroups",
+    "states": "Each knownsupportgroup rolling then slip; unknown index20;21states.",
+    "family_order": [
+      "shell_A",
+      "shell_B",
+      "belt_A",
+      "belt_B"
+    ],
+    "pair_minimum_normal_share": 0.1,
+    "limitation": "No3+family or arbitrary multiplepointswithinsamefamily model; unknown must remain explicit."
+  },
+  "inference_inputs": [
+    "Known geometry",
+    "Current exact simulatedq/v and priorq for midpointframe",
+    "Previous actuallyheldbeltspeeds/commands; no upcomingrequest",
+    "Unfiltered momentumobserver9 lastinterval and filtered6-derived intrinsicnormal",
+    "Original102candidate geometrydomain/masks and measuredmaterialvelocity"
+  ],
+  "forbidden_inference_inputs": [
+    "Solvercontacts/forces/points/normals",
+    "Actualterrain/map",
+    "Truecontactlabels/loadshares",
+    "Referencepath/desiredvelocity",
+    "Futurebodymeasurements",
+    "Evaluationpacket/baselinefamilies"
+  ],
+  "candidate_domain": "OriginalI60 17normal seeds(0/5/10degreecone)\u00d76shell/belt/rimslots102; rimsmaptoshellfamilies; deduplicatewithinbody bypoint1e-10m. No bank expansion or validation-driven tuning.",
+  "shortlist": "Atmost2perfamily:geometry minimum+geometry/rollingvelocity minimum, deduplicate; preserve at leastgeometry alternative. Exact shortlist source/seal before extraction.",
+  "force_model": {
+    "solver": "Existing SciPy.optimize.nnls,maxiter256; fixedraycone, not new physics solver.",
+    "friction_mu": 0.7,
+    "cone_rays": "n+mu/sqrt2*(\u00b1t1\u00b1t2),4rays percontact. Pair32combinations atnormalfractions.1/.9 enforceboth\u226510%.",
+    "sigma_force_N": 0.5,
+    "sigma_base_moment_Nm": 0.03,
+    "sigma_joint_Nm": 0.03,
+    "frame": "EndpointnativepointJacobian rotatedto exact observer-midpointworldangularframe; linearworld/jointscalar rowsunchanged.",
+    "timing": "Endpointgeometryapproximation for preceding5ms. Directedtransitionmodels fitunionpairforces butonlyendpointcurrentcontactvelocity; no actualsubsteptruth.",
+    "failures": "NNLSfailure/nonfinite/zero-normalfit is unavailable, counteddiagnostically, never silentlyrescoredwithtruth."
+  },
+  "potentials": {
+    "force": "Half squaredwhitenedloadfit residual; retaincompletepoint/force fit.",
+    "normal_scale_deg": 10,
+    "rolling_velocity_scale_m_s": 0.02,
+    "slip_velocity_scale_m_s": 0.15,
+    "velocity": "Half squaredtangentvelocity/scale plus2log(scale/.02) perpenalizedcontact; sameforcefit reused.",
+    "aggregation": "Negative-log-mean-exp of completevalidshortlistalternatives; MAPphysicalpoint/force and shortlistconditionalspread, not an unconstrained meanpoint.",
+    "unknown_cost": 9,
+    "minimum_force_N": 1,
+    "probability_scope": "Approximate modelpotentials/profileforcefit, assumednoise/correlation. NormalizedHMMbeliefs are not alreadycalibrated statisticalconfidence; evaluate calibration.",
+    "slip_scope": "Weakenedrollingconstraint +selectedpointkinematics, not independentfrictionsensing."
+  },
+  "temporal": {
+    "prior_singletons": 0.8,
+    "prior_pairs": 0.1,
+    "prior_unknown": 0.1,
+    "rolling_fraction": 0.9,
+    "known_dwell_s": 0.05,
+    "unknown_dwell_s": 0.02,
+    "evidence_correlation_s": 0.02,
+    "evidence_weight": "min(1,dt/.02), preventsnaiverepeatedfullstrengthsharedcues; assumedcorrelationtime, not calibrated.",
+    "transition": "Retain exp(-dt/dwell); alternativesweightedbaseprior\u00d7affinity: samecontactdifferentmotion4,nestedsets3,single-to-single1,sharedfamily.5,other.1,known-to-unknown2. One-jumpapproximation not exactCTMC.",
+    "interval_edge": "Forcontactchanges with2familyunion andcurrentendpoint singleton, usepairedforcefit/directedendpointvelocitypotential whenavailable; otherwisecurrentnode. Pairendpointusesnodepotential.",
+    "firstframe": "No precedinginterval atframe0: unknown. Gaps>.05s resethistory; duplicate/nonincreasingtime rejected.",
+    "causality": "Filteronly, no future/backwardsmoothing. Prefixinvariance contract required.",
+    "reporting": "MAP11collapsed supports; sumrolling+slip confidence. Physicalpoint fromonecompleteMAPlatest-edge fit; no cross-body pointaveraging."
+  },
+  "comparators": [
+    "Frozen nativeN",
+    "I60 fusedrawF",
+    "I60accepted/fallbackA",
+    "Newframe evidence withsameprior/tempering butnohistory",
+    "State-onlyHMMablation(noedge)",
+    "PRIMARY transition-awareHMM"
+  ],
+  "evaluation": {
+    "truth": "Historicalpositive-normal-pressure labels only; knownI68-69 qualification retained without reopeningphysics. These are retrospective recorded episodes, not physicalgroundcontactcertainty.",
+    "primary": "[1,41),totalnormal\u22651N,unique maximum\u226590%:same23423 historicalstates. Unknown/pair outputcountsincorrectforsingletonlabels.",
+    "multiset": "Allloaded[1,41)withtotal\u22651N,activefamilies share\u226510%. 3+familiesout-of-model countaserrors infullaccuracy andreportedseparately.",
+    "confidence": "11collapsedsetBrier/ECE(10fixedbins)/riskcoverage onrepresentableloadedsets;4familyinclusionBrier; not21state slipcalibration without sliptruth.",
+    "timing": "Consecutive differentdominant90%runs\u226550ms separated\u2264100ms ambiguousgap. Reference=newrunfirstsample, not firstphysicaltouch. Matchclosestunusedpredictednewfamilysingleton run\u226525ms within\u00b1100ms. Signed/absolute latency,missed,earlyreverted,falsechanges andunknown/pairchanges; zeroevents unscorable.",
+    "points": "Primary finite-singletonMAPphysicalpoints vsrawreferencecentroid; matchA onexactsamerows, includewrongfamilies, reportcoverage andA-missing. Correct-family-onlysecondary."
+  },
+  "gates": {
+    "primary_pooled_error_reduction_vs_A_minimum": 0.1,
+    "per_phase_error_rate_regression_maximum_percentage_points": 0.1,
+    "confidence_cutoff": 0.8,
+    "confident_primary_coverage_minimum": 0.8,
+    "confident_wrong_count_maximum": "A totalprimaryerrors on sameprimarymask",
+    "multiset_full_loaded_accuracy": "NonregressionvsA singleton-as-set, outofmodelerrorsincluded",
+    "set_brier": "NonregressionvsAonehotonrepresentableloadedsets",
+    "transition_median_absolute_latency_s": 0.02,
+    "transition_p95_absolute_latency_s": 0.05,
+    "missed_reverted_false": "No morethannewframeevidencecontrol",
+    "finite_singleton_point_coverage_minimum": 0.8,
+    "point_rms_max": "HMM\u2264A+1e-6m onmatchedprimaryfinite-singletonrows; bothpooledRMSandmax"
+  },
+  "training": "No learnedparameters/fit/labeltuning ininitialexperiment. No post-resultgrid or winnerarm adoption. All3episodespreviouslyseen.",
+  "staging": "Feature/core/evaluation/HMM source andinputseals before each newstage. Inferenceoutputs all3sealed BEFORE evaluationpackets open solvertruth. Preservefailures/corrections and avoidoverlappingtesttotals.",
+  "source_input_bindings": {
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/measurement_context.npz": "fe350974c33f5d62304af8372aa9c1ecb1a57e7aca26fa4ccc369487689f617e",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/projected_features.npz": "8e7f9527e87c40cdd02149624534c386ce74c3b55973ceee6079fee579b37782",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/m100_B/scores.npz": "e42609c4d8ea036bcfe28cf3365abd12f7f64365112429f73d94c0340725e576",
+    "results/contact_geometry_load_audit_20261127/features/stage01/m100_B/pose_maps.npz": "a9f99ea9292c932af86d9a8669ee7dbd9a80f249e135081d2a690f24f3251637",
+    "results/balance_priority_20261126/campaign/runs/m100_B/precision.npz": "010ff6e3fa4d7c47a18f7dc3982e9ed4bee7ea26ff6e873ba12fd6c692315cf0",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p030_B/measurement_context.npz": "9d24f5663f50697151beaddcb78f28a332cdd7f35fbef811d7e9958a9bc74960",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p030_B/projected_features.npz": "6363dd2704fe92d428ad3c20a80d9af125fc4133909299ef7bec8969975a9b77",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p030_B/scores.npz": "e96f08865b563c9131921322b1d69724d5400e42ea200a99291615a0663fa1eb",
+    "results/contact_geometry_load_audit_20261127/features/stage01/p030_B/pose_maps.npz": "e10b193984be60705ba5ab63bb0f0e2d4ea6b0e8c5ca788bd30634d03fd8ddf3",
+    "results/balance_priority_20261126/campaign/runs/p030_B/precision.npz": "89f20c5c25659cf39d4e10e67c3c1856ff964f9d54932feef243a3507d0e5702",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p090_B/measurement_context.npz": "ccb1d7101ae91e50b0f37d2c7d56dc7dab192481fccc8f787545b76f2c0c54be",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p090_B/projected_features.npz": "fe0a04b2f1def543f77326047f0fe8e5a27598e73e828a71b9311063b25afa65",
+    "results/velocity_contact_rank_20261127/campaign/features_stage01/p090_B/scores.npz": "b6853ea5c4054a3072d4dca329358a25430033686ff8542103b3afe661408ad5",
+    "results/contact_geometry_load_audit_20261127/features/stage01/p090_B/pose_maps.npz": "ac2795ee1eceb135ffc2dd437b5b04af6a125722b9bc96719bee7423c0bf0fe7",
+    "results/balance_priority_20261126/campaign/runs/p090_B/precision.npz": "38826bcc2747e2a57b331f08161b3ba7636cd3ea642e7917c470576942e1798e",
+    "config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+    "src/spherical_wheel/contact_hypotheses.py": "c0995d4acb268c73e834c488514aa9f34cd2b3d57aca516c63a394429b93f532",
+    "src/spherical_wheel/offroad_control.py": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+    "src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "src/spherical_wheel/synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+  },
+  "publication": "Iterationlog,datednotes,handoff,standalonecontext andcompactportableevidence; fullmodel/evidence caches local. No new driving/video or trackingclaim."
+}

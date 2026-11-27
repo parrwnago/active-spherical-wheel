@@ -1,0 +1,207 @@
+{
+  "iteration": "I-70",
+  "qa_utc": "2026-11-27T18:45:48.300754+00:00",
+  "status": "PASS publication/numerical QA; scientific candidate FAILS adoption",
+  "baseline_commit": "cdb85d562cbdca35363ade58ff04ce275192252b",
+  "live_controller_changed": false,
+  "new_physics_steps": 0,
+  "bundle": {
+    "bundle_path": "results/temporal_contact_modes_20261127_publication_qa/i70_handoff_stage01.zip",
+    "sha256": "53219b2506159fd86cdcbdeae3f6e08c0c15168234fa7bbaa8ea3196303e3686",
+    "bytes": 30306481,
+    "files": 272,
+    "crc_check_passed": true,
+    "all_extracted_payload_hashes_exact": true,
+    "extracted_root": "results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator",
+    "builder_sha256": "10df3958fbdfcd90a4a1d72782849bf8707b04f87fccf904fe06406f7c27b12a"
+  },
+  "pre_bundle": {
+    "export_files_verified": 253,
+    "local_links_verified": 361,
+    "pdf_pages": 4,
+    "all_gates_passed": false,
+    "failed_gates": [
+      "pooled_primary_error_reduction_10pct",
+      "m100_B_primary_error_nonregression_0p1pp",
+      "p030_B_primary_error_nonregression_0p1pp",
+      "p090_B_primary_error_nonregression_0p1pp",
+      "high_confidence_errors_no_more_than_A_total",
+      "matched_point_maximum_nonregression"
+    ],
+    "manual_figure_review": "All four page PNGs visually inspected; stage02 fixes only overview legend overlap.",
+    "scientific_source_and_inputs_unchanged": true
+  },
+  "focused_contracts": {
+    "passed": 69,
+    "scope": "Seven disjoint selected contract files; not full repo tests or scientific acceptance",
+    "registered_sources_unchanged": {
+      "src/spherical_wheel/temporal_contact_filter.py": true,
+      "src/spherical_wheel/shadow_contact_models.py": true,
+      "tests/test_temporal_contact_filter.py": true,
+      "tests/test_shadow_contact_models.py": true,
+      "results/temporal_contact_modes_20261127/campaign_tools/run_shadow_case.py": true,
+      "results/temporal_contact_modes_20261127/campaign_tools/run_batch.py": true,
+      "results/temporal_contact_modes_20261127/campaign_tools/test_shadow_runner.py": true,
+      "results/temporal_contact_modes_20261127/inputs/bank_points.py": true,
+      "results/temporal_contact_modes_20261127/inputs/input_features.py": true,
+      "results/temporal_contact_modes_20261127/inputs/prepare.py": true,
+      "results/temporal_contact_modes_20261127/inputs/portable_inputs.py": true,
+      "results/temporal_contact_modes_20261127/inputs/build_portable.py": true,
+      "results/temporal_contact_modes_20261127/inputs/test_input_features.py": true,
+      "results/temporal_contact_modes_20261127/evaluation/prepare_evaluation.py": true,
+      "results/temporal_contact_modes_20261127/evaluation/evaluate_temporal.py": true,
+      "results/temporal_contact_modes_20261127/evaluation/test_evaluate_temporal.py": true,
+      "results/temporal_contact_modes_20261127/review/force_fit_checks/test_reference_qp.py": true,
+      "results/temporal_contact_modes_20261127/review/force_fit_checks/verify_force_fits.py": true,
+      "results/temporal_contact_modes_20261127/evaluation/posthoc_temporal_errors/test_diagnose.py": true,
+      "results/temporal_contact_modes_20261127/evaluation/posthoc_temporal_errors/diagnose.py": true
+    },
+    "pytest_log_sha256": "67e49cffd9fa15569019da51a5d91d9532c655e52242c0f6e80231036ba74150"
+  },
+  "frozen_source_and_input_files_checked": 35,
+  "frozen_files_unchanged": true,
+  "extracted_inference": {
+    "all_cases_completed": true,
+    "all_exact": true,
+    "prediction_and_evidence_arrays": 108,
+    "uncached_feature_arrays": 18,
+    "cases": {
+      "m100_B": {
+        "all_prediction_and_evidence_arrays_exact": true,
+        "feature_arrays_exact": true,
+        "frames": 8801,
+        "report_sha256": "5c05f4f3f97f0db5361834d749b3ccae8b555ee3520ec8af28636a1aedae76d8",
+        "imports": {
+          "bank_points": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_inputs/source/bank_points.py",
+            "sha256": "bbf95df6b204e2102cf4b6c8e4555ac23ec6398221350422ea3f27dcca2805b3"
+          },
+          "frozen_runner": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/run_shadow_case.py",
+            "sha256": "abf1dbb77a621d8a525727f65482549a8d9c037e8946e3dd4b8dd155ae4def56"
+          },
+          "input_features": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_inputs/source/input_features.py",
+            "sha256": "9b579ea1168d8d72ca0029e1bb24c8670bb7d34b595d755ab3ec5fffed8f4d24"
+          },
+          "portable_inputs": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_inputs/source/portable_inputs.py",
+            "sha256": "f4ddde967f30dce0abf5af260799ce5c026f292f32d3a7c00d68a59dfd1d80f6"
+          },
+          "spherical_wheel": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/spherical_wheel/__init__.py",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "spherical_wheel.shadow_contact_models": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/spherical_wheel/shadow_contact_models.py",
+            "sha256": "a5deff5e67021628fcd3b843bbb5fa970907ab51bee13de491226fb04cc98bc4"
+          },
+          "spherical_wheel.temporal_contact_filter": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/spherical_wheel/temporal_contact_filter.py",
+            "sha256": "fb60315abf406c2981ec8686f0aa484650cafe11bbb8976f766f0e428f47df85"
+          }
+        }
+      },
+      "p030_B": {
+        "all_prediction_and_evidence_arrays_exact": true,
+        "feature_arrays_exact": true,
+        "frames": 8801,
+        "report_sha256": "57f071213af70f69bf2f94177dd394a153c076542728be098a0b329d3d72dc1d",
+        "imports": {
+          "bank_points": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_inputs/source/bank_points.py",
+            "sha256": "bbf95df6b204e2102cf4b6c8e4555ac23ec6398221350422ea3f27dcca2805b3"
+          },
+          "frozen_runner": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/run_shadow_case.py",
+            "sha256": "abf1dbb77a621d8a525727f65482549a8d9c037e8946e3dd4b8dd155ae4def56"
+          },
+          "input_features": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_inputs/source/input_features.py",
+            "sha256": "9b579ea1168d8d72ca0029e1bb24c8670bb7d34b595d755ab3ec5fffed8f4d24"
+          },
+          "portable_inputs": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_inputs/source/portable_inputs.py",
+            "sha256": "f4ddde967f30dce0abf5af260799ce5c026f292f32d3a7c00d68a59dfd1d80f6"
+          },
+          "spherical_wheel": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/spherical_wheel/__init__.py",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "spherical_wheel.shadow_contact_models": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/spherical_wheel/shadow_contact_models.py",
+            "sha256": "a5deff5e67021628fcd3b843bbb5fa970907ab51bee13de491226fb04cc98bc4"
+          },
+          "spherical_wheel.temporal_contact_filter": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/spherical_wheel/temporal_contact_filter.py",
+            "sha256": "fb60315abf406c2981ec8686f0aa484650cafe11bbb8976f766f0e428f47df85"
+          }
+        }
+      },
+      "p090_B": {
+        "all_prediction_and_evidence_arrays_exact": true,
+        "feature_arrays_exact": true,
+        "frames": 8801,
+        "report_sha256": "de26b2f7f92204206f9af1009ed552bdfffb56a0b1583e635cd8be07e649caf2",
+        "imports": {
+          "bank_points": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_inputs/source/bank_points.py",
+            "sha256": "bbf95df6b204e2102cf4b6c8e4555ac23ec6398221350422ea3f27dcca2805b3"
+          },
+          "frozen_runner": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/run_shadow_case.py",
+            "sha256": "abf1dbb77a621d8a525727f65482549a8d9c037e8946e3dd4b8dd155ae4def56"
+          },
+          "input_features": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_inputs/source/input_features.py",
+            "sha256": "9b579ea1168d8d72ca0029e1bb24c8670bb7d34b595d755ab3ec5fffed8f4d24"
+          },
+          "portable_inputs": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_inputs/source/portable_inputs.py",
+            "sha256": "f4ddde967f30dce0abf5af260799ce5c026f292f32d3a7c00d68a59dfd1d80f6"
+          },
+          "spherical_wheel": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/spherical_wheel/__init__.py",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "spherical_wheel.shadow_contact_models": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/spherical_wheel/shadow_contact_models.py",
+            "sha256": "a5deff5e67021628fcd3b843bbb5fa970907ab51bee13de491226fb04cc98bc4"
+          },
+          "spherical_wheel.temporal_contact_filter": {
+            "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127_publication_qa/extracted_stage01/i70-contact-estimator/docs/iterations/2026-11-27/temporal-contact-modes/evidence/portable_tools/source/spherical_wheel/temporal_contact_filter.py",
+            "sha256": "fb60315abf406c2981ec8686f0aa484650cafe11bbb8976f766f0e428f47df85"
+          }
+        }
+      }
+    }
+  },
+  "extracted_evaluation": {
+    "science_sha256": "c4a8476393506e9479ac5f0d7c5aa2d542d0da52f185f3b5af24b3f25dc5138d",
+    "science_byte_exact": true,
+    "frame_arrays_byte_exact": true,
+    "frame_arrays_verified": 207,
+    "source_sha256": "33993c7fc892d71a4530666090af957cb77614543b03fe3b4316bfdc8b351008"
+  },
+  "local_links_verified": 361,
+  "format_check": {
+    "passed_excluding_preserved_frozen_archives": true,
+    "waivers": [
+      "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/evaluate_temporal.py",
+      "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/pre_truth_execution_stage01/evaluate_temporal.py",
+      "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/stage01/evaluate_temporal.py",
+      "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/synthetic_stage01/evaluate_temporal.py",
+      "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/synthetic_stage02/evaluate_temporal.py",
+      "docs/iterations/2026-11-27/temporal-contact-modes/evidence/pre_execution_source/results/temporal_contact_modes_20261127/evaluation/evaluate_temporal.py"
+    ],
+    "reason": "Exact archived evaluator bytes retained to preserve frozen source and seals; only extra final blank line, no active-module waiver.",
+    "output": "docs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/evaluate_temporal.py:528: new blank line at EOF.\ndocs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/pre_truth_execution_stage01/evaluate_temporal.py:528: new blank line at EOF.\ndocs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/stage01/evaluate_temporal.py:528: new blank line at EOF.\ndocs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/synthetic_stage01/evaluate_temporal.py:502: new blank line at EOF.\ndocs/iterations/2026-11-27/temporal-contact-modes/evidence/evaluation/synthetic_stage02/evaluate_temporal.py:528: new blank line at EOF.\ndocs/iterations/2026-11-27/temporal-contact-modes/evidence/pre_execution_source/results/temporal_contact_modes_20261127/evaluation/evaluate_temporal.py:528: new blank line at EOF.\n"
+  },
+  "limitations": [
+    "No new controller/tracking result.",
+    "Three previously inspected historical episodes, not unseen validation.",
+    "Bit-exact full inference established in producer NumPy/SciPy only.",
+    "Evaluation packets include frozen point arrays; regenerate for changed variants.",
+    "Bundle excludes this post-packaging QA record; bundle manifest binds its original payload."
+  ]
+}

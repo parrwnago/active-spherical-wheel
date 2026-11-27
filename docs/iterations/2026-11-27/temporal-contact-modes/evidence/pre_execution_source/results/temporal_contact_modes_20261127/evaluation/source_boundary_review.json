@@ -1,0 +1,41 @@
+{
+  "iteration": "I-70",
+  "utc": "2026-11-27T18:22:49.931783+00:00",
+  "historical_arrays_read": false,
+  "physics_steps": 0,
+  "review": "Read-only source audit before inference/evaluation outcomes",
+  "files": [
+    {
+      "path": "src/spherical_wheel/temporal_contact_filter.py",
+      "sha256": "fb60315abf406c2981ec8686f0aa484650cafe11bbb8976f766f0e428f47df85"
+    },
+    {
+      "path": "results/temporal_contact_modes_20261127/inputs/prepare.py",
+      "sha256": "ff000d8397972af595758a31367f2680ae7d5db9feb34d8950527e574e1f19e7"
+    },
+    {
+      "path": "results/temporal_contact_modes_20261127/inputs/input_features.py",
+      "sha256": "f13ab8bf73fb687f49c9d1a15fc26893393e14cb16a548470bb59acd57b55f8a"
+    },
+    {
+      "path": "results/temporal_contact_modes_20261127/inputs/bank_points.py",
+      "sha256": "bbf95df6b204e2102cf4b6c8e4555ac23ec6398221350422ea3f27dcca2805b3"
+    }
+  ],
+  "material_blockers": [],
+  "checks": [
+    "Causal filter recursion uses prior belief and current endpoint/transition evidence only.",
+    "Nonincreasing timestamps rejected; gaps above50ms reset prior; unknown log potential must remain finite.",
+    "Evidence power dt/.02 applied consistently to temporal and frame control; fixed correlation-time assumption, not calibrated independence.",
+    "21state ordering matches evaluator:10 supportsets rolling/slip thenunknown; calibration/MAP operate on11collapsed supports.",
+    "ConditionalMAP predecessor/current within chosen collapsed support retains a complete physical hypothesis instead of cross-body averaging.",
+    "Input whitelist contains current/previous measured geometry/state, held prior commands, raw9 and filtered-normal hint; no terrain, contact truth, desired reference, future measurements or evaluation packets.",
+    "Force-map base moment rows are rotated from endpointworld via endpointbody into observer midpointworld; joint rows remain scalar axes.",
+    "Material velocity uses measured body/joint rates and previous held ideal belt speed."
+  ],
+  "limitations": [
+    "Endpoint geometry approximates preceding5ms interval; inferred transition force allocation is not measured substep history.",
+    "Geometry/radial normals and friction cones are assumptions, including near rim edges; additional particles cannot guarantee an identifiable model.",
+    "Beliefs are model-conditional probabilities; fixed mode priors, dwell times and evidence tempering are not learned statistical calibration."
+  ]
+}

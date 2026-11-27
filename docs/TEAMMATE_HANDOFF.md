@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-69.
+experiment history and common presentation questions through I-70.
 
 ## Current system
 
@@ -71,7 +71,27 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-69 identifies the source of the zero-normal shell forces.**
+**Latest: I-70 implements temporal contact reasoning, but this version fails adoption.**
+The new opt-in estimator keeps rolling/slipping, singleton/two-family and unknown
+explanations across time using raw momentum-observer load, measured motion and
+known geometry. It has no truth input, future samples or live command connection.
+Three saved Mars starts are processed without new physics or parameter tuning.
+
+On 23,423 dominant-pressure rows it makes 564 errors versus native N's 412 and
+earlier offline guarded A's 124. The 564 comprise 140 wrong singletons, 223
+unknowns and 201 pair outputs. It recognizes 453/471 two-family pressure rows,
+but gains only thirteen loaded-set decisions overall versus A. Matched point
+RMS improves 2.5455→2.2295mm; maximum worsens 26.9076→29.4537mm. Six of sixteen
+gates fail, including confident wrong count. Temporal smoothing is not enough
+when the underlying evidence can favor the wrong contact.
+
+Keep the live baseline above. The prototype and all regressions remain available
+for learning; no closed-loop improvement is claimed. Sixty-nine selected
+contracts pass; independent force/recurrence checks and full isolated replay
+agree. [Full record, four-page PDF, event plots and reproduction](iterations/2026-11-27/temporal-contact-modes/README.md).
+The user's earlier decision to stop solver investigation remains in force.
+
+**Previous: I-69 identifies the source of the zero-normal shell forces.**
 The installed Dantzig solver sets friction bounds using intermediate normal
 impulses, then retains them while normals can change. A registered installed-
 library probe reproduces zero final normal with nonzero tangent impulse and a
@@ -82,8 +102,8 @@ already contain the effect and reproduce the I-68 force records. All59precision
 and36substep arrays remain byte-exact. All20captured calls succeed, noPGS;
 12/140applied contacts exceed final-dependent component bounds, including good
 control. This localizes the specific force anomaly, not all trajectory error.
-Keep live LQR/observer/feedforward/preparation. Validate a friction-consistent
-applied contact solution before fitting weights around these artifacts.
+Keep live LQR/observer/feedforward/preparation. The proposed solver follow-up
+was subsequently parked at the user's request; it is not the current work item.
 [Report, one-page PDF and cached replay](iterations/2026-11-27/contact-force-boundary/README.md).
 
 **Previous: I-68 resolves much of the apparent observer-load error.**

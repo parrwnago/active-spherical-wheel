@@ -1,0 +1,60 @@
+{
+  "iteration": "I-70",
+  "case": "m100_B",
+  "registered_utc": "2026-11-27T18:27:56.644912+00:00",
+  "source_input_seal_sha256": "11fbe67710f45e0e49c780072e682b8209ed6f343fd380b2581e63e3d623c6d8",
+  "inputs": {
+    "results/temporal_contact_modes_20261127/inputs/stage01/m100_B/primitives.npz": "6cd7873134d7daba50fd390288ac50878b53f6e89e3d5f8c005afed6f6b5a731",
+    "results/temporal_contact_modes_20261127/inputs/stage01/m100_B/features.npz": "47acaa1af2990919fbbc860177de28010b024bfe0994d5ed7b4df56a0904bd18"
+  },
+  "measurement_boundary": "Whitelisted measured-state/observer/known-geometry arrays only; no evaluation packet, labels, terrain or references.",
+  "model_config": {
+    "force_sigma_N": 0.5,
+    "moment_sigma_Nm": 0.03,
+    "joint_sigma_Nm": 0.03,
+    "rolling_sigma_m_s": 0.02,
+    "slip_sigma_m_s": 0.15,
+    "normal_sigma_rad": 0.17453292519943295,
+    "friction_coefficient": 0.7,
+    "minimum_pair_normal_share": 0.1,
+    "minimum_observed_force_N": 1.0,
+    "unknown_cost": 9.0,
+    "nnls_maxiter": 256,
+    "point_dedup_tolerance_m": 1e-10
+  },
+  "filter_settings": {
+    "nominal_dt_s": 0.005,
+    "known_dwell_s": 0.05,
+    "unknown_dwell_s": 0.02,
+    "evidence_correlation_s": 0.02,
+    "reset_gap_s": 0.05,
+    "singleton_prior_mass": 0.8,
+    "pair_prior_mass": 0.1,
+    "unknown_prior_mass": 0.1,
+    "rolling_prior_fraction": 0.9
+  },
+  "mode_names": [
+    "shell_A/rolling",
+    "shell_A/slip",
+    "shell_B/rolling",
+    "shell_B/slip",
+    "belt_A/rolling",
+    "belt_A/slip",
+    "belt_B/rolling",
+    "belt_B/slip",
+    "shell_A+shell_B/rolling",
+    "shell_A+shell_B/slip",
+    "shell_A+belt_A/rolling",
+    "shell_A+belt_A/slip",
+    "shell_A+belt_B/rolling",
+    "shell_A+belt_B/slip",
+    "shell_B+belt_A/rolling",
+    "shell_B+belt_A/slip",
+    "shell_B+belt_B/rolling",
+    "shell_B+belt_B/slip",
+    "belt_A+belt_B/rolling",
+    "belt_A+belt_B/slip",
+    "unknown"
+  ],
+  "scope": "Offline shadow predictions; no robot motion or controller commands changed."
+}

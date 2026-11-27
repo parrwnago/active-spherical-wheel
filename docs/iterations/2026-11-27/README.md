@@ -1,5 +1,29 @@
 # Research presentation notes — 2026-11-27
 
+**I-70: temporal contact modes implemented; first prototype not adopted.**
+[Full record and portable replay](temporal-contact-modes/README.md),
+[four-page explanation/results PDF](temporal-contact-modes/evidence/plots_stage02/temporal_contact_report.pdf)
+and [comparison image](temporal-contact-modes/evidence/plots_stage02/overview.png).
+
+- New opt-in21-mode model separates rolling/slip, single/two-family support
+  and unknown. Raw5ms observer load, measured material velocity and known
+  geometry feed constrained force fits and a causal transition-aware HMM.
+- Three saved Mars starts,26,403frames; no newphysics, tuning or solver work.
+  Alloutputs seal before truth evaluation. Live LQR/observer/feedforward and
+  short incoming-drive preparation stay unchanged.
+- Primary dominant-family errors564 versus native412 and offline guarded124.
+  The564include140wrong singleton,223unknown and201pair outputs. Allthree
+  phases regress and6/16adoption gates fail;69selected softwarecontracts pass.
+- Pairlabels453/471correct, but total loadedset accuracy gains only13/23,894
+  rows overguardedA. Exactlymatched pointRMS2.5455→2.2295mm whilemaximum
+  worsens26.9076→29.4537mm, at98.19%finite-singleton coverage.
+- All71defined transitions acquired, p95absolute latency40ms versusA20ms.
+  Temporal beliefs can reinforce bad evidence:150confidentnonunknown mistakes.
+  Posthoc finds+.3rad197/201falsepairs; paired gains26 versuslosses466.
+- Retain failedprototype and limitations. Independent recurrence/force fits
+  agree; isolated uncached replay reproduces108output and18featurearrays.
+  This is offline estimator evidence, not improved trajectory tracking.
+
 **I-69: native solver impulses explain the unusual zero-normal shell forces.**
 [Full record](contact-force-boundary/README.md) and
 [one-page explanation PDF](contact-force-boundary/evidence/publication/plots_stage02/contact_force_cause.pdf).
@@ -14,8 +38,8 @@
   component bounds. All140match exports,25nonzero contacts have unique families.
 - The good control also contains the effect. Specific force anomaly explained;
   whole trajectory deviation and a corrected solver remain unresolved.
-- Keep LQR/observer/feedforward/preparation as baseline. Validate friction bounds
-  and convergence on saved problems before controlled transfer/trajectory tests.
+- Keep LQR/observer/feedforward/preparation as baseline. The proposed solver
+  follow-up was later parked at the user's request; preserve it as history.
 
 **I-68: matching the observer interval changes our interpretation of contact errors.**
 [Full record](contact-interval-replay/README.md),

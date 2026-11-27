@@ -1,16 +1,20 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 4 — 27 November 2026, through I-69.** Live-source baseline: repository
-commit `2f9088c`; I-69 changes no live control code. This is a study and discussion
+**Revision 5 — 27 November 2026, through I-70.** Baseline: repository commit
+`cdb85d5`; the selected live controller remains unchanged. I-70 adds opt-in
+offline estimation code, with no default or live-control change. This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest diagnostic, I-69, identifies why the specific zero-normal tangential
-forces in I-68 occur: the installed Dantzig contact solver retains friction
-bounds based on an intermediate normal solution. Native applied impulses already
-contain those forces, which the momentum observer correctly senses. Read
-Sections 12–13 before recommending estimator weights from old pressure labels.
-The controller remains unchanged and no tracking improvement is claimed.
+The latest experiment, I-70, implements and evaluates a hybrid temporal contact
+estimator on three existing recordings. It fails six of sixteen acceptance
+gates and is **not adopted**. It makes 564 primary mistakes against the
+comparison policy's 124; 424 of those new mistakes are unknown or pair outputs
+on dominant-singleton labels, rather than wrong-singleton assignments. Read
+Section 14 for the complete comparison. No new driving improvement is claimed.
+The I-68/I-69 force-boundary findings remain relevant qualifications on the
+recorded pressure labels, but the user has **stopped the solver-investigation
+direction**. Preserve that history without treating it as the next work item.
 
 ## Instructions for the ChatGPT reading this file
 
@@ -31,6 +35,8 @@ No MPC, iLQR, particle filter, camera, LiDAR, SLAM, or live dynamic-contact
 forecast currently commands the selected robot. There is a limited **kinematic
 preview**, explained below. The code also contains alternative modes and
 rejected candidates, so finding a module does not establish that it is active.
+The new temporal estimator is one such opt-in, shadow-only experiment. It is
+not a particle filter and does not replace the live support locator.
 
 ## 1. Mechanism, state, and simulator
 
@@ -373,7 +379,7 @@ particle filter and it has not replaced the live locator.
 
 ### Common evidence and notation
 
-I-60–I-67 reuse three I-58 **native** 44-second Gazebo/DART Mars figure-eight
+I-60–I-67 and I-70 reuse three I-58 **native** 44-second Gazebo/DART Mars figure-eight
 recordings: shaft starts **-1.0, +0.3, +0.9 rad**, initial yaw 45 degrees,
 unchanged input bounds. Each has 8,801 saved states. The primary `[1,41)`-second
 evaluation mask has **23,423** states with at least 1 N total normal load and
@@ -405,6 +411,7 @@ the candidate point or force representation is correct.
 | [I-65: covariance-aware relative score](iterations/2026-11-27/contact-covariance-ranking/README.md) | Fit shared three-vector bias/covariance on two whole episodes, score the third. Useful preferences improve 244→253/294 and harmful rejections 1→2/6 versus relative max-component scoring. Shadow result is 163 errors: loses 41 useful corrections to prevent two harmful changes. Point maximum stays 29.843 mm. | Different method, net regression; no adoption. |
 | [I-66: point versus load representation](iterations/2026-11-27/contact-geometry-load-audit/README.md) | On those 41 lost useful corrections, sampled-point replacement lowers joint-vector RMS 0.13926→0.10568 N m, 24.1%. Thirty-seven improve, four worsen; the registered criterion fails because the -1-rad focus case worsens. Truth-assisted relative preferences become 276/294 useful, 4/6 harmful. | Geometry matters, but does not explain all disagreement. Diagnostic only. |
 | [I-67: original-bank capacity](iterations/2026-11-27/contact-bank-audit/README.md) | Existing usable candidates reproduce all 29 newly correct I-66 reference-point decisions. On the 41 focus rows, selected median distance is 6.26 mm versus 0.81 mm for the nearest usable candidate. Known-correct-family any-point capacity is 27/41 focus, 280/294 useful and 5/6 harmful. | Selection opportunity within the existing bank; no deployable selector or live improvement. |
+| [I-70: hybrid temporal modes](iterations/2026-11-27/temporal-contact-modes/README.md) | Implements a causal 21-mode rolling/slip, single/pair/unknown estimator. Primary mistakes A124→564; frame evidence305 and no-edge temporal control646. Matched point RMS improves but maximum worsens; six of sixteen gates fail. | Completed shadow experiment, not adopted. Section 14 separates identity errors, abstention, multi-contact and timing results. |
 
 Every row is offline saved-log work, not a new driving improvement. Episodes
 were inspected before these later analyses; whole-episode holdouts reduce
@@ -567,10 +574,12 @@ Torque-null directions can also make different points indistinguishable.
 Full-wrench W relaxes the point-force assumption, so lower residual is not
 independent confirmation of physical identity.
 
-**Can we blame estimation lag?** Memory and timing mismatch are plausible.
-The current logs cannot reconstruct exact preceding-5-ms contact-force
-history, and they do not measure CPU latency. Use that uncertainty explicitly
-instead of turning a plausible explanation into an established cause.
+**Can we blame estimation lag?** Distinguish the recordings. The older three
+episodes lack full substep force history; the identical-motion I-68 replay
+adds it for the −1-rad phase. At 32.110 s that replay establishes contact
+transfer inside the preceding 5 ms, rather than CPU delay. Filtering and
+interval averaging still matter. I-70 tests an approximate mixed-interval
+model, but its failed gates do not establish a general timing correction.
 
 **What is the defensible project contribution?** Integration and evaluation
 of this mechanism/model, momentum-based support construction, contact-aware
@@ -696,11 +705,11 @@ against that pressure label can still be a body carrying reported tangential
 force. The conditional bank-capacity results also remain offline existence
 counts, not deployed improvements.
 
-Keep LQR, momentum observer, geometry support locator, feedforward and incoming
-preparation. The next target is the contact-force/normal boundary and evaluation
-labels, followed by an interval-consistent contact model. Understand the
-unusual forces before fitting another threshold, likelihood weight or particle
-filter around them. No new selector or controller is deployed.
+At I-68 the next target was the contact-force/normal boundary and evaluation
+labels. I-69 below completed that diagnostic connection. The user subsequently
+parked solver investigation; this paragraph is historical, not an instruction
+to reopen it. LQR, momentum observer, geometry support locator, feedforward and
+incoming preparation remain selected. No new selector or controller is deployed.
 
 Fourteen recorder and thirteen numerical contracts pass; independent real-model
 Jacobian checks agree near floating-point precision. The compact 14.13 MB input
@@ -766,12 +775,12 @@ and the good-control occurrence prevents a claim that this mechanism alone
 causes poor tracking. The specific large trajectory deviation remains incompletely
 explained.
 
-Keep LQR, momentum observer, geometry locator, feedforward and preparation as
-the baseline. Next validate a contact-solver/model correction on the saved
-problems, requiring final friction bounds and convergence/complementarity before
-a controlled shell/belt transfer and a broader trajectory comparison. Changing
-only exported force values would leave the actual simulated dynamics and the
-observer inconsistent. No corrected solver is implemented or adopted by I-69.
+At I-69 a possible follow-up was to validate a contact-solver/model correction
+on saved problems before more driving. The user stopped that direction; no
+corrected solver is implemented or adopted. Changing only exported force values
+would leave actual simulated dynamics and the observer inconsistent, so the
+finding remains an interpretation limit. The current work instead retained
+the baseline and tested the separate shadow estimator described next.
 
 The [I-69 record and explanation PDF](iterations/2026-11-27/contact-force-boundary/README.md)
 include source/package provenance, controlled/native evidence, independent
@@ -779,7 +788,143 @@ checks and cached numerical replay. Full new rollouts remain local; the compact
 package retains the solver problems and20 selected contact contexts without
 claiming to restore the entire simulation.
 
-## 14. Sources, attribution, and how to continue a discussion
+## 14. I-70: an implemented hybrid estimator, not an adopted replacement
+
+This experiment runs only on the three saved native episodes, processing all
+26,403 frames. It changes no robot command and generates no new physics. The
+question is whether remembering plausible contact modes improves decisions
+over time, rather than selecting one explanation independently every sample.
+All inference outputs were sealed before evaluation labels were opened.
+
+The estimator tracks **21 modes**. Four single-family support sets and six
+two-family sets each have a rolling and a slipping version; an additional mode
+means unknown. For example, “shell A rolling” and “shell A plus belt B slipping”
+are different hypotheses. A pair permits two separate contact forces, each
+carrying at least 10% of their combined normal load. Each point supplies force
+only; no independent contact couple is fitted. It cannot represent three
+families or arbitrary multiple points within one family. These modeled sets
+must not be confused with proof of simultaneous physical contact.
+
+Inputs are measured-state primitives already allowed in simulation: pose and
+velocity, previous applied commands, the raw nine-component observer estimate
+for the preceding interval, the filtered-wrench-derived normal hint, and known
+robot geometry. Candidate point velocities include prescribed belt surface
+motion. No solver contacts, true points/load shares, terrain map, reference
+trajectory or future samples enter inference. Exact simulated body state is
+still permitted; there is no independent new contact sensor.
+
+The original 102-point bank is retained. Each family keeps at most two points:
+one favored by geometry and one by geometry plus rolling-motion consistency,
+with duplicates removed. At a complete single/pair point combination, a
+nonnegative least-squares calculation fits separate forces inside assumed
+friction pyramids to explain all nine observer components. Geometry and
+tangential-motion terms then contribute to a profile score. Rolling uses a
+0.02 m/s motion scale; slipping uses the broader 0.15 m/s scale. Other fixed
+assumptions include a 10-degree normal scale, friction coefficient 0.7, force
+scale 0.5 N and moment/joint scales 0.03 N m. These are engineering assumptions,
+not parameters learned from this evaluation.
+
+A **hidden Markov model (HMM)** carries past mode beliefs forward, preferring
+some continuity while allowing switches. It uses only current/past data, with
+no backward smoothing or future terrain prediction. The contribution of a
+5 ms observation is reduced using an assumed 20 ms correlation time, since
+the available cues share state and observer history. A special transition
+calculation allows the preceding interval's force to come from both the
+exiting and incoming family while scoring rolling/slip motion only at the
+incoming endpoint. This addresses “old load in a recent interval, new support
+now” explicitly; it remains an endpoint-geometry approximation to that history.
+Before reporting a support set, rolling and slipping beliefs for that same set
+are added together, giving eleven support choices including unknown. Splitting
+belief between two motion hypotheses does not itself discard that support set.
+
+For each mode, alternative complete-fit scores are combined without rewarding
+a mode merely for having more candidates. Reported physical points/forces
+come from one complete fit, rather than mixing independently chosen components.
+Its point covariance describes only the small conditional shortlist. Neither
+that covariance nor the normalized HMM numbers establish full-surface
+uncertainty, unique forces or calibrated physical probabilities. This method
+is **not a particle filter**: it does not maintain and resample a cloud of
+continuous contact particles. It also continues to use the momentum observer.
+
+### Completed comparison and decision
+
+On the same **23,423 dominant-positive-pressure rows**, unknown and pair outputs
+count as mistakes when the reference label is a dominant singleton. The first
+numeric column below includes every such mistake, not only wrong families:
+
+| Method | Total primary mistakes | Wrong singleton | Unknown | Pair output |
+| --- | ---: | ---: | ---: | ---: |
+| Existing accepted/fallback policy A | 124 | 124 | 0 | 0 |
+| New frame evidence, without history | 305 | 62 | 204 | 39 |
+| Temporal model without transition-specific evidence | 646 | 147 | 241 | 258 |
+| Primary transition-aware HMM | **564** | **140** | **223** | **201** |
+
+Thus remembering modes does not automatically improve the primary decision.
+Transition-specific evidence helps relative to the no-edge temporal control,
+but this HMM is worse than both A and its own frame-only control on that metric.
+It fails **six of sixteen gates**: pooled primary error reduction, each of the
+three starting-phase error comparisons, high-confidence wrong count, and
+maximum point distance. Even at reported confidence at least 0.8, it makes
+150 **nonunknown** mistakes: 53 wrong singletons and 97 false pairs, versus
+A's 124 total. The registered covered-confidence metric excludes unknown;
+156 confident unknown outputs are reported separately and remain primary
+mistakes. **Do not adopt this version.**
+
+Other metrics show limited benefits and must retain their denominators:
+
+- On **23,894 loaded rows**, the full active-family-set comparison improves
+  from A's 595 mistakes to 582: only **13 additional correct rows**. Set Brier
+  score improves **0.049803→0.037896**. Brier measures probability-vector error
+  against recorded labels; a lower score can coexist with worse dominant-mode
+  decisions and does not prove calibration outside these episodes.
+- On **22,999 exactly matched finite-singleton rows**, point RMS improves
+  **2.54550→2.22954 mm**, while maximum distance worsens
+  **26.90764→29.45375 mm**. HMM finite-singleton coverage is **98.19%** of primary
+  rows. Wrong-family point errors are retained; missing unknown/pair points
+  are reported through coverage, not assigned zero distance. These matched
+  maxima are not A's maximum over every original primary row.
+- All **71 defined pressure transitions** are acquired. HMM median absolute
+  latency is 5 ms and p95 is **40 ms**, versus A's **20 ms** p95. HMM false support
+  changes fall from frame evidence's 158 to 97, but A has only 30. Much of that
+  frame-to-HMM reduction removes unknown transitions; wrong singleton toggles
+  increase from 18 to 27. “Smoother” therefore needs a specified comparison.
+
+A separately sealed **post-result diagnostic** explains the tradeoff without
+changing parameters or gates. The HMM recognizes **453 of 471** loaded pair
+rows, but relative to A it gains only **26** dominant-singleton decisions and
+loses **466**. Those pair successes almost offset the singleton losses in the
+full-set metric; they do not rescue the failed primary result.
+
+The +0.3-rad episode contains **197 of 201** false pair outputs. Its longest
+constant false-pair spell spans **15.725–15.765 s**, nine 5 ms samples counted
+as **45 ms** of sampled disagreement. The HMM retains shell A+B while pressure
+supports shell B; frame evidence already selects shell B at both ends. This
+is consistent with temporal retention contributing at that event, without
+isolating a dwell parameter or proving one cause for all mistakes.
+
+The labels remain sampled positive normal pressure from the final 1 ms solve,
+not every force-bearing body or first physical touch. I-68/I-69's qualification
+is retained without relabeling old episodes or restarting solver work.
+These are retrospective results on three already inspected starts, not unseen
+terrain validation or evidence of improved balance/tracking. Independent
+recurrence and force-QP checks support numerical correctness; they do not
+convert failed scientific gates into acceptance.
+
+The current decision is to keep the live baseline. If estimator work continues,
+an existing-log review can first identify which measurement terms and temporal
+preferences produce the wrong, unknown and pair outputs. Possible revisions
+include simpler confidence-aware handoffs, better justified transition models,
+or different contact/slip likelihoods. A particle filter could retain richer
+point alternatives, but would still inherit measurement-model and observability
+limits. None is a proven next improvement, and no new solver or hardware work
+is implied by these options.
+
+The [I-70 record, results and reproduction](iterations/2026-11-27/temporal-contact-modes/README.md)
+preserve the protocol, rejected candidate, source snapshots and evidence.
+The opt-in implementations are [contact profile models](../src/spherical_wheel/shadow_contact_models.py)
+and [causal temporal filtering](../src/spherical_wheel/temporal_contact_filter.py).
+
+## 15. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

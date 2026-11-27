@@ -1,0 +1,74 @@
+{
+  "all_cases_completed": true,
+  "all_exact": true,
+  "cases": {
+    "m100_B": {
+      "all_exact": true,
+      "cache_vs_fresh_all_feature_arrays_exact": true,
+      "elapsed_s": 84.28398867000942,
+      "frames": 8801,
+      "verified_prediction_arrays": 36
+    },
+    "p030_B": {
+      "all_exact": true,
+      "cache_vs_fresh_all_feature_arrays_exact": true,
+      "elapsed_s": 84.6173227050167,
+      "frames": 8801,
+      "verified_prediction_arrays": 36
+    },
+    "p090_B": {
+      "all_exact": true,
+      "cache_vs_fresh_all_feature_arrays_exact": true,
+      "elapsed_s": 86.07999618598842,
+      "frames": 8801,
+      "verified_prediction_arrays": 36
+    }
+  },
+  "children": [
+    {
+      "case": "m100_B",
+      "command": [
+        "/home/parrwnago/active-spherical-wheel/.venv/bin/python",
+        "-I",
+        "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/publication/portable_tools/replay_inference.py",
+        "--worker",
+        "m100_B",
+        "--inputs",
+        "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/inputs/portable_stage02",
+        "--output",
+        "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/publication/replay_producer_stage01"
+      ],
+      "returncode": 0
+    },
+    {
+      "case": "p030_B",
+      "command": [
+        "/home/parrwnago/active-spherical-wheel/.venv/bin/python",
+        "-I",
+        "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/publication/portable_tools/replay_inference.py",
+        "--worker",
+        "p030_B",
+        "--inputs",
+        "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/inputs/portable_stage02",
+        "--output",
+        "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/publication/replay_producer_stage01"
+      ],
+      "returncode": 0
+    },
+    {
+      "case": "p090_B",
+      "command": [
+        "/home/parrwnago/active-spherical-wheel/.venv/bin/python",
+        "-I",
+        "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/publication/portable_tools/replay_inference.py",
+        "--worker",
+        "p090_B",
+        "--inputs",
+        "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/inputs/portable_stage02",
+        "--output",
+        "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/publication/replay_producer_stage01"
+      ],
+      "returncode": 0
+    }
+  ]
+}

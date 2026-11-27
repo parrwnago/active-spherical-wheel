@@ -4275,6 +4275,65 @@ controlledshell/belttransfer andtrajectory comparisons. Do not merelyclipreporte
 forces, whichwouldbreakmotion/wrenchconsistency. No correctedsolverimplemented.
 [Report, explanation PDF and cached replay](docs/iterations/2026-11-27/contact-force-boundary/README.md).
 
+## I-70 — 2026-11-27 — temporal hybrid contact estimator; not adopted
+
+**Implemented, replayed and analyzed; six of sixteen adoption gates fail.**
+Test the approved temporal-mode proposal on the three existing I-58 native
+Mars figure-eight recordings, starting phases−1.0/+0.3/+0.9rad, yaw45°,
+44s/control5ms. No new physics, solver investigation, controller change or
+physical tracking gain. Baseline source cdb85d5; new estimator modules opt-in.
+
+Implement21modes:4singleton+6two-family sets, each rolling/slip, plusunknown.
+Use measured-state/known-geometry features and raw observer9 overprevious5ms;
+constrained physical point/force fits and causal HMM with directed interval-load
+transition evidence. Nominalfriction.7, pairshare≥.1, forceσ.5N,
+moment/jointσ.03Nm, rolling/slipσ.02/.15m/s, normalσ10°, known/unknown
+dwell50/20ms, correlation20ms, unknowncost9; fixed priors/affinities inprotocol.
+Profile potentials/shortlist covariance are approximate, not calibrated full
+contact uncertainty. No future samples, desired motion or simulator contacts
+enter inference. Truth-free inputs and all3outputs seal before truth evaluation.
+
+All26,403frames processed; primary23,423dominant-pressure rows reproduce
+N/F/A errors412/109/124. New frame evidence305errors; no-edgehistory646;
+primarytransition-awarehistory564=140wrong-singletons+223unknown+201pairs.
+PerphaseA→primary errors14→85,64→295,46→184. Six failedgates: pooled,
+all3phase comparisons, confidentwrong150>124, matchedpoint maximum.
+At≥.8 nonunknown confidence, coverage96.74%; confidence is not proof of accuracy.
+
+Mixed gains: all-loadedset errors595→582/23,894, setBrier.049803→.037896.
+All471nondominant loadedrows aretwo-family pressure sets; primarylabels453
+correctly. Exactlymatched22,999finite-singleton rows: pointRMS2.54550→2.22954mm,
+max26.90764→29.45375mm, coverage98.19%; wrong-family points included.
+All71stablepressure transitions acquired; absolute latencymedian5ms/p9540ms
+versusA p9520ms. Falsechanges97 versusnewframe158, butA30; mostreduction
+isunknown transitions, while singleton toggles18→27. Unknown/pair outputs count
+as errors ondominant truth and are never treated aszero point error.
+
+Separately sealed posthoc paired analysis: primary fixes26 and loses466
+dominant decisions versusA; retains207/294original usefulcorrections and
+repairs0/6harmful overrides. Phase+.3supplies197/201falsepairs andall97
+confident falsepairs. Longest constantfalsepair is45mssampled disagreement,
+15.725–15.765s, with frame evidence already correct atbothends. Edges improve
+no-edgehistory by86gains/4losses (net82), but lose5correct pairrows. Highest
+nonunknown errorconfidence.994 reinforces alreadywrong frame evidence. These
+are descriptive associations, not a unique causal explanation of physical contact.
+
+Verification:69contracts in7disjointselectedfiles pass (not fullsuite; earlier
+inclusive stages notadded). Independent probability-domain recurrence matches
+all3support/transition decisions;14/14Cartesianforce fits agree at6fixedframes,
+maxobjectivegap3.57e−13. Isolated uncached replay matches108prediction/evidence
+and18feature arrays exactly from10.52MBportable primitives. Preserve plugin
+setupfailure, unfinishedprelaunchguard, scalar-packagingcorrection andlayout1.
+Pressure labels arefinal1ms normal load, observer spans5ms; existingI68/I69
+qualification remains. No real-time5ms deployment or closed-loop gain validated.
+
+**Decision:** retain opt-in prototype/evidence; keep live gain-scheduledLQR,
+momentum observer, support locator, feedforward and incoming preparation.
+No outcome-driven parameter sweep. If revisited, test likelihood calibration
+and single-versus-pair evidence independently before integration; this is a
+proposal, not a demonstrated remedy. Solver work remains parked per user.
+[Full record, four-page PDF, plots and portable reproduction](docs/iterations/2026-11-27/temporal-contact-modes/README.md).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

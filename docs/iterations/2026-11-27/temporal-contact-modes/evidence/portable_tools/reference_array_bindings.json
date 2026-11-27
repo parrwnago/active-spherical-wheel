@@ -1,0 +1,929 @@
+{
+  "cases": {
+    "m100_B": {
+      "model_evidence.npz": {
+        "arrays": {
+          "edge_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "9a3530d29c340c2b51f4cc4eabcefd11ce379f26befe1223ffd3f3c77a19aa72",
+            "shape": [
+              8801,
+              6,
+              2,
+              2,
+              2
+            ]
+          },
+          "edge_cost": {
+            "dtype": "<f8",
+            "sha256": "6b3616ce3944170d0b4e3b4fbd62f1c9266621daf3b45ac8f2d124b00c41c623",
+            "shape": [
+              8801,
+              6,
+              2,
+              2
+            ]
+          },
+          "edge_valid": {
+            "dtype": "|b1",
+            "sha256": "0bb19f84be7c13301364167e4078d4c360ad18227a818fb4ee157b52b363c908",
+            "shape": [
+              8801,
+              6,
+              2,
+              2
+            ]
+          },
+          "node_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "4663c8cb0cf41323715f5d5ee9eff9ca274bf1fe03fc0bcd4d34a71463edb11f",
+            "shape": [
+              8801,
+              21,
+              2
+            ]
+          },
+          "node_cost": {
+            "dtype": "<f8",
+            "sha256": "8daaf3862bd353a45f216f97e83e795e3398ed1a5b061281c9253ee3a404ef2e",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "node_valid": {
+            "dtype": "|b1",
+            "sha256": "7aac15515a6a0a82271ec474a174b30a37216ee9c08c48e93929b88855c48300",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "shortlist_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "bbd63f9410d78dfc040a946a23ccf7f13b6c6e86befc2e694c33cca476e80ce7",
+            "shape": [
+              8801,
+              4,
+              2
+            ]
+          }
+        },
+        "canonical_file_sha256": "8de78cf115e416f6ca2a35dce66921ab4379c8d766648ca938a574e5452bc5ac"
+      },
+      "predictions.npz": {
+        "arrays": {
+          "emission_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "e377bd9a24e22337994665197d26aa8e8e9311c46477129ff77fdc3f082f5cfc",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "emission_conditional_point_covariance_m2": {
+            "dtype": "<f8",
+            "sha256": "f839226de2e19d8f32e512a3add307af184dbff5b6c0fb2f827fc8627dfb6766",
+            "shape": [
+              8801,
+              4,
+              3,
+              3
+            ]
+          },
+          "emission_interval_force_by_family_N": {
+            "dtype": "<f8",
+            "sha256": "10771f2ac050b7ad146ccf6ff4615693fb836cd7afa2c49ac0c1fb3fbecbc0df",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "emission_points_m": {
+            "dtype": "<f8",
+            "sha256": "754947960a232d4ab530e0ca8c6fe15cd9845ffb497c3f5f519f98d5e70fd53e",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "emission_probability21": {
+            "dtype": "<f8",
+            "sha256": "3345af9f650c4228ff82727b8fa7e39660c94995a6813baab76ec95989e4fc20",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "emission_selected_edge_index": {
+            "dtype": "<i8",
+            "sha256": "c59a6a5a6268744d82a14b4433013ee5880682e15982872c91f0ffc2ce7cbe9a",
+            "shape": [
+              8801
+            ]
+          },
+          "evidence_weight": {
+            "dtype": "<f8",
+            "sha256": "ddc6e7e60176c1b64bac811e448bfb078f86f31dce0fe43ff9c1ed6a24c64ba3",
+            "shape": [
+              8801
+            ]
+          },
+          "failed_force_fit_count": {
+            "dtype": "<i8",
+            "sha256": "84df2001168366518024196ace9a7719cb1b3288496aaf5dd2ecbe92c2618d3f",
+            "shape": [
+              8801
+            ]
+          },
+          "force_fit_count": {
+            "dtype": "<i8",
+            "sha256": "575e41ed063271ce8075a996ee39d6d0e6ef2fd424d94fe5f98faeb4b95d4c53",
+            "shape": [
+              8801
+            ]
+          },
+          "history_reset": {
+            "dtype": "|b1",
+            "sha256": "d2b5c4e2a9ff515dbabb8058e7194263bef532db3a50db35865e3373088b114c",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "d3ae0b57431853f7769f0ee6a85dfd7ca9fff9d7da7b9e56e30f2476c94fc932",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "hmm_conditional_point_covariance_m2": {
+            "dtype": "<f8",
+            "sha256": "f4897d67b0aea20b350db31109719b913ff9727a7027f09fbe3d0171d900c70f",
+            "shape": [
+              8801,
+              4,
+              3,
+              3
+            ]
+          },
+          "hmm_confidence": {
+            "dtype": "<f8",
+            "sha256": "48dd29cf7937fd42ad20fc1f6f002623d3d21eaac7fd311f294a9e6cff986c36",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_interval_force_by_family_N": {
+            "dtype": "<f8",
+            "sha256": "dd6e7ddbcef06fb0a7026d50f06c8b11210b8d4fae744e44c6873c4c4b0f933f",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "hmm_points_m": {
+            "dtype": "<f8",
+            "sha256": "4ca28fca18e9fa9e0ba5890955fd19e11f08ff5485a22830aa0454a06b94dd25",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "hmm_selected_current_mode": {
+            "dtype": "<i8",
+            "sha256": "9e9bfa33b6362181adf4e10de97f97fa548dfffd9dff008246f12e517f4cea8b",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_selected_edge_index": {
+            "dtype": "<i8",
+            "sha256": "feb70c10598d2282cea54b3908495c9dd6f87874ad34147ea8107195bb7b237b",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_selected_previous_mode": {
+            "dtype": "<i8",
+            "sha256": "e459be58bab07c39e9c5c218a170e6fc2308f4e6a6e42829b5cba30bc21c36f5",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_support_index": {
+            "dtype": "<i8",
+            "sha256": "af1c265e906eea2bb06ab18ffdd8373ed506deea9c552e3748f67365cefe2023",
+            "shape": [
+              8801
+            ]
+          },
+          "observation_valid": {
+            "dtype": "|b1",
+            "sha256": "b7d67afc391b5876f1ab158d5b5ae79c53fabc2f9c8e96a5a4a961a14b080c6f",
+            "shape": [
+              8801
+            ]
+          },
+          "posterior21": {
+            "dtype": "<f8",
+            "sha256": "d8ef32485f508a8a613f4bb401da9a1830dbe2ce7b6e28a3a898ff7342955b9a",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "shortlist_count": {
+            "dtype": "<i8",
+            "sha256": "66177bb3eab1e7d90092cd2bb6a83912a37a617367576d2030e0b2f58a6c2828",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "state_hmm_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "7f052a65feec6808b680daaee989d3587fe6194a3f6d47e2be83d991a018c489",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "state_hmm_conditional_point_covariance_m2": {
+            "dtype": "<f8",
+            "sha256": "66d677338a99eaa13fb6c4d45e53feb54cdce2e2a24cfe66bc9929df9cda9d71",
+            "shape": [
+              8801,
+              4,
+              3,
+              3
+            ]
+          },
+          "state_hmm_interval_force_by_family_N": {
+            "dtype": "<f8",
+            "sha256": "d028a500029162f432ff08f05d363bc1028f19c9a9b1e9f1d3ffd9c5b8bff5b4",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "state_hmm_points_m": {
+            "dtype": "<f8",
+            "sha256": "d8aed8d36cceec0a6ac85685eca4ae522732a958dcf76ad5615ae281694ca7f6",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "state_hmm_probability21": {
+            "dtype": "<f8",
+            "sha256": "74ea777b59297c3691c928c1dbee3514e713b41fab1fa67d847b16e85892c547",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "state_hmm_selected_edge_index": {
+            "dtype": "<i8",
+            "sha256": "c59a6a5a6268744d82a14b4433013ee5880682e15982872c91f0ffc2ce7cbe9a",
+            "shape": [
+              8801
+            ]
+          },
+          "time_s": {
+            "dtype": "<f8",
+            "sha256": "0b7b34f87e8841918f276ccfbaf5a67b9450d0e65d4a34afae6d982f958b6b1c",
+            "shape": [
+              8801
+            ]
+          }
+        },
+        "canonical_file_sha256": "d855e39437d0146e6b41e00f712ebba01fe5b6749ef598f6fe81f3e4b6e4c8e3"
+      }
+    },
+    "p030_B": {
+      "model_evidence.npz": {
+        "arrays": {
+          "edge_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "23c480b3321b4124e02c7ccb4f670e15b570142d1fd63b9e155b477d7cf09fa8",
+            "shape": [
+              8801,
+              6,
+              2,
+              2,
+              2
+            ]
+          },
+          "edge_cost": {
+            "dtype": "<f8",
+            "sha256": "73c1478f640d9ce5320526b713eb4bc5b45fd3fc02d9890b9b5da13bb635edf5",
+            "shape": [
+              8801,
+              6,
+              2,
+              2
+            ]
+          },
+          "edge_valid": {
+            "dtype": "|b1",
+            "sha256": "c63ee15eaaf5a962b906cc94df002d8532f580dcd055030ee014f6edd4d899ed",
+            "shape": [
+              8801,
+              6,
+              2,
+              2
+            ]
+          },
+          "node_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "c95739ac053a8eb5533977e6fcb0d4a18153da1149a0e356b5847d6e684eca08",
+            "shape": [
+              8801,
+              21,
+              2
+            ]
+          },
+          "node_cost": {
+            "dtype": "<f8",
+            "sha256": "e264695fa6e1988edcab751aa6b8995ef4db84c45e2a4149141de652641059c6",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "node_valid": {
+            "dtype": "|b1",
+            "sha256": "4c60700fe49ef6c8a63dfb0b7c8c0e295ce00fe02f5049cca94baa6eea381197",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "shortlist_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "c815b8bb5fcd6d0af86b6f5ca6a7adfce35c8ae5efcf290e1d9f16e7fd3e3500",
+            "shape": [
+              8801,
+              4,
+              2
+            ]
+          }
+        },
+        "canonical_file_sha256": "9e0bd0f2543971144e8423aaa85031e96749031f348e14358aec3532ec33293c"
+      },
+      "predictions.npz": {
+        "arrays": {
+          "emission_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "745130fd2efff15dcd4fc0c5fca20126de3e74b629d7fb9aac145137e627e806",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "emission_conditional_point_covariance_m2": {
+            "dtype": "<f8",
+            "sha256": "37680a2779fa5ec3c0c4b228a9d8801e56048a0dbd3cf05dcf818b4eba8383b4",
+            "shape": [
+              8801,
+              4,
+              3,
+              3
+            ]
+          },
+          "emission_interval_force_by_family_N": {
+            "dtype": "<f8",
+            "sha256": "003dd76e6219653cd0d3621da7cd95a6778becb8de582c99f1b9c753568f31c2",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "emission_points_m": {
+            "dtype": "<f8",
+            "sha256": "df18365c58838794a1b2505cae2cb93a214a77900cc506edbcdba26a9d4cba17",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "emission_probability21": {
+            "dtype": "<f8",
+            "sha256": "1ed6ef0fe2f99292f8dcd6be45ac42f5bf3839bc12413b5f6824f3482b99e79b",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "emission_selected_edge_index": {
+            "dtype": "<i8",
+            "sha256": "c59a6a5a6268744d82a14b4433013ee5880682e15982872c91f0ffc2ce7cbe9a",
+            "shape": [
+              8801
+            ]
+          },
+          "evidence_weight": {
+            "dtype": "<f8",
+            "sha256": "ddc6e7e60176c1b64bac811e448bfb078f86f31dce0fe43ff9c1ed6a24c64ba3",
+            "shape": [
+              8801
+            ]
+          },
+          "failed_force_fit_count": {
+            "dtype": "<i8",
+            "sha256": "84df2001168366518024196ace9a7719cb1b3288496aaf5dd2ecbe92c2618d3f",
+            "shape": [
+              8801
+            ]
+          },
+          "force_fit_count": {
+            "dtype": "<i8",
+            "sha256": "8a5a3094a7924e2c0a6c13b1633fcdbf5972f507b625625118f6b078bd8feae9",
+            "shape": [
+              8801
+            ]
+          },
+          "history_reset": {
+            "dtype": "|b1",
+            "sha256": "d2b5c4e2a9ff515dbabb8058e7194263bef532db3a50db35865e3373088b114c",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "42c43f4c7e6496e18f80545c0e905870e2222a03a7286aa0514dcbee27acb707",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "hmm_conditional_point_covariance_m2": {
+            "dtype": "<f8",
+            "sha256": "e39b179f7065f4de80b03bfa345e0e21ed86b5c72680e92853291966da770174",
+            "shape": [
+              8801,
+              4,
+              3,
+              3
+            ]
+          },
+          "hmm_confidence": {
+            "dtype": "<f8",
+            "sha256": "de4a424e977e7c8b29b916ac1f4977bf7f72658ec1619628895e8eeffa496427",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_interval_force_by_family_N": {
+            "dtype": "<f8",
+            "sha256": "d66b1ff64b579fa033dfe6a77ea1edd0341d1a2725d224d7e5dd43144660b03c",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "hmm_points_m": {
+            "dtype": "<f8",
+            "sha256": "42543073416a4bdc813d921a3f6740d157a47ae3e4e44ec04da05e98cb3eca39",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "hmm_selected_current_mode": {
+            "dtype": "<i8",
+            "sha256": "708f5a5e3fb9498b285c12af6860d5be990f66741b17de24b4cd928ba1d67558",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_selected_edge_index": {
+            "dtype": "<i8",
+            "sha256": "02357aba51a630a1225b80416bda7d9a6eafdd14358faab8747fc982be220775",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_selected_previous_mode": {
+            "dtype": "<i8",
+            "sha256": "82fbf9198823d7e25a3dcd25265dcaf7b63b2bb0c68ec387f860c0a46a3541c6",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_support_index": {
+            "dtype": "<i8",
+            "sha256": "a25ce34cf7fac180ac21e6d415455373b6f3b64cb20f4e88ead3813d56e53a7d",
+            "shape": [
+              8801
+            ]
+          },
+          "observation_valid": {
+            "dtype": "|b1",
+            "sha256": "ad828b519b2425b49ec7f2f11ec4205f8912b803dfb5978cd027a3e7bbfdf1bf",
+            "shape": [
+              8801
+            ]
+          },
+          "posterior21": {
+            "dtype": "<f8",
+            "sha256": "dfe70aa56d8596caa4a18d6bcfb441e6207cb914880a191962589d6547c75a45",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "shortlist_count": {
+            "dtype": "<i8",
+            "sha256": "3c86212a5a4f0fc04019cf05dea7525b74af90dd966ed78c8d901e5d5563e526",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "state_hmm_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "f6de736a7d229fa2f98ed513dfead70255e105ef87e7e18790335d19619b0278",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "state_hmm_conditional_point_covariance_m2": {
+            "dtype": "<f8",
+            "sha256": "80553a3aef8edde4fdab6c0728f7ca077130f60256cac936dff67b01ac1270a2",
+            "shape": [
+              8801,
+              4,
+              3,
+              3
+            ]
+          },
+          "state_hmm_interval_force_by_family_N": {
+            "dtype": "<f8",
+            "sha256": "adecd58afd339f5c6a08d0b6cf0832e683e181b5ca4633fe9ffc0d993ad043ca",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "state_hmm_points_m": {
+            "dtype": "<f8",
+            "sha256": "9d3a45d8ac97e5ad4e787a0496df3f0dcccb7e0cc16423309f1292a7ccb29fc6",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "state_hmm_probability21": {
+            "dtype": "<f8",
+            "sha256": "97cb20c1f81e954d80335e9707c214aed776af765bdc423b58470b51b2491ea0",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "state_hmm_selected_edge_index": {
+            "dtype": "<i8",
+            "sha256": "c59a6a5a6268744d82a14b4433013ee5880682e15982872c91f0ffc2ce7cbe9a",
+            "shape": [
+              8801
+            ]
+          },
+          "time_s": {
+            "dtype": "<f8",
+            "sha256": "0b7b34f87e8841918f276ccfbaf5a67b9450d0e65d4a34afae6d982f958b6b1c",
+            "shape": [
+              8801
+            ]
+          }
+        },
+        "canonical_file_sha256": "a3879f7ac6701a631b3d03f6c62c3ed7fc67a7168ba98bf7ec0c8d3f301726ce"
+      }
+    },
+    "p090_B": {
+      "model_evidence.npz": {
+        "arrays": {
+          "edge_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "0ceb971bc2f9981d0a76327da9e38d6356776826164e071604276b2ce9051b61",
+            "shape": [
+              8801,
+              6,
+              2,
+              2,
+              2
+            ]
+          },
+          "edge_cost": {
+            "dtype": "<f8",
+            "sha256": "08e650bad1b395e3fb06358f5d2a838c8d73f78a728bae83e5de57ab21350241",
+            "shape": [
+              8801,
+              6,
+              2,
+              2
+            ]
+          },
+          "edge_valid": {
+            "dtype": "|b1",
+            "sha256": "211e80c7905fb18651d2e30d8432fcec7c03622ffe750bcf26a871bfad7e6998",
+            "shape": [
+              8801,
+              6,
+              2,
+              2
+            ]
+          },
+          "node_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "ccd7cfd899d48decdc53f97331ffd8e276d7b62fe8816c21233ff31a0c9135ac",
+            "shape": [
+              8801,
+              21,
+              2
+            ]
+          },
+          "node_cost": {
+            "dtype": "<f8",
+            "sha256": "0f2087e1565b9f1d11e5d5951c50a7d6385b5892bce1c5acbec04b7e84db1862",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "node_valid": {
+            "dtype": "|b1",
+            "sha256": "e47bf4f2ea96133d16d0a2029eff47ecf8f13406e59c5f43ca027319e7e402db",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "shortlist_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "12ca2dec78c6604195a18241523f1f306f83d1006eb3cb46d42b26334928fc3c",
+            "shape": [
+              8801,
+              4,
+              2
+            ]
+          }
+        },
+        "canonical_file_sha256": "f12bd2374fb657fa6e0f2a5a6b05df1391f48698ee395e36364e3ef4e273880b"
+      },
+      "predictions.npz": {
+        "arrays": {
+          "emission_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "89733e9827b015c25dba3fe34123246a815b34b17903d0184d04c106adeaf483",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "emission_conditional_point_covariance_m2": {
+            "dtype": "<f8",
+            "sha256": "5e76e76f59258d861cc7b1546d0a240f6a06d32772779f7f1716b1d28460e1eb",
+            "shape": [
+              8801,
+              4,
+              3,
+              3
+            ]
+          },
+          "emission_interval_force_by_family_N": {
+            "dtype": "<f8",
+            "sha256": "12bdaab84b2b483f49d7775f335ac1ac46dd243e5d0c7323a48a9fadc71fcbad",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "emission_points_m": {
+            "dtype": "<f8",
+            "sha256": "7adf16d606b4ada35f1a37d60824b961df6402fe0c2089b88e74ea447be0a971",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "emission_probability21": {
+            "dtype": "<f8",
+            "sha256": "2fe84ac41c22bb1767298de53d99595ea3045d65552305d262cbbf1a9a7f1112",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "emission_selected_edge_index": {
+            "dtype": "<i8",
+            "sha256": "c59a6a5a6268744d82a14b4433013ee5880682e15982872c91f0ffc2ce7cbe9a",
+            "shape": [
+              8801
+            ]
+          },
+          "evidence_weight": {
+            "dtype": "<f8",
+            "sha256": "ddc6e7e60176c1b64bac811e448bfb078f86f31dce0fe43ff9c1ed6a24c64ba3",
+            "shape": [
+              8801
+            ]
+          },
+          "failed_force_fit_count": {
+            "dtype": "<i8",
+            "sha256": "84df2001168366518024196ace9a7719cb1b3288496aaf5dd2ecbe92c2618d3f",
+            "shape": [
+              8801
+            ]
+          },
+          "force_fit_count": {
+            "dtype": "<i8",
+            "sha256": "0087505c46f155fe856be6dda4bf3894ffacaa6bc511369ca9fe7f621c6c0aef",
+            "shape": [
+              8801
+            ]
+          },
+          "history_reset": {
+            "dtype": "|b1",
+            "sha256": "d2b5c4e2a9ff515dbabb8058e7194263bef532db3a50db35865e3373088b114c",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "e4c45a502c364b06ce7a8b739f67d3b7bb453c4c71b89056803a614ff8966bcc",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "hmm_conditional_point_covariance_m2": {
+            "dtype": "<f8",
+            "sha256": "45019deddd39e0813f06a13c451b186623bac9d62bd7699a16d37a05d3043ec3",
+            "shape": [
+              8801,
+              4,
+              3,
+              3
+            ]
+          },
+          "hmm_confidence": {
+            "dtype": "<f8",
+            "sha256": "f8e330744f24d00316a728556e146f3445119adc066418ff2de91598a91b4260",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_interval_force_by_family_N": {
+            "dtype": "<f8",
+            "sha256": "f8293043427b7c92a02fb3ea76d7a77b0c1e87f972cdfb262b2c3ce8854c6ec6",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "hmm_points_m": {
+            "dtype": "<f8",
+            "sha256": "46c033e822da16e7537afee03718f3ae043b5a92e0c8bbdc14bc21f244857da7",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "hmm_selected_current_mode": {
+            "dtype": "<i8",
+            "sha256": "ccf52f1d8a627a15733f83c443f9c455fc9bf8e0457a5a2b9f01ab0251715e78",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_selected_edge_index": {
+            "dtype": "<i8",
+            "sha256": "5ce115c32a9254b0ba5ca0bb92ae97f27d0bdcde235cfaca1ee02bf7b1195bd1",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_selected_previous_mode": {
+            "dtype": "<i8",
+            "sha256": "a38a7fefe2b4ffb7f958808d54196a27223844152665338a0ec2dbb802cf09bb",
+            "shape": [
+              8801
+            ]
+          },
+          "hmm_support_index": {
+            "dtype": "<i8",
+            "sha256": "3e2bcc492b81dbd49fb7019b56822b1de75042da0d4ffb220d52aa3f2514cf90",
+            "shape": [
+              8801
+            ]
+          },
+          "observation_valid": {
+            "dtype": "|b1",
+            "sha256": "ad828b519b2425b49ec7f2f11ec4205f8912b803dfb5978cd027a3e7bbfdf1bf",
+            "shape": [
+              8801
+            ]
+          },
+          "posterior21": {
+            "dtype": "<f8",
+            "sha256": "db0f3133ca15f729f13340790f621f290e3ece5b20cfa81948bbc14658f8e8cd",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "shortlist_count": {
+            "dtype": "<i8",
+            "sha256": "1cdcf30f9350b09bc0362c6060ba6ec1c13929cc72eff15db5a10b03727d56ca",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "state_hmm_candidate_index": {
+            "dtype": "<i8",
+            "sha256": "081eb4fa44b6b5f382810d8feea8000466dfb251bd85fcdfdfdeb5039cb30198",
+            "shape": [
+              8801,
+              4
+            ]
+          },
+          "state_hmm_conditional_point_covariance_m2": {
+            "dtype": "<f8",
+            "sha256": "f04232aa13bd6fb5a721eca3fa83652e05b6f961cca3d68c8fc2de240040a4e5",
+            "shape": [
+              8801,
+              4,
+              3,
+              3
+            ]
+          },
+          "state_hmm_interval_force_by_family_N": {
+            "dtype": "<f8",
+            "sha256": "b4ebf11be5528dd84449df122b377a0fc92b2172f79fc13ae35f1bbff94d83cd",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "state_hmm_points_m": {
+            "dtype": "<f8",
+            "sha256": "5895dd42c39e9b379761000c396d925f3cac4bd144713c71de548cb4e9528491",
+            "shape": [
+              8801,
+              4,
+              3
+            ]
+          },
+          "state_hmm_probability21": {
+            "dtype": "<f8",
+            "sha256": "f034a866523311e88ad7c62d2a8d3a0733cf372cf73175532adfaa28f2344e5d",
+            "shape": [
+              8801,
+              21
+            ]
+          },
+          "state_hmm_selected_edge_index": {
+            "dtype": "<i8",
+            "sha256": "c59a6a5a6268744d82a14b4433013ee5880682e15982872c91f0ffc2ce7cbe9a",
+            "shape": [
+              8801
+            ]
+          },
+          "time_s": {
+            "dtype": "<f8",
+            "sha256": "0b7b34f87e8841918f276ccfbaf5a67b9450d0e65d4a34afae6d982f958b6b1c",
+            "shape": [
+              8801
+            ]
+          }
+        },
+        "canonical_file_sha256": "b1b907fbcabddb28c01a45cb92984b8eb26c74ee9f65e08f06821dc7207a7af5"
+      }
+    }
+  },
+  "status": "canonical inference output array hashes only; no evaluation/contact truth labels"
+}

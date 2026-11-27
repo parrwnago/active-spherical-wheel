@@ -1,0 +1,409 @@
+{
+  "all_exact": true,
+  "cache_vs_fresh_all_feature_arrays_exact": true,
+  "case": "p090_B",
+  "completed": true,
+  "differing_feature_arrays": [],
+  "elapsed_s": 86.07999618598842,
+  "feature_bindings": {
+    "force_normals": {
+      "dtype": "<f8",
+      "sha256": "caa9fca9e9fac593b64d3bc9a6a555d0defb34bfafd868b7a238af2afb3d477a",
+      "shape": [
+        8801,
+        102,
+        3
+      ]
+    },
+    "material_velocity_m_s": {
+      "dtype": "<f8",
+      "sha256": "2a8803c5dc81c467d942c845dcf66a5b28235218eee2a1ed2fd6daa5831ac889",
+      "shape": [
+        8801,
+        102,
+        3
+      ]
+    },
+    "normal_angle_rad": {
+      "dtype": "<f8",
+      "sha256": "b4d791bf41d9f4df641ca9de0fe53ce61acd3311d92fb12219dc26e4ef05e256",
+      "shape": [
+        8801,
+        102
+      ]
+    },
+    "points_m": {
+      "dtype": "<f8",
+      "sha256": "e429663008ed00606970c26185959006a98a44df9725e8d1f8c848ac5be98bc4",
+      "shape": [
+        8801,
+        102,
+        3
+      ]
+    },
+    "tangent_velocity_m_s": {
+      "dtype": "<f8",
+      "sha256": "7753c37dea3f17993e78c5f0f1d28ce32427d68e74120b9acbf5e58c3fb5710b",
+      "shape": [
+        8801,
+        102,
+        3
+      ]
+    },
+    "valid": {
+      "dtype": "|b1",
+      "sha256": "0dd9cfaeeb0ca9ea5d1e20fa2145d417cad86dcf270d40b8d65eff7bb0d06c43",
+      "shape": [
+        8801,
+        102
+      ]
+    }
+  },
+  "frames": 8801,
+  "imports": {
+    "bank_points": {
+      "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/inputs/portable_stage02/source/bank_points.py",
+      "sha256": "bbf95df6b204e2102cf4b6c8e4555ac23ec6398221350422ea3f27dcca2805b3"
+    },
+    "frozen_runner": {
+      "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/publication/portable_tools/source/run_shadow_case.py",
+      "sha256": "abf1dbb77a621d8a525727f65482549a8d9c037e8946e3dd4b8dd155ae4def56"
+    },
+    "input_features": {
+      "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/inputs/portable_stage02/source/input_features.py",
+      "sha256": "9b579ea1168d8d72ca0029e1bb24c8670bb7d34b595d755ab3ec5fffed8f4d24"
+    },
+    "portable_inputs": {
+      "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/inputs/portable_stage02/source/portable_inputs.py",
+      "sha256": "f4ddde967f30dce0abf5af260799ce5c026f292f32d3a7c00d68a59dfd1d80f6"
+    },
+    "spherical_wheel": {
+      "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/publication/portable_tools/source/spherical_wheel/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "spherical_wheel.shadow_contact_models": {
+      "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/publication/portable_tools/source/spherical_wheel/shadow_contact_models.py",
+      "sha256": "a5deff5e67021628fcd3b843bbb5fa970907ab51bee13de491226fb04cc98bc4"
+    },
+    "spherical_wheel.temporal_contact_filter": {
+      "path": "/home/parrwnago/active-spherical-wheel/results/temporal_contact_modes_20261127/publication/portable_tools/source/spherical_wheel/temporal_contact_filter.py",
+      "sha256": "fb60315abf406c2981ec8686f0aa484650cafe11bbb8976f766f0e428f47df85"
+    }
+  },
+  "inference_api": "Copied ShadowInference.update + copied evaluate_frame + copied frame_features(primitives,i) uncached.",
+  "output_comparisons": {
+    "model_evidence.npz": {
+      "actual": {
+        "edge_candidate_index": {
+          "dtype": "<i8",
+          "sha256": "0ceb971bc2f9981d0a76327da9e38d6356776826164e071604276b2ce9051b61",
+          "shape": [
+            8801,
+            6,
+            2,
+            2,
+            2
+          ]
+        },
+        "edge_cost": {
+          "dtype": "<f8",
+          "sha256": "08e650bad1b395e3fb06358f5d2a838c8d73f78a728bae83e5de57ab21350241",
+          "shape": [
+            8801,
+            6,
+            2,
+            2
+          ]
+        },
+        "edge_valid": {
+          "dtype": "|b1",
+          "sha256": "211e80c7905fb18651d2e30d8432fcec7c03622ffe750bcf26a871bfad7e6998",
+          "shape": [
+            8801,
+            6,
+            2,
+            2
+          ]
+        },
+        "node_candidate_index": {
+          "dtype": "<i8",
+          "sha256": "ccd7cfd899d48decdc53f97331ffd8e276d7b62fe8816c21233ff31a0c9135ac",
+          "shape": [
+            8801,
+            21,
+            2
+          ]
+        },
+        "node_cost": {
+          "dtype": "<f8",
+          "sha256": "0f2087e1565b9f1d11e5d5951c50a7d6385b5892bce1c5acbec04b7e84db1862",
+          "shape": [
+            8801,
+            21
+          ]
+        },
+        "node_valid": {
+          "dtype": "|b1",
+          "sha256": "e47bf4f2ea96133d16d0a2029eff47ecf8f13406e59c5f43ca027319e7e402db",
+          "shape": [
+            8801,
+            21
+          ]
+        },
+        "shortlist_candidate_index": {
+          "dtype": "<i8",
+          "sha256": "12ca2dec78c6604195a18241523f1f306f83d1006eb3cb46d42b26334928fc3c",
+          "shape": [
+            8801,
+            4,
+            2
+          ]
+        }
+      },
+      "all_arrays_exact": true,
+      "differing_arrays": [],
+      "field_set_exact": true
+    },
+    "predictions.npz": {
+      "actual": {
+        "emission_candidate_index": {
+          "dtype": "<i8",
+          "sha256": "89733e9827b015c25dba3fe34123246a815b34b17903d0184d04c106adeaf483",
+          "shape": [
+            8801,
+            4
+          ]
+        },
+        "emission_conditional_point_covariance_m2": {
+          "dtype": "<f8",
+          "sha256": "5e76e76f59258d861cc7b1546d0a240f6a06d32772779f7f1716b1d28460e1eb",
+          "shape": [
+            8801,
+            4,
+            3,
+            3
+          ]
+        },
+        "emission_interval_force_by_family_N": {
+          "dtype": "<f8",
+          "sha256": "12bdaab84b2b483f49d7775f335ac1ac46dd243e5d0c7323a48a9fadc71fcbad",
+          "shape": [
+            8801,
+            4,
+            3
+          ]
+        },
+        "emission_points_m": {
+          "dtype": "<f8",
+          "sha256": "7adf16d606b4ada35f1a37d60824b961df6402fe0c2089b88e74ea447be0a971",
+          "shape": [
+            8801,
+            4,
+            3
+          ]
+        },
+        "emission_probability21": {
+          "dtype": "<f8",
+          "sha256": "2fe84ac41c22bb1767298de53d99595ea3045d65552305d262cbbf1a9a7f1112",
+          "shape": [
+            8801,
+            21
+          ]
+        },
+        "emission_selected_edge_index": {
+          "dtype": "<i8",
+          "sha256": "c59a6a5a6268744d82a14b4433013ee5880682e15982872c91f0ffc2ce7cbe9a",
+          "shape": [
+            8801
+          ]
+        },
+        "evidence_weight": {
+          "dtype": "<f8",
+          "sha256": "ddc6e7e60176c1b64bac811e448bfb078f86f31dce0fe43ff9c1ed6a24c64ba3",
+          "shape": [
+            8801
+          ]
+        },
+        "failed_force_fit_count": {
+          "dtype": "<i8",
+          "sha256": "84df2001168366518024196ace9a7719cb1b3288496aaf5dd2ecbe92c2618d3f",
+          "shape": [
+            8801
+          ]
+        },
+        "force_fit_count": {
+          "dtype": "<i8",
+          "sha256": "0087505c46f155fe856be6dda4bf3894ffacaa6bc511369ca9fe7f621c6c0aef",
+          "shape": [
+            8801
+          ]
+        },
+        "history_reset": {
+          "dtype": "|b1",
+          "sha256": "d2b5c4e2a9ff515dbabb8058e7194263bef532db3a50db35865e3373088b114c",
+          "shape": [
+            8801
+          ]
+        },
+        "hmm_candidate_index": {
+          "dtype": "<i8",
+          "sha256": "e4c45a502c364b06ce7a8b739f67d3b7bb453c4c71b89056803a614ff8966bcc",
+          "shape": [
+            8801,
+            4
+          ]
+        },
+        "hmm_conditional_point_covariance_m2": {
+          "dtype": "<f8",
+          "sha256": "45019deddd39e0813f06a13c451b186623bac9d62bd7699a16d37a05d3043ec3",
+          "shape": [
+            8801,
+            4,
+            3,
+            3
+          ]
+        },
+        "hmm_confidence": {
+          "dtype": "<f8",
+          "sha256": "f8e330744f24d00316a728556e146f3445119adc066418ff2de91598a91b4260",
+          "shape": [
+            8801
+          ]
+        },
+        "hmm_interval_force_by_family_N": {
+          "dtype": "<f8",
+          "sha256": "f8293043427b7c92a02fb3ea76d7a77b0c1e87f972cdfb262b2c3ce8854c6ec6",
+          "shape": [
+            8801,
+            4,
+            3
+          ]
+        },
+        "hmm_points_m": {
+          "dtype": "<f8",
+          "sha256": "46c033e822da16e7537afee03718f3ae043b5a92e0c8bbdc14bc21f244857da7",
+          "shape": [
+            8801,
+            4,
+            3
+          ]
+        },
+        "hmm_selected_current_mode": {
+          "dtype": "<i8",
+          "sha256": "ccf52f1d8a627a15733f83c443f9c455fc9bf8e0457a5a2b9f01ab0251715e78",
+          "shape": [
+            8801
+          ]
+        },
+        "hmm_selected_edge_index": {
+          "dtype": "<i8",
+          "sha256": "5ce115c32a9254b0ba5ca0bb92ae97f27d0bdcde235cfaca1ee02bf7b1195bd1",
+          "shape": [
+            8801
+          ]
+        },
+        "hmm_selected_previous_mode": {
+          "dtype": "<i8",
+          "sha256": "a38a7fefe2b4ffb7f958808d54196a27223844152665338a0ec2dbb802cf09bb",
+          "shape": [
+            8801
+          ]
+        },
+        "hmm_support_index": {
+          "dtype": "<i8",
+          "sha256": "3e2bcc492b81dbd49fb7019b56822b1de75042da0d4ffb220d52aa3f2514cf90",
+          "shape": [
+            8801
+          ]
+        },
+        "observation_valid": {
+          "dtype": "|b1",
+          "sha256": "ad828b519b2425b49ec7f2f11ec4205f8912b803dfb5978cd027a3e7bbfdf1bf",
+          "shape": [
+            8801
+          ]
+        },
+        "posterior21": {
+          "dtype": "<f8",
+          "sha256": "db0f3133ca15f729f13340790f621f290e3ece5b20cfa81948bbc14658f8e8cd",
+          "shape": [
+            8801,
+            21
+          ]
+        },
+        "shortlist_count": {
+          "dtype": "<i8",
+          "sha256": "1cdcf30f9350b09bc0362c6060ba6ec1c13929cc72eff15db5a10b03727d56ca",
+          "shape": [
+            8801,
+            4
+          ]
+        },
+        "state_hmm_candidate_index": {
+          "dtype": "<i8",
+          "sha256": "081eb4fa44b6b5f382810d8feea8000466dfb251bd85fcdfdfdeb5039cb30198",
+          "shape": [
+            8801,
+            4
+          ]
+        },
+        "state_hmm_conditional_point_covariance_m2": {
+          "dtype": "<f8",
+          "sha256": "f04232aa13bd6fb5a721eca3fa83652e05b6f961cca3d68c8fc2de240040a4e5",
+          "shape": [
+            8801,
+            4,
+            3,
+            3
+          ]
+        },
+        "state_hmm_interval_force_by_family_N": {
+          "dtype": "<f8",
+          "sha256": "b4ebf11be5528dd84449df122b377a0fc92b2172f79fc13ae35f1bbff94d83cd",
+          "shape": [
+            8801,
+            4,
+            3
+          ]
+        },
+        "state_hmm_points_m": {
+          "dtype": "<f8",
+          "sha256": "5895dd42c39e9b379761000c396d925f3cac4bd144713c71de548cb4e9528491",
+          "shape": [
+            8801,
+            4,
+            3
+          ]
+        },
+        "state_hmm_probability21": {
+          "dtype": "<f8",
+          "sha256": "f034a866523311e88ad7c62d2a8d3a0733cf372cf73175532adfaa28f2344e5d",
+          "shape": [
+            8801,
+            21
+          ]
+        },
+        "state_hmm_selected_edge_index": {
+          "dtype": "<i8",
+          "sha256": "c59a6a5a6268744d82a14b4433013ee5880682e15982872c91f0ffc2ce7cbe9a",
+          "shape": [
+            8801
+          ]
+        },
+        "time_s": {
+          "dtype": "<f8",
+          "sha256": "0b7b34f87e8841918f276ccfbaf5a67b9450d0e65d4a34afae6d982f958b6b1c",
+          "shape": [
+            8801
+          ]
+        }
+      },
+      "all_arrays_exact": true,
+      "differing_arrays": [],
+      "field_set_exact": true
+    }
+  },
+  "physics_run": false,
+  "source_and_primitive_seals_unchanged": true,
+  "truth_read": false
+}

@@ -1,0 +1,36 @@
+{
+  "iteration": "I-70",
+  "clock": "8801 original precision rows, 0..44 s inclusive,5ms spacing; no interpolation",
+  "family_order": ["shell_A", "shell_B", "belt_A", "belt_B"],
+  "support_category_order": [[0], [1], [2], [3], [0,1], [0,2], [0,3], [1,2], [1,3], [2,3], []],
+  "mode_order": "For each of first10 support categories rolling then slipping; unknown index20",
+  "prediction_file": "PREDICTION_ROOT/CASE/predictions.npz",
+  "prediction_fields": {
+    "time_s": "float64[N], byte-equal original precision clock",
+    "emission_probability21": "float64[N,21], normalized causal/current emission probabilities",
+    "posterior21": "float64[N,21], normalized causal edge-HMM posterior",
+    "state_hmm_probability21": "float64[N,21], secondary no-edge HMM control",
+    "emission_points_m": "float64[N,4,3], world points of collapsed-MAP support, selected conditional submode; NaN inactive slots",
+    "hmm_points_m": "float64[N,4,3], world points of collapsed-MAP support and conditional MAP transition/submode; NaN inactive slots",
+    "state_hmm_points_m": "float64[N,4,3], corresponding secondary control points"
+  },
+  "evaluation_file": "PACKET_ROOT/CASE/evaluation_packet.npz",
+  "evaluation_boundary": "Contains pressure truth. Never import/read from inference code. Only project after all3 prediction artifacts sealed.",
+  "evaluation_fields": {
+    "time_s": "float64[N]",
+    "truth_patch_loads_N": "float64[N,4], original last1ms positive-pressure totals",
+    "truth_patch_points_m": "float64[N,4,3], original last1ms raw positive-pressure-weighted family means",
+    "N_family": "integer[N], frozen I60 native family, -1 unknown/tie",
+    "F_family": "integer[N], frozen I60 raw fused winner, -1 unknown",
+    "A_family": "integer[N], accepted F else N",
+    "i60_accepted": "bool[N], frozen I60 acceptance",
+    "N_points_m": "float64[N,4,3], original native equivalent point in selected family slot",
+    "F_points_m": "float64[N,4,3], exact frozen I60 fused selected point in selected family slot",
+    "A_points_m": "float64[N,4,3], accepted F point else N point including same-family updates",
+    "emission_points_m": "copied inference outputs, never recomputed using truth",
+    "hmm_points_m": "copied inference outputs, never recomputed using truth",
+    "state_hmm_points_m": "copied inference outputs, never recomputed using truth"
+  },
+  "cli_projection": "python prepare_evaluation.py --original-root I58/campaign/runs --baseline-root I60/analysis/stage01 --point-root I60/point_check/stage01 --prediction-root I70/inference/stage01 --inference-seal ROOT_ALL_THREE_SEALED_RECEIPT --output I70/evaluation/packets_stage01",
+  "cli_evaluation": "python evaluate_temporal.py --protocol I70/protocol/protocol.json --packet-root I70/evaluation/packets_stage01 --prediction-root I70/inference/stage01 --output I70/evaluation/stage01"
+}

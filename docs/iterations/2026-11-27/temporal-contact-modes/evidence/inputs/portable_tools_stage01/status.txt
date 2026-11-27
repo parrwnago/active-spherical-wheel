@@ -1,0 +1,1 @@
+Post-packaging review: scalar ndarray shape was converted from() to(1,) by ascontiguousarray when generating shape metadata. Values/file hashes were exact, but rank binding could not distinguish a scalar from a one-element array. Preserve original package; fix only verification metadata to retain original shape and regenerate stage02. Scientific features/formulas untouched.
