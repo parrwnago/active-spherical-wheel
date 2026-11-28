@@ -5704,6 +5704,76 @@ binding files and366 authored local links. Staged whitespace checks pass;
 production-source diff is empty. These are evidence/documentation checks, not
 new simulation or repository-suite passes.
 
+## I-80 / 2026-11-28 / analyzed: supported slope descent at the user's frame
+
+**Question:** User points to I-76 eight−1 native/left panel at101.500s: it looks
+like rolling off a slope, without visibly wrong commanded velocity. Characterize
+the motion before calling it a false contact or wrong action. Start revision
+`827c2c7541c031c9f32a01a94aada2f49b87a274`. No new physics, controller change,
+tuning or acceptance trial; original native N remains selected.
+
+**Scope/conditions:** Decode exact original Gazebo/DART comparison video and
+read original eight−1 N precision/rollout around99–103s; query the retained
+Gazebo collision OBJ with actual centre/pressure-mean points over100–102.5s.
+Same I-76 rough-stress route, yaw158°, origin[−2.5953655642,10.4602524267]m,
+5ms control/1ms physics, inferred controller contacts, exact body state, original
+gains and[1.5,.6,.6Nm,.3,.3m/s]caps. This is not the I-78 straight episode.
+Bind sources/inputs before each retrospective reduction; no prior evidence edits.
+
+**Observed motion:** At101.500s mesh slope8.644°, actualvz−.073419066m/s and
+gradient(h)·vXY−.073419647m/s agree closely; XY motion is16.313° from downhill.
+Wheel-centre height drops33.919mm while the underlying DEM drops32.495mm over
+100–102.5s. Model XML confirms root origin is wheel centre. All801 saved99–103s
+samples retain positive pressure10.282–42.818N; shellA has17.407N at the frame.
+This supports rolling downhill rather than demonstrated sustained free fall.
+Sub5ms unloading is not ruled out; these are sampled last1ms solve records,
+not continuous impulses. Centre acceleration is not whole-system COM acceleration.
+
+The actual pressure-mean facet changes around101.550s from8.644→4.813° slope,
+normal rotation7.229°; mesh height stays continuous. The100.835s first-clipped
+command marker has no simultaneous pressure-mean facet change and
+pressure lies on beltA. A visible nearby edge is not established as the first
+disturbance. Timed error100.5/101.0/101.5s is44.819/77.441/201.677mm. Earlier
+I-77 disturbances and residual motion remain relevant.
+The clipped-command marker is not an independently identified instability onset.
+
+**Additional control detail:** ActualXYspeed at101.5 is.5032m/s versus desired
+~.0219; worldZrotation−199.9°/s. At101.495/.500, pressure is shellA but inferred
+support beltA; requested belt speed−1.966/−1.923m/s clips−.3. At101.505/.510,
+inference switches shellA; motor request−5.020/−4.516Nm clips−.6. At101.515
+inference returns beltA while pressure stays shellA. Gain rows change with
+routing. Point disagreement at101.5 is only.496mm. Family differences52/801
+are instantaneous pressure versus filtered interval inference, not a clean
+observer-error count or proof of harmful allocation. Wider pressure also changes.
+Current commands act after the displayed state; correction may react to motion.
+
+**Outcome/limit/decision:** Label as loss of path tracking during supported
+downhill motion, accompanied by rapid rotation and saturated correction. Real
+descent is verified; gravity-only cause, false-preview cause and wrong-command
+cause are not. No force/actuator/gravity work decomposition or causal intervention
+is performed. Keep baseline. Proposed follow-up: unchanged-native fine contact/
+interval-wrench/preview ledger around100.75–101.65s, then an isolated intervention
+only if warranted. Neither is launched here; I-79's proposal remains unexecuted.
+
+**Setup preservation:** Terrainstage01 repeatedly rebuilt a250k-vertex array,
+was explicitly terminated with observed143 and produces no science report.
+Preserve exact failed source/registration/receipt; stage02 caches the array once
+with unchanged queries/windows. Actual-pressure-facet follow-up is separate
+stage03. Global ffprobe127 is handled with installed imageio/packaged FFmpeg;
+eight original frames decode successfully, no new poses/physics. These are
+analysis setup errors, not robot failures. Support/motion/plot/routing/terrain
+stages preserve hashes/source and remain closed.
+
+**Evidence:** [I-80 report, exact frames, plots, PDF, ledgers and reproduction](docs/iterations/2026-11-28/slope-edge-review/README.md).
+Large original I-76 rollouts/mesh/video remain separately identified local
+prerequisites. All new compact reductions/sources/frames are preserved. No
+repository-suite or new physical-trial count is claimed.
+
+I-80 final QA verifies40 copied evidence/source/frame files (6.38MB),13 unique
+bound inputs and373 authored local links. Whitespace checks pass and production
+diff remains empty. These are read-only evidence checks, not new physics or
+software-suite test counts.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

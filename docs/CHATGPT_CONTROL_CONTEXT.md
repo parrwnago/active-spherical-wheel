@@ -1,6 +1,6 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 14 — 28 November 2026, through I-79.** The selected live controller
+**Revision 15 — 28 November 2026, through I-80.** The selected live controller
 remains the original native N. I-78 starts from repository commit `9f7cfc8` and
 tests managed path progress; no production/default promotion is made.
 This is a study and discussion
@@ -1895,7 +1895,48 @@ wrong preparation precedes departure should an isolated preparation intervention
 test causality. This does not restart camera/particle-filter development.
 [I-79 source bindings, evidence and proposed test](iterations/2026-11-28/terrain-contact-hypothesis/README.md).
 
-## 24. Sources, attribution, and how to continue a discussion
+## 24. I-80: the user identifies downhill motion in the video
+
+The user points to I-76 eight −1 native/left panel at 101.500 s, suggesting the
+robot simply rolls off the slope rather than visibly executing a wrong motion.
+Reviewing the exact video and original logs confirms a real downhill descent.
+At that frame the actual pressure-location terrain facet slopes 8.644°, measured
+vertical speed is −.073419066 m/s and terrain gradient dotted with actual XY
+velocity is −.073419647 m/s. XY velocity is 16.313° from downhill. The wheel
+centre/underlying DEM fall 33.919/32.495 mm over 100–102.5 s. All 801 saved
+99–103 s rows retain positive wheel pressure, minimum 10.282 N. This supports
+motion following terrain rather than a demonstrated sustained free fall;
+unloading between the 5 ms samples is not ruled out.
+
+Useful characterization: loss of path tracking during supported downhill motion,
+accompanied by rapid rotation and saturated correction. At 101.5 s actual XY
+speed is .5032 m/s, desired ~.0219 m/s, world-z rotation −199.9°/s and timed
+error 201.677 mm. That observed motion alone proves neither false contact nor
+a wrong command.
+Nor is gravity proved to account for all excess motion: work/force contributions
+are not separated. A larger actual pressure-facet grade change 8.644→4.813° occurs
+at 101.550 s, after substantial acceleration. The 100.835 s first clipped-command
+marker has no simultaneous pressure-facet change and is not an exact instability
+onset.
+
+There is also a hidden routing event. At 101.495/.500 s pressure is on shell A
+while inferred support is belt A, with belt requests −1.966/−1.923 m/s clipped
+to −.3. At 101.505/.510 s inference switches to shell A and motor requests
+−5.020/−4.516 N m clip to −.6. At 101.515 s inference returns to belt A while
+sampled pressure stays on shell A. Gain rows change too. At 101.5 s point
+disagreement is only .496 mm. These comparisons are last 1 ms pressure saved
+every 5 ms versus filtered completed-interval inference, not a clean observer
+error count or causal proof. The current command acts after the state.
+
+I-80 runs no new physics and changes no controller. It preserves exact decoded
+frames, collision-mesh queries, motion/pressure/command plots, sources and failed
+analysis setup. Keep native N. The proposed next diagnostic is an unchanged
+replay with fine actual-contact/interval-wrench/preview records around
+100.75–101.65 s, followed by a separate causal intervention only if warranted.
+No such replay is run here.
+[I-80 evidence and presentation wording](iterations/2026-11-28/slope-edge-review/README.md).
+
+## 25. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

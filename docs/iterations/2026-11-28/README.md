@@ -1,5 +1,17 @@
 # Research presentation notes — 2026-11-28
 
+**I-80 checks the user's exact 101.5 s figure-eight frame.**
+[Descent review, frames and PDF](slope-edge-review/README.md).
+The native robot really descends an8.644° slope: measured vertical velocity
+matches terrain-height decrease along its motion, with pressure retained at
+every saved99–103s sample. Describe supported downhill motion with loss of
+path tracking, rapid rotation and saturated correction. This does not by itself
+prove false contact or gravity-only cause. The logs also show rapid belt/shell
+routing changes near the frame; instantaneous pressure and filtered inference
+have different timing. A larger grade break occurs after substantial acceleration
+has developed. No new physics or controller change; causal contributions remain
+unisolated.
+
 **I-79 clarification: a terrain-induced preview failure is plausible, unverified.**
 [Evidence review and narrow proposed diagnostic](terrain-contact-hypothesis/README.md).
 The 120 ms preview extends current motion over a frozen estimated plane, so a

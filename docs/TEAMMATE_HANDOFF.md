@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-79.
+experiment history and common presentation questions through I-80.
 
 ## Current system
 
@@ -70,6 +70,17 @@ actuates the selected research loop. Those modules/experiments are retained as
 research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
+
+**I-80 verifies supported downhill motion in the user's 101.5 s native frame.**
+[Exact frames, terrain/contact plots and PDF](iterations/2026-11-28/slope-edge-review/README.md).
+At the figure-eight−1 frame, mesh slope is8.644°, downward speed matches motion
+along the terrain, positive shellA pressure remains, and yaw rotation is about
+−200°/s. The robot is losing tracking during a supported descent; no sustained
+airborne fall is demonstrated. Logs also show inferred beltA↔shellA routing
+and saturated correction. That does not prove an observer bug, wrong action
+or gravity-only cause. The larger nearby facet change occurs later. No new
+physics or controller changes; retain native N and investigate timing/causality
+with a separately instrumented short replay if proceeding.
 
 **I-79 reviews the terrain-change hypothesis without new physics.**
 [Review](iterations/2026-11-28/terrain-contact-hypothesis/README.md).

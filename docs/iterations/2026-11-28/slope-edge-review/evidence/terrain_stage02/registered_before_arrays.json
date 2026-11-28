@@ -1,0 +1,61 @@
+{
+  "iteration": "I-80",
+  "scope": "Retrospective geometric inspection; fixed user-cued 100--102.5 s, not causal intervention.",
+  "source_sha256": "ab04e56654b15267d3af152552566bcbc112392d2f4a02573b9d7f08e4714711",
+  "inputs": [
+    {
+      "path": "results/tangent_heading_routes_20261127/campaign/runs/eight_m100_N/precision.npz",
+      "bytes": 34618052,
+      "sha256": "ab0db432db668839068b925bc8ac58837ede8bbcf3fe3de729f4699b09490cf8"
+    },
+    {
+      "path": "results/tangent_heading_routes_20261127/campaign/runs/eight_m100_N/rollout.npz",
+      "bytes": 13707439,
+      "sha256": "894473c4c5e358c79d931ab296b82aa3f41e593c588ef86446f865851be36b31"
+    },
+    {
+      "path": "results/tangent_heading_routes_20261127/campaign/runs/eight_m100_N/provenance.json",
+      "bytes": 24777,
+      "sha256": "2b4b4f43690377efaa79f1b62cf6acb45afdddd7fc49c1a3f810f74c190752c7"
+    },
+    {
+      "path": "results/tangent_heading_routes_20261127/campaign/runs/eight_m100_N/terrain.json",
+      "bytes": 475,
+      "sha256": "b11e232f3f491c276f98ddbf639efef735accbb8806084f7260398155fad6a8c"
+    },
+    {
+      "path": "results/tangent_heading_routes_20261127/campaign/_workspaces/eight_m100_N/gazebo/world/asw_marsyard2021.sdf",
+      "bytes": 4539,
+      "sha256": "40dd24559f965c04e18d82c2e9b25618b7750e2229ec9de80b2c8d4b3e2e700d"
+    },
+    {
+      "path": "results/tangent_heading_routes_20261127/campaign/_workspaces/eight_m100_N/gazebo/world/marsyard2021_dem.obj",
+      "bytes": 37660750,
+      "sha256": "cd62cacba94c8cd04576627811e330a23c9385b8de23aece98c2025ddd35f6a6"
+    },
+    {
+      "path": "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/dem/marsyard_terrain_hm.tif",
+      "bytes": 1002230,
+      "sha256": "d9c143fa8af44c8719770e53499dcab7c23054cc1e4c333f4ccbe7ff8d942eba"
+    },
+    {
+      "path": "src/spherical_wheel/gazebo/mars.py",
+      "bytes": 46539,
+      "sha256": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63"
+    }
+  ],
+  "no_new_physics": true,
+  "selected_times_s": [
+    100.0,
+    100.5,
+    101.0,
+    101.5,
+    102.0,
+    102.5
+  ],
+  "qualifications": [
+    "Actual collision OBJ queries, not a nearest-centre tangent proxy.",
+    "Per-patch recorded positive-pressure mean may average several contacts; querying its XY is not identification of every actual loaded facet.",
+    "Local DEM excludes rock/lava meshes; original route corridor has separate clearance screening."
+  ]
+}
