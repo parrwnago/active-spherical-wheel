@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-81.
+experiment history and common presentation questions through I-82 (revision 17).
 
 ## Current system
 
@@ -40,10 +40,13 @@ flowchart LR
 ```
 
 The five commands are `[shaft torque, hemisphere A torque, hemisphere B torque,
-belt A speed, belt B speed]`, in `[N m, N m, N m, m/s, m/s]`. The latest studies
-use bounds `[1.5, 0.6, 0.6, 0.30, 0.30]`. Belts have prescribed surface-speed
-actuation in the model. Joint references are not independent hard velocity
-servos, and their limits do not bound actual acceleration.
+belt A speed, belt B speed]`, in `[N m, N m, N m, m/s, m/s]`. The reference
+baseline uses bounds `[1.5, 0.6, 0.6, 0.30, 0.30]`. I-82's leading experimental
+capacity variant raises both belt operating bounds to 0.60 m/s after the
+original configuration and LQR gains are constructed. It passes the current
+case's screen; defaults and gain design remain unchanged. Belts have prescribed
+surface-speed actuation in the model. Joint references are not independent
+hard velocity servos, and their limits do not bound actual acceleration.
 
 The controller constructs an unclipped request of the form
 `u_eq + u_rolling + u_holding - K e`, then applies preparation/fade and clipping.
@@ -71,7 +74,45 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-81 captures downhill traction during correctly assigned belt contact.**
+**Latest: I-82's 0.60 m/s capacity variant substantially improves the current figure-eight.**
+[Completed report, plots, PDF and reproduction](iterations/2026-11-28/current-belt-capacity/README.md)
+· [Full comparison video](../results/current_belt_capacity_20261128/publication/video_stage01/eight_m100_B030_B060.mp4)
+· [98–104 s event video](../results/current_belt_capacity_20261128/publication/video_stage01/event_98_104_B030_B060.mp4).
+Two fresh full 133 s Gazebo/DART runs compare 0.30 and 0.60 m/s operating caps
+on both belts in the original I-76 native eight −1 rad case. LQR gains, original
+configuration, observer, feedforward, native preparation and reference remain
+fixed. Physical and measured-state-mirror bounds change together; preparation
+uses that operating cap, so this is a capacity-interface comparison rather
+than an isolated final-clipping change.
+
+| Full-run comparison | 0.30 m/s reference | 0.60 m/s variant |
+| --- | ---: | ---: |
+| Moving timed XY RMS | 46.359 mm | 23.362 mm |
+| Peak timed XY error | 336.408 mm | 72.167 mm |
+| Final goal error | 32.880 mm | 0.877 mm |
+
+Both runs complete. All **111 setup checks and 30 fixed performance checks
+pass**, giving **PASS_CAPACITY_SCREEN** for this pair. A separate raw-array
+audit reproduces 124 scalars and all 30 gate decisions; these are overlapping
+verification scopes, not additive tests or a full repository test suite.
+The fresh 0.30 run exactly reproduces all 79 original precision arrays across
+26,601 rows. The first applied-command difference is at 80.880 s, so the later
+100.9 s force comparison includes different prior histories; it does not
+isolate a same-state correction to the original pulse.
+
+The 0.60 variant returns close to the goal and nearly stops translating, but
+retains about 6.095°/s world-vertical rotation in the final two seconds. It
+therefore fails strict four-condition settling, whose rotation limit is
+0.05 rad/s (2.865°/s). Position, speed and attitude settling pass; the 0.30
+reference fails position and rotation. The registered screen preserves native
+settling success when present; it does not require a new success when native
+also fails. Keep 0.30 as the reference baseline and 0.60 as the leading
+experimental capacity variant, with no automatic default promotion from one
+case. Earlier [I-49](iterations/2026-11-26/belt-capacity-sweep/README.md) tested
+a different 44 s figure-eight at +0.9 rad and yaw 45° and had mixed tradeoffs;
+that evidence is retained, not replaced by I-82's positive result.
+
+**I-81 captures downhill traction during correctly assigned belt contact.**
 [New report, plots, PDF and exact evidence](iterations/2026-11-28/slope-response-trace/README.md).
 One unchanged102s Gazebo/DART native eight−1 prefix matches all79 original
 precision fields exactly. Physical1ms logging and full native preview snapshots
@@ -113,7 +154,7 @@ a demanding lean target. Saved precision lacks full original preview targets;
 wrong preview causing the departure is still unverified. A short unchanged
 instrumented replay is proposed, not run. Baseline remains selected.
 
-**Latest: I-78 retimes path progress, improves one start, and fails its comparison.**
+**I-78 retimes path progress, improves one start, and fails its comparison.**
 [Report, PDF, videos and reproduction](iterations/2026-11-28/path-progress-governor/README.md).
 Six fresh Gazebo/DART straight runs compare original N with an isolated online
 virtual clock G at−1.0/+0.3/+0.9 rad. Original LQR/observer/lean/feedforward and
@@ -731,6 +772,10 @@ selected movies are committed. [Portable workspace details](../research/README.m
 unsuccessful trials. The [dated presentation notes](iterations/2026-11-26/README.md)
 are the shorter current index. Useful checkpoints:
 
+- I-82: both full 133 s runs complete; raising both operating belt caps to
+  0.60 m/s passes the current eight −1 case's registered performance screen.
+  It is the leading capacity variant, while 0.30 remains the reference baseline.
+  Near-stationary translation and residual yaw are reported separately.
 - I-12–I-14: configuration/direction sensitivity; bounded references do not
   guarantee bounded feedback or good actual motion.
 - I-31–I-38: MPC improved some behavior but did not establish reliable settling;

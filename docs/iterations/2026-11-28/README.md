@@ -1,6 +1,21 @@
 # Research presentation notes — 2026-11-28
 
-**Latest: I-81 identifies loaded-belt downhill force pulses.**
+**Latest: I-82 raises the belt operating limit and improves the current eight.**
+[Full comparison, slope-event video, two-page PDF and evidence](current-belt-capacity/README.md).
+Two full 133 s Gazebo/DART runs retain the original LQR gains, momentum observer,
+inferred-contact feedforward and preparation; only physical/mirror operating belt
+bounds change from 0.30 to 0.60 m/s. The fresh 0.30 arm reproduces all 79 original
+I-76 arrays exactly. Moving timed RMS falls 46.36→23.36 mm, full timed peak
+336.41→72.17 mm and final distance 32.88→0.88 mm. All 111 setup and 30 fixed
+performance checks pass; independent scoring agrees. The larger-limit arm
+nearly stops translating but retains about 6.1°/s rotation and fails strict
+four-condition settling. It is a leading capacity variant for this case,
+without automatic default promotion. Commands first differ at 80.880 s, so the
+later downhill force comparison reflects different histories, not a same-state
+100.9 s intervention. Earlier I-49's different-route mixed result stays retained.
+The requested full 1× movie and 98–104 s excerpt are checked and shareable.
+
+**I-81 identifies loaded-belt downhill force pulses.**
 [Report and two-page PDF](slope-response-trace/README.md).
 One unchanged native102s prefix exactly reproduces all79 original precision
 fields and captures1,300 new1ms contact samples plus261 full preview snapshots.
@@ -37,7 +52,7 @@ filtered-normal timing and difficult response to a real change remain separate
 mechanisms. Existing recordings omit full preview targets, so the complete
 prediction-error/causality chain is not established. No new runs or code changes.
 
-**Latest: I-78 tests coherent path retiming; one start improves, the candidate
+**I-78 tests coherent path retiming; one start improves, the candidate
 fails its fixed comparison.** [Full report and videos](path-progress-governor/README.md) ·
 [two-page PDF](path-progress-governor/evidence/evaluation/publication_stage01/progress_comparison.pdf).
 

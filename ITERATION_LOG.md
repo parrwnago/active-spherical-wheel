@@ -5923,6 +5923,163 @@ raw bundle, and rechecks all94 source/59 input bindings. Production-source diff
 is empty. These are evidence/documentation checks, not further physics or
 repository-suite results.
 
+## I-82 / 2026-11-28 / completed and analyzed: current-event belt capacity comparison
+
+**Question / authorization:** User requests the matched0.30-versus0.60m/s
+comparison on the current figure-eight and explicitly requests video. Earlier
+I-49 tested a different44s/+0.90rad/yaw45 route with mixed results; its capacity
+arms were not adopted. I-81 deliberately replayed the0.30 baseline. Do not
+mistake the old sweep for evidence on this current133s/−1rad/yaw158 episode.
+Start revision `907e55a4c984fea485f3ed20bc4f67e5e358cf7f`.
+
+**Planned change:** Two fresh full133s original I-76 native N Gazebo/DART
+eight−1 runs, both belt operating caps0.30 (B030) or0.60m/s (B060). Same
+rough-stress Mars path, initial state, phase, yaw, fixed0.30-design config/gain
+bank/ordinaryK, momentum observer, support locator, rolling inverse, feedforward,
+preparation and motor torque bounds[1.5,.6,.6]Nm. Override physical and measured-
+state mirror operating bounds after design construction. Incoming preparation
+uses the operating cap too; this is a capacity-interface comparison, not an
+isolated final-clamp change. No heading helper, retiming, new force controller
+or production/default edit.
+
+**Integrity / recording:** Run B030 first and require all79 original I-76
+precision fields and26,601 rows to match exactly through133s before B060.
+Separately retain first changed diagnostics/request/applied input and physical
+state in B060; bounds differ fromreset and preparation can change requests
+before any applied difference. Do not demand false all-field identity through
+the first changed applied command. One native observer/preview per control row,
+original truth guards and old source/input/plugin/gain hashes remain required.
+Reuse the unchanged1ms contact recorder over100.5–101.8s; no extra feedback,
+mirror step or truth-to-control input. Candidate physical early failure is a
+reported result, preserved without retuning/retry; process return and full
+physical completion remain separate.
+
+**Predeclared comparison:** Whole moving[3,123)s timed/geometric errors and
+full[0,133]s transients, final2s position/speed/rotation/attitude settling, plus
+fixed100.5–103s event window. Report actual/desired motion, tilt, own attitude
+target, rotation, acceleration, motor limits and both own-cap and original0.30
+clipping seconds/fractions/excess. A larger denominator alone is not improvement.
+Register numerical benefit/nonregression margins before outputs; report partial
+benefits even if the aggregate screen fails. One phase cannot adopt a default
+or establish a loaded motor rating.
+
+**Video:** Full133s side-by-side at1× physical elapsed time, both native N with
+explicit0.30/0.60 labels, same world-up camera/reference/path/trail, full10s goal
+hold. Also show98–104s event clip if feasible. Recorded Gazebo/DART poses with
+MuJoCo visuals only; no physics/controller replay for rendering. Ended physical
+runs are visibly frozen and labeled rather than presenting later simulated
+motion. Sources/inputs are sealed before rendering.
+
+**Status at proposal (retained):** Implementing scoped harness/metric/media contracts and
+source registration only. No I-82 physics, outcome, improvement or adoption at
+this entry. Local evidence root: `results/current_belt_capacity_20261128/`.
+
+**I-82 prephysics registration / launch:** Eight focused runner contracts pass;
+an earlier system-python127 compile setup is preserved and corrected using the
+explicit virtual-environment interpreter. Seven pure metric contracts pass.
+Independent harness review confirms original controller/design, both operating
+bounds, truth guards, once-preview ordering and read-only substeps. Four initial
+presentation contracts pass; counts are separate scopes, not full-repository
+tests or physical trials.
+
+Protocol SHA256
+`ce39ad0f0cd6c3748e764b72d413b45ad20353c1deb641bdbd722c35402dc400`
+binds93 sources/59 inputs. Numerical comparison definitions/core are frozen
+before outcomes. Gazebo-environment preflight passes. One serial launcher starts
+B030 at08:17:09UTC and gates B060 on full original baseline parity. Actual
+process exits and physical-horizon/failure outcomes will be reported separately.
+No I-82 outcome is claimed at launch; all prior sources/records remain unchanged.
+
+**Analysis/media structural corrections before array reads:** The scorer's pure
+geometric helper from original I-76 was omitted from the physics-source maps;
+it is an analysis-only dependency. Preserve the frozen protocol and stage01
+scorer, register the helper's exact bytes at08:18:10UTC before either case has
+saved precision or outcome arrays, and use separately named stage02 wrapper
+accepting that one supplemental binding. Numerical core/definitions/gates do
+not change. Separately, inherited video decoding assumed1600×960 while the
+new canvas is1600×1010; preserve original renderer and use a new dimension-aware
+stage02 renderer before any array read/render. Five final presentation contracts
+include the earlier four, not nine. Neither correction changes physics or
+requires a simulator rerun.
+
+**Numerical correction before I-82 scoring array reads:** An old-I-76-only parity audit
+exposes signed-max world-z spin where the registered physical peak requires
+absolute-max. Preserve frozen `core.py`; a named stage02 core changes that one
+line and adds a negative-rate contract. Registration08:23:21UTC is after B030
+precision exists, before B060 precision exists, and before any I-82 scoring
+array is read. Definitions, margins, frozen physics source and gains do not change.
+Retain earlier parity/setup failures and Path-metadata error; corrected old
+parity is14/14exact. Final eight pure metric contracts include earlier seven.
+The canonical scorer is `evaluate_stage03.py`; there is no physics retry.
+
+**Completed physical outcomes:** Both actual processes return zero and both
+physical episodes reach133s,26,601rows, with no physical failure. Fresh B030
+matches all79 original I-76 precision arrays byte-for-byte across the entire
+episode before B060 launches. Both physical1ms captures have1,300samples over
+260held command intervals. The closed-output seal binds456files. B060 first
+changes applied input and nonbounds diagnostics at80.880s; physical/observer/
+truth arrays match inclusively through that boundary. Later pulse differences
+therefore compare different histories, not a same-state local intervention.
+
+**Predeclared result:** PASS_CAPACITY_SCREEN;111/111setup and30/30performance
+checks pass. B030→B060 moving timed RMS46.359→23.362mm, full timed peak
+336.408→72.167mm, moving geometric RMS39.871→15.205mm, final goal
+32.880→0.877mm. Own-target up-error peak9.461→2.880°, absolute tilt peak
+12.230→11.871°, XY speed peak.672→.257m/s. One independent raw reduction
+agrees with124scalars and all30gate values/limits/names/decisions, maximum
+difference1.74e−12. This is a substantial positive capacity effect in this case.
+
+**Settling limitation:** Neither passes the strict four-condition final hold.
+B030 fails position and rotation. B060 passes position, translation speed and
+own-target up error, but final2s maxrotation.106371rad/s≈6.095°/s exceeds
+.05rad/s. Its maxgoal distance.970mm and maxXYspeed.290mm/s demonstrate close
+return and near-stationary translation without establishing full settling.
+Screen acceptance, physical completion and complete settling are separate.
+
+**Supplemental force evidence:** A post-primary, separately registered
+descriptive reduction records different capacity histories in100.5–101.8s.
+At100.900s B030 ground10.598N+gravity3.234N gives13.833N downhill; B060
+ground−3.278N+gravity3.265N gives−.0123N. B060 avoids that large pulse at the
+same clock, after histories diverge80.88s. No force gate, same-state causal
+claim, motor-work decomposition or single-command cure follows.
+
+**Media and preservation:** Full133s1× side-by-side and98–104s excerpt render
+saved Gazebo/DART poses only, with one camera and no control/physics replay.
+All1,331full and61eventframes decode; encoded frames/geometry are inspected.
+The33-member visualZIP is7,897,618bytes, CRC+SHA checked; SHA256
+`18b79c3893ff9022c2b30a793d06326bcaf34c995f220674485cf9d7b076302e`.
+[Report, PDF, videos, exact evidence and reproduction](docs/iterations/2026-11-28/current-belt-capacity/README.md).
+Packaging closes four supplemental registered analysis/media dependencies
+outside93/59physical bindings at original paths; preserve old and corrected
+helpers/contracts. Compact source/data metadata and a separately verified full
+raw bundle retain both successes and setup failures. Scoped checks are not a
+full repository suite and are not summed across overlapping contract stages.
+The first raw archive attempt stops before tar construction on relative/absolute
+CLI-path formatting; preserve `full_evidence_stage01/archive_failure.json`.
+Separately named stage03 helper resolves those paths and writes a fresh stage02
+archive. Six final pure packaging contracts include the earlier five/four; no
+physics, analysis result or movie changes for this packaging correction.
+Final local raw archive181,641,179bytes/971stream-verified regular members has
+SHA256 `dcb4a7951b13db65c9779f7c58209d5f48a000c9a5c1b77287f29460da5df092`.
+It includes965projectfiles and6metadata members;1,195explicit omissions are
+inventoried. Compact evidence binds152files/9,304,438bytes plus its manifest;
+its exact source/structured-diagnostic tar has665verified members. All original
+93sources/59inputs/456sealedoutputs remain unchanged through final packaging.
+
+**Decision:** Keep original LQR/observer/contact-feedforward architecture.
+Retain0.60m/s as the leading experimental capacity variant for this episode;
+preserve0.30as benchmark and leave production defaults unchanged pending broader
+phase/route validation. Retain I-49's different-case mixed result. Ideal surface-
+speed capacity is not a demonstrated motor envelope. Residual spin remains
+unresolved; no new estimator or force controller is warranted by this comparison.
+
+**Final repository QA:**399authored local links resolve;152compact file hashes
+match their originals,665compact archive members verify, and the full raw
+archive hash is independently rechecked. All33visualZIP members pass CRC/SHA.
+All93source/59input/456closed-output bindings still match. Staged whitespace
+checks pass and production-source diff is empty. These are preservation and
+documentation checks, not extra physical runs or a full repository test suite.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

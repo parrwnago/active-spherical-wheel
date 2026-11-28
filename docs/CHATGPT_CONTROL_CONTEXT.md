@@ -1,13 +1,35 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 16 — 28 November 2026, through I-81.** The selected live controller
-remains the original native N. I-81 starts from repository commit `979932b` and
-instruments its slope response; no production/default promotion is made.
+**Revision 17 — 28 November 2026, through I-82.** The selected controller
+architecture remains the original native N. The 0.30 m/s belt-cap setup is the
+reference baseline; I-82's 0.60 m/s operating-cap variant is the leading
+experimental capacity setting after passing the current case's comparison.
+Original configuration, LQR gain design and repository defaults remain unchanged.
 This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest investigation, **I-81**, runs one unchanged native eight −1 prefix to
+The latest experiment, **I-82**, completes two full 133 s Gazebo/DART native
+figure-eight runs at −1 rad, comparing both belt operating caps at 0.30 versus
+0.60 m/s after constructing the original gains. Moving timed XY RMS improves
+**46.359→23.362 mm**, peak error **336.408→72.167 mm**, and final goal error
+**32.880→0.877 mm**. All 111 setup and 30 fixed performance checks pass:
+**PASS_CAPACITY_SCREEN** for this pair. An independent raw-array audit agrees
+on 124 scalars and all 30 gate decisions, not additional independent tests or
+a full repository suite. The fresh baseline exactly reproduces all 79 original
+precision arrays over 26,601 rows. The first applied-command difference occurs
+at 80.880 s; later force differences include changed prior histories.
+
+The 0.60 variant nearly stops translating at the goal, but final-two-second
+world-vertical rotation reaches 6.095°/s, above the 0.05 rad/s (2.865°/s) limit.
+It passes position/speed/attitude settling and fails strict four-condition
+settling; the 0.30 baseline fails position and rotation. The registered screen
+preserves any native settling success, so this does not contradict its PASS.
+This is a strong result for one case, with no automatic default promotion or
+general motor-selection claim. Section 26 explains the comparison and retains
+the earlier mixed I-49 capacity evidence on its different trajectory/start.
+
+The preceding investigation, **I-81**, runs one unchanged native eight −1 prefix to
 102 s and exactly reproduces all 79 original precision fields. Its 1 ms contacts
 show belt A adds 10.598 N downhill alongside 3.234 N gravity at 100.900 s. Actual
 and inferred belt A agree; preparation adds zero; the preceding belt request
@@ -157,13 +179,20 @@ nine velocity errors gives the controller's **18-dimensional tangent error**.
 Orientation error is a three-component relative rotation, not subtraction of
 four quaternion components.
 
-| Input | Meaning | Unit | Assumed absolute bound |
+| Input | Meaning | Unit | Reference-baseline absolute bound |
 | --- | --- | --- | ---: |
 | `u[0]` | Common-shaft torque | N m | 1.5 |
 | `u[1]` | Shell-A torque | N m | 0.6 |
 | `u[2]` | Shell-B torque | N m | 0.6 |
 | `u[3]` | Belt-A surface speed | m/s | 0.30 |
 | `u[4]` | Belt-B surface speed | m/s | 0.30 |
+
+I-82 tests 0.60 m/s operating bounds for both belts in the physical plant and
+measured-state mirror, after the original 0.30-based configuration and gains
+are constructed. Native incoming-belt preparation also uses the operating
+bound. The 0.60 variant leads the current single-case capacity comparison;
+the table remains the 0.30 reference baseline, not a claim of automatic default
+promotion. Torque limits and the selected control architecture are unchanged.
 
 The belt channels prescribe ideal surface velocity at contact. They are not
 torque commands to modeled belt motors. A shell joint-rate reference, meanwhile,
@@ -2007,7 +2036,95 @@ or accepted cure is run here. Exact sources, failed compile/test setup stages,
 raw records and independent proofs are retained in a 93.9 MB local bundle plus
 compact repository evidence. [I-81 report/PDF/reproduction](iterations/2026-11-28/slope-response-trace/README.md).
 
-## 26. Sources, attribution, and how to continue a discussion
+## 26. I-82: higher operating belt capacity improves the current figure-eight
+
+The user asks to revisit the 0.30 m/s belt limit and see the comparison video.
+I-82 completes two fresh **133 s Gazebo/DART** runs of the original I-76 native
+eight −1 rad rough-stress case: **B030** at 0.30 m/s and **B060** at 0.60 m/s
+on both belts. Each run includes the initial three-second hold, 120-second
+timed motion and full ten-second goal hold. Control remains 5 ms and physics
+1 ms. This is a capacity comparison with the original LQR/observer/feedforward
+architecture, not a new estimator or a heading-control overlay.
+
+The original configuration, gain cache/design, torque bounds, reference and
+initial state remain fixed. Only operating belt bounds change after ordinary
+gain construction, in both the physical plant and measured-state mirror.
+Native incoming preparation also clips against that operating bound. It can
+therefore change future unclipped requests through history and preparation;
+this is not a final-clipping-only ablation or a redesigned LQR.
+
+| Recorded metric | B030 reference | B060 variant |
+| --- | ---: | ---: |
+| Moving timed XY RMS, [3,123) s | 46.359 mm | 23.362 mm |
+| Full timed XY peak, [0,133] s | 336.408 mm | 72.167 mm |
+| Moving geometric path RMS | 39.871 mm | 15.205 mm |
+| Final goal error at 133 s | 32.880 mm | 0.877 mm |
+| Peak own-reference up error | 9.461° | 2.880° |
+| Peak absolute platform tilt | 12.230° | 11.871° |
+| Peak planar speed | 0.6723 m/s | 0.2573 m/s |
+| Strict final four-condition settling | Fail | Fail |
+
+Both complete; completion is distinct from acceptance. All **111 setup checks
+and 30 fixed performance checks pass**, giving **PASS_CAPACITY_SCREEN** for
+this pair. The frozen screen requires at least 10% moving timed-RMS reduction,
+20% full timed-peak reduction, and margins on geometric tracking, final error,
+balance, speed, acceleration, rotation, common-scale command steps and joint
+torque clipping. Own-cap and original-0.30-cap command statistics are both
+reported, so increasing a normalization denominator is not counted as the
+improvement. Terminal commands with no subsequent physical hold are excluded.
+The full path is scored, not only the favorable slope window.
+
+Fresh B030 exactly reproduces **all 79 original precision arrays across 26,601
+rows**, including the full goal hold. Independent raw reconstruction, without
+importing the canonical metric functions, matches **124 scalars and all 30
+gate values/decisions**; maximum scalar difference is 1.74×10⁻¹². These overlap
+the primary checks and are not additive tests or a full repository test suite.
+Pure scoring contracts and saved-old-record parity checks are separately
+preserved. An absolute-versus-signed angular-speed correction was established
+from old evidence before new scoring case-array reads; earlier source/error stages
+remain archived rather than replaced.
+
+**Why can a passing variant still fail settling?** The registered gate preserves
+four-condition settling if B030 succeeds; it does not require B060 to create a
+success when B030 fails. Both absolute results are therefore explicit. During
+the final [131,133] s, B060 maximum goal distance is 0.970 mm, XY speed 0.290 mm/s
+and own-up error 0.00423°, passing the 20 mm, 20 mm/s and 2° limits. Its maximum
+world-z angular speed is 0.106371 rad/s (**6.095°/s**), above 0.05 rad/s, so
+strict settling fails. B030 fails position (32.880 mm maximum) and rotation
+(0.350080 rad/s); speed and attitude pass. B060 has excellent translational
+return here, not a complete stationary stop. Free heading does not eliminate
+the need to report residual rotation.
+
+**What does this establish about the slope episode?** The first applied-command
+difference is at **80.880 s**, well before the 100.5–103 s diagnostic window.
+Both runs retain 1 ms contact traces over 100.5–101.8 s: 1,300 substeps and 260
+completed holds each. At completed 100.900 s, contact-plus-gravity downhill force
+is +13.833 N for B030 versus −0.012 N for B060. Their states and contact histories
+already differ, so this is a comparison of whole capacity histories at the same
+clock. It does not isolate a same-state correction to the original force pulse,
+prove every observer estimate correct, or complete a motor/passive-work
+decomposition. The earlier proposed same-prefix loaded-feedback intervention
+has not been performed by this capacity experiment.
+
+**Decision:** 0.60 m/s is the **leading experimental capacity variant** after a
+clear positive result in this current case. Keep 0.30 as the reference baseline;
+do not silently promote defaults or claim robustness across starts and routes.
+The original architecture, gains and configuration are retained. Prescribed
+surface-speed belts do not demonstrate a finite motor torque-speed envelope,
+so these are assumed simulation operating bounds, not hardware validation.
+
+Earlier [I-49](iterations/2026-11-26/belt-capacity-sweep/README.md) remains valid:
+it compared 0.30/0.60/0.90 m/s on a **different 44 s figure-eight, +0.9 rad start
+and yaw 45°** and found mixed tracking/turn/settling tradeoffs. I-82 does not
+overwrite those results; current-case benefit and generalization are separate.
+
+[I-82 report, PDF, plots and reproduction](iterations/2026-11-28/current-belt-capacity/README.md)
+· [Full comparison video](../results/current_belt_capacity_20261128/publication/video_stage01/eight_m100_B030_B060.mp4)
+· [98–104 s event video](../results/current_belt_capacity_20261128/publication/video_stage01/event_98_104_B030_B060.mp4).
+The large videos and rollouts are local ignored artifacts; a plain clone needs
+the report's identified shareable bundle to obtain them.
+
+## 27. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

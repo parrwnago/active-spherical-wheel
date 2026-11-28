@@ -1,0 +1,48 @@
+{
+  "iteration": "I-82",
+  "scope": "One matched full-route current eight -1 rad capacity comparison, not a motor selection or global/default adoption test.",
+  "arms": {"B030": 0.30, "B060": 0.60},
+  "cap_interface": "Both physical plant and state mirror operating bounds change after fixed original .30 design/gain construction. Preparation uses operating bounds; this is not a final-clip-only ablation.",
+  "clock": {"dt_s": 0.005, "total_s": 133.0, "moving_s": [3.0, 123.0], "moving_half_open": true, "hold_s": [123.0, 133.0], "final_settling_s": [131.0, 133.0]},
+  "focus_s": [100.5, 103.0],
+  "focus_snapshot_s": [100.5, 100.835, 100.9, 101.0, 101.5, 101.505, 102.135, 103.0],
+  "geometric_path": {"source": "Original frozen I76 metrics.geometric_polyline('eight',4097)", "samples": 4097, "distance": "Exact Euclidean point-to-segment minimum on full fixed uniform-u polyline, not exact analytic curve distance.", "crossing_limitation": "Near-path distance at the crossing can hide wrong progress; timed XY remains independent."},
+  "base_bounds": [1.5, 0.6, 0.6, 0.3, 0.3],
+  "settling": {"position_m": 0.02, "xy_speed_m_s": 0.02, "world_z_rate_rad_s": 0.05, "own_raw_reference_up_error_deg": 2.0, "window_s": [131.0, 133.0], "preserve_if_B030_passes": true, "absolute_candidate_settling_reported_separately": true},
+  "command_metrics": {
+    "terminal": "Final emitted unheld command excluded from interval/duration/step/clipping metrics; its finite status reported separately.",
+    "actual_limits": "Report requested clipping at own arm caps and applied input compliance with those caps.",
+    "common_limits": "Also report requested excess and actual applied exceedance versus original .30 belt caps using fixed original bounds for normalization.",
+    "durations": "Use actual held interval durations as well as fractions; larger cap denominators alone are not improvement.",
+    "steps": "Report both own-cap normalized and original-bound normalized Euclidean command steps, plus dimensional per-channel peaks.",
+    "units": ["N m", "N m", "N m", "m/s", "m/s"]
+  },
+  "screen": {
+    "benefit": {"moving_timed_rms_ratio": 0.90, "full_timed_peak_ratio": 0.80},
+    "nonregression": {
+      "moving_geometric_rms_m": [1.10, 0.001],
+      "moving_geometric_peak_m": [1.00, 0.010],
+      "final_goal_error_m": [1.00, 0.010],
+      "own_reference_up_peak_deg": [1.00, 1.0],
+      "own_reference_up_rms_deg": [1.10, 0.1],
+      "absolute_tilt_peak_deg": [1.00, 1.0],
+      "full_planar_speed_peak_m_s": [1.10, 0.010],
+      "full_world_z_rate_peak_rad_s": [1.10, 0.050],
+      "full_50ms_acceleration_peak_m_s2": [1.10, 0.100],
+      "base_normalized_applied_step_peak": [1.10, 0.050]
+    },
+    "torque_channel_clipped_seconds_add_s": 0.10,
+    "hard": "Both complete133s finite and without declared physical failure; applied bounds, clip identity, prior-input history, original observer/contact-information boundary, original heading helper off, same initial state/reference/design/gain bytes. Fresh B030 matches all79 original I76 precision fields.",
+    "settling": "Preserve any original B030 four-condition final2s settling success. Absolute candidate settling remains explicit even if B030 fails.",
+    "decision": "INVALID_SETUP if source/schema/pair/reference/gain/native-parity/ledger fails. FAIL_CAPACITY_SCREEN if any hard or fixed benefit/nonregression/conditional-settling gate fails; otherwise PASS_CAPACITY_SCREEN for this pair only. No automatic adoption.",
+    "clipping_note": "Own-cap clipping improvement alone cannot pass. Belt clipping/excess at own and original scales remain descriptive; unchanged motor-torque clipping seconds and original-scale command-step/motion guards are compared."
+  },
+  "fixed_analysis_policy": "All full-route and fixed-focus results retained. No phase/window/threshold/cap/gain retuning or outcome-based retries.",
+  "interpretation_limits": [
+    "This is ideal prescribed belt surface speed, without belt motor torque/load dynamics.",
+    "A better motion result does not select or validate a real motor.",
+    "One phase/route cannot establish general controller improvement.",
+    "The fixed focus window is descriptive and cannot replace whole-route evaluation.",
+    "Without new1ms force instrumentation do not claim the I81 positive-force pulses are removed; evaluate visible motion and sampled existing signals only."
+  ]
+}
