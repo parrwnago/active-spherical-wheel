@@ -6443,6 +6443,137 @@ from whitespace cleanup to retain its original hash. Correct stage02 is valid.
 Staged compact blobs are verified against the manifest. These checks add no
 physical trial or full-repository-suite claim.
 
+**2026-11-28 scope follow-up / decision, not a new experiment:** The user
+confirms baseline motion recovery as the priority after the small I-85
+difference. Terrain assistance remains parked. Multi-contact work is deferred
+until its relevance is demonstrated; it is not assumed to explain the
+105.53 s velocity excursion. Existing I-04 fixtures already demonstrate two
+loaded rims and two loaded points on one shell. Multiple loaded contacts do
+not necessarily immobilize a sphere: a ball can roll along a symmetric
+V-groove while both faces support it. This is a kinematic example, not a
+completed moving-groove experiment. A nearly unloaded contact can often be
+neglected in the present force balance, but an impending load transfer can
+still matter. Solver manifold-point count alone is not a count of independent
+supports; assess separated patches, force/impulse shares and their effects on
+moments and rolling constraints before adding a multi-contact estimator.
+
+**Proposed baseline diagnostic, not implemented or run:** Reproduce the
+105.4–106.1 s event with the unchanged I-82 B060 native LQR, momentum observer,
+inferred-contact feedforward and 0.60 m/s operating limits. Record 1 ms
+interval contact forces and the commands held over each interval; distinguish
+the initial physical disturbance from the later velocity-recovery response.
+Then use matched interventions to test the current normal, holding and lean
+reference response if the trace supports them. Do not label a same-row new
+command as the cause of its preceding state change. Keep existing recovery
+bands and assess return, persistence, balance and residual spin separately.
+Whole-target smoothing is not an untested cure: I-43 already had mixed local
+benefits and failed broader gates. No new simulation, control change, test
+count or causal conclusion is added by this follow-up.
+
+## I-86 / 2026-11-28 / completed diagnostic, baseline retained: recovery interval-force trace
+
+**Question:** What initiates the known 105.53 s velocity excursion, how does
+the native controller subsequently recover, and do multiple loaded supports
+materially participate? The I-85 posthoc 5 ms record narrows the question but
+does not provide interval forces or establish a causal control fix.
+
+**Authorized work and fixed conditions:** One fresh unchanged I-82 B060 native
+prefix through 106.5 s, original I-76 rough-stress Mars figure-eight, shaft
+start -1 rad, yaw 158 degrees and original 133 s reference program. Preserve
+the original 0.30-based LQR design/gain bank, momentum observer, current support
+inference, feedforward and preparation; use the same 0.60 m/s physical/mirror
+operating belt limits as B060, motor bounds [1.5, 0.6, 0.6] N m. No terrain
+assistance, heading helper, retiming, new estimator or production change.
+
+**Implementation and comparison proposed:** Capture native states, admitted
+contact positions/normals/forces and actual held commands every 1 ms through
+105.0–106.3 s, retaining 5 ms feedback. Require all 79 original B060 precision
+fields to reproduce the 21,301-row prefix byte-for-byte, except the explicit
+final unheld-command flag. Reconstruct whole-robot COM momentum offline and
+compare contact plus gravity over completed intervals. Force-times-step sums
+are sampled impulse estimates, not exact exported solver impulses. Evaluate
+the fixed 105.4–106.1 s recovery window and distinguish the command that acted
+before a state change from the new command emitted afterward.
+
+**Planned evidence and decision:** Preserve raw contact and command ledgers,
+independent force/kinematic checks, descriptive support-load/impulse shares and
+plots. Multiple solver points alone are not independent loaded supports.
+Inspect separated contact groups with fixed descriptive load sensitivities,
+without fitting thresholds or introducing them into control. This shortened
+diagnostic is not a full-route acceptance test. A targeted intervention is
+conditional on the resulting evidence; no cure or completed run is claimed
+at proposal. Exact result-owned sources and preread definitions will be bound
+before their respective physics/data use under
+`results/baseline_recovery_trace_20261128/`.
+
+**Implemented, registered and run:** Physics registration binds 99 sources and
+66 inputs, SHA256 `e2255a7ef6bda5271cfb56fb34d26b3076c9e20239e5bfe5aecddf2db3dcf85f`.
+Observed process exit zero; all 79 baseline precision fields match over 21,301
+rows. Capture contains 1,300 substeps, 260 holds and 261 read-only snapshots,
+with one original command/observer/preview per 5 ms. Closed seal binds 646 files,
+SHA256 `399521947dfabf300ccfa549b85a5fa773db7ca4e0c4ab863306c53397818c0d`.
+Analysis and independent verifier source/rules were separately registered before
+new array reads. Six unique runner contracts pass in two environments; repeated
+invocations are not added. Four primary, six independent and three rendering
+contracts have separate scopes; no full-repository-suite claim.
+
+**Observed outcome:** All positive normal pressure over 105.0–106.3 s belongs
+to shell A; loaded solver points span at most 1.2245 mm. There is no second
+loaded family or 10 mm spatial group under the fixed 1/5/10% descriptive share
+checks. Two 1 ms solves, ending 105.525 and 105.724 s, have no resolved contacts
+or ground force; at the first gravity accounts for COM acceleration, followed
+by reloading. These are isolated contact-free solves, not a full 5 ms airborne
+episode or identification of the underlying geometric cause.
+
+Whole-COM force balance independently closes to 0.000276 N RMS / 0.001011 N
+maximum over all 260 holds. The narrower 140-hold focus yields 0.000376 N RMS;
+these are different windows. Primary/independent analytic-versus-MuJoCo
+kinematics and reductions agree on 52 comparisons / 53,131 scalar values with
+maximum absolute difference 8.26e-13. These are overlapping checks, not trials.
+Focus interval-observer force discrepancy is 0.000296 N RMS and same-filter
+intrinsic-normal discrepancy 0.00636 degrees RMS. The subsequently filtered
+controller normal differs from interval pressure direction by up to 4.499
+degrees; different observables must not be called a clean observer failure.
+
+The initial 105.525–105.530 s horizontal wheel-centre velocity change is
+[4.154, 3.666] mm/s versus whole-COM [0.493, 0.454] mm/s. The later 107.139
+mm/s velocity residual is much larger. A separately registered posthoc peak
+addendum finds it at 105.745 s: wheel-centre/COM/relative X velocities are
+-122.048/-55.847/-66.201 mm/s. From 105.530 s to the peak, signed X changes
+satisfy -106.982 = -38.555 - 68.428 mm/s, a kinematic identity rather than a
+causal partition. Desired up moves at 24.692 degrees/s, actual up at 30.912,
+while the supplied angular-rate reference is zero. The native lean target
+changes from roughly 9.3 to 5.6 degrees. Focus path stays within 8.237 mm and
+native up within 1.2583 degrees, all commands unsaturated; belt commands,
+rolling feedforward and preparation are zero. Opposing LQR terms partly cancel;
+their sizes alone do not establish physical causal contributions.
+
+**Decision and limitation:** Keep baseline LQR/observer/feedforward; terrain
+assistance remains parked and multi-contact expansion is deferred for this
+event. Narrow the next causal test to the balance-reference/holding/feedback
+response after the contact transient. A proposed rate-only ablation retains
+the native target-angle rule, holding, routing and gains while supplying a
+consistent desired-up rate; it is not implemented or run here. I-43 changed
+the target angle through smoothing too and had mixed results, so it remains
+relevant rather than being presented as an untested cure. No controller fix,
+full-route improvement or unique initiating mechanism is established.
+
+**Evidence:** [I-86 report, plots, PDF, video and reproduction](docs/iterations/2026-11-28/baseline-recovery-trace/README.md).
+The 301-frame 0.2x event clip covers 104.9–106.4 s; all frames decode, encoded
+samples/identical geometry checked. Video 470,412 bytes, SHA256
+`87cdbda5f356d68e07fc54508012f52e504828c5a4057c8aa807a027ad78264b`.
+Gazebo/DART supplies physics; MuJoCo is visualization/independent kinematics
+only. Production/defaults and prior frozen evidence remain unchanged.
+
+**I-86 preservation:** Full local raw archive 172,449,228 bytes, SHA256
+`47aae4ef3f0efc169b162c1baa9aeca445cb90a54689a04242baba1b1824425e`,
+contains 1,335 independently size/SHA-verified project members, with restoration
+inventory and external model/source/data prerequisites retained. The installed
+simulator environment is not included. Compact evidence binds 70 files plus
+manifest; source archive 114 members verified. Living presentation/handoff and
+standalone context revision21 retain the diagnostic result and proposed-only
+rate ablation. No new controller trial or test count is added by packaging.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

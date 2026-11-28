@@ -1,0 +1,471 @@
+{
+  "anchor_to_peak_signed_velocity_change": {
+    "COM_velocity_m_s": [
+      -0.03855471034418749,
+      -0.0013577617044532406,
+      0.010804156627953608
+    ],
+    "root_relative_to_COM_velocity_m_s": [
+      -0.06842766704797926,
+      -0.005088488988412241,
+      -0.0060112788280944855
+    ],
+    "root_velocity_m_s": [
+      -0.10698237739216675,
+      -0.006446250692865482,
+      0.004792877799859122
+    ],
+    "spatial_nominal_velocity_m_s": [
+      0.0009433021250755003,
+      -0.000497369229187361
+    ]
+  },
+  "initial_drop_reload": [
+    {
+      "COM_delta_velocity_m_s": [
+        -6.88933072159198e-06,
+        1.9996474710231454e-06,
+        -4.013486331931951e-07
+      ],
+      "contact_force_N": [
+        -0.012813317930607582,
+        0.0037233994914209756,
+        18.245853921947017
+      ],
+      "held_input": [
+        0.3477790867490038,
+        0.09580090508738173,
+        -0.0001969906185057893,
+        0.0,
+        0.0
+      ],
+      "pressure_family_N": [
+        18.158778113896915,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "root_delta_velocity_m_s": [
+        -1.3177627129559721e-05,
+        3.321684006309686e-06,
+        -1.1292413212181038e-06
+      ],
+      "time_s": 105.52399999997652
+    },
+    {
+      "COM_delta_velocity_m_s": [
+        4.953834451121297e-07,
+        -5.978754526615032e-07,
+        -0.009810021306580569
+      ],
+      "contact_force_N": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "held_input": [
+        0.3477790867490038,
+        0.09580090508738173,
+        -0.0001969906185057893,
+        0.0,
+        0.0
+      ],
+      "pressure_family_N": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "root_delta_velocity_m_s": [
+        -0.0017237698519332323,
+        -0.0014179006392980383,
+        -0.010173875309774238
+      ],
+      "time_s": 105.52499999997652
+    },
+    {
+      "COM_delta_velocity_m_s": [
+        0.00014334825623173522,
+        0.00011009591519565252,
+        0.009637397014901562
+      ],
+      "contact_force_N": [
+        0.26780089146629527,
+        0.20336941305175982,
+        36.172135407747085
+      ],
+      "held_input": [
+        0.2884046407627318,
+        0.08590270120629442,
+        -0.0032737907417649398,
+        0.0,
+        0.0
+      ],
+      "pressure_family_N": [
+        36.06775674760996,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "root_delta_velocity_m_s": [
+        0.0023199819494722357,
+        0.0019167200412011326,
+        0.010098323044396784
+      ],
+      "time_s": 105.52599999997652
+    },
+    {
+      "COM_delta_velocity_m_s": [
+        8.933142533077212e-05,
+        8.518923826388795e-05,
+        -0.00018994249669996004
+      ],
+      "contact_force_N": [
+        0.16638197232963936,
+        0.1582053229947742,
+        17.893331991805198
+      ],
+      "held_input": [
+        0.2884046407627318,
+        0.08590270120629442,
+        -0.0032737907417649398,
+        0.0,
+        0.0
+      ],
+      "pressure_family_N": [
+        17.847606232944855,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "root_delta_velocity_m_s": [
+        0.0004627715967069901,
+        0.00043501016829553495,
+        -0.00010716973753577275
+      ],
+      "time_s": 105.52699999997651
+    }
+  ],
+  "interpretation_limits": [
+    "The root/COM difference is a kinematic identity and includes internal motion/reorientation, not a separately measured disturbance force.",
+    "Current feedback blocks act together; their large opposing terms do not prove which one is harmful.",
+    "Zero angular reference during changing desired-up direction is a design convention; this replay alone does not prove that changing it improves recovery.",
+    "One unloaded1msstep and immediate reload are observed; no5msairborne claim.",
+    "I43 whole-target smoothing plus desired-rate correction already had mixed/failed broader results; it is not an untested cure."
+  ],
+  "maximum_desired_up_rate": {
+    "deg_s": 37.335210821152295,
+    "time_s": 105.69999999997636
+  },
+  "points": {
+    "anchor": {
+      "COM_minus_same_nominal_velocity_xy_m_s": [
+        -0.000918976164426568,
+        -0.006419287092918127
+      ],
+      "COM_velocity_m_s": [
+        -0.017292304180388296,
+        0.0006469225171185154,
+        0.0014206082546686727
+      ],
+      "actual_up_change_rate_deg_s": 1.3516520800744993,
+      "actual_world_angular_rate_rad_s": [
+        0.06126159477000595,
+        0.013309759267039974,
+        -0.34276878682074496
+      ],
+      "actual_world_tilt_deg": 9.299707784344962,
+      "command_components": {
+        "exact_applied": [
+          0.4053227967448517,
+          0.10455011969982589,
+          0.0046742917945088,
+          0.0,
+          0.0
+        ],
+        "exact_lqr_command": [
+          0.057710603604256255,
+          0.00927953919420179,
+          0.0046742917945088,
+          0.0,
+          0.0
+        ],
+        "exact_support_command": [
+          0.34761219314077363,
+          0.09527058050562409,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "lqr_block__body_angular_velocity": [
+          0.0936714835894762,
+          0.09512225800814657,
+          0.050620598627898854,
+          -0.0,
+          -0.0
+        ],
+        "lqr_block__body_linear_velocity": [
+          0.04541759673166761,
+          -0.019388578368412363,
+          -0.01339566941537206,
+          -0.0,
+          -0.0
+        ],
+        "lqr_block__roll_pitch_attitude": [
+          0.01529836575038108,
+          0.004203436691788539,
+          0.0019543401002043654,
+          -0.0,
+          -0.0
+        ]
+      },
+      "desired_minimum_angular_rate_world_rad_s": [
+        0.0011430633967169453,
+        0.03995714913815562,
+        0.0038327811923479483
+      ],
+      "desired_up_change_rate_deg_s": 2.3008165939631664,
+      "desired_world_tilt_deg": 9.277727557897704,
+      "native_up_error_deg": 0.022226436315042526,
+      "nominal_COM_qualification": "Same root-path velocity is used only as a descriptive common subtraction, not as an independently specified desired whole-COM trajectory.",
+      "normal": [
+        0.13695690130652285,
+        0.09327536926621563,
+        0.9861757007109668
+      ],
+      "root_relative_to_COM_velocity_m_s": [
+        0.0022271225603568666,
+        0.0018108054577547724,
+        0.00046835788639598024
+      ],
+      "root_spatial_error_xy_m_s": [
+        0.0013081463959302986,
+        -0.004608481635163354
+      ],
+      "root_velocity_m_s": [
+        -0.01506518162003143,
+        0.002457727974873288,
+        0.001888966141064653
+      ],
+      "spatial_nominal_velocity_m_s": [
+        -0.016373328015961728,
+        0.007066209610036642
+      ],
+      "spatial_velocity_error_m_s": 0.00479054798272842,
+      "supplied_body_angular_reference_rad_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "time_s": 105.52999999997651
+    },
+    "focus_start": {
+      "COM_minus_same_nominal_velocity_xy_m_s": [
+        -0.0015540284342530943,
+        -0.006938062986761506
+      ],
+      "COM_velocity_m_s": [
+        -0.018073549316616297,
+        0.00020838586698836026,
+        0.002490609310491142
+      ],
+      "actual_up_change_rate_deg_s": 0.0029406805485244028,
+      "actual_world_angular_rate_rad_s": [
+        0.04620462419986497,
+        0.031452964916045524,
+        -0.34169066953575467
+      ],
+      "actual_world_tilt_deg": 9.294602102278072,
+      "command_components": {
+        "exact_applied": [
+          0.34340499176162664,
+          0.10950298522062511,
+          0.00023633061509840264,
+          0.0,
+          0.0
+        ],
+        "exact_lqr_command": [
+          0.000674942957813715,
+          -0.0004323932216115378,
+          0.00023633061509840264,
+          0.0,
+          0.0
+        ],
+        "exact_support_command": [
+          0.3427300488039911,
+          0.10993537844223665,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "lqr_block__body_angular_velocity": [
+          0.00013324698282999402,
+          0.08220911088968069,
+          0.043903586477429854,
+          -0.0,
+          -0.0
+        ],
+        "lqr_block__body_linear_velocity": [
+          0.10137511064621246,
+          -0.012054481027205136,
+          -0.00839319617293234,
+          -0.0,
+          -0.0
+        ],
+        "lqr_block__roll_pitch_attitude": [
+          0.00877137257984854,
+          0.000880984951826884,
+          0.00041232390841035375,
+          -0.0,
+          -0.0
+        ]
+      },
+      "desired_minimum_angular_rate_world_rad_s": [
+        -2.9163771451705007e-06,
+        5.004651695230056e-06,
+        6.681377868202748e-08
+      ],
+      "desired_up_change_rate_deg_s": 0.0002957558666942196,
+      "desired_world_tilt_deg": 9.28306740577512,
+      "native_up_error_deg": 0.01169597757529606,
+      "nominal_COM_qualification": "Same root-path velocity is used only as a descriptive common subtraction, not as an independently specified desired whole-COM trajectory.",
+      "normal": [
+        0.13707510972918846,
+        0.09326844052646788,
+        0.9861599324118232
+      ],
+      "root_relative_to_COM_velocity_m_s": [
+        6.258348422081422e-06,
+        3.203992851743382e-07,
+        8.757691418274927e-07
+      ],
+      "root_spatial_error_xy_m_s": [
+        -0.0015477700858310128,
+        -0.006937742587476332
+      ],
+      "root_velocity_m_s": [
+        -0.018067290968194216,
+        0.0002087062662735346,
+        0.0024914850796329694
+      ],
+      "spatial_nominal_velocity_m_s": [
+        -0.016519520882363203,
+        0.0071464488537498665
+      ],
+      "spatial_velocity_error_m_s": 0.007108295467176088,
+      "supplied_body_angular_reference_rad_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "time_s": 105.39999999997663
+    },
+    "residual_peak": {
+      "COM_minus_same_nominal_velocity_xy_m_s": [
+        -0.04041698863368956,
+        -0.007279679568184007
+      ],
+      "COM_velocity_m_s": [
+        -0.055847014524575786,
+        -0.0007108391873347252,
+        0.01222476488262228
+      ],
+      "actual_up_change_rate_deg_s": 30.911925281469713,
+      "actual_world_angular_rate_rad_s": [
+        -0.018491892323406645,
+        0.5506258249600412,
+        -0.10474691299354667
+      ],
+      "actual_world_tilt_deg": 6.938847724640115,
+      "command_components": {
+        "exact_applied": [
+          0.2628339752050274,
+          -0.063866403589848,
+          0.00676914696291836,
+          0.0,
+          0.0
+        ],
+        "exact_lqr_command": [
+          0.024803697812559644,
+          -0.03362674423970141,
+          0.00676914696291836,
+          0.0,
+          0.0
+        ],
+        "exact_support_command": [
+          0.23803027739264593,
+          -0.03023965935014659,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "lqr_block__body_angular_velocity": [
+          -1.5597914833785604,
+          -0.890488453735195,
+          -0.4417244522506093,
+          -0.0,
+          -0.0
+        ],
+        "lqr_block__body_linear_velocity": [
+          1.212666401052617,
+          0.5212888679318447,
+          0.33291932374395217,
+          -0.0,
+          -0.0
+        ],
+        "lqr_block__roll_pitch_attitude": [
+          0.6570073781598275,
+          0.32649539190871446,
+          0.14183978513980003,
+          -0.0,
+          -0.0
+        ]
+      },
+      "desired_minimum_angular_rate_world_rad_s": [
+        -0.18795684842494484,
+        0.3870941329639008,
+        0.02361059840095573
+      ],
+      "desired_up_change_rate_deg_s": 24.69224702852088,
+      "desired_world_tilt_deg": 6.1464417210381335,
+      "native_up_error_deg": 1.1310494293544657,
+      "nominal_COM_qualification": "Same root-path velocity is used only as a descriptive common subtraction, not as an independently specified desired whole-COM trajectory.",
+      "normal": [
+        0.06079864480474952,
+        0.09169162423652057,
+        0.9939296609090477
+      ],
+      "root_relative_to_COM_velocity_m_s": [
+        -0.06620054448762239,
+        -0.0032776835306574685,
+        -0.005542920941698505
+      ],
+      "root_spatial_error_xy_m_s": [
+        -0.10661753312131195,
+        -0.010557363098841475
+      ],
+      "root_velocity_m_s": [
+        -0.12204755901219817,
+        -0.003988522717992194,
+        0.0066818439409237745
+      ],
+      "spatial_nominal_velocity_m_s": [
+        -0.015430025890886228,
+        0.006568840380849281
+      ],
+      "spatial_velocity_error_m_s": 0.10713895782802271,
+      "supplied_body_angular_reference_rad_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "time_s": 105.74499999997632
+    }
+  },
+  "scope": "Posthoc interpretation only; no new physics or primary-rule change.",
+  "signed_decomposition_closure_m_s": [
+    0.0,
+    0.0,
+    -8.673617379884035e-19
+  ]
+}

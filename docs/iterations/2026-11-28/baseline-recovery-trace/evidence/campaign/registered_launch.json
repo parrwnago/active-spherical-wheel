@@ -1,0 +1,32 @@
+{
+  "command": [
+    "/home/parrwnago/active-spherical-wheel/build/tools/bin/micromamba",
+    "run",
+    "-p",
+    "/home/parrwnago/active-spherical-wheel/build/gazebo-env",
+    "python",
+    "/home/parrwnago/active-spherical-wheel/results/baseline_recovery_trace_20261128/runner/run_trace.py",
+    "--protocol",
+    "/home/parrwnago/active-spherical-wheel/results/baseline_recovery_trace_20261128/protocol/frozen_stage01/protocol.json",
+    "--output",
+    "/home/parrwnago/active-spherical-wheel/results/baseline_recovery_trace_20261128/campaign/native106p5_stage01",
+    "--run"
+  ],
+  "cwd": "/home/parrwnago/active-spherical-wheel",
+  "environment_overrides": {
+    "set": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "unset": [
+      "PYTHONPATH",
+      "LD_LIBRARY_PATH",
+      "LD_PRELOAD"
+    ]
+  },
+  "iteration": "I-86",
+  "launcher_sha256": "567e8408539c9eaa3ceb08e97d98706a98bdab4621312a3d8b84b860bdd8b76c",
+  "protocol_sha256": "e2255a7ef6bda5271cfb56fb34d26b3076c9e20239e5bfe5aecddf2db3dcf85f",
+  "scope": "One unchanged native B060 prefix through106.5s. No controller intervention.",
+  "utc": "2026-11-28T10:38:08.714526+00:00"
+}

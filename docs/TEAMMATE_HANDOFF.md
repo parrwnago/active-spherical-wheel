@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-85 (revision 20).
+experiment history and common presentation questions through I-86 (revision 21).
 
 ## Current system
 
@@ -73,6 +73,21 @@ actuates the selected research loop. Those modules/experiments are retained as
 research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
+
+**Latest: I-86 finds single-support balance motion during the recovery interruption.**
+[Report, PDF, force plot and slow-motion video](iterations/2026-11-28/baseline-recovery-trace/README.md).
+One unchanged B060 prefix through106.5 s reproduces all79 fields and records
+1,300 physical1 ms samples. All positive pressure is shell A within a1.225 mm
+manifold; no second loaded support explains this event. Isolated contact-free
+solves105.525/105.724 s precede reloading. The larger later velocity excursion
+contains both whole-COM motion and substantial wheel-centre motion relative
+to the COM while the lean target changes. At105.745 s wheel-centre/COM X speeds
+are -122/-56 mm/s; desired-up rate24.7 degrees/s contrasts with angular-rate
+reference0. Commands are unsaturated and the momentum observer matches the
+corresponding physical wrench closely. These data narrow the next causal test
+to balance response, without proving a cure. A native-angle/rate-only ablation
+is proposed, not run; retain I-43's mixed shaped-angle/rate results. Baseline
+kept, terrain assistance parked, multi-contact expansion deferred for this case.
 
 **Latest: I-85's terrain-informed lean trial has small benefits but fails recovery; park this direction.**
 [Completed trial, PDF, evidence and reproduction](iterations/2026-11-28/terrain-lean-trial/README.md)

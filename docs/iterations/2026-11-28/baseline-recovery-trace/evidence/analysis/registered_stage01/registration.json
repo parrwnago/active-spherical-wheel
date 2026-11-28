@@ -1,0 +1,117 @@
+{
+  "change_policy": "Source/rule changes require a new preserved stage. No outcome-dependent tuning.",
+  "iteration": "I-86",
+  "known_outcomes": "I83/I85 old baseline event already known; all fixed new1ms reductions prospective.",
+  "model_input": {
+    "results/tangent_heading_routes_20261127/campaign/_workspaces/eight_m100_N/mirror/model.xml": {
+      "bytes": 27656,
+      "sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36"
+    }
+  },
+  "no_new_array_reads": true,
+  "planned_new_inputs": [
+    "closed I86 substeps.npz",
+    "same-case child precision.npz",
+    "parity_receipt.json",
+    "root physical output seal"
+  ],
+  "reductions": {
+    "causal_limit": "One exact unchanged replay establishes timing, force balance and associations. No same-state control intervention; do not claim a controller cure, unique initiating mechanism, incorrect observer or contact loss lasting a full5ms from one final-solve sample. I43 already tested whole-target smoothing with mixed results.",
+    "comparison_windows_s": {
+      "focus": [
+        105.4,
+        106.1
+      ],
+      "kick": [
+        105.52,
+        105.53
+      ],
+      "pre": [
+        105.4,
+        105.52
+      ],
+      "response": [
+        105.53,
+        106.0
+      ],
+      "whole_trace": [
+        105.0,
+        106.3
+      ]
+    },
+    "control_dt_s": 0.005,
+    "expected_holds": 260,
+    "expected_substeps": 1300,
+    "fixed_axes": "World XYZ and fixed normal/downhill/cross-slope axes constructed from controller normal at105.4s. Never integrate projections onto changing tangent directions.",
+    "focus_window_s": [
+      105.4,
+      106.1
+    ],
+    "force_accounting": "At each completed 1ms solve sum signed exported contact force, gravity and recorded world external disturbance. force*0.001 is sampled impulse, not an exact solver impulse. Retain rejected and nonpositive-normal rows.",
+    "force_sets": [
+      "all signed solver-exported rows",
+      "admitted signed rows",
+      "native measurement selection"
+    ],
+    "iteration": "I-86",
+    "momentum": "Use exact mirror-model masses/local COM offsets and recorded pre/post states for analytic whole-robot COM velocity. Compare momentum change against sampled force integral for each1ms and5ms interval and fixed windows. Root velocity is separately reported; internal rotation can change root velocity without the same whole-COM acceleration.",
+    "observer": "Compare completed5ms physical wrench against saved observer interval mean at the following row. Apply fixed100rad/s physical wrench filter seeded once from native filtered wrench at105s. No fitted lag.",
+    "physical_stop_s": 106.5,
+    "physics_dt_s": 0.001,
+    "recovery": "Reuse unchanged I83 intended-section spatial velocity/path and native-up bands. Prefix cannot measure full133s sustained recovery or acceptance.",
+    "reference": "Track current observer normal, native desired up direction and its finite-difference rate, supplied angular-rate reference, holding/equilibrium and exact LQR error blocks. Algebraic block sizes or correlations are not independent physical causes.",
+    "scope": "Unchanged native B060 diagnostic, not an intervention or accepted recovery fix.",
+    "snapshot_times_s": [
+      105.4,
+      105.5,
+      105.52,
+      105.525,
+      105.53,
+      105.55,
+      105.59,
+      105.65,
+      105.7,
+      105.725,
+      105.8,
+      105.9,
+      106.0,
+      106.1
+    ],
+    "time_alignment": "Held command at row h applies to five1ms solves, interval endpoint is row h+1. New command computed at endpoint cannot cause the already-recorded velocity change; previous held command can contribute.",
+    "trace_window_s": [
+      105.0,
+      106.3
+    ]
+  },
+  "source_bindings": {
+    "results/baseline_recovery_trace_20261128/analysis/analyze.py": {
+      "bytes": 15644,
+      "sha256": "50ef36381c57b931536891c14bf994185622a5f80518f532943524317a938b5a"
+    },
+    "results/baseline_recovery_trace_20261128/analysis/core.py": {
+      "bytes": 11855,
+      "sha256": "22d31a2275cb6e4cd7bacf8f3902755fa752c734e779a1123f8b433331a34b3a"
+    },
+    "results/baseline_recovery_trace_20261128/analysis/definitions.json": {
+      "bytes": 2717,
+      "sha256": "0626221c89dda7bd95fad6289c12f92d5cb249ef7627a96c521d11b70e717500"
+    },
+    "results/baseline_recovery_trace_20261128/analysis/test_core.py": {
+      "bytes": 1611,
+      "sha256": "dcb6d70c9f6f9cb8c56b5384a5f012b78b9e30dfc362da1b0b1c3e113e4c5379"
+    },
+    "results/recovery_assessment_20261128/evaluation/core.py": {
+      "bytes": 14221,
+      "sha256": "6fdcde4e3e4f6b50df53b28920348016fd8923c8a63af87c7dd5603d4841ab5c"
+    },
+    "results/recovery_assessment_20261128/protocol/definitions.json": {
+      "bytes": 4523,
+      "sha256": "c7eaa529ce64b4e140bd0d42a28e94f9e62401bf1bb1a82b333338cffc7dca72"
+    },
+    "results/slope_response_trace_20261128/analysis/core.py": {
+      "bytes": 9870,
+      "sha256": "d2f063d5edbabe40b50bac94b9407c080d08bd2e1e3e5fc6d9aa23763809387f"
+    }
+  },
+  "utc": "2026-11-28T10:39:54.666377+00:00"
+}

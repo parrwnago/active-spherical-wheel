@@ -1,0 +1,22 @@
+{
+  "iteration": "I-86",
+  "scope": "Unchanged native B060 diagnostic, not an intervention or accepted recovery fix.",
+  "trace_window_s": [105.0, 106.3],
+  "focus_window_s": [105.4, 106.1],
+  "physical_stop_s": 106.5,
+  "physics_dt_s": 0.001,
+  "control_dt_s": 0.005,
+  "expected_substeps": 1300,
+  "expected_holds": 260,
+  "comparison_windows_s": {"pre": [105.4, 105.52], "kick": [105.52, 105.53], "response": [105.53, 106.0], "focus": [105.4, 106.1], "whole_trace": [105.0, 106.3]},
+  "snapshot_times_s": [105.4, 105.5, 105.52, 105.525, 105.53, 105.55, 105.59, 105.65, 105.7, 105.725, 105.8, 105.9, 106.0, 106.1],
+  "force_sets": ["all signed solver-exported rows", "admitted signed rows", "native measurement selection"],
+  "force_accounting": "At each completed 1ms solve sum signed exported contact force, gravity and recorded world external disturbance. force*0.001 is sampled impulse, not an exact solver impulse. Retain rejected and nonpositive-normal rows.",
+  "momentum": "Use exact mirror-model masses/local COM offsets and recorded pre/post states for analytic whole-robot COM velocity. Compare momentum change against sampled force integral for each1ms and5ms interval and fixed windows. Root velocity is separately reported; internal rotation can change root velocity without the same whole-COM acceleration.",
+  "fixed_axes": "World XYZ and fixed normal/downhill/cross-slope axes constructed from controller normal at105.4s. Never integrate projections onto changing tangent directions.",
+  "time_alignment": "Held command at row h applies to five1ms solves, interval endpoint is row h+1. New command computed at endpoint cannot cause the already-recorded velocity change; previous held command can contribute.",
+  "observer": "Compare completed5ms physical wrench against saved observer interval mean at the following row. Apply fixed100rad/s physical wrench filter seeded once from native filtered wrench at105s. No fitted lag.",
+  "reference": "Track current observer normal, native desired up direction and its finite-difference rate, supplied angular-rate reference, holding/equilibrium and exact LQR error blocks. Algebraic block sizes or correlations are not independent physical causes.",
+  "recovery": "Reuse unchanged I83 intended-section spatial velocity/path and native-up bands. Prefix cannot measure full133s sustained recovery or acceptance.",
+  "causal_limit": "One exact unchanged replay establishes timing, force balance and associations. No same-state control intervention; do not claim a controller cure, unique initiating mechanism, incorrect observer or contact loss lasting a full5ms from one final-solve sample. I43 already tested whole-target smoothing with mixed results."
+}

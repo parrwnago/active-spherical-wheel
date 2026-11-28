@@ -1,5 +1,20 @@
 # Research presentation notes — 2026-11-28
 
+**Latest: I-86 narrows baseline recovery to a single-support balance transition.**
+[Report, force/recovery plot, PDF and slow-motion video](baseline-recovery-trace/README.md).
+One unchanged B060 prefix reproduces all 79 fields through 106.5 s and captures
+1,300 physical 1 ms samples. All load is shell A, within a 1.225 mm contact
+manifold; no second loaded support explains this event. Isolated contact-free
+solves occur at 105.525 and 105.724 s. Whole-COM force balance closes closely,
+and the momentum observer agrees with the corresponding physical wrench.
+The later velocity excursion grows while the native lean target changes: at
+105.745 s wheel-centre/COM X velocities are -122/-56 mm/s, with a large relative
+motion term. Desired-up rate is 24.7 degrees/s but the angular-rate reference
+is zero. This supports a targeted balance-response investigation, not an
+estimator replacement or proven cure. A native-angle/rate-only ablation is
+proposed, not run; retain I-43's mixed smoothing/rate results. Baseline kept,
+terrain assistance parked, no multi-contact expansion or default change.
+
 **Latest: I-85 fails recovery benefit; park terrain assistance per the user.**
 [Video, PDF, full comparison and baseline follow-up](terrain-lean-trial/README.md).
 One fixed native/terrain-lean pair completes2×133s at the same0.60capacity;
@@ -13,6 +28,19 @@ point to a105.53s contact/normal transient before velocity-band failure while
 commands are unsaturated, contact identity mostlycorrect and joint references
 small; complete interval-force causality remains unproved. Baseline velocity
 recovery is the next focus, with no new estimator or camera expansion.
+
+**User-confirmed priority: baseline recovery first; multi-contact later if
+needed.** The next diagnostic is proposed, not run: capture 1 ms contact-force
+intervals and held commands around the existing 105.53 s event to separate the
+physical disturbance from subsequent control recovery. Do not repeat target
+smoothing as an untested idea; I-43 already found mixed results. Existing
+[I-04 fixture evidence](../../../ITERATION_LOG.md#i-04--check-the-multi-contact-limitation)
+shows genuinely loaded multiple supports, but does not establish their role
+in this event or demonstrate multi-contact traversal. A sphere can roll along
+a V-groove with both faces loaded; multiple contacts restrict available motion
+without necessarily eliminating it. Defer estimator expansion until separated
+loaded patches materially affect recovery, rather than counting solver contact
+points. No further physical run or controller change accompanies this decision.
 
 **I-84 sees future terrain but preparation is inactive in this event.**
 [Observed-map preparation audit](terrain-recovery-preview/README.md).

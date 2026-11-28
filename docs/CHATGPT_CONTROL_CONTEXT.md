@@ -1,6 +1,6 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 20 — 28 November 2026, through I-85.** The selected controller
+**Revision 21 — 28 November 2026, through I-86.** The selected controller
 architecture remains the original native N. The 0.30 m/s belt-cap setup is the
 reference baseline; I-82's 0.60 m/s operating-cap variant is the leading
 experimental capacity setting after passing the current case's comparison.
@@ -8,6 +8,19 @@ Original configuration, LQR gain design and repository defaults remain unchanged
 This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
+
+The latest diagnostic, **I-86**, reproduces all 79 I-82 B060 fields through
+106.5 s and captures 1,300 physical 1 ms samples around the recovery interruption.
+All positive pressure belongs to one small shell-A patch; no multi-contact
+estimator expansion is justified by this event. Isolated contact-free solves
+at 105.525 and 105.724 s are followed by reloading. The larger, later wheel-centre
+velocity excursion develops while the native lean target changes. At 105.745 s,
+wheel-centre/whole-COM X velocities are -122.048/-55.847 mm/s; internal motion
+and reorientation contribute a substantial relative term. Commands are
+unsaturated and momentum-observer wrench agreement is close. The target up
+direction changes at 24.692 degrees/s while desired angular rate remains zero.
+A rate-only matched ablation is proposed, not run or proven to improve recovery.
+Section 30 preserves the distinction from I-43's mixed shaped-angle/rate trial.
 
 The latest trial, **I-85**, completes one fresh native-versus-terrain-lean pair
 and returns **STOP_CANDIDATE**, with 36/37 checks passing. Both use 0.60 m/s
@@ -2344,7 +2357,50 @@ instruction and preserves the partial benefits and unsuccessful iteration.
 [I-85 report, PDF, source history and reproduction](iterations/2026-11-28/terrain-lean-trial/README.md)
 · [99.5–133 s comparison video](../results/terrain_lean_trial_20261128/publication/video_stage01/native_vs_terrain_lean_99p5_133.mp4).
 
-## 30. Sources, attribution, and how to continue a discussion
+## 30. I-86: baseline recovery force trace and deferred multi-contact work
+
+The user returns to native motion recovery after the small I-85 difference.
+One new Gazebo/DART prefix, original rough-stress Mars eight at -1 rad/yaw158°,
+retains original LQR gains, observer, current contact inference, feedforward,
+preparation and B060 0.60 m/s operating limits. It stops at106.5 s and exactly
+reproduces all79 original B060 fields over21,301 rows. The final command-held
+flag is explicitly shortened. This is a diagnostic, not a full-route fix test.
+
+Capture105.0–106.3 s at1 ms under unchanged5 ms feedback. Across all260 holds,
+contact-plus-gravity versus whole-COM momentum rate closes to0.000276 N RMS,
+maximum0.001011 N. Analytic and independent MuJoCo recorded-state kinematics
+agree; MuJoCo performs no physics integration. All positive pressure belongs
+to shell A, with maximum loaded-point separation1.2245 mm. No second loaded
+family/group appears under fixed descriptive share sensitivities. Multiple
+solver points in this small manifold do not prove multiple independent supports.
+
+The 1 ms solves ending105.525 and105.724 have zero resolved contacts/ground
+force. These isolated samples do not establish5 ms airborne intervals or a
+unique geometric cause. At the first, gravity explains vertical COM acceleration.
+The later107.139 mm/s wheel-centre velocity residual peaks105.745 s. From
+105.530 to peak, signed X changes satisfy -106.982 = -38.555 -68.428 mm/s for
+wheel centre = whole COM + relative motion. This is a kinematic identity, not
+an independent partition of controller/terrain causes.
+
+The native lean target changes roughly9.3→5.6°. At peak, desired up changes
+24.692 degrees/s, actual up30.912, supplied angular-rate reference0. All focus
+commands remain unsaturated, path error≤8.237 mm and native up error≤1.2583°;
+belts/preparation/rolling feedforward are0. Interval observer-force discrepancy
+is0.000296 N RMS; same-filter intrinsic-normal discrepancy0.00636° RMS. The
+controller's later normal filter and raw interval pressure are different
+observables and may differ4.499° without proving a bad momentum estimate.
+
+**Decision:** retain baseline and defer multi-contact expansion for this event.
+Investigate balance-reference/holding/feedback response rather than replacing
+the observer. One proposed causal test retains the native target-angle rule,
+holding, routing and gains and changes only the desired-up angular-rate
+reference. I-43 also shaped the angle and had mixed results; those negative
+results remain relevant. No rate-only intervention, recovery improvement,
+production change or automatic default promotion is claimed by I-86.
+
+[I-86 report, PDF, video and reproduction](iterations/2026-11-28/baseline-recovery-trace/README.md).
+
+## 31. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and
