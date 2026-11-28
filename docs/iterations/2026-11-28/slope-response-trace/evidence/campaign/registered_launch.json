@@ -1,0 +1,33 @@
+{
+  "case_output": "results/slope_response_trace_20261128/campaign/native102_stage01",
+  "command": [
+    "/home/parrwnago/active-spherical-wheel/build/tools/bin/micromamba",
+    "run",
+    "-p",
+    "/home/parrwnago/active-spherical-wheel/build/gazebo-env",
+    "python",
+    "/home/parrwnago/active-spherical-wheel/results/slope_response_trace_20261128/runner/run_trace.py",
+    "--protocol",
+    "/home/parrwnago/active-spherical-wheel/results/slope_response_trace_20261128/protocol/frozen_stage01/protocol.json",
+    "--output",
+    "/home/parrwnago/active-spherical-wheel/results/slope_response_trace_20261128/campaign/native102_stage01",
+    "--run"
+  ],
+  "cwd": "/home/parrwnago/active-spherical-wheel",
+  "environment_overrides": {
+    "set": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "unset": [
+      "PYTHONPATH",
+      "LD_LIBRARY_PATH",
+      "LD_PRELOAD"
+    ]
+  },
+  "iteration": "I-81",
+  "launcher_sha256": "dcbf8592232f9640cb8caf2d1907447ef9f3e38d416b69be24ee1c5c1a4cd612",
+  "protocol_sha256": "dc916da7831c5930a3f2dbd838f076c812acde3555bbcfc4dbbbd5cec51fbfa8",
+  "scope": "Exactly one new shortened unchanged-native prefix; no intervention or full-route acceptance.",
+  "utc": "2026-11-28T07:45:52.326561+00:00"
+}

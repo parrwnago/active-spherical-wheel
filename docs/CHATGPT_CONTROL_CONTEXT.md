@@ -1,13 +1,22 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 15 — 28 November 2026, through I-80.** The selected live controller
-remains the original native N. I-78 starts from repository commit `9f7cfc8` and
-tests managed path progress; no production/default promotion is made.
+**Revision 16 — 28 November 2026, through I-81.** The selected live controller
+remains the original native N. I-81 starts from repository commit `979932b` and
+instruments its slope response; no production/default promotion is made.
 This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest experiment, **I-78**, slows path progress around the unchanged LQR
+The latest investigation, **I-81**, runs one unchanged native eight −1 prefix to
+102 s and exactly reproduces all 79 original precision fields. Its 1 ms contacts
+show belt A adds 10.598 N downhill alongside 3.234 N gravity at 100.900 s. Actual
+and inferred belt A agree; preparation adds zero; the preceding belt request
+−.889 m/s clips to −.300, with LQR roll/pitch correction the largest block. Whole-COM momentum
+confirms the physical force. This identifies loaded-belt feedback as a next
+causal-test target, without proving a cure or changing any controller. Section25
+separates these pulses from braking intervals and from timing/preview hypotheses.
+
+The preceding controller experiment, **I-78**, slows path progress around the unchanged LQR
 and observer using current inferred geometry and nominal full-command pressure.
 Desired position, velocity and acceleration remain coherent. Six fresh straight
 runs complete; native arrays exactly replay the earlier baseline. Peak path
@@ -1936,7 +1945,69 @@ replay with fine actual-contact/interval-wrench/preview records around
 No such replay is run here.
 [I-80 evidence and presentation wording](iterations/2026-11-28/slope-edge-review/README.md).
 
-## 25. Sources, attribution, and how to continue a discussion
+## 25. I-81: new physical trace identifies loaded-belt downhill traction
+
+The user prefers the current LQR, observer and feedforward, and asks whether an
+unseen slope simply exceeds holding torque. I-81 runs one original I-76 eight −1
+native Gazebo/DART prefix from reset to 102 s, capturing actual 1 ms contacts
+over 100.5–101.8 s and 261 full 5 ms preview/controller snapshots. The 181 focus
+anchors cover 724 original selected-horizon targets. All 79 precision arrays
+match 20,401 original rows exactly, except the shortened final unheld-command
+flag. No controller or physical parameter changes.
+
+At completed 100.900 s, ground contact contributes **+10.598 N downhill** and
+gravity **+3.234 N**, sampled sum **+13.833 N**, matching whole-COM momentum
+projection +13.828 N. The command was issued at 100.895 s: belt A actually
+carries load, inference selects belt A, requested speed −.889 m/s clips to
+−.300 m/s and preparation adds zero. Belt LQR contributions are roll/pitch
+−.452, body linear velocity −.198, body angular velocity −.164 and XY position
+−.078 m/s. These are algebraic components, not independent causal effects. At
+101.000 s ground adds +7.330 N, comprising belt A +9.686 N and shell A −2.356 N;
+the prior belt request −.918 clips to −.300, again with no preparation delta.
+
+Other intervals brake. Contact/gravity integrals along the changing downhill
+direction over 1.3 s are −3.180/+3.635 N s; they are not fixed-world momentum
+components. Ground can reinforce gravity in pulses without doing so throughout.
+This rejects a gravity-only description of those pulses, not a full motor/
+passive/contact work decomposition. A balancing controller can move the base
+to correct attitude; a large roll/pitch command does not establish a gain bug.
+Belts have prescribed speed actuation, so speed clipping neither identifies a
+finite belt-motor torque capacity nor proves the slope cannot be held statically.
+
+Whole-COM external-force balance has RMS .01971 N, maximum .17146 N, against
+18.2466 N model weight across 260 intervals. Observer interval-force discrepancy
+has RMS .02010 N; same-filter physical-vs-observer direction RMS .08265°,
+maximum .40917°. The physical filter is seeded at 100.5 s; no delay is fitted.
+At 100.900 s controller-normal versus interval-pressure direction differs only
+.0106°, while own-up error is 4.337°. A later 6.406° normal gap and 184.945°/s
+desired-up rate cannot be assigned as the earlier pulse's cause merely because
+they are large.
+
+Within 181 interval-END focus rows, dominant families differ at 52 rows versus
+the last physical sample and 56 versus prior-5-ms means. Sixteen last-sample
+differences agree with the interval, and nine inferred families have no pressure
+in any of those five samples. These are different filtered/timed quantities,
+not a clean observer-error count. For 100 prepared targets, constant-velocity
+versus actual-future-pose margins on the same frozen plane differ .175 mm RMS,
+.533 mm maximum absolute. Exposure is not force onset; 43 future-loaded targets
+must not be presented as 43% accuracy.
+
+A separately registered posthoc supplement uses 181 command-START focus holds:
+148 nonzero belt-A commands include 38 with no contact, 67 partial and 43 with
+pressure in all five samples; 103 clipped holds include seven with no contact.
+This denominator is shifted from interval-END rows and labeled. An unloaded
+shell motor is not called ineffective because its reaction affects balance.
+Independent MuJoCo kinematics (no dynamics integration) confirm analytic COM
+and all 724 preview margins/gaps/residuals; 26,264 scalar leaves agree.
+
+Keep native N. The next proposed causal diagnostic isolates loaded-belt LQR
+feedback in a bounded same-prefix window, preserving observer/feedforward/
+preparation and measuring balance, tracking and release. No such intervention
+or accepted cure is run here. Exact sources, failed compile/test setup stages,
+raw records and independent proofs are retained in a 93.9 MB local bundle plus
+compact repository evidence. [I-81 report/PDF/reproduction](iterations/2026-11-28/slope-response-trace/README.md).
+
+## 26. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

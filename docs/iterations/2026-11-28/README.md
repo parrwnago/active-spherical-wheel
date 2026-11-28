@@ -1,5 +1,20 @@
 # Research presentation notes — 2026-11-28
 
+**Latest: I-81 identifies loaded-belt downhill force pulses.**
+[Report and two-page PDF](slope-response-trace/README.md).
+One unchanged native102s prefix exactly reproduces all79 original precision
+fields and captures1,300 new1ms contact samples plus261 full preview snapshots.
+At100.900s ground adds10.598N downhill alongside3.234N gravity; whole-COM
+momentum confirms the sum. BeltA is actually loaded and inferred correctly.
+The preceding−.889m/s belt request clips−.300, preparation adds zero, and LQR
+roll/pitch correction is the largest command block. Other intervals brake.
+Thus neither gravity alone, wrong incoming preview nor misassignment alone
+explains these pulses. Loaded-belt feedback is a specific next causal-test
+target; no intervention, controller cure or default promotion is claimed.
+Observer-wrench agreement is close in this window; current pressure, interval
+pressure and filtered inference remain distinct. Independent numerical audits
+and exact source/data bundles preserve the evidence and setup failures.
+
 **I-80 checks the user's exact 101.5 s figure-eight frame.**
 [Descent review, frames and PDF](slope-edge-review/README.md).
 The native robot really descends an8.644° slope: measured vertical velocity

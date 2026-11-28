@@ -5774,6 +5774,155 @@ bound inputs and373 authored local links. Whitespace checks pass and production
 diff remains empty. These are read-only evidence checks, not new physics or
 software-suite test counts.
 
+## I-81 / 2026-11-28 / completed and analyzed, baseline retained: instrument slope response
+
+**Question / authorization:** User approves proceeding with the short unchanged
+baseline replay to distinguish correction routing, physical contact/observer
+timing, limited actuation and balance-target response. Keep gain-scheduled LQR,
+momentum observer, contact feedforward, native preparation and applied limits.
+No new force controller, estimator replacement, terrain camera or default change.
+Initial source revision `979932b8a4ead8e713f176c6db6ef3cbfaf57c3f`.
+
+**Planned conditions:** Original I-76 eight−1 native N, same Gazebo/DART Mars
+rough-stress path/gain bank, yaw158°, origin[−2.5953655642,10.4602524267]m,
+exact simulated q/v and inferred controller contacts. Nominal path133s;
+diagnostic stops102s. Record every physical1ms contact solve over100.50–101.80s
+while retaining original5ms held control. Focus preview anchors100.75–101.65s;
+their ≤120ms future horizon fits inside the recorded contact window. Exactly
+1,300 substeps/260 holds,261 full preview/controller snapshots and20,401 native
+precision rows are expected. No goal/full-route acceptance is claimed.
+
+**Implementation boundary:** Reuse the unchanged I-77/I-55 substep recorder,
+splitting run(5) into five run(1) calls only in-window. Save full native preview
+targets, selected horizons, plane, q/v, prior/new commands, returned diagnostics
+and observer/filter state after one original native call. No extra live update,
+second preview, state reset or future-truth input to control. Bound all exact
+sources/inputs/plugins before physics. Require all79 original precision arrays
+to match byte-for-byte through102s, except the explicit final unheld-command flag.
+
+**Analysis registered before new outcomes:** Align five completed contact solves
+with the next observer update; keep all signed/admitted/native-filter wrench
+sums separate. Compare native observer filtering with equally filtered physical
+interval wrench seeded from the native filtered state at100.5s, with no fitted
+delay. Distinguish instantaneous pressure, prior5ms pressure means/occupancy and
+filtered inference. Compare each past preview target with later physical contact
+samples, preserving horizon rounding and the difference between geometric
+exposure and actual load onset. Log actual requested/applied effort, force,
+motion, normal/lean changes and routing without equating correlation to cause.
+
+**Current status:** Harness/analysis/independent verifier implementation and
+contracts only. No I-81 physics or result at this entry. An unchanged trace is
+a diagnostic, not proof of static holding capacity or a causal intervention.
+Local evidence root: `results/slope_response_trace_20261128/`.
+
+**I-81 prephysics closure / launch:** Six focused runner contracts pass. A first
+unsealed pytest attempt auto-loads unrelated ROS launch-testing plugins and
+fails on missing lark before test collection; retain source/output and correct
+only the test environment with `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`. Analysis has
+nine final pure contracts, including COM kinematics (the prior eight are included,
+not added). Independent runner review approves unchanged-command/preview/observer
+ordering and read-only export. A verifier compile draft has a parenthesis error;
+preserve it and correct before freeze. No physics at those setup failures.
+
+Frozen protocol SHA256
+`dc916da7831c5930a3f2dbd838f076c812acde3555bbcfc4dbbbd5cec51fbfa8`
+binds94 sources and59 inputs, including unchanged I-76 source/input bindings,
+native recordings and the saved model XML. Both independent verifier sources
+are frozen. Gazebo-environment preflight passes. One separately source-bound
+launcher starts the102s prefix at07:45:52UTC, recording its actual process return
+code and stdout. No performance, completion, parity or causal result is claimed
+while it runs. Later main-analysis wrappers are new separately registered files;
+the numerical definitions/core remain fixed before physics.
+
+**I-81 completed replay / integrity:** One native102s diagnostic exits zero.
+All79 original precision fields match20,401 rows byte-for-byte, except the
+explicit final unheld-command mask. Capture has1,300 physical substeps,260
+completed holds and261 full native preview snapshots. One live controller,
+observer update and preview per control sample; no physical intervention or
+source/default changes. Original route133s remains unfinished by design, not
+a goal/full-route acceptance. Root output seal binds227 files, SHA256
+`c38602c73d4167c837a153619c37f963d72a1a201c80fbff89d2ed61132507aa`.
+All94 source/59 input bindings and full case manifest remain unchanged.
+
+**Material finding:** At completed100.900s, physical beltA contact adds
+**+10.598N downhill**, model gravity+3.234N, sampled total+13.833N, matching
+whole-COM momentum projection+13.828N. The held command was issued100.895s:
+correct inferred beltA, actual beltA pressure, requested belt speed−.889m/s,
+applied−.300m/s and preparation deltaZERO. Roll/pitch LQR contributes−.452,
+bodylinear−.198, bodyangular−.164 andXYposition−.078m/s to that belt request.
+These are algebraic blocks of one coupled controller, not independent causes.
+At101.000s ground adds+7.330N (beltA+9.686, shellA−2.356), gravity+2.966N;
+preceding belt request−.918 clips−.300 and preparation is again zero.
+
+This rejects a gravity-only description of these pulses; misassignment or an
+incoming-preview failure alone cannot explain them. It does not partition motor/
+passive/contact work or prove which feedback component causes the final error.
+Other intervals supply strong opposing contact force. Across the whole1.3s,
+contact/gravity integrals along the changing downhill direction are−3.180 and
++3.635Ns; these are not fixed-world momentum components. Belt actuation is
+prescribed surface speed, so speed saturation does not establish a finite belt
+motor torque envelope or static holding insufficiency.
+
+**Observer/timing/ref/preview:** Full260-interval force discrepancy RMS.02010N;
+same-filter physical-vs-observer intrinsic direction RMS.08265°, max.40917°,
+seeded once from native filtered wrench100.5s. Final controller normal can
+differ6.406° from current interval pressure normal; desired-up rate later peaks
+184.945°/s while native angular-rate reference stays zero. At100.900s normal
+gap is only.0106° and own up-error4.337°, so the later normal event is not
+silently assigned as the earlier pulse cause.
+
+Within181 interval-END focus rows, family differences are52 versuslast-solve
+pressure,56 versusprior5msmean;16 last-solve differences agree with interval
+mean,9 inferredfamilies have no pressure on any of its five samples. These
+are timing/representation comparisons, not clean observer-error counts. All724
+selected-horizon associations cover future samples, maxceil-rounding.857ms.
+For100 prepared targets, CV-vs-actualfuturepose margin disagreement on the same
+frozen plane is.175mm RMS/.533mm maxabsolute. Geometric exposure is not load
+onset, so43 future-loaded targets are not a43%-accuracy score.
+
+**Explicit posthoc supplement:** A new separately bound pulse ledger decomposes
+held command, contact family force and LQR blocks, without changing original
+definitions/gates. Across181 command-START focus holds,148 beltAnonzero commands
+include38 no-contact/67 partial/43 all-five pressure;103 clippedholds include
+7 no-contact/59 partial/37 all-five. Both181-row scopes differ by one shifted
+interval and are labeled. Unloaded shell reaction torque is not called
+ineffective. The full world impulse residual is approximately
+[.000079,.000194,.000041]Ns.
+
+**Independent validation / setup history:** COMforceclosure over260 intervals
+RMS.01971N/max.17146N against18.2466Nmodelweight. Private MuJoCo kinematics,
+without dynamic integration, independently reproduce COM and all724 original
+preview margins/gaps/residual velocities;26,264 scalar leaves agree, COMforce
+maxdifference1.45e−12N and anglemax1.41e−10°. Sixteen random-state kinematic
+checks pass. Nine analysiscontracts includeearlier8; sixrunnercontracts and
+threearchivecontracts are separate scopes, not a full repository suite or
+additional physical trials. Retain analysis-orchestrator and posthoc-pulse
+missing-space compile drafts and corrections, in addition to the prephysics
+failures above. Sources are separately sealed before new-array reads; frozen
+runtime/core/definitions and previous reports never change.
+
+**Decision:** Keep LQR/observer/feedforward selected. The strongest next causal
+target is loaded-belt feedback during transfer, with balance/tracking/release
+effects assessed separately. Such an isolated same-prefix intervention is
+proposed, not run or promoted. No new force controller or estimator is built.
+The unchanged trace identifies physical timing and command sources, not a cure.
+
+**Evidence / preservation:** [I-81 report, PDF, plots, summaries and reproduction](docs/iterations/2026-11-28/slope-response-trace/README.md).
+Compact evidence binds83 files plus its manifest,7.29MB, with389 exact
+source/structured-diagnostic archive members independently stream-hash checked.
+Full local raw archive93,890,599bytes/586 verified regular members has SHA256
+`361e762fa174ff7df312b40f41798487213dd471774f416efbd4a8a9240784a7`.
+It includes recorded NPZs/full previews, original registered prerequisites,
+final proofs/summary, failed stages and exact source. Explicit omission inventory
+has424 paths. Dated presentation notes, teammate handoff and standalone ChatGPT
+context are updated; large raw arrays remain local in the identified bundle.
+
+I-81 final repository QA checks383 authored local links, all83 compact file
+hashes and389 source/diagnostic archive members, independently hashes the full
+raw bundle, and rechecks all94 source/59 input bindings. Production-source diff
+is empty. These are evidence/documentation checks, not further physics or
+repository-suite results.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

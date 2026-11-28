@@ -1,0 +1,46 @@
+{
+  "belt_occupancy_rule": "For actual held command interval, classify positive belt pressure in0/1..4/5 captured solves. Also record native-contact presence and raw force to avoid equating zero pressure to no contact.",
+  "focus_held_command_anchor_window_s": [
+    100.75,
+    101.65
+  ],
+  "inputs": {
+    "results/slope_response_trace_20261128/analysis/completed_stage01/interval_rows.json": "092a68a885ce50e22ff510f2ff41146904eced6c4ca71f6d873a7f8208a48f83",
+    "results/slope_response_trace_20261128/analysis/completed_stage01/report.json": "9770c5d861b1a3d7693a4e376d73e60af07c347a4a250b8f07269f3988b6e512",
+    "results/slope_response_trace_20261128/analysis/core.py": "d2f063d5edbabe40b50bac94b9407c080d08bd2e1e3e5fc6d9aa23763809387f",
+    "results/slope_response_trace_20261128/analysis/definitions.json": "151a1c37df97d7177d85b8ccc23f864dafc98ffc66e17e0e142e42264e36f055",
+    "results/slope_response_trace_20261128/analysis/pulse_ledger.py": "aa15d8b0085cd326f65671440cd2557bd3d4b5d2f8164fca21f2a1384ad6510a",
+    "results/slope_response_trace_20261128/campaign/native102_stage01/child/campaign/runs/eight_m100_N/precision.npz": "a6aea7660768c4ede46e6d66b7581a176dab5728e5c1cf2437b87fbe0aa0df5e",
+    "results/slope_response_trace_20261128/campaign/native102_stage01/substeps.npz": "ad6fb834fea027093a6917bad1ac2cdf0292ae512091c28ef5cf46788e1a7286"
+  },
+  "iteration": "I-81",
+  "no_causal_intervention": true,
+  "no_new_physics": true,
+  "requested_diagnostics": [
+    "Past held-command and completed physical load occupancy; current request separately.",
+    "LQR18-state algebraic block decomposition at fixed selected rows.",
+    "Integral of contact projection onto changing downhill tangent is descriptive, not fixed-world momentum.",
+    "World-vector force impulse compared with whole-COM momentum change.",
+    "Per-family signed contact force and prior held prescribed belt world-surface-velocity vector, no power or actuator-work claim."
+  ],
+  "scope": "Explicit new posthoc diagnostic, requested after main results. No revised prephysics gates/definitions or controller.",
+  "selected_times_s": [
+    100.5,
+    100.75,
+    100.8,
+    100.835,
+    100.9,
+    101.0,
+    101.25,
+    101.495,
+    101.5,
+    101.505,
+    101.51,
+    101.515,
+    101.55,
+    101.65,
+    101.8
+  ],
+  "shell_reaction_caveat": "An unloaded shell torque can still affect the platform by reaction; do not call it ineffective.",
+  "utc": "2026-11-28T07:53:36.356846+00:00"
+}

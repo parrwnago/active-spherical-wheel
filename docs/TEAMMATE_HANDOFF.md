@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-80.
+experiment history and common presentation questions through I-81.
 
 ## Current system
 
@@ -70,6 +70,28 @@ actuates the selected research loop. Those modules/experiments are retained as
 research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
+
+**Latest: I-81 captures downhill traction during correctly assigned belt contact.**
+[New report, plots, PDF and exact evidence](iterations/2026-11-28/slope-response-trace/README.md).
+One unchanged102s Gazebo/DART native eight−1 prefix matches all79 original
+precision fields exactly. Physical1ms logging and full native preview snapshots
+do not change the selected LQR/observer/feedforward/preparation/caps.
+
+For the completed100.900s interval, actual beltA contact adds10.598N downhill
+and gravity3.234N; whole-COM momentum confirms13.833N sampled total. The
+preceding held belt speed is−.300m/s, clipped from−.889. Actual/inferred beltA
+agree and preparation adds zero. Roll/pitch LQR contributes−.452m/s, with
+velocity/position feedback making up most of the remainder. A similar pulse
+occurs at101.000s. Other intervals brake. Command sign alone is not world-force
+direction. This is not simply proof of inadequate static holding torque, and
+the belt model does not identify a finite motor torque envelope.
+
+Observer force matches interval physical force closely; misassignment/timing
+differences remain elsewhere. Preview exposure is geometry, not force onset.
+The next proposed causal test should isolate loaded-belt feedback while
+retaining the current architecture and assess balance plus tracking/release.
+It is not run in I-81. No motor/passive-work partition, complete departure cause
+or accepted controller improvement follows from this unchanged trace.
 
 **I-80 verifies supported downhill motion in the user's 101.5 s native frame.**
 [Exact frames, terrain/contact plots and PDF](iterations/2026-11-28/slope-edge-review/README.md).
