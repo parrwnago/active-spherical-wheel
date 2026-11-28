@@ -6287,6 +6287,162 @@ bundle hash and all14visualZIP members byCRC/SHA. Staged evidence bytes are
 checked against both manifests; whitespace passes and production-source diff
 is empty. These preservation checks add no physics or repository-suite claim.
 
+## I-85 / 2026-11-28 / completed and rejected: one bounded terrain-informed lean trial
+
+**Question / authorization / stop rule:** The user authorizes one loaded-motion
+terrain-informed attempt, explicitly asking to abandon the direction if not
+useful and focus on baseline motion recovery. One fixed candidate, one fresh
+native/candidate pair, no parameter search or outcome-dependent retries. Setup
+errors may be corrected in preserved named stages; physical regression is an
+outcome, not a reason to retune and replace the original result.
+
+**Change / conditions:** Original133s Gazebo/DART native I-76 eight−1/yaw158
+rough-stress route and original LQR gains/configuration remain. Both arms use
+0.60m/s operating belts after original0.30-based gain construction. Current
+observer contact/normal/load, holding support torque, gain selection, rolling
+allocation, synchronization, timed XY reference and torque bounds remain
+native. Both capture four ideal depth views20Hz,50msdelivery with exact
+simulated capture-time pose. No SLAM, new estimator, heading or path retiming.
+
+At99.5–104s only, candidate future-minus-current mapped normal contrast at
+current inferred foot / measured-CV0.50sahead supplies extra lean. Cap raw
+correction2°, smooth only correction withtau0.10s and≤1ms SSP-Heun steps.
+Quintic1sramps99.5–100.5 and103–104 have derivative≤1.875/s; allocate inner
+state rate.15−radians(2)*1.875≈.0845502rad/s so added tilt-chart/rate remains
+≤.15rad/s including ramps. Use SO(3) left Jacobian/equilibrium/actual-body
+frames for the additional angular-rate component; native zero-rate convention
+for its own changing target/yaw remains. Unknown map targets0; window output
+is exactly native outside its bounds. A declared combined-tilt safety guard
+cannot silently project/retune the candidate. Static contracts precede physics.
+
+**Comparison / declared acceptance:** Fresh native N must match all79 I-82
+B060 fields/26,601rows exactly before T. Require physical/observer prefix
+identity through first changed applied command. I-83 primary path-motion
+recovery uses the SAME unmodified native target RULE at each arm's current
+observer state; candidate changed-target error and same-clock N target error
+are separately reported. Require2sdwell entry≥1searlier than freshN, an
+uninterrupted acceptable tail through133s, non-null applied change and fixed
+full-route/focus tracking, balance, velocity, spin, acceleration, command-step
+and clipping nonregression margins. Compare1sdwell/firstreturn separately;
+do not replace the primary2sresult with a favorable secondary metric.
+
+**Status / evidence:** Isolated runtime, live harness and evaluator are being
+implemented under `results/terrain_lean_trial_20261128/`; no I-85 physical
+outcome exists yet. [Proposal and final evidence when complete](docs/iterations/2026-11-28/terrain-lean-trial/README.md).
+I-82/I-83/I-84 raw data, source, accepted/negative findings and defaults remain
+unchanged. A failed/null candidate will be parked rather than expanded.
+
+**Prephysics registration / launch:** Protocol SHA256
+`20da805827396858da0dc1c60d51b12e045bca0e3a137065319262fef1e82667`
+binds117sources/218inputs and rechecks original I-82 93/59/456 bindings plus
+the exact prior optical scene/asset closure. Thirteen unique policy contracts
+and seven unique runner contracts pass in BOTH local and actual Gazebo Python
+environments; repetitions are not26/14tests. Four prospective scorer contracts
+include earlierthree, and three presentation contracts are a separate scope.
+Actual physics environment probe:Python3.12.16,NumPy1.26.4,MuJoCo3.16.0.
+Preflight passes. Serial launcher records source/arguments and actual exits;
+N begins09:48:33UTC, with T blocked on full exact N baseline parity. No I-85
+performance outcome is claimed at launch.
+
+**Prephysics refinements retained:** Use byte comparison for all79fields,
+including signed zero and NaN payload, with a negative-zero fixture; value
+equality alone would not establish the declared bit identity. Scorer initially
+passed all79arrays into a finite-measurement assessment; some solver-truth
+fields legitimately contain unloaded NaN. Preserve that draft and restore
+the I-83 measured/reference/command11-field boundary with a new regression
+contract, without changing numerical gates. A draft same-clock-N attitude
+reference is preserved; before new outputs, use the common unmodified native
+RULE at each arm's actual observer state so different terrain positions are
+not automatically penalized and changed-target tracking cannot alone pass.
+These are prephysics implementation/definition clarifications, not tuning
+after candidate outcomes. Controller/estimator production sources remain exact.
+
+**Closed native replay / analysis-only semantic correction:** Fresh N completes
+133s with all79fields byte-exact I-82B060, observed process exit0; T starts
+09:56:14UTC. Independent review then detects a scorer bug before any new I-85
+array reduction or T precision/outcome exists: a final2sgoodtail was being
+called uninterrupted recovery after the FIRST2sentry. Preserve original frozen
+scorer/definitions and all117physics-source hashes. Separately registered
+`evaluate_stage02.py`/`definitions_stage02.json` implement the declared intent:
+the first2sentry must start the uninterrupted good tail through133s, with no
+later bad state. Five prospective contracts include earlierfour plus an
+early-good/bad/final-good counterexample; independent four contracts include
+the corresponding single-bad-state check. Register exact correction source
+and timing before new array reads; numerical bands,1simprovement threshold,
+controller policy and physics are unchanged. Keep the legacy-tail-only
+decision alongside the corrected decision for transparency. No rerun/tuning.
+
+**Separately registered old-baseline recovery diagnostic:** While the pair
+runs, inspect only original I-82B060105.4–106.1s around the known I-83velocity
+interruption. Source/input/window registered before reopening that old array;
+no new I-85 outputs or acceptance changes. At105.525s last1ms pressure is0
+while filtered inferred load is16.57N; pressure returns17.85N at105.530 and
+later reaches36.07N at105.725. The largest5ms actual-velocity and new-command
+changes both occur105.530; the new command acts AFTER the recorded state.
+This is not proof of a complete5ms airborne interval, nor does it exclude
+effects of the preceding held command or establish interval-force causality.
+
+Velocity residual crosses20mm/s at105.590 and peaks107.139mm/s while intended
+path error≤8.237mm, native up error≤1.258° and absolute tilt≤9.303°. All
+commands remain unsaturated, belt commands/preparation/heading/fade/clipping
+deltas are0, and inferred shellA identity has no transition (140/141saved
+last-step pressure labels agree). Rolling joint references remain small rather
+than spiking. Current normal-derived target relaxes from~9.3°to~5.6° while
+angular-rate reference is0. This narrows a baseline follow-up toward the
+contact/normal/reference transient and velocity-recovery response; it proves
+no complete cause or controller cure. Exact JSON,141row signals and checked
+plot remain under `analysis/baseline_recovery/` with timing qualifications.
+
+**I-85 completed physical comparison / decision:** N/T both reach133s,
+26,601rows with no physical failure and observed exits0. Fresh N all79fields
+match I-82B060 byte-for-byte. T's first applied difference is99.505s; inactive
+prefix/state/observer history checks pass. Canonical and independent decision
+STOP_CANDIDATE,36/37checks pass; only primary recovery benefit fails. Two-
+second uninterrupted recovery entry117.675→118.325s,0.650s LATER versus the
+required≥1s earlier (T≤116.675). Both then stay goodthrough133s. Legacy-tail-
+only decision alsoSTOP; semantic correction does not change acceptance here.
+
+Retain partial benefits: movingtimedRMS23.362→21.809mm, fulltimedpeak
+72.167→65.163mm, focusvelocityresidualpeak33.177→23.498mm/s. Focuspathpeak
+37.526→38.799mm andfinalgoal.877→.986mm worsen slightly; all nonregression
+checks pass. Fulltilt/speed/spin peaks are unchanged; actual-bound clipping0
+both. This does not meet the user's sustained-recovery objective. Honor the
+stopping instruction: park terrain assistance, no parameter tuning/newruns,
+keep native LQR/momentumobserver/feedforward and focus baseline recovery.
+
+Actual added lean peaks.479684°; added rate.04968rad/s; mapaccepted900/901
+active-gridrows(oneclockboundaryrow); outputs exactlyzero outsidewindow and
+actualfeedbackangularreference matches. MaxnormalizedN/Tinputdifference.1805
+includes closed-loop history effects. Bothcapture2,661batches/deliver2,660/
+pending1. Independent checks match60signalarrays,10sample-exact predicates,
+1,568numerical leaves andall gates. These overlapprimarychecks, not extra
+trials. SupplementalinterventionauditNumPy-boolJSON failure is preserved and
+fixed in newstage02; no numerical/controller change. All117/218/700bindings
+remain unchanged. New336frame eventmovie decodes; encodedframes/geometry
+inspected. PortableZIP12members/2,049,259bytes CRC+SHAverified,
+SHA256 `e3a60521c9c8abc712f5af1a83ae18bf3e80734a89aae27a44679c0e12e41718`.
+[I-85 complete record, video, PDF and baseline follow-up](docs/iterations/2026-11-28/terrain-lean-trial/README.md).
+
+**I-85 preservation:** Full local archive757,684,389bytes SHA256
+`950d57363ad251d904d9a2ae5c6b312f08dde40b6aa7b7f691036b8875cf9612`
+contains2,381stream-hashed/size-checked project members and4exact metadata
+members(2,385regular total),335original-path prerequisites and24explicit
+cache/curation omissions. All camera depths, policy records, raw physical
+arrays, models, exact sources, failed analysis stages and media are retained.
+Compact snapshot binds148files/6,583,460bytes plus manifest; its exactsource/
+metadata archive has902verified members. Handoff/contextrevision20 and dated
+presentation notes retain the failedobjective and partial benefits. No default
+or production-controller/estimator change; terrain assistance is parked.
+Final QA checks412authored local links, all148compact hashes plus manifest,
+902source-archive members, the independently rehashed full raw bundle and all
+12visualZIP members byCRC/SHA. All117source/218input/700closed-output hashes
+still match; production-source diff is empty. Authored/all other staged
+whitespace passes; the exact preserved partial intervention-stage01JSON ends
+after a key/space at the serialization failure and is deliberately exempted
+from whitespace cleanup to retain its original hash. Correct stage02 is valid.
+Staged compact blobs are verified against the manifest. These checks add no
+physical trial or full-repository-suite claim.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

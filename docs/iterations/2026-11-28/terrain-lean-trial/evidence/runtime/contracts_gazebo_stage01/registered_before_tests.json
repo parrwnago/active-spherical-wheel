@@ -1,0 +1,36 @@
+{
+  "utc": "2026-11-28T09:46:16.429255+00:00",
+  "scope": "Same13 synthetic policy contracts repeated in actual Gazebo environment; not26unique tests or new physical trials",
+  "command": [
+    "env",
+    "-u",
+    "PYTHONPATH",
+    "-u",
+    "LD_LIBRARY_PATH",
+    "-u",
+    "LD_PRELOAD",
+    "OPENBLAS_NUM_THREADS=1",
+    "OMP_NUM_THREADS=1",
+    "build/tools/bin/micromamba",
+    "run",
+    "-p",
+    "build/gazebo-env",
+    "python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "results/terrain_lean_trial_20261128/runtime",
+    "-p",
+    "test_terrain_lean.py",
+    "-v"
+  ],
+  "source_files": {
+    "terrain_lean.py": "7c39039a5915e2e4d9bfd4f1577e50b7ab77b34d57c20105fd3191d6a803dd12",
+    "POLICY.md": "f53ac64b42e590c78a293648933a3a2f800e81f52e3d28f720403314e6bfca3c",
+    "settings.json": "e4d16f17a130662cb896351e7c47c80e104ba3dccbd8760d8d953e5744d6a188",
+    "test_terrain_lean.py": "a2f283191655901b35a5165c07ca51b3cbeaa003a5d1bfbd27a83ccae82b91a1"
+  },
+  "recorded_array_reads": false,
+  "new_physics": false
+}

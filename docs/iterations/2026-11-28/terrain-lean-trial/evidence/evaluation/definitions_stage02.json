@@ -1,0 +1,126 @@
+{
+  "active_window_s": [
+    99.5,
+    104.0
+  ],
+  "analysis_correction": "Source-only semantic correction after fresh N completed but before any newI85arrayreads or Tprecision/outcome. Originalnumericthresholds and policy/physics unchanged; frozenstage01scorer retained, tail-only decision also reported.",
+  "arms": [
+    "N",
+    "T"
+  ],
+  "clipping": {
+    "any_channel_extra_seconds_max": 0.1,
+    "each_channel_extra_seconds_max": 0.1,
+    "terminal_unheld_excluded": true
+  },
+  "decision": "ACCEPT_SINGLE_CASE_ONLY iff every hard, primary and nonregression gate passes; otherwise STOP_CANDIDATE. No default promotion or cross-route robustness claim. One pair only, no post-outcome parameter changes. Strict spin recovery and timed tracking remain separately reported.",
+  "dt_s": 0.005,
+  "duration_s": 133.0,
+  "expected_rows": 26601,
+  "focus_s": [
+    100.5,
+    104.0
+  ],
+  "hard": [
+    "Fresh N all79 arrays exactly match old I82 B060 over26601rows",
+    "Both full133s finite and no physical failure",
+    "Both applied bounds/clip/prior-input identities pass",
+    "No heading helper",
+    "Candidate all79 fields before99.5s exactly match fresh N",
+    "Body/observer/truth state at99.5s matches inclusively",
+    "Candidate active-window normalized applied change at least0.001",
+    "T sidecar native_reference_quat finite200Hz export and equals recorded own target outside activewindow"
+  ],
+  "iteration": "I-85",
+  "no_new_estimator_or_force_controller": true,
+  "nonregression": {
+    "absolute_tilt_peak_deg": [
+      1.0,
+      1.0
+    ],
+    "acceleration_50ms_peak_m_s2": [
+      1.1,
+      0.1
+    ],
+    "final_goal_m": [
+      1.0,
+      0.01
+    ],
+    "focus_absolute_tilt_peak_deg": [
+      1.0,
+      1.0
+    ],
+    "focus_native_rule_up_peak_deg": [
+      1.0,
+      1.0
+    ],
+    "focus_path_peak_m": [
+      1.0,
+      0.01
+    ],
+    "focus_spatial_velocity_peak_m_s": [
+      1.1,
+      0.01
+    ],
+    "focus_world_z_abs_peak_rad_s": [
+      1.1,
+      0.05
+    ],
+    "full_timed_peak_m": [
+      1.0,
+      0.01
+    ],
+    "moving_global_peak_m": [
+      1.0,
+      0.01
+    ],
+    "moving_global_rms_m": [
+      1.1,
+      0.001
+    ],
+    "moving_timed_rms_m": [
+      1.1,
+      0.001
+    ],
+    "native_rule_up_peak_deg": [
+      1.0,
+      1.0
+    ],
+    "native_rule_up_rms_deg": [
+      1.1,
+      0.1
+    ],
+    "original_scale_command_step_peak": [
+      1.1,
+      0.05
+    ],
+    "world_z_abs_peak_rad_s": [
+      1.1,
+      0.05
+    ],
+    "xy_speed_peak_m_s": [
+      1.1,
+      0.01
+    ]
+  },
+  "operating_bounds": [
+    1.5,
+    0.6,
+    0.6,
+    0.6,
+    0.6
+  ],
+  "primary": {
+    "criterion": "I83 path_motion with common native attitude reference",
+    "dwell_s": 2.0,
+    "known_candidate_latest_entry_s": 116.675,
+    "known_native_entry_s": 117.675,
+    "minimum_active_normalized_applied_change": 0.001,
+    "minimum_entry_improvement_s": 1.0,
+    "persistence_condition": "The FIRST qualifying2s recovery entry must begin one uninterrupted good run through133s: primary.entry_s equals finalgoodtail.start_s and no laterbadstate exists. A later final2sgoodtail cannot repair an earlier reexit.",
+    "sustained_through_133_required": true
+  },
+  "recovery_definitions": "results/recovery_assessment_20261128/protocol/definitions.json",
+  "recovery_reference": "Both primary path-motion predicates use the same UNMODIFIED NATIVE REFERENCE RULE evaluated at each arm own current measured state and current observer normal. N uses its recorded native quaternion. T uses sidecar native_reference_quat exported before terrain shaping. Candidate shaped-target error and same-clock recorded N quaternion error are separate diagnostics, never substitutes in recovery/nonregression gates.",
+  "scope": "One fixed full-route native-versus-terrain-informed-lean comparison. Previously known I82/I83 baseline outcomes inform these thresholds; new trial outputs are not read before registration. No tuning/retry; failed, null or incomplete candidate stops this direction for the current task."
+}

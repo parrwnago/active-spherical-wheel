@@ -1,6 +1,20 @@
 # Research presentation notes — 2026-11-28
 
-**Latest: I-84 sees future terrain but preparation is inactive in this event.**
+**Latest: I-85 fails recovery benefit; park terrain assistance per the user.**
+[Video, PDF, full comparison and baseline follow-up](terrain-lean-trial/README.md).
+One fixed native/terrain-lean pair completes2×133s at the same0.60capacity;
+fresh native matchesall79oldB060fields. Extra lean peaks.480° with actual
+mapped observations. TrackingRMS23.362→21.809mm andpeak72.167→65.163mm
+improve, but uninterrupted2s recovery entry117.675→118.325s is.650s LATER,
+failing the≥1sbenefit requirement. Both stay goodafterward.36/37checks pass;
+canonical/independent and legacy/corrected persistence decisions allSTOP.
+Keep the native LQR/observer/feedforward, no tuning/retry. Old-baseline logs
+point to a105.53s contact/normal transient before velocity-band failure while
+commands are unsaturated, contact identity mostlycorrect and joint references
+small; complete interval-force causality remains unproved. Baseline velocity
+recovery is the next focus, with no new estimator or camera expansion.
+
+**I-84 sees future terrain but preparation is inactive in this event.**
 [Observed-map preparation audit](terrain-recovery-preview/README.md).
 Four-camera memory supplies accepted future centre/foot fits at all261focus
 and901dense anchors, but both native and mapped preparation blends are0

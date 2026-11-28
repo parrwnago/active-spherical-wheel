@@ -1,0 +1,1 @@
+Pre-freeze proposal used same-clock N quaternion for primary attitude. Root refined this to the common native reference RULE evaluated on each arm current state/observer, exported unshaped by T. No new trial arrays or physics existed/read; earlier draft retained for design provenance.

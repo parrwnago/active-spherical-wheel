@@ -1,0 +1,67 @@
+{
+  "iteration": "I-83",
+  "scope": "New descriptive recovery assessment of existing I-82 recordings; old outcomes already known. Definitions fixed before these new reductions, not blind preregistration and not a change to I-82 acceptance gates.",
+  "arms": ["B030", "B060"],
+  "event_anchor_s": 100.5,
+  "departure_search_end_s": 104.0,
+  "recording_end_s": 133.0,
+  "control_dt_s": 0.005,
+  "expected_rows": 26601,
+  "anchor_reason": "Start of previously selected I-81/I-82 fine-contact episode. This is a common clock anchor, not identified physical disturbance onset.",
+  "route": {
+    "kind": "i76_eight",
+    "anchor_origin_m": [-2.4, 10.0],
+    "local_offset_m": [0.5, 0.0],
+    "rotation_deg": 113.0,
+    "shape": "[0.5*sin(2*pi*u),0.25*sin(4*pi*u)]",
+    "start_s": 3.0,
+    "moving_duration_s": 120.0,
+    "full_polyline_vertices": 4097,
+    "intended_u_interval": [0.75, 1.0],
+    "projection": "Exact clipped segment projection on the original full-grid last quarter: 1025 vertices, 1024 segments; deterministic smallest-u tie. No parameter wrap or branch selected from actual outcomes.",
+    "lower_boundary_clamp": "Flag and report; not silently discarded or used as a different branch.",
+    "spatial_velocity": "At fractional projected u, invert u=10*r^3-15*r^4+6*r^5 on [0,1] with 60 fixed bisection iterations; nominal tangent velocity is R*c_prime(u)*30*r^2*(1-r)^2/120. Endpoints u=0/1 have zero nominal speed. This retains original speed profile in space without a timed-position deadline."
+  },
+  "thresholds": {
+    "path_distance_m": 0.02,
+    "timed_position_m": 0.02,
+    "velocity_error_m_s": 0.02,
+    "own_reference_up_error_deg": 2.0,
+    "absolute_body_tilt_guard_deg": 15.0,
+    "absolute_world_z_rate_rad_s": 0.05,
+    "primary_dwell_s": 2.0,
+    "secondary_dwell_s": 1.0,
+    "qualifying_exit_s": 0.1,
+    "comparison_tolerance": 1e-12,
+    "clock_grid_tolerance_s": 1e-9
+  },
+  "criteria": {
+    "geometric": "Intended-section path distance <=20mm.",
+    "path_motion": "Geometric AND full XY velocity residual to spatial nominal <=20mm/s AND own-reference up error <=2deg AND absolute tilt <=15deg. Primary translational/balance recovery; no free-heading angle target.",
+    "path_full": "path_motion AND abs(world-z spin)<=0.05rad/s. Separate strict motion recovery.",
+    "timed_motion": "Timed XY error <=20mm AND full XY velocity residual to original clocked reference <=20mm/s AND same up/tilt conditions.",
+    "timed_full": "timed_motion AND same absolute world-z spin bound."
+  },
+  "classification": {
+    "outside_at_anchor": "Left-censored onset; elapsed return from common anchor is reported, not claimed latency since physical disturbance onset.",
+    "inside_at_anchor": "Seek first bad-state run lasting >=0.1s whose first state is <=104s; if none, label no_qualifying_departure rather than zero-latency recovery.",
+    "return": "Search from anchor/departure for first entry starting a continuous good run with full dwell. Report both entry and confirmation times. First threshold entry is also reported without calling it sustained recovery.",
+    "dwell_samples": "At200Hz,2s requires401 consecutive states and1s requires201, with finite complete clock. Endpoint-only/insufficient-dwell return is right-censored.",
+    "later_exits": "Report first subsequent qualifying exit and count after primary confirmation, plus remaining-good fraction and last continuous good tail through133s. These can include new terrain disturbances; not automatically same-event overshoot.",
+    "later_tail": "A final uninterrupted good tail must meet2s to be sustained-through-end; distinguish this from an earlier2s recovery followed by new exits."
+  },
+  "report": [
+    "Initial/focus/fullpostanchor errors and rates",
+    "First entry,2s sustained and1s sensitivity for every criterion",
+    "Left/right censoring and no qualifying departure explicitly",
+    "Spatial progress and clocked progress lag, along/cross velocity residuals",
+    "Global geometric versus intended-section distance kept separate",
+    "Timed/reference-independent path recovery kept separate",
+    "Peak departure and integral error/excess over100.5to133,focus100.5to104",
+    "Held command clipping and command steps with each arm's actual bounds and original0.30 scale",
+    "Residual spin separately from translational return",
+    "Thresholds are engineering preferences, not stability guarantees; no causal attribution of every later departure"
+  ],
+  "new_physics": false,
+  "default_change": false
+}

@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-84 (revision 19).
+experiment history and common presentation questions through I-85 (revision 20).
 
 ## Current system
 
@@ -74,7 +74,43 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-84 finds mapped terrain, but the preparation-only candidate has no action in this episode.**
+**Latest: I-85's terrain-informed lean trial has small benefits but fails recovery; park this direction.**
+[Completed trial, PDF, evidence and reproduction](iterations/2026-11-28/terrain-lean-trial/README.md)
+· [99.5–133 s comparison video](../results/terrain_lean_trial_20261128/publication/video_stage01/native_vs_terrain_lean_99p5_133.mp4).
+Two fresh 133 s Gazebo/DART runs compare native N against one bounded mapped-
+terrain lean correction T, both with 0.60 m/s belt caps and unchanged original
+LQR design/gains, momentum observer and current-normal feedforward. Fresh N
+exactly reproduces all 79 I-82 B060 precision arrays. T uses a fixed 0.50 s
+future-minus-current mapped-normal contrast, at most 2° additional lean and
+0.15 rad/s additional angular reference, active only over 99.5–104 s.
+
+The result is **STOP_CANDIDATE: 36/37 checks pass**. Primary two-second recovery
+starts at **117.675 s for N and 118.325 s for T**, 0.650 s later; the candidate
+needed entry by 116.675 s. Both remain acceptable through 133 s after their
+entries. Moving timed RMS improves **23.362→21.809 mm**, peak timed error
+**72.167→65.163 mm**, and focus spatial-velocity peak **33.177→23.498 mm/s**.
+Focus path peak slightly worsens **37.526→38.799 mm** and final error
+**0.877→0.986 mm**; clipping is zero, and full tilt/speed/spin peaks are unchanged.
+Keep these partial benefits without calling the failed recovery objective solved.
+
+Evaluation uses the original native attitude rule at each arm's own current
+state, so changing T's target cannot manufacture balance success. An analysis-
+only persistence correction, after N completed and before T outputs were read,
+requires uninterrupted success from the first two-second entry through 133 s.
+The 117 original frozen sources remain unchanged; both legacy and corrected
+decisions are STOP. Independent reconstruction confirms the metrics and gates.
+
+The user explicitly asked to stop terrain-assisted work if this attempt was
+not good: **park it, with no tuning or retry**, and retain native LQR/observer/
+feedforward with the promising 0.60 capacity setting. A separate old-baseline
+diagnostic finds a short contact/normal transient near 105.53 s, followed by
+the 105.59 s velocity-band failure while path distance stays below 8.24 mm and
+own-up error below 1.26°. Commands are unsaturated, with no joint-reference or
+preparation spike. Last-1-ms solver samples do not establish complete force
+causality. The next question is baseline velocity recovery and its response
+to the current normal-derived reference; no new map or estimator is selected.
+
+**I-84 finds mapped terrain, but the preparation-only candidate has no action in this episode.**
 [Completed terrain-preview audit and stopping decision](iterations/2026-11-28/terrain-recovery-preview/README.md).
 This is a valid **STOP** for the selected candidate and episode, with no live
 trial or new physics. The runtime/shadow audit uses 1,158 unique anchors:
@@ -95,8 +131,8 @@ The causal replay captures 2,661 four-camera batches (10,644 frames), with 2,660
 delivered and one pending at the end. Ideal depth, exact capture-time pose,
 50 ms delivery latency and static terrain are assumptions. No MPC or new
 contact estimator is introduced. Keep LQR/observer/feedforward and the promising
-0.60 capacity variant. Using mapped terrain to anticipate **loaded** velocity
-or lean references is a new proposal, not implemented or validated by I-84.
+0.60 capacity variant. I-84 proposed using mapped terrain for **loaded** velocity
+or lean references; the later I-85 lean trial above is separate and is rejected.
 
 **I-83 separates fast first return from durable recovery.**
 [Recovery report, plots and PDF](iterations/2026-11-28/recovery-assessment/README.md)
@@ -831,6 +867,10 @@ selected movies are committed. [Portable workspace details](../research/README.m
 unsuccessful trials. The [dated presentation notes](iterations/2026-11-26/README.md)
 are the shorter current index. Useful checkpoints:
 
+- I-85: one actual terrain-informed lean pair improves some errors but its
+  two-second recovery is 0.650 s later. Both persistence interpretations stop
+  the candidate. Park terrain assistance as requested and investigate native
+  velocity recovery through short contact/normal transitions.
 - I-84: complete mapped future support in the selected episode, but zero native
   and mapped preparation weights mean no candidate command change. The valid
   stopping gate prevents an uninformative live trial; sensing generally remains

@@ -1,6 +1,6 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 19 — 28 November 2026, through I-84.** The selected controller
+**Revision 20 — 28 November 2026, through I-85.** The selected controller
 architecture remains the original native N. The 0.30 m/s belt-cap setup is the
 reference baseline; I-82's 0.60 m/s operating-cap variant is the leading
 experimental capacity setting after passing the current case's comparison.
@@ -9,15 +9,26 @@ This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest audit, **I-84**, completes with a valid **STOP** for a map-informed
+The latest trial, **I-85**, completes one fresh native-versus-terrain-lean pair
+and returns **STOP_CANDIDATE**, with 36/37 checks passing. Both use 0.60 m/s
+belt caps. Primary two-second recovery starts at 117.675 s for N versus
+118.325 s for T, 0.650 s later rather than the required one-second improvement.
+Both then stay acceptable through 133 s. Timed RMS and peak improve modestly,
+23.362→21.809 and 72.167→65.163 mm; that does not pass the recovery objective.
+Per the user's stopping instruction, park terrain assistance with no tuning
+or retry. Keep native LQR/observer/feedforward and investigate baseline velocity
+recovery through current-contact/normal-reference transitions. Section 29
+retains partial benefits, analysis corrections and causal limits.
+
+The preceding audit, **I-84**, completes with a valid **STOP** for a map-informed
 unloaded-drive preparation candidate. Mapped future support is complete at all
 261 focus and 901 dense anchors, but both native and mapped preparation weights
 are zero throughout 99.5–104 s, so the candidate changes no applied command in
 that episode. No live zero-action trial or new physics is run. This identifies
 an inactive control interface, not a visibility failure or a verdict against
-cameras. Section 28 records the evidence and limits. Anticipating loaded
-velocity/lean references from mapped terrain is a new proposal, not an I-84
-implementation or driving result.
+cameras. Section 28 records the evidence and limits. The subsequent I-85 trial
+implements one loaded-lean anticipation candidate; it is separate from this
+preparation-only audit and does not establish an accepted map-control method.
 
 The preceding assessment, **I-83**, measures recovery in the existing I-82
 recordings without new physics. From the common 100.5 s anchor, 0.60 m/s first
@@ -2253,14 +2264,87 @@ the result to replace the declared focus or launch a different live trial.
 I-82's promising 0.60 operating-cap variant, with I-83's fast-versus-durable
 recovery qualifications intact. Using mapped geometry to anticipate **loaded
 velocity or lean references**, while the observer checks current loaded support,
-is a **new proposal**. It is not implemented, evaluated or accepted by this
-preparation-only audit. Exact source snapshots, development stages and stopping
+was a **new proposal at I-84 completion**. It was not implemented, evaluated or
+accepted by that preparation-only audit; the following I-85 tests one lean
+candidate and rejects it. Exact source snapshots, development stages and stopping
 evidence remain part of the iteration history; do not turn this STOP into a
 claim of driving improvement or a general rejection of mapped terrain.
 
 [I-84 report, evidence and reproduction](iterations/2026-11-28/terrain-recovery-preview/README.md).
 
-## 29. Sources, attribution, and how to continue a discussion
+## 29. I-85: one terrain-lean trial fails the sustained-recovery objective
+
+The user authorizes one attempt, with the explicit instruction to abandon this
+terrain-assisted direction if it is not useful and return to baseline recovery.
+Two fresh **133 s Gazebo/DART** native eight −1 rad runs compare N with one
+terrain-informed lean candidate T. Both retain 0.60 m/s operating belt caps,
+the original 0.30-based configuration/gain design, momentum observer, current
+support inference, holding feedforward, rolling references and preparation.
+Fresh N reproduces **all 79 I-82 B060 arrays exactly** over 26,601 rows.
+
+T queries the delivered four-view terrain memory at the current inferred foot
+and 0.50 s ahead under measured constant XY velocity. Future-minus-current
+mapped-normal lean contrast supplies at most **2° extra tilt**. Only the added
+correction is filtered, with a 0.10 s time constant and smooth ramps over
+99.5–100.5 and 103–104 s. Its angular-reference contribution is bounded by
+**0.15 rad/s**, including the ramps; native references are returned exactly
+outside 99.5–104 s. The current observer normal is not replaced in holding,
+rolling or gain routing. The added rate differentiates only that correction;
+native changing-lean and carried-yaw zero-rate conventions remain.
+
+Primary balance/recovery is graded against the **unmodified native attitude
+rule at each arm's own current state**, not T's moved target. Shaped-target
+tracking and same-clock N attitude are separate diagnostics. The fixed screen
+requires at least one-second earlier two-second path-motion entry, uninterrupted
+acceptable motion afterward through 133 s, meaningful command action and
+tracking/balance/motion/clipping nonregression.
+
+| Metric | N | Terrain lean T |
+| --- | ---: | ---: |
+| Primary two-second entry | 117.675 s | 118.325 s |
+| Moving timed XY RMS | 23.362 mm | 21.809 mm |
+| Full timed XY peak | 72.167 mm | 65.163 mm |
+| Focus spatial-velocity peak | 33.177 mm/s | 23.498 mm/s |
+| Focus intended-path peak | 37.526 mm | 38.799 mm |
+| Final goal error | 0.877 mm | 0.986 mm |
+
+Both stay good through 133 s after their primary entries. Clipping is zero;
+full tilt, planar-speed and spin peaks are unchanged. The result is
+**STOP_CANDIDATE: 36/37 checks pass**. Only the primary entry gate fails:
+T is 0.650 s later, rather than entry by 116.675 s. The modest error benefits
+are retained, but do not establish the requested faster durable recovery.
+
+A source-only review found the original evaluator checked a good final tail
+rather than continuity from the first sustained entry. A separately preserved
+analysis correction, after N completed and before T output reads, enforces the
+intended uninterrupted condition. All 117 original frozen sources remain
+unchanged, and legacy/corrected decisions both STOP. Independent saved-record
+verification agrees on 60 signal arrays, ten predicate arrays, 1,568 numerical
+recovery/metric leaves and the gates. These are verification scopes, not an
+additive full-repository test count; both simulations completing is separate
+from acceptance.
+
+A separately registered posthoc diagnostic uses the **old I-82 B060** window
+105.4–106.1 s, not new I-85 trajectories. A short contact/load sample change
+near 105.525–105.530 s precedes the velocity-band failure at 105.590 s. The
+velocity residual reaches 107.139 mm/s while intended-path distance stays below
+8.24 mm and native own-up error below 1.26°. All commands are unsaturated;
+belts, preparation increments and rolling feedforward are zero, and joint
+references stay small. The changing current normal and native lean/holding
+response warrant investigation. Last-completed-1-ms solver samples are not
+interval forces or proof of a complete airborne interval; full causality remains
+unproven without an appropriately isolated diagnostic.
+
+**Decision:** park terrain assistance for this task, with no tuning, retry,
+new map module or estimator replacement. Keep native N and the promising 0.60
+capacity setting. Focus next on baseline velocity recovery and its response to
+current contact/normal-derived references. This follows the user's stopping
+instruction and preserves the partial benefits and unsuccessful iteration.
+
+[I-85 report, PDF, source history and reproduction](iterations/2026-11-28/terrain-lean-trial/README.md)
+· [99.5–133 s comparison video](../results/terrain_lean_trial_20261128/publication/video_stage01/native_vs_terrain_lean_99p5_133.mp4).
+
+## 30. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

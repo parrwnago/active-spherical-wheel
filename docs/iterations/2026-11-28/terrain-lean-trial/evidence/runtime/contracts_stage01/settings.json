@@ -1,0 +1,35 @@
+{
+  "combined_guard": "If norm(native_theta+extra)>28deg, raisePolicySafetyError and preserve policy.failure; no projection or retuning.",
+  "derived": {
+    "extra_tilt_rad": 0.03490658503988659,
+    "inner_rate_rad_s": 0.08455015305021264,
+    "maximum_envelope_rate_s": 1.875
+  },
+  "horizon_justification": "Fixed.5s exceeds50ms delivery plus2deg/.15rad_s=.283s; no saved outcome used to select horizon.",
+  "iteration": "I-85",
+  "outside_window": "Exact original quaternion and override_angular_reference=False; caller leaves vref untouched.",
+  "policy": {
+    "combined_tilt_guard_deg": 28.0,
+    "extra_rate_rad_s": 0.15,
+    "extra_tilt_deg": 2.0,
+    "horizon_s": 0.5,
+    "maximum_integrator_step_s": 0.001,
+    "ramp_s": 1.0,
+    "time_constant_s": 0.1,
+    "window_end_s": 104.0,
+    "window_start_s": 99.5
+  },
+  "rate_scope": "Only derivative of extra correction w*z; native baseline changing-lean and yaw zero-rate convention retained.",
+  "target_definition": "Radialcap2deg(theta(map_normal_future,a)-theta(map_normal_current,a)); currentfoot=centerXY-radius*observer_normalXY; futurefoot=currentfoot+.5*measured_worldXYvelocity. Both map queries use current delivered-map time. Add ONLY to native observer-normal lean.",
+  "unknown_map": "Targetzero; bounded delta-state return; no currentnormal replacement.",
+  "window_ramps_s": [
+    [
+      99.5,
+      100.5
+    ],
+    [
+      103.0,
+      104.0
+    ]
+  ]
+}
