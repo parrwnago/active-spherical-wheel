@@ -1,14 +1,27 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 9 — 27 November 2026, through I-74.** Latest experiment baseline:
-repository commit `45c29e8`; the selected live controller remains unchanged.
-I-74 tests an existing bounded starting-heading helper with the original LQR/
-observer/contact feedforward, with no active-controller or default change.
+**Revision 10 — 27 November 2026, through I-75.** Latest experiment baseline:
+repository commit `2136d8b`; the selected live controller remains unchanged.
+I-75 tests trajectory-facing heading with the original LQR/observer/contact
+feedforward, using a result-owned helper adapter and no live/default change.
 This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest experiment, **I-74**, compares native N with native plus bounded
+The latest experiment, **I-75**, compares native N with trajectory-facing
+heading T in six fresh S-path episodes. Both start aligned to the initial path
+tangent, yaw argument 149.242843°, rather than the old 45°. All complete; all
+212 setup checks pass, but 15/60 fixed control checks fail. Heading RMS N→T is
+78.26→9.43°, 96.52→22.87°, 94.45→23.61°. Moving timed XY RMS nevertheless
+worsens in all three phases: 19.66→33.82, 18.07→24.14, 20.08→27.01 mm. T ends
+81.93/56.99/26.11 mm from goal and none passes original four-condition settling.
+Pointing improves, with worse tracking. A +0.9 demand spike again comes through
+rolling joint-speed references entering LQR, not a large direct heading torque.
+Keep T experimental. This overlay retains zero LQR angular-rate references and
+translation-only rolling allocation; full reference coordination is untested.
+Section 19 gives the mechanism, exact rate distinction and limitations.
+
+The preceding experiment, **I-74**, compares native N with native plus bounded
 starting-heading hold H in six fresh S-path episodes. All complete and native
 data reproduce I-73 exactly. H improves final stopping in two phases, but fails
 12 of 66 fixed checks. At −1.0 rad moving XY RMS falls 47.31→24.38 mm and H
@@ -449,6 +462,7 @@ the selected live controller's adopted replacement.
 | [I-72: geometry-first velocity selection](iterations/2026-11-27/geometry-first-contact/README.md) | Choose one physical candidate per family nearest native N's equivalent point, then reuse fixed I-60 ranking/acceptance. Primary C has127 errors versus A124; acceptance6848 versus 6902. Full-primary point RMS/p95/max improve against N, but RMS/p95 worsen against A despite a better maximum. Four of ten gates fail. | Mixed spatial benefit, configured selector rejected; no tuning or live adoption. Section 16 retains the complete comparisons. |
 | [I-73: fresh S-path rolling-reference comparison](iterations/2026-11-27/contact-reference-control/README.md) | Nine new45s Gazebo/DART episodes, N/A/C ×three phases. Only rolling reference/feedforward records change. Allcomplete; C fails12/36controlchecks and noneof9fullysettles. −1.0tracking improves, +.3regresses, +.9littlechange. | No consistent motion gain; original pipeline retained. Section17 distinguishes positionreturn, motion and freeheading. |
 | [I-74: bounded starting-heading hold](iterations/2026-11-27/heading-hold-control/README.md) | Six new matched N/H S episodes, exact native replay. H improves stopping in two phases; only −1.0 meets the additional heading tolerance. Twelve of 66 fixed checks fail, including command magnitude/rotation peaks and+.9tracking. | H remains experimental. Section18 explains configuration-dependent helper availability and the rolling-reference/LQR demand spike. |
+| [I-75: trajectory-facing heading](iterations/2026-11-27/tangent-heading-control/README.md) | Six fresh aligned-start N/T episodes. Heading RMS improves in all three, but every moving XY RMS worsens; 15/60 fixed control checks fail. No T meets original four-condition settling. | T stays experimental. Section 19 distinguishes an improved heading objective from tracking, command feasibility and a fully coordinated yaw reference. |
 
 Every row is offline saved-log work, not a new driving improvement. Episodes
 were inspected before these later analyses; whole-episode holdouts reduce
@@ -1405,7 +1419,9 @@ The current helper damps absolute world-z rate; it does not yet track a
 trajectory yaw-rate reference. A reversal needs a declared choice between
 turning around and driving backward. Current S initial tangent is149.24°,
 versus initial body yaw45°, so fair startup alignment is a real design choice.
-No implementation or new experiment follows from this clarification alone.
+At that clarification, implementation and testing remained proposed. The later
+authorized I-75 below tests the S-path tangent with aligned startup and a
+declared stop policy; it does not change the I-74 result.
 
 For presentation terminology, **holonomic constraints** are configuration
 relations such as `f(q,t)=0`. Nonholonomic rolling restrictions constrain
@@ -1429,7 +1445,109 @@ Do not equate a weak heading controller with a mechanical impossibility, or
 count five actuator commands as proof of three independently controlled chassis
 motions. The selected baseline, prior results and parked work remain unchanged.
 
-## 19. Sources, attribution, and how to continue a discussion
+## 19. I-75: face the path tangent, with worse position tracking
+
+**Question and intervention.** The user wants the platform to point in the
+planned direction of travel rather than hold initial yaw. Six new Gazebo/DART
+runs compare native N and a result-owned T adapter at phases −1.0, +0.3 and
++0.9 rad. Same fixed moderate Mars site, S path, 5 ms control /1 ms physics and
+45 s episode: 3 s hold, 32 s motion, 10 s final hold. Original gains/LQR,
+momentum observer, support/load/normal/gain estimation, rolling/holding
+feedforward, preparation and final `[1.5,.6,.6 N m,.3,.3 m/s]` caps remain.
+No camera, new contact estimator, solver or dynamic contact forecast enters.
+
+**Fair initialization.** Both N and T use yaw argument 149.242843°, the initial
+geometric tangent. Paired q/v are exactly equal; all actual initial heading
+errors are approximately .04292°. These native data are new matched baselines,
+not numerical replays of the old 45° starts. Comparing old and new native
+numbers as a controlled method effect would confound initial orientation.
+
+**Heading reference at rest.** Desired heading is the analytic S-path tangent,
+113° + atan2(2π*.14*cos(2πu),1.2), with quintic progress u through the motion.
+It is defined even when speed is zero and retains the endpoint tangent in the
+final hold. Its derivative supplies desired turn rate. Raw=command throughout:
+no active reference governor or shaping lag. Sampled peaks .231862 rad/s and
+.0692701 rad/s² pass the registered .35/.5 reference-design guards; these are
+not actuator-feasibility guarantees. No progress reversal occurs on this S, so
+a general turn-around versus backward-driving policy is not established.
+
+**Measured rate.** With body-forward vector h=R[:,0] and
+hdot=omega_world×h, exact Euler heading rate is
+(hx*hdot_y−hy*hdot_x)/(hx²+hy²). Projection norm²≤1e−8 disables the helper with
+an explicit invalid flag. Physical world-z angular speed is separately logged;
+on a tilted body it is not substituted for the Euler derivative. T retains
+helper gain .2, damping .06, cap .15 N m, horizontal reaction budget .05 N m,
+load/lever eligibility and ±.5 rad used-error clamp. It damps rate error relative
+to the planned turn, rather than damping only absolute world-z rotation.
+
+**Known scope before results.** Native LQR angular-velocity references stay
+exactly zero and rolling allocation handles translation only. T is an overlay,
+not a complete coordinated planar-pose controller. Native rate feedback may
+oppose intended turns. Full consistent angular/rolling/LQR reference changes
+would be another intervention, especially with tilted world-up lean references.
+A negative overlay result does not establish mechanical impossibility or a
+holonomic/nonholonomic classification.
+
+| Phase | Heading RMS N→T, degrees | Euler-rate-error RMS N→T, rad/s | Moving XY RMS N→T, mm | Final XY N→T, mm |
+|---|---:|---:|---:|---:|
+| −1.0 | 78.26→9.43 | .20181→.06997 | 19.66→33.82 | 3.11→81.93 |
+| +0.3 | 96.52→22.87 | .11068→.11209 | 18.07→24.14 | 11.77→56.99 |
+| +0.9 | 94.45→23.61 | .36201→.16983 | 20.08→27.01 | 41.91→26.11 |
+
+Heading/rate metrics use 3–45 s including terminal state; moving XY uses timed
+reference over [3,35), not nearest geometric path distance. All six complete,
+finite and bounded. All 212 setup checks pass; **45/60 control checks pass**.
+Every phase improves heading RMS by at least 20%; rate RMS passes 2/3. Every
+moving XY RMS worsens. Additional failed margins include lean, position peaks,
+acceleration, Euler-rate peak, clipping-excess magnitude and command steps.
+No gates or parameters change after outcomes. Status **FAIL_TANGENT_SCREEN**.
+
+Only +0.3 N passes the original four simultaneous final-2 s settling criteria;
+no T does, and no case passes the five-condition version adding ≤10° heading.
+Final T heading errors are 5.41/17.68/7.46°. −1.0 T is almost stationary about
+81.93 mm off goal. Better pointing or little final motion does not establish
+successful goal return. Actual helper activity is substantial in all T runs.
+
+**Command spike, algebraic source.** A sealed bounded posthoc audit reconstructs
+ledgers at each maximum normalized clipping excess and fixed ±25 ms context.
+In +0.9 T at 15.515 s, shaft/shell-B rolling references −74.107/+206.791 rad/s
+versus actual +3.510/−7.594 generate LQR joint-rate blocks −17.740/+17.401 N m.
+Requested motors `[−18.290,.790,17.551]` clip to `[−1.5,.6,.6]` N m. Heading
+adds only `[0,.127,0]` N m; rolling additive feedforward/preparation/fade are
+zero at that row. Thus the large demand enters through rolling references and
+LQR velocity error, not direct helper magnitude. This is an algebraic source,
+not the complete physical cause or proof of a contact-Jacobian singularity.
+All actual caps hold. +0.9 request-excess RMS rises .00670→.39975 despite
+any-channel clipping occurring only .200%/.2556% of N/T held intervals.
+
+All raw/feedback angular refs verify zero. Rate-block/helper motor-vector
+opposition is descriptive and does not establish net physical yaw conflict.
+At 35/45 s −1.0 T has no eligible free shell and lever ≈.0138, while +0.3 T still
+has an eligible free shell with ≈.07 N m helper (35 s held; 45 s emitted but
+unheld). Not every remaining offset can
+be attributed to loss of helper availability. No new physical mapping or
+causal intervention is performed in this audit.
+
+**Verification and decision.** Five reference functions, twelve adapter/runner
+functions (four identity subtests included) and final 28 evaluation functions
+(inclusive of earlier 27) pass. Seven media functions include five reused and two new;
+six restore functions are reused. These are scoped checks, not the repo suite.
+Preserved reference-loader, venv-launcher and draft docstring failures precede
+physics/outcome analysis and do not hide failed physical episodes. Original
+83-source/17-input/48-output bindings stay unchanged. Posthoc algebraic
+identities are not extra software tests. Two post-encode video decode failures
+are preserved; separate sequential recovery verifies all 2,703 existing frames
+and unchanged encoded bytes, with no rerender or physics. Exact decoder resource
+cause remains unconfirmed. Sources, compact outcomes, PDF, full videos and
+portable restoration are in the
+[I-75 record](iterations/2026-11-27/tangent-heading-control/README.md).
+
+Retain original N as selected; T remains experimental. Preserve both the
+heading progress and tracking/stopping/command regressions for presentation.
+A full coordinated heading reference remains proposed and untested. Do not
+quietly promote the overlay or restart parked solver/HMM/PF work.
+
+## 20. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

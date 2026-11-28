@@ -4801,6 +4801,171 @@ and [§13.1](https://modernrobotics.northwestern.edu/nu-gm-book-resource/13-1-wh
 No new simulation, controller change or demonstrated path-facing result in
 this clarification; the original selected baseline remains unchanged.
 
+## I-75 / 2026-11-27 / analyzed, experimental not adopted: trajectory-tangent heading
+
+**Question / authorization:** User approves testing the clarified objective:
+face the desired trajectory tangent. I-74 remains a fixed-start-heading result;
+this is a new matched experiment, not a relabeling or tuning of that outcome.
+
+**Fixed plan:** Keep original native LQR/gain bytes, momentum observer, inferred
+contact/normal/load/gain routing, rolling/holding feedforward, preparation and
+final bounds. Compare native N with result-owned tangent-heading T, using the
+same .2 heading gain, .06 rate damping, .15 N m helper cap, .05 N m horizontal
+reaction budget and existing lever/load eligibility/error clamp. T changes
+the heading target and rate-error reference. Its derivative feedback uses exact
+Euler heading rate from the projected body-forward-axis derivative; physical
+world-z rate remains separately logged. Original N is untouched.
+
+**Reference / initialization:** Exact prior S source and moderate faceted Mars
+site, 3 s initial hold +32 s motion +10 s final hold. Analytic geometric tangent
+exists at rest; raw=command with no stateful governor if registered .35 rad/s
+rate/.5 rad/s² acceleration guards pass. This is a smooth reference-design
+assumption, not a claim of actuator feasibility. Hold the last endpoint tangent
+at the stop. Both N/T start with yaw argument149.242843° (initial path tangent),
+same XY/q/v and requested phase−1.0/+.3/+.9. Actual initial Euler error must be≤1°.
+This changes initial yaw from prior45° episodes, so create a fresh paired N
+baseline; do not demand numerical replay against those different starts.
+
+**Screen fixed before physics:** Each T phase needs at least20% lower raw-tangent
+heading-error RMS and exact Euler heading-rate tracking RMS over3–45 s versus
+matched N. Keep original tracking/lean/tilt/speed/50 ms acceleration, clipping
+fraction/excess and command-step guards; rate-error peak gets a nonregression
+margin. Intentional turning makes absolute rotation travel/peak inappropriate
+as primary nonregression targets; report them separately. Four/five-condition
+final settling is descriptive. Preserve the I-74 rolling-reference/LQR spike
+finding; this experiment does not change its allocation or erase that risk.
+
+**Planning-stage status (retained):** Pure reference, adapter/runner, focused
+contracts and frozen protocol are being prepared. No new physics/result yet. Reference-only stage01
+is registered before timed-grid checks; no new map search. Every source/setup
+correction, regression and decision will be preserved, with raw/full media local
+or in a named bundle. The original selected default remains unchanged.
+[I-75 record](docs/iterations/2026-11-27/tangent-heading-control/README.md).
+
+**Pre-run scope review:** Keep the declared heading-helper overlay. Native
+LQR angular-velocity references remain zero, and rolling allocation remains
+translational. Those existing rate terms can oppose intended turns; this tests
+the new helper alongside that baseline, not a coordinated planar-pose tracker.
+Changing both LQR angular references and rolling Jacobian/rate bookkeeping
+would be a separate material intervention, with the tilted world-up reference
+handled consistently. Preserve this known limitation before outcomes; exact
+K/error and command terms allow later algebraic inspection.
+
+**Reference check completed:** Stage02 snapshots source/inputs before 9,001
+reference samples. Raw=command exactly, no active governor; sampled rate peak
+.231862 rad/s and acceleration.0692701 rad/s² stay below .35/.5 guards.
+Analytic conservative bounds .269872/.232099 also pass. Tangent spans
+76.7572–149.242843° and has zero rate/acceleration in both holds. Five unique
+reference contracts pass. Stage01 loader fails before arithmetic due protocol
+key mismatch; preserve its source/trace before correcting loader only. No
+physics, contact inference or terrain sampling in reference validation.
+
+**Implemented / launched:** Twelve scoped adapter/runner functions pass
+(eight adapter, three protocol, one real-controller identity with four included
+subtests). N output/info/history identity includes tilted/angular-rate states;
+T versus original helper equivalence is scoped to level/pure-yaw constant-target,
+zero-rate cases. Exact Euler-rate finite-rotation derivative checks pass.
+First test launcher resolves the venv symlink to system Python and fails imports;
+preserve source/logs. Corrected stage02 uses the venv executable, same control
+source bytes, and passes all 12; no physical setup failure or source-law change.
+
+Before physics protocol
+`d579e1a21890b2da48dbd5c664ddbb692a1bb5c67f112262fbdf2b95500671ee`
+binds 83 control/runtime/runner sources and 17 inputs, with unchanged gain and
+Gazebo plugin bytes. Native preflight passes all registered cases/settings;
+six fresh isolated processes launch three at a time. Completion and scientific
+acceptance are pending at launch; source/gate/defaults remain fixed.
+
+**Completed outcome:** All six Gazebo/DART episodes complete 45 s without a
+declared physical failure; all 212 setup checks pass. Canonical evaluation runs
+once after source/input sealing. T fails 15 of 60 fixed control checks:
+**FAIL_TANGENT_SCREEN**. All three raw heading benefits pass; exact Euler-rate
+RMS benefit passes two of three. This is an executed but unaccepted intervention,
+not an incomplete campaign. All helper activity requirements pass.
+
+| Phase | Heading RMS N→T, degrees | Moving timed XY RMS N→T, mm | Final XY N→T, mm |
+|---|---:|---:|---:|
+| −1.0 | 78.26→9.43 | 19.66→33.82 | 3.11→81.93 |
+| +0.3 | 96.52→22.87 | 18.07→24.14 | 11.77→56.99 |
+| +0.9 | 94.45→23.61 | 20.08→27.01 | 41.91→26.11 |
+
+Heading uses 3–45 s; moving XY uses 3–35 s. All moving RMS errors worsen.
+Only +0.3 N passes the original four-condition final-2 s settling check; no T
+does, and no case passes the version adding ≤10° heading error. −1.0 T is
+almost stationary about 81.93 mm off goal. Final T heading errors are
+5.41/17.68/7.46°. Better pointing does not establish a successful goal return.
+Matched actual initial heading errors are .04292° and paired q/v agree exactly;
+raw=command target lag remains zero. Old 45° native comparisons remain separate.
+
+**Regressions:** −1.0 fails moving/peak/final XY and lean-RMS margins; +0.3 fails
+rate-RMS benefit, moving/peak/final XY, acceleration and command-step margins;
++0.9 fails moving XY, acceleration, Euler-rate-error peak, normalized clipping
+excess RMS and command-step margins. Any-channel clipping fractions N/T are
+.100%/0%, 0%/.0889%, .200%/.2556%. Rare request magnitude still matters:
++0.9 normalized excess RMS rises .00670→.39975 and step peak 1.184→3.014.
+All actually applied commands satisfy final caps. No post-result tuning occurs.
+
+**Bounded posthoc finding:** Sources/inputs seal before selecting each case's
+maximum normalized clipping excess and fixed ±25 ms context. In +0.9 T at
+15.515 s, rolling shaft/shell-B references −74.107/+206.791 rad/s versus actual
++3.510/−7.594 enter LQR joint-rate errors. Corresponding motor corrections
+are −17.740/+17.401 N m. Requested motors `[−18.290,.790,17.551]` N m clip
+to `[−1.5,.6,.6]`; direct heading contributes only `[0,.127,0]` N m. Rolling
+additive feedforward/preparation/fade deltas are zero. Full ledgers verify.
+This identifies the algebraic command source; contact-map singularity, timing
+and the complete physical cause are not established by this audit.
+
+Native raw/feedback body-angular references are exactly zero in all six runs.
+Motor-vector opposition between rate feedback/helper is descriptive only;
+without physical yaw mapping it does not prove a causal yaw conflict. At 35/45 s,
+−1.0 T helper is unavailable with both shells estimated loaded and lever≈.0138;
++0.3 T retains an eligible free shell and≈.07 N m helper despite residual error
+(35 s held; 45 s emitted but unheld).
+Loss of helper eligibility therefore cannot explain every offset.
+
+**Evidence and checks:** Output seal
+`8bacbf437eadc69eb4210f1c8f0d3d3f290ce437795da343b8f3a6aa5b2d892d`
+binds all 48 case artifacts. All 83 source/17 input bindings remain unchanged.
+Twenty-eight final evaluation functions pass, inclusive of earlier 27; five
+reference and twelve runner/adapter functions are separately scoped. Seven
+media functions include five reused/two new; six restore functions are reused.
+No summed repository-suite claim. Preserve the draft evaluator docstring syntax
+failure/correction alongside reference-loader and test-launcher setup history;
+these are not failed physical episodes. Posthoc algebraic identities are not
+additional software tests. Full-rate arrays, source snapshots, plots, full 45 s
+videos and reproduction are linked in the I-75 record; large media remain in
+its explicitly named companion bundle.
+
+Two media processes fail only during post-encode random-seek decoder startup;
+complete 901-frame streams already exist. Preserve failed stages/source/logs.
+Exact resource cause remains unconfirmed. Distinct sequential single-thread
+recovery decodes every frame and verifies all encoded bytes unchanged; no
+rendering/physics/controller rerun. Final three-video QA passes 2,703 frames,
+20 fps, 1600×960, 45.05 s encoded for saved 0–45 s, including the full goal
+hold. Terminal helper is a logged unheld output. Root and media visual reviews
+cover every phase at first/middle/final frames, with the same camera.
+
+**Decision / limitation:** Retain original native N selected; T remains
+experimental. Keep the positive heading result and negative tracking/stopping/
+command results. This tests one bounded helper overlay with original zero-rate
+LQR/translation-only allocation, not a fully coordinated planar-pose controller.
+It neither disproves trajectory-facing heading nor classifies mechanical
+holonomy. No new estimator, camera, solver work, hardware evidence or live
+contact forecast is introduced. A coordinated reference intervention remains
+proposed and untested.
+
+**Archive verification completed:** All 503 bound compact files, all 35
+members of the 114,886,138-byte raw/media bundle and all six explicit 50 ms
+plot-only subsets verify exactly. The archived restore runs in a fresh isolated
+fixture, recreates 33 result-owned raw/video payloads and the exact gain cache,
+preserves an unrelated sentinel and installs no live source/plugin. Root also
+independently verifies every compact hash/size and reviews plots/video stills.
+Compact manifest SHA
+`07d0a24392cda7fd289f1bef12a75d9b3fef8d9c78137728d3cd960265ca5fe2`;
+bundle SHA
+`a177600220f0d12d24b4ef38361d25341e284abfe5f583698f33bec8f01e5ccd`.
+[Final archive/restore receipt](docs/iterations/2026-11-27/tangent-heading-control/archive_verification/receipt.json).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

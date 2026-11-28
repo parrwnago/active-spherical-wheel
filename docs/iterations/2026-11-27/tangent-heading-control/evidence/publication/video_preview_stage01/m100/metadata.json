@@ -1,0 +1,275 @@
+{
+  "absolute_tilt": "acos(world vertical dot body up), from recorded quaternion",
+  "both_methods_and_all_phases_preserved": true,
+  "dimensions": [
+    1600,
+    960
+  ],
+  "display_terrain": "Visual height field sampled from the original Mars DEM; original rock/lava meshes. Display interpolation is not a new collision or contact evaluation.",
+  "euler_heading_rate": "Derivative of the projected forward-axis angle from recorded pose/body angular velocity; compared with logged exact Euler derivative.",
+  "fps": 20,
+  "frames": 6,
+  "frozen_complete_reference": {
+    "duration_s": 32.0,
+    "endpoint_policy": "Exactly zero velocity and acceleration before and after motion.",
+    "forward_m": 1.2,
+    "geometry": "origin + R113deg @ [1.2*u, 0.14*sin(2*pi*u)]",
+    "geometry_heading_deg": 113.0,
+    "goal_hold_s": 10.0,
+    "initial_heading_deg": 149.2428430702093,
+    "kind": "i73_smooth_s",
+    "lateral_m": 0.14,
+    "origin": [
+      -2.4,
+      10.0
+    ],
+    "origin_policy": "Fixed original world origin, no measured-state reanchor or reset.",
+    "progress": "u = 10*r^3 - 15*r^4 + 6*r^5; r=(t-3)/32 clipped to [0,1]",
+    "start_s": 3.0,
+    "total_duration_s": 45.0
+  },
+  "full_recorded_window_s": [
+    0.0,
+    45.0
+  ],
+  "heading_error": "Shortest wrapped angular difference between actual Euler yaw and raw desired path tangent; unwrapped yaw is also displayed.",
+  "heading_motor_norm": "Euclidean norm of helper motor-command torques; not a world-frame yaw torque measurement.",
+  "heading_parameters": {
+    "heading_actuation": "shells",
+    "heading_damping": 0.06,
+    "heading_gain": 0.2,
+    "heading_reference": "start",
+    "heading_roll_budget_Nm": 0.05,
+    "heading_torque_limit_Nm": 0.15
+  },
+  "heading_reference_parameters": {
+    "max_acceleration_rad_s2": 0.5,
+    "max_rate_rad_s": 0.35
+  },
+  "heading_target": "Recorded raw planned geometric tangent; bounded command stream is separate and verified equal for this C2 path. Actual helper target is N OFF or T planned stream.",
+  "iteration": "I-75",
+  "methods": [
+    "N",
+    "T"
+  ],
+  "no_physics_or_controller_execution": true,
+  "path_heading_initial_deg": {
+    "m100_N": 149.2428430702093,
+    "m100_T": 149.2428430702093,
+    "p030_N": 149.2428430702093,
+    "p030_T": 149.2428430702093,
+    "p090_N": 149.2428430702093,
+    "p090_T": 149.2428430702093
+  },
+  "phase": "m100",
+  "phase_definition": "Requested ground-relative initial configuration; setup adjusts the actual shaft joint for terrain normal.",
+  "physical_world_yaw_rate": "world-z component of recorded angular velocity, not Euler yaw derivative",
+  "playback_speed": 1.0,
+  "raw_reference_up_error": "acos(recorded body up dot recorded raw reference up)",
+  "reference_lean": "acos(world vertical dot reference up), from recorded raw reference quaternion",
+  "reference_marker": "Always frozen full raw path(t), including after a truncated actual run.",
+  "rendered_state_source": "Unmodified full-precision recorded exact_qpos/qvel/time from precision.npz.",
+  "renderer": "MuJoCo: saved Gazebo poses only",
+  "requested_start_phase_rad": -1.0,
+  "rollout_precision_format_checks": {
+    "m100_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.529671807229079e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.3522085612626142e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.76699982598916e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "m100_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.53473961118334e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.3792908443454053e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.76699982598916e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "p030_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.767941472749726e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.3771613477663323e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.76699982598916e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "p030_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 3.2416483719543976e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.728765254924383e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.76699982598916e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "p090_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7675240111288986e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.3187681819081263e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.76699982598916e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "p090_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.768324206594343e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.3825215933470645e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.76699982598916e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    }
+  },
+  "root_output_seal_verification": {
+    "cases": [
+      "m100_N",
+      "m100_T",
+      "p030_N",
+      "p030_T",
+      "p090_N",
+      "p090_T"
+    ],
+    "passed": true,
+    "protocol_sha256": "d579e1a21890b2da48dbd5c664ddbb692a1bb5c67f112262fbdf2b95500671ee",
+    "root_seal_sha256": "8bacbf437eadc69eb4210f1c8f0d3d3f290ce437795da343b8f3a6aa5b2d892d",
+    "route_source_matches_executed": true,
+    "verified_root_file_count": 48
+  },
+  "shared_camera": {
+    "actual_and_reference_xy_bounds_m": [
+      -2.9291451361782572,
+      -2.3915020366663895,
+      9.988997319851618,
+      11.160881073215231
+    ],
+    "actual_camera_lookat_m": [
+      -2.660323586422323,
+      10.574939196533425,
+      1.3362664082995344
+    ],
+    "all_six_paths_included": true,
+    "azimuth_deg": 112.0,
+    "distance_m": 2.6750140053817804,
+    "elevation_deg": -34.0,
+    "lookat": [
+      -2.660323586422323,
+      10.574939196533425,
+      1.2762664082995343
+    ],
+    "render_terrain_bounds_m": [
+      -3.6291451361782574,
+      -1.6915020366663895,
+      9.28899731985162,
+      11.86088107321523
+    ]
+  }
+}

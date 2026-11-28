@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-74.
+experiment history and common presentation questions through I-75.
 
 ## Current system
 
@@ -71,7 +71,36 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-74 bounded heading hold improves two stops, with important regressions.**
+**Latest: I-75 follows the desired path heading, with a clear tracking tradeoff.**
+Six fresh matched N/T S runs complete 45 s. Both start at the initial path tangent,
+yaw argument 149.242843°, so native numbers are a new baseline, not matched old
+45° I-73/I-74 replays. T keeps the original LQR/observer/contact feedforward and
+helper budgets, changes its target to planned geometric tangent, and tracks
+its desired rate using exact Euler heading-rate feedback. Raw and command
+targets coincide with no active reference shaping.
+
+Heading RMS N→T is **78.26→9.43°, 96.52→22.87°, 94.45→23.61°**. Moving timed
+XY RMS worsens in all phases: **19.66→33.82, 18.07→24.14, 20.08→27.01 mm**.
+T final position errors are **81.93/56.99/26.11 mm**, heading errors
+**5.41/17.68/7.46°**. No T passes original four-condition settling; only +0.3 N
+does. All 212 setup checks pass, but 15/60 fixed control checks fail.
+
+At +0.9 T, 15.515 s, large rolling shaft/shell-B references −74.1/+206.8 rad/s
+create LQR velocity corrections around −17.74/+17.40 N m. Requested motors
+−18.29/.79/17.55 clip to −1.5/.6/.6 N m, while the direct heading term is only
+.127 N m. This identifies the algebraic demand source; no contact singularity
+or whole-path physical cause is proved. Final helper availability differs by
+configuration: −1.0 T is unavailable at the endpoint samples, while +0.3 T
+remains eligible despite an offset. Eligibility loss cannot explain every residual.
+
+Keep T experimental and original N selected. The overlay leaves native LQR
+angular-rate references zero and rolling allocation translation-only; it does
+not test a fully coordinated planar-pose controller or settle holonomy. Source/
+input seals, setup corrections, all six results, full-hold videos and restore
+instructions are retained. No post-result tuning or default change.
+[Full I-75 record, PDF, videos and reproduction](iterations/2026-11-27/tangent-heading-control/README.md).
+
+**Previous: I-74 bounded heading hold improves two stops, with important regressions.**
 Six fresh matched N/H S-path runs all complete. H keeps the same LQR/observer/
 contact feedforward and enables the existing starting-heading helper, gain .2,
 rate damping .06, torque cap .15 N m and horizontal reaction budget .05 N m.

@@ -1,5 +1,35 @@
 # Research presentation notes — 2026-11-27
 
+**I-75: trajectory-facing heading improves pointing but worsens moving path
+tracking at all three starts; keep it experimental.**
+[Full record and videos](tangent-heading-control/README.md),
+[motion/heading plot](tangent-heading-control/evidence/publication/plots_stage01/motion_comparison.png),
+[two-page PDF](tangent-heading-control/evidence/publication/plots_stage01/tangent_heading_comparison.pdf).
+
+- Six new 45 s Gazebo/DART N/T episodes complete; all 212 setup checks pass,
+  but 15/60 fixed control checks fail. Completion is separate from acceptance.
+- Both now start at the initial path tangent, yaw argument 149.242843°. These
+  paired native baselines differ from the earlier 45° starts; do not compare
+  their numbers as matched I-73/I-74 replays. Same S/site and three phases.
+- Heading RMS N→T: **78.26→9.43°, 96.52→22.87°, 94.45→23.61°**. Moving timed
+  XY RMS: **19.66→33.82, 18.07→24.14, 20.08→27.01 mm**. Pointing improves
+  strongly while every moving position RMS worsens. Rate-RMS benefit passes 2/3.
+- Final T goal errors are **81.93/56.99/26.11 mm**, heading errors
+  **5.41/17.68/7.46°**. No T meets original four-condition final settling;
+  only +0.3 N does. No case meets the five-condition version adding heading.
+- T uses planned continuous geometric tangent and its rate, exact Euler heading
+  rate feedback, original helper limits/eligibility and unchanged LQR/observer/
+  feedforward. Raw=command, no reference shaping lag. It remains an overlay:
+  original LQR angular-rate refs are zero and rolling allocation is translational.
+- Posthoc +0.9 T at 15.515 s: rolling references −74.1/+206.8 rad/s enter LQR
+  rate errors, producing large demands; requested motors −18.29/.79/17.55 N m
+  clip to −1.5/.6/.6, while direct heading adds only .127 N m. Command source
+  is established; a contact-map singularity or complete physical cause is not.
+- Preserve setup-loader/venv/draft-syntax corrections, frozen gates, spike ledgers,
+  all full-hold videos and rejected outcome. No default promotion or tuning;
+  original controller remains selected. Coordinated yaw/rolling/LQR references
+  would be a new experiment, not a correction silently folded into this result.
+
 **I-74: existing bounded heading hold improves stopping in two starts, but
 does not pass robust heading/tracking/command checks.**
 [Full record and videos](heading-hold-control/README.md),
@@ -25,8 +55,9 @@ does not pass robust heading/tracking/command checks.**
   package contracts are largely reused. No solver/camera/HMM revival or retuning.
 - Later user clarification: the desired heading should follow the trajectory
   tangent. I-74 holds initial yaw and does not test that objective. A moving
-  target, stop/reversal policy and fair initial alignment remain proposed;
-  omnidirectional translation alone does not prove independent planar yaw control.
+  target, stop/reversal policy and fair initial alignment were then proposed;
+  I-75 above tests a continuous S tangent with aligned starts. Omnidirectional
+  translation alone does not prove independent planar yaw control.
 
 **I-73: fresh S-path contact-reference intervention completes, with mixed
 tracking and no demonstrated settling improvement.**

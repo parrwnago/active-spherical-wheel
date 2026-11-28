@@ -1,0 +1,34 @@
+{
+  "utc": "2026-11-28T04:39:20.865048+00:00",
+  "status": "SETUP_FAILURE",
+  "source_preserved_before_correction": true,
+  "files": {
+    "results/tangent_heading_control_20261127/runtime/heading_reference.py": {
+      "sha256": "ff788accb9ca0da647099453517f7c0eb8b448cad35ce84e54d0b447002d74ad",
+      "bytes": 5420
+    },
+    "results/tangent_heading_control_20261127/runtime/reference_preflight.py": {
+      "sha256": "7b8ad23b1a3ed8b9c9180b14e305d4eda36f2f2cfad812d480575b832c3997f6",
+      "bytes": 4301
+    },
+    "results/tangent_heading_control_20261127/runtime/test_heading_reference.py": {
+      "sha256": "aaccab96197db50c7b4dbca0270fa89b24b3256e28882cf68bf99204f066b6f3",
+      "bytes": 2632
+    },
+    "results/tangent_heading_control_20261127/runtime/route.py": {
+      "sha256": "f740cb028cc883ff948ab080390e7a45c580c8f568c55248661556d338222dfd",
+      "bytes": 3775
+    },
+    "results/tangent_heading_control_20261127/protocol/reference_stage01.json": {
+      "sha256": "a5d094aa05cd532fc33aade6dcb8343543795185f40f2d30e6e09c2ea4257c9b",
+      "bytes": 1644
+    }
+  },
+  "reason": "Preflight loader expected max_rate_rad_s in reference_parameters, but root protocol stores maximum_absolute_heading_rate_rad_s under reference_bounds.",
+  "exception": "KeyError: 'max_rate_rad_s'",
+  "stage_directory_created_by_failed_command": false,
+  "no_reference_grid_arithmetic": true,
+  "no_physics": true,
+  "no_case_outputs": true,
+  "correction_scope": "Read-only preflight protocol loader only; generator/control/path unchanged."
+}

@@ -1,0 +1,23 @@
+test_native_identity (unittest.loader._FailedTest) ... ERROR
+test_exact_paired_phases_and_aligned_initial_yaw (test_runner.RunnerContracts) ... ok
+test_only_T_enables_heading_and_reference_guard_settings_are_fixed (test_runner.RunnerContracts) ... ok
+test_rejects_new_gain_or_allocation_or_unregistered_heading_cost (test_runner.RunnerContracts) ... ok
+
+======================================================================
+ERROR: test_native_identity (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_native_identity
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/home/parrwnago/active-spherical-wheel/results/tangent_heading_control_20261127/campaign_tools/test_native_identity.py", line 14, in <module>
+    import mujoco
+ModuleNotFoundError: No module named 'mujoco'
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+FAILED (errors=1)

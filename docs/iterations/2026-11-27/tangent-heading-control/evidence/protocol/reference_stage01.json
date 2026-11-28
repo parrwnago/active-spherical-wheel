@@ -1,0 +1,12 @@
+{
+  "iteration": "I-75",
+  "status": "registered reference-only validation before timed-grid arithmetic",
+  "route": "Exact I73/I74 S source bytes, origin[-2.4,10], R113deg*[1.2u,.14sin(2piu)], quintic progress3+32+10s",
+  "heading_policy": "Analytic unwrapped geometric tangent, valid at zero translational speed; identical raw and command streams. Hold endpoint tangent in initial/final rest, with zero heading rate/acceleration.",
+  "reference_bounds": {"maximum_absolute_heading_rate_rad_s": 0.35, "maximum_absolute_heading_acceleration_rad_s2": 0.5},
+  "sampling": {"start_s": 0.0, "end_s": 45.0, "step_s": 0.005, "include_both_endpoints": true},
+  "decision": "Freeze generator, route, preflight and this protocol before sampling. Validate exact raw=command, continuity, endpoint direction/rates, analytic derivative agreement and all reference bounds. Failure preserves the stage and prevents physics; no silent clipping or result-dependent governor.",
+  "initial_fixture": {"yaw_argument_deg": 149.2428430702093, "same_for_native_and_tangent": true, "maximum_actual_initial_raw_heading_error_deg": 1.0, "note": "Terrain lean can slightly change actual Euler yaw; identical paired q/v is required, not equality to the yaw argument at machine precision."},
+  "rate_frame": "Reference heading rate is Euler heading derivative. T feedback uses exact measured Euler heading rate from the projected forward axis; physical world-z omega is a separate diagnostic.",
+  "scope": "No plant construction, dynamics integration, contact inference or new terrain sampling. Numeric bounds are reference-design assumptions, not motor specifications."
+}

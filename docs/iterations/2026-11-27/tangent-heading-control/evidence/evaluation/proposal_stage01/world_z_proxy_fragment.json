@@ -1,0 +1,128 @@
+{
+  "iteration": "I-75",
+  "scope": "Fresh matched native N versus trajectory-tangent helper T; both start at the same trajectory-aligned requested yaw. Raw geometric targets remain the primary objective; no tuning or automatic adoption.",
+  "clock": {
+    "dt_s": 0.005,
+    "start_s": 0.0,
+    "total_s": 45.0,
+    "moving_s": [
+      3.0,
+      35.0
+    ],
+    "heading_s": [
+      3.0,
+      45.0
+    ],
+    "hold_s": [
+      35.0,
+      45.0
+    ],
+    "late_s": [
+      29.0,
+      45.0
+    ],
+    "final_settling_s": [
+      43.0,
+      45.0
+    ],
+    "moving_interval": "Half-open [3,35); all physical-state windows otherwise include actual terminal state.",
+    "command_interval": "Exclude final emitted but unheld command; include actual prior input for command-step metrics."
+  },
+  "heading_benefit": {
+    "raw_heading_error_rms_ratio": 0.8,
+    "raw_planar_yaw_rate_proxy_error_rms_ratio": 0.8,
+    "rate_tracking_error_peak_nonregression": {
+      "ratio": 1.1,
+      "add_rad_s": 0.05
+    },
+    "definition": "Each T phase must reduce raw geometric-tangent wrapped heading-error RMS and physical world-z rate tracking RMS to the raw planar tangent yaw-rate by at least20percent over[3,45]s versus matchedN. Because body is tilted, world-z angular velocity is NOT Euler yaw derivative; this rate metric is the helper-control objective/proxy, not exact orientation-rate tracking. Exact Euler yaw-rate tracking is separately reported.",
+    "raw_target_policy": "Planned S geometric tangent at zero speed; start/end tangent retained in both holds. Desired heading/rate never follow measured drift.",
+    "shaped_target_policy": "Report raw-to-command target lag and actual-to-command tracking separately; shaped target never replaces raw primary objective."
+  },
+  "helper_activity": {
+    "motor_torque_norm_threshold_Nm": 0.0001,
+    "definition": "Count actual held intervals with norm of recorded native heading_command[:3] at least threshold. Record original helper eligibility and lever/load masks separately.",
+    "limitation": "This is helper activity before fade/clipping, not a full applied-command counterfactual. Actual clipping and fade are reported separately.",
+    "minimum_held_seconds_per_T_phase": 0.1
+  },
+  "settling": {
+    "sustained_s": 2.0,
+    "goal_radius_m": 0.02,
+    "body_xy_speed_m_s": 0.02,
+    "world_z_angular_speed_rad_s": 0.05,
+    "raw_reference_up_error_deg": 2.0,
+    "heading_error_deg": 10.0,
+    "scope": "Descriptive original4conditions and original4 plus raw final geometric heading error<=10degrees. No allphase settling-only adoption claim."
+  },
+  "hard_contracts": [
+    "All six episodes complete45s, finite physicalstate/held commands, no declaredphysicalfailure, applied=clip(requested), caps and actualpriorhistory valid.",
+    "Samephase N/T initial q/v/previousactualinput byteexact. Requested yaw equals initial geometric tangent in protocol; actual initial Euler yaw and small alignment error are reported rather than assumed identical to yaw parameter.",
+    "RawXY/V/A clocks and rawtangent heading/rate/acceleration are common and match independent frozen Sgeometry/progress at actualtimestamps. Fullpath and finalgoal stayfixed afterearlystop.",
+    "Only declared tangent-heading reference/helper adapter affectsT; native LQR,gaincache,observercount,normal/load/support/reference/preparation algorithms remain. Currentvalues can differ after trajectories diverge.",
+    "Raw and shaped telemetry distinguish both objectives. Shaped rate/accel bounds and command/helper identities verified; N heading helper remains zero.",
+    "No I73/I74 numerical baseline replay gate: common startingyaw is intentionally changed for BOTH methods. Preserve those historical datasets and do not compare them as matched currentbaseline."
+  ],
+  "diagnostic_only": [
+    "Actual quaternion-derived Eulerheadingrate and its raw/shapedreference tracking errors; physicalworldzrate reported separately.",
+    "Absolute physicalrotation/travel and angularspeed are descriptive, since followingthe tangent requires intentional turning.",
+    "Raw versus shaped heading/rate lag, desired yawacceleration, helpereligibility/lever/load/torque and activity beforefade/clipping.",
+    "Originalfour/five-condition goalhold settling and geometrictrackdistance; finalunheldcommand excluded fromcommandstatistics.",
+    "Actual jointspeed peaks and huge rolling-reference demands remain observable in rawlogs; no new assumed jointspeed bound is introduced."
+  ],
+  "status_precedence": [
+    "INVALID_SETUP forsource/schema/seal/rawreference/initialpair/invariant/gain/shapingcontract violations; physicalcompletion reported separately.",
+    "FAIL_TANGENT_SCREEN ifany N/Tphysicalcondition, perphase rawheading/ratebenefit or nonregressionguard fails.",
+    "INCONCLUSIVE ifotherwiseallpasses but anyTphase helperactivity<.10s.",
+    "PASS_TANGENT_SCREEN onlyifallthreephases pass allconditions; no automaticdefaultadoption."
+  ],
+  "per_phase_T_vs_N_nonregression": {
+    "moving_timed_xy_rms": {
+      "ratio": 1.1,
+      "add_m": 0.001
+    },
+    "full_timed_xy_peak": {
+      "ratio": 1.0,
+      "add_m": 0.01
+    },
+    "final_timed_xy": {
+      "ratio": 1.0,
+      "add_m": 0.01
+    },
+    "raw_reference_up_error_peak": {
+      "ratio": 1.0,
+      "add_deg": 1.0
+    },
+    "raw_reference_up_error_rms": {
+      "ratio": 1.1,
+      "add_deg": 0.1
+    },
+    "absolute_tilt_peak": {
+      "ratio": 1.0,
+      "add_deg": 1.0
+    },
+    "full_body_xy_speed_peak": {
+      "ratio": 1.1,
+      "add_m_s": 0.01
+    },
+    "full_50ms_body3D_linear_acceleration_peak": {
+      "ratio": 1.1,
+      "add_m_s2": 0.1
+    },
+    "held_any_channel_clipping_fraction": {
+      "ratio": 1.0,
+      "add_fraction": 0.02
+    },
+    "held_each_channel_clipping_fraction": {
+      "ratio": 1.0,
+      "add_fraction": 0.02
+    },
+    "held_normalized_clipping_excess_rms": {
+      "ratio": 1.1,
+      "add": 0.01
+    },
+    "held_normalized_command_step_peak": {
+      "ratio": 1.1,
+      "add": 0.05
+    }
+  }
+}
