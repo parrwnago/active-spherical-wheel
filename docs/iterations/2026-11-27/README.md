@@ -1,5 +1,10 @@
 # Research presentation notes — 2026-11-27
 
+**I-77 starts a baseline-cause investigation; the causal follow-up finishes on
+2026-11-28.** [Updated presentation notes](../2026-11-28/README.md) and
+[cause report](baseline-deviation-cause/README.md). Preserve I-76 and earlier
+comparisons below; no heading candidate is promoted.
+
 **I-76: broader tests support a figure-eight path benefit, with substantial
 tradeoffs; the heading overlay stays experimental.**
 [All nine comparisons and full videos](tangent-heading-routes/README.md),

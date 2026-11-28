@@ -1,12 +1,12 @@
 # Teammate handoff — control, evidence and current limits
 
-Updated 2026-11-27. Start here, then read the
+Updated 2026-11-28. Start here, then read the
 [dynamics/controller/observer study guide](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf).
 The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-76.
+experiment history and common presentation questions through I-77.
 
 ## Current system
 
@@ -71,7 +71,32 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-76 broadens the comparison; figure-eight path distance improves,
+**Latest: I-77 returns to the original baseline and separates deviation causes.**
+[Cause report, causal plots and raw evidence index](iterations/2026-11-27/baseline-deviation-cause/README.md).
+The production controller remains unchanged. In one straight −1 rad episode,
+two active drive directions nearly coincide; an unbounded rolling inverse
+generates large opposing speed references. Exact same-prefix physical tests show
+that limiting only feedback joint-rate references for 250 ms reduces subsequent
+geometric peak error over 20.4–24 s from 148.9 to 22.0 mm. Removing only the
+largest pulse does not help. This diagnostic is not a full-route controller
+acceptance or a motor specification; earlier guard regressions remain recorded.
+
+The figure-eight has another precursor: actual contact normals change rapidly,
+and the accurately reconstructed wrench feeds a fast normal-derived lean target.
+The baseline still requests zero body angular velocity. Aligned 1 ms contacts
+verify the observer's filtered intrinsic direction within 0.02345° maximum in
+96–97.5 s. This does not prove every contact estimate or reference is correct.
+The cause report separates the earlier disturbance from the later near-path
+crossing with residual velocity and contains the isolated attitude-reference
+follow-up. Avoid explaining every departure as either wrong contact or saturation.
+The half-second attitude-reference hold/release reduces later geometric peak
+over 96.4–103 s from 316.7 to 62.2 mm, despite slightly worse immediate path
+error. Its release changes shaft torque abruptly and later local attitude
+targets differ with physical contact history. Keep this as causal evidence,
+not a controller acceptance. All five shortened diagnostics finish; production
+code and selected defaults stay unchanged.
+
+**I-76 broadens the heading comparison; figure-eight path distance improves,
 but the same heading overlay is not a general tracking improvement.**
 Eighteen corrected Gazebo/DART runs compare N/T on straight, 90° arc and
 figure-eight paths at three shaft starts. All complete, with 686 consistency

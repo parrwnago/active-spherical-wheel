@@ -5299,6 +5299,181 @@ failures, aborts and client interruption are retained; no post-result candidate
 promotion. [Final QA](docs/iterations/2026-11-27/tangent-heading-routes/archive_verification/receipt.json)
 and [restored input closure](docs/iterations/2026-11-27/tangent-heading-routes/archive_verification/closure/receipt.json).
 
+## I-77 / 2026-11-27–28 / analyzed, baseline retained: deviation causes
+
+**Question:** What initiates the selected original baseline's departures: inferred
+contact, rolling allocation, feedback/reference design, transition preparation,
+or another active component? Return to native N; no heading-helper promotion or
+new estimator/controller tuning. Distinguish deviation onset from later balance
+reactions and command decomposition from physical causation.
+
+**Conditions and comparison:** Unchanged selected hardware-mode LQR, momentum
+observer, inferred geometry, least-squares rolling feedforward, preparation and
+original final caps; HEAD `3155d7af9dcfa6801a09e837f6566f1f15aa31b0`.
+Begin with I-76's nine sealed native recordings. Primary event is straight
+−1.0 rad around 20.585 s and its subsequent departure; straight +0.9 rad is a
+smaller-deviation comparator, not a deviation-free control. Separately inspect
+the late eight −1.0 rad departure. Preserve I-76's map/route distinctions,
+measurement boundary and instantaneous-pressure-truth limitations.
+
+**Planned evidence:** Fixed onset definitions and event windows; exact-state
+reconstruction of the active rolling map; chronological command/contact/motion
+ledgers; active-component source audit. Each analysis registers source and input
+hashes before numeric reduction. Simulator truth is evaluation-only. If these
+cannot establish causality, use a narrowly isolated, registered same-prefix
+physical intervention with baseline replay validation; no broad trajectory
+campaign. No new physics or controller changes have been performed for I-77 at
+this registration.
+
+**Status / decision:** Investigation in progress; no new cause established or
+candidate accepted. Retain earlier unsuccessful approaches and existing known
+allocation/preparation failures. Do not assume they explain every departure.
+
+[I-77 scope and forthcoming evidence](docs/iterations/2026-11-27/baseline-deviation-cause/README.md).
+
+**I-77 registered causal follow-up, before new physics:** Saved-state rolling
+reconstruction now reproduces both 9,001-row straight −1.0/+0.9 native histories
+bit-for-bit, including loads, point and rolling references. At 20.585 s −1.0,
+the scaled map condition is 571.82 and its two active directions differ by
+0.389°. The last-solve pressure-point substitution remains ill-conditioned
+(383.97); point separation is 0.140 mm and support agrees on shell B. This
+establishes reference amplification, not yet its physical contribution to the
+later departure. Seven >20 rad/s reference rows occur from 20.430–20.585 s.
+
+Register three short 24 s Gazebo diagnostics using the original I-76 straight
+−1.0 native initialization: unchanged replay; replace only feedback joint-rate
+references at row 4117 (20.585 s) with native row 4116 values; and clip only
+feedback joint-rate references to ±5 rad/s for rows 4080–4129
+([20.400,20.650) s). The number 5 is the existing allocator normalization scale,
+not a claimed motor rating. The latter removes the cluster's oversized targets
+while retaining position/body-velocity references, angular-rate feedback,
+observer, normal, gains, raw allocation/cache/nominal integration, feedforward,
+preparation and final caps. No contact oracle or physics change.
+
+Require exact saved native prefix and matched-control reproduction. Compare the
+state at 20.650 s before release acts, original peak time 22.635 s, and the 24 s
+diagnostic endpoint. Separate release/closed-loop-history effects from direct
+first-hold effects. These are truncated causal probes, not complete trajectory
+trials or controller acceptance tests; production defaults remain unchanged.
+
+**I-77 contact-timing follow-up registered — 2026-11-28:** The late eight's
+near-path interval at 98.690–99.175 s still has velocity error; the last jointly
+small position/velocity/attitude interval ends at 96.160 s. Desired-up motion
+starts at 96.150 s and becomes rapid before the larger velocity mismatch. The
+saved nearest-centre DEM tangent is not an oracle contact normal and changes
+at different times. Do not infer observer lag/error from that proxy alone.
+Register one additional unchanged-native eight prefix through 97.500 s, recording
+all raw 1 ms bridge contacts/states over [96.000,97.500) s with the original I-55
+recorder. No control intervention or solver changes. Require bit-exact equality
+of all shared I-76 precision fields for the shortened prefix, except its
+explicitly shortened terminal held-command mask. Compare aligned five-millisecond
+signed contact wrenches, contact geometry and observer-derived reference motion.
+This is a contact/controller diagnostic, not a return to solver tuning or a
+complete 133 s trajectory experiment. Wrapper source and inputs are frozen before
+physics; prior three straight diagnostic arms remain unchanged.
+
+**I-77 straight causal result — 2026-11-28:** All three 24 s diagnostics finish.
+Independent verification matches all 79 shared precision fields of native replay
+through 24 s, with the declared terminal-held-mask exception. Treatment prefixes
+and first-active states/native-feedback inputs reproduce exactly. The cluster
+window changes 43 reference/applied rows (including moderate requests), not only
+the seven original >20 rad/s spikes. Geometric peak/RMS over fixed 20.4–24 s:
+native **148.934/108.244 mm**, one-pulse **150.665/109.095 mm**, cluster
+**21.979/16.858 mm**. At the original peak time 22.635 s the errors are
+148.934/149.544/18.773 mm. At 24 s: 98.211/95.334/7.415 mm. Preserve the adverse
+primary endpoint: at 20.650 s cluster geometric error is slightly worse,
+12.507 versus 11.995 mm. The preceding 20.645 s reference is already unclipped,
+so release at 20.650 does not introduce a new direct cap-switch step.
+
+This confirms a causal contribution from the selected feedback-reference window
+to the later departure in this case; removing the single largest pulse is
+insufficient. Later observer/contact/control histories can differ through actual
+motion. The diagnostic does not establish a general solution, a motor rating,
+full-route improvement, or that allocation explains every departure. Defaults
+remain unchanged. Three scoped synthetic hook functions pass; repeated stages
+are not added. Preserve the failed interpreter-path test setup and its correction.
+
+**I-77 aligned contact result / final eight probe registered — 2026-11-28:**
+The unchanged eight prefix reproduces all 79 precision fields through 97.5 s
+(terminal mask exception); 1,500 substeps over 300 holds have no failed holds.
+Aligned physical contact forces genuinely change; their same-filter intrinsic
+direction matches the native observer to max 0.02345° / RMS 0.00974°. Thus the
+fast desired-lean motion is not explained by an invented observer wrench in
+this window. Pressure-weighted actual normals switch between terrain faces.
+Their geometry, filtered equivalent direction and nearest-centre DEM proxy are
+distinct quantities. Keep that result separate from causal attribution.
+
+To isolate reference response from direct terrain forcing, register one final
+eight diagnostic prefix through 97.5 s: hold only the raw attitude quaternion
+passed to native feedback at its saved 96.395 s value for [96.400,96.900) s.
+Current-yaw handling and the derived shaft-error formula run normally with that
+attitude; normal/support torque, raw rolling references, observer, gains,
+preparation, fade and caps remain native. Primary state endpoint 96.900 s is
+before release acts; 97.500 s is secondary. Compare error to the same untreated
+native desired-up direction separately from the held target. No controller
+adoption, physics/solver changes or additional broad campaign.
+
+**I-77 prephysics horizon amendment — 2026-11-28:** Before the attitude-hold
+source/protocol are frozen or any candidate arrays exist, extend only its
+diagnostic stop from 97.5 to 103.0 s to include the original 102.135 s late peak.
+Preserve the 97.5 s proposal source/protocol. Intervention and primary 96.900 s
+pre-release / secondary 97.500 s endpoints stay unchanged; add 102.135 and
+103.000 s comparisons against sealed original I-76 native N. The native
+97.5 s recording already validates the unchanged source/instrumentation prefix.
+No additional branch or post-outcome horizon selection is authorized by this
+amendment; a 103 s diagnostic is still shorter than the 133 s nominal route.
+
+**I-77 final attitude-reference result — 2026-11-28:** The single amended
+103 s arm finishes with observed exit0. All 79 pre-intervention fields and
+inclusive first-active state/observer/reference/gain inputs reproduce exactly.
+Independent reconstruction verifies all 20,601 untreated/used errors, velocity
+references and LQR terms; exactly 100 control rows hold the quaternion. The
+first physical effect follows the first changed command by one row.
+
+At primary 96.900 s before release acts, geometric error slightly worsens
+5.924→6.898 mm; at 97.500 s, 28.534→31.072 mm. Later the original 102.135 s peak
+is 316.714→59.372 mm, and 103 s error is 223.483→47.485 mm. Geometric peak/RMS
+over fixed 96.4–103 s changes 316.714/142.194→62.191/44.979 mm. The early
+attitude-reference treatment followed by release therefore influences the
+departure. A 0.491 N m release shaft step remains; holding and release are not
+separately isolated, nor are normal filtering and zero angular-rate reference.
+
+Keep all attitude denominators: at 96.900 s treated error is 0.607° to the held
+target, 2.942° to the saved original-native target, and 0.416° to its current
+branch-local untreated target (native 0.420°). At 103 s the treated saved-target
+error is 7.940° but current branch-local target error is 0.020°. The former is
+not automatically a balance failure and the latter is not robust acceptance;
+physical/contact histories and normal-derived targets diverge. Keep original N
+selected. Five targeted physics diagnostics finish; no full 45/133 s route
+acceptance or general controller fix is claimed. Earlier failed guards remain.
+
+**I-77 verification and preservation:** Three scoped hook functions pass;
+repeat stages are not added and no full repository-suite claim is made.
+Preserve interpreter-path contract setup failure, velocity-report Path/string
+bookkeeping failure, reference-attribution equilibrium-anchor setup failure,
+prephysics hold-horizon/gate corrections, and the independent verifier's
+≤5.56e−16 operation-order mismatch. The last is an analysis-only strict-byte
+failure, corrected without repeating physics. All 40 independently calculated
+hold endpoint scalars match the producer report exactly.
+
+The verified local raw bundle has 2,088 members / 283,450,221 bytes, SHA256
+`6e6224f201e72a46b9400c533c59b639ea1ba09b1df3dbe0c4e865c5685e8006`.
+Generated workspace assets are explicitly excluded; source/config/model metadata
+and every new diagnostic array remain included, with I-76 inputs a separate
+prerequisite. Compact curation first included three index-linked reports only
+inside its verified metadata archive. Final link QA adds exact direct copies,
+preserves the first manifest, and leaves all raw/archive/science bytes unchanged.
+The final compact manifest binds 193 files plus itself; all 32 local Markdown
+links in the cause-report subtree resolve. Updated presentation notes,
+teammate handoff and standalone ChatGPT context retain the causal findings and
+their limits. [Final report and evidence](docs/iterations/2026-11-27/baseline-deviation-cause/README.md).
+
+Final review also verifies all 193 evidence files against their staged Git blobs,
+all 199 local links across the updated notes/context/handoff, the raw bundle
+hash, and every registered I-76 source hash. Production-source diff is empty.
+The preserved CSV uses CRLF; the whitespace check explicitly permits CR at EOL
+while retaining the other whitespace checks. Its staged bytes match the seal.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

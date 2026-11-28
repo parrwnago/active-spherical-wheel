@@ -1,0 +1,60 @@
+{
+  "arms": [
+    "native24",
+    "one_pulse",
+    "cluster_cap5"
+  ],
+  "baseline_first_changed_reference_indices": {
+    "cluster_cap5": 4083,
+    "one_pulse": 4117
+  },
+  "baseline_output_seal_sha256": "e5e65236947d7b1945c90b3a74a133f055495851d1938b42dacd0ac26602fc2a",
+  "baseline_protocol_sha256": "53106cdb758d76436e04b747c9483c4081abcc7ec1f2a163ace90b58b82085c2",
+  "case_id": "straight_m100_N",
+  "endpoint_4130": "20.650s state before the release command is held; post-release changes reported separately.",
+  "failure_policy": "Stop on any nonzero exit or failed prefix; preserve failedsetup/partial evidence.",
+  "fixed_controller": "Original I76 N LQR/momentum observer/contact feedforward; no heading actuation, production edits, terrain/truth command reads or gain changes.",
+  "followup_date": "2026-11-28",
+  "horizon_s": 24.0,
+  "interventions": {
+    "cluster_cap5": {
+      "cap_rad_s": 5.0,
+      "joint_velocity_dofs": [
+        6,
+        7,
+        8
+      ],
+      "kind": "clip_feedback_joint_reference",
+      "start_index": 4080,
+      "stop_index_exclusive": 4130
+    },
+    "native24": {
+      "kind": "native"
+    },
+    "one_pulse": {
+      "joint_velocity_dofs": [
+        6,
+        7,
+        8
+      ],
+      "kind": "hold_saved_previous_feedback_joint_reference",
+      "source_index": 4116,
+      "start_index": 4117,
+      "stop_index_exclusive": 4118
+    }
+  },
+  "iteration": "I-77",
+  "motor_limit_caveat": "The diagnostic5rad/s reference clip is the native allocator normalization scale, not an asserted motor-speed rating.",
+  "native_full_precision_gate": "All shared precision fields bit-exact to original0:4801, except final command-held mask false at24s rather than true in continuing45s source.",
+  "nominal_route_horizon_s": 45.0,
+  "prefix_rule": "First actual changed-reference index inclusive for state/previous-input/nominal/native-feedback; complete command prefix exclusive. Armed window begins at4080 but native cluster cap first changes refs at4083.",
+  "primary_endpoint_indices": [
+    4130,
+    4527,
+    4800
+  ],
+  "question": "Does the ill-conditioned rolling joint-rate reference cluster cause the original straight minus1rad N departure?",
+  "scope": "Causal diagnosis only; not tuning, candidate acceptance or full-route completion.",
+  "serial_order": "native24 must pass runtime and full-array prefix verification before one_pulse, then cluster_cap5; fresh process perarm.",
+  "source_isolation": "Call native feedback once; copy returned ref/error; change onlyqvelref6:9/error15:18. Recompute equilibrium+rawrollingFF+support\u2212Kerror. Preserve native rawrefs/caches/history and all downstream algorithms."
+}

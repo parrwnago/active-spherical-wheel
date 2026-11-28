@@ -1,14 +1,23 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 11 — 27 November 2026, through I-76.** Latest experiment baseline:
-repository commit `5d96001`; the selected live controller remains unchanged.
-I-76 tests the unchanged trajectory-facing helper across more routes, with
-original LQR/observer/contact feedforward and no live/default promotion.
+**Revision 12 — 28 November 2026, through I-77.** The selected live controller
+remains the original native N. I-77 starts from repository commit `3155d7a` and
+investigates its deviations; no production/default promotion is made.
 This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest experiment, **I-76**, extends the same heading helper to straight,
+The latest investigation, **I-77**, returns to the baseline. In a matched-prefix
+straight −1 rad test, limiting only feedback joint-rate references during one
+250 ms window reduces subsequent geometric peak error over 20.4–24 s from 148.9
+to 22.0 mm. Removing only the worst 5 ms pulse does not help. This is a causal
+diagnostic, not an adopted controller. The map has nearly parallel drive
+directions even at the recorded pressure point. A separate figure-eight event
+has actual rapid contact-normal changes, accurately reconstructed contact
+wrench, and a rapidly moving normal-derived lean target with zero angular-rate
+reference. Section21 gives the evidence and qualifications.
+
+The preceding experiment, **I-76**, extends the same heading helper to straight,
 90° arc and figure-eight routes, each at three starts: 18 corrected runs. All
 complete. Heading RMS improves 8/9 pairs, but timed XY only3/9 and geometric
 path distance4/9. The figure-eight is promising: every phase's geometric RMS
@@ -1701,7 +1710,87 @@ prerequisites and223 registered result-owned inputs, with all3,633 compact files
 and7,746 raw members verified. No physics, video, metric or control source
 changes result.
 
-## 21. Sources, attribution, and how to continue a discussion
+## 21. I-77: investigate the original baseline before adding complexity
+
+The selected native N pipeline remains unchanged. I-77 first uses the nine
+sealed I-76 native recordings and reconstructs three cases' rolling references
+exactly over 44,603 saved states without integration. The rolling map stacks
+unweighted per-contact XY constraints with scales [5,5,5,.3,.3]; those are
+preferences, not hard speed limits. No bounded allocator deliberately allows
+trajectory deviation in this selected baseline.
+
+On straight −1 at 20.585 s, shaft/shell-B drive directions are 0.389° apart,
+condition 571.82, and reference rates 26.06/−91.90 rad/s. Recorded pressure and
+inferred support both identify shell B; equivalent points differ by 0.140 mm.
+Substituting the pressure point still gives condition 383.97 and rates
+17.73/−61.68 rad/s. Reference growth occurs while cross-track error is closing.
+Later contact switching and the largest pulse must be distinguished from the
+beginning of the response.
+
+Three new 24 s diagnostic prefixes preserve original observer, normal, raw
+allocation/cache, support feedforward, gains, preparation, fade and caps.
+Native replay matches all 79 original precision fields through 24 s, except its
+explicit shortened terminal held-command mask. Independent checks verify the
+candidate prefixes and first-active states. A single-row hold at 20.585 s leaves
+20.4–24 s geometric peak 150.7 mm versus native 148.9 mm. A ±5 rad/s feedback
+reference cap during [20.400,20.650) s changes 43 rows and reduces peak to
+21.98 mm and RMS from 108.24 to 16.86 mm. At 20.650 s before release acts,
+error is slightly worse: 12.507 versus 11.995 mm. The benefit develops later.
+This proves a selected reference-window contribution, not a general fix, motor
+rating or full 45 s route success. Earlier guard/allocator regressions remain
+relevant.
+
+The late eight −1 has another pattern. Its small-position crossing near
+99.175 s retains 29.7 mm/s velocity disagreement. Actual drive-rate disagreement
+dominates late velocity error; body rotation partly cancels it and material
+rolling residual is tiny in 98.5–100.8 s. That does not exonerate the preceding
+96 s disturbance. The last jointly small position/velocity/attitude interval
+ends at 96.160 s. Desired-up motion appears at 96.150 s; at 96.4 s its rate is
+84.3°/s, preceding 82 mm/s velocity disagreement at 96.5 s. The rolling inverse
+is well conditioned and no command clips during 96–99.2 s.
+
+An unchanged 97.5 s native replay reproduces all 79 precision fields and captures
+1,500 physical 1 ms samples over 96–97.5 s. Exported pressure-weighted solver normals change rapidly. Applying the native 100 rad/s wrench filter to actual interval
+forces/moments, anchored to native filtered wrench at 96 s, matches native
+intrinsic direction within 0.02345° maximum / 0.00974° RMS. The observer wrench
+is not inventing those changes in this window. Equivalent contact radial
+direction, surface normal, filtered normal and nearest-centre DEM tangent are
+distinct observables. Their current-vs-history disagreement does not establish
+wall-clock calculation delay.
+
+Reconstructing the unchanged attitude function confirms nearly all fast target
+motion comes from the normal: 152.16°/s peak versus acceleration contribution
+below 0.0027°/s, with no lean cap. Baseline angular-rate reference remains zero.
+The isolated attitude-reference follow-up is recorded in the
+[full I-77 cause report](iterations/2026-11-27/baseline-deviation-cause/README.md).
+It must compare the same untreated native target separately from its held
+target; a small error to an easier target is not a balance improvement.
+
+The final held-attitude diagnostic freezes only the raw attitude supplied to
+feedback during [96.400,96.900) s, then releases it. All 79 fields before the
+intervention and first-active inputs reproduce exactly; independent analysis
+reconstructs all 20,601 feedback errors/LQR terms. The primary pre-release
+96.900 s geometric error slightly worsens, 5.924→6.898 mm, and 97.500 s is also
+slightly worse. Later geometric peak over 96.4–103 s falls 316.714→62.191 mm
+and RMS 142.194→44.979 mm. Release itself introduces a 0.491 N m shaft-command
+step. This confirms an early reference-response/return contribution; it does
+not separate holding from release or prove that one filter or missing angular
+reference is the sole cause.
+
+Targets diverge with physical paths. At 103 s the treated robot is 7.940° from
+the saved original-native attitude but only 0.020° from its current branch-local
+untreated target. The former is not by itself a balance failure; the latter is
+not a robustness certificate. Holding terrain attitude at a chosen event time
+is a diagnostic, not an adopted controller. All five diagnostic physics runs
+complete their requested shortened horizons; no full-route acceptance follows.
+
+Keep the momentum observer and native baseline selected. Accurate force
+estimation does not guarantee feasible or smooth feedback references. Neither
+desired-vs-actual velocity mismatch nor one accurate contact-point sample is
+sufficient to choose a new estimator. Current reports separate measured
+physical contributions from unresolved mechanisms and preserve failed setups.
+
+## 22. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

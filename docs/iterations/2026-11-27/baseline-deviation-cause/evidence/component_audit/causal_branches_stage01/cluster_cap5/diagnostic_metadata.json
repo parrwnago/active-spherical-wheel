@@ -1,0 +1,43 @@
+{
+  "actual_first_changed_applied_index": 4083,
+  "actual_first_changed_reference_index": 4083,
+  "actual_first_changed_requested_index": 4083,
+  "actual_requested_duration_s": 24.0,
+  "arm": "cluster_cap5",
+  "baseline_first_changed_reference_index": 4083,
+  "cap_interpretation": "The cluster cap5rad/s matches the native allocation normalization scale, not an asserted motor-speed rating; actual commands retain original torque/surface-speed caps.",
+  "complete_command_prefix_rows_verified": 4083,
+  "complete_command_prefix_stop_exclusive": 4083,
+  "endpoint_4130_interpretation": "State at20.650s before the native release command acts; release effects afterward reported separately.",
+  "full_route_completion_claim": false,
+  "history_fingerprint_scope": "Selected numeric native-controller history; full physical solver prefix is replayed, not checkpoint restored.",
+  "inherited_metadata_override": "Child I76 wrapper iteration/case duration fields are inherited source metadata, not an I76 campaign or full-route completion claim. This I77 diagnostic metadata is authoritative.",
+  "intervention_scope": "Only feedback joint-rate reference/error rows; raw allocation/cache/normal/observer/gains/support/preparation/fade/clipping algorithms remain native. Their future values may change through actual physical state.",
+  "intervention_specification": {
+    "cap_rad_s": 5.0,
+    "joint_velocity_dofs": [
+      6,
+      7,
+      8
+    ],
+    "kind": "clip_feedback_joint_reference",
+    "start_index": 4080,
+    "stop_index_exclusive": 4130
+  },
+  "iteration": "I-77",
+  "native_feedback_prefix_rows_verified": 4084,
+  "no_trajectory_facing_heading_actuation": true,
+  "nominal_reference_route_duration_s": 45.0,
+  "nominal_window_start_index": 4080,
+  "parent_I76_case": "straight_m100_N",
+  "primary_endpoint_indices": [
+    4130,
+    4527,
+    4800
+  ],
+  "same_state_native_counterfactual_scope": "Current actual state/history with native feedback reference, propagated through the unchanged state-based preparation/fade/clipping; not the historical native trajectory after branch.",
+  "source_protocol_sha256": "53106cdb758d76436e04b747c9483c4081abcc7ec1f2a163ace90b58b82085c2",
+  "state_prefix_end_inclusive": 4083,
+  "state_prefix_rows_verified": 4084,
+  "success": true
+}
