@@ -6098,6 +6098,195 @@ First quantify recovery in existing records and define one controlled slope
 event before proposing another map-assisted actuation experiment. No new
 physics, controller, camera integration or recovery result is claimed here.
 
+## I-83 / 2026-11-28 / completed and analyzed: recovery after the terrain episode
+
+**Question / authorization:** The user accepts temporary terrain disturbances
+and asks to prioritize how quickly tracking and balance recover, with terrain
+anticipation as a complementary route. User approves measuring existing runs
+then testing one bounded terrain-informed adjustment if the available geometry
+can support it. I-83 evaluates the two existing I-82 Gazebo/DART recordings;
+it launches no new physics and does not change their original gates.
+
+**Comparison / definitions before new reductions:** Outcomes of I-82 are already
+known; this is a posthoc new-metric assessment, not blind preregistration. Fix
+the historical100.5s contact-window anchor, search departures through104s and
+follow both full recordings through133s. Restrict path projection to original
+figure-eight u[.75,1] on the4097vertex full polyline to avoid accepting another
+lobe at the crossing. Report timed and intended-section recovery separately.
+Primary bands20mm position/path,20mm/s velocity residual,2°own-target up error,
+15°common absolute-tilt guard;2scontinuous dwell,1ssensitivity and.1squalifying
+exits. These are stated engineering preferences, not stability limits.
+Spatial recovery uses the nominal velocity at projected path progress, avoiding
+a timed-position deadline; timed position/velocity is separately evaluated.
+Spin .05rad/s is an additional separately reported full-motion condition.
+
+**Censoring / interpretation:** Already outside at100.5 has unknown earlier
+onset; report elapsed return from the anchor, not physical disturbance latency.
+No qualifying departure is distinct from zero-latency recovery. A run lacking
+the complete dwell is right-censored. Report later exits and sustained-through-
+end status; changing terrain can produce new disturbances, so do not label
+every later exit as overshoot from the original event. Freeze definitions and
+exact reduction/verifier sources before reading the new arrays. Keep original
+I-82source/input/output bindings, raw data and earlier outcomes unchanged.
+
+**Status at implementation (retained):** Pure analysis/contracts and independent verification are being
+implemented under `results/recovery_assessment_20261128/`. No I-83 recovery
+result is claimed yet. The terrain-informed control arm is a separate proposed
+experiment: same0.60capacity in both arms, current observer/load feedback kept,
+future terrain supplied only to preview/preparation with causal-map confidence
+and exact native fallback. No new camera/control trial is claimed here.
+
+**Pre-reduction registration / development:** Root protocol SHA256
+`85f16fd35cbadd3ead3741b9d76f539df26cc7b58f8b3e882ff9de12a094e25c`
+binds9sources/17inputs and rechecks all original93source/59input/456closed
+output bindings before new reductions. Fifteen final pure metric contracts
+include the earlier13;14independent synthetic contracts are a separate scope.
+Preserve draft failures: accumulated floating clocks made a401state two-second
+dwell appear short; validated integer interval counts correct it. A same-
+quaternion zero-angle fixture had an overstrict arccos roundoff tolerance;
+correct the fixture tolerance before scoring. Also correct focus command
+integration to half-open[100.5,104),3.500heldseconds, while state endpoints
+remain inclusive. These are pre-reduction fixes, not outcome tuning. Exact
+sources, tests and failed stages are retained; no physics is rerun.
+
+**Completed result:** Canonical reduction returns actualexit0. All five criteria
+are outside at100.5s, so onset is left-censored. B030→B060 first path-motion
+entry109.960→103.880s (elapsed9.460→3.380s). One-second-dwell entry
+116.955→103.880s, but primary two-second entry116.955→117.675s: B060 is
+.720s later on that measure. Its first good interval103.880–105.585s lasts
+1.705s; velocity residual interrupts it105.590–106.000 while geometry and
+attitude still pass. Geometry later exits108.045. Do not claim all recovery
+metrics improve or classify every later exit as the same disturbance.
+
+B060 path-motion remains good117.675–133s; B030 has two qualifying later exits,
+first126.555, and ends outside. Geometric2sdwell entry114.925→103.880s;
+timed-motion2sentry116.955→117.615s. Neither strict path-full nor timed-full
+criterion has any acceptable postanchor state because rotation persists; both
+are right-censored. Postanchor20mm-path-excess integral.906236→.190451m·s;
+focus peak intended-section departure316.714→37.526mm. Report severity,
+first return, sustained return and residual spin separately.
+
+**Independent verification / decision:** Raw reconstruction checks60signal
+arrays and10predicate arrays sample-exact over26,601states per arm;1,317
+numerical ledger leaves and every nested schema/status/censor/count/null match.
+Verification uses no canonical metric imports. These are overlapping reduction
+checks, not extra physical trials or a full repository suite. Keep original
+LQR/observer architecture and I-82's positive capacity finding; do not replace
+the registered2sdwell with a more favorable1sresult. Proceed to the separately
+registered observed-map action audit before any live anticipatory trial.
+[I-83 plots, PDF, ledgers and reproduction](docs/iterations/2026-11-28/recovery-assessment/README.md).
+
+## I-84 / 2026-11-28 / completed audit, stopped before live trial: observed future terrain for preparation
+
+**Question / authorization:** Following the user's approval, investigate one
+bounded anticipatory action while retaining LQR and the momentum observer.
+Use the same0.60m/s operating bounds in both arms so the effect of terrain
+knowledge is separated from I-82's capacity effect. I-83 first quantifies
+recovery in existing recordings. No live I-84 result is claimed at proposal.
+
+**Candidate / information boundary:** Keep the current observer-derived plane,
+loaded contact records, holding feedback, gains and current tangent velocities.
+Only different private future poses in the existing120ms incoming-drive preview
+may query previously delivered four-camera terrain memory. Require supported
+centre and foot fits with3mm consistency; otherwise exact native fallback.
+Reuse original activation/blend/load/command bounds. The map supplies geometry,
+not known future loads, friction, forces or future executed configuration.
+Four views retain original20Hz capture,50ms delivery, exact simulated capture-
+time pose and observed-only memory settings. No SLAM or production changes.
+
+**Registered audit before live decision:** Implement pure/static contracts,
+freeze exact source/settings/dependencies then traverse saved B060 causally.
+Audit0.5suniform anchors plus all5ms99.5–104s anchors; primary action window
+100.5–101.8s. First require native preview reproduction within1e−9 and causal
+current-load/current-velocity preservation. Require at least10 primary-window
+anchors with an accepted mapped future support on a nonzero preparation blend
+and a normalized applied-command change at least.001 using the unchanged
+actual bounds. No post-outcome threshold tuning. Unsupported/unknown anchors
+remain in denominators. If no concrete opportunity is shown, stop at the audit
+and record the limitation rather than launch a zero-action live comparison.
+
+**Status at proposal / evidence (retained):** Source interfaces audited; isolated runtime/contracts
+are authorized, raw-value reads and physics await source registration.
+[I-84 proposal and subsequent evidence](docs/iterations/2026-11-28/terrain-recovery-preview/README.md).
+Old I-44/I-45 records remain unchanged. A camera-assisted actuation improvement
+has not yet been demonstrated by those offline tests or this proposal.
+
+**Frozen implementation / completed audit:** Registration SHA256
+`bb8712febb1e5a57b0f274806c88482fa7a253d2d69b977d254ba7379f6d404b`
+binds100sources/191inputs, including explicit mirror/optical XML asset closure
+and exact CAD/terrain sources. Original I-82 93/59/456 bindings remain unchanged.
+Optical scene/crop is sealed before array reads; crop is certified against
+analytic route/domain bounds, not executed future positions. Eight static
+contracts pass. User-authorized shadow audit returns actualexit0, traverses
+26,601saved rows, and evaluates1,158unique anchors (267uniform+901dense−10
+overlap). No new physics, controller command or observer update occurs.
+
+**Registered result / why:** Native preparation reconstruction and current
+load/velocity/margin preservation each have maximum error0. Focus has0/261
+qualifying command opportunities, below fixed10; decision
+STOP_NO_REGISTERED_FOCUS_UTILITY_NO_LIVE_TRIAL. Separately registered posthoc
+decomposition shows accepted centre/foot future fits at261/261focus and901/901
+dense anchors (4,176/4,176 and14,416/14,416unique patch/pose queries), but BOTH
+native and mapped preparation weights are zero at every dense anchor. Actual
+shadow command differences are exactly0 throughout99.5–104, including lead-in.
+This is inactivity of the selected unloaded-preparation interface, not missing
+camera visibility at this event or a general rejection of mapped terrain.
+
+Elsewhere267uniformanchors include94accepted/nonzero-blend proposals,50above
+the same.001command threshold;44have no accepted selected support, and222/267
+have every future query accepted. Do not
+select a new live event after seeing those results. Unknowns and716rejected
+uniform queries remain counted. Captured2,661four-view batches/10,644frames,
+delivered2,660with1pending at133s, preserve actual sensor time causality.
+Full raw depth/calibration/pose/time file205,318,137bytes and rows46,433,954bytes
+remain local, with exact source/asset bindings and per-file hashes.
+
+**Review/setup qualification:** Exact raw-pose current/future classification
+has a potential zero-lookahead quaternion-normalization edge. Explicit current
+guards are0across this dataset; do not generalize them to a deployment proof.
+Preserve a post-analysis metadata hash helper failure (unavailable file_digest)
+and its streamed-SHA correction; no audit result/threshold changes. Static
+contracts, reduction checks and capture batches are different scopes, not
+additional physical trials or a full-repository suite.
+
+**Decision:** Honor the registered stop; no zero-action live trial or claimed
+camera-driven recovery improvement. Keep native LQR/observer/feedforward and
+the0.60capacity candidate. Future terrain shaping of loaded-motion reference
+(lean/rate or approach braking) is a separate proposed hypothesis, not an
+implemented result. Preserve the useful map coverage and the negative action
+finding together with I-83's dwell-dependent recovery nuance.
+
+**Independent audit / media:** Every1,158anchor's native blocksum/blend/fade/
+clip, current guards and shadow input is independently reconstructed. Maximum
+native residual1.74e−18, shadow-command residual6.94e−18, currentguard0;
+all capture poses/calibration/validity/ranges/timing pass (posemax1.78e−15).
+Six pure independent contracts are a separate scope. Full dense-window
+accepted geometry versus zero eligible blend is confirmed, including lead-in.
+Two-pagePDF/timeline/causal-depth figure use saved observations and label shadow
+status. Preserve stage01 layout and clearer stage02; no science is rerun.
+I-83's new326frame recovery-annotation video uses original I-82 frames only,
+all decoded, with three separate pure media contracts. Portable14memberZIP
+is4,590,393bytes withCRC/SHAverified members; SHA256
+`a6e534b57e55e6392706727bab870a6ca9c91f4abe17f0fd58b123c9da4d109a`.
+It includes both new PDFs, the recovery video, audits and context revision19.
+
+**Final preservation:** Combined local raw bundle383,343,894bytes has SHA256
+`481f4d49a4ca54a005a97250a78d40dc1e8327106f971b2e9f9a1a5463bd3753`.
+All662project members are stream-hashed/size-checked and4metadata members
+byte-verified (666regular members total), restoring314registered original-path
+prerequisites. It includes all camera depths, complete query rows, new signal
+arrays and videos;19cache/curation omissions are inventoried. I-83compact
+evidence binds51files/2,303,242bytes plus manifest with92source-archive members;
+I-84binds49files/5,309,997bytes plus manifest with158source-archive members.
+Original I-82 93/59/456 bindings and I-83 9/17 plus I-84 100/191 bindings are
+rechecked unchanged. Living presentation/handoff/context notes are updated
+separately; no production controller/estimator or defaults change.
+Final repository QA verifies422authored local links, all100compact file hashes
+and both manifest bytes, all92/158compact source-archive members, the full raw
+bundle hash and all14visualZIP members byCRC/SHA. Staged evidence bytes are
+checked against both manifests; whitespace passes and production-source diff
+is empty. These preservation checks add no physics or repository-suite claim.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

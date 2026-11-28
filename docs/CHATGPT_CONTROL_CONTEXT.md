@@ -1,6 +1,6 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 17 — 28 November 2026, through I-82.** The selected controller
+**Revision 19 — 28 November 2026, through I-84.** The selected controller
 architecture remains the original native N. The 0.30 m/s belt-cap setup is the
 reference baseline; I-82's 0.60 m/s operating-cap variant is the leading
 experimental capacity setting after passing the current case's comparison.
@@ -9,7 +9,29 @@ This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest experiment, **I-82**, completes two full 133 s Gazebo/DART native
+The latest audit, **I-84**, completes with a valid **STOP** for a map-informed
+unloaded-drive preparation candidate. Mapped future support is complete at all
+261 focus and 901 dense anchors, but both native and mapped preparation weights
+are zero throughout 99.5–104 s, so the candidate changes no applied command in
+that episode. No live zero-action trial or new physics is run. This identifies
+an inactive control interface, not a visibility failure or a verdict against
+cameras. Section 28 records the evidence and limits. Anticipating loaded
+velocity/lean references from mapped terrain is a new proposal, not an I-84
+implementation or driving result.
+
+The preceding assessment, **I-83**, measures recovery in the existing I-82
+recordings without new physics. From the common 100.5 s anchor, 0.60 m/s first
+enters the path-motion band after 3.380 s versus 9.460 s for 0.30, and its
+one-second sustained entry is 3.380 versus 16.455 s. But the primary two-second
+entry is **17.175 versus 16.455 s**: 0.60 is 0.720 s later on this criterion.
+Its eventual good tail persists through 133 s; 0.30 has two late qualifying
+exits. Neither meets the stricter simultaneous spin-inclusive conditions.
+All criteria start outside at the anchor, so onset is left-censored, not a
+measured disturbance-response latency. Section 27 explains the thresholds,
+dwell sensitivity and persistence. The subsequent I-84 shadow audit does not
+claim a map-driven recovery improvement.
+
+The preceding experiment, **I-82**, completes two full 133 s Gazebo/DART native
 figure-eight runs at −1 rad, comparing both belt operating caps at 0.30 versus
 0.60 m/s after constructing the original gains. Moving timed XY RMS improves
 **46.359→23.362 mm**, peak error **336.408→72.167 mm**, and final goal error
@@ -2124,7 +2146,121 @@ overwrite those results; current-case benefit and generalization are separate.
 The large videos and rollouts are local ignored artifacts; a plain clone needs
 the report's identified shareable bundle to obtain them.
 
-## 27. Sources, attribution, and how to continue a discussion
+## 27. I-83: first return, sustained recovery and persistence are different
+
+The user accepts terrain disturbance but wants quick recovery, and proposes
+combining remembered depth terrain with the observer and preview. I-83 first
+assesses the **existing I-82 B030/B060 recordings**; no physics/controller runs
+or I-82 acceptance-gate changes occur. Earlier I-44/I-45 camera-memory tests
+were offline and never commanded the live LQR, so their videos were not
+closed-loop map-control comparisons.
+
+Definitions are fixed before these new reductions, with I-82 outcomes already
+known; this is not blind preregistration. The common anchor is 100.5 s, focus
+ends at 104 s, and follow-through ends at 133 s. All five criteria are already
+outside at the anchor: **onset is left-censored**. Report elapsed return from
+that clock, not latency from an identified physical disturbance onset.
+
+The intended final path quarter, u∈[0.75,1], is declared before projection,
+using 1,025 vertices from the original 4,097-point eight. This avoids a false
+rejoin on another branch at the crossing. Spatial nominal velocity is evaluated
+at fractional projected progress by inverting the original quintic clock;
+it retains the speed profile in space without a timed-position deadline.
+Global nearest-path and clocked tracking metrics remain separately reported.
+
+Primary **path_motion** requires distance ≤20 mm, full XY spatial-velocity
+residual ≤20 mm/s, own-reference up error ≤2°, and absolute tilt ≤15°. The
+15° guard is a declared engineering preference, not a stability guarantee.
+Two continuous seconds require 401 states at 200 Hz; one-second sensitivity
+requires 201. A qualifying later exit needs 21 bad states spanning 100 ms.
+The strict **path_full** adds |world-z rotation|≤0.05 rad/s. The two timed
+criteria use clocked position/velocity instead; geometric-only is also kept.
+
+| Path-motion entry, elapsed from 100.5 s | B030, 0.30 m/s | B060, 0.60 m/s |
+| --- | ---: | ---: |
+| First threshold entry | 9.460 s | 3.380 s |
+| Entry sustained for 1 s | 16.455 s | 3.380 s |
+| Primary entry sustained for 2 s | 16.455 s | 17.175 s |
+
+B060's initial good interval is only **1.705 s**, ending at 105.585 s; its
+velocity residual leaves the band at 105.590–106.000 s. Attitude and the 15°
+guard remain acceptable. Thus first/one-second return improves markedly, but
+the primary two-second entry is **0.720 s later**. Its eventual continuous
+path-motion tail is **117.675–133 s**. B030's earlier two-second recovery has
+two later qualifying exits, starting at **126.555 s**, and ends outside.
+Neither ever enters the strict simultaneous spin-inclusive criteria; those
+returns are right-censored. Later exits can include new terrain disturbances,
+so they are not automatically overshoot from the original event.
+
+Independent reconstruction matches **60 signal arrays, 10 predicate arrays
+and 1,317 numeric ledger leaves**, plus every nested status, censoring flag,
+exit/count and tail field. Fifteen selected pure scoring contracts pass;
+draft failures/corrections remain recorded. These scopes overlap and are not
+an additive full repository test count. No new physical trial is implied.
+
+**Decision:** keep I-82's positive capacity screen and 0.60 leading variant;
+I-83 adds the objective of fast **and durable** recovery rather than replacing
+that result. The subsequent I-84 runtime/shadow audit stops its preparation-only
+candidate before a live comparison. Future mapped geometry remains distinct
+from observer-estimated
+current support and unknown regions; map accuracy alone cannot demonstrate
+better recovery.
+
+[I-83 report, PDF, plots and reproduction](iterations/2026-11-28/recovery-assessment/README.md)
+· [Annotated recovery video](../results/recovery_assessment_20261128/publication/video_stage01/recovery_100p5_133_B030_B060.mp4).
+
+## 28. I-84: mapped support is available, but preparation is inactive here
+
+The user approves recovery assessment followed by one terrain-informed
+comparison. I-84 implements an opt-in runtime/shadow audit before deciding
+whether its particular command interface has a useful intervention in the
+selected episode. It reuses the existing I-82 B060 history, not new physics.
+The live architecture remains native LQR, momentum observer, support locator,
+rolling/holding feedforward and incoming-drive preparation.
+
+Four causal depth views accumulate a static 2.5D terrain memory using exact
+capture-time simulated pose. There are **2,661 batches / 10,644 frames**;
+2,660 batches are delivered and one remains pending at recording end.
+Ideal finite-view depth, exact pose, 50 ms delivery latency and constant-velocity
+future configuration are assumptions, not hardware, SLAM or force prediction.
+Unknown/rejected regions retain explicit fallback. No MPC or new contact
+estimator is introduced, and the audit does not update the observer.
+
+The audit covers **1,158 unique anchors**: 267 uniform and 901 dense, with ten
+overlapping. Canonical native-parity and current-value guard errors are exactly
+zero. Independent saved-record verification passes, including calibration,
+capture poses, delivery, fallback and shadow-command reconstruction; floating
+reconstruction residuals there are negligible rather than literally all zero.
+
+The registered focus is **100.5–101.8 s**, 261 anchors, inside the dense
+**99.5–104 s** window of 901 anchors. Both sets have complete accepted mapped
+future support: **261/261 and 901/901**. However, native and mapped preparation
+weights are both zero at every dense anchor. Shadow applied-command change is
+therefore zero, and there are **zero registered focus opportunities** against
+the minimum ten. The valid outcome is
+**STOP_NO_REGISTERED_FOCUS_UTILITY_NO_LIVE_TRIAL**.
+
+The candidate can change only unloaded-drive preparation. That channel was
+inactive while the selected episode unfolded, so better future terrain could
+not change its command. This is **not a visibility failure**, a demonstrated
+camera-induced regression, or proof that terrain knowledge has no control
+value. No zero-action live trial is run, and shadow commands are not motion
+results. Uniform anchors elsewhere include 94 with accepted nonzero mapped
+preparation and 50 registered potential opportunities; those were not selected after seeing
+the result to replace the declared focus or launch a different live trial.
+
+**Decision:** retain the current LQR/observer/feedforward architecture and
+I-82's promising 0.60 operating-cap variant, with I-83's fast-versus-durable
+recovery qualifications intact. Using mapped geometry to anticipate **loaded
+velocity or lean references**, while the observer checks current loaded support,
+is a **new proposal**. It is not implemented, evaluated or accepted by this
+preparation-only audit. Exact source snapshots, development stages and stopping
+evidence remain part of the iteration history; do not turn this STOP into a
+claim of driving improvement or a general rejection of mapped terrain.
+
+[I-84 report, evidence and reproduction](iterations/2026-11-28/terrain-recovery-preview/README.md).
+
+## 29. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

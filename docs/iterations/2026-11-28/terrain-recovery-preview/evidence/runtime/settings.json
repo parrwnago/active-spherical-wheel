@@ -1,0 +1,29 @@
+{
+  "iteration": "I-84",
+  "scope": "Causal observed-map future-only incoming-drive preparation shadow audit; no new controller/observer/physics execution",
+  "operating_bounds": [1.5, 0.6, 0.6, 0.6, 0.6],
+  "capture_hz": 20.0,
+  "latency_s": 0.05,
+  "cameras": {"count": 4, "width": 64, "height": 48, "horizontal_fov_deg": 100.0, "pitch_down_deg": 45.0, "min_range_m": 0.08, "max_range_m": 2.0, "azimuths_deg": [0, 90, 180, 270], "mounts": "unchanged four_camera_rig defaults", "pose": "exact simulated capture-time pose; perfect localization assumption"},
+  "memory": {"cell_size_m": 0.01, "normal_radius_m": 0.04, "min_support_cells": 6, "max_plane_rms_m": 0.003, "min_xy_spread_m": 0.003, "max_slope_deg": 60.0, "max_cell_height_spread_m": 0.02, "max_age_s": null},
+  "foot_consistency_m": 0.003,
+  "lookahead_s": 0.12,
+  "duration_s": 133.0,
+  "control_dt_s": 0.005,
+  "expected_rows": 26601,
+  "uniform_anchor_stride_s": 0.5,
+  "dense_anchor_window_s": [99.5, 104.0],
+  "gate_focus_window_s": [100.5, 101.8],
+  "gate_minimum_focus_opportunities": 10,
+  "gate_normalized_applied_change": 0.001,
+  "gate_native_and_current_guard_tolerance": 1e-9,
+  "scene_crop_xy_m": [-5.4, 0.6, 6.4, 13.6],
+  "scene_crop_rule": "Fixed declared route-domain bounds with >=2.30m optical margin; never use future executed footprint",
+  "inputs": {
+    "precision": "results/current_belt_capacity_20261128/campaign/runs/B060/child/campaign/runs/eight_m100_N/precision.npz",
+    "model_xml": "results/current_belt_capacity_20261128/campaign/runs/B060/child/campaign/_workspaces/eight_m100_N/mirror/model_offroad.xml",
+    "config": "results/current_belt_capacity_20261128/campaign/runs/B060/child/campaign/_workspaces/eight_m100_N/mirror/model_config.json",
+    "collision_dem": "results/current_belt_capacity_20261128/campaign/runs/B060/child/campaign/_workspaces/eight_m100_N/gazebo/world/marsyard2021_dem.obj",
+    "source_output_seal": "results/current_belt_capacity_20261128/campaign/outputs_sealed.json"
+  }
+}

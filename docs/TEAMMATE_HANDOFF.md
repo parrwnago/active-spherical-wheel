@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-82 (revision 17).
+experiment history and common presentation questions through I-84 (revision 19).
 
 ## Current system
 
@@ -74,7 +74,66 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-82's 0.60 m/s capacity variant substantially improves the current figure-eight.**
+**Latest: I-84 finds mapped terrain, but the preparation-only candidate has no action in this episode.**
+[Completed terrain-preview audit and stopping decision](iterations/2026-11-28/terrain-recovery-preview/README.md).
+This is a valid **STOP** for the selected candidate and episode, with no live
+trial or new physics. The runtime/shadow audit uses 1,158 unique anchors:
+267 uniform and 901 dense, with ten overlapping. Native reconstruction and
+current-value guard errors are zero in the canonical audit; independent
+saved-record verification passes.
+
+Mapped future support is complete at all 261 focus anchors (100.5–101.8 s)
+and all 901 dense anchors (99.5–104 s). Yet both native and mapped preparation
+weights are zero throughout that dense interval, so shadow applied commands
+are identical. The candidate changes **unloaded-drive preparation**, which was
+inactive here. This is neither a visibility failure nor proof that cameras
+have no value. No zero-action live trial was run. Elsewhere, 94 uniform anchors
+have accepted nonzero mapped preparation and 50 meet the registered opportunity
+threshold; those were not selected afterward to rescue the live comparison.
+
+The causal replay captures 2,661 four-camera batches (10,644 frames), with 2,660
+delivered and one pending at the end. Ideal depth, exact capture-time pose,
+50 ms delivery latency and static terrain are assumptions. No MPC or new
+contact estimator is introduced. Keep LQR/observer/feedforward and the promising
+0.60 capacity variant. Using mapped terrain to anticipate **loaded** velocity
+or lean references is a new proposal, not implemented or validated by I-84.
+
+**I-83 separates fast first return from durable recovery.**
+[Recovery report, plots and PDF](iterations/2026-11-28/recovery-assessment/README.md)
+· [Annotated 100.5–133 s video](../results/recovery_assessment_20261128/publication/video_stage01/recovery_100p5_133_B030_B060.mp4).
+This assesses the existing I-82 recordings, with no new physics or controller
+change. All five criteria are already outside their bands at the common
+100.5 s anchor: onset is left-censored, so elapsed times below are from that
+anchor, not from an identified physical disturbance onset. The intended last
+quarter of the eight is fixed to avoid credit for a different branch at the
+crossing. Spatial nominal velocity is evaluated at projected path progress;
+timed tracking remains a separate test.
+
+| Path-motion recovery, elapsed from anchor | 0.30 m/s reference | 0.60 m/s variant |
+| --- | ---: | ---: |
+| First threshold entry | 9.460 s | 3.380 s |
+| Entry sustained for 1 s | 16.455 s | 3.380 s |
+| Primary entry sustained for 2 s | 16.455 s | 17.175 s |
+
+Path-motion requires distance ≤20 mm, full spatial velocity residual ≤20 mm/s,
+own-reference up error ≤2° and absolute tilt ≤15°. The raised-cap first good
+interval lasts 1.705 s, ending at 105.585 s; velocity residual exceeds its band
+at 105.590–106.000 s, so that return does not pass the primary two-second dwell.
+Its eventual continuous good tail is 117.675–133 s. The reference's earlier
+two-second recovery has two later qualifying exits, starting at 126.555 s,
+and ends outside. Neither ever enters the stricter simultaneous criteria that
+also constrain spin; those returns are right-censored. Faster first return and
+better persistence do not mean every recovery-time metric improves.
+
+Independent reconstruction confirms 60 signal arrays, 10 predicate arrays and
+1,317 numerical ledger leaves plus all statuses/censoring/counts. These are
+verification scopes, not additive tests or a full repository suite. I-82's
+positive full-route capacity screen remains valid; I-83 asks a different question.
+The objective is fast **and** durable recovery. The later I-84 audit stops the
+selected preparation-only candidate before a live trial. Earlier camera-memory
+tests were offline and never commanded LQR.
+
+**I-82's 0.60 m/s capacity variant substantially improves the current figure-eight.**
 [Completed report, plots, PDF and reproduction](iterations/2026-11-28/current-belt-capacity/README.md)
 · [Full comparison video](../results/current_belt_capacity_20261128/publication/video_stage01/eight_m100_B030_B060.mp4)
 · [98–104 s event video](../results/current_belt_capacity_20261128/publication/video_stage01/event_98_104_B030_B060.mp4).
@@ -772,6 +831,13 @@ selected movies are committed. [Portable workspace details](../research/README.m
 unsuccessful trials. The [dated presentation notes](iterations/2026-11-26/README.md)
 are the shorter current index. Useful checkpoints:
 
+- I-84: complete mapped future support in the selected episode, but zero native
+  and mapped preparation weights mean no candidate command change. The valid
+  stopping gate prevents an uninformative live trial; sensing generally remains
+  distinct from this inactive control interface.
+- I-83: saved-record recovery assessment finds a faster first/one-second return
+  with 0.60, but its first two-second path-motion return is 0.720 s later. The
+  raised-cap tail persists; native has late exits. Residual spin remains.
 - I-82: both full 133 s runs complete; raising both operating belt caps to
   0.60 m/s passes the current eight −1 case's registered performance screen.
   It is the leading capacity variant, while 0.30 remains the reference baseline.

@@ -1,0 +1,10 @@
+{
+  "iteration": "I-84",
+  "scope": "Post-analysis artifact-size/hash reporting only",
+  "actual_observed_exit_code": 1,
+  "error": "AttributeError: module 'hashlib' has no attribute 'file_digest'",
+  "trigger": "An inline metadata helper attempted hashlib.file_digest(path.open('rb'), 'sha256') on this Python version.",
+  "effect": "Stopped before printing any metadata record; no scientific output, source, setting, row, camera observation or manifest was changed.",
+  "correction": "Use the existing streamed hashlib.sha256 update loop. This record was written after the reporting failure; it is not a pre-command snapshot.",
+  "no_new_physics": true
+}

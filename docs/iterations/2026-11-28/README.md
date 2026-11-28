@@ -1,5 +1,27 @@
 # Research presentation notes — 2026-11-28
 
+**Latest: I-84 sees future terrain but preparation is inactive in this event.**
+[Observed-map preparation audit](terrain-recovery-preview/README.md).
+Four-camera memory supplies accepted future centre/foot fits at all261focus
+and901dense anchors, but both native and mapped preparation blends are0
+through99.5–104s. Native reconstruction/current load/velocity/margin guards
+have0error. The predeclared action gate fails0/261 versus required10; honor
+its stop before a zero-action live trial. This is not a camera-visibility
+failure or rejection of terrain information. Map-informed loaded-motion
+references remain a different proposed experiment. No new physics is run.
+
+**I-83 finds earlier return but mixed sustained-recovery timing.**
+[Recovery definitions](recovery-assessment/README.md) ·
+[Observed-map preparation proposal](terrain-recovery-preview/README.md).
+Existing I-82 recordings give first acceptable path motion9.460→3.380s after
+the100.5s anchor at0.30→0.60m/s. The0.60firstreturn lasts1.705s; its primary
+two-second-dwell entry is.720s later (116.955→117.675s absolute), then stays
+good through133s while0.30leaves again. Both retain rotation and never satisfy
+the stricter full-motion bands. Independent raw reconstruction matches60signal
+arrays,10sample-exact predicates and1,317numerical ledger leaves. No newphysics.
+I-84's subsequent fixed0.60capacity audit does not demonstrate useful action
+through the unloaded-preparation interface in this event.
+
 **Latest: I-82 raises the belt operating limit and improves the current eight.**
 [Full comparison, slope-event video, two-page PDF and evidence](current-belt-capacity/README.md).
 Two full 133 s Gazebo/DART runs retain the original LQR gains, momentum observer,

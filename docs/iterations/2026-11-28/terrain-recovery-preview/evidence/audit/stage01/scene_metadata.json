@@ -1,0 +1,87 @@
+{
+  "backend": "MuJoCo mj_multiRay/mj_ray triangle first-hit; no dynamics",
+  "bounds_xy_m": [
+    -5.4,
+    0.6,
+    6.4,
+    13.6
+  ],
+  "crop_rule": "All triangles whose world XY AABB intersects bounds; vertices need not lie inside crop.",
+  "cropped_assets": [
+    {
+      "name": "dem",
+      "path": "/home/parrwnago/active-spherical-wheel/results/terrain_recovery_preview_20261128/protocol/frozen_stage01/optical_scene/dem_collision_crop.obj",
+      "sha256": "45ed8f69049992dbc5f3650e7aa49c37f36eb9218f2c3fa7bc110026b912f197",
+      "triangles": 9856,
+      "vertices": 5070
+    },
+    {
+      "name": "lava",
+      "path": "/home/parrwnago/active-spherical-wheel/results/terrain_recovery_preview_20261128/protocol/frozen_stage01/optical_scene/lava_collision_crop.obj",
+      "sha256": "f95ab6f1c5ff36922d3a93054bbfc977915efc247458b709e6068bfeeaf1d3e3",
+      "triangles": 553,
+      "vertices": 326
+    },
+    {
+      "name": "rocks_big",
+      "path": "/home/parrwnago/active-spherical-wheel/results/terrain_recovery_preview_20261128/protocol/frozen_stage01/optical_scene/rocks_big_collision_crop.obj",
+      "sha256": "2373bd56dfe728b5f1e91df16719827105b064d48aed92fd022dd4228f8d0072",
+      "triangles": 330,
+      "vertices": 171
+    },
+    {
+      "name": "rocks_medium",
+      "path": "/home/parrwnago/active-spherical-wheel/results/terrain_recovery_preview_20261128/protocol/frozen_stage01/optical_scene/rocks_medium_collision_crop.obj",
+      "sha256": "612cec5651d561d864dfe4ccbe8b28d0408d2bfaa65070a7ffecee81f115b07e",
+      "triangles": 501,
+      "vertices": 289
+    }
+  ],
+  "environment_geom_count": 4,
+  "environment_policy": "Saved collision DEM triangles and original lava/rock faces; no visual heightmap/resampling or smooth vertex normals.",
+  "feature_link_yaw_rad": 1.5707963268,
+  "feature_local_z_offsets_m": {
+    "lava": 0.0,
+    "rocks_big": 0.0,
+    "rocks_medium": -0.03
+  },
+  "mujoco_version": "3.16.0",
+  "numerical_geometry": "Source triangle coordinates preserved in assets; MuJoCo compiled mesh vertices use float32. Face normals, never OBJ smooth vn.",
+  "robot_model_xml": "/home/parrwnago/active-spherical-wheel/results/terrain_recovery_preview_20261128/protocol/frozen_stage01/optical_scene/robot/model.xml",
+  "robot_model_xml_sha256": "01795549e99d14c16984996af4e86d7949e9e351bd4cf0e1b97a709d55b18b36",
+  "robot_occluder_geom_count": 10,
+  "robot_policy": "Generated visible CAD/fork/shaft/belt geoms; groups3/5 hidden wedges/proxies excluded. Known-model self-first-hits masked, not transparent. Not an exact Gazebo robot optical sensor.",
+  "scene": "Mars collision geometry, ideal optical robot selfmask",
+  "scene_xml": "/home/parrwnago/active-spherical-wheel/results/terrain_recovery_preview_20261128/protocol/frozen_stage01/optical_scene/depth_scene.xml",
+  "scene_xml_sha256": "675d9f593661408b66e8a95261b045157337f5c0502c1ceac174e674303f1d10",
+  "source_assets": [
+    {
+      "name": "dem",
+      "path": "/home/parrwnago/active-spherical-wheel/results/current_belt_capacity_20261128/campaign/runs/B060/child/campaign/_workspaces/eight_m100_N/gazebo/world/marsyard2021_dem.obj",
+      "sha256": "cd62cacba94c8cd04576627811e330a23c9385b8de23aece98c2025ddd35f6a6",
+      "triangles": 498002,
+      "vertices": 250000
+    },
+    {
+      "name": "lava",
+      "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/lava.obj",
+      "sha256": "7c5db43cb0b1d2aa509c793d662f02d13c41f34cf43c2a8232acc1be57a5f2a9",
+      "triangles": 13836,
+      "vertices": 7528
+    },
+    {
+      "name": "rocks_big",
+      "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_big.obj",
+      "sha256": "7a8e0be5a3f1c7bbc7ffe8c5a511be14b25485c713a8caf6cf42dd20e9fdb49f",
+      "triangles": 6510,
+      "vertices": 3333
+    },
+    {
+      "name": "rocks_medium",
+      "path": "/home/parrwnago/active-spherical-wheel/assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_medium.obj",
+      "sha256": "ccf20567f10256c2617879d73a1d842d4275cf36c9d6a2f93f4162584614d342",
+      "triangles": 70318,
+      "vertices": 38673
+    }
+  ]
+}

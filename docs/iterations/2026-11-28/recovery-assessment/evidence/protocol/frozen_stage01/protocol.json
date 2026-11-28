@@ -1,0 +1,200 @@
+{
+  "default_change": false,
+  "definitions": {
+    "anchor_reason": "Start of previously selected I-81/I-82 fine-contact episode. This is a common clock anchor, not identified physical disturbance onset.",
+    "arms": [
+      "B030",
+      "B060"
+    ],
+    "classification": {
+      "dwell_samples": "At200Hz,2s requires401 consecutive states and1s requires201, with finite complete clock. Endpoint-only/insufficient-dwell return is right-censored.",
+      "inside_at_anchor": "Seek first bad-state run lasting >=0.1s whose first state is <=104s; if none, label no_qualifying_departure rather than zero-latency recovery.",
+      "later_exits": "Report first subsequent qualifying exit and count after primary confirmation, plus remaining-good fraction and last continuous good tail through133s. These can include new terrain disturbances; not automatically same-event overshoot.",
+      "later_tail": "A final uninterrupted good tail must meet2s to be sustained-through-end; distinguish this from an earlier2s recovery followed by new exits.",
+      "outside_at_anchor": "Left-censored onset; elapsed return from common anchor is reported, not claimed latency since physical disturbance onset.",
+      "return": "Search from anchor/departure for first entry starting a continuous good run with full dwell. Report both entry and confirmation times. First threshold entry is also reported without calling it sustained recovery."
+    },
+    "control_dt_s": 0.005,
+    "criteria": {
+      "geometric": "Intended-section path distance <=20mm.",
+      "path_full": "path_motion AND abs(world-z spin)<=0.05rad/s. Separate strict motion recovery.",
+      "path_motion": "Geometric AND full XY velocity residual to spatial nominal <=20mm/s AND own-reference up error <=2deg AND absolute tilt <=15deg. Primary translational/balance recovery; no free-heading angle target.",
+      "timed_full": "timed_motion AND same absolute world-z spin bound.",
+      "timed_motion": "Timed XY error <=20mm AND full XY velocity residual to original clocked reference <=20mm/s AND same up/tilt conditions."
+    },
+    "default_change": false,
+    "departure_search_end_s": 104.0,
+    "event_anchor_s": 100.5,
+    "expected_rows": 26601,
+    "iteration": "I-83",
+    "new_physics": false,
+    "recording_end_s": 133.0,
+    "report": [
+      "Initial/focus/fullpostanchor errors and rates",
+      "First entry,2s sustained and1s sensitivity for every criterion",
+      "Left/right censoring and no qualifying departure explicitly",
+      "Spatial progress and clocked progress lag, along/cross velocity residuals",
+      "Global geometric versus intended-section distance kept separate",
+      "Timed/reference-independent path recovery kept separate",
+      "Peak departure and integral error/excess over100.5to133,focus100.5to104",
+      "Held command clipping and command steps with each arm's actual bounds and original0.30 scale",
+      "Residual spin separately from translational return",
+      "Thresholds are engineering preferences, not stability guarantees; no causal attribution of every later departure"
+    ],
+    "route": {
+      "anchor_origin_m": [
+        -2.4,
+        10.0
+      ],
+      "full_polyline_vertices": 4097,
+      "intended_u_interval": [
+        0.75,
+        1.0
+      ],
+      "kind": "i76_eight",
+      "local_offset_m": [
+        0.5,
+        0.0
+      ],
+      "lower_boundary_clamp": "Flag and report; not silently discarded or used as a different branch.",
+      "moving_duration_s": 120.0,
+      "projection": "Exact clipped segment projection on the original full-grid last quarter: 1025 vertices, 1024 segments; deterministic smallest-u tie. No parameter wrap or branch selected from actual outcomes.",
+      "rotation_deg": 113.0,
+      "shape": "[0.5*sin(2*pi*u),0.25*sin(4*pi*u)]",
+      "spatial_velocity": "At fractional projected u, invert u=10*r^3-15*r^4+6*r^5 on [0,1] with 60 fixed bisection iterations; nominal tangent velocity is R*c_prime(u)*30*r^2*(1-r)^2/120. Endpoints u=0/1 have zero nominal speed. This retains original speed profile in space without a timed-position deadline.",
+      "start_s": 3.0
+    },
+    "scope": "New descriptive recovery assessment of existing I-82 recordings; old outcomes already known. Definitions fixed before these new reductions, not blind preregistration and not a change to I-82 acceptance gates.",
+    "thresholds": {
+      "absolute_body_tilt_guard_deg": 15.0,
+      "absolute_world_z_rate_rad_s": 0.05,
+      "clock_grid_tolerance_s": 1e-09,
+      "comparison_tolerance": 1e-12,
+      "own_reference_up_error_deg": 2.0,
+      "path_distance_m": 0.02,
+      "primary_dwell_s": 2.0,
+      "qualifying_exit_s": 0.1,
+      "secondary_dwell_s": 1.0,
+      "timed_position_m": 0.02,
+      "velocity_error_m_s": 0.02
+    }
+  },
+  "inputs": {
+    "results/current_belt_capacity_20261128/campaign/B030.observed_exit.json": {
+      "bytes": 798,
+      "sha256": "7ba4bfdac9705d99338ee63159482ec6a6830e54abfbb71c59c7a87ef338ced7"
+    },
+    "results/current_belt_capacity_20261128/campaign/B060.observed_exit.json": {
+      "bytes": 927,
+      "sha256": "efbad9e9be8f0c2edd9f5b417db96f74cff7a60a0d7d2011d8362f2eef8e13cc"
+    },
+    "results/current_belt_capacity_20261128/campaign/outputs_sealed.json": {
+      "bytes": 95728,
+      "sha256": "957e356fc264ee4b38cee442acf3908d053809518223a3c776b269b7806335f8"
+    },
+    "results/current_belt_capacity_20261128/campaign/runs/B030/child/campaign/runs/eight_m100_N/precision.npz": {
+      "bytes": 34618052,
+      "sha256": "ab0db432db668839068b925bc8ac58837ede8bbcf3fe3de729f4699b09490cf8"
+    },
+    "results/current_belt_capacity_20261128/campaign/runs/B030/native_comparison.json": {
+      "bytes": 6736,
+      "sha256": "45dab79cd058fd077032391a7e4732b0f7f96aacf08063484522ac0f46de0e42"
+    },
+    "results/current_belt_capacity_20261128/campaign/runs/B030/outcome.json": {
+      "bytes": 695,
+      "sha256": "55345694482a127a6b3becc17b3d68d2fe16a88e60464bf36d65bfdc78d1fd40"
+    },
+    "results/current_belt_capacity_20261128/campaign/runs/B060/child/campaign/runs/eight_m100_N/precision.npz": {
+      "bytes": 34381312,
+      "sha256": "f9a9c4d8a23ab8c27f86ddfc0e131d59090119dd04215d6d3cead3387ce92554"
+    },
+    "results/current_belt_capacity_20261128/campaign/runs/B060/native_comparison.json": {
+      "bytes": 14575,
+      "sha256": "7f099885949fd24ad5939bd64a8edc6f72005f62297d9e52cc674cf1f6e0a6c6"
+    },
+    "results/current_belt_capacity_20261128/campaign/runs/B060/outcome.json": {
+      "bytes": 695,
+      "sha256": "04b753c144903af20ed13fc50b5bf4c7de1a0603122add65461e27fed800005c"
+    },
+    "results/current_belt_capacity_20261128/evaluation/completed_stage01/report.json": {
+      "bytes": 50232,
+      "sha256": "bd9ff5f93aff0dec984985207c13d427a213101b6291b26db7722484b599c96e"
+    },
+    "results/current_belt_capacity_20261128/protocol/frozen_stage01/protocol.json": {
+      "bytes": 29234,
+      "sha256": "ce39ad0f0cd6c3748e764b72d413b45ad20353c1deb641bdbd722c35402dc400"
+    },
+    "results/recovery_assessment_20261128/evaluation/contracts_stage01_draft/outcome.json": {
+      "bytes": 51,
+      "sha256": "d98b11f1577c22e5156c819782b5da135f248321b15fa411f521f351e653e16a"
+    },
+    "results/recovery_assessment_20261128/evaluation/contracts_stage02/outcome.json": {
+      "bytes": 254,
+      "sha256": "f3fc437466179643fbf6c2bc453610036236c1dcdbae7385cbcef2212d39bc51"
+    },
+    "results/recovery_assessment_20261128/evaluation/contracts_stage03/outcome.json": {
+      "bytes": 324,
+      "sha256": "efa07c0c20e10921095af10f0ea7047eb943b4f650e41abdd88249cb29eff247"
+    },
+    "results/recovery_assessment_20261128/protocol/definitions.json": {
+      "bytes": 4523,
+      "sha256": "c7eaa529ce64b4e140bd0d42a28e94f9e62401bf1bb1a82b333338cffc7dca72"
+    },
+    "results/recovery_assessment_20261128/verification/contracts_stage01/receipt.json": {
+      "bytes": 426,
+      "sha256": "dbf91f81b9f16c01fb5275216cf30178c83855811b790d33bd6f8a01bff4a42d"
+    },
+    "results/recovery_assessment_20261128/verification/contracts_stage02/receipt.json": {
+      "bytes": 432,
+      "sha256": "d1658a76602a2e19a367cbf66eda72787b5059c78bfbeeafa72ba1a3e3b471d4"
+    }
+  },
+  "iteration": "I-83",
+  "new_physics": false,
+  "original_i82_binding_counts_verified": {
+    "closed_outputs": 456,
+    "inputs": 59,
+    "sources": 93
+  },
+  "registered_before_new_reductions_utc": "2026-11-28T09:08:52.469198+00:00",
+  "scope": "Previously known I-82 outcomes; new descriptive metrics fixed before new reductions, not blind preregistration. No simulator/controller calls.",
+  "source_revision": "07db1b3ad3b613fadf646cebaafc708cfa4188e8",
+  "sources": {
+    "results/recovery_assessment_20261128/evaluation/core.py": {
+      "bytes": 14221,
+      "sha256": "6fdcde4e3e4f6b50df53b28920348016fd8923c8a63af87c7dd5603d4841ab5c"
+    },
+    "results/recovery_assessment_20261128/evaluation/evaluate.py": {
+      "bytes": 15453,
+      "sha256": "7387cd50b234c862153eeae811f9dd5b34da231be2f72fd5c8300d6790588444"
+    },
+    "results/recovery_assessment_20261128/evaluation/test_core.py": {
+      "bytes": 7899,
+      "sha256": "a8cd35fe132a4f8cdef81b364352a430aaf075d06bde87b062dd6f460299953d"
+    },
+    "results/recovery_assessment_20261128/protocol/register.py": {
+      "bytes": 3851,
+      "sha256": "6af0f17edda066edf55e2b114ee3e569c860518f91402f2da74bd32e166a21a1"
+    },
+    "results/recovery_assessment_20261128/verification/independent.py": {
+      "bytes": 15728,
+      "sha256": "a98d9a365e629cc978ac85a96323fe18195fa7ac9a80441189d0331d23c4a4f6"
+    },
+    "results/recovery_assessment_20261128/verification/test_independent.py": {
+      "bytes": 6843,
+      "sha256": "a95fbdac0eff8f28bc59e1daf1c4cd91b4b6bdc357547883ba151a83d5694e03"
+    },
+    "results/recovery_assessment_20261128/verification/verify_recovery.py": {
+      "bytes": 9236,
+      "sha256": "602cba689841df849da9b7ca00cceb516eb6aa5449160e785c109f51380be376"
+    },
+    "results/tangent_heading_routes_20261127/evaluation/metrics.py": {
+      "bytes": 24463,
+      "sha256": "ca4b71dc840c53f0bd59e38f60643500a3d1fb0bdab50d5ee062832cf130b4c1"
+    },
+    "results/tangent_heading_routes_20261127/runtime/route.py": {
+      "bytes": 9362,
+      "sha256": "512a3fd7c8a034f85745d6c2f90485a7c5c632dde3578061103e91fe0405b55e"
+    }
+  }
+}
