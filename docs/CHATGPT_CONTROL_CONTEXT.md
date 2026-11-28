@@ -1,13 +1,23 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 12 — 28 November 2026, through I-77.** The selected live controller
-remains the original native N. I-77 starts from repository commit `3155d7a` and
-investigates its deviations; no production/default promotion is made.
+**Revision 13 — 28 November 2026, through I-78.** The selected live controller
+remains the original native N. I-78 starts from repository commit `9f7cfc8` and
+tests managed path progress; no production/default promotion is made.
 This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest investigation, **I-77**, returns to the baseline. In a matched-prefix
+The latest experiment, **I-78**, slows path progress around the unchanged LQR
+and observer using current inferred geometry and nominal full-command pressure.
+Desired position, velocity and acceleration remain coherent. Six fresh straight
+runs complete; native arrays exactly replay the earlier baseline. Peak path
+departures N→G are148.9→102.0,124.6→124.4,59.7→59.2 mm at−1.0/+0.3/+0.9 rad,
+with0.985/0.600/0.005 s extra travel time. It fails two of82 fixed checks because
++0.3 peak speed and tilt increase. Keep G experimental. This is a reactive
+policy, not a future contact predictor or a guarantee of command feasibility.
+Section22 explains the test, retained failures and causal limits.
+
+The preceding investigation, **I-77**, returns to the baseline. In a matched-prefix
 straight −1 rad test, limiting only feedback joint-rate references during one
 250 ms window reduces subsequent geometric peak error over 20.4–24 s from 148.9
 to 22.0 mm. Removing only the worst 5 ms pulse does not help. This is a causal
@@ -1790,7 +1800,68 @@ desired-vs-actual velocity mismatch nor one accurate contact-point sample is
 sufficient to choose a new estimator. Current reports separate measured
 physical contributions from unresolved mechanisms and preserve failed setups.
 
-## 22. Sources, attribution, and how to continue a discussion
+## 22. I-78: coherent path retiming is useful in one case, not a general fix
+
+The student asked whether the advancing time reference truly caused departures.
+I-77 shows causal reference-window effects, but it does not identify a sole
+root cause. I-78 tests a remedy hypothesis without changing original LQR,
+observer, lean, gains, inverse rolling map, feedforward, preparation or caps.
+
+The original straight reference has a3s hold,32s minimum-jerk1.2m traversal,
+then10s goal hold. N finishes45s. G introduces virtual time τ and rate λ∈[0,1]:
+`p=g(τ)`, `v=g′(τ)λ`, `a=g″(τ)λ²+g′(τ)λdot`. It can pause without a positive
+floor, but a five-second failure to advance while unfinished and away from goal
+fails the experiment. G must complete plus10s actual goal hold within75s.
+
+One private native clone evaluates full-speed command demand at current state
+and virtual position, with history refreshed from the live controller. It never
+integrates physics or applies commands. Rate target is the minimum of one,
+inferred load-weighted planar authority/.15m/s,5rad/s over nominal largest joint
+reference, and .85 over normalized nominal full native request. A two-stage
+bounded cascade, .10s time constant and4s⁻¹ rate bound, smooths the clock. These
+are design assumptions, not motor ratings or a certified balance reserve.
+Exactly one live update commands each5ms hold. No truth contacts, camera,
+heading helper, tilt shaper or future contact forecast is introduced.
+
+Six fresh Gazebo/DART Mars straight cases at[−2.4,10]m,yaw113° and starts
+−1.0/+0.3/+0.9rad use the same gains and[1.5,.6,.6Nm,.3,.3m/s]caps. All original
+N precision arrays replay exactly. G reaches the reference endpoint at
+35.985/35.600/35.005s and then completes10s goal holds. Primary full-path metrics:
+
+| Shaft start | Peak path error N→G | Progress-weighted RMS N→G | Added time |
+| --- | ---: | ---: | ---: |
+| −1.0 | 148.9→102.0 mm | 50.0→34.0 mm | .985s |
+| +0.3 | 124.6→124.4 mm | 42.9→39.7 mm | .600s |
+| +0.9 | 59.7→59.2 mm | 21.3→21.2 mm | .005s |
+
+All180 setup checks pass;80/82 performance checks pass. At+0.3 absolute tilt
+9.397→9.970° exceeds the native+.5° margin, and speed.1819→.2284m/s exceeds
+.2101m/s. No phase/gate/parameter retuning follows results. All six meet final
+position/speed convergence; only G−1 meets full position/speed/rotation/attitude
+settling. G−1 clipping time drops.680→.240s but largest joint reference is still
+66.13rad/s versus91.90 native. This is not an enforced future-input constraint.
+
+At+0.3, G's peak speed occurs19.730s while desired speed is only.03869m/s and
+no same-row command clips. Tilt peaks20.070s during reacceleration, when desired
+acceleration is.07785m/s² and a motor request−.6594Nm clips to−.6Nm. Changed
+reference/contact/state histories are associations, not isolated physical causes.
+Slowing desired motion can alter balancing motion and does not directly cap
+actual motion. The governor has no prediction or invariance proof.
+
+Two independent raw-data audits reproduce scalar metrics and all82 decisions;
+one covers564 scalar leaves. Original registered analysis is preserved alongside
+pre-array structural/arrival corrections, without numerical gate changes. A
+later prose claim that G+.9 never retimed was wrong; saved reports were correct:
+first changed reference19.815s, minimum rate.9862, actual lag4.631ms. Direct raw
+checks confirm the canonical metrics. No physics rerun corrects the prose.
+
+Keep N selected. One meaningful improvement, two nearly unchanged peaks and a
+regression support continued diagnosis, not claims that the clock alone caused
+the problem or more threshold tuning must cure it. Sources, plots, PDF, videos,
+conditions and reproduction are indexed in the
+[I-78 report](iterations/2026-11-28/path-progress-governor/README.md).
+
+## 23. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

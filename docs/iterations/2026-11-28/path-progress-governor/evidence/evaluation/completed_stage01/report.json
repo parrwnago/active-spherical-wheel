@@ -1,0 +1,2701 @@
+{
+  "canonical_analysis_stage": "stage02",
+  "cases": {
+    "straight_m100_G": {
+      "actual_last_time_s": 45.98500000000507,
+      "arrival_added_time_s": 0.9849999999999568,
+      "attitude": {
+        "absolute_tilt_peak_deg": 8.393999151989531,
+        "own_raw_target_peak_deg": 2.6065769584999687,
+        "own_raw_target_rms_deg": 0.5042868847876841
+      },
+      "authoritative_path_outcome": {
+        "actual_end_s": 45.98500000000507,
+        "case": {
+          "case_id": "straight_m100_G",
+          "goal_hold_s": 10.0,
+          "maximum_duration_s": 75.0,
+          "phase_rad": -1.0,
+          "policy": "G",
+          "route_id": "straight",
+          "yaw_deg": 113.0
+        },
+        "default_changed": false,
+        "diagnostic_completed": true,
+        "finished_at_s": 35.980581370662755,
+        "first_complete_sample_s": 35.98499999999996,
+        "full_goal_hold_completed": true,
+        "iteration": "I-78",
+        "maximum_physical_budget_s": 75.0,
+        "native_failure": null,
+        "parent_case_directory": "child/campaign/runs/straight_m100_N",
+        "parent_summary_qualification": "Inherited native summary retains fixed nominal metric windows; completed means the dynamic requested stop was reached without native failure. I78 reference progress/arrival/10s goal-reference hold and independent physical-goal/settling gates remain separate.",
+        "physical_goal_hold_s": 10.000000000005116,
+        "policy": "G",
+        "protocol_sha256": "cf868e800031bee3dc8f503269dffdd461067feff6fdf4bf33bd5e417a0fb112",
+        "reference_complete": true,
+        "requested_stop_s": 45.98499999999996,
+        "source_hashes_unchanged_after": true,
+        "survived_without_native_failure": true,
+        "terminal_command_held": false
+      },
+      "cap_ok": true,
+      "case": {
+        "case_id": "straight_m100_G",
+        "goal_hold_s": 10.0,
+        "maximum_duration_s": 75.0,
+        "phase_rad": -1.0,
+        "policy": "G",
+        "route_id": "straight",
+        "yaw_deg": 113.0
+      },
+      "clip_identity": true,
+      "commands": {
+        "clipped_any_fraction": 0.00521909318255953,
+        "clipped_any_seconds": 0.24,
+        "clipped_channel_fraction": [
+          0.00021746221593998044,
+          0.0,
+          0.0004349244318799609,
+          0.0,
+          0.00478416875067957
+        ],
+        "clipped_channel_seconds": [
+          0.01,
+          0.0,
+          0.02,
+          0.0,
+          0.22
+        ],
+        "final_unheld_request_finite": true,
+        "held_intervals": 9197,
+        "normalized_applied_step": {
+          "complete": true,
+          "count": 9197,
+          "finite_count": 9197,
+          "maximum": 2.8727900182521657,
+          "mean": 0.01943405969735111,
+          "p95": 0.07450615150064685,
+          "rms": 0.09648127133872018
+        },
+        "normalized_clipping_excess": {
+          "complete": true,
+          "count": 9197,
+          "finite_count": 9197,
+          "maximum": 6.9995882089413435,
+          "mean": 0.003160543769880677,
+          "p95": 0.0,
+          "rms": 0.0829938446423444
+        },
+        "requested_peak_abs": [
+          3.8537834018826715,
+          0.4271163545977345,
+          4.69285685379219,
+          0.12180352837012634,
+          0.5345357220836913
+        ],
+        "terminal_unheld_command_excluded": true
+      },
+      "declared_reference_arrival_s": 35.98499999999996,
+      "finite_reference": true,
+      "finite_state_commands": true,
+      "frames": 9198,
+      "full_ten_second_hold": true,
+      "geometric_progress_slow": {
+        "coordinate_name": "geometric_u",
+        "diagnostic_only": true,
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.005,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "grid_ok": true,
+      "held_mask_ok": true,
+      "inherited_requested_horizon_s": 45.98499999999996,
+      "inherited_summary_completed": true,
+      "maximum_virtual_clock_lag_s": 0.9849999999999568,
+      "motion": {
+        "acceleration_50ms_peak_m_s2": 4.607277781953681,
+        "planar_speed_peak_m_s": 0.2295181321461734,
+        "world_z_rate_peak_rad_s": 0.9692557384692332
+      },
+      "native_measurement_boundary_ok": true,
+      "no_progress": {
+        "coordinate_name": "virtual_time_s",
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.05,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "physical_failure": null,
+      "physical_run_completed": true,
+      "primary_episode_end_s": 45.98499999999996,
+      "prior_input_identity": true,
+      "progress_valid": true,
+      "recorded_extra_tail_s": 5.115907697472721e-12,
+      "reference_consistency_ok": true,
+      "reference_path_completed": true,
+      "reference_residuals": {
+        "reference_acceleration": 4.163336342344337e-17,
+        "reference_velocity": 2.7755575615628914e-17,
+        "reference_xy": 0.0
+      },
+      "requested_horizon_is_path_completion": false,
+      "settling": {
+        "final_samples": 401,
+        "final_window_complete": true,
+        "four_condition_passed": true,
+        "goal": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.0016338171607656455,
+          "mean": 0.0016219873409704664,
+          "p95": 0.001633029742096569,
+          "rms": 0.0016220089097925985
+        },
+        "own_reference_up_error": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.00017953420527759995,
+          "mean": 0.00010765897538790805,
+          "p95": 0.0001690105260847263,
+          "rms": 0.00011275827684017503
+        },
+        "physical_position_passed": true,
+        "speed": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 3.0268396535469095e-05,
+          "mean": 2.4221208133682473e-05,
+          "p95": 2.9385512790703394e-05,
+          "rms": 2.4387160689795633e-05
+        },
+        "world_z_rate": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.010975194422999828,
+          "mean": 0.010943009003541997,
+          "p95": 0.010971310926461272,
+          "rms": 0.01094302199912216
+        }
+      },
+      "tracking": {
+        "geometric_progress_rms": {
+          "complete": true,
+          "covered_progress": 1.0,
+          "definition": "Trapezoidal error\u00b2du over complete unit reference progress; pauses get zero weight.",
+          "rms": 0.03395167651500444
+        },
+        "geometric_traversal": {
+          "complete": true,
+          "count": 6598,
+          "finite_count": 6598,
+          "maximum": 0.10203250992637743,
+          "mean": 0.01495733271719121,
+          "p95": 0.08451632352443728,
+          "rms": 0.027756802088732983
+        },
+        "goal_error_at_primary_end_m": 0.0016338171607656455,
+        "original_clock_error_is_primary": false,
+        "original_clock_schedule_error": {
+          "complete": true,
+          "count": 9198,
+          "finite_count": 9198,
+          "maximum": 0.12395271223210609,
+          "mean": 0.02000634979026307,
+          "p95": 0.09125179518469828,
+          "rms": 0.033373646090604274
+        },
+        "own_reference_xy": {
+          "complete": true,
+          "count": 6598,
+          "finite_count": 6598,
+          "maximum": 0.10222898282094867,
+          "mean": 0.01911700907029156,
+          "p95": 0.08569585864064796,
+          "rms": 0.029983799085634883
+        },
+        "physical_goal_position_converged": true
+      },
+      "traversal_time_ratio": 1.0307812499999986,
+      "virtual_clock_valid": true
+    },
+    "straight_m100_N": {
+      "actual_last_time_s": 45.00000000000457,
+      "arrival_added_time_s": -5.471179065352771e-13,
+      "attitude": {
+        "absolute_tilt_peak_deg": 8.388898957517522,
+        "own_raw_target_peak_deg": 3.067380922549638,
+        "own_raw_target_rms_deg": 0.5875965750559625
+      },
+      "authoritative_path_outcome": {
+        "actual_end_s": 45.00000000000457,
+        "case": {
+          "case_id": "straight_m100_N",
+          "goal_hold_s": 10.0,
+          "maximum_duration_s": 45.0,
+          "phase_rad": -1.0,
+          "policy": "N",
+          "route_id": "straight",
+          "yaw_deg": 113.0
+        },
+        "default_changed": false,
+        "diagnostic_completed": true,
+        "finished_at_s": 35.0,
+        "first_complete_sample_s": 34.99999999999945,
+        "full_goal_hold_completed": true,
+        "iteration": "I-78",
+        "maximum_physical_budget_s": 45.0,
+        "native_failure": null,
+        "parent_case_directory": "child/campaign/runs/straight_m100_N",
+        "parent_summary_qualification": "Inherited native summary retains fixed nominal metric windows; completed means the dynamic requested stop was reached without native failure. I78 reference progress/arrival/10s goal-reference hold and independent physical-goal/settling gates remain separate.",
+        "physical_goal_hold_s": 10.000000000005116,
+        "policy": "N",
+        "protocol_sha256": "cf868e800031bee3dc8f503269dffdd461067feff6fdf4bf33bd5e417a0fb112",
+        "reference_complete": true,
+        "requested_stop_s": 45.0,
+        "source_hashes_unchanged_after": true,
+        "survived_without_native_failure": true,
+        "terminal_command_held": false
+      },
+      "cap_ok": true,
+      "case": {
+        "case_id": "straight_m100_N",
+        "goal_hold_s": 10.0,
+        "maximum_duration_s": 45.0,
+        "phase_rad": -1.0,
+        "policy": "N",
+        "route_id": "straight",
+        "yaw_deg": 113.0
+      },
+      "clip_identity": true,
+      "commands": {
+        "clipped_any_fraction": 0.015111111111111112,
+        "clipped_any_seconds": 0.68,
+        "clipped_channel_fraction": [
+          0.0011111111111111111,
+          0.0,
+          0.0028888888888888888,
+          0.0,
+          0.012222222222222223
+        ],
+        "clipped_channel_seconds": [
+          0.05,
+          0.0,
+          0.13,
+          0.0,
+          0.55
+        ],
+        "final_unheld_request_finite": true,
+        "held_intervals": 9000,
+        "normalized_applied_step": {
+          "complete": true,
+          "count": 9000,
+          "finite_count": 9000,
+          "maximum": 2.9086159641315676,
+          "mean": 0.030421846624310807,
+          "p95": 0.1101615201018623,
+          "rms": 0.1287789549718338
+        },
+        "normalized_clipping_excess": {
+          "complete": true,
+          "count": 9000,
+          "finite_count": 9000,
+          "maximum": 11.193339363270328,
+          "mean": 0.012001526506954395,
+          "p95": 0.0,
+          "rms": 0.20425332820176245
+        },
+        "requested_peak_abs": [
+          5.1076527926085316,
+          0.4244589049303899,
+          7.189669678497985,
+          0.12180352837012634,
+          0.6181974165596442
+        ],
+        "terminal_unheld_command_excluded": true
+      },
+      "declared_reference_arrival_s": 34.99999999999945,
+      "finite_reference": true,
+      "finite_state_commands": true,
+      "frames": 9001,
+      "full_ten_second_hold": true,
+      "geometric_progress_slow": {
+        "coordinate_name": "geometric_u",
+        "diagnostic_only": true,
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.005,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "grid_ok": true,
+      "held_mask_ok": true,
+      "inherited_requested_horizon_s": 45.0,
+      "inherited_summary_completed": true,
+      "maximum_virtual_clock_lag_s": 0.0,
+      "motion": {
+        "acceleration_50ms_peak_m_s2": 4.690105048489319,
+        "planar_speed_peak_m_s": 0.2495126095054054,
+        "world_z_rate_peak_rad_s": 1.4289845408664974
+      },
+      "native_measurement_boundary_ok": true,
+      "no_progress": {
+        "coordinate_name": "virtual_time_s",
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.05,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "physical_failure": null,
+      "physical_run_completed": true,
+      "primary_episode_end_s": 44.99999999999945,
+      "prior_input_identity": true,
+      "progress_valid": true,
+      "recorded_extra_tail_s": 5.115907697472721e-12,
+      "reference_consistency_ok": true,
+      "reference_path_completed": true,
+      "reference_residuals": {
+        "reference_acceleration": 0.0,
+        "reference_velocity": 1.3877787807814457e-17,
+        "reference_xy": 0.0
+      },
+      "requested_horizon_is_path_completion": false,
+      "settling": {
+        "final_samples": 401,
+        "final_window_complete": true,
+        "four_condition_passed": false,
+        "goal": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.01874434817768715,
+          "mean": 0.017180850022804197,
+          "p95": 0.01857698879013382,
+          "rms": 0.017200069830266094
+        },
+        "own_reference_up_error": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.020584627873463858,
+          "mean": 0.015553252621910901,
+          "p95": 0.020549561484765673,
+          "rms": 0.016477123955609987
+        },
+        "physical_position_passed": true,
+        "speed": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.005878900600062501,
+          "mean": 0.004815615024602652,
+          "p95": 0.005873101856724441,
+          "rms": 0.004885913717786388
+        },
+        "world_z_rate": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.11659485664678897,
+          "mean": 0.11352409902919788,
+          "p95": 0.11649639607369039,
+          "rms": 0.11354450327839585
+        }
+      },
+      "tracking": {
+        "geometric_progress_rms": {
+          "complete": true,
+          "covered_progress": 1.0,
+          "definition": "Trapezoidal error\u00b2du over complete unit reference progress; pauses get zero weight.",
+          "rms": 0.049970998399843536
+        },
+        "geometric_traversal": {
+          "complete": true,
+          "count": 6401,
+          "finite_count": 6401,
+          "maximum": 0.14893441607973287,
+          "mean": 0.019550279039547085,
+          "p95": 0.11883244640827406,
+          "rms": 0.03907594433073746
+        },
+        "goal_error_at_primary_end_m": 0.01874434817768715,
+        "original_clock_error_is_primary": false,
+        "original_clock_schedule_error": {
+          "complete": true,
+          "count": 9001,
+          "finite_count": 9001,
+          "maximum": 0.15317809433425067,
+          "mean": 0.021903691805735485,
+          "p95": 0.10728754330489626,
+          "rms": 0.03677462733402516
+        },
+        "own_reference_xy": {
+          "complete": true,
+          "count": 6401,
+          "finite_count": 6401,
+          "maximum": 0.15317809433425067,
+          "mean": 0.024591050057144886,
+          "p95": 0.12694728848515466,
+          "rms": 0.0424140881998895
+        },
+        "physical_goal_position_converged": true
+      },
+      "traversal_time_ratio": 0.9999999999999829,
+      "virtual_clock_valid": true
+    },
+    "straight_p030_G": {
+      "actual_last_time_s": 45.600000000004876,
+      "arrival_added_time_s": 0.5999999999997598,
+      "attitude": {
+        "absolute_tilt_peak_deg": 9.969799432017153,
+        "own_raw_target_peak_deg": 2.2978007417808244,
+        "own_raw_target_rms_deg": 0.5328190850810891
+      },
+      "authoritative_path_outcome": {
+        "actual_end_s": 45.600000000004876,
+        "case": {
+          "case_id": "straight_p030_G",
+          "goal_hold_s": 10.0,
+          "maximum_duration_s": 75.0,
+          "phase_rad": 0.3,
+          "policy": "G",
+          "route_id": "straight",
+          "yaw_deg": 113.0
+        },
+        "default_changed": false,
+        "diagnostic_completed": true,
+        "finished_at_s": 35.59581370850617,
+        "first_complete_sample_s": 35.59999999999976,
+        "full_goal_hold_completed": true,
+        "iteration": "I-78",
+        "maximum_physical_budget_s": 75.0,
+        "native_failure": null,
+        "parent_case_directory": "child/campaign/runs/straight_p030_N",
+        "parent_summary_qualification": "Inherited native summary retains fixed nominal metric windows; completed means the dynamic requested stop was reached without native failure. I78 reference progress/arrival/10s goal-reference hold and independent physical-goal/settling gates remain separate.",
+        "physical_goal_hold_s": 10.000000000005116,
+        "policy": "G",
+        "protocol_sha256": "cf868e800031bee3dc8f503269dffdd461067feff6fdf4bf33bd5e417a0fb112",
+        "reference_complete": true,
+        "requested_stop_s": 45.59999999999976,
+        "source_hashes_unchanged_after": true,
+        "survived_without_native_failure": true,
+        "terminal_command_held": false
+      },
+      "cap_ok": true,
+      "case": {
+        "case_id": "straight_p030_G",
+        "goal_hold_s": 10.0,
+        "maximum_duration_s": 75.0,
+        "phase_rad": 0.3,
+        "policy": "G",
+        "route_id": "straight",
+        "yaw_deg": 113.0
+      },
+      "clip_identity": true,
+      "commands": {
+        "clipped_any_fraction": 0.005592105263157895,
+        "clipped_any_seconds": 0.255,
+        "clipped_channel_fraction": [
+          0.0,
+          0.0,
+          0.0002192982456140351,
+          0.0,
+          0.00537280701754386
+        ],
+        "clipped_channel_seconds": [
+          0.0,
+          0.0,
+          0.01,
+          0.0,
+          0.245
+        ],
+        "final_unheld_request_finite": true,
+        "held_intervals": 9120,
+        "normalized_applied_step": {
+          "complete": true,
+          "count": 9120,
+          "finite_count": 9120,
+          "maximum": 1.1865323700448864,
+          "mean": 0.02130981625729622,
+          "p95": 0.1165207310659867,
+          "rms": 0.0927558088733058
+        },
+        "normalized_clipping_excess": {
+          "complete": true,
+          "count": 9120,
+          "finite_count": 9120,
+          "maximum": 0.7329673295154251,
+          "mean": 0.0019666872011834123,
+          "p95": 0.0,
+          "rms": 0.03258924120208927
+        },
+        "requested_peak_abs": [
+          0.5089686612033097,
+          0.28092978712845973,
+          0.6594131208866455,
+          0.17588533513988563,
+          0.5198901988546275
+        ],
+        "terminal_unheld_command_excluded": true
+      },
+      "declared_reference_arrival_s": 35.59999999999976,
+      "finite_reference": true,
+      "finite_state_commands": true,
+      "frames": 9121,
+      "full_ten_second_hold": true,
+      "geometric_progress_slow": {
+        "coordinate_name": "geometric_u",
+        "diagnostic_only": true,
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.005,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "grid_ok": true,
+      "held_mask_ok": true,
+      "inherited_requested_horizon_s": 45.59999999999976,
+      "inherited_summary_completed": true,
+      "maximum_virtual_clock_lag_s": 0.5999999999997598,
+      "motion": {
+        "acceleration_50ms_peak_m_s2": 4.81471555261781,
+        "planar_speed_peak_m_s": 0.22836237586008892,
+        "world_z_rate_peak_rad_s": 1.1433083979538086
+      },
+      "native_measurement_boundary_ok": true,
+      "no_progress": {
+        "coordinate_name": "virtual_time_s",
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.05,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "physical_failure": null,
+      "physical_run_completed": true,
+      "primary_episode_end_s": 45.59999999999976,
+      "prior_input_identity": true,
+      "progress_valid": true,
+      "recorded_extra_tail_s": 5.115907697472721e-12,
+      "reference_consistency_ok": true,
+      "reference_path_completed": true,
+      "reference_residuals": {
+        "reference_acceleration": 2.7755575615628914e-17,
+        "reference_velocity": 2.7755575615628914e-17,
+        "reference_xy": 0.0
+      },
+      "requested_horizon_is_path_completion": false,
+      "settling": {
+        "final_samples": 401,
+        "final_window_complete": true,
+        "four_condition_passed": false,
+        "goal": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.00441014256925751,
+          "mean": 0.0029196585882652203,
+          "p95": 0.004250762099389522,
+          "rms": 0.0030334294188495417
+        },
+        "own_reference_up_error": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.03168379380939249,
+          "mean": 0.02976033710283672,
+          "p95": 0.03142606924397983,
+          "rms": 0.02977234895684452
+        },
+        "physical_position_passed": true,
+        "speed": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.0020378541645256223,
+          "mean": 0.0016042363545770038,
+          "p95": 0.002025313374563509,
+          "rms": 0.0016238837096788303
+        },
+        "world_z_rate": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.39843078813407873,
+          "mean": 0.3627289107499513,
+          "p95": 0.396959365410412,
+          "rms": 0.36348316126523966
+        }
+      },
+      "tracking": {
+        "geometric_progress_rms": {
+          "complete": true,
+          "covered_progress": 1.0,
+          "definition": "Trapezoidal error\u00b2du over complete unit reference progress; pauses get zero weight.",
+          "rms": 0.03971537687712848
+        },
+        "geometric_traversal": {
+          "complete": true,
+          "count": 6521,
+          "finite_count": 6521,
+          "maximum": 0.12442063208792534,
+          "mean": 0.015249316942492491,
+          "p95": 0.09222483607432722,
+          "rms": 0.031057618675370383
+        },
+        "goal_error_at_primary_end_m": 0.00441014256925751,
+        "original_clock_error_is_primary": false,
+        "original_clock_schedule_error": {
+          "complete": true,
+          "count": 9121,
+          "finite_count": 9121,
+          "maximum": 0.1417168157418412,
+          "mean": 0.020332661788671717,
+          "p95": 0.10011307422257251,
+          "rms": 0.03577414312133136
+        },
+        "own_reference_xy": {
+          "complete": true,
+          "count": 6521,
+          "finite_count": 6521,
+          "maximum": 0.12699657021716268,
+          "mean": 0.0198202965092023,
+          "p95": 0.09773470106979708,
+          "rms": 0.0339976571727239
+        },
+        "physical_goal_position_converged": true
+      },
+      "traversal_time_ratio": 1.0187499999999925,
+      "virtual_clock_valid": true
+    },
+    "straight_p030_N": {
+      "actual_last_time_s": 45.00000000000457,
+      "arrival_added_time_s": -5.471179065352771e-13,
+      "attitude": {
+        "absolute_tilt_peak_deg": 9.396590260258288,
+        "own_raw_target_peak_deg": 2.521965631060949,
+        "own_raw_target_rms_deg": 0.5239464917612864
+      },
+      "authoritative_path_outcome": {
+        "actual_end_s": 45.00000000000457,
+        "case": {
+          "case_id": "straight_p030_N",
+          "goal_hold_s": 10.0,
+          "maximum_duration_s": 45.0,
+          "phase_rad": 0.3,
+          "policy": "N",
+          "route_id": "straight",
+          "yaw_deg": 113.0
+        },
+        "default_changed": false,
+        "diagnostic_completed": true,
+        "finished_at_s": 35.0,
+        "first_complete_sample_s": 34.99999999999945,
+        "full_goal_hold_completed": true,
+        "iteration": "I-78",
+        "maximum_physical_budget_s": 45.0,
+        "native_failure": null,
+        "parent_case_directory": "child/campaign/runs/straight_p030_N",
+        "parent_summary_qualification": "Inherited native summary retains fixed nominal metric windows; completed means the dynamic requested stop was reached without native failure. I78 reference progress/arrival/10s goal-reference hold and independent physical-goal/settling gates remain separate.",
+        "physical_goal_hold_s": 10.000000000005116,
+        "policy": "N",
+        "protocol_sha256": "cf868e800031bee3dc8f503269dffdd461067feff6fdf4bf33bd5e417a0fb112",
+        "reference_complete": true,
+        "requested_stop_s": 45.0,
+        "source_hashes_unchanged_after": true,
+        "survived_without_native_failure": true,
+        "terminal_command_held": false
+      },
+      "cap_ok": true,
+      "case": {
+        "case_id": "straight_p030_N",
+        "goal_hold_s": 10.0,
+        "maximum_duration_s": 45.0,
+        "phase_rad": 0.3,
+        "policy": "N",
+        "route_id": "straight",
+        "yaw_deg": 113.0
+      },
+      "clip_identity": true,
+      "commands": {
+        "clipped_any_fraction": 0.005,
+        "clipped_any_seconds": 0.225,
+        "clipped_channel_fraction": [
+          0.0,
+          0.0,
+          0.00022222222222222223,
+          0.0,
+          0.0047777777777777775
+        ],
+        "clipped_channel_seconds": [
+          0.0,
+          0.0,
+          0.01,
+          0.0,
+          0.215
+        ],
+        "final_unheld_request_finite": true,
+        "held_intervals": 9000,
+        "normalized_applied_step": {
+          "complete": true,
+          "count": 9000,
+          "finite_count": 9000,
+          "maximum": 2.503887396686838,
+          "mean": 0.01635378459273395,
+          "p95": 0.09349455724526312,
+          "rms": 0.07717313001173566
+        },
+        "normalized_clipping_excess": {
+          "complete": true,
+          "count": 9000,
+          "finite_count": 9000,
+          "maximum": 1.1388398096783066,
+          "mean": 0.0019015084538652686,
+          "p95": 0.0,
+          "rms": 0.0302873999395677
+        },
+        "requested_peak_abs": [
+          1.3303774971101148,
+          0.21311774598391808,
+          1.2833038858069838,
+          0.15380351226705974,
+          0.4923669953441989
+        ],
+        "terminal_unheld_command_excluded": true
+      },
+      "declared_reference_arrival_s": 34.99999999999945,
+      "finite_reference": true,
+      "finite_state_commands": true,
+      "frames": 9001,
+      "full_ten_second_hold": true,
+      "geometric_progress_slow": {
+        "coordinate_name": "geometric_u",
+        "diagnostic_only": true,
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.005,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "grid_ok": true,
+      "held_mask_ok": true,
+      "inherited_requested_horizon_s": 45.0,
+      "inherited_summary_completed": true,
+      "maximum_virtual_clock_lag_s": 0.0,
+      "motion": {
+        "acceleration_50ms_peak_m_s2": 4.4793428412943594,
+        "planar_speed_peak_m_s": 0.1819024226509851,
+        "world_z_rate_peak_rad_s": 1.0203751638345149
+      },
+      "native_measurement_boundary_ok": true,
+      "no_progress": {
+        "coordinate_name": "virtual_time_s",
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.05,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "physical_failure": null,
+      "physical_run_completed": true,
+      "primary_episode_end_s": 44.99999999999945,
+      "prior_input_identity": true,
+      "progress_valid": true,
+      "recorded_extra_tail_s": 5.115907697472721e-12,
+      "reference_consistency_ok": true,
+      "reference_path_completed": true,
+      "reference_residuals": {
+        "reference_acceleration": 0.0,
+        "reference_velocity": 1.3877787807814457e-17,
+        "reference_xy": 0.0
+      },
+      "requested_horizon_is_path_completion": false,
+      "settling": {
+        "final_samples": 401,
+        "final_window_complete": true,
+        "four_condition_passed": false,
+        "goal": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.00411127330174653,
+          "mean": 0.0024687145170453387,
+          "p95": 0.003932007883272114,
+          "rms": 0.0026166062661688656
+        },
+        "own_reference_up_error": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.02015304752433048,
+          "mean": 0.019652250211444764,
+          "p95": 0.020149322642578283,
+          "rms": 0.019657975224894073
+        },
+        "physical_position_passed": true,
+        "speed": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.001844305945857571,
+          "mean": 0.001587171185813449,
+          "p95": 0.0018432843001180074,
+          "rms": 0.00159956977309266
+        },
+        "world_z_rate": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.2993843518204974,
+          "mean": 0.29544380949956867,
+          "p95": 0.2990903289479813,
+          "rms": 0.29545473939021605
+        }
+      },
+      "tracking": {
+        "geometric_progress_rms": {
+          "complete": true,
+          "covered_progress": 1.0,
+          "definition": "Trapezoidal error\u00b2du over complete unit reference progress; pauses get zero weight.",
+          "rms": 0.04286841360865944
+        },
+        "geometric_traversal": {
+          "complete": true,
+          "count": 6401,
+          "finite_count": 6401,
+          "maximum": 0.12460052217567924,
+          "mean": 0.01734232394625835,
+          "p95": 0.09093633511141354,
+          "rms": 0.032566600710065646
+        },
+        "goal_error_at_primary_end_m": 0.0012649388811526712,
+        "original_clock_error_is_primary": false,
+        "original_clock_schedule_error": {
+          "complete": true,
+          "count": 9001,
+          "finite_count": 9001,
+          "maximum": 0.1282981993030949,
+          "mean": 0.016848593140993705,
+          "p95": 0.08133607178871151,
+          "rms": 0.030351142512875996
+        },
+        "own_reference_xy": {
+          "complete": true,
+          "count": 6401,
+          "finite_count": 6401,
+          "maximum": 0.1282981993030949,
+          "mean": 0.02157325347781975,
+          "p95": 0.10087529011557723,
+          "rms": 0.035805555404329
+        },
+        "physical_goal_position_converged": true
+      },
+      "traversal_time_ratio": 0.9999999999999829,
+      "virtual_clock_valid": true
+    },
+    "straight_p090_G": {
+      "actual_last_time_s": 45.00500000000457,
+      "arrival_added_time_s": 0.00499999999945544,
+      "attitude": {
+        "absolute_tilt_peak_deg": 8.975807863905029,
+        "own_raw_target_peak_deg": 2.469950897816417,
+        "own_raw_target_rms_deg": 0.4545987243507058
+      },
+      "authoritative_path_outcome": {
+        "actual_end_s": 45.00500000000457,
+        "case": {
+          "case_id": "straight_p090_G",
+          "goal_hold_s": 10.0,
+          "maximum_duration_s": 75.0,
+          "phase_rad": 0.9,
+          "policy": "G",
+          "route_id": "straight",
+          "yaw_deg": 113.0
+        },
+        "default_changed": false,
+        "diagnostic_completed": true,
+        "finished_at_s": 35.0046309898725,
+        "first_complete_sample_s": 35.004999999999455,
+        "full_goal_hold_completed": true,
+        "iteration": "I-78",
+        "maximum_physical_budget_s": 75.0,
+        "native_failure": null,
+        "parent_case_directory": "child/campaign/runs/straight_p090_N",
+        "parent_summary_qualification": "Inherited native summary retains fixed nominal metric windows; completed means the dynamic requested stop was reached without native failure. I78 reference progress/arrival/10s goal-reference hold and independent physical-goal/settling gates remain separate.",
+        "physical_goal_hold_s": 10.000000000005116,
+        "policy": "G",
+        "protocol_sha256": "cf868e800031bee3dc8f503269dffdd461067feff6fdf4bf33bd5e417a0fb112",
+        "reference_complete": true,
+        "requested_stop_s": 45.004999999999455,
+        "source_hashes_unchanged_after": true,
+        "survived_without_native_failure": true,
+        "terminal_command_held": false
+      },
+      "cap_ok": true,
+      "case": {
+        "case_id": "straight_p090_G",
+        "goal_hold_s": 10.0,
+        "maximum_duration_s": 75.0,
+        "phase_rad": 0.9,
+        "policy": "G",
+        "route_id": "straight",
+        "yaw_deg": 113.0
+      },
+      "clip_identity": true,
+      "commands": {
+        "clipped_any_fraction": 0.0,
+        "clipped_any_seconds": 0.0,
+        "clipped_channel_fraction": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "clipped_channel_seconds": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final_unheld_request_finite": true,
+        "held_intervals": 9001,
+        "normalized_applied_step": {
+          "complete": true,
+          "count": 9001,
+          "finite_count": 9001,
+          "maximum": 0.7594678051401497,
+          "mean": 0.013525409073971728,
+          "p95": 0.08789246843533079,
+          "rms": 0.04465435589072818
+        },
+        "normalized_clipping_excess": {
+          "complete": true,
+          "count": 9001,
+          "finite_count": 9001,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "p95": 0.0,
+          "rms": 0.0
+        },
+        "requested_peak_abs": [
+          0.449883116409455,
+          0.13463449968683847,
+          0.2890569006127435,
+          0.0729485028044392,
+          0.2233968007018529
+        ],
+        "terminal_unheld_command_excluded": true
+      },
+      "declared_reference_arrival_s": 35.004999999999455,
+      "finite_reference": true,
+      "finite_state_commands": true,
+      "frames": 9002,
+      "full_ten_second_hold": true,
+      "geometric_progress_slow": {
+        "coordinate_name": "geometric_u",
+        "diagnostic_only": true,
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.005,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "grid_ok": true,
+      "held_mask_ok": true,
+      "inherited_requested_horizon_s": 45.004999999999455,
+      "inherited_summary_completed": true,
+      "maximum_virtual_clock_lag_s": 0.00499999999945544,
+      "motion": {
+        "acceleration_50ms_peak_m_s2": 5.143889614657631,
+        "planar_speed_peak_m_s": 0.21146420668725385,
+        "world_z_rate_peak_rad_s": 0.8582359504591439
+      },
+      "native_measurement_boundary_ok": true,
+      "no_progress": {
+        "coordinate_name": "virtual_time_s",
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.05,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "physical_failure": null,
+      "physical_run_completed": true,
+      "primary_episode_end_s": 45.004999999999455,
+      "prior_input_identity": true,
+      "progress_valid": true,
+      "recorded_extra_tail_s": 5.115907697472721e-12,
+      "reference_consistency_ok": true,
+      "reference_path_completed": true,
+      "reference_residuals": {
+        "reference_acceleration": 2.6020852139652106e-18,
+        "reference_velocity": 2.7755575615628914e-17,
+        "reference_xy": 0.0
+      },
+      "requested_horizon_is_path_completion": false,
+      "settling": {
+        "final_samples": 401,
+        "final_window_complete": true,
+        "four_condition_passed": false,
+        "goal": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.004131352283841234,
+          "mean": 0.002991957888520597,
+          "p95": 0.004019035767565487,
+          "rms": 0.0030665287092560035
+        },
+        "own_reference_up_error": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.01390605894672097,
+          "mean": 0.012021381117343343,
+          "p95": 0.01384668691185217,
+          "rms": 0.012052080860690028
+        },
+        "physical_position_passed": true,
+        "speed": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.0012646519619949055,
+          "mean": 0.0011824368482918509,
+          "p95": 0.0012623928725600984,
+          "rms": 0.001184695961138149
+        },
+        "world_z_rate": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.29409370811221697,
+          "mean": 0.24533123796988818,
+          "p95": 0.29391424456591114,
+          "rms": 0.24597936635853246
+        }
+      },
+      "tracking": {
+        "geometric_progress_rms": {
+          "complete": true,
+          "covered_progress": 1.0,
+          "definition": "Trapezoidal error\u00b2du over complete unit reference progress; pauses get zero weight.",
+          "rms": 0.02122172152618768
+        },
+        "geometric_traversal": {
+          "complete": true,
+          "count": 6402,
+          "finite_count": 6402,
+          "maximum": 0.05920545462517328,
+          "mean": 0.013381097256178231,
+          "p95": 0.04385031793170404,
+          "rms": 0.018264402698339885
+        },
+        "goal_error_at_primary_end_m": 0.0018504462425395427,
+        "original_clock_error_is_primary": false,
+        "original_clock_schedule_error": {
+          "complete": true,
+          "count": 9002,
+          "finite_count": 9002,
+          "maximum": 0.08695442263606606,
+          "mean": 0.017937342793397353,
+          "p95": 0.05504234375999247,
+          "rms": 0.02472967228042679
+        },
+        "own_reference_xy": {
+          "complete": true,
+          "count": 6402,
+          "finite_count": 6402,
+          "maximum": 0.08717841305814089,
+          "mean": 0.02291692928763942,
+          "p95": 0.06795306544184758,
+          "rms": 0.029111820856078514
+        },
+        "physical_goal_position_converged": true
+      },
+      "traversal_time_ratio": 1.000156249999983,
+      "virtual_clock_valid": true
+    },
+    "straight_p090_N": {
+      "actual_last_time_s": 45.00000000000457,
+      "arrival_added_time_s": -5.471179065352771e-13,
+      "attitude": {
+        "absolute_tilt_peak_deg": 8.962890309305417,
+        "own_raw_target_peak_deg": 2.488035061121869,
+        "own_raw_target_rms_deg": 0.45406795783494697
+      },
+      "authoritative_path_outcome": {
+        "actual_end_s": 45.00000000000457,
+        "case": {
+          "case_id": "straight_p090_N",
+          "goal_hold_s": 10.0,
+          "maximum_duration_s": 45.0,
+          "phase_rad": 0.9,
+          "policy": "N",
+          "route_id": "straight",
+          "yaw_deg": 113.0
+        },
+        "default_changed": false,
+        "diagnostic_completed": true,
+        "finished_at_s": 35.0,
+        "first_complete_sample_s": 34.99999999999945,
+        "full_goal_hold_completed": true,
+        "iteration": "I-78",
+        "maximum_physical_budget_s": 45.0,
+        "native_failure": null,
+        "parent_case_directory": "child/campaign/runs/straight_p090_N",
+        "parent_summary_qualification": "Inherited native summary retains fixed nominal metric windows; completed means the dynamic requested stop was reached without native failure. I78 reference progress/arrival/10s goal-reference hold and independent physical-goal/settling gates remain separate.",
+        "physical_goal_hold_s": 10.000000000005116,
+        "policy": "N",
+        "protocol_sha256": "cf868e800031bee3dc8f503269dffdd461067feff6fdf4bf33bd5e417a0fb112",
+        "reference_complete": true,
+        "requested_stop_s": 45.0,
+        "source_hashes_unchanged_after": true,
+        "survived_without_native_failure": true,
+        "terminal_command_held": false
+      },
+      "cap_ok": true,
+      "case": {
+        "case_id": "straight_p090_N",
+        "goal_hold_s": 10.0,
+        "maximum_duration_s": 45.0,
+        "phase_rad": 0.9,
+        "policy": "N",
+        "route_id": "straight",
+        "yaw_deg": 113.0
+      },
+      "clip_identity": true,
+      "commands": {
+        "clipped_any_fraction": 0.0,
+        "clipped_any_seconds": 0.0,
+        "clipped_channel_fraction": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "clipped_channel_seconds": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final_unheld_request_finite": true,
+        "held_intervals": 9000,
+        "normalized_applied_step": {
+          "complete": true,
+          "count": 9000,
+          "finite_count": 9000,
+          "maximum": 0.786320671129525,
+          "mean": 0.013559448621865205,
+          "p95": 0.08924581604347015,
+          "rms": 0.045118355892456774
+        },
+        "normalized_clipping_excess": {
+          "complete": true,
+          "count": 9000,
+          "finite_count": 9000,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "p95": 0.0,
+          "rms": 0.0
+        },
+        "requested_peak_abs": [
+          0.449883116409455,
+          0.13463449968683847,
+          0.32217686009318264,
+          0.0729485028044392,
+          0.22189887925718227
+        ],
+        "terminal_unheld_command_excluded": true
+      },
+      "declared_reference_arrival_s": 34.99999999999945,
+      "finite_reference": true,
+      "finite_state_commands": true,
+      "frames": 9001,
+      "full_ten_second_hold": true,
+      "geometric_progress_slow": {
+        "coordinate_name": "geometric_u",
+        "diagnostic_only": true,
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.005,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "grid_ok": true,
+      "held_mask_ok": true,
+      "inherited_requested_horizon_s": 45.0,
+      "inherited_summary_completed": true,
+      "maximum_virtual_clock_lag_s": 0.0,
+      "motion": {
+        "acceleration_50ms_peak_m_s2": 4.750958926827444,
+        "planar_speed_peak_m_s": 0.21193459267417833,
+        "world_z_rate_peak_rad_s": 0.8608231179212454
+      },
+      "native_measurement_boundary_ok": true,
+      "no_progress": {
+        "coordinate_name": "virtual_time_s",
+        "episodes": [],
+        "flagged_windows": 0,
+        "goal_radius_m": 0.02,
+        "min_delta": 0.05,
+        "passed": true,
+        "window_s": 5.0
+      },
+      "physical_failure": null,
+      "physical_run_completed": true,
+      "primary_episode_end_s": 44.99999999999945,
+      "prior_input_identity": true,
+      "progress_valid": true,
+      "recorded_extra_tail_s": 5.115907697472721e-12,
+      "reference_consistency_ok": true,
+      "reference_path_completed": true,
+      "reference_residuals": {
+        "reference_acceleration": 0.0,
+        "reference_velocity": 1.3877787807814457e-17,
+        "reference_xy": 0.0
+      },
+      "requested_horizon_is_path_completion": false,
+      "settling": {
+        "final_samples": 401,
+        "final_window_complete": true,
+        "four_condition_passed": false,
+        "goal": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.004400306782003574,
+          "mean": 0.0032731599435265007,
+          "p95": 0.004289074809760207,
+          "rms": 0.0033398918530359776
+        },
+        "own_reference_up_error": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.013792830031179527,
+          "mean": 0.012177395045874274,
+          "p95": 0.01372051667981515,
+          "rms": 0.01220359855426345
+        },
+        "physical_position_passed": true,
+        "speed": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.001313199166337332,
+          "mean": 0.001221589331120645,
+          "p95": 0.0013126394017597288,
+          "rms": 0.0012236795810256205
+        },
+        "world_z_rate": {
+          "complete": true,
+          "count": 401,
+          "finite_count": 401,
+          "maximum": 0.2904039427042414,
+          "mean": 0.2437683228383964,
+          "p95": 0.29014791348434477,
+          "rms": 0.24454941075536596
+        }
+      },
+      "tracking": {
+        "geometric_progress_rms": {
+          "complete": true,
+          "covered_progress": 1.0,
+          "definition": "Trapezoidal error\u00b2du over complete unit reference progress; pauses get zero weight.",
+          "rms": 0.021299089714883913
+        },
+        "geometric_traversal": {
+          "complete": true,
+          "count": 6401,
+          "finite_count": 6401,
+          "maximum": 0.059718141235308254,
+          "mean": 0.013410353838233753,
+          "p95": 0.04399963057921991,
+          "rms": 0.01831976637066958
+        },
+        "goal_error_at_primary_end_m": 0.0021312639367739262,
+        "original_clock_error_is_primary": false,
+        "original_clock_schedule_error": {
+          "complete": true,
+          "count": 9001,
+          "finite_count": 9001,
+          "maximum": 0.08851486708721162,
+          "mean": 0.01806692985286179,
+          "p95": 0.05605124658010407,
+          "rms": 0.024981379422844154
+        },
+        "own_reference_xy": {
+          "complete": true,
+          "count": 6401,
+          "finite_count": 6401,
+          "maximum": 0.08851486708721162,
+          "mean": 0.02299973966091705,
+          "p95": 0.06882873592702145,
+          "rms": 0.029350669118378858
+        },
+        "physical_goal_position_converged": true
+      },
+      "traversal_time_ratio": 0.9999999999999829,
+      "virtual_clock_valid": true
+    }
+  },
+  "decision": {
+    "all_three_phases_required": true,
+    "automatic_adoption": false,
+    "checks": [
+      {
+        "name": "-1.0_physical_completion_and_bounds",
+        "passed": true
+      },
+      {
+        "name": "-1.0_physical_goal_position_convergence",
+        "passed": true
+      },
+      {
+        "name": "-1.0_no_prolonged_clock_stall",
+        "passed": true
+      },
+      {
+        "actual": 8.393999151989531,
+        "limit": 8.888898957517522,
+        "name": "-1.0_absolute_tilt_peak_deg",
+        "native": 8.388898957517522,
+        "passed": true
+      },
+      {
+        "actual": 4.607277781953681,
+        "limit": 5.259115553338251,
+        "name": "-1.0_acceleration_50ms_peak_m_s2",
+        "native": 4.690105048489319,
+        "passed": true
+      },
+      {
+        "actual": 0.00521909318255953,
+        "limit": 0.035111111111111114,
+        "name": "-1.0_any_channel_clipping_fraction",
+        "native": 0.015111111111111112,
+        "passed": true
+      },
+      {
+        "actual": 0.24,
+        "limit": 0.78,
+        "name": "-1.0_any_channel_clipping_seconds",
+        "native": 0.68,
+        "passed": true
+      },
+      {
+        "actual": 0.10203250992637743,
+        "limit": 0.15393441607973288,
+        "name": "-1.0_geometric_peak_m",
+        "native": 0.14893441607973287,
+        "passed": true
+      },
+      {
+        "actual": 2.8727900182521657,
+        "limit": 3.2494775605447246,
+        "name": "-1.0_normalized_applied_command_step_peak",
+        "native": 2.9086159641315676,
+        "passed": true
+      },
+      {
+        "actual": 0.0829938446423444,
+        "limit": 0.2346786610219387,
+        "name": "-1.0_normalized_clipping_excess_rms",
+        "native": 0.20425332820176245,
+        "passed": true
+      },
+      {
+        "actual": 2.6065769584999687,
+        "limit": 3.567380922549638,
+        "name": "-1.0_own_raw_target_up_error_peak_deg",
+        "native": 3.067380922549638,
+        "passed": true
+      },
+      {
+        "actual": 0.5042868847876841,
+        "limit": 0.7463562325615588,
+        "name": "-1.0_own_raw_target_up_error_rms_deg",
+        "native": 0.5875965750559625,
+        "passed": true
+      },
+      {
+        "actual": 0.2295181321461734,
+        "limit": 0.28446387045594596,
+        "name": "-1.0_planar_speed_peak_m_s",
+        "native": 0.2495126095054054,
+        "passed": true
+      },
+      {
+        "actual": 0.03395167651500444,
+        "limit": 0.05346954831983572,
+        "name": "-1.0_progress_weighted_geometric_rms_m",
+        "native": 0.049970998399843536,
+        "passed": true
+      },
+      {
+        "actual": 0.027756802088732983,
+        "limit": 0.04398353876381121,
+        "name": "-1.0_time_weighted_geometric_rms_m",
+        "native": 0.03907594433073746,
+        "passed": true
+      },
+      {
+        "actual": 0.9692557384692332,
+        "limit": 1.6218829949531473,
+        "name": "-1.0_world_z_angular_rate_peak_rad_s",
+        "native": 1.4289845408664974,
+        "passed": true
+      },
+      {
+        "actual": 0.00021746221593998044,
+        "limit": 0.021111111111111112,
+        "name": "-1.0_clipped_channel_fraction_0",
+        "native": 0.0011111111111111111,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "-1.0_clipped_channel_fraction_1",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0004349244318799609,
+        "limit": 0.02288888888888889,
+        "name": "-1.0_clipped_channel_fraction_2",
+        "native": 0.0028888888888888888,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "-1.0_clipped_channel_fraction_3",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.00478416875067957,
+        "limit": 0.03222222222222222,
+        "name": "-1.0_clipped_channel_fraction_4",
+        "native": 0.012222222222222223,
+        "passed": true
+      },
+      {
+        "actual": 0.01,
+        "limit": 0.15000000000000002,
+        "name": "-1.0_clipped_channel_seconds_0",
+        "native": 0.05,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "-1.0_clipped_channel_seconds_1",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.02,
+        "limit": 0.23,
+        "name": "-1.0_clipped_channel_seconds_2",
+        "native": 0.13,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "-1.0_clipped_channel_seconds_3",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.22,
+        "limit": 0.65,
+        "name": "-1.0_clipped_channel_seconds_4",
+        "native": 0.55,
+        "passed": true
+      },
+      {
+        "actual": true,
+        "name": "-1.0_preserve_native_four_condition_settling",
+        "native": false,
+        "passed": true
+      },
+      {
+        "actual": 0.10203250992637743,
+        "limit": 0.1191475328637863,
+        "name": "-1.0_minus_one_geometric_peak_benefit",
+        "native": 0.14893441607973287,
+        "passed": true
+      },
+      {
+        "name": "0.3_physical_completion_and_bounds",
+        "passed": true
+      },
+      {
+        "name": "0.3_physical_goal_position_convergence",
+        "passed": true
+      },
+      {
+        "name": "0.3_no_prolonged_clock_stall",
+        "passed": true
+      },
+      {
+        "actual": 9.969799432017153,
+        "limit": 9.896590260258288,
+        "name": "0.3_absolute_tilt_peak_deg",
+        "native": 9.396590260258288,
+        "passed": false
+      },
+      {
+        "actual": 4.81471555261781,
+        "limit": 5.027277125423796,
+        "name": "0.3_acceleration_50ms_peak_m_s2",
+        "native": 4.4793428412943594,
+        "passed": true
+      },
+      {
+        "actual": 0.005592105263157895,
+        "limit": 0.025,
+        "name": "0.3_any_channel_clipping_fraction",
+        "native": 0.005,
+        "passed": true
+      },
+      {
+        "actual": 0.255,
+        "limit": 0.325,
+        "name": "0.3_any_channel_clipping_seconds",
+        "native": 0.225,
+        "passed": true
+      },
+      {
+        "actual": 0.12442063208792534,
+        "limit": 0.12960052217567924,
+        "name": "0.3_geometric_peak_m",
+        "native": 0.12460052217567924,
+        "passed": true
+      },
+      {
+        "actual": 1.1865323700448864,
+        "limit": 2.8042761363555218,
+        "name": "0.3_normalized_applied_command_step_peak",
+        "native": 2.503887396686838,
+        "passed": true
+      },
+      {
+        "actual": 0.03258924120208927,
+        "limit": 0.043316139933524477,
+        "name": "0.3_normalized_clipping_excess_rms",
+        "native": 0.0302873999395677,
+        "passed": true
+      },
+      {
+        "actual": 2.2978007417808244,
+        "limit": 3.021965631060949,
+        "name": "0.3_own_raw_target_up_error_peak_deg",
+        "native": 2.521965631060949,
+        "passed": true
+      },
+      {
+        "actual": 0.5328190850810891,
+        "limit": 0.676341140937415,
+        "name": "0.3_own_raw_target_up_error_rms_deg",
+        "native": 0.5239464917612864,
+        "passed": true
+      },
+      {
+        "actual": 0.22836237586008892,
+        "limit": 0.21009266491608364,
+        "name": "0.3_planar_speed_peak_m_s",
+        "native": 0.1819024226509851,
+        "passed": false
+      },
+      {
+        "actual": 0.03971537687712848,
+        "limit": 0.04601183428909242,
+        "name": "0.3_progress_weighted_geometric_rms_m",
+        "native": 0.04286841360865944,
+        "passed": true
+      },
+      {
+        "actual": 0.031057618675370383,
+        "limit": 0.03682326078107222,
+        "name": "0.3_time_weighted_geometric_rms_m",
+        "native": 0.032566600710065646,
+        "passed": true
+      },
+      {
+        "actual": 1.1433083979538086,
+        "limit": 1.1724126802179664,
+        "name": "0.3_world_z_angular_rate_peak_rad_s",
+        "native": 1.0203751638345149,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "0.3_clipped_channel_fraction_0",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "0.3_clipped_channel_fraction_1",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0002192982456140351,
+        "limit": 0.02022222222222222,
+        "name": "0.3_clipped_channel_fraction_2",
+        "native": 0.00022222222222222223,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "0.3_clipped_channel_fraction_3",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.00537280701754386,
+        "limit": 0.024777777777777777,
+        "name": "0.3_clipped_channel_fraction_4",
+        "native": 0.0047777777777777775,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "0.3_clipped_channel_seconds_0",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "0.3_clipped_channel_seconds_1",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.01,
+        "limit": 0.11,
+        "name": "0.3_clipped_channel_seconds_2",
+        "native": 0.01,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "0.3_clipped_channel_seconds_3",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.245,
+        "limit": 0.315,
+        "name": "0.3_clipped_channel_seconds_4",
+        "native": 0.215,
+        "passed": true
+      },
+      {
+        "actual": false,
+        "name": "0.3_preserve_native_four_condition_settling",
+        "native": false,
+        "passed": true
+      },
+      {
+        "name": "0.9_physical_completion_and_bounds",
+        "passed": true
+      },
+      {
+        "name": "0.9_physical_goal_position_convergence",
+        "passed": true
+      },
+      {
+        "name": "0.9_no_prolonged_clock_stall",
+        "passed": true
+      },
+      {
+        "actual": 8.975807863905029,
+        "limit": 9.462890309305417,
+        "name": "0.9_absolute_tilt_peak_deg",
+        "native": 8.962890309305417,
+        "passed": true
+      },
+      {
+        "actual": 5.143889614657631,
+        "limit": 5.326054819510189,
+        "name": "0.9_acceleration_50ms_peak_m_s2",
+        "native": 4.750958926827444,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "0.9_any_channel_clipping_fraction",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "0.9_any_channel_clipping_seconds",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.05920545462517328,
+        "limit": 0.06471814123530825,
+        "name": "0.9_geometric_peak_m",
+        "native": 0.059718141235308254,
+        "passed": true
+      },
+      {
+        "actual": 0.7594678051401497,
+        "limit": 0.9149527382424776,
+        "name": "0.9_normalized_applied_command_step_peak",
+        "native": 0.786320671129525,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.01,
+        "name": "0.9_normalized_clipping_excess_rms",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 2.469950897816417,
+        "limit": 2.988035061121869,
+        "name": "0.9_own_raw_target_up_error_peak_deg",
+        "native": 2.488035061121869,
+        "passed": true
+      },
+      {
+        "actual": 0.4545987243507058,
+        "limit": 0.5994747536184417,
+        "name": "0.9_own_raw_target_up_error_rms_deg",
+        "native": 0.45406795783494697,
+        "passed": true
+      },
+      {
+        "actual": 0.21146420668725385,
+        "limit": 0.2431280519415962,
+        "name": "0.9_planar_speed_peak_m_s",
+        "native": 0.21193459267417833,
+        "passed": true
+      },
+      {
+        "actual": 0.02122172152618768,
+        "limit": 0.023364044200628112,
+        "name": "0.9_progress_weighted_geometric_rms_m",
+        "native": 0.021299089714883913,
+        "passed": true
+      },
+      {
+        "actual": 0.018264402698339885,
+        "limit": 0.02115174300773654,
+        "name": "0.9_time_weighted_geometric_rms_m",
+        "native": 0.01831976637066958,
+        "passed": true
+      },
+      {
+        "actual": 0.8582359504591439,
+        "limit": 0.9969054297133702,
+        "name": "0.9_world_z_angular_rate_peak_rad_s",
+        "native": 0.8608231179212454,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "0.9_clipped_channel_fraction_0",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "0.9_clipped_channel_fraction_1",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "0.9_clipped_channel_fraction_2",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "0.9_clipped_channel_fraction_3",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.02,
+        "name": "0.9_clipped_channel_fraction_4",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "0.9_clipped_channel_seconds_0",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "0.9_clipped_channel_seconds_1",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "0.9_clipped_channel_seconds_2",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "0.9_clipped_channel_seconds_3",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": 0.0,
+        "limit": 0.1,
+        "name": "0.9_clipped_channel_seconds_4",
+        "native": 0.0,
+        "passed": true
+      },
+      {
+        "actual": false,
+        "name": "0.9_preserve_native_four_condition_settling",
+        "native": false,
+        "passed": true
+      }
+    ],
+    "old_clock_timing_is_secondary": true,
+    "passed": false,
+    "status": "FAIL_PROGRESS_SCREEN"
+  },
+  "full_repo_suite_claim": false,
+  "iteration": "I-78",
+  "no_automatic_adoption": true,
+  "no_new_physics": true,
+  "progress_completion_separate_from_physical_goal": true,
+  "registered_original_analysis_retained": true,
+  "scope": "Six fresh declared cases; only pathprogresschanges. Passing narrowerstraightcase screen isnotallterrain/globalstability evidence.",
+  "setup_checks": [
+    {
+      "max_error": 0.0,
+      "name": "straight_m100_N_coherent_clock_chain_u",
+      "passed": true
+    },
+    {
+      "max_error": 1.1102230246251565e-16,
+      "name": "straight_m100_N_coherent_clock_chain_udot",
+      "passed": true
+    },
+    {
+      "max_error": 2.7755575615628914e-17,
+      "name": "straight_m100_N_coherent_clock_chain_uddot",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_clock_rate_bounds_and_finiteness",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_selection_truth_boundary",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_private_probe_presence",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_probe_sensor_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 0,
+      "name": "straight_m100_N_probe_sensor_stages_match_live",
+      "passed": true,
+      "unchecked_rows": 9001
+    },
+    {
+      "name": "straight_m100_N_equal_reference_full_output_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 0,
+      "name": "straight_m100_N_equal_reference_probe_full_output_identity",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_sidecar_matches_actual_reference_xy",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_sidecar_matches_actual_reference_velocity",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_sidecar_matches_actual_reference_acceleration",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_no_private_dynamic_integration",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_private_observer_updates_only_in_G_probe",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_nominal_probe_count",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_same_final_held_mask",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_first_complete_sample_time",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_first_complete_stamp_history",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_dense_completion_is_diagnostic_only",
+      "passed": true
+    },
+    {
+      "actual_end_s": 45.00000000000457,
+      "expected_end_s": 44.99999999999945,
+      "name": "straight_m100_N_physical_stop_matches_preplanned_rule",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_outcome_clock_matches_arrays",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_grid_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_held_mask_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_reference_consistency_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_finite_reference",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_progress_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_virtual_clock_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_native_measurement_boundary_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_N_all_original_precision_fields_bit_exact",
+      "passed": true
+    },
+    {
+      "max_error": 0.0,
+      "name": "straight_m100_G_coherent_clock_chain_u",
+      "passed": true
+    },
+    {
+      "max_error": 1.1102230246251565e-16,
+      "name": "straight_m100_G_coherent_clock_chain_udot",
+      "passed": true
+    },
+    {
+      "max_error": 1.3877787807814457e-16,
+      "name": "straight_m100_G_coherent_clock_chain_uddot",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_clock_rate_bounds_and_finiteness",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_selection_truth_boundary",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_private_probe_presence",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_probe_sensor_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 9198,
+      "name": "straight_m100_G_probe_sensor_stages_match_live",
+      "passed": true,
+      "unchecked_rows": 0
+    },
+    {
+      "name": "straight_m100_G_equal_reference_full_output_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 5073,
+      "name": "straight_m100_G_equal_reference_probe_full_output_identity",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_sidecar_matches_actual_reference_xy",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_sidecar_matches_actual_reference_velocity",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_sidecar_matches_actual_reference_acceleration",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_no_private_dynamic_integration",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_private_observer_updates_only_in_G_probe",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_nominal_probe_count",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_same_final_held_mask",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_first_complete_sample_time",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_first_complete_stamp_history",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_dense_completion_is_diagnostic_only",
+      "passed": true
+    },
+    {
+      "actual_end_s": 45.98500000000507,
+      "expected_end_s": 45.98499999999996,
+      "name": "straight_m100_G_physical_stop_matches_preplanned_rule",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_outcome_clock_matches_arrays",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_grid_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_held_mask_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_reference_consistency_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_finite_reference",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_progress_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_virtual_clock_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_m100_G_native_measurement_boundary_ok",
+      "passed": true
+    },
+    {
+      "max_error": 0.0,
+      "name": "straight_p030_N_coherent_clock_chain_u",
+      "passed": true
+    },
+    {
+      "max_error": 1.1102230246251565e-16,
+      "name": "straight_p030_N_coherent_clock_chain_udot",
+      "passed": true
+    },
+    {
+      "max_error": 2.7755575615628914e-17,
+      "name": "straight_p030_N_coherent_clock_chain_uddot",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_clock_rate_bounds_and_finiteness",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_selection_truth_boundary",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_private_probe_presence",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_probe_sensor_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 0,
+      "name": "straight_p030_N_probe_sensor_stages_match_live",
+      "passed": true,
+      "unchecked_rows": 9001
+    },
+    {
+      "name": "straight_p030_N_equal_reference_full_output_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 0,
+      "name": "straight_p030_N_equal_reference_probe_full_output_identity",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_sidecar_matches_actual_reference_xy",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_sidecar_matches_actual_reference_velocity",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_sidecar_matches_actual_reference_acceleration",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_no_private_dynamic_integration",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_private_observer_updates_only_in_G_probe",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_nominal_probe_count",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_same_final_held_mask",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_first_complete_sample_time",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_first_complete_stamp_history",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_dense_completion_is_diagnostic_only",
+      "passed": true
+    },
+    {
+      "actual_end_s": 45.00000000000457,
+      "expected_end_s": 44.99999999999945,
+      "name": "straight_p030_N_physical_stop_matches_preplanned_rule",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_outcome_clock_matches_arrays",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_grid_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_held_mask_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_reference_consistency_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_finite_reference",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_progress_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_virtual_clock_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_native_measurement_boundary_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_N_all_original_precision_fields_bit_exact",
+      "passed": true
+    },
+    {
+      "max_error": 0.0,
+      "name": "straight_p030_G_coherent_clock_chain_u",
+      "passed": true
+    },
+    {
+      "max_error": 1.1102230246251565e-16,
+      "name": "straight_p030_G_coherent_clock_chain_udot",
+      "passed": true
+    },
+    {
+      "max_error": 6.938893903907228e-17,
+      "name": "straight_p030_G_coherent_clock_chain_uddot",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_clock_rate_bounds_and_finiteness",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_selection_truth_boundary",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_private_probe_presence",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_probe_sensor_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 9121,
+      "name": "straight_p030_G_probe_sensor_stages_match_live",
+      "passed": true,
+      "unchecked_rows": 0
+    },
+    {
+      "name": "straight_p030_G_equal_reference_full_output_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 5730,
+      "name": "straight_p030_G_equal_reference_probe_full_output_identity",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_sidecar_matches_actual_reference_xy",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_sidecar_matches_actual_reference_velocity",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_sidecar_matches_actual_reference_acceleration",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_no_private_dynamic_integration",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_private_observer_updates_only_in_G_probe",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_nominal_probe_count",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_same_final_held_mask",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_first_complete_sample_time",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_first_complete_stamp_history",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_dense_completion_is_diagnostic_only",
+      "passed": true
+    },
+    {
+      "actual_end_s": 45.600000000004876,
+      "expected_end_s": 45.59999999999976,
+      "name": "straight_p030_G_physical_stop_matches_preplanned_rule",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_outcome_clock_matches_arrays",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_grid_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_held_mask_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_reference_consistency_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_finite_reference",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_progress_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_virtual_clock_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_p030_G_native_measurement_boundary_ok",
+      "passed": true
+    },
+    {
+      "max_error": 0.0,
+      "name": "straight_p090_N_coherent_clock_chain_u",
+      "passed": true
+    },
+    {
+      "max_error": 1.1102230246251565e-16,
+      "name": "straight_p090_N_coherent_clock_chain_udot",
+      "passed": true
+    },
+    {
+      "max_error": 2.7755575615628914e-17,
+      "name": "straight_p090_N_coherent_clock_chain_uddot",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_clock_rate_bounds_and_finiteness",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_selection_truth_boundary",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_private_probe_presence",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_probe_sensor_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 0,
+      "name": "straight_p090_N_probe_sensor_stages_match_live",
+      "passed": true,
+      "unchecked_rows": 9001
+    },
+    {
+      "name": "straight_p090_N_equal_reference_full_output_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 0,
+      "name": "straight_p090_N_equal_reference_probe_full_output_identity",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_sidecar_matches_actual_reference_xy",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_sidecar_matches_actual_reference_velocity",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_sidecar_matches_actual_reference_acceleration",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_no_private_dynamic_integration",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_private_observer_updates_only_in_G_probe",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_nominal_probe_count",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_same_final_held_mask",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_first_complete_sample_time",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_first_complete_stamp_history",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_dense_completion_is_diagnostic_only",
+      "passed": true
+    },
+    {
+      "actual_end_s": 45.00000000000457,
+      "expected_end_s": 44.99999999999945,
+      "name": "straight_p090_N_physical_stop_matches_preplanned_rule",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_outcome_clock_matches_arrays",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_grid_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_held_mask_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_reference_consistency_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_finite_reference",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_progress_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_virtual_clock_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_native_measurement_boundary_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_N_all_original_precision_fields_bit_exact",
+      "passed": true
+    },
+    {
+      "max_error": 0.0,
+      "name": "straight_p090_G_coherent_clock_chain_u",
+      "passed": true
+    },
+    {
+      "max_error": 1.1102230246251565e-16,
+      "name": "straight_p090_G_coherent_clock_chain_udot",
+      "passed": true
+    },
+    {
+      "max_error": 2.7755575615628914e-17,
+      "name": "straight_p090_G_coherent_clock_chain_uddot",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_clock_rate_bounds_and_finiteness",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_selection_truth_boundary",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_private_probe_presence",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_probe_sensor_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 9002,
+      "name": "straight_p090_G_probe_sensor_stages_match_live",
+      "passed": true,
+      "unchecked_rows": 0
+    },
+    {
+      "name": "straight_p090_G_equal_reference_full_output_check_mask",
+      "passed": true
+    },
+    {
+      "checked_rows": 5964,
+      "name": "straight_p090_G_equal_reference_probe_full_output_identity",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_sidecar_matches_actual_reference_xy",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_sidecar_matches_actual_reference_velocity",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_sidecar_matches_actual_reference_acceleration",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_no_private_dynamic_integration",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_private_observer_updates_only_in_G_probe",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_nominal_probe_count",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_same_final_held_mask",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_first_complete_sample_time",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_first_complete_stamp_history",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_dense_completion_is_diagnostic_only",
+      "passed": true
+    },
+    {
+      "actual_end_s": 45.00500000000457,
+      "expected_end_s": 45.004999999999455,
+      "name": "straight_p090_G_physical_stop_matches_preplanned_rule",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_outcome_clock_matches_arrays",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_grid_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_held_mask_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_reference_consistency_ok",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_finite_reference",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_progress_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_virtual_clock_valid",
+      "passed": true
+    },
+    {
+      "name": "straight_p090_G_native_measurement_boundary_ok",
+      "passed": true
+    },
+    {
+      "name": "-1.0_all_field_initial_three_second_native_prefix",
+      "passed": true,
+      "samples": 601
+    },
+    {
+      "name": "0.3_all_field_initial_three_second_native_prefix",
+      "passed": true,
+      "samples": 601
+    },
+    {
+      "name": "0.9_all_field_initial_three_second_native_prefix",
+      "passed": true,
+      "samples": 601
+    }
+  ],
+  "source_inputs_unchanged": true
+}

@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-77.
+experiment history and common presentation questions through I-78.
 
 ## Current system
 
@@ -71,7 +71,31 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-77 returns to the original baseline and separates deviation causes.**
+**Latest: I-78 retimes path progress, improves one start, and fails its comparison.**
+[Report, PDF, videos and reproduction](iterations/2026-11-28/path-progress-governor/README.md).
+Six fresh Gazebo/DART straight runs compare original N with an isolated online
+virtual clock G at−1.0/+0.3/+0.9 rad. Original LQR/observer/lean/feedforward and
+caps remain unchanged. G coherently slows desired position, velocity and
+acceleration from current inferred authority and nominal full-command demand;
+it performs no future physics or contact forecast.
+
+Peak distance from the same path N→G is148.9→102.0,124.6→124.4,59.7→59.2 mm,
+with0.985/0.600/0.005 s added travel time. All finish with the full ten-second
+goal hold, none stalls, and all six meet position/speed goal convergence. Only
+G−1 meets stricter four-condition settling. At−1, any clipping falls.680→.240 s,
+but extreme rolling references remain. At+0.3, peak tilt9.397→9.970° and speed
+.1819→.2284 m/s fail the fixed margins. The screen is80/82, with180/180 setup
+checks passing. Two independent audits reproduce the scores and gate decisions.
+
+Keep original N selected; no production/default changes. This tests a possible
+remedy, not proof that nominal-clock advance caused every departure. Current
+speed is not capped simply by slowing desired speed: +0.3 speed peaks with a
+lower reference and no same-row saturation, after changed dynamics. Do not
+claim a certified reference governor, a constrained LQR, or a general fix.
+Exact source/metadata and failed setups are archived; large raw/video bundles
+remain local with explicit inventories and hashes.
+
+**Previous: I-77 returns to the original baseline and separates deviation causes.**
 [Cause report, causal plots and raw evidence index](iterations/2026-11-27/baseline-deviation-cause/README.md).
 The production controller remains unchanged. In one straight −1 rad episode,
 two active drive directions nearly coincide; an unbounded rolling inverse

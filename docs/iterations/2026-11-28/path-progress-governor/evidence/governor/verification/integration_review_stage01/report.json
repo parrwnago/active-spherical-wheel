@@ -1,0 +1,34 @@
+{
+  "analysis_clock_note": "Current generator numerical targets do not certify hard future feasibility; transient excessive requests while braking remain possible.",
+  "checks": [
+    "Native command captured before I76 class monkeypatch.",
+    "Selected hardware/least_squares/no-heading/no-tilt/allocator configuration only.",
+    "All mutable fields written by native reset/command/after_step refreshed, including observer, estimator, held refs, nominal joints and synchronization plane; private scratch model/data remain independent.",
+    "Private observer/model update separate from sole live update; mirror never dynamically integrated.",
+    "Known-geometry authority and nominal command derived from current private probe, with live history unchanged.",
+    "Physical contact and terrain reads forbidden during private selection and original live command.",
+    "One nominal private callback per new time; actual selected p/v/a supplied through original native control stages.",
+    "Reference-independent stages checked always; full command/history match only when all references are identical.",
+    "N full79 original arrays, G original prefix and inclusive first-reference-change state/stages, with explicit terminal-held-mask exception.",
+    "Governed dynamic stop=min75s, first complete reference sample+10s; inherited completion separated from actual-goal and performance acceptance.",
+    "None completion telemetry converted to NaN and Unicode; object arrays rejected."
+  ],
+  "followup": "Prepare independent saved clock/policy/straight-reference/native-prefix verification after each producer artifact manifest closes.",
+  "iteration": "I-78",
+  "passed": true,
+  "protocol_sha256": "cf868e800031bee3dc8f503269dffdd461067feff6fdf4bf33bd5e417a0fb112",
+  "scope": "Independent manual source/AST review. Not new simulation, numerical case evaluation or software-suite count.",
+  "source_sha256": {
+    "results/path_progress_governor_20261128/governor/progress_governor.py": "cca0e8987b440b29ac1298c29d8508d710fc0021c3696375e7ba1f4e3afd41c5",
+    "results/path_progress_governor_20261128/runner/native_probe.py": "1422dc88eb9d0b110e9efa3eca22c1ccf460505d8ef434bf92ed4550f0d90ab5",
+    "results/path_progress_governor_20261128/runner/run_case.py": "e5b487d8d59f432e7947247a1536f934778fc50ec166acad1e4a9a27254fd6b0",
+    "results/path_progress_governor_20261128/runner/run_loop.py": "66644c4510ffc0fc7a633b4e6304d1eb56a6dd034defe9015ded84801848ea4a",
+    "results/path_progress_governor_20261128/runner/session.py": "0283f77b0d4a1044918d4abf03f815106daa641a71bb692d0af84925284473ad",
+    "src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "src/spherical_wheel/mirror.py": "8e6325a9c44f79516c32c2af079718c3355f447d0d2751c44a684b6b8cf7b038",
+    "src/spherical_wheel/offroad_control.py": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+    "src/spherical_wheel/predictive_seed.py": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca",
+    "src/spherical_wheel/synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c"
+  },
+  "utc": "2026-11-28T06:09:19.008163+00:00"
+}

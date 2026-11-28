@@ -5474,6 +5474,184 @@ hash, and every registered I-76 source hash. Production-source diff is empty.
 The preserved CSV uses CRLF; the whitespace check explicitly permits CR at EOL
 while retaining the other whitespace checks. Its staged bytes match the seal.
 
+## I-78 / 2026-11-28 / completed, analyzed, not adopted: managed path progress
+
+**Question and causal limit:** The user authorizes trying managed path progress
+and asks whether it caused the baseline problem. I-77 demonstrates that selected
+reference interventions influence later departures. It does **not** establish
+that the advancing nominal clock is the root cause or that retiming will solve
+them. Test that hypothesis without changing LQR, momentum observer, native lean
+generation, raw rolling inverse, support feedforward, preparation or final caps.
+Keep prior I-17–I-21, I-43, I-51 and I-56 regressions visible.
+
+**New change:** A result-owned causal virtual clock τ traverses the unchanged
+I-76 straight path. Its rate λ lies in [0,1], with no positive floor. References
+are coherent: p=g(τ), v=g′(τ)λ, a=g″(τ)λ²+g′(τ)λdot. A bounded two-stage scalar
+cascade makes rate and acceleration continuous when its target changes; the
+existing initial 3 s hold stays exact. Clock arrival at 35 s means the original
+32 s reference traversal has finished, followed by a real 10 s goal hold.
+Maximum physical horizon 75 s. This changes reference progress, not only a speed
+setpoint while the old timed position continues advancing.
+
+**State-based policy proposed before physics:** One private, nonintegrating
+native-controller clone evaluates the full-speed reference at the current
+virtual position and current measured state/history. It supplies raw joint-rate
+demand, full native requested-command demand, and current inferred geometry.
+The target clock rate is the minimum of one, a load-weighted 2D authority metric
+divided by 0.15 m/s in native column-scaled units, 5 rad/s divided by nominal
+joint-rate demand, and 0.85 divided by normalized total requested-input demand.
+These are declared simulation-design parameters, not motor ratings. Mean
+authority can conceal per-contact incompatibility; log that limitation and the
+native stack separately. Cascade time constant 0.10 s, rate bound 4 s⁻¹,
+integration substep ≤1 ms. Register the new target after advancing the old held
+target. Preserve exact native references before the first actual slowdown.
+
+**Important limitation:** This is a reactive progress prototype with an exact
+current-state hypothetical command probe, not a certified predictive constraint
+governor. Smooth slowing cannot instantly remove an already present reference
+spike. Actual requested demand during braking can still exceed limits. One live
+observer/controller update per held command; private trial updates are separate
+and never feed back their history. No private physics, truth contacts or terrain
+queries enter the governor. No blanket torque slew or new tilt shaper.
+
+**Conditions / comparison:** Start from `9f7cfc87b9a5b12f45c0a0158fda0f5dcb8c73f3`.
+Same Gazebo/DART Mars straight, origin [−2.4,10.0] m, yaw113°, phases
+−1.0/+0.3/+0.9, fixed flat gain bank and [1.5,.6,.6 N m,.3,.3 m/s] caps.
+Register six episodes: three fresh native45 s replays and three governed
+arrival+10 s episodes, at most75 s. Native must reproduce all79 I-76 precision
+fields exactly. Freeze source/input/plugin/gain hashes and numerical gates
+before any new physics. Preserve every failed setup/run and source correction.
+
+**Predeclared outcome checks:** Compare full-path geometric peak, progress-
+weighted RMS and time RMS, physical goal convergence, balance/rotation/speed,
+absolute clipped seconds and fractions, command steps, and completion time.
+Old-clock position error is secondary schedule lag. All three governed cases
+must complete and converge, without regression of native settling successes.
+Fail a continuous5 s unfinished-traversal interval with Δτ<0.05 s while physical
+goal distance remains >20 mm; report geometric low progress separately to avoid
+calling normal quintic endpoint slowing a stall. Lead −1 peak must improve20%;
+other precise nonregression margins will be in the frozen protocol. No result-
+dependent threshold, phase, horizon or target changes; no automatic adoption.
+
+**Status / decision:** Proposed implementation and preflight only; no I-78
+physics, performance result or accepted candidate at this registration.
+[I-78 record](docs/iterations/2026-11-28/path-progress-governor/README.md).
+
+**I-78 implementation / prephysics registration:** Ten core clock contracts,
+seven metric contracts and six runner/probe contracts pass in their final
+scopes; earlier/repeated stages are included rather than added. Preserve the
+metric strict-boundary float-subtraction failure, prephysics syntax drafts,
+partial-terminal-mask refinement and draft-metadata syntax correction.
+No earlier I-78 physics was run. The frozen protocol binds100 sources and66
+inputs, SHA256 `cf868e800031bee3dc8f503269dffdd461067feff6fdf4bf33bd5e417a0fb112`.
+One six-job serial launcher starts at06:05:30 UTC, observing actual return codes.
+
+**Analysis-only structural correction declared before candidate outcomes:**
+Peer review identified that the first evaluator used `.all()` on a deliberately
+conditional full-probe-identity flag. Native has no probe and active governed
+references differ from the nominal full-speed probe; unchecked flags are
+correctly false. Keep every registered file unchanged while physics runs.
+A separately named evaluator gates equality only where checked, asserts that
+the check mask matches reference equality, and retains reference-independent
+sensor-stage checks for G. It also resolves the protocol-subdirectory base path.
+Freeze this correction before candidate outputs are read, without changing any
+numerical performance criterion or runtime source.
+
+**I-78 completed result:** All six registered Gazebo/DART episodes exit zero.
+Native runs finish45s; G runs finish45.985/45.600/45.005s, each first emitted
+completed-reference sample plus a full ten physical seconds. No stall or native
+physical-failure flag occurs. All three N replays match every one of79 original
+I-76 precision arrays. The campaign output seal binds230 files, SHA256
+`ca37d68ed52506607313b3887043d98db544f1e0ece96ab9ddfd8496964adeb3`.
+No production controller, default, input bound or runtime source changes.
+
+| Phase | Finite-path peak N→G | Progress-weighted RMS N→G | Added reference travel time |
+| --- | ---: | ---: | ---: |
+| −1.0rad | 148.934→102.033mm | 49.971→33.952mm | .985s |
+| +0.3rad | 124.601→124.421mm | 42.868→39.715mm | .600s |
+| +0.9rad | 59.718→59.205mm | 21.299→21.222mm | .005s |
+
+All180 setup checks pass. **80/82 fixed performance checks pass; candidate
+FAIL_PROGRESS_SCREEN.** Both failures are+0.3: absolute tilt9.396590→9.969799°
+against9.896590° limit, planar speed.181902→.228362m/s against.210093m/s limit.
+All six satisfy final2s position/speed goal convergence, but only G−1 satisfies
+the four simultaneous position/speed/rotation/attitude settling conditions.
+The remaining runs retain rotation. Reference completion and physical settling
+are reported separately, not substituted for each other.
+
+**Learning / residual demand:** At−1, any-channel clipping time falls.680→.240s,
+largest joint reference91.896→66.131rad/s and normalized request peak11.983→7.821.
+The clock reduces demand without making it feasible. Minimum G rate is
+.2851/.5242/.9862. Authority or total-command pressure determines slowing; the
+joint-rate factor never wins the minimum in this campaign. Those declared
+normalization scales are not identified hardware limits.
+
+At+0.3, speed peaks19.730s with reference speed only.038691m/s, rate.550877,
+rate derivative+.010129/s and no same-row clipping. Tilt peaks20.070s during
+reacceleration, rate.740825, derivative+1.115156/s, reference acceleration
+.077850m/s² and third-actuator request−.659413Nm clipped to−.6Nm. Estimated
+support switches at changed times after physical trajectories diverge. These
+are posthoc associations; truth-label misassignment, one instantaneous governor
+shock or the complete physical cause has not been isolated.
+
+**Analysis / verification history:** Keep the original registered evaluator and
+all prior failed/repeated contract stages. Separately registered stage02 also
+handles first-arrival floating-point sampling: a reference at35s can first be
+emitted at35.005s, without extending budget or altering the actual10s hold.
+Four new analysis contracts cover conditional-mask and boundary behavior; no
+numerical performance gate changes. Final scoped contracts remain ten clock,
+seven metric, six runner/probe, four new analysis and three presentation
+contracts; these scopes are not a full-repository suite or counts of new runs.
+
+One independent raw-data audit reconstructs564 scalar leaves and all82 gate
+decisions, maximum difference1.79e−15. A second independently reconstructs78
+selected scalars and39 comparisons, maximum difference1.11e−16. They confirm
+the same two failures, not additional physics. The all-case native command
+ledger closes54,324 recorded control observations. Reports bind source/inputs.
+
+An independent agent's prose mistakenly said G+.9 never retimed; its original
+saved report was correct. Direct sealed raw checks verify reference/applied
+divergence at19.815s, state divergence at19.820s, minimum rate.986156 and dense
+delay4.630991ms. Independent finite-line peaks equal canonical values. Preserve
+the reporting correction; no physics, verifier source or score was changed.
+
+**Decision / causal limit:** Original N remains selected. I-78 improves the−1
+departure about31% but not the other peaks and fails nonregression. It supports
+a reference-generation contribution, not a sole-cause advancing-clock claim,
+general stability guarantee or automatic parameter-tuning recommendation.
+Keep earlier allocator/tilt/reference/slew regressions visible. Retain this
+isolated candidate and the unsuccessful result for presentation.
+
+**Evidence:** [I-78 report, plots, PDF and three full videos](docs/iterations/2026-11-28/path-progress-governor/README.md).
+Compact evidence binds152 files plus its manifest (9.41MB), including an exact
+source/metadata archive of1,543 members. Streamed archive contents and every
+copied file verify by SHA256. The separate15,603,422-byte local visual bundle
+has SHA256 `92b955df59829fc33dc3e96614392b67d3939520c9cb99f93a6444ba72f23784`.
+Videos show shared physical time at1×, explicitly frozen ended panels, recorded
+Gazebo/DART physics with MuJoCo visuals only. Large arrays/media remain local;
+dated presentation notes, teammate handoff and standalone ChatGPT context are
+updated through I-78. The report gives sealed-data evaluation commands and
+the full evidence bundle/prerequisite inventory.
+
+**I-78 final preservation closure:** After the initial152-file compact capture,
+retain its manifest and append exact final full-bundle metadata. The final
+compact manifest binds159 files plus itself. The local full evidence archive is
+172,744,969bytes /1,962 fully stream-decoded, SHA256-verified regular members,
+digest `31a82810e8981312ae79e2fb9d781fb0cef55f21f62aaedec231e782a0fa369e`.
+It includes the three original I-76 replay inputs and six new precision/rollout
+pairs, final audits and media. Explicit omission inventory lists3,047 paths;
+rebuildable assets/environment and unrelated credential files are excluded.
+Final100-source/66-input/230-output checks pass. Three separate pure archive
+selection/member-integrity contracts pass. No physics, scores or source archive
+is changed by this packaging amendment.
+
+Final repository QA resolves376 authored local links, verifies all159 compact
+evidence files against staged Git blobs, independently hashes the full raw
+archive, and rechecks every100-source/66-input protocol binding. Production
+diff remains empty. A standard whitespace check flags an extra EOF blank line
+in one immutable tested `run_loop.py` snapshot; retain its exact hashed bytes
+and run the remaining whitespace checks with only that snapshot excluded.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

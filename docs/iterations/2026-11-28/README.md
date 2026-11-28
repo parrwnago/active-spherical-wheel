@@ -1,5 +1,31 @@
 # Research presentation notes — 2026-11-28
 
+**Latest: I-78 tests coherent path retiming; one start improves, the candidate
+fails its fixed comparison.** [Full report and videos](path-progress-governor/README.md) ·
+[two-page PDF](path-progress-governor/evidence/evaluation/publication_stage01/progress_comparison.pdf).
+
+- Keep original native N LQR, momentum observer and contact feedforward selected.
+  Only an isolated virtual path clock changes; production code/defaults do not.
+- Six fresh Gazebo/DART straight runs use three shaft starts. Native replays
+  exactly match all79 original precision fields. G finishes the same path with
+  0.985/0.600/0.005 s added travel time and a full ten-second goal hold. None stalls.
+- Peak geometric departures N→G are148.9→102.0,124.6→124.4,59.7→59.2 mm.
+  At−1 rad, clipping falls0.680→0.240 s; residual large demands remain.
+- All180 setup checks pass. Two of82 performance checks fail: +0.3 peak tilt
+  rises9.397→9.970° and speed0.1819→0.2284 m/s. Only G−1 meets all four settling
+  conditions; approaching the goal alone is not full settling.
+- Independent raw-data audits reproduce564 scalar leaves and all82 gate
+  decisions. They are checks of these six recordings, not additional physics or
+  a full-repository test count. No post-outcome tuning or default promotion.
+- The governor is reactive, not a future contact forecast or constraint
+  guarantee. +0.3 speed peaks while desired speed is lower and commands are
+  unsaturated at that instant; its earlier altered dynamics remain relevant.
+- I-77 establishes reference-window contributions; neither I-77 nor I-78 proves
+  that the advancing path clock is the sole cause. Retain both benefit and
+  regression in the presentation.
+
+## Previous causal investigation
+
 **I-77 returns to the original baseline and tests causes before another design.**
 [Full investigation](../2026-11-27/baseline-deviation-cause/README.md) ·
 [straight causal comparison](../2026-11-27/baseline-deviation-cause/evidence/component_audit/causal_publication_stage02/causal_comparison.png) ·

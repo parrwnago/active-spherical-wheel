@@ -1,0 +1,144 @@
+{
+  "iteration": "I-78",
+  "status": "root-approved fixed prephysics evaluation design",
+  "max_duration_s": 75.0,
+  "native_duration_s": 45.0,
+  "goal_hold_s": 10.0,
+  "reference_consistency_atol": 1e-10,
+  "lead_peak_ratio": 0.8,
+  "stall": {
+    "window_s": 5.0,
+    "min_delta_virtual_time_s": 0.05,
+    "geometric_min_delta_u_diagnostic": 0.005,
+    "goal_radius_m": 0.02
+  },
+  "settling": {
+    "sustained_s": 2.0,
+    "goal_radius_m": 0.02,
+    "body_xy_speed_m_s": 0.02,
+    "world_z_angular_speed_rad_s": 0.05,
+    "raw_reference_up_error_deg": 2.0
+  },
+  "nonregression": {
+    "geometric_peak_m": {
+      "path": [
+        "tracking",
+        "geometric_traversal",
+        "maximum"
+      ],
+      "ratio": 1.0,
+      "add": 0.005
+    },
+    "progress_weighted_geometric_rms_m": {
+      "path": [
+        "tracking",
+        "geometric_progress_rms",
+        "rms"
+      ],
+      "ratio": 1.05,
+      "add": 0.001
+    },
+    "time_weighted_geometric_rms_m": {
+      "path": [
+        "tracking",
+        "geometric_traversal",
+        "rms"
+      ],
+      "ratio": 1.1,
+      "add": 0.001
+    },
+    "own_raw_target_up_error_peak_deg": {
+      "path": [
+        "attitude",
+        "own_raw_target_peak_deg"
+      ],
+      "ratio": 1.0,
+      "add": 0.5
+    },
+    "own_raw_target_up_error_rms_deg": {
+      "path": [
+        "attitude",
+        "own_raw_target_rms_deg"
+      ],
+      "ratio": 1.1,
+      "add": 0.1
+    },
+    "absolute_tilt_peak_deg": {
+      "path": [
+        "attitude",
+        "absolute_tilt_peak_deg"
+      ],
+      "ratio": 1.0,
+      "add": 0.5
+    },
+    "planar_speed_peak_m_s": {
+      "path": [
+        "motion",
+        "planar_speed_peak_m_s"
+      ],
+      "ratio": 1.1,
+      "add": 0.01
+    },
+    "world_z_angular_rate_peak_rad_s": {
+      "path": [
+        "motion",
+        "world_z_rate_peak_rad_s"
+      ],
+      "ratio": 1.1,
+      "add": 0.05
+    },
+    "acceleration_50ms_peak_m_s2": {
+      "path": [
+        "motion",
+        "acceleration_50ms_peak_m_s2"
+      ],
+      "ratio": 1.1,
+      "add": 0.1
+    },
+    "any_channel_clipping_fraction": {
+      "path": [
+        "commands",
+        "clipped_any_fraction"
+      ],
+      "ratio": 1.0,
+      "add": 0.02
+    },
+    "any_channel_clipping_seconds": {
+      "path": [
+        "commands",
+        "clipped_any_seconds"
+      ],
+      "ratio": 1.0,
+      "add": 0.1
+    },
+    "normalized_clipping_excess_rms": {
+      "path": [
+        "commands",
+        "normalized_clipping_excess",
+        "rms"
+      ],
+      "ratio": 1.1,
+      "add": 0.01
+    },
+    "normalized_applied_command_step_peak": {
+      "path": [
+        "commands",
+        "normalized_applied_step",
+        "maximum"
+      ],
+      "ratio": 1.1,
+      "add": 0.05
+    }
+  },
+  "channel_clipping_fraction_add": 0.02,
+  "channel_clipping_seconds_add": 0.1,
+  "scope": "All three straight phases and one setting; no post-outcome phase/threshold/window/horizon selection. A pass is an experimental screen, not global stability or automatic adoption.",
+  "metric_denominators": {
+    "traversal": "All physical states from3s through first reference-arrival state; includes pauses. Exact distance to shared finite1.2mstraightsegment.",
+    "progress_weighted": "Trapezoidal integral(error^2 du) over complete referenceu0to1. Never grades partial path successful; paused intervals havezero progress weight and remain in timeRMS/peak/stall metrics.",
+    "primary_episode": "First referencearrival+10s goalhold, not arbitrary later tail. Actualgoal convergence requires final2s\u226420mm and\u2264.02m/s.",
+    "current_target": "Each arm's unchanged native observer-normal attitude target. Absolute tilt reported separately; no frozen-native-target substitution after physical paths differ.",
+    "commands": "Held intervals only, excluding primary episode end/actualterminal emittedcommand. Fractions and absoluteclippedseconds bothgated.",
+    "original_schedule": "Original35s patharrival/45s episode timing remains descriptive schedulelag; not primarypathtracking gate."
+  }
+}
