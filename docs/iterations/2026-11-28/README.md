@@ -1,5 +1,15 @@
 # Research presentation notes — 2026-11-28
 
+**I-79 clarification: a terrain-induced preview failure is plausible, unverified.**
+[Evidence review and narrow proposed diagnostic](terrain-contact-hypothesis/README.md).
+The 120 ms preview extends current motion over a frozen estimated plane, so a
+new slope can defeat it. It prepares incoming drives rather than declaring
+current loaded contact. The eight's actual normal changes rapidly even while
+the observer follows the filtered physical wrench closely. Wrong prediction,
+filtered-normal timing and difficult response to a real change remain separate
+mechanisms. Existing recordings omit full preview targets, so the complete
+prediction-error/causality chain is not established. No new runs or code changes.
+
 **Latest: I-78 tests coherent path retiming; one start improves, the candidate
 fails its fixed comparison.** [Full report and videos](path-progress-governor/README.md) ·
 [two-page PDF](path-progress-governor/evidence/evaluation/publication_stage01/progress_comparison.pdf).

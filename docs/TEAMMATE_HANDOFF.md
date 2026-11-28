@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-78.
+experiment history and common presentation questions through I-79.
 
 ## Current system
 
@@ -70,6 +70,15 @@ actuates the selected research loop. Those modules/experiments are retained as
 research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
+
+**I-79 reviews the terrain-change hypothesis without new physics.**
+[Review](iterations/2026-11-28/terrain-contact-hypothesis/README.md).
+Sudden terrain can invalidate the native 120 ms frozen-plane/motion preview,
+but preview candidates are not current load estimates. Existing eight evidence
+also permits an accurately observed physical change followed by filtering and
+a demanding lean target. Saved precision lacks full original preview targets;
+wrong preview causing the departure is still unverified. A short unchanged
+instrumented replay is proposed, not run. Baseline remains selected.
 
 **Latest: I-78 retimes path progress, improves one start, and fails its comparison.**
 [Report, PDF, videos and reproduction](iterations/2026-11-28/path-progress-governor/README.md).

@@ -1,6 +1,6 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 13 — 28 November 2026, through I-78.** The selected live controller
+**Revision 14 — 28 November 2026, through I-79.** The selected live controller
 remains the original native N. I-78 starts from repository commit `9f7cfc8` and
 tests managed path progress; no production/default promotion is made.
 This is a study and discussion
@@ -1861,7 +1861,41 @@ the problem or more threshold tuning must cure it. Sources, plots, PDF, videos,
 conditions and reproduction are indexed in the
 [I-78 report](iterations/2026-11-28/path-progress-governor/README.md).
 
-## 23. Sources, attribution, and how to continue a discussion
+## 23. I-79: sudden terrain may invalidate preview, but false contact is unverified
+
+The student suggests an unseen sudden slope invalidates current-motion contact
+preview. This is plausible: native synchronization extrapolates constant body/
+joint velocity for 120 ms against a frozen observer-derived plane. It cannot
+know arbitrary unseen terrain. A different future slope can change the incoming
+surface, onset time and speed needed for preparation.
+
+However, this preview only blends incoming-drive preparation. It does not
+declare current support. Momentum observation and the geometry-based locator
+infer support separately. Completed-interval averaging and filtering have
+temporal effects; lockstep simulation does not establish computation delay.
+
+Existing I-77 eight evidence shows real rapid normal changes, close agreement
+between observer and same-filter physical interval-wrench direction (maximum
+.02345°), and a subsequently filtered controller normal that can differ from
+current pressure normal by6.076°. At96.4s the latter gap is5.025°, desired-up
+rate84.315°/s versus actual~.46°/s; selected rows still carry shellB pressure.
+Thus accurate wrench observation plus filtering and a demanding lean target
+remains possible without a false support identity. Changing solver normals alone
+does not prove a particular sudden terrain facet: actual contact locations and
+facet identities are needed. Straight20.585s also retains weak rolling geometry
+when the nearly correct estimated point is replaced with pressure geometry.
+
+Existing I-76/I-78 precision does not save the full original preview targets
+(selected horizons, margins/gaps and target speeds). Therefore the chain
+terrain change→wrong preview→departure is not established. I-79 only reviews
+source and copies qualified prior values; no physics, tuning or control change.
+A short unchanged instrumented replay is proposed to compare each past preview
+with later actual contacts, alongside observer/normal/lean histories. Only if
+wrong preparation precedes departure should an isolated preparation intervention
+test causality. This does not restart camera/particle-filter development.
+[I-79 source bindings, evidence and proposed test](iterations/2026-11-28/terrain-contact-hypothesis/README.md).
+
+## 24. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

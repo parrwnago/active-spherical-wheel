@@ -5652,6 +5652,58 @@ diff remains empty. A standard whitespace check flags an extra EOF blank line
 in one immutable tested `run_loop.py` snapshot; retain its exact hashed bytes
 and run the remaining whitespace checks with only that snapshot excluded.
 
+## I-79 / 2026-11-28 / reviewed, validation proposed: terrain-change hypothesis
+
+**Question:** The user suggests a sudden slope invalidates motion-based contact
+preview and causes false contact. Review existing evidence before adopting this
+cause. No new physics, controller/estimator change, tuning or acceptance trial.
+Native N from `a1339b07a8a3b20da248a494eda73a1bb01fe84c` remains selected.
+
+**Scope/change:** Read baseline source and I-77 evidence; preserve a small
+retrospective extraction bound to ten input/source hashes and five fixed prior
+timestamps. This copies prior values, not an independent physics reconstruction.
+Separate wrong future preview, current support/normal timing, and controller
+response to an accurately observed physical change. Conditions stay original
+I-76/I-77 Gazebo/DART straight−1/eight−1, inferred contact boundary, exact
+simulated body state, 5 ms control and unchanged caps/gains.
+
+**Evidence:** Preview extrapolates constant current velocity for120ms over a
+frozen observer-derived plane and blends incoming preparation; it does not
+declare current loaded support. A sudden unseen slope can invalidate that
+forecast. Current support is inferred separately from interval wrench and
+known geometry. Existing eight96–97.5s pressure normals change rapidly; observer
+direction agrees with same-filter physical interval-wrench direction within
+.02345° maximum, whereas the final filtered normal differs from instantaneous
+pressure normal by up to6.076°. At96.4s the latter gap is5.025°, desired-up rate
+84.315°/s versus actual~.46°/s. Selected rows remain shellB. Real contact change,
+filtering and demanding balance response remain plausible without false family.
+
+Straight20.585s has correct family and.140mm point discrepancy; pressure-point
+substitution still leaves condition383.97 and large opposing references. Do
+not attribute all deviations to a wrong point. Rapid solver-normal change also
+does not by itself prove a terrain-facet boundary; the saved centre DEM tangent
+is only a proxy.
+
+**Limitation / decision:** Existing I-76/I-78 precision saves preparation
+weights/deltas but not full original target horizons/margins/gaps/speeds. No
+matched past-preview versus future-physical-contact ledger exists in the
+reviewed evidence. The full chain sudden slope→wrong preview→departure remains
+unverified. Keep baseline. Propose a short unchanged-native instrumented replay
+first, then a preparation-only causal intervention only if the ledger supports
+it. Neither is run in I-79. Prior I-41/I-45 prediction limitations concern other
+episodes and are not proof for these cases. No tests or simulations are rerun
+for this documentation/evidence review; validate input hashes, links and copies.
+
+**Evidence/reproduction:** [I-79 review and proposed diagnostic](docs/iterations/2026-11-28/terrain-contact-hypothesis/README.md),
+exact source, manifest and extracted existing values. Local extraction source:
+`results/terrain_contact_hypothesis_20261128/review.py`. Prior archives and
+reports remain unchanged.
+
+I-79 final QA verifies all ten input hashes, the four preserved extraction/
+binding files and366 authored local links. Staged whitespace checks pass;
+production-source diff is empty. These are evidence/documentation checks, not
+new simulation or repository-suite passes.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated
