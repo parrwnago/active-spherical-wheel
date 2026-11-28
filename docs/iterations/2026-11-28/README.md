@@ -15,6 +15,14 @@ later downhill force comparison reflects different histories, not a same-state
 100.9 s intervention. Earlier I-49's different-route mixed result stays retained.
 The requested full 1× movie and 98–104 s excerpt are checked and shareable.
 
+**Research objective clarification:** Allow temporary terrain-induced departure
+and evaluate recovery time as well as peak/whole-route error. Stored terrain
+could support anticipation while the momentum observer checks actual contact.
+I-44/I-45 were offline map/contact diagnostics, not live recovery-control tests.
+Recovery bands, event anchors and dwell criteria remain to be registered; no
+new recovery score, simulation or map-assisted controller is claimed. Compare
+policies at the same operating limits to separate knowledge from capacity.
+
 **I-81 identifies loaded-belt downhill force pulses.**
 [Report and two-page PDF](slope-response-trace/README.md).
 One unchanged native102s prefix exactly reproduces all79 original precision

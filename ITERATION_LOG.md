@@ -6080,6 +6080,24 @@ All93source/59input/456closed-output bindings still match. Staged whitespace
 checks pass and production-source diff is empty. These are preservation and
 documentation checks, not extra physical runs or a full repository test suite.
 
+**User objective clarification / proposed follow-up, 2026-11-28:** Terrain
+disturbance and temporary path departure are acceptable; evaluate how quickly
+tracking and balance recover, alongside anticipation from previously observed
+terrain. I-82's lower whole-route errors do not by themselves establish shorter
+event recovery time. Proposed metrics should separately report peak departure,
+return to the intended path section with controlled velocity/balance for a
+continuous dwell, secondary departures, command saturation and residual spin.
+Exact event anchors/bands/dwell and comparisons are not yet registered or run.
+Keep capacity fixed within each comparison so anticipation is not confounded
+with the I-82 bound change. Retain LQR and the momentum observer; a stored map
+would supply uncertain terrain geometry for preview/reference/feedforward,
+while actual wrench/load inference remains necessary. I-44/I-45 were offline
+geometry/contact-forecast diagnostics, not live map-assisted recovery trials;
+their coverage/forecast limitations do not reject terrain sensing generally.
+First quantify recovery in existing records and define one controlled slope
+event before proposing another map-assisted actuation experiment. No new
+physics, controller, camera integration or recovery result is claimed here.
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated
