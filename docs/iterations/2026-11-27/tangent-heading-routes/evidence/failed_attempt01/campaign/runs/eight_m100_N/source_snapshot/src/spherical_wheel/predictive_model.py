@@ -1,0 +1,330 @@
+"""Private MuJoCo prediction from measured state and an estimated support plane.
+
+The predictor owns its model and data. It never reads the simulated robot's
+contacts or terrain and never integrates the controller's StateMirror. The
+estimated plane is fixed during each prediction; predicted contacts remain
+unilateral, frictional contacts of the existing mechanical model.
+"""
+from __future__ import annotations
+
+import copy
+from time import perf_counter
+
+import mujoco
+import numpy as np
+
+
+class EstimatedPlanePredictor:
+    """Five physical inputs: three torques and two ideal belt surface speeds.
+
+    Local state coordinates are position tangent coordinates relative to an
+    anchor qpos, followed by velocity differences relative to anchor qvel.
+    ``linearize`` returns ``A, B, f0`` for
+    ``x_next = A @ x + B @ (u - anchor_u) + f0`` with current ``x = 0``.
+
+    Calibrating the plane offset uses an estimated normal load. It adds no
+    external force and does not keep applying a support wrench after predicted
+    contact is lost. It is not a contact-mode or friction-feasibility guarantee.
+    """
+
+    def __init__(self, mirror, max_plane_offset_m=.003, calibration_iterations=20):
+        if not np.isfinite(max_plane_offset_m) or max_plane_offset_m <= 0:
+            raise ValueError('max_plane_offset_m must be finite and positive')
+        if int(calibration_iterations) != calibration_iterations or calibration_iterations < 1:
+            raise ValueError('calibration_iterations must be a positive integer')
+        self.model = copy.copy(mirror.model)
+        self.model.opt.disableflags &= ~int(mujoco.mjtDisableBit.mjDSBL_CONTACT)
+        # Central finite differences at a torque limit require the unclipped
+        # local plant derivative. Actual commands are constrained by the MPC.
+        self.model.actuator_ctrllimited[:] = False
+        self.data = mujoco.MjData(self.model)
+        self._integration_spec = mujoco.mjtState.mjSTATE_INTEGRATION
+        self._reset_integration = np.empty(mujoco.mj_stateSize(self.model, self._integration_spec))
+        mujoco.mj_getState(self.model, self.data, self._reset_integration, self._integration_spec)
+        self.bounds = np.asarray(mirror.bounds, float).copy()
+        self.nv, self.nq = self.model.nv, self.model.nq
+        if self.nv != 9 or self.model.nu != 3 or self.bounds.shape != (5,):
+            raise ValueError('Predictor requires the wheel with nine velocities and five physical inputs')
+        self.floor_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, 'floor')
+        if self.floor_id < 0 or self.model.geom_type[self.floor_id] != mujoco.mjtGeom.mjGEOM_PLANE:
+            raise ValueError('Predictor requires the modeled plane floor')
+        self._mocap = int(self.model.body_mocapid[self.model.geom_bodyid[self.floor_id]])
+        if self._mocap < 0:
+            raise ValueError('Predictor floor must be a mocap plane')
+        self.belt_ids = [mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, 'belt_'+side)
+                         for side in ('A', 'B')]
+        self.smooth_belt_ids = [mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM,
+                                              'belt_'+side+'_smooth') for side in ('A', 'B')]
+        if min(self.belt_ids) < 0:
+            raise ValueError('Predictor requires both belt contact geoms')
+        self.all_belt_ids = self.belt_ids+[geom for geom in self.smooth_belt_ids if geom >= 0]
+        self.max_plane_offset_m = float(max_plane_offset_m)
+        self.calibration_iterations = int(calibration_iterations)
+        # Plant.apply_input updates this measured-input array in place. Read
+        # its current value at every update; no source model/data is modified.
+        self._measured_input = mirror.last_input
+        self._known_input = np.asarray(self._measured_input, float).copy()
+        self.normal = np.array([0., 0., 1.])
+        self.point = np.zeros(3)
+        self._plane_point = self.point.copy()
+        self._plane_quat = np.array([1., 0., 0., 0.])
+        self._ready = False
+        self.diagnostics = {}
+
+    def _state(self, qpos, qvel):
+        qpos, qvel = np.asarray(qpos, float), np.asarray(qvel, float)
+        if qpos.shape != (self.nq,) or qvel.shape != (self.nv,):
+            raise ValueError('Prediction state has the wrong dimensions')
+        if not np.isfinite(qpos).all() or not np.isfinite(qvel).all():
+            raise ValueError('Prediction state must be finite')
+        if not np.isclose(np.linalg.norm(qpos[3:7]), 1., atol=1e-6):
+            raise ValueError('Prediction quaternion must have unit norm')
+        return qpos, qvel
+
+    @staticmethod
+    def _command(command):
+        command = np.asarray(command, float)
+        if command.shape != (5,) or not np.isfinite(command).all():
+            raise ValueError('Prediction input must be five finite physical commands')
+        return command
+
+    def _apply_input(self, command):
+        # Do not clip here: finite differences at a physical bound must still
+        # differentiate the plant. The optimizer owns the actual input bounds.
+        self.data.ctrl[:] = command[:3]
+        self.model.geom_surfacevel[self.all_belt_ids] = 0.
+        self.model.geom_surfacevel[self.belt_ids, 1] = command[3:]
+        for side, geom in enumerate(self.smooth_belt_ids):
+            if geom >= 0:
+                self.model.geom_surfacevel[geom, 1] = command[3+side]
+        self.model.flg_surfacevel = 1
+
+    def _assign(self, qpos, qvel, command, plane_point=None):
+        data = self.data
+        # Reset every integration/warm-start field, not only qpos and qvel.
+        # This keeps +/- finite differences independent of evaluation order.
+        mujoco.mj_setState(self.model, data, self._reset_integration, self._integration_spec)
+        data.qpos[:] = qpos
+        data.qvel[:] = qvel
+        data.time = 0.
+        data.qacc_warmstart[:] = 0.
+        data.qfrc_applied[:] = 0.
+        data.xfrc_applied[:] = 0.
+        if self.model.na:
+            data.act[:] = 0.
+        data.mocap_pos[self._mocap] = self._plane_point if plane_point is None else plane_point
+        data.mocap_quat[self._mocap] = self._plane_quat
+        self._apply_input(command)
+        mujoco.mj_forward(self.model, data)
+
+    def update(self, qpos, qvel, normal, point, load_N, friction=None, command=None):
+        """Set a plane using estimates only, then fit its private normal offset.
+
+        The support plane passes through ``point`` before calibration. Positive
+        offset moves the plane toward the wheel. The bounded scalar fit matches
+        normal generalized contact reaction to ``load_N`` at the measured state.
+        Other force/moment components are not fitted. Out-of-range loads leave a
+        reported residual rather than adding a fictitious supporting force.
+        """
+        start = perf_counter()
+        qpos, qvel = self._state(qpos, qvel)
+        normal, point = np.asarray(normal, float), np.asarray(point, float)
+        if normal.shape != (3,) or point.shape != (3,) or not np.isfinite(normal).all() or not np.isfinite(point).all():
+            raise ValueError('Estimated normal and point must be finite three-vectors')
+        size = np.linalg.norm(normal)
+        if size < 1e-12 or not np.isfinite(load_N) or load_N < 0:
+            raise ValueError('Estimated plane needs a nonzero normal and nonnegative finite load')
+        self.normal, self.point = normal/size, point.copy()
+        self._plane_quat = np.r_[1.+self.normal[2], -self.normal[1], self.normal[0], 0.]
+        if np.linalg.norm(self._plane_quat) < 1e-12:
+            self._plane_quat = np.array([0., 1., 0., 0.])
+        self._plane_quat /= np.linalg.norm(self._plane_quat)
+        if friction is not None:
+            if not np.isfinite(friction) or friction < 0:
+                raise ValueError('Estimated friction must be finite and nonnegative')
+            self.model.geom_friction[self.floor_id, 0] = float(friction)
+        self._known_input = self._command(self._measured_input if command is None else command).copy()
+
+        def evaluate(offset):
+            candidate = self.point+float(offset)*self.normal
+            self._assign(qpos, qvel, self._known_input, candidate)
+            # Free-joint linear generalized forces are world-frame forces.
+            return max(0., float(self.normal@self.data.qfrc_constraint[:3]))
+
+        bound = self.max_plane_offset_m
+        trials = [(0., evaluate(0.)), (-bound, evaluate(-bound)), (bound, evaluate(bound))]
+        low, high = -bound, bound
+        bracketed = trials[1][1] <= load_N <= trials[2][1]
+        if bracketed:
+            for _ in range(self.calibration_iterations):
+                middle = .5*(low+high)
+                value = evaluate(middle)
+                trials.append((middle, value))
+                if value < load_N:
+                    low = middle
+                else:
+                    high = middle
+        offset, predicted_load = min(trials, key=lambda item: abs(item[1]-load_N))
+        self._plane_point = self.point+offset*self.normal
+        self._assign(qpos, qvel, self._known_input)
+        self._ready = True
+        self.diagnostics = {
+            'plane_offset_m': float(offset), 'plane_offset_bound_m': bound,
+            'estimated_normal_load_N': float(load_N),
+            'calibrated_normal_load_N': float(predicted_load),
+            'normal_load_residual_N': float(predicted_load-load_N),
+            'load_fit_bracketed': bool(bracketed),
+            'load_fit_within_tolerance': bool(abs(predicted_load-load_N) <= max(.02, .002*load_N)),
+            'predicted_contact_count': int(self.data.ncon),
+            'private_input_clipping': False,
+            'plane_update_s': float(perf_counter()-start),
+        }
+        return dict(self.diagnostics)
+
+    def transition(self, qpos, qvel, command, dt):
+        """Predict one held-input interval without touching the measured robot."""
+        if not self._ready:
+            raise RuntimeError('Set estimated plane with update before predicting')
+        qpos, qvel = self._state(qpos, qvel)
+        command = self._command(command)
+        if not np.isfinite(dt) or dt <= 0:
+            raise ValueError('Prediction duration must be finite and positive')
+        steps = int(round(dt/self.model.opt.timestep))
+        if steps < 1 or not np.isclose(steps*self.model.opt.timestep, dt, atol=1e-12):
+            raise ValueError('Prediction duration must be an integer number of model physics steps')
+        self._assign(qpos, qvel, command)
+        for _ in range(steps):
+            mujoco.mj_step(self.model, self.data)
+        if not np.isfinite(self.data.qpos).all() or not np.isfinite(self.data.qvel).all():
+            raise RuntimeError('Private dynamics prediction produced nonfinite state')
+        return self.data.qpos.copy(), self.data.qvel.copy()
+
+    def tangent(self, anchor_qpos, anchor_qvel, qpos, qvel):
+        """State difference in the coordinates used by the affine prediction."""
+        anchor_qpos, anchor_qvel = self._state(anchor_qpos, anchor_qvel)
+        qpos, qvel = self._state(qpos, qvel)
+        difference = np.zeros(self.nv)
+        mujoco.mj_differentiatePos(self.model, difference, 1., anchor_qpos, qpos)
+        return np.r_[difference, qvel-anchor_qvel]
+
+    def perturb(self, qpos, qvel, tangent):
+        qpos, qvel = self._state(qpos, qvel)
+        tangent = np.asarray(tangent, float)
+        if tangent.shape != (2*self.nv,) or not np.isfinite(tangent).all():
+            raise ValueError('Prediction perturbation must be a finite full-state tangent')
+        result = qpos.copy()
+        mujoco.mj_integratePos(self.model, result, tangent[:self.nv], 1.)
+        return result, qvel+tangent[self.nv:]
+
+    def linearize(self, qpos, qvel, command, dt, epsilon=1e-5):
+        """Differentiate one full private held-input interval at a fixed plane."""
+        if not np.isfinite(epsilon) or epsilon <= 0:
+            raise ValueError('Finite-difference epsilon must be finite and positive')
+        qpos, qvel = self._state(qpos, qvel)
+        command = self._command(command)
+        start = perf_counter()
+
+        def evaluate(dx, du):
+            perturbed_q, perturbed_v = self.perturb(qpos, qvel, dx)
+            predicted_q, predicted_v = self.transition(perturbed_q, perturbed_v, command+du, dt)
+            return self.tangent(qpos, qvel, predicted_q, predicted_v)
+
+        nx = 2*self.nv
+        zero_x, zero_u = np.zeros(nx), np.zeros(5)
+        f0 = evaluate(zero_x, zero_u)
+        A = np.column_stack([(evaluate(np.eye(nx)[i]*epsilon, zero_u)-
+                              evaluate(-np.eye(nx)[i]*epsilon, zero_u))/(2*epsilon)
+                             for i in range(nx)])
+        B = np.column_stack([(evaluate(zero_x, np.eye(5)[i]*epsilon)-
+                              evaluate(zero_x, -np.eye(5)[i]*epsilon))/(2*epsilon)
+                             for i in range(5)])
+        self.diagnostics.update(linearization_s=float(perf_counter()-start),
+                                linearization_dt_s=float(dt),
+                                linearization_epsilon=float(epsilon))
+        return A, B, f0
+
+    def rollout(self, qpos, qvel, commands, dt):
+        """Nonlinear predicted states, including the supplied initial state."""
+        qpos, qvel = self._state(qpos, qvel)
+        commands = np.asarray(commands, float)
+        if commands.ndim != 2 or commands.shape[1] != 5 or not np.isfinite(commands).all():
+            raise ValueError('Rollout commands must have shape (steps, 5) and be finite')
+        poses, velocities = [qpos.copy()], [qvel.copy()]
+        for command in commands:
+            qpos, qvel = self.transition(qpos, qvel, command, dt)
+            poses.append(qpos)
+            velocities.append(qvel)
+        return np.asarray(poses), np.asarray(velocities)
+
+    def linearize_trajectory(self, anchor_qpos, anchor_qvel, commands, dt, epsilon=1e-5,
+                             jacobian_stride=1):
+        """Stage-varying affine model along a private nonlinear input rollout.
+
+        All states use ONE root-anchor tangent chart, rather than each node's
+        different local orientation chart. Returns ``A, B, c, nominal_states``
+        with shapes ``(N,18,18)``, ``(N,18,5)``, ``(N,18)`` and ``(N+1,18)``.
+        For nominal input ``commands[i]``, the stage equation is
+        ``x[i+1] = A[i] @ x[i] + B[i] @ (u[i]-commands[i]) + c[i]``.
+
+        The estimated plane/calibration stays fixed throughout this routine;
+        the existing contact model determines predicted support changes. This
+        derivative can be poor at a contact boundary, so nonlinear plan replay
+        remains necessary. No physical pose or contact identity is imposed.
+
+        ``jacobian_stride > 1`` evaluates finite differences at selected nodes,
+        always including the last, and linearly interpolates intermediate
+        Jacobians. Nominal states and affine drifts remain exact for the
+        nonlinear nominal rollout. This approximation can interpolate across
+        contact changes and does not certify intermediate-stage derivatives.
+        """
+        if not np.isfinite(epsilon) or epsilon <= 0:
+            raise ValueError('Finite-difference epsilon must be finite and positive')
+        if (isinstance(jacobian_stride, (bool, np.bool_)) or
+                not isinstance(jacobian_stride, (int, np.integer)) or jacobian_stride < 1):
+            raise ValueError('jacobian_stride must be a positive integer')
+        anchor_qpos, anchor_qvel = self._state(anchor_qpos, anchor_qvel)
+        commands = np.asarray(commands, float)
+        if commands.ndim != 2 or commands.shape[1] != 5 or len(commands) == 0 or not np.isfinite(commands).all():
+            raise ValueError('Trajectory commands must have nonempty shape (steps, 5) and be finite')
+        start = perf_counter()
+        poses, velocities = self.rollout(anchor_qpos, anchor_qvel, commands, dt)
+        nominal = np.asarray([self.tangent(anchor_qpos, anchor_qvel, q, v)
+                              for q, v in zip(poses, velocities)])
+        nx = 2*self.nv
+        eye_x, eye_u = np.eye(nx), np.eye(5)
+        matrices = np.empty((len(commands), nx, nx))
+        inputs = np.empty((len(commands), nx, 5))
+        nodes = sorted(set(range(0, len(commands), int(jacobian_stride))) | {len(commands)-1})
+
+        def evaluate(global_state, command):
+            # Add perturbations in the common anchor chart. Perturbing each
+            # stage's qpos locally would use the wrong quaternion coordinates.
+            qpos, qvel = self.perturb(anchor_qpos, anchor_qvel, global_state)
+            next_q, next_v = self.transition(qpos, qvel, command, dt)
+            return self.tangent(anchor_qpos, anchor_qvel, next_q, next_v)
+
+        for index in nodes:
+            command = commands[index]
+            node = nominal[index]
+            A = np.column_stack([(evaluate(node+eye_x[column]*epsilon, command)-
+                                  evaluate(node-eye_x[column]*epsilon, command))/(2*epsilon)
+                                 for column in range(nx)])
+            B = np.column_stack([(evaluate(node, command+eye_u[column]*epsilon)-
+                                  evaluate(node, command-eye_u[column]*epsilon))/(2*epsilon)
+                                 for column in range(5)])
+            matrices[index] = A
+            inputs[index] = B
+        for low, high in zip(nodes[:-1], nodes[1:]):
+            for index in range(low+1, high):
+                fraction = (index-low)/(high-low)
+                matrices[index] = (1.-fraction)*matrices[low]+fraction*matrices[high]
+                inputs[index] = (1.-fraction)*inputs[low]+fraction*inputs[high]
+        offsets = np.asarray([nominal[index+1]-matrices[index]@nominal[index]
+                              for index in range(len(commands))])
+        self.diagnostics.update(trajectory_linearization_s=float(perf_counter()-start),
+                                trajectory_linearization_dt_s=float(dt),
+                                trajectory_linearization_nodes=int(len(commands)),
+                                trajectory_linearization_epsilon=float(epsilon),
+                                trajectory_jacobian_stride=int(jacobian_stride),
+                                trajectory_jacobian_evaluation_nodes=nodes)
+        return matrices, inputs, offsets, nominal

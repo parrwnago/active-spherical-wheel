@@ -1,0 +1,737 @@
+{
+  "base_commit": "5d96001b64b6aa0282361c3e16c2909f1efaf5d6",
+  "bounds": [
+    1.5,
+    0.6,
+    0.6,
+    0.3,
+    0.3
+  ],
+  "bridge_binary_sha256": "6e76050bb1555368491bbcea3861cb8ff6cd4348fa8f4ee7665c960dc74c6f90",
+  "campaign_attempt": "corrected_attempt02",
+  "cases": [
+    {
+      "case_id": "straight_m100_N",
+      "duration_s": 45.0,
+      "phase_rad": -1.0,
+      "policy": "N",
+      "route_id": "straight",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "straight_m100_T",
+      "duration_s": 45.0,
+      "phase_rad": -1.0,
+      "policy": "T",
+      "route_id": "straight",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "straight_p030_N",
+      "duration_s": 45.0,
+      "phase_rad": 0.3,
+      "policy": "N",
+      "route_id": "straight",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "straight_p030_T",
+      "duration_s": 45.0,
+      "phase_rad": 0.3,
+      "policy": "T",
+      "route_id": "straight",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "straight_p090_N",
+      "duration_s": 45.0,
+      "phase_rad": 0.9,
+      "policy": "N",
+      "route_id": "straight",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "straight_p090_T",
+      "duration_s": 45.0,
+      "phase_rad": 0.9,
+      "policy": "T",
+      "route_id": "straight",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "arc_m100_N",
+      "duration_s": 45.0,
+      "phase_rad": -1.0,
+      "policy": "N",
+      "route_id": "arc",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "arc_m100_T",
+      "duration_s": 45.0,
+      "phase_rad": -1.0,
+      "policy": "T",
+      "route_id": "arc",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "arc_p030_N",
+      "duration_s": 45.0,
+      "phase_rad": 0.3,
+      "policy": "N",
+      "route_id": "arc",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "arc_p030_T",
+      "duration_s": 45.0,
+      "phase_rad": 0.3,
+      "policy": "T",
+      "route_id": "arc",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "arc_p090_N",
+      "duration_s": 45.0,
+      "phase_rad": 0.9,
+      "policy": "N",
+      "route_id": "arc",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "arc_p090_T",
+      "duration_s": 45.0,
+      "phase_rad": 0.9,
+      "policy": "T",
+      "route_id": "arc",
+      "yaw_deg": 113.0
+    },
+    {
+      "case_id": "eight_m100_N",
+      "duration_s": 133.0,
+      "phase_rad": -1.0,
+      "policy": "N",
+      "route_id": "eight",
+      "yaw_deg": 158.0
+    },
+    {
+      "case_id": "eight_m100_T",
+      "duration_s": 133.0,
+      "phase_rad": -1.0,
+      "policy": "T",
+      "route_id": "eight",
+      "yaw_deg": 158.0
+    },
+    {
+      "case_id": "eight_p030_N",
+      "duration_s": 133.0,
+      "phase_rad": 0.3,
+      "policy": "N",
+      "route_id": "eight",
+      "yaw_deg": 158.0
+    },
+    {
+      "case_id": "eight_p030_T",
+      "duration_s": 133.0,
+      "phase_rad": 0.3,
+      "policy": "T",
+      "route_id": "eight",
+      "yaw_deg": 158.0
+    },
+    {
+      "case_id": "eight_p090_N",
+      "duration_s": 133.0,
+      "phase_rad": 0.9,
+      "policy": "N",
+      "route_id": "eight",
+      "yaw_deg": 158.0
+    },
+    {
+      "case_id": "eight_p090_T",
+      "duration_s": 133.0,
+      "phase_rad": 0.9,
+      "policy": "T",
+      "route_id": "eight",
+      "yaw_deg": 158.0
+    }
+  ],
+  "configuration_limits": "Existing free-shell/lever/error-clamp/torque/roll-budget policy; projected-axis norm2<=1e-8 skips T helper with explicit invalid-rate flag.",
+  "default_changed": false,
+  "evaluation": {
+    "clock_by_route": {
+      "arc": {
+        "command_interval": "Exclude final emitted but unheld command; include actual prior input for command-step metrics.",
+        "dt_s": 0.005,
+        "final_settling_s": [
+          43.0,
+          45.0
+        ],
+        "heading_s": [
+          3.0,
+          45.0
+        ],
+        "hold_s": [
+          35.0,
+          45.0
+        ],
+        "late_s": [
+          29.0,
+          45.0
+        ],
+        "moving_interval": "Half-open [3,35); all physical-state windows otherwise include actual terminal state.",
+        "moving_s": [
+          3.0,
+          35.0
+        ],
+        "start_s": 0.0,
+        "total_s": 45.0
+      },
+      "eight": {
+        "command_interval": "Exclude final emitted but unheld command; include actual prior input for command-step metrics.",
+        "dt_s": 0.005,
+        "final_settling_s": [
+          131.0,
+          133.0
+        ],
+        "heading_s": [
+          3.0,
+          133.0
+        ],
+        "hold_s": [
+          123.0,
+          133.0
+        ],
+        "late_s": [
+          117.0,
+          133.0
+        ],
+        "moving_interval": "Half-open [3,123); all physical-state windows otherwise include actual terminal state.",
+        "moving_s": [
+          3.0,
+          123.0
+        ],
+        "start_s": 0.0,
+        "total_s": 133.0
+      },
+      "straight": {
+        "command_interval": "Exclude final emitted but unheld command; include actual prior input for command-step metrics.",
+        "dt_s": 0.005,
+        "final_settling_s": [
+          43.0,
+          45.0
+        ],
+        "heading_s": [
+          3.0,
+          45.0
+        ],
+        "hold_s": [
+          35.0,
+          45.0
+        ],
+        "late_s": [
+          29.0,
+          45.0
+        ],
+        "moving_interval": "Half-open [3,35); all physical-state windows otherwise include actual terminal state.",
+        "moving_s": [
+          3.0,
+          35.0
+        ],
+        "start_s": 0.0,
+        "total_s": 45.0
+      }
+    },
+    "diagnostic_only": [
+      "Physical world-z angularvelocity and itsintegrals/peaks reported separately from exact Eulerheadingrate; neither substituted for primary Euler-rateerror.",
+      "Absolute physicalrotation/travel and angularspeed are descriptive, since followingthe tangent requires intentional turning.",
+      "Raw versus shaped heading/rate lag, desired yawacceleration, helpereligibility/lever/load/torque and activity beforefade/clipping.",
+      "Detailed four/five-condition goalhold outcomes remain explicit. Four-condition preservation and geometric cross-track have declared nonregression gates; five-condition settling is descriptive. Final unheld commands are excluded from command statistics.",
+      "Actual jointspeed peaks and huge rolling-reference demands remain observable in rawlogs; no new assumed jointspeed bound is introduced."
+    ],
+    "fixture_classification": {
+      "arc": "moderate",
+      "eight": "rough_stress",
+      "straight": "moderate"
+    },
+    "fixture_domain_revision": {
+      "eight_active_planned_local_offset_m": [
+        0.5,
+        0.0
+      ],
+      "eight_map_stage02_observation": "Approximately96.72mm corridor relief and12.385degree facet slope exceed unchanged80mm/12degree moderate screens. Coverage and feature clearance remain required.",
+      "eight_moderate_screen_passed": false,
+      "failed_map_history": "Original fixture, +.5x fixture and six fixed scan candidates retained; scan selected no passing moderate site. No further map search.",
+      "interpretation": "Straight and arc are moderate fixtures. Eight is an explicit rough-stress case outside the unchanged moderate screen, not a passed moderate case. Within-route paired N/T comparisons only; different initial terrain and route difficulty prevent isolated-shape claims.",
+      "performance_decision": "All nine route/phase performance pairs and every numeric control criterion remain required; rough-stress classification does not waive performance failures.",
+      "timing": "Declared before any I76 trajectory outcomes or physics campaign."
+    },
+    "geometric_cross_track": {
+      "distance": "Exact Euclidean point-to-segment minimum over the fixed dense polyline, computed in chunks. This is discretized geometric cross-track distance, not exact analytic curve distance.",
+      "figure_eight_limitation": "Nearest-path distance at the crossing can hide wrong progress; independent timed XY tracking stays a separate requirement.",
+      "parameter_sampling": "Uniform geometric u in [0,1], including both endpoints; full intended path retained even after early failure.",
+      "peak_nonregression": {
+        "add_m": 0.01,
+        "ratio": 1.0
+      },
+      "polyline_samples": 4097,
+      "rms_nonregression": {
+        "add_m": 0.001,
+        "ratio": 1.1
+      }
+    },
+    "hard_contracts": [
+      "All eighteen episodes complete their registered45/45/133s, finite physicalstate/held commands, no declaredphysicalfailure, applied=clip(requested), caps and actualpriorhistory valid.",
+      "Sameroute/phase N/T initial q/v/previousactualinput byteexact; commonrequested yaw=that route geometric initial tangent and actualinitial rawheadingerror<=1degree. Do not assume Eulerheading equalsyawargument byteexactly.",
+      "RawXY/V/A clocks and rawtangent heading/rate/acceleration are common and match independent frozen routegeometry/progress at actualtimestamps. Fullpath and finalgoal stayfixed afterearlystop.",
+      "Only declared tangent-heading reference/helper adapter affectsT; native LQR,gaincache,observercount,normal/load/support/reference/preparation algorithms remain. Currentvalues can differ after trajectories diverge.",
+      "Raw and shaped telemetry distinguish both objectives. Shaped rate/accel bounds and command/helper identities verified; N heading helper remains zero.",
+      "No historical numerical replay gate; all eighteen episodes are fresh paired runs with route-specific aligned initial yaws.",
+      "All eighteen outputs must be sealed before scoring. Every one of nine route/phase pairs must pass; no postresult route, phase, threshold or candidate selection."
+    ],
+    "heading_benefit": {
+      "actual_rate_definition": "Let h=R(q)[:,0] and hdot=omega_world cross h. Exact Eulerheadingrate=(hx*hdot_y-hy*hdot_x)/(hx^2+hy^2); horizontal forwardprojection denominator must exceed1e-8. Physical world-z angularvelocity is a distinct diagnostic, not the primary rate.",
+      "command_target_policy": "Rawanalytic C2target equals command target if frozen rate/accel guards pass. Any reference shaping/lag must be explicit, and raw objectives remain primary.",
+      "definition": "Every T route/phase must have raw heading RMS<=max(.8N,5deg) and exact Euler-heading-rate error RMS<=max(.8N,.03rad/s). Label achieved20percent relative reductions separately from absolute-floor passes; zero-baseline cases never imply a relative improvement.",
+      "rate_tracking_error_peak_nonregression": {
+        "add_rad_s": 0.05,
+        "ratio": 1.1
+      },
+      "raw_euler_rate_error_absolute_floor_rad_s": 0.03,
+      "raw_euler_yaw_rate_error_rms_ratio": 0.8,
+      "raw_heading_absolute_floor_deg": 5.0,
+      "raw_heading_error_rms_ratio": 0.8,
+      "raw_target_policy": "Frozen geometric tangent including holds; no measured-drift target. Figure-eight crossing has a nonzero geometric tangent and no cusp."
+    },
+    "helper_activity": {
+      "definition": "Count actual held intervals with norm of recorded native heading_command[:3] at least threshold. Record original helper eligibility and lever/load masks separately.",
+      "limitation": "This is helper activity before fade/clipping, not a full applied-command counterfactual. Actual clipping and fade are reported separately.",
+      "minimum_held_seconds_per_T_phase": 0.1,
+      "motor_torque_norm_threshold_Nm": 0.0001
+    },
+    "iteration": "I-76",
+    "per_phase_T_vs_N_nonregression": {
+      "absolute_tilt_peak": {
+        "add_deg": 1.0,
+        "ratio": 1.0
+      },
+      "final_timed_xy": {
+        "add_m": 0.01,
+        "ratio": 1.0
+      },
+      "full_50ms_body3D_linear_acceleration_peak": {
+        "add_m_s2": 0.1,
+        "ratio": 1.1
+      },
+      "full_body_xy_speed_peak": {
+        "add_m_s": 0.01,
+        "ratio": 1.1
+      },
+      "full_timed_xy_peak": {
+        "add_m": 0.01,
+        "ratio": 1.0
+      },
+      "held_any_channel_clipping_fraction": {
+        "add_fraction": 0.02,
+        "ratio": 1.0
+      },
+      "held_each_channel_clipping_fraction": {
+        "add_fraction": 0.02,
+        "ratio": 1.0
+      },
+      "held_normalized_clipping_excess_rms": {
+        "add": 0.01,
+        "ratio": 1.1
+      },
+      "held_normalized_command_step_peak": {
+        "add": 0.05,
+        "ratio": 1.1
+      },
+      "moving_timed_xy_rms": {
+        "add_m": 0.001,
+        "ratio": 1.1
+      },
+      "raw_reference_up_error_peak": {
+        "add_deg": 1.0,
+        "ratio": 1.0
+      },
+      "raw_reference_up_error_rms": {
+        "add_deg": 0.1,
+        "ratio": 1.1
+      }
+    },
+    "reference_guards": {
+      "forward_projection_denominator_min": 1e-08,
+      "heading_acceleration_limit_rad_s2": 0.5,
+      "heading_rate_limit_rad_s": 0.35,
+      "initial_raw_heading_error_max_deg": 1.0,
+      "raw_command_identity": "Bothpolicies log commonplanned raw/command streams; no postresult targetfiltering or shaping. Rawanalyticrate/accel must satisfyguard before physics."
+    },
+    "routes": {
+      "anchor_origin_xy_m": [
+        -2.4,
+        10.0
+      ],
+      "arc": {
+        "local_geometry": "[.6sin(pi*u/2),.6(1-cos(pi*u/2))]",
+        "motion_s": 32.0
+      },
+      "eight": {
+        "local_geometry": "[.5sin(2pi*u),.25sin(4pi*u)]",
+        "motion_s": 120.0
+      },
+      "origin_policy": "Actual origin=anchor+R113@route local offset. Eight translated prephysics after original corridor failed map relief/slope setup guards; shape/timing/headings and numeric control gates unchanged.",
+      "planned_local_offset_m": {
+        "arc": [
+          0.0,
+          0.0
+        ],
+        "eight": [
+          0.5,
+          0.0
+        ],
+        "straight": [
+          0.0,
+          0.0
+        ]
+      },
+      "progress": "quintic u=10r^3-15r^4+6r^5, r=clip((t-3)/duration,0,1)",
+      "rotation_deg": 113.0,
+      "straight": {
+        "local_geometry": "[1.2u,0]",
+        "motion_s": 32.0
+      }
+    },
+    "scope": "Fresh matched native N versus unchanged I75 tangent-heading overlay T across straight, arc and figure-eight paths and all three starting phases; no selected-route promotion, no tuning or automatic adoption.",
+    "settling": {
+      "body_xy_speed_m_s": 0.02,
+      "goal_radius_m": 0.02,
+      "heading_error_deg": 10.0,
+      "nonregression": "If N passes all original four conditions throughout the final2s, T must also pass those four. All four/five-condition results remain explicit; broad overlay screen success is not a claim of absolute convergence in every run.",
+      "raw_reference_up_error_deg": 2.0,
+      "scope": "Original4conditions and original4 plus raw final geometric heading error<=10degrees. Explicit conditional4condition nonregression; no allphase convergence or settling-only adoption claim.",
+      "sustained_s": 2.0,
+      "world_z_angular_speed_rad_s": 0.05
+    },
+    "status_precedence": [
+      "INVALID_SETUP forsource/schema/seal/rawreference/initialpair/invariant/gain/shapingcontract violations; physicalcompletion reported separately.",
+      "FAIL_TANGENT_SCREEN ifany N/Tphysicalcondition, perroute/phase flooredrawheading/rate gate or nonregressionguard fails.",
+      "INCONCLUSIVE ifotherwiseallpasses but anyTroute/phase helperactivity<.10s.",
+      "PASS_TANGENT_SCREEN onlyifallnine route/phase pairs pass allconditions; no automaticdefaultadoption."
+    ],
+    "suite_decision": "All9 matched route/phase pairs required. Report route-specific and pooled descriptive summaries, but do not select a winning route or drop a failed pair. Native LQR angular-reference policy and helper gains unchanged from I75 minimal overlay. Route origins and initial terrain differ. Compare N/T within each matched route/phase; cross-route differences do not isolate path shape or establish equal difficulty."
+  },
+  "evaluation_code_policy": "Fixed definitions before physics; separately sealed/tested pure evaluator before reading new arrays.",
+  "exact_physics_binary_sha256": "f3227a4eed2e51c9405845972764ff9cd9ce2ee941c41f3bd5867d4eed0ebccb",
+  "gain_cache": {
+    "path": "generated/offroad/flat/control_schedule.npz",
+    "sha256": "45ab9990aa3961d1202533acf51d5d8a9294eefe5a4c7e6cfde6aa0b3ac462c1"
+  },
+  "heading_parameters": {
+    "heading_actuation": "shells",
+    "heading_damping": 0.06,
+    "heading_gain": 0.2,
+    "heading_reference": "start",
+    "heading_roll_budget_Nm": 0.05,
+    "heading_torque_limit_Nm": 0.15
+  },
+  "heading_rate_projection_min_norm2": 1e-08,
+  "heading_reference_parameters": {
+    "max_acceleration_rad_s2": 0.5,
+    "max_rate_rad_s": 0.35
+  },
+  "initial_yaw_deg_by_route": {
+    "arc": 113.0,
+    "eight": 158.0,
+    "straight": 113.0
+  },
+  "initialization": "Same route/phase N/T initial q/v/previousappliedinput exact, yawargument=geometricinitialtangent; actualinitialerror<=1degree. No oldS replay gate.",
+  "input_sha256": {
+    "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/dem/marsyard_terrain_hm.tif": "d9c143fa8af44c8719770e53499dcab7c23054cc1e4c333f4ccbe7ff8d942eba",
+    "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/lava.obj": "7c5db43cb0b1d2aa509c793d662f02d13c41f34cf43c2a8232acc1be57a5f2a9",
+    "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_big.obj": "7a8e0be5a3f1c7bbc7ffe8c5a511be14b25485c713a8caf6cf42dd20e9fdb49f",
+    "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_medium.obj": "ccf20567f10256c2617879d73a1d842d4275cf36c9d6a2f93f4162584614d342",
+    "build/gazebo/libAswExactPhysics.so": "f3227a4eed2e51c9405845972764ff9cd9ce2ee941c41f3bd5867d4eed0ebccb",
+    "results/tangent_heading_routes_20261127/campaign_tools/contracts_stage05/receipt.json": "bc7404dbb420358e53aae5fdae80f14c1b4b59f9ec7ec8f9ae48752d2b5a1126",
+    "results/tangent_heading_routes_20261127/evaluation/protocol_metrics_fragment.json": "83a04955984c728940f2c2ba6ca3663b983822cdd8a9c066ac268367d7cd6d93",
+    "results/tangent_heading_routes_20261127/failed_attempt01/attempt_record.json": "3ab0c1065abdc56522ffefa29f33827170f8e911da441a3d91f65a43e395fd2f",
+    "results/tangent_heading_routes_20261127/failed_attempt01/campaign/outputs_sealed.json": "d7da4005b306359d1ae031ec657fb94e62390aafab469d2e3336d3c9279ca81c",
+    "results/tangent_heading_routes_20261127/protocol/map_scan_stage03.json": "a4be275150c05e0cefa868198130ef2d2ed0388d14d4359d8ba0244d07fd7ebb",
+    "results/tangent_heading_routes_20261127/protocol/map_stage01.json": "8daf8e3ef59ef3beb98dc098cde566307bb7517068af199898c61c01c413e2c2",
+    "results/tangent_heading_routes_20261127/protocol/map_stage02.json": "2ffd0aa0077222cd741827b5f9d6a0be00d697f26e8bd0aeee03f03c3004ed36",
+    "results/tangent_heading_routes_20261127/protocol/reference_stage01.json": "c1bae97f09144998e748823264dda4da8357782f79ded76dbbcf966171234e60",
+    "results/tangent_heading_routes_20261127/protocol/reference_stage02.json": "a8d764f78cbfbd95f125d3ba37350415b934dc8fcd4ce10730da9fb7aff5eb53",
+    "results/tangent_heading_routes_20261127/protocol/reference_stage05.json": "4e546958ab3cc9bdd57ca8f88a8951030225033fd3385497191a038e0582acfb",
+    "results/tangent_heading_routes_20261127/runtime/environment_stage01/receipt.json": "bfbec0e1f48b4e682b33ad68ad257fe4f0eaf0d84b4bc74bd2896fc967199538",
+    "results/tangent_heading_routes_20261127/runtime/environment_stage01/registered_before_probe.json": "1e294d5816059bb8b1780d29b410e5aebe3501ca59bfd959471e0102ee598c8d",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/historical_I75_protocol.json": "d579e1a21890b2da48dbd5c664ddbb692a1bb5c67f112262fbdf2b95500671ee",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/historical_ground_verification_fixture.json": "6ebae0ef69c116d1625364f0d9e10cf860ce5fca3d7257dcb6dd5aaf8196b986",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/historical_selected_map_report.json": "ceb84a0d1d8f83080c3ca82fd7de46d0d37e8ed20c19b6f01957b5e01da9bc59",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_scan_stage03/artifact_manifest.json": "b53a16ed9b18734dd94e0b1dd8e7917367788d401b762934e7effb8d4fd3bda3",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_scan_stage03/registered_before_arithmetic.json": "d05d2fe4090939f9ebdc268d8a22afddeb5ff767671cf153f03fcb9f9ae12e3e",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_scan_stage03/report.json": "ac6f2be2728e6945c2cc94e702d5eed333cb0dade58b4a8280bf16e836325237",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_scan_stage03/selection.json": "50a6017481c0bf69b0246f956e8d4821faec87552f7d1c4670c1a0db158c41f0",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage01/artifact_manifest.json": "7f799b88f3e56f50bc050104482e44c5e49bb7a6a03ed97f551beb5d748e598f",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage01/ground_verification_fixtures.json": "d3e4fbb5aae57ed4fe094c782874d852ef77df69684235f30c0132aa2dee84b6",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage01/registered_before_arithmetic.json": "d5c082925e099a62d12645c17071bfc4744a628c2f46a73fd1399181def7cd71",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage01/report.json": "1d007e11b9ff87a396fb723e2fe806cd1861cc8c23c5b795f92a359d1f2505d6",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/arc/ground_verification_fixture.json": "ae934fd74396a5cbdeff1e151171e7ef623ed1571d7f9a082cb14699b9949b02",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/arc/report.json": "7917791e26eee39382b692dbf221f06c36f57fe325042d20e7bfcc032b6a43b1",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/artifact_manifest.json": "dd124116b06a8c5ac6b6e8701ae50f1b66ab5ec63e8d92136c23e57f1e02df19",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/eight/ground_verification_fixture.json": "04e41280f2279748a14bc90cfcd474f649e55f419791fe4abd3931a189ffe864",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/eight/report.json": "059c0217affbff5f87320022326a0af55cd65557be54605354aab8bfabffb270",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/ground_verification_fixtures.json": "507c3a55c6cf51c9a5367a1b8c7002a9525068e1b17af434b267e7fe6cfd1f77",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/registered_before_arithmetic.json": "fca6fb1b1be926c838b954c6db8d0e06394ba523ee05b3f286916a36a8e15b86",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/report.json": "e986ab7ba3e444de1c04a4e082c3e4b155e5cf8073a0d1666b8ccdf0d7ee2d1d",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/straight/ground_verification_fixture.json": "20dff8ac5123ebe02679047159f3751fedf32daa7a827589821fed47189475c0",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/straight/report.json": "a7902dde9208b0310b0d83a648a00c186c976592762a11104bafb0e5059de1db",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/receipt.json": "9da2e25893b44a713c6113bb62e214cb1f1ca656ff53704e9a74041b0a522a80",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/registered_before_checks.json": "6f56a48ae2a70820fd73e2bcfb9434807b21934cad921cbadcddb80249e5960e",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/stress_decision_stage04.json": "f91a2d3c63d3cbbd0fe7e97596db38fef69a155c912a8d0f4b4e8bbcba9fafa1",
+    "results/tangent_heading_routes_20261127/runtime/geometry_carryforward_stage05/receipt.json": "7958c6bf4b7e42be8ece7e6ad9d78df43b1965680e71ef5b27ea7973f3de01af",
+    "results/tangent_heading_routes_20261127/runtime/geometry_carryforward_stage05/registered_before_geometry_arithmetic.json": "ebb39bc942b8e8239d3f64186b59d44a6d8968c047f6125b59b0d1e06c8e764d",
+    "results/tangent_heading_routes_20261127/runtime/reference_stage01/artifact_manifest.json": "62ede8d75b1ff184092af0257a704970a10ac2b5d9f4576fb875f6f476707cbf",
+    "results/tangent_heading_routes_20261127/runtime/reference_stage01/registered_before_reference_arithmetic.json": "3d384a2821b01a183ce5181d420c3240e3f6cf6f39d87cf30119c386ea4736e4",
+    "results/tangent_heading_routes_20261127/runtime/reference_stage01/report.json": "3af4e114fb6c9210dae212951f12c6d65f1c0e4a600bab273989bf8a159b876e",
+    "results/tangent_heading_routes_20261127/runtime/reference_stage02/artifact_manifest.json": "5158f23af97ee9955c27ebc302a6518325e2fd1d09bf1e9a50bdf1130a65d221",
+    "results/tangent_heading_routes_20261127/runtime/reference_stage02/registered_before_reference_arithmetic.json": "1eaf29122ecaafa3540f19b9242c547c81cea215a5e486ed90899b1c602fee8c",
+    "results/tangent_heading_routes_20261127/runtime/reference_stage02/report.json": "303a151a78af0622d92eefef7d293c45ec61d15447d73d719af82ecc15edc91a",
+    "results/tangent_heading_routes_20261127/runtime/reference_stage05/artifact_manifest.json": "b82d83265b605c73c01248d70a880bfc07157df67b044d25b2d32592d92f8732",
+    "results/tangent_heading_routes_20261127/runtime/reference_stage05/registered_before_reference_arithmetic.json": "8a9087e8c40b4f30242502bdc0949ed5e7a60c70af8a988d250246e2acf8f1f7",
+    "results/tangent_heading_routes_20261127/runtime/reference_stage05/report.json": "383d9e1a450cef1f77dce3d2d9433ac49a7a42659c565ffa2dd482ddd8c27e89"
+  },
+  "integration": {
+    "control_interval_s": 0.005,
+    "final_state_included": true,
+    "physics_step_s": 0.001,
+    "terminal_unheld_command_excluded_from_command_statistics": true
+  },
+  "intervention": "Result-owned T changes heading target and derivative feedback to exact Euler heading-rate error. Native LQR/observer/contacts/rolling/support/preparation/caps unchanged.",
+  "iteration": "I-76",
+  "lqr_rate_reference_policy": "Original LQR angular-velocity reference remains zero; original rolling allocation handles translation only. This is a heading-helper overlay, not a coordinated planar-pose reference/allocator. Existing rate feedback may oppose intended turns and its contribution is logged via K/error.",
+  "map_preflight": {
+    "allow_outside_moderate_screen_routes": [
+      "eight"
+    ],
+    "domain_decision_path": "results/tangent_heading_routes_20261127/runtime/fixture_stage01/stress_decision_stage04.json",
+    "domain_decision_sha256": "f91a2d3c63d3cbbd0fe7e97596db38fef69a155c912a8d0f4b4e8bbcba9fafa1",
+    "fixture_categories": {
+      "arc": "moderate",
+      "eight": "rough_stress",
+      "straight": "moderate"
+    },
+    "report_path": "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_stage02/report.json",
+    "required_passed": false,
+    "sha256": "e986ab7ba3e444de1c04a4e082c3e4b155e5cf8073a0d1666b8ccdf0d7ee2d1d"
+  },
+  "numerical_correction": "Only quintic progress rounded back to its declared[0,1]domain; derivative arithmetic, routegeometry/timing, gains/maps/limits/gates unchanged. All18 rerunfresh.",
+  "outcome_policy": "Eighteen fresh episodes, all sealed before scoring. Allnine paired screens required; no result-dependent route/phase/site/setting selection or defaultadoption.",
+  "parameters": {
+    "mode": "hardware",
+    "rolling_allocation": "least_squares",
+    "track_contact_point": false
+  },
+  "previous_unscored_attempt_record": "results/tangent_heading_routes_20261127/failed_attempt01/attempt_record.json",
+  "question": "Does the unchanged I75 trajectory-facing heading overlay help across straight, quarter-circle and figure-eight routes at allthree starting phases?",
+  "reference_preflight": {
+    "report_path": "results/tangent_heading_routes_20261127/runtime/reference_stage05/report.json",
+    "required_passed": true,
+    "sha256": "383d9e1a450cef1f77dce3d2d9433ac49a7a42659c565ffa2dd482ddd8c27e89"
+  },
+  "registered_before_this_campaign_physics_utc": "2026-11-28T02:59:20.104572+00:00",
+  "route_comparability": "Shared siteanchor/rotation and phases, but route shapes,lengths,durations and starting terrain differ. Eight retains stage02 localoffset[.5,0] as an explicit rough_stress case outside unchanged80mm/12deg moderate screens. Allsix finite scan candidates failed (selectionnull); no winning placement. Domain revised beforeanyphysics. Figureeight motion120s tokeep same referenceguards; starts/ends crossing. Report paired method effects withinroute; no claim of equal difficulty.",
+  "route_ids": [
+    "straight",
+    "arc",
+    "eight"
+  ],
+  "route_specs": {
+    "arc": {
+      "anchor_origin": [
+        -2.4,
+        10.0
+      ],
+      "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+      "duration_s": 32.0,
+      "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+      "geometry": "origin + R113deg @ [.6*sin(pi*u/2),.6*(1-cos(pi*u/2))]",
+      "geometry_heading_deg": 113.0,
+      "goal_hold_s": 10.0,
+      "initial_heading_deg": 113.0,
+      "kind": "i76_arc",
+      "local_footprint_m": [
+        0,
+        0.6,
+        0,
+        0.6
+      ],
+      "origin": [
+        -2.4,
+        10.0
+      ],
+      "origin_policy": "Fixed per-route planned origin = shared site anchor + R113deg @ planned_local_offset; no measured-state reanchor or reset.",
+      "planned_local_offset": [
+        0.0,
+        0.0
+      ],
+      "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+      "route_id": "arc",
+      "start_s": 3.0,
+      "total_duration_s": 45.0
+    },
+    "eight": {
+      "anchor_origin": [
+        -2.4,
+        10.0
+      ],
+      "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+      "duration_s": 120.0,
+      "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+      "geometry": "origin + R113deg @ [.5*sin(2*pi*u),.25*sin(4*pi*u)]",
+      "geometry_heading_deg": 113.0,
+      "goal_hold_s": 10.0,
+      "initial_heading_deg": 158.0,
+      "kind": "i76_eight",
+      "local_footprint_m": [
+        -0.5,
+        0.5,
+        -0.25,
+        0.25
+      ],
+      "origin": [
+        -2.595365564244637,
+        10.46025242672622
+      ],
+      "origin_policy": "Fixed per-route planned origin = shared site anchor + R113deg @ planned_local_offset; no measured-state reanchor or reset.",
+      "planned_local_offset": [
+        0.5,
+        0.0
+      ],
+      "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+      "route_id": "eight",
+      "start_s": 3.0,
+      "total_duration_s": 133.0
+    },
+    "straight": {
+      "anchor_origin": [
+        -2.4,
+        10.0
+      ],
+      "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+      "duration_s": 32.0,
+      "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+      "geometry": "origin + R113deg @ [1.2*u,0]",
+      "geometry_heading_deg": 113.0,
+      "goal_hold_s": 10.0,
+      "initial_heading_deg": 113.0,
+      "kind": "i76_straight",
+      "local_footprint_m": [
+        0,
+        1.2,
+        0,
+        0
+      ],
+      "origin": [
+        -2.4,
+        10.0
+      ],
+      "origin_policy": "Fixed per-route planned origin = shared site anchor + R113deg @ planned_local_offset; no measured-state reanchor or reset.",
+      "planned_local_offset": [
+        0.0,
+        0.0
+      ],
+      "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+      "route_id": "straight",
+      "start_s": 3.0,
+      "total_duration_s": 45.0
+    }
+  },
+  "source_sha256": {
+    "config/model.yaml": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+    "gazebo/physics/CanonicalLinkModelTracker.hh": "bdcc2cd67fcf25d77dee64fd9d94ef566e4000a85d04b9aa65c6b368bf3528d9",
+    "gazebo/physics/DartsimRetrieveWorld.hh": "d052c92e9d35214fe5f33fd1e82b9c6d4e1f64773b48d51e4ce9f98e9f324030",
+    "gazebo/physics/EntityFeatureMap.hh": "0ad4936ca92f2d9a3157359330506c71fd3a35b3c8efd13bc733a699c97b08ac",
+    "gazebo/physics/Physics.cc": "46e5cd00159ab406d198da71feaa6d38da7fe2186bbff5537168c212e2332809",
+    "gazebo/physics/Physics.hh": "34acf8be55a25eabc29b52e892af0e520b1ee59cc7d49ab0398d9ac5f1dd58d1",
+    "gazebo/plugin/SphericalWheelBridge.cc": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e",
+    "results/tangent_heading_routes_20261127/adapter/tangent_heading_adapter.py": "12402b356bc105463ca685bd50e3b3aeb23d80b84bc79396c54d6df2703e8a77",
+    "results/tangent_heading_routes_20261127/adapter/test_tangent_heading_adapter.py": "0c48d0808845d749b3d4d6b8fb07f488b59b2358ff6df09c6ec2cf0d23d50317",
+    "results/tangent_heading_routes_20261127/campaign_tools/checks.py": "4bc2a0e89224dd5f2032dcfd453fc63a2a7cef7171ff8909f9470d55c4e0038a",
+    "results/tangent_heading_routes_20261127/campaign_tools/launch.py": "b635df381b154183519336ab8d80c1693991597ec8cb091216e152a285b2a59b",
+    "results/tangent_heading_routes_20261127/campaign_tools/run_case.py": "def6e1e92e96fa9fd7d7be9f4db556b6990d426d8754224175f5b1eb949e564e",
+    "results/tangent_heading_routes_20261127/campaign_tools/test_native_identity.py": "6d6b091cac4dadf99a3e5406521a069e4b65ab6d857b1fa33964028bdf6b14d1",
+    "results/tangent_heading_routes_20261127/campaign_tools/test_runner.py": "c3d1b48a82b76d1eb8c89099bec37a9328ae3eb29cec0b4a06c1c825d2113715",
+    "results/tangent_heading_routes_20261127/protocol/register.py": "e1f4ca646843443cef1c83d0709360b1269d8aa65be0d19a55dcf4f3b43a9129",
+    "results/tangent_heading_routes_20261127/runtime/environment_stage01/environment_probe.py": "29fca12a0a6d318d2b3bb68e56b94d203277d3ee93ad57fc84aa820a90082947",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_preflight.py": "3d9e840d1d7118a73d4aa528588affb3b10b191919e55d945e8bd0e25d30501f",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_scan.py": "0dca71259e9586651cf86535d1016e5fd2fec7428ff4f9b33f2f7319c009e118",
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/verify_assets.py": "530f20cb08748d9474efd392f2f38062f4f0de5adc5376096ae62a2876c78e73",
+    "results/tangent_heading_routes_20261127/runtime/heading_reference.py": "823d5208ceeac8c08ba9a81174e4c71d159b01b24f48891770d7323727b3548d",
+    "results/tangent_heading_routes_20261127/runtime/reference_preflight.py": "d048142b22a5c94db68981948d6b8797109f46b49da997f4accf598e45a9e117",
+    "results/tangent_heading_routes_20261127/runtime/route.py": "512a3fd7c8a034f85745d6c2f90485a7c5c632dde3578061103e91fe0405b55e",
+    "results/tangent_heading_routes_20261127/runtime/test_analytic_reference.py": "61bc4785422a552ca3c48d6b826b42eb9fdc46c5a8d0fd6162b0dd68f77d3f6e",
+    "scripts/run-lqr-contact-forecast.py": "4e4d590037801f178bb05e779ddb49fb093f5cae830212b9f90d57ddce1790cf",
+    "src/spherical_wheel/__init__.py": "3ec9d9b209172f8b735dba797aee9e1b7850bd28129d86083636525edbdb4d47",
+    "src/spherical_wheel/__main__.py": "b0694f2035697f7295db710bca58167353174c77a7d92c8b620a2c150f464888",
+    "src/spherical_wheel/balance_priority_control.py": "11e5320580f2a1ed007df9447bfaf2e1c6008fc8e679f01535f383e784a6d925",
+    "src/spherical_wheel/cli.py": "8f808e8ec874b0e2bbb8d1ccc9d9fd96c6612ab655a12adebda7e4bfe9232406",
+    "src/spherical_wheel/contact.py": "a534156e7b304d60efd3e44911477ff5b89dedd076a90eb47e0c46fb2068fb84",
+    "src/spherical_wheel/contact_diagnostics.py": "f0a927e4c230b4f181f4d72cf5216f38d34de26573dcd511027047ff5a36cbcb",
+    "src/spherical_wheel/contact_hypotheses.py": "c0995d4acb268c73e834c488514aa9f34cd2b3d57aca516c63a394429b93f532",
+    "src/spherical_wheel/contact_kinematics.py": "678eff4f9792e86dd3b9dece83edaaf2517b8416df3b736352cb0a0142b98351",
+    "src/spherical_wheel/contact_load_consistency.py": "af6a1c52a2ac9ce459d2a8b810a82234eddbdda358384742f16047a31902fc9c",
+    "src/spherical_wheel/contact_pose_diagnostic.py": "6cb83937e643a1536b7242101670e4661e4cfe1b6d4173e32a741477eb953edb",
+    "src/spherical_wheel/contact_prediction.py": "cb9deeee1e254ea2b1eb9b88511a68eb07b1b55233fc6ac3de808b849e978f3f",
+    "src/spherical_wheel/contact_sensing.py": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+    "src/spherical_wheel/control.py": "e0c4107601e07cafe29b726341de4c32bb8151506a539e913b0d6eec2e0c8e6f",
+    "src/spherical_wheel/experiments.py": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638",
+    "src/spherical_wheel/feasible_reference.py": "c044a48fdd00efa35d1ed1094183806c10d6329748eae5eedac713b0710438aa",
+    "src/spherical_wheel/gazebo/__init__.py": "3d8aa250141d5f840b41a5a4bd1cd7b5d115942165f5b64567c72b883a1410c9",
+    "src/spherical_wheel/gazebo/__main__.py": "e6fd3883bc41a08c518f4f24c4a72ff5de9a94cff725e7959ea115c38bd2105e",
+    "src/spherical_wheel/gazebo/bridge.py": "6b1f7e2ec860e6d21a6a025d1581952836aef3515da66f60a2314d15776c18a4",
+    "src/spherical_wheel/gazebo/experiments.py": "4fd2fa15833b724a027de054261698829b87c0667a14d2821c1684f989d6308b",
+    "src/spherical_wheel/gazebo/mars.py": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63",
+    "src/spherical_wheel/gazebo/mars_compare.py": "11cd6b314bae383f150c48bfc864672878a1f109757476713ecfcee90f966ceb",
+    "src/spherical_wheel/gazebo/mars_observer.py": "f420a80f2fbd5a45f3ca926e3c76c3959e65114d65226c02c76ed24ceb49b67a",
+    "src/spherical_wheel/gazebo/mars_shapes.py": "f5205692cdeda87e1487d6f4d27f63d5fc0adf15e35682a9e11602d02791a107",
+    "src/spherical_wheel/gazebo/model_sdf.py": "34abc16930ebe04f3f8333aa8d57803c9c33c12e9eea7a12f668fb6a2da05d49",
+    "src/spherical_wheel/gazebo/parity.py": "35140f72c13af341731e8b260e2e3f80458b3876c5db04f18f78cf7840cc68b6",
+    "src/spherical_wheel/gazebo/plant.py": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d",
+    "src/spherical_wheel/gazebo/worlds.py": "ad8b8133fb57b2bcab729ce6eb215f931ac04128b925c496710d8176ef0b39d4",
+    "src/spherical_wheel/geometry_first_contact.py": "40345a138228a205901f059768f615f69f4e2de9f16a44550f2bddcbc6bbfb41",
+    "src/spherical_wheel/handoff_control.py": "6d9ee4e7d94db6e364b3d916770c326bafbc12e8c8bc38aeb3169f7f6ff1f9b8",
+    "src/spherical_wheel/handoff_model.py": "663a13b553c402adf3e1d795c34bfba7c5bd886471ef9c3cc36135e9ac08a559",
+    "src/spherical_wheel/lab_runtime.py": "64bf8c70fae337553e35a55202bb626b15abe5a23f28a6d6cf02177034bfb096",
+    "src/spherical_wheel/lab_server.py": "d5af071ce3c3aeabe5a02c3e9e31ab5c9c087f9bd1076c9905318d0f2a6cf311",
+    "src/spherical_wheel/mirror.py": "8e6325a9c44f79516c32c2af079718c3355f447d0d2751c44a684b6b8cf7b038",
+    "src/spherical_wheel/mobility.py": "92c08f5fe4001065128f8b9fe7b6821c8a63d9d4b7622da961778d1fd3adbab8",
+    "src/spherical_wheel/model.py": "d41d35b283ef4732cd2b7c321539491054a8070c86a2109a577d470a8c406e72",
+    "src/spherical_wheel/offroad.py": "bb87ec5d188cc51acdc2591b8629dc94785b2c3aaff2e402947f911b993f5070",
+    "src/spherical_wheel/offroad_analysis.py": "c212949b09147b91aead5fee473594d6dc1c775f5f95860d0f189d5a0dfe10ac",
+    "src/spherical_wheel/offroad_cli.py": "a41ce3e8974862fd11006a3bf72be80602eb7d172adaf4b1c19b70f5701e8331",
+    "src/spherical_wheel/offroad_control.py": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+    "src/spherical_wheel/offroad_experiments.py": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b",
+    "src/spherical_wheel/offroad_geometry.py": "b843181c5537050d544118df534a0f53e2e2905054fef32fe66d702395afc4ae",
+    "src/spherical_wheel/offroad_suite.py": "2e201f4fea2110fe6539385b0763b6eacc7bf0028683765acc45d9d030187d5c",
+    "src/spherical_wheel/offroad_view.py": "631370d0c5ee29417cb2e8531ced3139464f4ffa6bd8d6d33d12a4ae3b3c479f",
+    "src/spherical_wheel/predictive_control.py": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f",
+    "src/spherical_wheel/predictive_equilibrium.py": "c8a5c340a7ce9f52c8334f9f8a7fa0491f21ea63fd1125cb0dbabc2f58b15ad2",
+    "src/spherical_wheel/predictive_model.py": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473",
+    "src/spherical_wheel/predictive_seed.py": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca",
+    "src/spherical_wheel/recovery_control.py": "b3a6bad0870c22ada4c926a7659befb756e31f8ed5defb5506786dc466f5b17d",
+    "src/spherical_wheel/rolling_allocation.py": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092",
+    "src/spherical_wheel/sensitivity.py": "4555fc809dab22aa2629148700fc8b8464076603a2be9377b3bd0c7af2d607be",
+    "src/spherical_wheel/shadow_contact_models.py": "a5deff5e67021628fcd3b843bbb5fa970907ab51bee13de491226fb04cc98bc4",
+    "src/spherical_wheel/sim.py": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975",
+    "src/spherical_wheel/support_routing_audit.py": "c7436cab44467f51d0110041aa7c132889d74ba397c0b36c21d409408b2169ba",
+    "src/spherical_wheel/synchronization.py": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+    "src/spherical_wheel/temporal_contact_filter.py": "fb60315abf406c2981ec8686f0aa484650cafe11bbb8976f766f0e428f47df85",
+    "src/spherical_wheel/terrain.py": "43ff7b6bf2d53fd3cfccfaa9d02841195f78e0d7e6cc2181b01c0589176751eb",
+    "src/spherical_wheel/terrain_depth.py": "476f87cc8f4a9b1081d7ea2be4c6b15e89ebb2efade31f9c3516a5d6dd24a549",
+    "src/spherical_wheel/terrain_memory.py": "938752c4a3c4e402191cbf75c464860ae5082f1750368c8342c65635552a7388",
+    "src/spherical_wheel/tilt_reference.py": "598fe7e5f4a20d2933daf00f95526949fe0e73fb1eebc56b73b712de35dffa7d",
+    "src/spherical_wheel/transition.py": "6330b2d0bfc832167105fb44354f00731e54b6a510c2ed96a4d45482652d13f3",
+    "src/spherical_wheel/validation.py": "f66410a457be404a5934b08d0bee5c4812cc3fea5e5bdf5fa6a9d16b188fd171",
+    "src/spherical_wheel/visualize.py": "cfa603e710fe63d7ff0e63e5d2057748b6758efcb304e8f79d1a0318ef736b51"
+  },
+  "target_policy": "Allroutes analytic planned tangent and exactEuler derivative, raw=command, geometricendpoint targets retained; no measured-drift target or shaping."
+}

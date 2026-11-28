@@ -1,0 +1,172 @@
+"""Opt-in causal tilt shaping; no robot, contact or terrain data is accessed.
+
+The two states stay in the raw tilt disk under SSP Heun. Chart speed is bounded
+by R and chart acceleration by 2R/tau. These are reference-design bounds, not
+proof that a physical actuator can attain the requested motion.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+import math
+
+import numpy as np
+
+
+@dataclass(frozen=True)
+class TiltReferenceSettings:
+    time_constant_s: float = .08
+    max_rate_deg_s: float = 60.
+    activation_time_s: float = 0.
+    use_rate_reference: bool = True
+
+    def __post_init__(self):
+        for name in ('time_constant_s', 'max_rate_deg_s'):
+            value = float(getattr(self, name))
+            if not np.isfinite(value) or value <= 0:
+                raise ValueError(f'{name} must be finite and positive')
+            object.__setattr__(self, name, value)
+        activation = float(self.activation_time_s)
+        if not np.isfinite(activation) or activation < 0:
+            raise ValueError('activation_time_s must be finite and nonnegative')
+        if not isinstance(self.use_rate_reference, (bool, np.bool_)):
+            raise ValueError('use_rate_reference must be a boolean')
+        object.__setattr__(self, 'activation_time_s', activation)
+        object.__setattr__(self, 'use_rate_reference', bool(self.use_rate_reference))
+
+
+def bounded_velocity(difference, time_constant_s, max_rate_rad_s):
+    """Smooth radial speed cap f(d); its derivative has norm <= 1/tau."""
+    difference = np.asarray(difference, float)
+    size = float(np.linalg.norm(difference))
+    u = size / (max_rate_rad_s * time_constant_s)
+    factor = (1. - u*u/3. + 2.*u**4/15.) if u < 1e-4 else np.tanh(u)/u
+    return difference * (factor/time_constant_s)
+
+
+def bounded_velocity_jacobian(difference, time_constant_s, max_rate_rad_s):
+    difference = np.asarray(difference, float)
+    size = float(np.linalg.norm(difference))
+    if size == 0:
+        return np.eye(len(difference))/time_constant_s
+    u = size/(max_rate_rad_s*time_constant_s)
+    tangent = ((1.-u*u/3.+2.*u**4/15.) if u < 1e-4 else np.tanh(u)/u)/time_constant_s
+    radial = (1.-np.tanh(u)**2)/time_constant_s
+    direction = difference/size
+    return tangent*np.eye(len(difference))+(radial-tangent)*np.outer(direction,direction)
+
+
+def left_jacobian_so3(phi):
+    """Spatial angular velocity of Exp(phi): omega = J_left(phi) phi_dot."""
+    phi = np.asarray(phi, float)
+    if phi.shape != (3,) or not np.isfinite(phi).all():
+        raise ValueError('Rotation vector must contain three finite values')
+    x,y,z = phi
+    skew = np.array([[0.,-z,y],[z,0.,-x],[-y,x,0.]])
+    squared = float(phi@phi)
+    if squared < 1e-8:
+        a = .5-squared/24.+squared*squared/720.
+        b = 1./6.-squared/120.+squared*squared/5040.
+    else:
+        angle = math.sqrt(squared)
+        a = (1.-math.cos(angle))/squared
+        b = (angle-math.sin(angle))/(squared*angle)
+    return np.eye(3)+a*skew+b*(skew@skew)
+
+
+def tilt_quaternion(theta):
+    """wxyz quaternion Exp([theta_x,theta_y,0]), before equilibrium/heading."""
+    theta = np.asarray(theta, float)
+    if theta.shape != (2,) or not np.isfinite(theta).all():
+        raise ValueError('Tilt chart must contain two finite values')
+    angle = float(np.linalg.norm(theta))
+    scale = .5 if angle < 1e-12 else math.sin(angle/2.)/angle
+    return np.r_[math.cos(angle/2.), scale*theta, 0.]
+
+
+def tilt_angular_velocity(theta, theta_dot):
+    theta, theta_dot = np.asarray(theta,float), np.asarray(theta_dot,float)
+    if theta.shape != (2,) or theta_dot.shape != (2,) or not np.isfinite(theta_dot).all():
+        raise ValueError('Tilt and tilt rate must contain two finite values')
+    return left_jacobian_so3(np.r_[theta,0.])@np.r_[theta_dot,0.]
+
+
+class TiltReference:
+    """Two smooth bounded cascaded states, driven by the previous held target.
+
+    update(raw_now,now) first integrates to now using the previous held raw
+    target, then registers raw_now. A target change changes acceleration but
+    never instantly changes the angle or rate. Same-time calls neither advance
+    state nor replace held input. reset() clears state for lazy activation.
+    """
+    def __init__(self, settings: TiltReferenceSettings, max_tilt_rad: float):
+        if not isinstance(settings,TiltReferenceSettings):
+            raise ValueError('settings must be TiltReferenceSettings')
+        if not np.isfinite(max_tilt_rad) or not 0 < max_tilt_rad < np.pi/2:
+            raise ValueError('Tilt disk radius must lie strictly between 0 and pi/2')
+        self.settings = settings
+        self.max_tilt_rad = float(max_tilt_rad)
+        self.max_rate_rad_s = float(np.radians(settings.max_rate_deg_s))
+        self.max_substep_s = min(.001,settings.time_constant_s/4.)
+        self.reset()
+
+    def reset(self):
+        self._theta = self._z = self._held_raw = self._time = None
+        self._last_seen_time = None
+
+    def state_dict(self):
+        """Canonical uninitialized state is None; returned arrays never alias."""
+        if self._time is None:
+            return None
+        return {'time_s':self._time,'theta_rad':self._theta.copy(),
+                'z_rad':self._z.copy(),'held_raw_theta_rad':self._held_raw.copy()}
+
+    def _velocity(self,difference):
+        return bounded_velocity(difference,self.settings.time_constant_s,self.max_rate_rad_s)
+
+    def _rhs(self,z,theta):
+        return self._velocity(self._held_raw-z),self._velocity(z-theta)
+
+    def update(self,raw_theta,time_s):
+        raw_theta = np.asarray(raw_theta,float)
+        time_s = float(time_s)
+        if raw_theta.shape != (2,) or not np.isfinite(raw_theta).all():
+            raise ValueError('Raw tilt must contain two finite values')
+        if np.linalg.norm(raw_theta) > self.max_tilt_rad+1e-12:
+            raise ValueError('Raw tilt lies outside the configured disk')
+        if not np.isfinite(time_s) or time_s < 0:
+            raise ValueError('Reference time must be finite and nonnegative')
+        if self._last_seen_time is not None and time_s < self._last_seen_time:
+            raise ValueError('Reference time cannot move backwards; reset explicitly')
+        self._last_seen_time = time_s
+        active = self._time is not None or time_s >= self.settings.activation_time_s-1e-9
+        initialized = advanced = False
+        substeps = 0
+        if not active:
+            theta,z,held = raw_theta.copy(),raw_theta.copy(),raw_theta.copy()
+            rate,acceleration = np.zeros(2),np.zeros(2)
+        else:
+            if self._time is None:
+                self._theta,self._z,self._held_raw = raw_theta.copy(),raw_theta.copy(),raw_theta.copy()
+                self._time = time_s
+                initialized = True
+            elif time_s > self._time:
+                elapsed = time_s-self._time
+                substeps = max(1,int(math.ceil(elapsed/self.max_substep_s)))
+                h = elapsed/substeps
+                for _ in range(substeps):
+                    dz,dtheta = self._rhs(self._z,self._theta)
+                    first_z,first_theta = self._z+h*dz,self._theta+h*dtheta
+                    next_dz,next_dtheta = self._rhs(first_z,first_theta)
+                    self._z = .5*self._z+.5*(first_z+h*next_dz)
+                    self._theta = .5*self._theta+.5*(first_theta+h*next_dtheta)
+                self._time = time_s
+                self._held_raw = raw_theta.copy()
+                advanced = True
+            theta,z,held = self._theta.copy(),self._z.copy(),self._held_raw.copy()
+            rate = self._velocity(z-theta)
+            acceleration = bounded_velocity_jacobian(z-theta,self.settings.time_constant_s,self.max_rate_rad_s)@(
+                self._velocity(held-z)-rate)
+        return {'active':active,'initialized_now':initialized,'advanced':advanced,'substeps':substeps,'time_s':time_s,
+                'raw_theta_rad':raw_theta.copy(),'theta_rad':theta,'z_rad':z,'held_raw_theta_rad':held,
+                'theta_dot_rad_s':rate,'theta_ddot_rad_s2':acceleration,
+                'q_tilt':tilt_quaternion(theta),'angular_velocity_equilibrium_rad_s':tilt_angular_velocity(theta,rate)}

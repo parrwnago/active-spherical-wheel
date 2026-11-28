@@ -1,0 +1,648 @@
+{
+  "absolute_tilt": "acos(world vertical dot body up), from recorded quaternion",
+  "actual_goal_hold_fully_recorded_by_case": {
+    "arc_m100_N": true,
+    "arc_m100_T": true
+  },
+  "actual_recorded_windows_s": {
+    "arc_m100_N": [
+      0.0,
+      45.00000000000457
+    ],
+    "arc_m100_T": [
+      0.0,
+      45.00000000000457
+    ]
+  },
+  "all_three_routes_preserved": true,
+  "both_methods_and_all_phases_preserved": true,
+  "dimensions": [
+    1600,
+    960
+  ],
+  "display_terrain": "Route category comes from the explicit prephysics domain decision; eight did not pass the moderate screen. Visual height field sampled from the original Mars DEM; original rock/lava meshes. Display interpolation is not a new collision or contact evaluation.",
+  "episode_completed_by_case": {
+    "arc_m100_N": true,
+    "arc_m100_T": true
+  },
+  "euler_heading_rate": "Derivative of the projected forward-axis angle from recorded pose/body angular velocity; compared with logged exact Euler derivative.",
+  "fps": 10,
+  "frames": 6,
+  "frozen_complete_reference": {
+    "anchor_origin": [
+      -2.4,
+      10.0
+    ],
+    "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+    "duration_s": 32.0,
+    "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+    "geometry": "origin + R113deg @ [.6*sin(pi*u/2),.6*(1-cos(pi*u/2))]",
+    "geometry_heading_deg": 113.0,
+    "goal_hold_s": 10.0,
+    "initial_heading_deg": 113.0,
+    "kind": "i76_arc",
+    "local_footprint_m": [
+      0,
+      0.6,
+      0,
+      0.6
+    ],
+    "origin": [
+      -2.4,
+      10.0
+    ],
+    "origin_policy": "Fixed per-route planned origin = shared site anchor + R113deg @ planned_local_offset; no measured-state reanchor or reset.",
+    "planned_local_offset": [
+      0.0,
+      0.0
+    ],
+    "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+    "route_id": "arc",
+    "start_s": 3.0,
+    "total_duration_s": 45.0
+  },
+  "heading_error": "Shortest wrapped angular difference between actual Euler yaw and raw desired path tangent; unwrapped yaw is also displayed.",
+  "heading_motor_norm": "Euclidean norm of logged helper motor-command torques; not a world-frame yaw torque measurement or necessarily applied torque. No command application beyond an actual recorded endpoint is claimed.",
+  "heading_parameters": {
+    "heading_actuation": "shells",
+    "heading_damping": 0.06,
+    "heading_gain": 0.2,
+    "heading_reference": "start",
+    "heading_roll_budget_Nm": 0.05,
+    "heading_torque_limit_Nm": 0.15
+  },
+  "heading_reference_parameters": {
+    "max_acceleration_rad_s2": 0.5,
+    "max_rate_rad_s": 0.35
+  },
+  "heading_target": "Recorded raw planned geometric tangent; bounded command stream is separate and verified equal for this C2 path. Actual helper target is N OFF or T planned stream.",
+  "iteration": "I-76",
+  "methods": [
+    "N",
+    "T"
+  ],
+  "no_physics_or_controller_execution": true,
+  "path_heading_initial_deg": {
+    "arc_m100_N": 113.0,
+    "arc_m100_T": 113.0,
+    "arc_p030_N": 113.0,
+    "arc_p030_T": 113.0,
+    "arc_p090_N": 113.0,
+    "arc_p090_T": 113.0,
+    "eight_m100_N": 158.0,
+    "eight_m100_T": 158.0,
+    "eight_p030_N": 158.0,
+    "eight_p030_T": 158.0,
+    "eight_p090_N": 158.0,
+    "eight_p090_T": 158.0,
+    "straight_m100_N": 113.0,
+    "straight_m100_T": 113.0,
+    "straight_p030_N": 113.0,
+    "straight_p030_T": 113.0,
+    "straight_p090_N": 113.0,
+    "straight_p090_T": 113.0
+  },
+  "phase": "m100",
+  "phase_definition": "Requested ground-relative initial configuration; setup adjusts the actual shaft joint for terrain normal.",
+  "physical_world_yaw_rate": "world-z component of recorded angular velocity, not Euler yaw derivative",
+  "planned_visualization_window_s": [
+    0.0,
+    45.0
+  ],
+  "playback_speed": 1.0,
+  "raw_reference_up_error": "acos(recorded body up dot recorded raw reference up)",
+  "reference_lean": "acos(world vertical dot reference up), from recorded raw reference quaternion",
+  "reference_marker": "Always frozen full raw path(t), including after a truncated actual run.",
+  "rendered_state_source": "Unmodified full-precision recorded exact_qpos/qvel/time from precision.npz.",
+  "renderer": "MuJoCo: saved Gazebo poses only",
+  "requested_start_phase_rad": -1.0,
+  "rollout_precision_format_checks": {
+    "arc_m100_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7677734116291504e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.9008010632148853e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7682602044574196e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "arc_m100_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.534969116486991e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.3747766775272794e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7682602044574196e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "arc_p030_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.768355132966917e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.2534176213895307e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7682602044574196e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "arc_p030_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.535119360748467e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.6210953819070255e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7682602044574196e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "arc_p090_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.535169134267107e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7618673448823756e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7682602044574196e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "arc_p090_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.523999224825275e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.35670658099707e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7682602044574196e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "eight_m100_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.536583647218322e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.336324247044558e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7683156090272405e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 7.32426715899237e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "eight_m100_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 3.814570220583846e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.4053554226763936e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7683156090272405e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 7.32426715899237e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "eight_p030_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.768341970162737e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7471614550431696e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7683156090272405e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 7.32426715899237e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "eight_p030_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 7.628814302051978e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.574345240371258e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7683156090272405e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 7.32426715899237e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "eight_p090_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.5362591423509e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.44834471994227e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7683156090272405e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 7.32426715899237e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "eight_p090_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.9072679862119912e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.6635762274149783e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.7683156090272405e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 7.32426715899237e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "straight_m100_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.768057575432749e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 3.0774751280659984e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.766022758673216e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "straight_m100_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.906432856912943e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8677856346016597e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.766022758673216e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "straight_p030_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.9046839412339978e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.3775701851747044e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.766022758673216e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "straight_p030_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.515072640908784e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.341954621343234e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.766022758673216e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "straight_p090_N": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.518432122490594e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.3739697940783344e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.766022758673216e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    },
+    "straight_p090_T": {
+      "qpos": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 9.536093905637699e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "qvel": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 2.3726365405707384e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "reference_xy": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 4.766022758673216e-07,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      },
+      "time_s": {
+        "exact_after_original_dtype_cast": true,
+        "maximum_original_encoding_difference": 1.8310592153625294e-06,
+        "precision_dtype": "<f8",
+        "rollout_dtype": "<f4"
+      }
+    }
+  },
+  "root_output_seal_verification": {
+    "cases": [
+      "arc_m100_N",
+      "arc_m100_T",
+      "arc_p030_N",
+      "arc_p030_T",
+      "arc_p090_N",
+      "arc_p090_T",
+      "eight_m100_N",
+      "eight_m100_T",
+      "eight_p030_N",
+      "eight_p030_T",
+      "eight_p090_N",
+      "eight_p090_T",
+      "straight_m100_N",
+      "straight_m100_T",
+      "straight_p030_N",
+      "straight_p030_T",
+      "straight_p090_N",
+      "straight_p090_T"
+    ],
+    "passed": true,
+    "protocol_sha256": "53106cdb758d76436e04b747c9483c4081abcc7ec1f2a163ace90b58b82085c2",
+    "root_seal_sha256": "e5e65236947d7b1945c90b3a74a133f055495851d1938b42dacd0ac26602fc2a",
+    "route_source_matches_executed": true,
+    "verified_root_file_count": 149
+  },
+  "route_id": "arc",
+  "shared_camera": {
+    "actual_and_reference_xy_bounds_m": [
+      -3.1964853375741042,
+      -2.1769778557579995,
+      9.886633022123288,
+      11.123202727272064
+    ],
+    "actual_camera_lookat_m": [
+      -2.6867315966660517,
+      10.504917874697675,
+      1.3432146682182327
+    ],
+    "all_eighteen_paths_included": true,
+    "azimuth_deg": 112.0,
+    "distance_m": 2.7785115282380417,
+    "elevation_deg": -34.0,
+    "lookat": [
+      -2.6867315966660517,
+      10.504917874697675,
+      1.2832146682182326
+    ],
+    "render_terrain_bounds_m": [
+      -3.896485337574104,
+      -1.4769778557579996,
+      9.186633022123289,
+      11.823202727272063
+    ]
+  },
+  "terminal_sample_policy": "At the planned endpoint of a completed episode, terminal helper output is logged UNHELD because no integration interval follows. A planned final frame after an early endpoint is unavailable simulation and displays only the capped last recorded pose/telemetry; no later actuation is claimed.",
+  "terrain_category": "moderate_passed",
+  "unavailable_frame_policy": "After the actual recorded endpoint: simulation is unavailable; show only the last recorded pose/telemetry frozen with red RUN ENDED marker, capped pose time and false simulation_state_available. Planned path/clock continue independently; no continued actual motion or goal hold is claimed."
+}

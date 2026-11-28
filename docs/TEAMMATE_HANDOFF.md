@@ -6,7 +6,7 @@ The guide supplies the equations and presentation questions; this page explains
 the latest experiments, what to run and what remains unresolved.
 The [standalone ChatGPT context file](CHATGPT_CONTROL_CONTEXT.md) can be uploaded
 without the repository; it explains the selected pipeline, equations, boundaries,
-experiment history and common presentation questions through I-75.
+experiment history and common presentation questions through I-76.
 
 ## Current system
 
@@ -71,7 +71,43 @@ research history. There is limited kinematic prediction in the active preview.
 
 ## What the latest experiments show
 
-**Latest: I-75 follows the desired path heading, with a clear tracking tradeoff.**
+**Latest: I-76 broadens the comparison; figure-eight path distance improves,
+but the same heading overlay is not a general tracking improvement.**
+Eighteen corrected Gazebo/DART runs compare N/T on straight, 90° arc and
+figure-eight paths at three shaft starts. All complete, with 686 consistency
+checks passing; the fixed control screen fails 42/207 checks. Eight remains
+explicit rough stress outside the original moderate-terrain screen.
+
+Heading RMS improves 8/9 pairs (20% benefit in 7/9); timed XY improves 3/9,
+geometric path RMS4/9. The figure-eight improves geometric RMS in every start:
+**39.87→15.54,27.91→22.22,32.73→17.21 mm**; timed RMS improves 2/3.
+Straight improves 1/3; arc 0/3. These are matched within-route effects; route
+shapes, durations, terrain and planned accumulated heading change differ.
+
+Four-condition stopping totals are3 N /3 T, but T loses two native successes
+and gains two different ones. Only straight+.9 T and eight+.9 T also satisfy
+≤10° raw heading error throughout the final 2 s. Straight−1 T has a 19.89° tilt,
+1.09 m/s speed and14.12 m/s² acceleration transient. All applied caps hold.
+The formerly favorable −1 start is not uniformly best on new routes.
+The selected event's large demand is dominated by attitude/body-velocity LQR
+feedback; baseline straight−1 instead has large rolling-reference terms.
+Do not assign the same cause to every spike or call a small direct helper
+term proof that the intervention cannot have indirect effects.
+
+The first unscored attempt exposed endpoint roundoff: quintic progress becomes
+1.0000000000000009 just before 123 s, triggering a strict range guard. A minimal
+[0,1] clamp passes adversarial tests; all 12 earlier complete recordings and
+three saved failure prefixes reproduce exactly. Failed sources/data and explicit
+aborts remain preserved. An accidental client closure later preserves six
+completed corrected runs and resumes twelve with actual observed exit statuses
+and file hashes documented. No source/gain/criterion tuning follows outcomes.
+
+Keep original N selected; T stays experimental. The native zero LQR angular-rate
+reference and translation-only rolling allocation are still present. This is
+trajectory-heading reference work, not a new contact prediction or estimator.
+[All nine videos, six-page PDF, setup/correction history and reproduction](iterations/2026-11-27/tangent-heading-routes/README.md).
+
+**Previous: I-75 follows the desired path heading, with a clear tracking tradeoff.**
 Six fresh matched N/T S runs complete 45 s. Both start at the initial path tangent,
 yaw argument 149.242843°, so native numbers are a new baseline, not matched old
 45° I-73/I-74 replays. T keeps the original LQR/observer/contact feedforward and

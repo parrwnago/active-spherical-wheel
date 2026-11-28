@@ -1,5 +1,38 @@
 # Research presentation notes — 2026-11-27
 
+**I-76: broader tests support a figure-eight path benefit, with substantial
+tradeoffs; the heading overlay stays experimental.**
+[All nine comparisons and full videos](tangent-heading-routes/README.md),
+[six-page results PDF](tangent-heading-routes/evidence/publication/plots_stage01/tangent_routes_comparison.pdf),
+[figure-eight plot](tangent-heading-routes/evidence/publication/plots_stage01/eight_motion.png).
+
+- Eighteen corrected Gazebo/DART runs all complete; 686 consistency checks pass,
+  but 42/207 fixed control checks fail. Same I-75 heading helper, gains, LQR,
+  observer, contact feedforward and caps. No result-driven tuning/adoption.
+- Heading RMS improves 8/9 pairs; timed XY 3/9 and geometric path RMS 4/9.
+  Figure-eight geometric RMS improves **39.87→15.54, 27.91→22.22,
+  32.73→17.21 mm**, timed RMS improves 2/3. Straight improves 1/3; arc 0/3.
+- Four-condition settling totals are 3 N /3 T, with two native successes lost
+  and two different gains. Only straight +0.9 T and eight +0.9 T also meet
+  the ≤10° heading condition. Average pointing and final pose stay separate.
+- Straight −1 T has a 19.89° tilt /1.09 m/s speed /14.12 m/s² transient.
+  Its dominant demand comes through attitude/body-velocity feedback; baseline
+  straight −1's selected event is dominated by large rolling-rate references.
+  Not every spike has the same source. All applied caps hold.
+- Straight/arc pass moderate terrain screens; eight is explicitly rough stress
+  outside the original 80 mm/12° screen. Two failed placements and a finite
+  six-placement no-pass scan remain recorded. Within-route comparisons only;
+  shapes, durations, terrain and planned heading variation differ.
+- Preserve the first unscored dynamic attempt: endpoint roundoff made progress
+  slightly >1, causing a reference exception. A minimal domain clamp passes
+  adversarial tests and reproduces 12 full recordings plus 3 saved prefixes
+  exactly. Client interruption then preserves 6 complete corrected runs and
+  resumes the remaining 12, with actual observed exit statuses documented.
+- Final scoped functions: reference 10, runner 13, evaluation 34, media 9,
+  package 7 plus one metadata-coverage contract (earlier stages included).
+  Replay/ledger checks are separate.
+  Keep native selected; a fully coordinated yaw reference remains untested.
+
 **I-75: trajectory-facing heading improves pointing but worsens moving path
 tracking at all three starts; keep it experimental.**
 [Full record and videos](tangent-heading-control/README.md),

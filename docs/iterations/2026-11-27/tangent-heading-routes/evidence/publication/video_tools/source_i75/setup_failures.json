@@ -1,0 +1,13 @@
+{
+  "iteration": "I-75",
+  "stage": "publication/videos_stage01",
+  "failed_processes": [
+    {"phase": "m100", "returncode": 1, "location": "render.py:352 reader.get_data(i)", "exception": "OSError: Could not load meta information", "completed_before_failure": "All 901 frames encoded; reader.count_frames()==901 passed; decoded frame 0 and 450 saved."},
+    {"phase": "p030", "returncode": 1, "location": "render.py:352 reader.get_data(i)", "exception": "OSError: Could not load meta information", "completed_before_failure": "All 901 frames encoded; reader.count_frames()==901 passed; decoded frame 0 saved."}
+  ],
+  "successful_original_process": "p090",
+  "observation": "Two of three concurrent render processes failed during post-encode random-seek FFmpeg decoder initialization. Both reported complete 45.05s streams before failure.",
+  "cause_status": "The exact decoder resource failure is unconfirmed. Concurrent decoder pressure is a hypothesis, not a simulation or controller failure.",
+  "preservation": "Original render.py remains unchanged; original per-phase registered sources and stage inventories remain. Existing small artifacts are copied before recovery under publication/video_decode_recovery_stage01/before/.",
+  "correction": "Distinct finalize_existing.py sequentially decodes every existing frame with one input/output thread, verifies 901 frames and encoded-byte identity, completes metadata/schedules and explicitly labels terminal helper output UNHELD. No rerender, physics or controller execution."
+}

@@ -4966,6 +4966,339 @@ bundle SHA
 `a177600220f0d12d24b4ef38361d25341e284abfe5f583698f33bec8f01e5ccd`.
 [Final archive/restore receipt](docs/iterations/2026-11-27/tangent-heading-control/archive_verification/receipt.json).
 
+## I-76 / 2026-11-27 / analyzed, experimental not adopted: heading comparison across more trajectories
+
+**Question / authorization:** User requests more trajectory comparisons and
+hypothesizes that facing the desired travel direction may help more generally.
+I-75 improved pointing but worsened moving timed XY RMS in all three S starts.
+Keep that negative tracking result; broader coverage is a new experiment.
+
+**Frozen design before outcomes:** Compare unchanged native N versus the same
+I-75 trajectory-facing helper T, with original LQR/observer/contact estimation,
+rolling/holding feedforward, preparation, gains and caps. Keep helper settings
+.2/.06/.15 N m/.05 N m and original eligibility. No controller tuning. Native
+LQR angular-rate references remain zero and rolling allocation translational;
+this is still an overlay, not a coordinated planar-pose controller.
+
+Three routes at the same fixed Mars origin `[-2.4,10]` m and rotation113°:
+straight `[1.2u,0]`, quarter-circle `[.6sin(pi*u/2),.6(1-cos(pi*u/2))]`,
+figure-eight `[.5sin(2pi*u),.25sin(4pi*u)]`. Quintic progress; straight/arc motion
+32 s, eight120 s, plus3 s initial/10 s final holds. Eight starts/ends at the
+crossing, with nonzero geometric tangent. Its longer duration keeps planned
+heading rate within the same .35 rad/s/.5 rad/s² guards; no target smoothing.
+Different lengths/durations are explicit, not a claim of identical difficulty.
+
+Use phases−1.0/+.3/+.9, N/T each:18 new episodes. Each pair shares exact initial
+q/v and starts facing its route's initial tangent. These are new paired baselines,
+not replays of old S starts. Original map-only slope12°/relief80 mm/corridor.15 m/
+feature clearance≥1 m screens apply separately at the fixed site before physics.
+Preserve any failed setup and decide openly before proceeding; no outcome-based
+site or setting selection.
+
+**Acceptance fixed before physics:** Per pair raw-heading RMS≤max(.8N,5°) and
+Euler-rate RMS≤max(.8N,.03 rad/s); absolute-floor passes are not called20%
+improvements. Keep I-75 timed tracking/attitude/motion/command guards, add moving
+nearest-full-path RMS≤1.10N+1 mm and peak≤N+10 mm, and require T four-condition
+settling whenever N passes it. Timed error stays separate because the eight's
+crossing can hide wrong progress in nearest-path distance. All nine pairs are
+required for the broad screen; show every case and full holds, no winner-route
+promotion. Completion remains separate from acceptance.
+
+**Planning-stage status (retained):** New result-owned route/reference, runner/evaluation and map-only
+fixture sources are being prepared. Reference/map sources and definitions will
+freeze before their checks; physics/source/output seals precede outcome scoring.
+No new physics, outcome or adoption yet. I-75 stays immutable. Evidence will be
+tracked under the dated I-76 record, with raw/full media in a named local bundle.
+
+**I-76 setup stage01 — completed, failed figure-eight map screen:** Straight
+passes with48.08 mm relief /11.288° max corridor facet; arc passes66.26 mm /
+10.668°. Eight fails111.37 mm>80 mm and12.385°>12°. DEM coverage/feature
+clearance pass allthree. Preserve all original map reports, arrays, registration
+and tested sources. No physics or controller outcomes have been read.
+
+Initial reference preflight passes nine functions and all45/45/133 s grids;
+all planned raw=command, certified eight rate.331891 and accel.288901 within
+.35/.5. Twelve focused adapter/runner functions also pass, including reused
+native identity with four included subtests. These are the original-origin
+setup results, not later relocated-source results.
+
+**I-76 setup revision02 — proposed before physics:** Translate only the eight's
+planned origin by local `[+.5,0]` m rotated113°, placing both lobes along the
+previous positive-forward footprint. Same site anchor, orientation, shape,
+timing, heading guards, helper/controller settings and numeric acceptance gates.
+Straight/arc stay fixed. This changes eight's initial terrain; comparisons remain
+within each matched route/phase, not an isolated shape-only effect or equal
+route difficulty. Retain stage01 failure and re-register/recheck map/reference/
+runner sources as new stages before any physics. No automatic screen relaxation.
+
+Pure evaluation source review also corrects metadata before physics: eight's
+moving-window description was35 s instead of123 s (numeric window was correct),
+and legacy descriptive-only settling text did not reflect the new conditional
+four-condition preservation gate (arithmetic was correct). Preserve all drafts
+and component snapshots; no numeric threshold or outcome-dependent change.
+
+**I-76 setup stage02 — completed, same eight screen still fails:** The
+translated eight has96.72 mm relief>80 mm and12.385° max facet>12°; straight/
+arc retain their passing screens. Stage02 reference nine functions and runner
+12 functions pass again (same function sets, not added to stage01 counts).
+Preserve both failed placements, all arrays and source/protocol snapshots.
+There are still zero new physics episodes or controller outcome reads.
+
+**I-76 setup revision03 — proposed finite map-only placement scan:** Replace
+the initial no-search setup plan before physics with one explicit fixed list of
+figure-eight planned local offsets, in this order: `[.5,+.4]`, `[.5,-.4]`,
+`[.5,+.8]`, `[.5,-.8]`, `[.5,+1.2]`, `[.5,-1.2]` m. Evaluate all six once
+with unchanged screens and select the first passing candidate, not the lowest
+terrain score or best controller outcome. Keep straight/arc fixed. Snapshot
+scan source/protocol before any map arithmetic. After selection, register new
+final route/reference/map/runner stages before physics; all prior setup stages
+remain historical. No controller, heading cost, actuator limit, route shape,
+duration or numeric acceptance-gate tuning is authorized by this setup change.
+
+**I-76 finite scan completed / final prephysics domain revision:** All six
+registered offsets fail unchanged moderate screens. Relief mm / max facet° by
+fixed order:84.09/12.312,76.46/14.197,59.60/14.366,108.40/14.730,
+81.36/15.652,108.81/14.730. Selection is null; no winning placement is adopted.
+Stop map queries. Keep stage02 eight planned offset `[.5,0]`, origin
+`[-2.595365564244637,10.46025242672622]`, as an explicitly **rough_stress**
+route outside the80 mm/12° moderate screen. Straight/arc remain passing
+moderate routes. Eight coverage/feature clearance still pass. This revises the
+experimental domain before physics; it does not turn failed geometry gates
+into passes. Record the original failed plan and the revised scope together.
+
+The strict runner admits only this declared eight stress exception, keeps its
+slope/relief pass flags false and requires straight/arc moderate pass plus eight
+coverage/clearance. All nine paired controller-performance requirements remain
+unchanged. No shape, timing, controller gain, command cap or numeric control
+threshold changes. Different starting terrain/route difficulty limit across-route
+inferences; N/T comparisons are matched within each route/phase.
+
+**I-76 implemented / launched:** Final current-origin reference stage02 passes
+nine functions; runner stage04 passes13 functions (8 reused adapter,4 runner,
+1 reused real-controller identity with4 included subtests). Earlier12-stage
+executions are included history, not additional unique functions. Final
+34 evaluation functions pass, inclusive of earlier33; all18 actual Gazebo-env
+preflights pass without constructing a plant. Media8 functions include7 retained
+and1 new; six restore functions are retained, codec check separate and not added
+to repository-function counts. Source reviews and metadata-only corrections
+precede outcomes; original selected default stays unchanged.
+
+Protocol SHA
+`00f4428907829baccdaaca0feeeb8157399cb4761d5e1ff2fe018d22a45009ae`
+binds86 control/runtime/runner sources and44 inputs, with unchanged original
+flat gain bytes and Gazebo binaries. It explicitly registers45/45/133 s,
+18 N/T cases, truthful terrain classes and all9 paired gates. Three isolated
+processes run concurrently; all outputs will seal before campaign scoring.
+Completion/acceptance remain pending at launch. Current tested source snapshots
+are distinct from earlier failed-placement snapshots; no historical overwrite.
+
+**I-76 additional descriptive audit plan (during campaign, before outcome
+access):** Inspect every case's maximum normalized held clipping excess and
+fixed±25 ms context, with explicit zero-tie/no-spike labeling. Reconstruct stored
+LQR joint-rate blocks/direct helper/feedforward/support/preparation/fade/clipping
+ledgers and actual/reference joint-rate extrema. No new Jacobian, contact
+inference, physical-cause conclusion or acceptance criterion. Seal audit source/
+inputs before fresh array reads after all18 outputs seal. This plan is not
+misrepresented as a control gate registered before physics.
+
+**I-76 media clarification during campaign, before outcome reads:** Preserve
+earlier tested media sources, then distinguish planned visualization windows
+from actual recorded windows, explicit episode completion and unavailable frames.
+After an early end, only the last recorded pose can be frozen, with a red end
+banner and capped pose time; no later simulation or actual goal hold is claimed.
+Completed terminal outputs remain explicitly unheld. Final9 media functions
+pass (7 retained I-75 plus2 I-76; all earlier8/9 stages included, not added).
+This changes presentation metadata only, not dynamics, scores or control sources.
+
+**I-76 first dynamic attempt — setup exception, unscored:** Preserve the entire
+campaign/protocol under `results/tangent_heading_routes_20261127/failed_attempt01/`
+with source snapshots and explicit logical-path relocation record. Twelve
+straight/arc processes exit0; three eight processes throw a reference-domain
+exception, and three remaining eights are explicitly aborted after that known
+setup error (exit137; saved logs/provenance, unsaved in-memory states disclosed).
+SIGINT/TERM did not stop those recorded experiment processes; narrowly targeted
+SIGKILL termination is recorded. No physical-controller-failure claim follows
+from those stops, and no first-attempt performance comparison is scored.
+
+Trace and **time-only** partial-array diagnosis: saved clocks end at
+122.99499999996063 s. The next clock122.99999999996062 is slightly before the
+123 s motion endpoint, so the moving branch is selected. Expanded quintic
+progress evaluates1.0000000000000009 (four ULP above1), and the strict geometric
+parameter guard throws. This is floating-point cancellation at the endpoint,
+not observed instability or an actuation failure. Original outputs seal SHA
+`d7da4005b306359d1ae031ec657fb94e62390aafab469d2e3336d3c9279ca81c`.
+
+**I-76 numerical correction plan:** Clip only computed quintic progress to its
+declared mathematical `[0,1]` domain, with unchanged derivative arithmetic,
+path geometry/timing, contact observer, gains, caps and performance gates.
+Preserve pre-fix bytes before changing them. Add adversarial endpoint/accumulated-
+clock contracts, re-register corrected sources, verify stored fixture geometry
+is unchanged without new terrain queries, and rerun all18 fresh with one source
+version. Do not pool the12 earlier recordings into the corrected comparison.
+Define exact numerical replay against those12 and prefix replay against the
+three failed partial recordings as correction verification, not an adoption
+gate. The rerun must remain separate from original unsuccessful history.
+
+**I-76 corrected attempt02 — implemented and launched:** Minimal range clamp
+only; source patch/diagnosis is in runtime/development/endpoint_roundoff_fix_stage05.
+Reference stage05 passes10 functions, including the exact observed-clock/ULP
+regression (earlier9 included). Runner stage05 passes the same13 functions.
+Final corrected evaluation passes34 at synthetic_stage02 (earlier34/33 included);
+independent progress uses the same mathematical-domain clamp. No performance
+threshold or contact/control law change.
+
+Stored fixture carryforward checks show bit-exact zero difference in all1,601
+XY/velocity/acceleration samples and seven ground points for every route. No DEM,
+mesh or terrain query is repeated; original moderate/stress classifications stand.
+Original failed sources/complete/partial/abort records remain unchanged.
+
+Corrected protocol SHA
+`53106cdb758d76436e04b747c9483c4081abcc7ec1f2a163ace90b58b82085c2`
+binds86 sources/52 inputs and identifies corrected_attempt02. All18 fresh cases
+launch three at a time, using the same phases/settings and exact original gain/
+plugin bytes. Twelve first-attempt successful recordings are not pooled into
+this comparison. Correction replay diagnostics are specified separately from
+controller acceptance; no first-attempt controller performance is scored.
+
+**I-76 accidental client interruption / resume:** User reports VS Code closed
+accidentally. On resume, no campaign process remains active. Six corrected-
+protocol straight recordings are complete and verified against case manifests,
+summary/provenance, final logs and unchanged protocol/source/input bindings.
+All six actual exit0 events had been observed in prior launcher tool stdout;
+verbatim records and their origin are preserved, rather than inferring exit
+codes from output files. Three arc runs stopped mid-recording with no saved raw
+state arrays; preserve their source/provenance/scalar-progress logs separately
+and disclose the lost in-memory states. Nine later cases had not started.
+
+Resume orchestration and receipts live under
+`results/tangent_heading_routes_20261127/review/client_interruption_resume_stage01/`.
+Keep the six complete corrected recordings and run the remaining twelve with
+the identical frozen corrected protocol53106cdb…85c2, gains/settings and source.
+This is resumption of corrected_attempt02, not reuse of first-attempt outputs,
+a physical-controller failure or a change of numeric acceptance criteria.
+The eventual all18 seal binds the recovery evidence and all six observed old
+exit statuses together with newly observed subprocess statuses. No performance
+array is read or scored during recovery.
+
+**I-76 corrected outputs sealed after resume:** All18 corrected-protocol process
+exit codes are observed0 (six preserved prior launcher events plus12 resumed
+subprocess results). Seal
+`e5e65236947d7b1945c90b3a74a133f055495851d1938b42dacd0ac26602fc2a`
+binds149 files; root independently verifies every file hash/size before release.
+All data consumers receive release only after this seal. Canonical evaluation,
+full media and separately defined correction/command diagnostics now proceed;
+process success is not reported as controller acceptance or physical settling.
+
+**I-76 canonical outcome — completed once after corrected all18 seal:** All18
+actual episodes complete their full45/45/133 s schedules, finite/capped, with
+valid held-command/prior-input history. All686 source/reference/state consistency
+checks pass. This includes truthful registration of the eight as rough stress;
+its original moderate terrain screens remain failed. **165/207 control checks
+pass,42 fail; FAIL_TANGENT_SCREEN.** All9 T helper-activity conditions pass.
+No outcome-dependent setting, criterion, trajectory or phase selection occurs.
+
+| Route / phase | Heading RMS N→T, degrees | Moving timed XY RMS N→T, mm | Geometric path RMS N→T, mm |
+|---|---:|---:|---:|
+| straight −1.0 | 69.08→34.46 | 42.42→59.32 | 39.08→56.29 |
+| straight +0.3 | 76.25→17.89 | 35.81→34.67 | 32.57→29.23 |
+| straight +0.9 | 91.35→9.64 | 29.35→40.83 | 18.32→22.78 |
+| arc −1.0 | 26.07→13.98 | 16.91→24.87 | 10.91→12.60 |
+| arc +0.3 | 38.24→12.74 | 13.62→58.12 | 7.75→12.62 |
+| arc +0.9 | 83.91→18.50 | 24.10→25.28 | 13.54→21.14 |
+| eight −1.0 | 96.02→76.96 | 46.36→28.66 | 39.87→15.54 |
+| eight +0.3 | 88.84→90.89 | 44.53→42.58 | 27.91→22.22 |
+| eight +0.9 | 101.15→51.70 | 62.91→69.54 | 32.73→17.21 |
+
+Heading RMS improves8/9, achieves20% benefit7/9; Euler-rate RMS improves7/9,
+achieves20% benefit6/9. No pass relies on an absolute floor. Timed XY improves
+3/9, geometric distance4/9. The eight improves geometric RMS at every phase,
+with timed improvement2/3: real route-specific benefit. Straight improves1/3;
+arc0/3. Eight−1 misses the fixed heading margin narrowly:19.846% reduction,
+.147837° RMS above its limit; its other22 checks pass. Do not retune that gate.
+Failures split18straight/14arc/10eight; no pair passes all23 checks.
+
+Four-condition final settling occurs for N at arc+.9/eight+.3/eight+.9;
+T at straight+.9/arc−1/eight+.9. Equal totals3each conceal two lost native
+successes and two different gains. Only straight+.9 T and eight+.9 T meet the
+additional≤10° raw-heading condition throughout that final2s; Nnone. T finalheading errors are
+57.60/27.15/4.27° (straight),19.02/5.01/44.57° (arc),61.09/105.74/3.39° (eight).
+Better average pointing is separate from correct final heading and stopping.
+
+Straight−1 T has a substantial transient: peaktilt19.89°, XYspeed1.09 m/s,
+50 ms acceleration14.12 m/s² and Euler-rate-error peak4.725 rad/s. Preserve it
+in plots/full video. All actually applied commands remain capped. The unchanged
+minimal overlay has useful figure-eight spatial benefits but is not accepted
+as a general improvement; original native N remains selected. Full coordinated
+yaw/rolling/LQR references remain unimplemented, not disproved by this result.
+
+**I-76 correction reproducibility:** Twelve first-attempt complete recordings
+match every79 stored numeric fields; three failed precision prefixes match all
+73 stored fields and three truth prefixes all5fields. All1,182 field comparisons
+match dtype/shape/raw array bytes, includingNaNs;487,909,608 bytes per side.
+Current-only held-mask/truth fields on partials are explicitly listed. Original
+partial containers were NOT in the first120-file launcher seal; a separate
+42-input seal binds them before replay comparison. Earlier diagnosis reads only
+time. Three unsaved aborted runs are excluded. This verifies the correction;
+it is not extra software tests or a controller-acceptance result.
+
+**I-76 command audit:** All18 maxima and fixed±25 ms contexts retained, all144
+full-record algebraic identities verify (maximum residual2.665e−15). In straight
+−1 N at20.585 s, rolling refs+26.056/−91.896 rad/s drive large joint-rate terms;
+requests4.741/−.167/−7.190 N m clip to1.5/−.167/−.6. In straight−1 T at20.975 s,
+references are ordinary(.544/0/.183rad/s); shell B's−7.272 N m request is
+instead dominated by attitude/body-velocity feedback, while direct helper is
++.107 N m onA. Do not blame every new spike on large rolling references or
+exonerate a closed-loop intervention merely because its direct term is small.
+Eight maximum normalized request excess N/T improves7.367/.327,3.242/3.175,
+5.503/1.973; selected+.3T/+.9T events do contain dominant joint-rate blocks.
+The audit localizes algebraic demand, not full physical cause or singularity.
+
+[Final I-76 record, all9 videos, six-page PDF, raw reports and reproduction](docs/iterations/2026-11-27/tangent-heading-routes/README.md).
+Final media/immutable archive verification follows without changing sources,
+metrics, default selection or earlier unsuccessful records.
+
+**I-76 archive coverage correction — identified before final QA:** Initial
+curation's small-file suffix set omitted `.jsonl`, and the raw collector did not
+cover review-folder JSONL. The final149-file seal requires the verbatim recovered
+launcher-status JSONL, so a subset-only successful restore would not prove
+re-evaluation readiness. Preserve the original compact manifest/source and use
+an explicit post-collection metadata amendment before final verification; retain
+raw bundle/video/physics/metric bytes. Verify closure against **all149** sealed
+outputs in the actual isolated restore, not only selected inventory entries.
+This is archive metadata repair; no controller outcome or acceptance change.
+
+**I-76 archive amendment completed before final QA:** Preserve the initial
+manifest and unchanged1,180,265,241-byte raw tar. The explicit metadata amendment
+adds both review JSONLs and18 canonical per-case model YAML snapshots (the latter
+were omitted by a top-level-only case scan). YAML hashes match the sealed
+prephysics provenance/config binding. The extended missing/corrupt JSONL+YAML
+regression passes as one additional function, separate from7 retained package/
+restore functions; no doubled stage count. Root independently verifies all3,633
+amended compact file hashes/sizes and exact field set. Manifest SHA
+`76ecf09b6a9a7fe46c5ddc9bc5d190ef6c522f56ecb94ceb7fea8bab80a4a638`.
+Final actual-restore checks require149 sealed outputs+18 model prerequisites
+and current registered result-owned tool inputs; archive QA is still pending.
+No raw/video/metric/controller bytes change through this metadata amendment.
+
+**I-76 final archive and actual restore — PASS:** Final compact record has3,633
+bound files/129,468,477 bytes plus its manifest. All7,746 raw tar members verify
+exactly;1,180,265,241-byte bundle SHA
+`259932a1f79d03552535276a30c8e45ac5268d7d40870baf0def4d6cdfdd2643`.
+Actual isolated restoration recreates7,744 result raw files, all compact files
+and original gain cache; unrelated sentinel unchanged, no live code/plugin
+installation. All18 explicit50ms subsets match original arrays/indices, with
+actual terminal retained. Root independently checks every compact hash/size
+and exact manifest field set.
+
+Additional actual-restored closure verifies every149 sealed output plus18
+prephysics-provenance-bound model YAMLs (167 unique essentials), both amended
+JSONLs and223 registered result-owned producer inputs. Initial compact manifest,
+metadata omission/correction source/receipt and one added regression remain
+recorded. Builder/raw/video/metric/controller bytes stay unchanged. Earlier
+failures, aborts and client interruption are retained; no post-result candidate
+promotion. [Final QA](docs/iterations/2026-11-27/tangent-heading-routes/archive_verification/receipt.json)
+and [restored input closure](docs/iterations/2026-11-27/tangent-heading-routes/archive_verification/closure/receipt.json).
+
 ## Evidence preservation and reproduction
 
 Compact report/plot/test snapshots live outside ignored `results/`. The dated

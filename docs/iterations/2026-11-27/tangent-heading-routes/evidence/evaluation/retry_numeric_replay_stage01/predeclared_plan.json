@@ -1,0 +1,39 @@
+{
+  "clock_and_terminal_scope": "Completed comparison includes terminal physical state and emitted-unheld command fields; partial comparison ends at last saved row before original reference exception. Fresh extra rows beyond a partial prefix are reported, not compared to nonexistent old data.",
+  "completed_comparisons": [
+    "straight_m100_N",
+    "straight_m100_T",
+    "straight_p030_N",
+    "straight_p030_T",
+    "straight_p090_N",
+    "straight_p090_T",
+    "arc_m100_N",
+    "arc_m100_T",
+    "arc_p030_N",
+    "arc_p030_T",
+    "arc_p090_N",
+    "arc_p090_T"
+  ],
+  "excluded_explicit_aborts": [
+    "eight_p030_T",
+    "eight_p090_N",
+    "eight_p090_T"
+  ],
+  "excluded_reason": "Attempt01 explicitly aborted with no saved in-memory partial precision; no nonexistent numeric replay is claimed.",
+  "iteration": "I-76",
+  "kind": "Exact numeric replay diagnostic, not a controller adoption/acceptance gate.",
+  "method": "For all saved precision fields, compare key sets, dtype, shape and array bytes. Compare every row for12 completed cases and every saved prefix row for3 reference-exception cases. Report each field exact/mismatch and first differing saved row; NPZ ZIP container bytes and changed protocol/provenance metadata are not an array-replay target. No case/field/phase selection from results.",
+  "no_new_physics_in_replay": true,
+  "no_tuning_or_gate_changes": true,
+  "partial_prefix_comparisons": [
+    "eight_m100_N",
+    "eight_m100_T",
+    "eight_p030_N"
+  ],
+  "prior_attempt": "failed_attempt01/campaign/runs",
+  "prior_output_seal_sha256": "d7da4005b306359d1ae031ec657fb94e62390aafab469d2e3336d3c9279ca81c",
+  "release": "Run only after all18 fresh retry outputs are sealed and root authorizes performance-array reads. Seal replay source and both attempt inputs before any NPZ array loads.",
+  "result_policy": "Preserve any numeric mismatch and original attempt failure/abort history; do not erase earlier runs or use replay as adoption evidence.",
+  "timing": "Defined after attempt01 setup failure, before any fresh retry physics or fresh performance outcome reads.",
+  "utc": "2026-11-28T02:58:07.330177+00:00"
+}

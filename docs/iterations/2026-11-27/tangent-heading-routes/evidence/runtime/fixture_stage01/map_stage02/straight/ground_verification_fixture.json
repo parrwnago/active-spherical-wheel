@@ -1,0 +1,85 @@
+{
+  "classification": "Planned map points only; no Gazebo ground verification has run yet.",
+  "control_interval_s": 0.005,
+  "ground_check_points_xy_m": [
+    [
+      -2.4,
+      10.0
+    ],
+    [
+      -2.4166422517689874,
+      10.039206688202604
+    ],
+    [
+      -2.4984063582861875,
+      10.231830851980614
+    ],
+    [
+      -2.634438677093564,
+      10.552302912071465
+    ],
+    [
+      -2.770470995900941,
+      10.872774972162313
+    ],
+    [
+      -2.852235102418141,
+      11.065399135940325
+    ],
+    [
+      -2.8688773541871284,
+      11.104605824142928
+    ]
+  ],
+  "ground_check_times_s": [
+    3.0,
+    8.333333333333332,
+    13.666666666666666,
+    19.0,
+    24.333333333333332,
+    29.666666666666664,
+    35.0
+  ],
+  "requested_duration_s": 45.0,
+  "route": {
+    "anchor_origin": [
+      -2.4,
+      10.0
+    ],
+    "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+    "duration_s": 32.0,
+    "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+    "geometry": "origin + R113deg @ [1.2*u,0]",
+    "geometry_heading_deg": 113.0,
+    "goal_hold_s": 10.0,
+    "initial_heading_deg": 113.0,
+    "kind": "i76_straight",
+    "local_footprint_m": [
+      0,
+      1.2,
+      0,
+      0
+    ],
+    "origin": [
+      -2.4,
+      10.0
+    ],
+    "origin_policy": "Fixed per-route planned origin = shared site anchor + R113deg @ planned_local_offset; no measured-state reanchor or reset.",
+    "planned_local_offset": [
+      0.0,
+      0.0
+    ],
+    "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+    "route_id": "straight",
+    "start_s": 3.0,
+    "total_duration_s": 45.0
+  },
+  "route_id": "straight",
+  "unchanged_ground_check": "Original Gazebo verify_ground median<=200um and at least50% points within200um; no tolerance change.",
+  "visual_bounds_xy_m": [
+    -4.368877354187129,
+    -0.8999999999999999,
+    8.5,
+    12.604605824142928
+  ]
+}

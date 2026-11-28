@@ -1,0 +1,110 @@
+{
+  "fork": {
+    "mass_kg": 1.2,
+    "com_m": [
+      0.0,
+      0.0,
+      0.19108861704571561
+    ],
+    "inertia_kg_m2": [
+      [
+        0.00848236218221216,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0038092133193589565,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.010100397289225821
+      ]
+    ]
+  },
+  "carrier": {
+    "mass_kg": 0.36,
+    "com_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "inertia_kg_m2": [
+      [
+        0.000295253333297982,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0019454257556334067,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0019454257556334067
+      ]
+    ]
+  },
+  "shell_A": {
+    "mass_kg": 0.15,
+    "com_m": [
+      0.06049110921273916,
+      0.0,
+      0.0
+    ],
+    "inertia_kg_m2": [
+      [
+        0.0013135150601990078,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0007846113137436766,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0007846113137436766
+      ]
+    ]
+  },
+  "shell_B": {
+    "mass_kg": 0.15,
+    "com_m": [
+      -0.06049110921273916,
+      0.0,
+      0.0
+    ],
+    "inertia_kg_m2": [
+      [
+        0.0013135150601990078,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0007846113137436766,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0007846113137436766
+      ]
+    ]
+  },
+  "total_mass_kg": 1.8599999999999999,
+  "policies": {
+    "fork": "Uniform-density three fork boxes plus uniform platform box; full parallel-axis combination.",
+    "carrier": "Central uniform solid box plus two equivalent solid cylinders along x for fixed belt modules.",
+    "shells": "Uniform spherical shell volume with configured inner/outer radii, axial equatorial cut and conical polar aperture; exact analytic inertia for that approximation.",
+    "platform_com_offset": "Moves the equivalent platform box and its COM together for mass-property calculation.",
+    "actuation": "Equivalent output torque; planetary gearing, rotor inertia and belt motor load omitted."
+  }
+}

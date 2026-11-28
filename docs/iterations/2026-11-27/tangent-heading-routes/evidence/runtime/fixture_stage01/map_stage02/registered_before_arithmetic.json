@@ -1,0 +1,106 @@
+{
+  "feature_screen": "Original mesh triangles, including buried geometry; conservative XY distance lower bound capped at1m.",
+  "files": {
+    "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/dem/marsyard_terrain_hm.tif": {
+      "bytes": 1002230,
+      "sha256": "d9c143fa8af44c8719770e53499dcab7c23054cc1e4c333f4ccbe7ff8d942eba"
+    },
+    "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/lava.obj": {
+      "bytes": 1207842,
+      "sha256": "7c5db43cb0b1d2aa509c793d662f02d13c41f34cf43c2a8232acc1be57a5f2a9"
+    },
+    "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_big.obj": {
+      "bytes": 569782,
+      "sha256": "7a8e0be5a3f1c7bbc7ffe8c5a511be14b25485c713a8caf6cf42dd20e9fdb49f"
+    },
+    "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_medium.obj": {
+      "bytes": 7262794,
+      "sha256": "ccf20567f10256c2617879d73a1d842d4275cf36c9d6a2f93f4162584614d342"
+    },
+    "results/tangent_heading_routes_20261127/protocol/map_stage02.json": {
+      "bytes": 2355,
+      "sha256": "2ffd0aa0077222cd741827b5f9d6a0be00d697f26e8bd0aeee03f03c3004ed36"
+    },
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/historical_I75_protocol.json": {
+      "bytes": 24381,
+      "sha256": "d579e1a21890b2da48dbd5c664ddbb692a1bb5c67f112262fbdf2b95500671ee"
+    },
+    "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_preflight.py": {
+      "bytes": 12401,
+      "sha256": "3d9e840d1d7118a73d4aa528588affb3b10b191919e55d945e8bd0e25d30501f"
+    },
+    "results/tangent_heading_routes_20261127/runtime/route.py": {
+      "bytes": 9336,
+      "sha256": "a37df75e624b4132a6471dad81bd2e91635a5757effccf0bd54ef0cddda270ba"
+    },
+    "src/spherical_wheel/gazebo/mars.py": {
+      "bytes": 46539,
+      "sha256": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63"
+    },
+    "src/spherical_wheel/gazebo/worlds.py": {
+      "bytes": 12839,
+      "sha256": "ad8b8133fb57b2bcab729ce6eb215f931ac04128b925c496710d8176ef0b39d4"
+    }
+  },
+  "iteration": "I-76",
+  "no_case_outcomes_read": true,
+  "no_controller_or_estimator_execution": true,
+  "no_physics": true,
+  "policy": "Evaluate every frozen route origin once; retain every failed screen. No automatic site/threshold search.",
+  "protocol": {
+    "anchor_m": [
+      -2.4,
+      10.0
+    ],
+    "geometry_heading_deg": 113.0,
+    "input_sha256": {
+      "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/dem/marsyard_terrain_hm.tif": "d9c143fa8af44c8719770e53499dcab7c23054cc1e4c333f4ccbe7ff8d942eba",
+      "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/lava.obj": "7c5db43cb0b1d2aa509c793d662f02d13c41f34cf43c2a8232acc1be57a5f2a9",
+      "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_big.obj": "7a8e0be5a3f1c7bbc7ffe8c5a511be14b25485c713a8caf6cf42dd20e9fdb49f",
+      "assets/gazebo/third_party/leo_simulator-ros2/leo_gz_worlds/models/marsyard2021_terrain/meshes/rocks_medium.obj": "ccf20567f10256c2617879d73a1d842d4275cf36c9d6a2f93f4162584614d342",
+      "results/tangent_heading_routes_20261127/runtime/fixture_stage01/historical_I75_protocol.json": "d579e1a21890b2da48dbd5c664ddbb692a1bb5c67f112262fbdf2b95500671ee"
+    },
+    "iteration": "I-76",
+    "no_outcomes": true,
+    "no_physics": true,
+    "origin_by_route_m": {
+      "arc": [
+        -2.4,
+        10.0
+      ],
+      "eight": [
+        -2.595365564244637,
+        10.46025242672622
+      ],
+      "straight": [
+        -2.4,
+        10.0
+      ]
+    },
+    "registered_before_map_arithmetic_utc": "2026-11-28T02:34:25.071920+00:00",
+    "route_ids": [
+      "straight",
+      "arc",
+      "eight"
+    ],
+    "sampling": {
+      "circumference_samples": 25,
+      "corridor_radius_m": 0.15,
+      "route_count": 1601
+    },
+    "screens": {
+      "maximum_corridor_facet_slope_deg": 12.0,
+      "maximum_corridor_total_height_relief_m": 0.08,
+      "minimum_route_feature_xy_clearance_m": 1.0
+    },
+    "setup_revision": "Onlyeightplannedorigintranslatedlocal+.5m after preserved stage01 mapfailure; thresholds unchanged; beforeanyphysics.",
+    "source_sha256": {
+      "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_preflight.py": "3d9e840d1d7118a73d4aa528588affb3b10b191919e55d945e8bd0e25d30501f",
+      "results/tangent_heading_routes_20261127/runtime/route.py": "a37df75e624b4132a6471dad81bd2e91635a5757effccf0bd54ef0cddda270ba",
+      "src/spherical_wheel/gazebo/mars.py": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63",
+      "src/spherical_wheel/gazebo/worlds.py": "ad8b8133fb57b2bcab729ce6eb215f931ac04128b925c496710d8176ef0b39d4"
+    }
+  },
+  "registered_before_map_arithmetic": true,
+  "utc": "2026-11-28T02:35:00.454593+00:00"
+}

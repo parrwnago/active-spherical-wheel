@@ -1,0 +1,12 @@
+{
+  "case": {
+    "case_id": "eight_p030_N",
+    "duration_s": 133.0,
+    "phase_rad": 0.3,
+    "policy": "N",
+    "route_id": "eight",
+    "yaw_deg": 158.0
+  },
+  "elapsed_s": 219.99273762899998,
+  "traceback": "Traceback (most recent call last):\n  File \"/home/parrwnago/active-spherical-wheel/results/tangent_heading_routes_20261127/campaign_tools/run_case.py\", line 321, in run_case\n    log,summary=run_gazebo(workspace,terrain,path,OffroadParams(**case_parameters),\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/parrwnago/active-spherical-wheel/src/spherical_wheel/gazebo/experiments.py\", line 55, in run_gazebo\n    log, summary = run_offroad(workspace, terrain, path, params, **options)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/parrwnago/active-spherical-wheel/src/spherical_wheel/offroad_experiments.py\", line 250, in run_offroad\n    xy, velocity, acceleration = path(now)\n                                 ^^^^^^^^^\n  File \"/home/parrwnago/active-spherical-wheel/results/tangent_heading_routes_20261127/runtime/route.py\", line 126, in __call__\n    curve, first, second, _ = self.shape_derivatives(u)\n                              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/parrwnago/active-spherical-wheel/results/tangent_heading_routes_20261127/runtime/route.py\", line 54, in shape_derivatives\n    raise ValueError('Finite geometric parameter in [0,1] required')\nValueError: Finite geometric parameter in [0,1] required\n"
+}

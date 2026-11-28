@@ -1,14 +1,25 @@
 # Active spherical wheel: standalone context for another ChatGPT
 
-**Revision 10 — 27 November 2026, through I-75.** Latest experiment baseline:
-repository commit `2136d8b`; the selected live controller remains unchanged.
-I-75 tests trajectory-facing heading with the original LQR/observer/contact
-feedforward, using a result-owned helper adapter and no live/default change.
+**Revision 11 — 27 November 2026, through I-76.** Latest experiment baseline:
+repository commit `5d96001`; the selected live controller remains unchanged.
+I-76 tests the unchanged trajectory-facing helper across more routes, with
+original LQR/observer/contact feedforward and no live/default promotion.
 This is a study and discussion
 document, not a claim that every retained experiment is part of the operating
 controller. It is intended to remain useful without access to the repository.
 
-The latest experiment, **I-75**, compares native N with trajectory-facing
+The latest experiment, **I-76**, extends the same heading helper to straight,
+90° arc and figure-eight routes, each at three starts: 18 corrected runs. All
+complete. Heading RMS improves 8/9 pairs, but timed XY only3/9 and geometric
+path distance4/9. The figure-eight is promising: every phase's geometric RMS
+improves,39.87→15.54,27.91→22.22,32.73→17.21 mm; timed error improves 2/3.
+Straight improves 1/3; arc 0/3. The screen fails42/207 control checks despite
+686 consistency checks passing. Equal stopping totals 3 N /3 T conceal two lost
+native successes and two different gains. A straight−1 T transient reaches
+19.89° tilt/1.09 m/s/14.12 m/s². Keep T experimental; Section20 distinguishes
+route-specific benefit from general improvement and retains setup/recovery history.
+
+The preceding experiment, **I-75**, compares native N with trajectory-facing
 heading T in six fresh S-path episodes. Both start aligned to the initial path
 tangent, yaw argument 149.242843°, rather than the old 45°. All complete; all
 212 setup checks pass, but 15/60 fixed control checks fail. Heading RMS N→T is
@@ -463,6 +474,7 @@ the selected live controller's adopted replacement.
 | [I-73: fresh S-path rolling-reference comparison](iterations/2026-11-27/contact-reference-control/README.md) | Nine new45s Gazebo/DART episodes, N/A/C ×three phases. Only rolling reference/feedforward records change. Allcomplete; C fails12/36controlchecks and noneof9fullysettles. −1.0tracking improves, +.3regresses, +.9littlechange. | No consistent motion gain; original pipeline retained. Section17 distinguishes positionreturn, motion and freeheading. |
 | [I-74: bounded starting-heading hold](iterations/2026-11-27/heading-hold-control/README.md) | Six new matched N/H S episodes, exact native replay. H improves stopping in two phases; only −1.0 meets the additional heading tolerance. Twelve of 66 fixed checks fail, including command magnitude/rotation peaks and+.9tracking. | H remains experimental. Section18 explains configuration-dependent helper availability and the rolling-reference/LQR demand spike. |
 | [I-75: trajectory-facing heading](iterations/2026-11-27/tangent-heading-control/README.md) | Six fresh aligned-start N/T episodes. Heading RMS improves in all three, but every moving XY RMS worsens; 15/60 fixed control checks fail. No T meets original four-condition settling. | T stays experimental. Section 19 distinguishes an improved heading objective from tracking, command feasibility and a fully coordinated yaw reference. |
+| [I-76: heading across three routes](iterations/2026-11-27/tangent-heading-routes/README.md) | Eighteen corrected N/T runs all complete. Heading improves8/9, timedXY3/9, geometric path4/9; eight geometric RMS improvesall3, arcnone. Fixed screen fails42/207 checks. | T remains experimental. Section20 preserves a real eight path benefit, stopping/transient regressions, numerical endpoint correction, client recovery and exact replay. |
 
 Every row is offline saved-log work, not a new driving improvement. Episodes
 were inspected before these later analyses; whole-episode holdouts reduce
@@ -1547,7 +1559,149 @@ heading progress and tracking/stopping/command regressions for presentation.
 A full coordinated heading reference remains proposed and untested. Do not
 quietly promote the overlay or restart parked solver/HMM/PF work.
 
-## 20. Sources, attribution, and how to continue a discussion
+## 20. I-76: broader route comparison supports a limited figure-eight benefit
+
+**Question.** The user believes facing planned travel may help more generally
+and asks for more trajectories. Keep the I-75 helper settings and original
+LQR/observer/contact feedforward unchanged; broaden geometry without tuning.
+Nine matched route/phase pairs compare native N with trajectory-heading T.
+The selected live controller stays N. T is an opt-in experiment, not a replacement
+contact estimator or dynamic contact predictor.
+
+**Inputs and design.** Fixed site anchor[-2.4,10]m, rotation113°, quintic progress,
+3 s initial/10 s final hold,5 ms control/1 ms Gazebo/DART physics. Straight uses
+[1.2u,0], arc[.6sin(pi*u/2),.6(1−cos(pi*u/2))], both32 s motion/45 s total.
+Eight uses[.5sin(2piu),.25sin(4piu)],120 s motion/133 s total, with local origin
+offset[.5,0]m. Both N/T start facing their geometric tangent: yaw113° for
+straight/arc,158° for eight. Initial q/v/last input match exactly per pair.
+These are fresh baselines, not old S recordings. Eight starts/ends at its
+crossing with a regular tangent; it is not a stop/reversal at that crossing.
+
+Raw and command heading coincide. Exact Euler-heading-rate feedback follows
+the planned derivative, with original .2/.06 gains, .15Nm helper cap and .05Nm
+horizontal reaction budget, free-shell/lever eligibility and used-error clamp.
+Planned rate peaks0/.09204/.29677rad/s meet the same .35/.5 rate/acceleration
+guards. Planned accumulated heading variation, sampled over4097uniformu, is
+about0°/90°/540°; eight has zero net heading change. Its slower schedule does
+not make all routes equally difficult. Native LQR angular refs stay zero and
+rolling allocation translation-only, as in I-75. Full reference coordination
+remains untested.
+
+**Terrain boundaries are explicit.** Straight/arc pass the original moderate
+12°facet/80mm relief/.15m corridor/≥1m feature-clearance screen. Eight fails
+at its original placement111.37mm/12.385°, and after half-metre forward shift
+96.72mm/12.385°. A finite preregistered six-placement map-only scan finds no
+pass; no candidate is selected. Before reading controller outcomes, the domain
+is revised to retain the shifted eight as explicitly rough stress outside the
+moderate screen. Its slope/relief pass flags remain false; coverage/clearance
+pass. Straight/arc must still pass. No failed geometry gate is relabeled as a
+pass. The 686 later consistency checks concern the registered source/reference/
+state boundary, not a new moderate-screen pass for eight. Comparisons isolate
+method effects within each route/phase, not geometry alone across terrains.
+
+**Criteria fixed before outcomes.** T heading RMS≤max(.8N,5°), Euler-rate RMS
+≤max(.8N,.03rad/s), with relative benefits distinguished from absolute-floor
+passes. Prior timed XY/lean/tilt/speed/50 ms acceleration/clip-frequency/clip-
+magnitude/command-step guards remain. Add moving geometric RMS≤1.10N+1mm,
+peak≤N+10mm, and require T four-condition stopping whenever N passes. All nine
+pairs must pass. Geometric distance is exact distance to a fixed4097point
+uniform-u polyline, not exact analytic distance. It can hide incorrect progress
+at the crossing, so timed tracking remains a separate criterion.
+
+| Route / phase | Heading RMS N→T, degrees | Moving timed XY RMS N→T, mm | Geometric RMS N→T, mm | Final goal N→T, mm |
+|---|---:|---:|---:|---:|
+| straight−1 |69.08→34.46|42.42→59.32|39.08→56.29|18.74→22.69|
+| straight+.3 |76.25→17.89|35.81→34.67|32.57→29.23|1.26→52.38|
+| straight+.9 |91.35→9.64|29.35→40.83|18.32→22.78|2.13→.54|
+| arc−1 |26.07→13.98|16.91→24.87|10.91→12.60|1.96→8.67|
+| arc+.3 |38.24→12.74|13.62→58.12|7.75→12.62|13.24→133.01|
+| arc+.9 |83.91→18.50|24.10→25.28|13.54→21.14|7.28→40.68|
+| eight−1 |96.02→76.96|46.36→28.66|39.87→15.54|32.88→42.13|
+| eight+.3 |88.84→90.89|44.53→42.58|27.91→22.22|.301→28.32|
+| eight+.9 |101.15→51.70|62.91→69.54|32.73→17.21|.060→12.74|
+
+Heading/rate windows are3s through terminal, moving windows[3,35) or[3,123).
+All 18 complete, finite and capped;686/686 consistency checks pass. **165/207
+control checks pass;42 fail: FAIL_TANGENT_SCREEN**. Heading RMS improves 8/9,
+reaches 20% benefit7/9; rateRMS improves7/9, reaches 20% benefit6/9. No absolute-floor
+pass. TimedXY improves 3/9; geometric4/9. Eight−1 misses the20% heading threshold
+narrowly at 19.846%reduction (.148°RMS excess), while its other22 checks pass.
+Keep that failed gate; do not redefine success because it nearly passes.
+
+**What is promising.** All three eight starts improve geometric distance, with
+timed improvement2/3. This is motion evidence beyond better pointing. Straight
+improves 1/3; arc 0/3, so there is no consistent general benefit under this overlay.
+Eight+.9 has better geometric distance and final heading, but worse timed RMS
+and final position error;
+these measure different aspects and must not be combined into an invented win.
+
+**Stopping and peaks.** N passes final 2 s four-condition settling at arc+.9,
+eight+.3,eight+.9. T passes straight+.9,arc−1,eight+.9. Equal totals 3each conceal
+two native successes lost and two different gains. Five-condition stopping,
+which adds≤10° raw heading error throughout the same final 2 s, passes only
+straight+.9 T and eight+.9 T; N none. Straight−1 T has 19.89° tilt,1.09 m/s speed,
+14.12 m/s²50 ms acceleration and4.725 rad/s Euler-rate-error peaks. All actual
+input caps hold. No T activity is insufficient, so the result is not a lack-of-
+exposure inconclusive screen. Better average pointing is not final regulation.
+
+**Different algebraic spike sources.** A bounded descriptive audit uses all 18
+maximum normalized clipping events and±25ms contexts, declared during campaign
+before outcome reads. All 144 ledger identities verify. In straight−1 N at
+20.585s, rolling shaft/shell-B refs26.056/−91.896rad/s produce large joint-rate
+LQR terms; motors request4.741/−.167/−7.190Nm and apply1.5/−.167/−.6. In
+straight−1 T at20.975s, refs are ordinary .544/0/.183rad/s; attitude and body-
+velocity feedback dominate shell-B request−7.272Nm, clipped−.6. Helper adds
+only+.107Nm onA. Large rolling refs are not the source of every request; a
+small direct helper term does not establish how the different closed-loop
+states arose. No contact singularity or complete physical cause is proved.
+Eight max normalized clipping excess N/T improves7.367/.327,3.242/3.175,
+5.503/1.973; selected+.3T/+.9T events do contain dominant joint-rate blocks.
+
+**Iteration history is part of the result.** The first dynamic attempt is
+unscored: twelve processes finish, three hit a numerical reference exception,
+three remaining ones are explicitly aborted with lost in-memory states disclosed.
+The next accumulated clock122.99999999996062s is just below123s, but expanded
+quintic cancellation yields progress1.0000000000000009. Strict geometry-domain
+validation throws. A minimal clip to mathematical[0,1], preserving derivative
+arithmetic and every controller parameter, fixes only that numeric domain.
+Adversarial observed-clock/ULP checks pass. Stored terrain-fixture XY/V/A and
+seven ground points match exactly; no new map query is performed.
+
+All 18 corrected cases start fresh. After accidental client closure, six complete
+corrected runs are recovered with their actual previously observed exit0 tool
+stdout and independently verified artifact/provenance hashes; three interrupted
+arc records/logs are preserved, twelve remaining jobs resume unchanged. No
+first-attempt recording is pooled into corrected outcomes. Numerical replay then
+finds all 12 old full recordings,3saved precision prefixes and3truth prefixes
+exact by dtype/shape/arraybytes. The original partials were not in the first
+120file seal; they receive explicit later bindings before replay. Earlier error
+diagnosis read only time. This is correction reproducibility, not an adoption
+result or new unit-test count; three unsaved aborts are excluded.
+
+**Verification and decision.** Final scoped functions:10 reference,13 runner,
+34 evaluation,9 media,7 package/restore plus one metadata-coverage regression,
+with earlier stages/subtests included.
+Original gains/plugins/production sources remain. All149 corrected output files
+seal before canonical evaluation, which runs once. Allnine full side-by-side
+videos retain actual goal holds, raw heading/rate/tilt and command metadata.
+[Full I-76 record, PDF, videos and restoration](iterations/2026-11-27/tangent-heading-routes/README.md).
+Keep native N selected and T experimental. The figure-eight spatial benefit
+justifies a focused next hypothesis; it does not qualify the current overlay as
+a general improvement or reject fully coordinated trajectory-facing control.
+An archive coverage omission is also preserved: the initial suffix set omitted
+JSONL recovery evidence needed by the final149-output seal. A separate metadata
+amendment preserves the initial compact manifest/raw bundle, adds the exact
+files with source/receipt provenance and tests missing/corrupt-JSONL behavior.
+The coverage check also finds18 per-case model YAML snapshots missing from a
+top-level scan; exact copies are validated against sealed prephysics provenance.
+Final actual restoration must close over all149 sealed outputs and18 model
+prerequisites, as well as registered result-owned tool inputs, not only the
+selected inventory. Final actual-restore QA passes all167 essential
+prerequisites and223 registered result-owned inputs, with all3,633 compact files
+and7,746 raw members verified. No physics, video, metric or control source
+changes result.
+
+## 21. Sources, attribution, and how to continue a discussion
 
 The repository's [study-guide PDF](iterations/2026-11-26/presentation-preparation/control-and-observer-study-guide.pdf)
 and [teammate handoff](TEAMMATE_HANDOFF.md) provide further derivations and

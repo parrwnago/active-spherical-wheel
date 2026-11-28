@@ -1,0 +1,37 @@
+{
+  "change": "Only bound the original expanded quintic u with float(np.clip(u,0,1)); original du/ddu formulas and ordering, shapes, placements, clocks, gains, controller adapter and gates retained.",
+  "failed_attempt_output_seal_sha256": "d7da4005b306359d1ae031ec657fb94e62390aafab469d2e3336d3c9279ca81c",
+  "failure_classification": "Reference endpoint roundoff rejected by strict geometric-parameter domain; not a physical/control performance verdict.",
+  "focused_reference_functions_final": 10,
+  "iteration": "I-76",
+  "new_physics_steps": 0,
+  "new_tests_run": false,
+  "next_reference_output": "runtime/reference_stage05",
+  "next_reference_registration": "protocol/reference_stage05.json",
+  "one_new_contract": "Adversarial endpoint ULP clocks and observed accumulated-clock fraction through all routes and heading references; checks finite valid geometry and unchanged du/ddu formulas.",
+  "preserved_attempt": "failed_attempt01",
+  "preserved_source": "failed_attempt01/pre_fix_source",
+  "source_sha256_before_checks": {
+    "results/tangent_heading_routes_20261127/runtime/heading_reference.py": "823d5208ceeac8c08ba9a81174e4c71d159b01b24f48891770d7323727b3548d",
+    "results/tangent_heading_routes_20261127/runtime/reference_preflight.py": "d048142b22a5c94db68981948d6b8797109f46b49da997f4accf598e45a9e117",
+    "results/tangent_heading_routes_20261127/runtime/route.py": "512a3fd7c8a034f85745d6c2f90485a7c5c632dde3578061103e91fe0405b55e",
+    "results/tangent_heading_routes_20261127/runtime/test_analytic_reference.py": "61bc4785422a552ca3c48d6b826b42eb9fdc46c5a8d0fd6162b0dd68f77d3f6e"
+  },
+  "status": "minimal_numerical_fix_prepared_pending_registered_tests",
+  "time_only_diagnosis": {
+    "cases": [
+      "eight_m100_N",
+      "eight_m100_T",
+      "eight_p030_N"
+    ],
+    "clock_scope": "Read only partial_precision time_s; failed-call time is extrapolated from last recorded time, not a new saved physical state.",
+    "expanded_quintic_u": 1.0000000000000009,
+    "extrapolated_next_nominal_5ms_time_s": 122.99999999996062,
+    "fraction_r": 0.9999999999996718,
+    "last_saved_time_s": 122.99499999996063,
+    "overshoot_above_one": 8.881784197001252e-16,
+    "performance_fields_read": false,
+    "saved_rows_each": 24600
+  },
+  "utc": "2026-11-28T02:58:07.329959+00:00"
+}

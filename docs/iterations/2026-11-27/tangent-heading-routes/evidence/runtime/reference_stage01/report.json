@@ -1,0 +1,200 @@
+{
+  "focused_test_functions": 9,
+  "iteration": "I-76",
+  "limitation": "Pure geometric/reference checks are not actuator feasibility or closed-loop validation.",
+  "no_terrain_or_case_output_read": true,
+  "passed": true,
+  "physics_steps": 0,
+  "routes": {
+    "arc": {
+      "acceleration_limit_active_samples": 0,
+      "count": 9001,
+      "final_heading_deg": 203.0,
+      "initial_heading_deg": 113.0,
+      "rate_limit_active_samples": 0,
+      "raw_command_arrays_exact": true,
+      "reference": {
+        "active_governor": false,
+        "angle_unwrap": "Analytic planned-parameter branch; no temporal sample history or posthoc unwrap.",
+        "certified_max_acceleration_rad_s2": 0.008856442208174891,
+        "certified_max_rate_rad_s": 0.09203884727313846,
+        "derivative_meaning": "Euler heading and its time derivatives, not physical world-z angular velocity.",
+        "endpoint_policy": "Geometric initial/final tangent at rest; zero heading rate/acceleration in both holds.",
+        "formula": "psi_u=cross(c1,c2)/|c1|^2; psi_uu=(cross(c1,c3)*|c1|^2-2*cross(c1,c2)*(c1.c2))/|c1|^4",
+        "geometric_certificate": {
+          "maximum_heading_parameter_derivative": 1.5707963267948966,
+          "maximum_heading_parameter_second_derivative": 0.0,
+          "maximum_second_norm": 1.4804406601634037,
+          "maximum_third_norm": 2.325470751022486,
+          "minimum_tangent_norm": 0.9424777960769379,
+          "proof": "Circular tangent angle equals (pi/2)*u exactly."
+        },
+        "kind": "i76_analytic_route_tangent",
+        "max_acceleration_rad_s2": 0.5,
+        "max_rate_rad_s": 0.35,
+        "path": {
+          "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+          "duration_s": 32.0,
+          "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+          "geometry": "origin + R113deg @ [.6*sin(pi*u/2),.6*(1-cos(pi*u/2))]",
+          "geometry_heading_deg": 113.0,
+          "goal_hold_s": 10.0,
+          "initial_heading_deg": 113.0,
+          "kind": "i76_arc",
+          "local_footprint_m": [
+            0,
+            0.6,
+            0,
+            0.6
+          ],
+          "origin": [
+            -2.4,
+            10.0
+          ],
+          "origin_policy": "Fixed planned world origin; no measured-state reanchor or reset.",
+          "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+          "route_id": "arc",
+          "start_s": 3.0,
+          "total_duration_s": 45.0
+        },
+        "raw_equals_command": true,
+        "reference_inputs": "Frozen planned route and time only; no measured state, contact, terrain or outcome."
+      },
+      "sampled_absolute_acceleration_peak_rad_s2": 0.008856441314598498,
+      "sampled_absolute_rate_peak_rad_s": 0.09203884727313846,
+      "sampled_heading_range_deg": [
+        113.0,
+        203.0
+      ],
+      "sampled_linear_acceleration_peak_m_s2": 0.005434605125830183,
+      "sampled_speed_peak_m_s": 0.05522330836388308
+    },
+    "eight": {
+      "acceleration_limit_active_samples": 0,
+      "count": 26601,
+      "final_heading_deg": 158.0,
+      "initial_heading_deg": 158.0,
+      "rate_limit_active_samples": 0,
+      "raw_command_arrays_exact": true,
+      "reference": {
+        "active_governor": false,
+        "angle_unwrap": "Analytic planned-parameter branch; no temporal sample history or posthoc unwrap.",
+        "certified_max_acceleration_rad_s2": 0.28890073714380043,
+        "certified_max_rate_rad_s": 0.331891299725658,
+        "derivative_meaning": "Euler heading and its time derivatives, not physical world-z angular velocity.",
+        "endpoint_policy": "Geometric initial/final tangent at rest; zero heading rate/acceleration in both holds.",
+        "formula": "psi_u=cross(c1,c2)/|c1|^2; psi_uu=(cross(c1,c3)*|c1|^2-2*cross(c1,c2)*(c1.c2))/|c1|^4",
+        "geometric_certificate": {
+          "maximum_heading_parameter_derivative": 21.241043182442112,
+          "maximum_heading_parameter_second_derivative": 1148.4545123209136,
+          "maximum_second_norm": 44.13821270373381,
+          "maximum_third_norm": 511.36861524000744,
+          "minimum_tangent_norm": 2.0779682205165204,
+          "proof": "Exact quadratic minimum in z=cos\u00b2(theta); componentwise norm upper bounds; |psi_u|<=|c2|/min|c1| and |psi_uu|<=|c3|/min|c1|+2*(|c2|/min|c1|)^2."
+        },
+        "kind": "i76_analytic_route_tangent",
+        "max_acceleration_rad_s2": 0.5,
+        "max_rate_rad_s": 0.35,
+        "path": {
+          "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+          "duration_s": 120.0,
+          "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+          "geometry": "origin + R113deg @ [.5*sin(2*pi*u),.25*sin(4*pi*u)]",
+          "geometry_heading_deg": 113.0,
+          "goal_hold_s": 10.0,
+          "initial_heading_deg": 158.0,
+          "kind": "i76_eight",
+          "local_footprint_m": [
+            -0.5,
+            0.5,
+            -0.25,
+            0.25
+          ],
+          "origin": [
+            -2.4,
+            10.0
+          ],
+          "origin_policy": "Fixed planned world origin; no measured-state reanchor or reset.",
+          "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+          "route_id": "eight",
+          "start_s": 3.0,
+          "total_duration_s": 133.0
+        },
+        "raw_equals_command": true,
+        "reference_inputs": "Frozen planned route and time only; no measured state, contact, terrain or outcome."
+      },
+      "sampled_absolute_acceleration_peak_rad_s2": 0.05986905032067307,
+      "sampled_absolute_rate_peak_rad_s": 0.29677030964738094,
+      "sampled_heading_range_deg": [
+        -111.99999999999999,
+        158.0
+      ],
+      "sampled_linear_acceleration_peak_m_s2": 0.009632705819755845,
+      "sampled_speed_peak_m_s": 0.06942004590872447
+    },
+    "straight": {
+      "acceleration_limit_active_samples": 0,
+      "count": 9001,
+      "final_heading_deg": 113.0,
+      "initial_heading_deg": 113.0,
+      "rate_limit_active_samples": 0,
+      "raw_command_arrays_exact": true,
+      "reference": {
+        "active_governor": false,
+        "angle_unwrap": "Analytic planned-parameter branch; no temporal sample history or posthoc unwrap.",
+        "certified_max_acceleration_rad_s2": 0.0,
+        "certified_max_rate_rad_s": 0.0,
+        "derivative_meaning": "Euler heading and its time derivatives, not physical world-z angular velocity.",
+        "endpoint_policy": "Geometric initial/final tangent at rest; zero heading rate/acceleration in both holds.",
+        "formula": "psi_u=cross(c1,c2)/|c1|^2; psi_uu=(cross(c1,c3)*|c1|^2-2*cross(c1,c2)*(c1.c2))/|c1|^4",
+        "geometric_certificate": {
+          "maximum_heading_parameter_derivative": 0.0,
+          "maximum_heading_parameter_second_derivative": 0.0,
+          "maximum_second_norm": 0.0,
+          "maximum_third_norm": 0.0,
+          "minimum_tangent_norm": 1.2,
+          "proof": "Constant nonzero tangent."
+        },
+        "kind": "i76_analytic_route_tangent",
+        "max_acceleration_rad_s2": 0.5,
+        "max_rate_rad_s": 0.35,
+        "path": {
+          "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+          "duration_s": 32.0,
+          "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+          "geometry": "origin + R113deg @ [1.2*u,0]",
+          "geometry_heading_deg": 113.0,
+          "goal_hold_s": 10.0,
+          "initial_heading_deg": 113.0,
+          "kind": "i76_straight",
+          "local_footprint_m": [
+            0,
+            1.2,
+            0,
+            0
+          ],
+          "origin": [
+            -2.4,
+            10.0
+          ],
+          "origin_policy": "Fixed planned world origin; no measured-state reanchor or reset.",
+          "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+          "route_id": "straight",
+          "start_s": 3.0,
+          "total_duration_s": 45.0
+        },
+        "raw_equals_command": true,
+        "reference_inputs": "Frozen planned route and time only; no measured state, contact, terrain or outcome."
+      },
+      "sampled_absolute_acceleration_peak_rad_s2": 0.0,
+      "sampled_absolute_rate_peak_rad_s": 0.0,
+      "sampled_heading_range_deg": [
+        113.0,
+        113.0
+      ],
+      "sampled_linear_acceleration_peak_m_s2": 0.0067658227844238465,
+      "sampled_speed_peak_m_s": 0.07031249999999999
+    }
+  },
+  "source_and_inputs_unchanged": true
+}

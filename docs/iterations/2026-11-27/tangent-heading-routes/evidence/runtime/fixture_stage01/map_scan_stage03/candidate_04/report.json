@@ -1,0 +1,115 @@
+{
+  "anchor_m": [
+    -2.4,
+    10.0
+  ],
+  "candidate_index_1based": 4,
+  "corridor_height_range_m": [
+    1.127681829067113,
+    1.2360797534832482
+  ],
+  "corridor_relief_m": 0.10839792441613527,
+  "corridor_slope_deg": {
+    "maximum": 14.730307789474193,
+    "p95": 12.404898239681769
+  },
+  "features": {
+    "lava": {
+      "exact_below_one_m": false,
+      "lower_bound_m": 1.0,
+      "minimum_sampled_route_xy_clearance_m": 1.0,
+      "nearby_triangles": 0,
+      "total_triangles": 13836
+    },
+    "rocks_big": {
+      "exact_below_one_m": false,
+      "lower_bound_m": 1.0,
+      "minimum_sampled_route_xy_clearance_m": 1.0,
+      "nearby_triangles": 0,
+      "total_triangles": 6510
+    },
+    "rocks_medium": {
+      "exact_below_one_m": false,
+      "lower_bound_m": 1.0,
+      "minimum_sampled_route_xy_clearance_m": 1.0,
+      "nearby_triangles": 0,
+      "total_triangles": 70318
+    }
+  },
+  "fixed_screens": {
+    "maximum_corridor_facet_slope_deg": 12.0,
+    "maximum_corridor_total_height_relief_m": 0.08,
+    "minimum_route_feature_xy_clearance_m": 1.0
+  },
+  "gates": {
+    "corridor_height_range": false,
+    "corridor_within_dem": true,
+    "feature_xy_clearance": true,
+    "max_corridor_facet_slope": false
+  },
+  "iteration": "I-76",
+  "limitations": [
+    "Sampled route/circumference corridor, not a continuous certificate.",
+    "Mesh feature clearance is conservative XY projection, capped at1m lower bound.",
+    "Map-only fixture selection gives no dynamic performance or actuator-feasibility evidence."
+  ],
+  "no_active_route_mutation": true,
+  "no_dynamic_outcomes_read": true,
+  "no_physics": true,
+  "passed": false,
+  "planned_local_offset_m": [
+    0.5,
+    -0.8
+  ],
+  "planned_origin_m": [
+    -1.8589616814826846,
+    10.772837329517639
+  ],
+  "route": {
+    "anchor_origin": [
+      -2.4,
+      10.0
+    ],
+    "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+    "duration_s": 120.0,
+    "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+    "geometry": "origin + R113deg @ [.5*sin(2*pi*u),.25*sin(4*pi*u)]",
+    "geometry_heading_deg": 113.0,
+    "goal_hold_s": 10.0,
+    "initial_heading_deg": 158.0,
+    "kind": "i76_eight",
+    "local_footprint_m": [
+      -0.5,
+      0.5,
+      -0.25,
+      0.25
+    ],
+    "origin": [
+      -1.8589616814826846,
+      10.772837329517639
+    ],
+    "origin_policy": "Fixed per-route planned origin = shared site anchor + R113deg @ planned_local_offset; no measured-state reanchor or reset.",
+    "planned_local_offset": [
+      0.5,
+      -0.8
+    ],
+    "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+    "route_id": "eight",
+    "start_s": 3.0,
+    "total_duration_s": 133.0
+  },
+  "route_height_range_m": [
+    1.1297744383765163,
+    1.2243854208767209
+  ],
+  "route_slope_deg": {
+    "maximum": 14.19657305955145,
+    "p95": 13.178983988703678
+  },
+  "route_xy_bounds_m": [
+    -2.236237932765536,
+    -1.481685430199833,
+    10.277508931116113,
+    11.268165727919165
+  ]
+}

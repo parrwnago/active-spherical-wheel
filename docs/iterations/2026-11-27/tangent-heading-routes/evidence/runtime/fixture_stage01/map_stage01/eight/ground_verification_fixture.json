@@ -1,0 +1,77 @@
+{
+  "classification": "Planned map points only; no Gazebo ground verification has run yet.",
+  "control_interval_s": 0.005,
+  "ground_check_points_xy_m": [
+    [
+      -2.4,
+      10.0
+    ],
+    [
+      -2.5424822960664715,
+      10.059655161671003
+    ],
+    [
+      -2.7003669241515014,
+      10.398512046572591
+    ],
+    [
+      -2.4,
+      10.0
+    ],
+    [
+      -2.0996330758484993,
+      9.601487953427409
+    ],
+    [
+      -2.257517703933529,
+      9.940344838328997
+    ],
+    [
+      -2.4,
+      10.0
+    ]
+  ],
+  "ground_check_times_s": [
+    3.0,
+    23.0,
+    43.0,
+    63.0,
+    83.0,
+    103.0,
+    123.0
+  ],
+  "requested_duration_s": 133.0,
+  "route": {
+    "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+    "duration_s": 120.0,
+    "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+    "geometry": "origin + R113deg @ [.5*sin(2*pi*u),.25*sin(4*pi*u)]",
+    "geometry_heading_deg": 113.0,
+    "goal_hold_s": 10.0,
+    "initial_heading_deg": 158.0,
+    "kind": "i76_eight",
+    "local_footprint_m": [
+      -0.5,
+      0.5,
+      -0.25,
+      0.25
+    ],
+    "origin": [
+      -2.4,
+      10.0
+    ],
+    "origin_policy": "Fixed planned world origin; no measured-state reanchor or reset.",
+    "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+    "route_id": "eight",
+    "start_s": 3.0,
+    "total_duration_s": 133.0
+  },
+  "route_id": "eight",
+  "unchanged_ground_check": "Original Gazebo verify_ground median<=200um and at least50% points within200um; no tolerance change.",
+  "visual_bounds_xy_m": [
+    -4.277276251282851,
+    -0.5227237487171488,
+    8.004671601598474,
+    11.995328398401526
+  ]
+}

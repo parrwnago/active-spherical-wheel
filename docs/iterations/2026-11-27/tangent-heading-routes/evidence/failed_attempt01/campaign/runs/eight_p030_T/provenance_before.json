@@ -1,0 +1,457 @@
+{
+  "captured_before_physics_utc": "2026-11-28T02:52:01.793426+00:00",
+  "case": {
+    "case_id": "eight_p030_T",
+    "duration_s": 133.0,
+    "phase_rad": 0.3,
+    "policy": "T",
+    "route_id": "eight",
+    "yaw_deg": 158.0
+  },
+  "counterfactual": "None. Native N is the independent closed-loop comparator; heading contribution is logged before fade/clipping.",
+  "default_changed": false,
+  "dropout": "Original native held loads/gain/reference history and stationary rolling branches unchanged.",
+  "git_head": "5d96001b64b6aa0282361c3e16c2909f1efaf5d6",
+  "intervention": "T uses planned tangent angle/rate and exact Euler-rate damping in the existing load/lever/torque-budget helper. Native LQR/observer/contacts/rolling/support/preparation/caps retained.",
+  "iteration": "I-76",
+  "measurement_boundary": "Current exact simulated q/v and last actual held input; observer/known-geometry selection only. Physical contacts/terrain prohibited during command.",
+  "pid": 10112,
+  "protocol_sha256": "00f4428907829baccdaaca0feeeb8157399cb4761d5e1ff2fe018d22a45009ae",
+  "sources": [
+    {
+      "origin": "config/model.yaml",
+      "sha256": "363a0cfec864f4874e5194929dc62defa37c87d1f3c4d38b4122fd02277f895e",
+      "snapshot": "source_snapshot/config/model.yaml"
+    },
+    {
+      "origin": "gazebo/physics/CanonicalLinkModelTracker.hh",
+      "sha256": "bdcc2cd67fcf25d77dee64fd9d94ef566e4000a85d04b9aa65c6b368bf3528d9",
+      "snapshot": "source_snapshot/gazebo/physics/CanonicalLinkModelTracker.hh"
+    },
+    {
+      "origin": "gazebo/physics/DartsimRetrieveWorld.hh",
+      "sha256": "d052c92e9d35214fe5f33fd1e82b9c6d4e1f64773b48d51e4ce9f98e9f324030",
+      "snapshot": "source_snapshot/gazebo/physics/DartsimRetrieveWorld.hh"
+    },
+    {
+      "origin": "gazebo/physics/EntityFeatureMap.hh",
+      "sha256": "0ad4936ca92f2d9a3157359330506c71fd3a35b3c8efd13bc733a699c97b08ac",
+      "snapshot": "source_snapshot/gazebo/physics/EntityFeatureMap.hh"
+    },
+    {
+      "origin": "gazebo/physics/Physics.cc",
+      "sha256": "46e5cd00159ab406d198da71feaa6d38da7fe2186bbff5537168c212e2332809",
+      "snapshot": "source_snapshot/gazebo/physics/Physics.cc"
+    },
+    {
+      "origin": "gazebo/physics/Physics.hh",
+      "sha256": "34acf8be55a25eabc29b52e892af0e520b1ee59cc7d49ab0398d9ac5f1dd58d1",
+      "snapshot": "source_snapshot/gazebo/physics/Physics.hh"
+    },
+    {
+      "origin": "gazebo/plugin/SphericalWheelBridge.cc",
+      "sha256": "d6b8c146cce2385f7c41eccda9a375a0c49de7fc7c2d1dbe5c4f0272cb9c542e",
+      "snapshot": "source_snapshot/gazebo/plugin/SphericalWheelBridge.cc"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/adapter/tangent_heading_adapter.py",
+      "sha256": "12402b356bc105463ca685bd50e3b3aeb23d80b84bc79396c54d6df2703e8a77",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/adapter/tangent_heading_adapter.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/adapter/test_tangent_heading_adapter.py",
+      "sha256": "0c48d0808845d749b3d4d6b8fb07f488b59b2358ff6df09c6ec2cf0d23d50317",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/adapter/test_tangent_heading_adapter.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/campaign_tools/checks.py",
+      "sha256": "4bc2a0e89224dd5f2032dcfd453fc63a2a7cef7171ff8909f9470d55c4e0038a",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/campaign_tools/checks.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/campaign_tools/launch.py",
+      "sha256": "b635df381b154183519336ab8d80c1693991597ec8cb091216e152a285b2a59b",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/campaign_tools/launch.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/campaign_tools/run_case.py",
+      "sha256": "def6e1e92e96fa9fd7d7be9f4db556b6990d426d8754224175f5b1eb949e564e",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/campaign_tools/run_case.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/campaign_tools/test_native_identity.py",
+      "sha256": "6d6b091cac4dadf99a3e5406521a069e4b65ab6d857b1fa33964028bdf6b14d1",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/campaign_tools/test_native_identity.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/campaign_tools/test_runner.py",
+      "sha256": "c3d1b48a82b76d1eb8c89099bec37a9328ae3eb29cec0b4a06c1c825d2113715",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/campaign_tools/test_runner.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/protocol/protocol.json",
+      "sha256": "00f4428907829baccdaaca0feeeb8157399cb4761d5e1ff2fe018d22a45009ae",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/protocol/protocol.json"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/protocol/register.py",
+      "sha256": "98ffc82ba30af3a433103f8eb2c8e85c3e66a9c555534d8ae6864d2386b3c4ea",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/protocol/register.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/runtime/environment_stage01/environment_probe.py",
+      "sha256": "29fca12a0a6d318d2b3bb68e56b94d203277d3ee93ad57fc84aa820a90082947",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/runtime/environment_stage01/environment_probe.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_preflight.py",
+      "sha256": "3d9e840d1d7118a73d4aa528588affb3b10b191919e55d945e8bd0e25d30501f",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_preflight.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_scan.py",
+      "sha256": "0dca71259e9586651cf86535d1016e5fd2fec7428ff4f9b33f2f7319c009e118",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/runtime/fixture_stage01/map_scan.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/runtime/fixture_stage01/verify_assets.py",
+      "sha256": "530f20cb08748d9474efd392f2f38062f4f0de5adc5376096ae62a2876c78e73",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/runtime/fixture_stage01/verify_assets.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/runtime/heading_reference.py",
+      "sha256": "823d5208ceeac8c08ba9a81174e4c71d159b01b24f48891770d7323727b3548d",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/runtime/heading_reference.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/runtime/reference_preflight.py",
+      "sha256": "252681740728a61d3a8c4703a9c1ab4a1063a00ba021b2a3e8a814bd28740791",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/runtime/reference_preflight.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/runtime/route.py",
+      "sha256": "a37df75e624b4132a6471dad81bd2e91635a5757effccf0bd54ef0cddda270ba",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/runtime/route.py"
+    },
+    {
+      "origin": "results/tangent_heading_routes_20261127/runtime/test_analytic_reference.py",
+      "sha256": "468307b1e406420409ddc3164c35795c111928eebaf4f9e231a4c49fd5ef56ea",
+      "snapshot": "source_snapshot/results/tangent_heading_routes_20261127/runtime/test_analytic_reference.py"
+    },
+    {
+      "origin": "scripts/run-lqr-contact-forecast.py",
+      "sha256": "4e4d590037801f178bb05e779ddb49fb093f5cae830212b9f90d57ddce1790cf",
+      "snapshot": "source_snapshot/scripts/run-lqr-contact-forecast.py"
+    },
+    {
+      "origin": "src/spherical_wheel/__init__.py",
+      "sha256": "3ec9d9b209172f8b735dba797aee9e1b7850bd28129d86083636525edbdb4d47",
+      "snapshot": "source_snapshot/src/spherical_wheel/__init__.py"
+    },
+    {
+      "origin": "src/spherical_wheel/__main__.py",
+      "sha256": "b0694f2035697f7295db710bca58167353174c77a7d92c8b620a2c150f464888",
+      "snapshot": "source_snapshot/src/spherical_wheel/__main__.py"
+    },
+    {
+      "origin": "src/spherical_wheel/balance_priority_control.py",
+      "sha256": "11e5320580f2a1ed007df9447bfaf2e1c6008fc8e679f01535f383e784a6d925",
+      "snapshot": "source_snapshot/src/spherical_wheel/balance_priority_control.py"
+    },
+    {
+      "origin": "src/spherical_wheel/cli.py",
+      "sha256": "8f808e8ec874b0e2bbb8d1ccc9d9fd96c6612ab655a12adebda7e4bfe9232406",
+      "snapshot": "source_snapshot/src/spherical_wheel/cli.py"
+    },
+    {
+      "origin": "src/spherical_wheel/contact.py",
+      "sha256": "a534156e7b304d60efd3e44911477ff5b89dedd076a90eb47e0c46fb2068fb84",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact.py"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_diagnostics.py",
+      "sha256": "f0a927e4c230b4f181f4d72cf5216f38d34de26573dcd511027047ff5a36cbcb",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_diagnostics.py"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_hypotheses.py",
+      "sha256": "c0995d4acb268c73e834c488514aa9f34cd2b3d57aca516c63a394429b93f532",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_hypotheses.py"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_kinematics.py",
+      "sha256": "678eff4f9792e86dd3b9dece83edaaf2517b8416df3b736352cb0a0142b98351",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_kinematics.py"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_load_consistency.py",
+      "sha256": "af6a1c52a2ac9ce459d2a8b810a82234eddbdda358384742f16047a31902fc9c",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_load_consistency.py"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_pose_diagnostic.py",
+      "sha256": "6cb83937e643a1536b7242101670e4661e4cfe1b6d4173e32a741477eb953edb",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_pose_diagnostic.py"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_prediction.py",
+      "sha256": "cb9deeee1e254ea2b1eb9b88511a68eb07b1b55233fc6ac3de808b849e978f3f",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_prediction.py"
+    },
+    {
+      "origin": "src/spherical_wheel/contact_sensing.py",
+      "sha256": "5471ab9054f2a40beb919c6aba5869ec113802c8ee4d96db0d454cd7a7bc1833",
+      "snapshot": "source_snapshot/src/spherical_wheel/contact_sensing.py"
+    },
+    {
+      "origin": "src/spherical_wheel/control.py",
+      "sha256": "e0c4107601e07cafe29b726341de4c32bb8151506a539e913b0d6eec2e0c8e6f",
+      "snapshot": "source_snapshot/src/spherical_wheel/control.py"
+    },
+    {
+      "origin": "src/spherical_wheel/experiments.py",
+      "sha256": "132113667aba7792689bc32f05f1b9b159af3901c41128858a76de560dcda638",
+      "snapshot": "source_snapshot/src/spherical_wheel/experiments.py"
+    },
+    {
+      "origin": "src/spherical_wheel/feasible_reference.py",
+      "sha256": "c044a48fdd00efa35d1ed1094183806c10d6329748eae5eedac713b0710438aa",
+      "snapshot": "source_snapshot/src/spherical_wheel/feasible_reference.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/__init__.py",
+      "sha256": "3d8aa250141d5f840b41a5a4bd1cd7b5d115942165f5b64567c72b883a1410c9",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/__init__.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/__main__.py",
+      "sha256": "e6fd3883bc41a08c518f4f24c4a72ff5de9a94cff725e7959ea115c38bd2105e",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/__main__.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/bridge.py",
+      "sha256": "6b1f7e2ec860e6d21a6a025d1581952836aef3515da66f60a2314d15776c18a4",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/bridge.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/experiments.py",
+      "sha256": "4fd2fa15833b724a027de054261698829b87c0667a14d2821c1684f989d6308b",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/experiments.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars.py",
+      "sha256": "0890c9ff2dda2e5b1d398c4154f74548f2219c805d09836656597cde326d2f63",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars_compare.py",
+      "sha256": "11cd6b314bae383f150c48bfc864672878a1f109757476713ecfcee90f966ceb",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars_compare.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars_observer.py",
+      "sha256": "f420a80f2fbd5a45f3ca926e3c76c3959e65114d65226c02c76ed24ceb49b67a",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars_observer.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/mars_shapes.py",
+      "sha256": "f5205692cdeda87e1487d6f4d27f63d5fc0adf15e35682a9e11602d02791a107",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/mars_shapes.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/model_sdf.py",
+      "sha256": "34abc16930ebe04f3f8333aa8d57803c9c33c12e9eea7a12f668fb6a2da05d49",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/model_sdf.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/parity.py",
+      "sha256": "35140f72c13af341731e8b260e2e3f80458b3876c5db04f18f78cf7840cc68b6",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/parity.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/plant.py",
+      "sha256": "d82e2445d2d37363861967b9537ae86557b7a5b3d4d513f0f863c014d4172c4d",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/plant.py"
+    },
+    {
+      "origin": "src/spherical_wheel/gazebo/worlds.py",
+      "sha256": "ad8b8133fb57b2bcab729ce6eb215f931ac04128b925c496710d8176ef0b39d4",
+      "snapshot": "source_snapshot/src/spherical_wheel/gazebo/worlds.py"
+    },
+    {
+      "origin": "src/spherical_wheel/geometry_first_contact.py",
+      "sha256": "40345a138228a205901f059768f615f69f4e2de9f16a44550f2bddcbc6bbfb41",
+      "snapshot": "source_snapshot/src/spherical_wheel/geometry_first_contact.py"
+    },
+    {
+      "origin": "src/spherical_wheel/handoff_control.py",
+      "sha256": "6d9ee4e7d94db6e364b3d916770c326bafbc12e8c8bc38aeb3169f7f6ff1f9b8",
+      "snapshot": "source_snapshot/src/spherical_wheel/handoff_control.py"
+    },
+    {
+      "origin": "src/spherical_wheel/handoff_model.py",
+      "sha256": "663a13b553c402adf3e1d795c34bfba7c5bd886471ef9c3cc36135e9ac08a559",
+      "snapshot": "source_snapshot/src/spherical_wheel/handoff_model.py"
+    },
+    {
+      "origin": "src/spherical_wheel/lab_runtime.py",
+      "sha256": "64bf8c70fae337553e35a55202bb626b15abe5a23f28a6d6cf02177034bfb096",
+      "snapshot": "source_snapshot/src/spherical_wheel/lab_runtime.py"
+    },
+    {
+      "origin": "src/spherical_wheel/lab_server.py",
+      "sha256": "d5af071ce3c3aeabe5a02c3e9e31ab5c9c087f9bd1076c9905318d0f2a6cf311",
+      "snapshot": "source_snapshot/src/spherical_wheel/lab_server.py"
+    },
+    {
+      "origin": "src/spherical_wheel/mirror.py",
+      "sha256": "8e6325a9c44f79516c32c2af079718c3355f447d0d2751c44a684b6b8cf7b038",
+      "snapshot": "source_snapshot/src/spherical_wheel/mirror.py"
+    },
+    {
+      "origin": "src/spherical_wheel/mobility.py",
+      "sha256": "92c08f5fe4001065128f8b9fe7b6821c8a63d9d4b7622da961778d1fd3adbab8",
+      "snapshot": "source_snapshot/src/spherical_wheel/mobility.py"
+    },
+    {
+      "origin": "src/spherical_wheel/model.py",
+      "sha256": "d41d35b283ef4732cd2b7c321539491054a8070c86a2109a577d470a8c406e72",
+      "snapshot": "source_snapshot/src/spherical_wheel/model.py"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad.py",
+      "sha256": "bb87ec5d188cc51acdc2591b8629dc94785b2c3aaff2e402947f911b993f5070",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad.py"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_analysis.py",
+      "sha256": "c212949b09147b91aead5fee473594d6dc1c775f5f95860d0f189d5a0dfe10ac",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_analysis.py"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_cli.py",
+      "sha256": "a41ce3e8974862fd11006a3bf72be80602eb7d172adaf4b1c19b70f5701e8331",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_cli.py"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_control.py",
+      "sha256": "bb4edbbf7b085bb99a5f9c12fba917bd8dffc02b07b98f9107eccee07f9ad766",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_control.py"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_experiments.py",
+      "sha256": "d7be0bc07b477b8e8c5171bdf3f3f53d4e8fd915e1b98e06ce932600f9ac951b",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_experiments.py"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_geometry.py",
+      "sha256": "b843181c5537050d544118df534a0f53e2e2905054fef32fe66d702395afc4ae",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_geometry.py"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_suite.py",
+      "sha256": "2e201f4fea2110fe6539385b0763b6eacc7bf0028683765acc45d9d030187d5c",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_suite.py"
+    },
+    {
+      "origin": "src/spherical_wheel/offroad_view.py",
+      "sha256": "631370d0c5ee29417cb2e8531ced3139464f4ffa6bd8d6d33d12a4ae3b3c479f",
+      "snapshot": "source_snapshot/src/spherical_wheel/offroad_view.py"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_control.py",
+      "sha256": "a489078ab4aa61e55b39a10f0428c17a63134503fce27dbee5eb326a0e795b0f",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_control.py"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_equilibrium.py",
+      "sha256": "c8a5c340a7ce9f52c8334f9f8a7fa0491f21ea63fd1125cb0dbabc2f58b15ad2",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_equilibrium.py"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_model.py",
+      "sha256": "6aed2e476fca1547c59abdd19aaee812fad849ec6b090beab1654125aeb7a473",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_model.py"
+    },
+    {
+      "origin": "src/spherical_wheel/predictive_seed.py",
+      "sha256": "373e0d261c22712f4ecc446b69b29f212210548f7e4bf94dafe847ccce6b9aca",
+      "snapshot": "source_snapshot/src/spherical_wheel/predictive_seed.py"
+    },
+    {
+      "origin": "src/spherical_wheel/recovery_control.py",
+      "sha256": "b3a6bad0870c22ada4c926a7659befb756e31f8ed5defb5506786dc466f5b17d",
+      "snapshot": "source_snapshot/src/spherical_wheel/recovery_control.py"
+    },
+    {
+      "origin": "src/spherical_wheel/rolling_allocation.py",
+      "sha256": "a8ff3e9a79f0d337c42c894c2f35d2de8db5aa74b698fd63f4395e90dade1092",
+      "snapshot": "source_snapshot/src/spherical_wheel/rolling_allocation.py"
+    },
+    {
+      "origin": "src/spherical_wheel/sensitivity.py",
+      "sha256": "4555fc809dab22aa2629148700fc8b8464076603a2be9377b3bd0c7af2d607be",
+      "snapshot": "source_snapshot/src/spherical_wheel/sensitivity.py"
+    },
+    {
+      "origin": "src/spherical_wheel/shadow_contact_models.py",
+      "sha256": "a5deff5e67021628fcd3b843bbb5fa970907ab51bee13de491226fb04cc98bc4",
+      "snapshot": "source_snapshot/src/spherical_wheel/shadow_contact_models.py"
+    },
+    {
+      "origin": "src/spherical_wheel/sim.py",
+      "sha256": "f86e01ea6b310c03c957495a758f8a9b56955d4fa88e20ea6636823eed734975",
+      "snapshot": "source_snapshot/src/spherical_wheel/sim.py"
+    },
+    {
+      "origin": "src/spherical_wheel/support_routing_audit.py",
+      "sha256": "c7436cab44467f51d0110041aa7c132889d74ba397c0b36c21d409408b2169ba",
+      "snapshot": "source_snapshot/src/spherical_wheel/support_routing_audit.py"
+    },
+    {
+      "origin": "src/spherical_wheel/synchronization.py",
+      "sha256": "95568934e6c4788773315685d3919df19791332cce7db50b550ca14b8cf90a6c",
+      "snapshot": "source_snapshot/src/spherical_wheel/synchronization.py"
+    },
+    {
+      "origin": "src/spherical_wheel/temporal_contact_filter.py",
+      "sha256": "fb60315abf406c2981ec8686f0aa484650cafe11bbb8976f766f0e428f47df85",
+      "snapshot": "source_snapshot/src/spherical_wheel/temporal_contact_filter.py"
+    },
+    {
+      "origin": "src/spherical_wheel/terrain.py",
+      "sha256": "43ff7b6bf2d53fd3cfccfaa9d02841195f78e0d7e6cc2181b01c0589176751eb",
+      "snapshot": "source_snapshot/src/spherical_wheel/terrain.py"
+    },
+    {
+      "origin": "src/spherical_wheel/terrain_depth.py",
+      "sha256": "476f87cc8f4a9b1081d7ea2be4c6b15e89ebb2efade31f9c3516a5d6dd24a549",
+      "snapshot": "source_snapshot/src/spherical_wheel/terrain_depth.py"
+    },
+    {
+      "origin": "src/spherical_wheel/terrain_memory.py",
+      "sha256": "938752c4a3c4e402191cbf75c464860ae5082f1750368c8342c65635552a7388",
+      "snapshot": "source_snapshot/src/spherical_wheel/terrain_memory.py"
+    },
+    {
+      "origin": "src/spherical_wheel/tilt_reference.py",
+      "sha256": "598fe7e5f4a20d2933daf00f95526949fe0e73fb1eebc56b73b712de35dffa7d",
+      "snapshot": "source_snapshot/src/spherical_wheel/tilt_reference.py"
+    },
+    {
+      "origin": "src/spherical_wheel/transition.py",
+      "sha256": "6330b2d0bfc832167105fb44354f00731e54b6a510c2ed96a4d45482652d13f3",
+      "snapshot": "source_snapshot/src/spherical_wheel/transition.py"
+    },
+    {
+      "origin": "src/spherical_wheel/validation.py",
+      "sha256": "f66410a457be404a5934b08d0bee5c4812cc3fea5e5bdf5fa6a9d16b188fd171",
+      "snapshot": "source_snapshot/src/spherical_wheel/validation.py"
+    },
+    {
+      "origin": "src/spherical_wheel/visualize.py",
+      "sha256": "cfa603e710fe63d7ff0e63e5d2057748b6758efcb304e8f79d1a0318ef736b51",
+      "snapshot": "source_snapshot/src/spherical_wheel/visualize.py"
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+"""Native-feedback command seeds generated only from private predictions.
+
+The live controller, observer and contact-free measurement mirror are cloned.
+The clone receives predicted states, then advances the same observer/locator
+pipeline. No saved future command, live terrain or solved contact is supplied
+to the feedback policy. A mean of native subinterval commands is a bounded
+coarse input sequence, not the same trajectory as its fine feedback rollout;
+the MPC must independently replay and score that coarse sequence.
+"""
+from __future__ import annotations
+
+import copy
+from time import perf_counter
+
+import mujoco
+import numpy as np
+
+from .mirror import StateMirror
+from .offroad_control import OffroadController
+
+
+# An experiment runner may patch OffroadController.command globally. Call the
+# original function explicitly rather than clone.command(), which would enter
+# that live experiment wrapper. Callers can supply their captured original.
+_NATIVE_COMMAND = OffroadController.command
+
+
+def clone_native_controller(controller):
+    """Clone mutable native state while sharing the read-only design library.
+
+    Native command/after_step do not call design.local/variant. Their scheduled
+    gains and ordinary operating point are copied with the controller. Model,
+    data, observer history, synchronizer, estimator and joint references are
+    independent; the design library is never reset or changed by the rollout.
+    """
+    plant = controller.plant
+    if (controller.params.mode != 'hardware' or
+            controller.params.rolling_allocation != 'least_squares' or
+            not isinstance(plant, StateMirror)):
+        raise ValueError('Native rollout seed requires hardware/least_squares with a StateMirror')
+    if (plant.ground is not None or plant.terrain is not None or plant.data.ncon != 0 or
+            not plant.model.opt.disableflags & int(mujoco.mjtDisableBit.mjDSBL_CONTACT)):
+        raise ValueError('Native rollout seed requires a contact-free measurement mirror')
+    clone = copy.deepcopy(controller, {id(controller.design): controller.design})
+    if (clone.plant is plant or clone.plant.model is plant.model or clone.plant.data is plant.data or
+            clone.observer is controller.observer or clone.synchronizer is controller.synchronizer):
+        raise RuntimeError('Native seed clone retained mutable live state')
+    return clone
+
+
+def generate_native_rollout_seed(controller, predictor, path, now, horizon_steps,
+                                 stage_s, *, current_command=None, command_function=None):
+    """Return ``(N,5)`` mean native commands and private-rollout diagnostics.
+
+    ``current_command`` is required when the live native command has already
+    been computed at ``now`` (the online MPC convention). Its observer/filter
+    history is cloned after that call and the command is applied first without
+    another same-time controller update. Otherwise the first command is
+    computed on the clone. ``command_function`` accepts the unbound original
+    native command function, avoiding experiment-runner monkeypatch recursion.
+    """
+    start = perf_counter()
+    if (isinstance(horizon_steps, (bool, np.bool_)) or
+            not isinstance(horizon_steps, (int, np.integer)) or horizon_steps < 1):
+        raise ValueError('horizon_steps must be a positive integer')
+    if not np.isfinite(now) or not np.isfinite(stage_s) or stage_s <= 0:
+        raise ValueError('now must be finite and stage_s finite/positive')
+    if not predictor._ready:
+        raise RuntimeError('Configure the estimated prediction plane before creating a seed')
+    dt = float(controller.plant.dt)
+    ratio = stage_s/dt
+    if not np.isclose(ratio, round(ratio), atol=1e-10, rtol=0) or ratio < 1:
+        raise ValueError('stage_s must be a positive integer multiple of native control interval')
+    substeps = int(round(ratio))
+    if not np.isclose(controller.plant.data.time, now, atol=1e-8, rtol=0):
+        raise ValueError('now must match the measured controller state time')
+    if not np.array_equal(predictor.bounds, controller.plant.bounds):
+        raise ValueError('Native policy and predictor input bounds must agree')
+    native_function = _NATIVE_COMMAND if command_function is None else command_function
+    if not callable(native_function) or not callable(path):
+        raise ValueError('path and command_function must be callable')
+    clone = clone_native_controller(controller)
+    observer_time = (None if controller.observer._previous is None else
+                     float(controller.observer._previous[0]))
+    if current_command is None and observer_time is not None and observer_time >= now-1e-12:
+        raise ValueError('Pass current_command when native feedback already observed this time')
+    if current_command is not None and (observer_time is None or abs(observer_time-now) > 1e-8):
+        raise ValueError('current_command requires native observer history updated at now')
+
+    plant = clone.plant
+    bounds = plant.bounds.copy()
+
+    def bounded_command(value):
+        value = np.asarray(value, float)
+        if value.shape != (5,) or not np.isfinite(value).all() or np.any(abs(value) > bounds+1e-10):
+            raise ValueError('Native commands must be five finite bounded physical inputs')
+        return value.copy()
+
+    first = None if current_command is None else bounded_command(current_command)
+    qpos, qvel = plant.data.qpos.copy(), plant.data.qvel.copy()
+    fine = []
+    for index in range(int(horizon_steps)*substeps):
+        instant = float(now+index*dt)
+        if index == 0 and first is not None:
+            command = first
+        else:
+            xy, velocity, acceleration = path(instant)
+            command, _ = native_function(clone, np.asarray(xy, float).copy(),
+                                        np.asarray(velocity, float).copy(),
+                                        np.asarray(acceleration, float).copy())
+            command = bounded_command(command)
+        fine.append(command)
+        qpos, qvel = predictor.transition(qpos, qvel, command, dt)
+        plant.set_state(qpos, qvel, float(now+(index+1)*dt), command)
+        clone.after_step()
+    fine = np.asarray(fine)
+    commands = fine.reshape(int(horizon_steps), substeps, 5).mean(axis=1)
+    if not np.isfinite(commands).all() or np.any(abs(commands) > bounds+1e-10):
+        raise RuntimeError('Native coarse seed is not finite and bounded')
+    return commands, {
+        'method': 'cloned_native_feedback_private_prediction_interval_mean',
+        'measurement_boundary': 'Current estimated-state controller history and frozen estimated-plane private predictions only; no saved future commands or live contacts.',
+        'native_interval_s': dt, 'stage_s': float(stage_s),
+        'fine_steps': int(len(fine)), 'horizon_steps': int(horizon_steps),
+        'first_command_source': 'already_computed_native' if first is not None else 'computed_on_clone',
+        'observer_history_time_s': observer_time,
+        'fine_commands': fine.tolist(),
+        'fine_rollout_terminal_qpos': qpos.tolist(),
+        'fine_rollout_terminal_qvel': qvel.tolist(),
+        'coarse_sequence_requires_independent_rescore': True,
+        'total_wall_s': float(perf_counter()-start)}

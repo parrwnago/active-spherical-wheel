@@ -1,0 +1,231 @@
+{
+  "iteration": "I-76",
+  "scope": "Fresh matched native N versus unchanged I75 tangent-heading overlay T across straight, arc and figure-eight paths and all three starting phases; no selected-route promotion, no tuning or automatic adoption.",
+  "heading_benefit": {
+    "raw_heading_error_rms_ratio": 0.8,
+    "raw_euler_yaw_rate_error_rms_ratio": 0.8,
+    "rate_tracking_error_peak_nonregression": {
+      "ratio": 1.1,
+      "add_rad_s": 0.05
+    },
+    "definition": "Every T route/phase must have raw heading RMS<=max(.8N,5deg) and exact Euler-heading-rate error RMS<=max(.8N,.03rad/s). Label achieved20percent relative reductions separately from absolute-floor passes; zero-baseline cases never imply a relative improvement.",
+    "actual_rate_definition": "Let h=R(q)[:,0] and hdot=omega_world cross h. Exact Eulerheadingrate=(hx*hdot_y-hy*hdot_x)/(hx^2+hy^2); horizontal forwardprojection denominator must exceed1e-8. Physical world-z angularvelocity is a distinct diagnostic, not the primary rate.",
+    "raw_target_policy": "Frozen geometric tangent including holds; no measured-drift target. Figure-eight crossing has a nonzero geometric tangent and no cusp.",
+    "command_target_policy": "Rawanalytic C2target equals command target if frozen rate/accel guards pass. Any reference shaping/lag must be explicit, and raw objectives remain primary.",
+    "raw_heading_absolute_floor_deg": 5.0,
+    "raw_euler_rate_error_absolute_floor_rad_s": 0.03
+  },
+  "helper_activity": {
+    "motor_torque_norm_threshold_Nm": 0.0001,
+    "definition": "Count actual held intervals with norm of recorded native heading_command[:3] at least threshold. Record original helper eligibility and lever/load masks separately.",
+    "limitation": "This is helper activity before fade/clipping, not a full applied-command counterfactual. Actual clipping and fade are reported separately.",
+    "minimum_held_seconds_per_T_phase": 0.1
+  },
+  "settling": {
+    "sustained_s": 2.0,
+    "goal_radius_m": 0.02,
+    "body_xy_speed_m_s": 0.02,
+    "world_z_angular_speed_rad_s": 0.05,
+    "raw_reference_up_error_deg": 2.0,
+    "heading_error_deg": 10.0,
+    "scope": "Original4conditions and original4 plus raw final geometric heading error<=10degrees. Explicit conditional4condition nonregression; no allphase convergence or settling-only adoption claim.",
+    "nonregression": "If N passes all original four conditions throughout the final2s, T must also pass those four. All four/five-condition results remain explicit; broad overlay screen success is not a claim of absolute convergence in every run."
+  },
+  "hard_contracts": [
+    "All eighteen episodes complete their registered45/45/133s, finite physicalstate/held commands, no declaredphysicalfailure, applied=clip(requested), caps and actualpriorhistory valid.",
+    "Sameroute/phase N/T initial q/v/previousactualinput byteexact; commonrequested yaw=that route geometric initial tangent and actualinitial rawheadingerror<=1degree. Do not assume Eulerheading equalsyawargument byteexactly.",
+    "RawXY/V/A clocks and rawtangent heading/rate/acceleration are common and match independent frozen routegeometry/progress at actualtimestamps. Fullpath and finalgoal stayfixed afterearlystop.",
+    "Only declared tangent-heading reference/helper adapter affectsT; native LQR,gaincache,observercount,normal/load/support/reference/preparation algorithms remain. Currentvalues can differ after trajectories diverge.",
+    "Raw and shaped telemetry distinguish both objectives. Shaped rate/accel bounds and command/helper identities verified; N heading helper remains zero.",
+    "No historical numerical replay gate; all eighteen episodes are fresh paired runs with route-specific aligned initial yaws.",
+    "All eighteen outputs must be sealed before scoring. Every one of nine route/phase pairs must pass; no postresult route, phase, threshold or candidate selection."
+  ],
+  "diagnostic_only": [
+    "Physical world-z angularvelocity and itsintegrals/peaks reported separately from exact Eulerheadingrate; neither substituted for primary Euler-rateerror.",
+    "Absolute physicalrotation/travel and angularspeed are descriptive, since followingthe tangent requires intentional turning.",
+    "Raw versus shaped heading/rate lag, desired yawacceleration, helpereligibility/lever/load/torque and activity beforefade/clipping.",
+    "Originalfour/five-condition goalhold settling and geometrictrackdistance; finalunheldcommand excluded fromcommandstatistics.",
+    "Actual jointspeed peaks and huge rolling-reference demands remain observable in rawlogs; no new assumed jointspeed bound is introduced."
+  ],
+  "status_precedence": [
+    "INVALID_SETUP forsource/schema/seal/rawreference/initialpair/invariant/gain/shapingcontract violations; physicalcompletion reported separately.",
+    "FAIL_TANGENT_SCREEN ifany N/Tphysicalcondition, perroute/phase flooredrawheading/rate gate or nonregressionguard fails.",
+    "INCONCLUSIVE ifotherwiseallpasses but anyTroute/phase helperactivity<.10s.",
+    "PASS_TANGENT_SCREEN onlyifallnine route/phase pairs pass allconditions; no automaticdefaultadoption."
+  ],
+  "per_phase_T_vs_N_nonregression": {
+    "moving_timed_xy_rms": {
+      "ratio": 1.1,
+      "add_m": 0.001
+    },
+    "full_timed_xy_peak": {
+      "ratio": 1.0,
+      "add_m": 0.01
+    },
+    "final_timed_xy": {
+      "ratio": 1.0,
+      "add_m": 0.01
+    },
+    "raw_reference_up_error_peak": {
+      "ratio": 1.0,
+      "add_deg": 1.0
+    },
+    "raw_reference_up_error_rms": {
+      "ratio": 1.1,
+      "add_deg": 0.1
+    },
+    "absolute_tilt_peak": {
+      "ratio": 1.0,
+      "add_deg": 1.0
+    },
+    "full_body_xy_speed_peak": {
+      "ratio": 1.1,
+      "add_m_s": 0.01
+    },
+    "full_50ms_body3D_linear_acceleration_peak": {
+      "ratio": 1.1,
+      "add_m_s2": 0.1
+    },
+    "held_any_channel_clipping_fraction": {
+      "ratio": 1.0,
+      "add_fraction": 0.02
+    },
+    "held_each_channel_clipping_fraction": {
+      "ratio": 1.0,
+      "add_fraction": 0.02
+    },
+    "held_normalized_clipping_excess_rms": {
+      "ratio": 1.1,
+      "add": 0.01
+    },
+    "held_normalized_command_step_peak": {
+      "ratio": 1.1,
+      "add": 0.05
+    }
+  },
+  "reference_guards": {
+    "heading_rate_limit_rad_s": 0.35,
+    "heading_acceleration_limit_rad_s2": 0.5,
+    "forward_projection_denominator_min": 1e-08,
+    "initial_raw_heading_error_max_deg": 1.0,
+    "raw_command_identity": "Bothpolicies log commonplanned raw/command streams; no postresult targetfiltering or shaping. Rawanalyticrate/accel must satisfyguard before physics."
+  },
+  "clock_by_route": {
+    "straight": {
+      "dt_s": 0.005,
+      "start_s": 0.0,
+      "total_s": 45.0,
+      "moving_s": [
+        3.0,
+        35.0
+      ],
+      "heading_s": [
+        3.0,
+        45.0
+      ],
+      "hold_s": [
+        35.0,
+        45.0
+      ],
+      "late_s": [
+        29.0,
+        45.0
+      ],
+      "final_settling_s": [
+        43.0,
+        45.0
+      ],
+      "moving_interval": "Half-open [3,35); all physical-state windows otherwise include actual terminal state.",
+      "command_interval": "Exclude final emitted but unheld command; include actual prior input for command-step metrics."
+    },
+    "arc": {
+      "dt_s": 0.005,
+      "start_s": 0.0,
+      "total_s": 45.0,
+      "moving_s": [
+        3.0,
+        35.0
+      ],
+      "heading_s": [
+        3.0,
+        45.0
+      ],
+      "hold_s": [
+        35.0,
+        45.0
+      ],
+      "late_s": [
+        29.0,
+        45.0
+      ],
+      "final_settling_s": [
+        43.0,
+        45.0
+      ],
+      "moving_interval": "Half-open [3,35); all physical-state windows otherwise include actual terminal state.",
+      "command_interval": "Exclude final emitted but unheld command; include actual prior input for command-step metrics."
+    },
+    "eight": {
+      "dt_s": 0.005,
+      "start_s": 0.0,
+      "total_s": 133.0,
+      "moving_s": [
+        3.0,
+        123.0
+      ],
+      "heading_s": [
+        3.0,
+        133.0
+      ],
+      "hold_s": [
+        123.0,
+        133.0
+      ],
+      "late_s": [
+        117.0,
+        133.0
+      ],
+      "final_settling_s": [
+        131.0,
+        133.0
+      ],
+      "moving_interval": "Half-open [3,123); all physical-state windows otherwise include actual terminal state.",
+      "command_interval": "Exclude final emitted but unheld command; include actual prior input for command-step metrics."
+    }
+  },
+  "routes": {
+    "origin_xy_m": [
+      -2.4,
+      10.0
+    ],
+    "rotation_deg": 113.0,
+    "progress": "quintic u=10r^3-15r^4+6r^5, r=clip((t-3)/duration,0,1)",
+    "straight": {
+      "local_geometry": "[1.2u,0]",
+      "motion_s": 32.0
+    },
+    "arc": {
+      "local_geometry": "[.6sin(pi*u/2),.6(1-cos(pi*u/2))]",
+      "motion_s": 32.0
+    },
+    "eight": {
+      "local_geometry": "[.5sin(2pi*u),.25sin(4pi*u)]",
+      "motion_s": 120.0
+    }
+  },
+  "geometric_cross_track": {
+    "polyline_samples": 4097,
+    "parameter_sampling": "Uniform geometric u in [0,1], including both endpoints; full intended path retained even after early failure.",
+    "distance": "Exact Euclidean point-to-segment minimum over the fixed dense polyline, computed in chunks. This is discretized geometric cross-track distance, not exact analytic curve distance.",
+    "figure_eight_limitation": "Nearest-path distance at the crossing can hide wrong progress; independent timed XY tracking stays a separate requirement.",
+    "rms_nonregression": {
+      "ratio": 1.1,
+      "add_m": 0.001
+    },
+    "peak_nonregression": {
+      "ratio": 1.0,
+      "add_m": 0.01
+    }
+  },
+  "suite_decision": "All9 matched route/phase pairs required. Report route-specific and pooled descriptive summaries, but do not select a winning route or drop a failed pair. Native LQR angular-reference policy and helper gains unchanged from I75 minimal overlay."
+}

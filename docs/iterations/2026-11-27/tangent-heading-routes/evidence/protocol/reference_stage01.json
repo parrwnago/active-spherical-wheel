@@ -1,0 +1,98 @@
+{
+  "heading_reference_parameters": {
+    "max_acceleration_rad_s2": 0.5,
+    "max_rate_rad_s": 0.35
+  },
+  "iteration": "I-76",
+  "no_case_outcomes": true,
+  "no_physics": true,
+  "registered_before_reference_arithmetic_utc": "2026-11-28T02:31:16.484716+00:00",
+  "route_ids": [
+    "straight",
+    "arc",
+    "eight"
+  ],
+  "route_specs": {
+    "arc": {
+      "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+      "duration_s": 32.0,
+      "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+      "geometry": "origin + R113deg @ [.6*sin(pi*u/2),.6*(1-cos(pi*u/2))]",
+      "geometry_heading_deg": 113.0,
+      "goal_hold_s": 10.0,
+      "initial_heading_deg": 113.0,
+      "kind": "i76_arc",
+      "local_footprint_m": [
+        0,
+        0.6,
+        0,
+        0.6
+      ],
+      "origin": [
+        -2.4,
+        10.0
+      ],
+      "origin_policy": "Fixed planned world origin; no measured-state reanchor or reset.",
+      "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+      "route_id": "arc",
+      "start_s": 3.0,
+      "total_duration_s": 45.0
+    },
+    "eight": {
+      "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+      "duration_s": 120.0,
+      "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+      "geometry": "origin + R113deg @ [.5*sin(2*pi*u),.25*sin(4*pi*u)]",
+      "geometry_heading_deg": 113.0,
+      "goal_hold_s": 10.0,
+      "initial_heading_deg": 158.0,
+      "kind": "i76_eight",
+      "local_footprint_m": [
+        -0.5,
+        0.5,
+        -0.25,
+        0.25
+      ],
+      "origin": [
+        -2.4,
+        10.0
+      ],
+      "origin_policy": "Fixed planned world origin; no measured-state reanchor or reset.",
+      "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+      "route_id": "eight",
+      "start_s": 3.0,
+      "total_duration_s": 133.0
+    },
+    "straight": {
+      "crossing_policy": "Eight starts/ends at its crossing with nonzero geometric tangent; no nearest-path progress selection.",
+      "duration_s": 32.0,
+      "endpoint_policy": "Zero temporal velocity/acceleration during both holds; geometric endpoint tangent retained.",
+      "geometry": "origin + R113deg @ [1.2*u,0]",
+      "geometry_heading_deg": 113.0,
+      "goal_hold_s": 10.0,
+      "initial_heading_deg": 113.0,
+      "kind": "i76_straight",
+      "local_footprint_m": [
+        0,
+        1.2,
+        0,
+        0
+      ],
+      "origin": [
+        -2.4,
+        10.0
+      ],
+      "origin_policy": "Fixed planned world origin; no measured-state reanchor or reset.",
+      "progress": "u=10*r^3-15*r^4+6*r^5; r=(t-3)/duration clipped to [0,1]",
+      "route_id": "straight",
+      "start_s": 3.0,
+      "total_duration_s": 45.0
+    }
+  },
+  "source_sha256": {
+    "results/tangent_heading_routes_20261127/runtime/heading_reference.py": "823d5208ceeac8c08ba9a81174e4c71d159b01b24f48891770d7323727b3548d",
+    "results/tangent_heading_routes_20261127/runtime/reference_preflight.py": "252681740728a61d3a8c4703a9c1ab4a1063a00ba021b2a3e8a814bd28740791",
+    "results/tangent_heading_routes_20261127/runtime/route.py": "ea8a04dcb225472979b528421d0996ec1e1bf04e298ece3859bda2dd3bce4aba",
+    "results/tangent_heading_routes_20261127/runtime/test_analytic_reference.py": "ce6bb3e6641ff9aeef6112b17a9f86c6b07178f05166013b73a6f51c1aca4eee"
+  }
+}
